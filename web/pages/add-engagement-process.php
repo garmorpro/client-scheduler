@@ -11,6 +11,10 @@ $employee = $_POST['employee']; // Not needed in this case since user_id is alre
 $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
+var_dump($_POST);
+exit();  // Stop the script here to inspect the POST data
+
+
 // We don't need to fetch the user_id from the database since it's already passed
 // Make sure $userId is valid (if necessary)
 if (!$userId) {
