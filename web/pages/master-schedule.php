@@ -29,6 +29,12 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
     <title>Master Schedule</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+      .form-select, .form-control {
+        background-color: #f9fafb;
+        border-radius: 8px;
+      }
+    </style>
 </head>
 <body class="d-flex">
 
@@ -37,6 +43,47 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
   <div class="flex-grow-1 p-4">
     <h3 class="mb-0">Master Schedule</h3>
     <p class="text-muted mb-4">Complete overview of all client engagements and team assignments</p>
+
+    <!-- Filter Section -->
+    <div class="bg-white border rounded p-3 mb-4">
+      <div class="mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-funnel-fill text-muted"></i>
+        <strong>Filters</strong>
+      </div>
+
+      <form method="get" class="row g-3">
+        <!-- Search -->
+        <div class="col-md-6">
+          <input 
+            type="text" 
+            name="search" 
+            class="form-control" 
+            placeholder="Search projects or clients..."
+            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
+          >
+        </div>
+
+        <!-- Status Dropdown -->
+        <div class="col-md-3">
+          <select name="status" class="form-select">
+            <option value="">All Statuses</option>
+            <option value="active" <?php echo (isset($_GET['status']) && $_GET['status'] == 'active') ? 'selected' : ''; ?>>Active</option>
+            <option value="completed" <?php echo (isset($_GET['status']) && $_GET['status'] == 'completed') ? 'selected' : ''; ?>>Completed</option>
+            <option value="on_hold" <?php echo (isset($_GET['status']) && $_GET['status'] == 'on_hold') ? 'selected' : ''; ?>>On Hold</option>
+          </select>
+        </div>
+
+        <!-- Type Dropdown -->
+        <div class="col-md-3">
+          <select name="type" class="form-select">
+            <option value="">All Types</option>
+            <option value="audit" <?php echo (isset($_GET['type']) && $_GET['type'] == 'audit') ? 'selected' : ''; ?>>Audit</option>
+            <option value="review" <?php echo (isset($_GET['type']) && $_GET['type'] == 'review') ? 'selected' : ''; ?>>Review</option>
+            <option value="consulting" <?php echo (isset($_GET['type']) && $_GET['type'] == 'consulting') ? 'selected' : ''; ?>>Consulting</option>
+          </select>
+        </div>
+      </form>
+    </div>
 
     <!-- Date Selector Toolbar -->
     <form method="get" class="d-flex align-items-center justify-content-between mb-4">
