@@ -28,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: dashboard.php");
             exit;
         } else {
-            $error = "Invalid password.";
+            $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
-        $error = "User not found.";
+        $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
     }
 
     $stmt->close();
