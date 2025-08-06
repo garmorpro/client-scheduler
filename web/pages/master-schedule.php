@@ -267,36 +267,42 @@ function openEngagementModal(engagementId) {
 
 function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            // Set employee name and role
-            document.getElementById('employeeName').innerText = data.employee_name;
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Fill in modal fields
+            document.getElementById('employeeName').innerText = data.full_name;
             document.getElementById('employeeRole').innerText = data.role;
 
-            // Set total assigned hours
-            let totalAssignedHours = data.total_hours;
-            let totalAvailableHours = data.max_hours ?? 0;
+            let assignmentsHTML = '';
+            if (data.assignments.length > 0) {
+                data.assignments.forEach(a => {
+                    assignmentsHTML += `
+                        <div class="mb-2">
+                            <strong>${a.client_name}</strong><br>
+                            ${a.assigned_hours} hrs – Starting ${a.reporting_start}
+                        </div>
+                    `;
+                });
+            } else {
+                assignmentsHTML = '<p class="text-muted">No upcoming assignments.</p>';
+            }
 
-            // Set total assigned hours text
-            document.getElementById('totalAssignedHoursEmployee').innerText = totalAssignedHours;
-            document.getElementById('totalAvailableHoursEmployee').innerText = `/ ${totalAvailableHours} hrs`;
-
-            // Set the progress bar width based on the assigned hours
-            let utilizationPercent = (totalAssignedHours / totalAvailableHours) * 100;
-            document.getElementById('utilizationBarEmployee').style.width = utilizationPercent + "%";
-            document.getElementById('utilizationBarEmployee').setAttribute('aria-valuenow', totalAssignedHours);
-            document.getElementById('utilizationBarEmployee').setAttribute('aria-valuemax', totalAvailableHours);
-
-            // Set upcoming assignments
-            let assignedAssignments = data.upcoming_assignments;
-            document.getElementById('assignedAssignments').innerHTML = assignedAssignments;
+            document.getElementById('employeeAssignments').innerHTML = assignmentsHTML;
 
             // Show modal
             const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
             employeeModal.show();
         })
-        .catch(error => console.error('Error fetching employee details:', error));
+        .catch(err => {
+            console.error('Error fetching employee details:', err);
+        });
 }
+
 
 
 
