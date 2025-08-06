@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $endDate = date('Y-m-d', strtotime('+6 days', strtotime($startDate))); // Week end date
 
     // Insert new engagement into the database
-    // $stmt = $conn->prepare("INSERT INTO engagements (client_name, assigned_hours, start_date, end_date, assigned_to) VALUES (?, ?, ?, ?, ?)");
-    // $stmt->bind_param('sissi', $clientName, $assignedHours, $startDate, $endDate, $employee);
-    // if ($stmt->execute()) {
-    //     echo "<script>alert('Engagement added successfully!'); window.location.href = 'master-schedule.php';</script>";
-    // } else {
-    //     echo "<script>alert('Error adding engagement!');</script>";
-    // }
+    $stmt = $conn->prepare("INSERT INTO engagements (client_name, assigned_hours, start_date, end_date, assigned_to) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param('sissi', $clientName, $assignedHours, $startDate, $endDate, $employee);
+    if ($stmt->execute()) {
+        echo "<script>alert('Engagement added successfully!'); window.location.href = 'master-schedule.php';</script>";
+    } else {
+        echo "<script>alert('Error adding engagement!');</script>";
+    }
 }
 ?>
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <?php include_once '../templates/sidebar.php'; ?>
 
-  <div class="container mt-4">
+  <div class="flex-grow-1 p-4">
     <h3 class="mb-4">Add Engagement</h3>
 
     <form method="POST">
