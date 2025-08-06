@@ -19,7 +19,7 @@ require_once '../includes/auth.php';
 
         <!-- Show error alert only if error is not empty -->
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <form class="p-4" method="POST" action="">
