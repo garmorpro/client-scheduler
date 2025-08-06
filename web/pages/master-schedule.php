@@ -48,7 +48,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
     <div class="bg-white border rounded p-3 mb-4">
       <div class="mb-3 d-flex align-items-center gap-2">
         <i class="bi bi-funnel-fill text-muted"></i>
-        <strong>Filters</strong>
+        Filters
       </div>
 
       <form method="get" class="row g-3">
