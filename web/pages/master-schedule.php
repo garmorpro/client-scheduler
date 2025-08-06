@@ -35,6 +35,12 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         border-radius: 8px;
       }
     </style>
+    <script>
+      // JavaScript function to auto-submit form on date change
+      function autoSubmitDateFilter() {
+        document.getElementById("filterForm").submit();
+      }
+    </script>
 </head>
 <body class="d-flex">
 
@@ -51,7 +57,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         Filters
       </div>
 
-      <form method="get" class="row g-3">
+      <form id="filterForm" method="get" class="row g-3">
         <!-- Search -->
         <div class="col-md-6">
           <input 
@@ -85,10 +91,9 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
         <!-- Date Selector Toolbar -->
         <div class="col-md-6 d-flex align-items-center gap-3">
-          <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>">
+          <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
           <span class="fw-semibold">to</span>
-          <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>">
-          <button type="submit" class="btn btn-primary">Apply</button>
+          <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" onchange="autoSubmitDateFilter()">
           <a href="?start=<?php echo date('Y-m-d', strtotime('monday this week')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday this week'))); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
