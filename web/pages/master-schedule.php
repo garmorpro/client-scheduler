@@ -188,21 +188,22 @@ if ($stmt === false) {
                         <input type="text" id="modalEmployee" name="employee" value="">
                         <input type="text" id="modalWeek" name="week_start" value="">
                         <input type="text" id="modalEngagementId" name="engagement_id" value="">
-
+                                  
                         <div class="mb-3">
                             <label for="client_name" class="form-label">Client Name</label>
                             <select class="form-select" id="client_name" name="client_name" required>
+                                <option value="" selected disabled>Select a client</option> <!-- Placeholder -->
                                 <?php foreach ($activeClients as $client): ?>
                                     <option value="<?php echo $client['engagement_id']; ?>"><?php echo htmlspecialchars($client['client_name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
+                                
                         <div class="mb-3">
                             <label for="assigned_hours" class="form-label">Assigned Hours</label>
                             <input type="number" class="form-control" id="assigned_hours" name="assigned_hours" required>
                         </div>
-
+                                
                         <div class="mb-3">
                             <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
                         </div>
@@ -211,6 +212,7 @@ if ($stmt === false) {
             </div>
         </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
