@@ -76,7 +76,7 @@ if ($stmt === false) {
         .highlight-today { background-color: lightblue !important; }
         td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
     </style>
-    <script>
+<script>
 function autoSubmitDateFilter() {
   document.getElementById("filterForm").submit();
 }
@@ -87,6 +87,10 @@ function openModal(employee, weekStart, engagementId = null) {
   document.getElementById('modalEmployee').value = employee;
   document.getElementById('modalWeek').value = weekStart;
   document.getElementById('modalEngagementId').value = engagementId ?? '';
+
+  document.getElementById('client_name').selectedIndex = 0; // Reset client dropdown
+  document.getElementById('numberOfWeeks').value = ''; // Reset number of weeks
+  document.getElementById('weeksContainer').innerHTML = ''; // Clear inputs
 
   document.getElementById('modalTitle').innerText = engagementId ? 'Edit Engagement' : 'Add Engagement';
   document.getElementById('modalSubmitBtn').innerText = engagementId ? 'Save Changes' : 'Add Engagement';
@@ -104,16 +108,20 @@ function generateWeekInputs() {
   for (let i = 1; i <= numberOfWeeks; i++) {
     const inputGroup = document.createElement("div");
     inputGroup.classList.add("mb-3");
+
     inputGroup.innerHTML = `
-      <label class="form-label">Week ${i} Start</label>
-      <input type="date" class="form-control" name="week_start_${i}" required>
-      <label class="form-label mt-2">Assigned Hours</label>
-      <input type="number" class="form-control" name="assigned_hours_${i}" placeholder="e.g. 20" min="1" required>
+      <label for="week_start_${i}" class="form-label">Week ${i} Start</label>
+      <input type="date" class="form-control" id="week_start_${i}" name="week_start_${i}" required>
+
+      <label for="assigned_hours_${i}" class="form-label mt-2">Assigned Hours</label>
+      <input type="number" class="form-control" id="assigned_hours_${i}" name="assigned_hours_${i}" placeholder="e.g. 20" min="1" required>
     `;
+
     weeksContainer.appendChild(inputGroup);
   }
 }
 </script>
+
 
 </head>
 <body class="d-flex">
@@ -192,7 +200,7 @@ function generateWeekInputs() {
         </div>
     </div>
 
-    <!-- Modal for Adding and Editing Engagement -->
+<!-- Modal for Adding and Editing Engagement -->
 <div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -201,15 +209,15 @@ function generateWeekInputs() {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="add-engagement-process.php" method="POST">
-          <input type="hidden" id="modalEmployee" name="employee" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
-          <input type="hidden" id="modalEngagementId" name="engagement_id" value="">
+        <form id="engagementForm" action="add-engagement-process.php" method="POST">
+          <input type="hidden" id="modalEmployee" name="employee">
+          <input type="hidden" id="modalWeek" name="week_start">
+          <input type="hidden" id="modalEngagementId" name="engagement_id">
 
           <div class="mb-3">
             <label for="client_name" class="form-label">Client Name</label>
             <select class="form-select" id="client_name" name="client_name" required>
-              <option value="" selected disabled>Select a client</option>
+              <option value="" disabled selected>Select a client</option>
               <?php foreach ($activeClients as $client): ?>
                 <option value="<?php echo $client['engagement_id']; ?>">
                   <?php echo htmlspecialchars($client['client_name']); ?>
@@ -218,16 +226,14 @@ function generateWeekInputs() {
             </select>
           </div>
 
-          <!-- Number of Weeks -->
           <div class="mb-3">
             <label for="numberOfWeeks" class="form-label">Number of Weeks</label>
             <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
           </div>
 
-          <!-- Container for dynamically generated week inputs -->
           <div id="weeksContainer"></div>
 
-          <div class="mb-3">
+          <div class="mb-3 text-end">
             <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
           </div>
         </form>
@@ -235,6 +241,7 @@ function generateWeekInputs() {
     </div>
   </div>
 </div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
