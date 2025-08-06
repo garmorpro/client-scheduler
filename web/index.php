@@ -31,7 +31,7 @@
         </div>
       </form>
       <p class="text-center text-muted">
-        <strong>Contact your administrator for account setup.</strong>
+        Contact your administrator for account setup.
         <br>
         <span style="font-size: 10px;">
             This is a demo application. In production, users would be created by administrators.
