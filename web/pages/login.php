@@ -17,7 +17,8 @@ require_once '../includes/auth.php';
         <h5 class="text-center mb-2">Welcome Back</h5>
         <p class="text-center text-muted">Sign in to access your engagement schedules</p>
 
-        <?php if (isset($error)): ?>
+        <!-- Show error alert only if error is not empty -->
+        <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
