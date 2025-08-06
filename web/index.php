@@ -27,7 +27,7 @@
           <input type="password" class="form-control" id="password" placeholder="Password" required>
         </div>
         <div class="d-grid">
-          <button type="submit" class="btn btn-primary">Login</button>
+          <button type="submit" class="btn" style="background-color: rgb(23,62, 70)">Login</button>
         </div>
       </form>
     </div>
