@@ -1,5 +1,3 @@
-// FILE: add-engagement-process.php
-
 <?php
 require_once '../includes/db.php';
 session_start();
@@ -13,12 +11,12 @@ $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
 // Get the user ID from employee name
-$user_id_query = $conn->prepare("SELECT id FROM users WHERE name = ? LIMIT 1");
+$user_id_query = $conn->prepare("SELECT user_id FROM users WHERE first_name = ? LIMIT 1");
 $user_id_query->bind_param("s", $employee);
 $user_id_query->execute();
 $user_id_result = $user_id_query->get_result();
 $user_id_row = $user_id_result->fetch_assoc();
-$user_id = $user_id_row ? $user_id_row['id'] : null;
+$user_id = $user_id_row ? $user_id_row['user_id'] : null;
 
 if (!$user_id) {
     die("User not found.");
@@ -32,7 +30,7 @@ if (!$assignmentInsert->execute()) {
 }
 $assignmentId = $assignmentInsert->insert_id;
 
-// Loop through the number of weeks and insert into assignment_weeks
+// Loop through the number of weeks and insert into assignments table
 for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekKey = 'week_start_' . $i;
     $hoursKey = 'assigned_hours_' . $i;
@@ -44,10 +42,11 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    $weekInsert = $conn->prepare("INSERT INTO assignment_weeks (week_start, assigned_hours) VALUES (?, ?, ?)");
-    $weekInsert->bind_param("iss", $assignmentId, $weekStart, $assignedHours);
-    if (!$weekInsert->execute()) {
-        echo "Error inserting week $i: " . $conn->error . "<br>";
+    // Insert into assignments table (instead of assignment_weeks)
+    $assignmentUpdate = $conn->prepare("UPDATE assignments SET week_start = ?, assigned_hours = ? WHERE assignment_id = ?");
+    $assignmentUpdate->bind_param("ssi", $weekStart, $assignedHours, $assignmentId);
+    if (!$assignmentUpdate->execute()) {
+        echo "Error updating assignment $i: " . $conn->error . "<br>";
     }
 }
 
