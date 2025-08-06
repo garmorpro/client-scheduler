@@ -244,7 +244,27 @@ function deleteAssignment(assignmentId) {
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
             <div class="col-md-7">
-                <input type="text" name="search" class="form-control" placeholder="Search projects or clients...">
+                <div class="col-md-3">
+                    <select name="employee" class="form-select">
+                        <option value="">All Employees</option>
+                        <?php foreach ($employees as $id => $emp): ?>
+                            <option value="<?php echo $id; ?>" <?php if (isset($_GET['employee']) && $_GET['employee'] == $id) echo 'selected'; ?>>
+                                <?php echo htmlspecialchars($emp['full_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="client" class="form-select">
+                        <option value="">All Clients</option>
+                        <?php foreach ($activeClients as $client): ?>
+                            <option value="<?php echo $client['engagement_id']; ?>" <?php if (isset($_GET['client']) && $_GET['client'] == $client['engagement_id']) echo 'selected'; ?>>
+                                <?php echo htmlspecialchars($client['client_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
             </div>
             <div class="col-md-2">
                 <select name="status" class="form-select">
