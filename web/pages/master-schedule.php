@@ -1,3 +1,70 @@
+<?php
+require_once '../includes/db.php'; // Your DB connection file
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$today = date('Y-m-d');
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
+$endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
+
+// Initialize mondays array
+$mondays = [];
+$current = strtotime($startDate);
+while ($current <= strtotime($endDate)) {
+    if (date('N', $current) == 1) {
+        $mondays[] = $current;
+    }
+    $current = strtotime('+1 week', $current);
+}
+
+// Initialize employees array (you can fetch this from your database or use static values)
+$employees = ['John Doe', 'Jane Smith', 'Alex Johnson']; // Replace this with actual data if necessary
+
+// Query to fetch active clients from the engagements table
+$clientQuery = "SELECT engagement_id, client_name FROM engagements WHERE status = 'active'";
+$clientResult = $conn->query($clientQuery);
+
+if ($clientResult === false) {
+    die('MySQL query failed: ' . $conn->error);
+}
+
+$activeClients = [];
+while ($clientRow = $clientResult->fetch_assoc()) {
+    $activeClients[] = $clientRow;
+}
+
+// Modify the query to join 'assignments', 'assignment_weeks', and 'engagements' based on 'assignment_id' and 'engagement_id'
+$query = "
+    SELECT 
+        aw.assignment_id, 
+        e.client_name, 
+        aw.assigned_hours, 
+        aw.week_start, 
+        e.engagement_id, 
+        a.user_id
+    FROM 
+        assignment_weeks aw
+    JOIN 
+        assignments a ON a.assignment_id = aw.assignment_id  -- join on assignment_id
+    JOIN 
+        engagements e ON e.engagement_id = a.engagement_id
+    WHERE 
+        aw.week_start <= ? AND aw.week_start >= ? AND a.user_id = ?
+    ORDER BY 
+        aw.week_start
+";
+
+$stmt = $conn->prepare($query);
+
+if ($stmt === false) {
+    // If prepare fails, output the error and exit
+    die('MySQL prepare failed: ' . $conn->error);
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
