@@ -15,28 +15,27 @@
     <div class="card p-3 shadow" style="width: 100%; max-width: 400px;">
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
-      <h5 class="text-center mb-2">Welcome Back</h3>
-      <p class="text-center text-muted">Sign in to access your engagement schedules</p>
-      <form class="p-4">
-        <div class="mb-3">
-          <label for="email" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="email" placeholder="Enter email" required>
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" placeholder="Password" required>
-        </div>
-        <div class="d-grid">
-          <button type="submit" class="btn" style="background-color: rgb(23,62, 70); color: white;">Login</button>
-        </div>
-      </form>
-      <p class="text-center text-muted">
-        Contact your administrator for account setup.
-        <br>
-        <span style="font-size: 10px; line-height: .5px !important;">
+        <h5 class="text-center mb-2">Welcome Back</h3>
+        <p class="text-center text-muted">Sign in to access your engagement schedules</p>
+        <form class="p-4">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn" style="background-color: rgb(23,62, 70); color: white;">Login</button>
+            </div>
+        </form>
+        <p class="text-center text-muted">
+            Contact your administrator for account setup.
+        </p>
+        <p class="text-center text-muted" style="font-size: 10px;">
             This is a demo application. In production, users would be created by administrators.
-        </span>
-      </p>
+        </p>
     </div>
   </div>
 
