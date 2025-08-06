@@ -8,12 +8,12 @@
 
     <title>Document</title>
 </head>
-<body styles="background-color: rgba(216, 216, 216, 1);">
+<body style="background-color: rgba(216, 216, 216, 1);">
 
 
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <div class="card p-4 shadow" style="width: 100%; max-width: 450px;">
-        <img src="assets/images/aarc-360-logo-1.webp" alt="">
+        <img src="assets/images/aarc-360-logo-1.webp" alt="" style="width: 75%;">
       <h5 class="text-center mb-4">Welcome Back</h3>
       <p class="text-center">Sign in to access your engagement schedules</p>
       <form>
