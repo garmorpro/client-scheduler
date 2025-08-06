@@ -1,12 +1,9 @@
 <?php
-require_once '../includes/db.php';
-
-// Log errors instead of displaying them
-ini_set('log_errors', 1);
-ini_set('display_errors', 0);
-ini_set('error_log', __DIR__ . '/error_log.txt');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once '../includes/db.php';
 header('Content-Type: application/json');
 
 if (!isset($_GET['id'])) {
@@ -15,10 +12,10 @@ if (!isset($_GET['id'])) {
 }
 
 $employeeId = (int)$_GET['id'];
-$today = date('Y-m-d');
 
-// Get employee info
-$stmt = $conn->prepare("SELECT first_name, last_name, role, total_available_hours FROM users WHERE user_id = ?");
+// Fetch employee details
+$userQuery = "SELECT first_name, last_name, role FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($userQuery);
 $stmt->bind_param('i', $employeeId);
 $stmt->execute();
 $userResult = $stmt->get_result();
@@ -29,38 +26,54 @@ if ($userResult->num_rows === 0) {
 }
 
 $user = $userResult->fetch_assoc();
+$fullName = $user['first_name'] . ' ' . $user['last_name'];
+$role = $user['role'] ?? 'N/A';
 
-// Get future assignments
-$assignmentQuery = "
-    SELECT e.client_name, a.assigned_hours, a.week_start
+// Fetch upcoming assignments (week_start >= today)
+$today = date('Y-m-d');
+$assignmentsQuery = "
+    SELECT 
+        e.client_name,
+        a.week_start,
+        a.assigned_hours
     FROM assignments a
     JOIN engagements e ON a.engagement_id = e.engagement_id
-    WHERE a.user_id = ?
-      AND a.week_start >= ?
+    WHERE a.user_id = ? AND a.week_start >= ?
     ORDER BY a.week_start ASC
 ";
-$stmt = $conn->prepare($assignmentQuery);
+
+$stmt = $conn->prepare($assignmentsQuery);
 $stmt->bind_param('is', $employeeId, $today);
 $stmt->execute();
-$assignmentResult = $stmt->get_result();
+$assignmentsResult = $stmt->get_result();
 
-$assignments = [];
 $totalAssignedHours = 0;
+$assignmentItemsHTML = '';
 
-while ($row = $assignmentResult->fetch_assoc()) {
-    $totalAssignedHours += $row['assigned_hours'];
-    $assignments[] = [
-        'client_name' => $row['client_name'],
-        'assigned_hours' => $row['assigned_hours'],
-        'week_start' => $row['week_start']
-    ];
+while ($row = $assignmentsResult->fetch_assoc()) {
+    $client = htmlspecialchars($row['client_name']);
+    $weekStart = date('M j, Y', strtotime($row['week_start']));
+    $hours = (int)$row['assigned_hours'];
+    $totalAssignedHours += $hours;
+
+    $assignmentItemsHTML .= "
+        <div class='list-group-item d-flex justify-content-between align-items-center'>
+            <div>
+                <strong>{$client}</strong><br />
+                <small class='text-muted'>Week of {$weekStart}</small>
+            </div>
+            <span class='badge bg-primary rounded-pill'>{$hours} hrs</span>
+        </div>
+    ";
 }
 
+// Optional: You can hardcode or calculate this from elsewhere if needed
+$totalAvailableHours = 40 * 4; // 4 weeks * 40 hrs/week (example)
+
 echo json_encode([
-    'full_name' => $user['first_name'] . ' ' . $user['last_name'],
-    'role' => $user['role'],
-    'assignments' => $assignments,
+    'full_name' => $fullName,
+    'role' => $role,
     'total_assigned_hours' => $totalAssignedHours,
-    'total_available_hours' => $user['total_available_hours'] ?? 1000,
+    'total_available_hours' => $totalAvailableHours,
+    'assignment_items' => $assignmentItemsHTML
 ]);
-exit;

@@ -267,41 +267,42 @@ function openEngagementModal(engagementId) {
 
 function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
-        .then(res => res.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Network error");
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert(data.error);
                 return;
             }
 
-            // Fill in modal fields
             document.getElementById('employeeName').innerText = data.full_name;
             document.getElementById('employeeRole').innerText = data.role;
 
-            let assignmentsHTML = '';
-            if (data.assignments.length > 0) {
-                data.assignments.forEach(a => {
-                    assignmentsHTML += `
-                        <div class="mb-2">
-                            <strong>${a.client_name}</strong><br>
-                            ${a.assigned_hours} hrs – Starting ${a.reporting_start}
-                        </div>
-                    `;
-                });
-            } else {
-                assignmentsHTML = '<p class="text-muted">No upcoming assignments.</p>';
-            }
+            document.getElementById('totalAssignedHoursEmployee').innerText = data.total_assigned_hours;
+            document.getElementById('totalAvailableHoursEmployeeVal').innerText = data.total_available_hours;
 
-            document.getElementById('employeeAssignments').innerHTML = assignmentsHTML;
+            // Set progress bar
+            const percent = (data.total_assigned_hours / data.total_available_hours) * 100;
+            const bar = document.getElementById('utilizationBarEmployee');
+            bar.style.width = percent + "%";
+            bar.setAttribute('aria-valuenow', data.total_assigned_hours);
+            bar.setAttribute('aria-valuemax', data.total_available_hours);
+
+            // Set assignments
+            document.getElementById('assignedAssignments').innerHTML = data.assignment_items;
 
             // Show modal
             const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
             employeeModal.show();
         })
         .catch(err => {
-            console.error('Error fetching employee details:', err);
+            console.error("Error fetching employee details:", err);
+            alert("Failed to load employee details.");
         });
 }
+
 
 
 
