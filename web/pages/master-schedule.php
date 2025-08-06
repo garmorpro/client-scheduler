@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 // Get today's date
 $today = date('Y-m-d');
 
-// Set the default start date to 2 weeks before the current date (start of the week of two weeks ago)
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('monday -3 weeks')); // Start 2 weeks ago
+// Adjust start date: if the selected date is not a Monday, shift it to the previous Monday
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
 
 // Automatically calculate the end date to be 5 weeks after the selected start date, making it a 6-week view
 $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
@@ -87,16 +87,6 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
           </select>
         </div>
 
-        <!-- Type Dropdown -->
-        <!-- <div class="col-md-3">
-          <select name="type" class="form-select">
-            <option value="">All Types</option>
-            <option value="audit" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'audit') ? 'selected' : ''; ?>>Audit</option>
-            <option value="review" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'review') ? 'selected' : ''; ?>>Review</option>
-            <option value="consulting" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'consulting') ? 'selected' : ''; ?>>Consulting</option>
-          </select>
-        </div> -->
-
         <!-- Date Selector Toolbar -->
         <div class="col-md-3 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
@@ -129,7 +119,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
             <tr>
               <td class="text-start fw-semibold"><?php echo htmlspecialchars($employee); ?></td>
               <?php foreach ($mondays as $monday): ?>
-                <td>test (25)</td> <!-- Placeholder: replace with actual assignments later -->
+                <td>-</td> <!-- Placeholder: replace with actual assignments later -->
               <?php endforeach; ?>
             </tr>
           <?php endforeach; ?>
