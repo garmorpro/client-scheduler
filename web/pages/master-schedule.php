@@ -227,6 +227,41 @@ function deleteAssignment(assignmentId) {
     }
 }
 
+
+
+function openEngagementModal(engagementId) {
+    fetch(`engagement-details.php?id=${engagementId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  // Check the data to see if it's correct
+
+            // Set engagement (client) name
+            document.getElementById('clientName').innerText = data.client_name;
+
+            // Set total assigned hours
+            let totalAssignedHours = data.total_hours;
+            let totalAvailableHours = 1000; // Example total available hours, adjust as needed
+
+            // Set total assigned hours text
+            document.getElementById('totalAssignedHours').innerText = totalAssignedHours;
+
+            // Set the progress bar width based on the assigned hours
+            let utilizationPercent = (totalAssignedHours / totalAvailableHours) * 100;
+            document.getElementById('utilizationBar').style.width = utilizationPercent + "%";
+            document.getElementById('utilizationBar').setAttribute('aria-valuenow', totalAssignedHours);
+
+            // Set assigned employees
+            let assignedEmployees = data.assigned_employees;
+            document.getElementById('assignedEmployees').innerHTML = assignedEmployees;
+
+            // Show modal
+            const engagementModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            engagementModal.show();
+        })
+        .catch(error => console.error('Error fetching engagement details:', error));
+}
+
+
     </script>
 
     <style>
@@ -455,6 +490,44 @@ function deleteAssignment(assignmentId) {
 
 <?php endif; ?>
 
+
+<!-- Modal for Engagement Details -->
+<div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Engagement Name -->
+        <h4 id="clientName" class="text-center mb-3"></h4>
+
+        <!-- Utilization Progress Bar -->
+        <div class="mb-4">
+          <h6>Total Assigned Hours:</h6>
+          <div class="d-flex justify-content-between">
+            <span id="totalAssignedHours" class="fw-bold"></span>
+            <span id="totalHours" class="text-muted">/ 1000 hrs</span> <!-- Change 1000 to your total hours -->
+          </div>
+          <div class="progress mt-2" style="height: 25px;">
+            <div id="utilizationBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+          </div>
+        </div>
+
+        <!-- Assigned Employees -->
+        <h6 class="mt-4 mb-3">Assigned Employees:</h6>
+        <div id="assignedEmployees"></div>
+
+        <!-- Notes Section (Optional) -->
+        <div class="mt-4">
+          <h6 class="mb-2">Client Notes:</h6>
+          <p id="clientNotes" class="text-muted">No notes available.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
