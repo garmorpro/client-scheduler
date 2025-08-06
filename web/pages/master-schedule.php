@@ -19,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
 
   <div class="flex-grow-1 p-4">
     <!-- Dashboard content goes here -->
-    <h1>Master Schedule</h1>
+    <h3>Master Schedule</h3>
     <p class="text-muted">
       Complete overview of all client engagements and team assignments
     </p>
