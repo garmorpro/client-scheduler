@@ -119,11 +119,30 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
             <tr>
               <td class="text-start fw-semibold"><?php echo htmlspecialchars($employee); ?></td>
               <?php foreach ($mondays as $monday): ?>
-                <td>-</td> <!-- Placeholder: replace with actual assignments later -->
+                <td>
+                  <?php
+                    // Query engagements for the current employee and current week (Monday)
+                    $clientAssignments = ''; // Default is empty
+              
+                    // Get the engagements for this employee and week
+                    foreach ($engagements as $engagement) {
+                        // Check if the engagement falls within the current week
+                        $weekStart = date('Y-m-d', $monday);
+                        if ($engagement['start_date'] <= $weekStart && $engagement['end_date'] >= $weekStart) {
+                            // Format as "Client Name (Assigned Hours)"
+                            $clientAssignments .= $engagement['client_name'] . ' (' . $engagement['assigned_hours'] . ')<br>';
+                        }
+                    }
+                  
+                    // Output the client assignments for this employee and week
+                    echo $clientAssignments ? $clientAssignments : '-'; // If no assignments, show '-'
+                  ?>
+                </td>
               <?php endforeach; ?>
             </tr>
           <?php endforeach; ?>
         </tbody>
+
       </table>
     </div>
   </div>
