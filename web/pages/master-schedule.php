@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Handle start and end date from GET params, or set defaults
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('monday this week'));
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('-2 weeks'));  // Start 2 weeks before today
 $endDate = isset($_GET['end']) ? date('Y-m-d', strtotime($_GET['end'])) : date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
 // Get all Mondays between start and end
@@ -21,6 +21,9 @@ while ($current <= strtotime($endDate)) {
 
 // Example employees (replace this with DB call if needed)
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
+
+// Get today's date
+$today = date('Y-m-d');
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +36,9 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
       .form-select, .form-control {
         background-color: #f9fafb;
         border-radius: 8px;
+      }
+      .highlight-today {
+        background-color: lightblue !important;
       }
     </style>
     <script>
@@ -106,7 +112,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
           <tr>
             <th class="text-start">Employee</th>
             <?php foreach ($mondays as $monday): ?>
-              <th>
+              <th class="<?php echo (date('Y-m-d', $monday) == $today) ? 'highlight-today' : ''; ?>">
                 <?php echo date('M j', $monday); ?><br>
                 <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
               </th>
