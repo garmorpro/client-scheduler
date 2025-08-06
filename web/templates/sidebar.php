@@ -14,6 +14,8 @@
       </div>
     </div>
 
+    <hr>
+
     <!-- Nav Links -->
     <ul class="nav flex-column">
       <li class="nav-item mb-2">
