@@ -142,16 +142,18 @@ if ($stmt === false) {
                                 $engagementId = null;
                                 while ($row = $result->fetch_assoc()) {
                                     if ($row['user_id'] === $employee && $row['week_start'] <= $weekStart && $row['week_start'] >= $weekStart) {
-                                        $cellContent = "<span onclick=\"openModal('{$employee}', '{$weekStart}', '{$row['engagement_id']}')\">{$row['client_name']} ({$row['assigned_hours']})</span>";
+                                        $cellContent = "<span>{$row['client_name']} ({$row['assigned_hours']})</span>";
                                         $engagementId = $row['engagement_id'];
                                         break;
                                     }
                                 }
                                 if ($cellContent === '-') {
-                                    $cellContent = "<span class='text-muted' onclick=\"openModal('{$employee}', '{$weekStart}')\">+</span>";
+                                    $cellContent = "<span class='text-muted'>+</span>";
                                 }
                             ?>
-                            <td class="addable"><?php echo $cellContent; ?></td>
+                            <td class="addable" onclick="openModal('<?php echo $employee; ?>', '<?php echo $weekStart; ?>', '<?php echo $engagementId ? $engagementId : 'null'; ?>')">
+                                <?php echo $cellContent; ?>
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                     <?php endforeach; ?>
