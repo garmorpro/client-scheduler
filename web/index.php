@@ -12,12 +12,12 @@
 
 
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card shadow" style="width: 100%; max-width: 400px;padding: 35px;">
+    <div class="card p-3 shadow" style="width: 100%; max-width: 400px;">
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
       <h5 class="text-center mb-2">Welcome Back</h3>
       <p class="text-center text-muted">Sign in to access your engagement schedules</p>
-      <form>
+      <form class="p-5">
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
           <input type="email" class="form-control" id="email" placeholder="Enter email" required>
