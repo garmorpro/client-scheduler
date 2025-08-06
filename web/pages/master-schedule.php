@@ -172,9 +172,9 @@ if ($stmt === false) {
                 </div>
                 <div class="modal-body">
                     <form action="add-engagement-process.php" method="POST">
-                        <input type="hidden" id="modalEmployee" name="employee" value="">
-                        <input type="hidden" id="modalWeek" name="week_start" value="">
-                        <input type="hidden" id="modalEngagementId" name="engagement_id" value="">
+                        <input type="text" id="modalEmployee" name="employee" value="">
+                        <input type="text" id="modalWeek" name="week_start" value="">
+                        <input type="text" id="modalEngagementId" name="engagement_id" value="">
 
                         <div class="mb-3">
                             <label for="client_name" class="form-label">Client Name</label>
