@@ -15,7 +15,7 @@
     <div class="card p-4 shadow" style="width: 100%; max-width: 450px;">
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
-      <h5 class="text-center mb-1">Welcome Back</h3>
+      <h5 class="text-center mb-2">Welcome Back</h3>
       <p class="text-center text-muted">Sign in to access your engagement schedules</p>
       <form>
         <div class="mb-3">
