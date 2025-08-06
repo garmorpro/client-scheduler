@@ -19,34 +19,20 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekKey = 'week_start_' . $i;
     $hoursKey = 'assigned_hours_' . $i;
 
+    // Check if the required POST fields exist
     if (!isset($_POST[$weekKey]) || !isset($_POST[$hoursKey])) {
-        continue;
+        continue; // Skip if the week or assigned hours are not set
     }
 
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    // Ensure that the combination of user_id, engagement_id, and week_start is unique.
-    // Check if the record for the same week already exists
-    $checkQuery = $conn->prepare("SELECT assignment_id FROM assignments WHERE user_id = ? AND engagement_id = ? AND week_start = ?");
-    $checkQuery->bind_param("iis", $employee, $engagementId, $weekStart);
-    $checkQuery->execute();
-    $result = $checkQuery->get_result();
-
-    if ($result->num_rows > 0) {
-        // If the record exists, update the assigned hours
-        $updateQuery = $conn->prepare("UPDATE assignments SET assigned_hours = ? WHERE user_id = ? AND engagement_id = ? AND week_start = ?");
-        $updateQuery->bind_param("iiss", $assignedHours, $employee, $engagementId, $weekStart);
-        if (!$updateQuery->execute()) {
-            die("Assignment update failed: " . $conn->error);
-        }
-    } else {
-        // Insert a new record for the current week
-        $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
-        $assignmentInsert->bind_param("iiss", $employee, $engagementId, $weekStart, $assignedHours);
-        if (!$assignmentInsert->execute()) {
-            die("Assignment creation failed: " . $conn->error);
-        }
+    // Insert a new record into the assignments table for each week
+    $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
+    $assignmentInsert->bind_param("iiss", $employee, $engagementId, $weekStart, $assignedHours);
+    
+    if (!$assignmentInsert->execute()) {
+        die("Assignment creation failed: " . $conn->error);
     }
 }
 
