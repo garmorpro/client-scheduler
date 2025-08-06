@@ -11,8 +11,8 @@ $today = date('Y-m-d');
 // Set the default start date to 2 weeks before the current date (start of the week of two weeks ago)
 $startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('monday -3 weeks')); // Start 2 weeks ago
 
-// Set the end date to 5 weeks after the start date, or use the one from GET params
-$endDate = isset($_GET['end']) ? date('Y-m-d', strtotime($_GET['end'])) : date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
+// Automatically calculate the end date to be 5 weeks after the selected start date, making it a 6-week view
+$endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
 // Get all Mondays between start and end
 $mondays = [];
@@ -100,9 +100,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         <!-- Date Selector Toolbar -->
         <div class="col-md-6 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-          <span class="fw-semibold">to</span>
-          <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" onchange="autoSubmitDateFilter()">
-          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday -2 weeks'))); ?>" class="btn btn-outline-secondary">Today</a>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -3 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
     </div>
