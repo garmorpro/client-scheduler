@@ -243,10 +243,10 @@ function deleteAssignment(assignmentId) {
 
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
-            <div class="col-md-7">
+            <!-- <div class="col-md-7">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
                 <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
-            </div>
+            </div> -->
             <div class="col-md-2">
                 <select name="status" class="form-select">
                     <option value="">All Statuses</option>
