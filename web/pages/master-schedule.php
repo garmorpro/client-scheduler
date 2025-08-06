@@ -1,68 +1,3 @@
-<?php
-require_once '../includes/db.php'; // Your DB connection file
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$today = date('Y-m-d');
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
-$endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
-
-$mondays = [];
-$current = strtotime($startDate);
-while ($current <= strtotime($endDate)) {
-    if (date('N', $current) == 1) {
-        $mondays[] = $current;
-    }
-    $current = strtotime('+1 week', $current);
-}
-
-$employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
-
-// Query to fetch active clients from the engagements table
-$clientQuery = "SELECT engagement_id, client_name FROM engagements WHERE status = 'active'";
-$clientResult = $conn->query($clientQuery);
-
-if ($clientResult === false) {
-    die('MySQL query failed: ' . $conn->error);
-}
-
-$activeClients = [];
-while ($clientRow = $clientResult->fetch_assoc()) {
-    $activeClients[] = $clientRow;
-}
-
-// Modify the query to join 'assignments', 'assignment_weeks', and 'engagements' based on 'assignment_id' and 'engagement_id'
-$query = "
-    SELECT 
-        aw.assignment_id, 
-        e.client_name, 
-        aw.assigned_hours, 
-        aw.week_start, 
-        e.engagement_id, 
-        a.user_id
-    FROM 
-        assignment_weeks aw
-    JOIN 
-        assignments a ON a.assignment_id = aw.assignment_id  -- join on assignment_id
-    JOIN 
-        engagements e ON e.engagement_id = a.engagement_id
-    WHERE 
-        aw.week_start <= ? AND aw.week_start >= ? AND a.user_id = ?
-    ORDER BY 
-        aw.week_start
-";
-
-$stmt = $conn->prepare($query);
-
-if ($stmt === false) {
-    // If prepare fails, output the error and exit
-    die('MySQL prepare failed: ' . $conn->error);
-}
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -80,7 +15,7 @@ if ($stmt === false) {
         }
 
         function openModal(employee, weekStart, engagementId = null) {
-            console.log('openModal called', employee, weekStart, engagementId); // Debugging
+            console.log('openModal called', employee, weekStart, engagementId);
                 
             document.getElementById('modalEmployee').value = employee;
             document.getElementById('modalWeek').value = weekStart;
@@ -92,10 +27,42 @@ if ($stmt === false) {
                 document.getElementById('modalTitle').innerText = 'Add Engagement';
                 document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
             }
-          
+
             // Fallback for modal trigger
             const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
             modalElement.show();
+        }
+
+        // Function to show/hide and generate multiple week inputs
+        function toggleMultipleWeeks() {
+            var multipleWeeks = document.getElementById("multipleWeeksCheckbox").checked;
+            var numberInputDiv = document.getElementById("numberOfWeeksDiv");
+            var weeksContainer = document.getElementById("weeksContainer");
+
+            if (multipleWeeks) {
+                numberInputDiv.style.display = 'block'; // Show the number input for weeks
+                weeksContainer.innerHTML = ''; // Clear existing inputs
+            } else {
+                numberInputDiv.style.display = 'none'; // Hide the number input for weeks
+                weeksContainer.innerHTML = ''; // Clear existing inputs
+            }
+        }
+
+        // Function to generate inputs based on the selected number of weeks
+        function generateWeekInputs() {
+            var numberOfWeeks = document.getElementById("numberOfWeeks").value;
+            var weeksContainer = document.getElementById("weeksContainer");
+            weeksContainer.innerHTML = ''; // Clear any existing inputs
+
+            for (var i = 1; i <= numberOfWeeks; i++) {
+                var inputGroup = document.createElement("div");
+                inputGroup.classList.add("mb-3");
+                inputGroup.innerHTML = `
+                    <label for="assigned_hours_${i}" class="form-label">Assigned Hours for Week ${i}</label>
+                    <input type="number" class="form-control" id="assigned_hours_${i}" name="assigned_hours_${i}" required>
+                `;
+                weeksContainer.appendChild(inputGroup);
+            }
         }
     </script>
 </head>
@@ -188,7 +155,7 @@ if ($stmt === false) {
                         <input type="text" id="modalEmployee" name="employee" value="">
                         <input type="text" id="modalWeek" name="week_start" value="">
                         <input type="text" id="modalEngagementId" name="engagement_id" value="">
-                                  
+
                         <div class="mb-3">
                             <label for="client_name" class="form-label">Client Name</label>
                             <select class="form-select" id="client_name" name="client_name" required>
@@ -198,12 +165,21 @@ if ($stmt === false) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                                
+
+                        <!-- Multiple Weeks Option -->
                         <div class="mb-3">
-                            <label for="assigned_hours" class="form-label">Assigned Hours</label>
-                            <input type="number" class="form-control" id="assigned_hours" name="assigned_hours" required>
+                            <label class="form-check-label" for="multipleWeeksCheckbox">Multiple Weeks</label>
+                            <input type="checkbox" class="form-check-input" id="multipleWeeksCheckbox" onclick="toggleMultipleWeeks()">
                         </div>
-                                
+
+                        <div id="numberOfWeeksDiv" style="display: none;">
+                            <label for="numberOfWeeks" class="form-label">Number of Weeks</label>
+                            <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
+                        </div>
+
+                        <!-- Container for dynamically generated week inputs -->
+                        <div id="weeksContainer"></div>
+
                         <div class="mb-3">
                             <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
                         </div>
@@ -212,7 +188,6 @@ if ($stmt === false) {
             </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
