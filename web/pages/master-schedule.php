@@ -67,7 +67,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
       <form id="filterForm" method="get" class="row g-3">
         <!-- Search -->
-        <div class="col-md-8">
+        <div class="col-md-7">
           <input 
             type="text" 
             name="search" 
