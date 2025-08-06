@@ -98,7 +98,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         </div>
 
         <!-- Date Selector Toolbar -->
-        <div class="col-md-6 d-flex align-items-center gap-3">
+        <div class="col-md-3 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
           <a href="?start=<?php echo date('Y-m-d', strtotime('monday -3 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
