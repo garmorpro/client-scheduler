@@ -96,67 +96,71 @@ while ($row = $result->fetch_assoc()) {
     }
 
     // open modal
-    function openModal(user_id, employeeName, weekStart, engagementId = null) {
-        // Prepare modal data for engagement
-        document.getElementById('modalEmployee').value = user_id;
-        document.getElementById('modalEmployeeName').value = employeeName;
-        document.getElementById('modalWeek').value = weekStart;
-        document.getElementById('modalEngagementId').value = engagementId ?? '';
+function openModal(user_id, employeeName, weekStart, engagementId = null) {
+    // Prepare modal data for engagement
+    document.getElementById('modalEmployee').value = user_id;
+    document.getElementById('modalEmployeeName').value = employeeName;
+    document.getElementById('modalWeek').value = weekStart;
+    document.getElementById('modalEngagementId').value = engagementId ?? '';
 
-        // Fetch assignments
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    // Fetch assignments
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-        // Hide existing modals first before showing a new one
-        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModal.hide(); // Close the Manage Assignments modal
+    // Hide the engagement modal before showing
+    const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
+    engagementModalElement.hide();
 
-        if (assignmentsForWeek.length > 0) {
-            // Manage assignments modal
-            const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-            document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+    // Manage assignments modal
+    const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
 
-            showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
+    if (assignmentsForWeek.length > 0) {
+        // Show assignments for the week if any exist
+        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
-            // Show the Manage Assignments modal
-            assignmentsModal.show();
-        } else {
-            // Engagement modal (no existing assignments)
-            const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-            engagementModalElement.show();
-        }
+        showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
+
+        // Show the Manage Assignments modal
+        assignmentsModal.show();
+    } else {
+        // Engagement modal (no existing assignments)
+        const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
+        engagementModalElement.show();
     }
+}
 
-    function showAssignments(assignmentsForWeek, user_id, weekStart, employeeName) {
-        let assignmentsList = '';
+function showAssignments(assignmentsForWeek, user_id, weekStart, employeeName) {
+    let assignmentsList = '';
 
-        assignmentsForWeek.forEach((assignment) => {
-            assignmentsList += `
-                <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                    <div>
-                        <strong>${assignment.client_name}</strong><br>
-                        <small>${assignment.assigned_hours} hrs</small>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-warning me-1" onclick="openEditModal(${assignment.assignment_id}, '${assignment.assigned_hours}')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
-                    </div>
+    assignmentsForWeek.forEach((assignment) => {
+        assignmentsList += `
+            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <div>
+                    <strong>${assignment.client_name}</strong><br>
+                    <small>${assignment.assigned_hours} hrs</small>
                 </div>
-            `;
-        });
+                <div>
+                    <button class="btn btn-sm btn-warning me-1" onclick="openEditModal(${assignment.assignment_id}, '${assignment.assigned_hours}')">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
+                </div>
+            </div>
+        `;
+    });
 
-        // Add "Add Assignment" button if there are existing assignments
-        if (assignmentsForWeek.length > 0) {
-            assignmentsList += `
-                <button class="btn btn-sm btn-success mt-2" onclick="openModal('${user_id}', '${employeeName}', '${weekStart}')">
-                    <i class="bi bi-plus-circle"></i> Add Assignment
-                </button>
-            `;
-        }
-
-        document.getElementById('existingAssignments').innerHTML = assignmentsList;
+    // Add "Add Assignment" button if there are existing assignments
+    if (assignmentsForWeek.length > 0) {
+        assignmentsList += `
+            <button class="btn btn-sm btn-success mt-2" onclick="openModal('${user_id}', '${employeeName}', '${weekStart}')">
+                <i class="bi bi-plus-circle"></i> Add Assignment
+            </button>
+        `;
     }
+
+    document.getElementById('existingAssignments').innerHTML = assignmentsList;
+}
+
 
     function openEditModal(assignmentId, assignedHours) {
         document.getElementById('editAssignmentId').value = assignmentId;
