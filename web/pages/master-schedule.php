@@ -47,7 +47,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
     <!-- Filter Section -->
     <div class="bg-white border rounded p-3 mb-4">
       <div class="mb-3 d-flex align-items-center gap-2">
-        <i class="bi bi-funnel-fill text-muted"></i>
+        <i class="bi bi-funnel text-muted"></i>
         Filters
       </div>
 
