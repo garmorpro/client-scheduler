@@ -97,34 +97,48 @@ while ($row = $result->fetch_assoc()) {
     }
 
     function openModal(user_id, employeeName, weekStart, engagementId = null) {
+    // Prepare modal data for engagement
     document.getElementById('modalEmployee').value = user_id;
     document.getElementById('modalEmployeeName').value = employeeName;
     document.getElementById('modalWeek').value = weekStart;
     document.getElementById('modalEngagementId').value = engagementId ?? '';
 
+    // Fetch assignments
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
     if (assignmentsForWeek.length > 0) {
-        // Existing assignments logic
+        // Manage assignments modal
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
         showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
-        const assignmentsModalElement = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModalElement.show();
+        
+        // Close the current "Manage Assignments" modal if it's open
+        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+        assignmentsModal.hide();
+
+        // Show the "Manage Assignments" modal
+        assignmentsModal.show();
     } else {
-        // Fallback to adding a new engagement
+        // Add engagement modal
         document.getElementById('modalTitle').innerText = 'Add Engagement';
         document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
         document.getElementById('client_name').selectedIndex = 0;
         document.getElementById('numberOfWeeks').value = '';
         document.getElementById('weeksContainer').innerHTML = '';
-        const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-        modalElement.show();
+        
+        // Close the current "Manage Assignments" modal if it's open
+        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+        assignmentsModal.hide();
+
+        // Show the "Add Engagement" modal
+        const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
+        engagementModalElement.show();
     }
 }
+
 
 
 
