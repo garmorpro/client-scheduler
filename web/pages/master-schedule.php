@@ -228,39 +228,19 @@ function deleteAssignment(assignmentId) {
 
 
 
-ffunction openEngagementModal(engagementId) {
-    fetch(`engagement-details.php?id=${engagementId}`)
+function openClientModal(clientId) {
+    fetch(`client-details.php?id=${clientId}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);  // Check the data to see if it's correct
-
-            // Set engagement (client) name
             document.getElementById('clientName').innerText = data.client_name;
+            document.getElementById('totalAssignedHours').innerText = data.total_hours;
+            document.getElementById('assignedEmployees').innerHTML = data.assigned_employees;
 
-            // Set total assigned hours
-            let totalAssignedHours = data.total_hours;
-            let totalAvailableHours = 1000; // Example total available hours, adjust as needed
-
-            // Set total assigned hours text
-            document.getElementById('totalAssignedHours').innerText = totalAssignedHours;
-
-            // Set the progress bar width based on the assigned hours
-            let utilizationPercent = (totalAssignedHours / totalAvailableHours) * 100;
-            document.getElementById('utilizationBar').style.width = utilizationPercent + "%";
-            document.getElementById('utilizationBar').setAttribute('aria-valuenow', totalAssignedHours);
-
-            // Set assigned employees
-            let assignedEmployees = data.assigned_employees;
-            document.getElementById('assignedEmployees').innerHTML = assignedEmployees;
-
-            // Show modal
-            const engagementModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
-            engagementModal.show();
+            const clientModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            clientModal.show();
         })
-        .catch(error => console.error('Error fetching engagement details:', error));
+        .catch(error => console.error('Error fetching client details:', error));
 }
-
-
 
 
 function openEmployeeModal(employeeId) {
@@ -506,9 +486,23 @@ function openEmployeeModal(employeeId) {
 
 
 
-
-
-
+<!-- Modal for Client Details -->
+<div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clientDetailsModalLabel">Client Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5 id="clientName"></h5>
+        <p><strong>Total Assigned Hours:</strong> <span id="totalAssignedHours"></span></p>
+        <h6>Assigned Employees:</h6>
+        <div id="assignedEmployees"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Modal for Employee Details -->
