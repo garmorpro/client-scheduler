@@ -174,14 +174,27 @@ function openEditModal(event) {
     const assignmentId = buttonElement.getAttribute('data-assignment-id');
     const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-    // Set the form fields inside the modal
+    // Grab status from assignment array (parsed already in page)
+    const assignments = <?php echo json_encode($assignments); ?>;
+    let currentStatus = 'pending';
+
+    // Try to find the status from the DOM context
+    const parent = buttonElement.closest('.d-flex');
+    if (parent) {
+        const text = parent.innerHTML;
+        if (text.includes('Confirmed')) currentStatus = 'confirmed';
+        else if (text.includes('Not Confirmed')) currentStatus = 'not_confirmed';
+        else currentStatus = 'pending';
+    }
+
     document.getElementById('editAssignmentId').value = assignmentId;
     document.getElementById('editAssignedHours').value = assignedHours;
+    document.getElementById('editStatus').value = currentStatus;
 
-    // Initialize the Edit Assignment Modal and show it
     const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
     editModal.show();
 }
+
 
 // Delete an assignment
 function deleteAssignment(assignmentId) {
@@ -349,6 +362,14 @@ function deleteAssignment(assignmentId) {
           <div class="mb-3">
             <label for="editAssignedHours" class="form-label">Assigned Hours</label>
             <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" min="0" required>
+          </div>
+          <div class="mb-3">
+              <label for="editStatus" class="form-label">Status</label>
+              <select class="form-select" id="editStatus" name="status" required>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="not_confirmed">Not Confirmed</option>
+              </select>
           </div>
           <div class="mb-3 text-end">
             <button type="submit" id="editSubmitBtn" class="btn btn-primary">Save Changes</button>
