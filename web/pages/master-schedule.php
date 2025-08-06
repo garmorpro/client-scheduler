@@ -334,6 +334,48 @@ function deleteAssignment(assignmentId) {
   </div>
 </div>
 
+<!-- Modal for Adding Engagements -->
+<div class="modal fade" id="engagementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Engagement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="engagementForm" action="add-engagement-process.php" method="POST">
+                    <input type="hidden" id="modalEmployee" name="employee">
+                    <input type="hidden" id="modalEmployeeName">
+                    <input type="hidden" id="modalWeek" name="week_start">
+                    <input type="hidden" id="modalEngagementId" name="engagement_id">
+                    
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Client Name</label>
+                        <select class="form-select" id="client_name" name="client_name" required>
+                            <option value="" disabled selected>Select a client</option>
+                            <?php foreach ($activeClients as $client): ?>
+                                <option value="<?php echo $client['engagement_id']; ?>">
+                                    <?php echo htmlspecialchars($client['client_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="numberOfWeeks" class="form-label">Number of Weeks</label>
+                        <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
+                    </div>
+
+                    <div id="weeksContainer"></div>
+
+                    <div class="mb-3 text-end">
+                        <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 <!-- Edit Assignment Modal -->
 <div class="modal fade" id="editAssignmentModal" tabindex="-1">
   <div class="modal-dialog">
