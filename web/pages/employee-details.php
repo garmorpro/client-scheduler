@@ -30,7 +30,7 @@ $fullName = $user['first_name'] . ' ' . $user['last_name'];
 $role = $user['role'] ?? 'N/A';
 
 // Fetch upcoming assignments (week_start >= today)
-$today = date('Y-m-d');
+$mondayThisWeek = date('Y-m-d', strtotime('monday this week'));
 $assignmentsQuery = "
     SELECT 
         e.client_name,
@@ -43,7 +43,7 @@ $assignmentsQuery = "
 ";
 
 $stmt = $conn->prepare($assignmentsQuery);
-$stmt->bind_param('is', $employeeId, $today);
+$stmt->bind_param('is', $employeeId, $mondayThisWeek);
 $stmt->execute();
 $assignmentsResult = $stmt->get_result();
 
