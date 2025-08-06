@@ -75,7 +75,6 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -104,10 +103,11 @@ while ($row = $result->fetch_assoc()) {
 
         // Check if there are existing assignments
         if (assignmentsForWeek.length > 0) {
-            // If there are existing assignments, show them in the modal and allow editing
-            document.getElementById('modalTitle').innerText = 'Edit Engagement';
-            document.getElementById('modalSubmitBtn').innerText = 'Save Changes';
+            // If there are existing assignments, show them in the new assignments modal
+            document.getElementById('assignmentsModalTitle').innerText = 'Manage Assignments';
             showAssignments(assignmentsForWeek);
+            const assignmentsModalElement = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+            assignmentsModalElement.show();
         } else {
             // If no assignments, show the form to add a new engagement
             document.getElementById('modalTitle').innerText = 'Add Engagement';
@@ -115,22 +115,37 @@ while ($row = $result->fetch_assoc()) {
             document.getElementById('client_name').selectedIndex = 0;
             document.getElementById('numberOfWeeks').value = '';
             document.getElementById('weeksContainer').innerHTML = '';
+            const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
+            modalElement.show();
         }
-
-        // Open the modal
-        const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-        modalElement.show();
     }
 
     function showAssignments(assignmentsForWeek) {
         let assignmentsList = '';
 
         assignmentsForWeek.forEach((assignment) => {
-            assignmentsList += `<p>Client: ${assignment.client_name}, Hours: ${assignment.assigned_hours}</p>`;
+            assignmentsList += `
+                <p>
+                    Client: ${assignment.client_name}, Hours: ${assignment.assigned_hours}
+                    <button class="btn btn-warning btn-sm" onclick="editAssignment(${assignment.engagement_id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
+                </p>`;
         });
 
         // Display existing assignments in the modal
         document.getElementById('existingAssignments').innerHTML = assignmentsList;
+    }
+
+    function editAssignment(engagementId) {
+        // Logic for editing an assignment
+        console.log('Edit assignment:', engagementId);
+        // You can populate the modal with existing data here for editing
+    }
+
+    function deleteAssignment(engagementId) {
+        // Logic for deleting an assignment
+        console.log('Delete assignment:', engagementId);
+        // Call a PHP script to delete the assignment from the database
     }
 
     function generateWeekInputs() {
@@ -225,6 +240,22 @@ while ($row = $result->fetch_assoc()) {
 
 </div>
 
+<!-- Modal for Managing Assignments -->
+<div class="modal fade" id="assignmentsModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignmentsModalTitle">Manage Assignments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="existingAssignments"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Adding Engagements -->
 <div class="modal fade" id="engagementModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
