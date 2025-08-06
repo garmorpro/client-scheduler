@@ -228,10 +228,12 @@ function deleteAssignment(assignmentId) {
 
 
 
-function openEngagementModal(engagementId) {
+ffunction openEngagementModal(engagementId) {
     fetch(`engagement-details.php?id=${engagementId}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data);  // Check the data to see if it's correct
+
             // Set engagement (client) name
             document.getElementById('clientName').innerText = data.client_name;
 
@@ -257,6 +259,7 @@ function openEngagementModal(engagementId) {
         })
         .catch(error => console.error('Error fetching engagement details:', error));
 }
+
 
 
 
