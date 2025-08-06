@@ -129,7 +129,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
             <tr>
               <td class="text-start fw-semibold"><?php echo htmlspecialchars($employee); ?></td>
               <?php foreach ($mondays as $monday): ?>
-                <td>-</td> <!-- Placeholder: replace with actual assignments later -->
+                <td>test (25)</td> <!-- Placeholder: replace with actual assignments later -->
               <?php endforeach; ?>
             </tr>
           <?php endforeach; ?>
