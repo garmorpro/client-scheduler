@@ -118,7 +118,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
                 $highlightClass = (date('Y-m-d', strtotime($today)) >= $weekStart && date('Y-m-d', strtotime($today)) < date('Y-m-d', strtotime('+7 days', strtotime($weekStart)))) ? 'highlight-today' : '';
             ?>
               <th class="<?php echo $highlightClass; ?>">
-                <!-- <?php //echo date('M j', $monday); ?><br> -->
+                <?php echo date('M j', $monday); ?><br>
                 <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
               </th>
             <?php endforeach; ?>
