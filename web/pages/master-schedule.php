@@ -46,6 +46,7 @@ while ($clientRow = $clientResult->fetch_assoc()) {
 // Query assignments for the date range
 $query = "
     SELECT 
+        a.assignment_id,
         a.user_id,
         a.engagement_id,
         e.client_name,
@@ -68,10 +69,12 @@ $assignments = [];
 while ($row = $result->fetch_assoc()) {
     // Store multiple assignments for each employee and week
     $assignments[$row['user_id']][$row['week_start']][] = [
-        'client_name' => $row['client_name'],
-        'assigned_hours' => $row['assigned_hours'],
-        'engagement_id' => $row['engagement_id']
-    ];
+      'assignment_id' => $row['assignment_id'],
+      'client_name' => $row['client_name'],
+      'assigned_hours' => $row['assigned_hours'],
+      'engagement_id' => $row['engagement_id']
+  ];
+
 }
 ?>
 
@@ -133,7 +136,7 @@ while ($row = $result->fetch_assoc()) {
                     <small>${assignment.assigned_hours} hrs</small>
                 </div>
                 <div>
-                    <button class="btn btn-sm btn-warning me-1" onclick="openEditModal(${assignment.engagement_id}, '${assignment.assigned_hours}')">Edit</button>
+                    <button class="btn btn-sm btn-warning me-1" onclick="openEditModal(${assignment.assignment_id}, '${assignment.assigned_hours}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
                 </div>
             </div>
