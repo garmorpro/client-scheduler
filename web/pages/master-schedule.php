@@ -88,14 +88,14 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         </div>
 
         <!-- Type Dropdown -->
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <select name="type" class="form-select">
             <option value="">All Types</option>
-            <option value="audit" <?php echo (isset($_GET['type']) && $_GET['type'] == 'audit') ? 'selected' : ''; ?>>Audit</option>
-            <option value="review" <?php echo (isset($_GET['type']) && $_GET['type'] == 'review') ? 'selected' : ''; ?>>Review</option>
-            <option value="consulting" <?php echo (isset($_GET['type']) && $_GET['type'] == 'consulting') ? 'selected' : ''; ?>>Consulting</option>
+            <option value="audit" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'audit') ? 'selected' : ''; ?>>Audit</option>
+            <option value="review" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'review') ? 'selected' : ''; ?>>Review</option>
+            <option value="consulting" <?php // echo (isset($_GET['type']) && $_GET['type'] == 'consulting') ? 'selected' : ''; ?>>Consulting</option>
           </select>
-        </div>
+        </div> -->
 
         <!-- Date Selector Toolbar -->
         <div class="col-md-3 d-flex align-items-center gap-3">
