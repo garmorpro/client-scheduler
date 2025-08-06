@@ -17,7 +17,7 @@
         <div class="mt-4"></div>
       <h5 class="text-center mb-2">Welcome Back</h3>
       <p class="text-center text-muted">Sign in to access your engagement schedules</p>
-      <form class="p-5">
+      <form class="p-3">
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
           <input type="email" class="form-control" id="email" placeholder="Enter email" required>
