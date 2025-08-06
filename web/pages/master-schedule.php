@@ -226,40 +226,6 @@ function deleteAssignment(assignmentId) {
     }
 }
 
-
-
-function openClientModal(clientId) {
-    fetch(`client-details.php?id=${clientId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('clientName').innerText = data.client_name;
-            document.getElementById('totalAssignedHours').innerText = data.total_hours;
-            document.getElementById('assignedEmployees').innerHTML = data.assigned_employees;
-
-            const clientModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
-            clientModal.show();
-        })
-        .catch(error => console.error('Error fetching client details:', error));
-}
-
-
-function openEmployeeModal(employeeId) {
-    fetch(`employee-details.php?id=${employeeId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('employeeName').innerText = data.employee_name;
-            document.getElementById('weeklyAssignedHours').innerHTML = data.weekly_hours;
-
-            const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
-            employeeModal.show();
-        })
-        .catch(error => console.error('Error fetching employee details:', error));
-}
-
-
-
-
-
     </script>
 
     <style>
@@ -484,43 +450,6 @@ function openEmployeeModal(employeeId) {
 
 <?php endif; ?>
 
-
-
-<!-- Modal for Client Details -->
-<div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="clientDetailsModalLabel">Client Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h5 id="clientName"></h5>
-        <p><strong>Total Assigned Hours:</strong> <span id="totalAssignedHours"></span></p>
-        <h6>Assigned Employees:</h6>
-        <div id="assignedEmployees"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal for Employee Details -->
-<div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h5 id="employeeName"></h5>
-        <h6>Assigned Hours per Week:</h6>
-        <div id="weeklyAssignedHours"></div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
