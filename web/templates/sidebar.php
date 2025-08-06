@@ -42,7 +42,7 @@
       JD
     </div>
     <div>
-      <div class="fw-semibold">John Doe</div>
+      <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?></div>
       <small class="text-muted">Manager</small>
     </div>
     <a href="logout.php" class="ms-auto text-decoration-none text-muted">

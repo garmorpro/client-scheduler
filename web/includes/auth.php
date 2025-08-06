@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $hashed_password)) {
             session_start();
             $_SESSION['user_id'] = $user_id;
+            $_SESSION['first_name'] = $first_name
             header("Location: dashboard.php");
             exit;
         } else {
