@@ -8,8 +8,8 @@
         <i class="bi bi-calendar2-week"></i> <!-- Bootstrap icon -->
       </div>
       <div>
-        <h5 class="mb-0 fw-bold">EngagePro</h5>
-        <small class="text-muted">Schedule Manager</small>
+        <h5 class="mb-0 fw-bold">AARC-360</h5>
+        <small class="text-muted">Engagement Schedule Manager</small>
       </div>
     </div>
 
