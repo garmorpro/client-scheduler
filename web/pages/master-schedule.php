@@ -90,7 +90,7 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
-    function openModal(userId, employeeName, weekStart, engagementId = null) {
+    function openModal(user_id, employeeName, weekStart, engagementId = null) {
         document.getElementById('modalEmployee').value = user_id;
         document.getElementById('modalEmployeeName').value = employeeName;
         document.getElementById('modalWeek').value = weekStart;
