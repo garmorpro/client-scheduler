@@ -409,20 +409,25 @@ function generateWeekInputs() {
     const weeksContainer = document.getElementById('weeksContainer');
     weeksContainer.innerHTML = ''; // Clear previous input fields
 
-    // Generate the week input fields with assigned hours
     for (let i = 0; i < numberOfWeeks; i++) {
         const weekInput = document.createElement('div');
         weekInput.classList.add('mb-3');
         weekInput.innerHTML = `
             <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
                 <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" required>
                 <input type="number" class="form-control" id="assigned_hours_${i+1}" name="assigned_hours[]" min="0" placeholder="Assigned Hours" required>
+                <select class="form-select" name="statuses[]" required>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="not_confirmed">Not Confirmed</option>
+                </select>
             </div>
         `;
         weeksContainer.appendChild(weekInput);
     }
 }
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -7,37 +7,34 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Retrieve the posted values
     $employeeId = $_POST['employee'];
     $clientId = $_POST['client_name'];
     $weeks = $_POST['weeks']; // Array of week start dates
-    $assignedHours = $_POST['assigned_hours']; // Array of assigned hours for each week
+    $assignedHours = $_POST['assigned_hours']; // Array of assigned hours
+    $statuses = $_POST['statuses']; // Array of statuses
 
-    // Check if we have the same number of weeks and assigned hours
-    if (count($weeks) !== count($assignedHours)) {
-        die('The number of weeks and assigned hours do not match.');
+    if (count($weeks) !== count($assignedHours) || count($weeks) !== count($statuses)) {
+        die('The number of weeks, assigned hours, and statuses do not match.');
     }
 
-    // Loop through each week and assigned hours, inserting into the database
     $stmt = $conn->prepare("
         INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, status)
-        VALUES (?, ?, ?, ?, 'pending')
+        VALUES (?, ?, ?, ?, ?)
     ");
-    
+
     for ($i = 0; $i < count($weeks); $i++) {
         $weekStart = $weeks[$i];
         $hours = $assignedHours[$i];
+        $status = $statuses[$i];
 
-        // Bind parameters and execute
-        $stmt->bind_param('iisi', $employeeId, $clientId, $weekStart, $hours);
+        $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
         $stmt->execute();
     }
 
-    // Check if the insert was successful
     if ($stmt->affected_rows > 0) {
         header("Location: master-schedule.php?status=success");
+        exit();
     } else {
         die('Error adding assignments.');
     }
