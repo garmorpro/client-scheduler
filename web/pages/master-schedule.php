@@ -82,19 +82,17 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
             <option value="consulting" <?php echo (isset($_GET['type']) && $_GET['type'] == 'consulting') ? 'selected' : ''; ?>>Consulting</option>
           </select>
         </div>
+
+        <!-- Date Selector Toolbar -->
+        <div class="col-md-6 d-flex align-items-center gap-3">
+          <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>">
+          <span class="fw-semibold">to</span>
+          <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>">
+          <button type="submit" class="btn btn-primary">Apply</button>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('monday this week')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday this week'))); ?>" class="btn btn-outline-secondary">Today</a>
+        </div>
       </form>
     </div>
-
-    <!-- Date Selector Toolbar -->
-    <form method="get" class="d-flex align-items-center justify-content-between mb-4">
-      <div class="d-flex align-items-center gap-3">
-        <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>">
-        <span class="fw-semibold">to</span>
-        <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>">
-        <button type="submit" class="btn btn-primary">Apply</button>
-        <a href="?start=<?php echo date('Y-m-d', strtotime('monday this week')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday this week'))); ?>" class="btn btn-outline-secondary">Today</a>
-      </div>
-    </form>
 
     <!-- Schedule Table -->
     <div class="table-responsive">
