@@ -8,11 +8,11 @@
 
     <title>Document</title>
 </head>
-<body styles="background-color: rgb(247,249,251);">
+<body styles="background-color: rgba(216, 216, 216, 1);">
 
 
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 550px;">
       <h3 class="text-center mb-4">Login</h3>
       <form>
         <div class="mb-3">
