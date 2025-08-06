@@ -1,4 +1,7 @@
 <?php
+
+require_once '../db.php'; // or wherever your DB connection is
+
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
