@@ -6,30 +6,23 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$userId = $_POST['user_id']; // Get user_id from the POST request
-$employee = $_POST['employee']; // Not needed in this case since user_id is already passed
+$employee = $_POST['employee']; // Use employee as the user ID
 $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
-var_dump($_POST);
-exit();  // Stop the script here to inspect the POST data
-
-
-// We don't need to fetch the user_id from the database since it's already passed
-// Make sure $userId is valid (if necessary)
-if (!$userId) {
+if (!$employee) {
     die("Invalid user ID.");
 }
 
 // Insert into assignments table
 $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id) VALUES (?, ?)");
-$assignmentInsert->bind_param("ii", $userId, $engagementId);
+$assignmentInsert->bind_param("ii", $employee, $engagementId);
 if (!$assignmentInsert->execute()) {
     die("Assignment creation failed: " . $conn->error);
 }
 $assignmentId = $assignmentInsert->insert_id;
 
-// Loop through the number of weeks and insert into assignments table
+// Loop through the number of weeks and insert into assignment_weeks
 for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekKey = 'week_start_' . $i;
     $hoursKey = 'assigned_hours_' . $i;
@@ -41,13 +34,14 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    // Insert into assignments table (instead of assignment_weeks)
-    $assignmentUpdate = $conn->prepare("UPDATE assignments SET week_start = ?, assigned_hours = ? WHERE assignment_id = ?");
-    $assignmentUpdate->bind_param("ssi", $weekStart, $assignedHours, $assignmentId);
-    if (!$assignmentUpdate->execute()) {
-        echo "Error updating assignment $i: " . $conn->error . "<br>";
+    // Insert into assignment_weeks
+    $weekInsert = $conn->prepare("INSERT INTO assignment_weeks (assignment_id, week_start, assigned_hours) VALUES (?, ?, ?)");
+    $weekInsert->bind_param("iss", $assignmentId, $weekStart, $assignedHours);
+    if (!$weekInsert->execute()) {
+        echo "Error inserting week $i: " . $conn->error . "<br>";
     }
 }
 
 header("Location: master-schedule.php");
 exit();
+?>
