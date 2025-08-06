@@ -26,21 +26,8 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    // Check if the assignment already exists
-    $checkQuery = $conn->prepare("SELECT COUNT(*) FROM assignments WHERE user_id = ? AND engagement_id = ? AND week_start = ?");
-    $checkQuery->bind_param("iis", $employee, $engagementId, $weekStart);
-    $checkQuery->execute();
-    $checkResult = $checkQuery->get_result();
-    $exists = $checkResult->fetch_row()[0];
-
-    if ($exists) {
-        // Skip inserting this week if it already exists
-        echo "Assignment for this week already exists: User {$employee}, Engagement {$engagementId}, Week Start {$weekStart}.<br>";
-        continue;
-    }
-
-    // Insert into assignments table if it does not exist
-    $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
+    // Insert into assignments table using INSERT IGNORE (to ignore duplicate entries)
+    $assignmentInsert = $conn->prepare("INSERT IGNORE INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
     $assignmentInsert->bind_param("iiss", $employee, $engagementId, $weekStart, $assignedHours);
     if (!$assignmentInsert->execute()) {
         die("Assignment creation failed: " . $conn->error);
