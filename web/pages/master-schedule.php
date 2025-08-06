@@ -25,7 +25,7 @@ while ($current <= strtotime($endDate)) {
 
 // Get employees from users table
 $employees = [];
-$userQuery = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name FROM users WHERE status = 'active' AND role IN ('staff', 'senior')";
+$userQuery = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role FROM users WHERE status = 'active' AND role IN ('staff', 'senior')";
 $userResult = $conn->query($userQuery);
 if ($userResult) {
     while ($userRow = $userResult->fetch_assoc()) {
