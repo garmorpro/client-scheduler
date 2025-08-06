@@ -505,7 +505,7 @@ function openEngagementModal(engagementId) {
       </div>
       <div class="modal-body">
         <!-- Engagement Name -->
-        <h4 id="clientName" class="text-center mb-3 text-primary fw-bold"></h4>
+        <h5 id="clientName" class="text-left mb-3  fw-bold"></h5>
 
         <!-- Utilization Progress Bar -->
         <div class="mb-4">
