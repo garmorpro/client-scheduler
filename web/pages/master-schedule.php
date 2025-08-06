@@ -96,6 +96,10 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
+    
+    
+    // open modal
+
     function openModal(user_id, employeeName, weekStart, engagementId = null) {
     // Prepare modal data for engagement
     document.getElementById('modalEmployee').value = user_id;
@@ -119,21 +123,15 @@ while ($row = $result->fetch_assoc()) {
 
         showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
 
-        // Show the Manage Assignments modal again
+        // Show the Manage Assignments modal
         assignmentsModal.show();
     } else {
-        // Add engagement modal
-        document.getElementById('modalTitle').innerText = 'Add Engagement';
-        document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
-        document.getElementById('client_name').selectedIndex = 0;
-        document.getElementById('numberOfWeeks').value = '';
-        document.getElementById('weeksContainer').innerHTML = '';
-
-        // Show the Add Engagement modal
+        // Engagement modal (no existing assignments)
         const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
         engagementModalElement.show();
     }
 }
+
 
 
 
