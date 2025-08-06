@@ -145,33 +145,38 @@ while ($row = $result->fetch_assoc()) {
     }
 
     function showAssignments(assignmentsForWeek) {
-        let assignmentsList = '';
+    let assignmentsList = '';
 
-        assignmentsForWeek.forEach((assignment) => {
-            assignmentsList += `
-                <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                    <div>
-                        <strong>${assignment.client_name}</strong><br>
-                        <small>${assignment.assigned_hours} hrs</small>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-warning me-1" onclick="openEditModal(${assignment.assignment_id}, '${assignment.assigned_hours}')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
-                    </div>
+    assignmentsForWeek.forEach((assignment) => {
+        assignmentsList += `
+            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <div>
+                    <strong>${assignment.client_name}</strong><br>
+                    <small>${assignment.assigned_hours} hrs</small>
                 </div>
-            `;
-        });
+                <div>
+                    <button class="btn btn-sm btn-warning me-1" data-assignment-id="${assignment.assignment_id}" data-assigned-hours="${assignment.assigned_hours}" onclick="openEditModal(this)">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
+                </div>
+            </div>
+        `;
+    });
 
-        document.getElementById('existingAssignments').innerHTML = assignmentsList;
-    }
+    document.getElementById('existingAssignments').innerHTML = assignmentsList;
+}
 
-    function openEditModal(assignmentId, assignedHours) {
-        document.getElementById('editAssignmentId').value = assignmentId;
-        document.getElementById('editAssignedHours').value = assignedHours;
+// Update openEditModal to handle dynamic elements properly
+function openEditModal(buttonElement) {
+    const assignmentId = buttonElement.getAttribute('data-assignment-id');
+    const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-        const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
-        editModal.show();
-    }
+    document.getElementById('editAssignmentId').value = assignmentId;
+    document.getElementById('editAssignedHours').value = assignedHours;
+
+    const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
+    editModal.show();
+}
+
 
     function deleteAssignment(assignmentId) {
         if (confirm('Are you sure you want to delete this assignment?')) {
