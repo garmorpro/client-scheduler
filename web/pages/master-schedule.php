@@ -5,8 +5,13 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Handle start and end date from GET params, or set defaults
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('-2 weeks'));  // Start 2 weeks before today
+// Get today's date
+$today = date('Y-m-d');
+
+// Set the default start date to the most recent Monday (always use the week of the most recent Monday)
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('last monday')); // Start with the week of the last Monday
+
+// Set the end date to 5 weeks after the start date, or use the one from GET params
 $endDate = isset($_GET['end']) ? date('Y-m-d', strtotime($_GET['end'])) : date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
 // Get all Mondays between start and end
@@ -21,9 +26,6 @@ while ($current <= strtotime($endDate)) {
 
 // Example employees (replace this with DB call if needed)
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
-
-// Get today's date
-$today = date('Y-m-d');
 ?>
 
 <!DOCTYPE html>
@@ -100,7 +102,7 @@ $today = date('Y-m-d');
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
           <span class="fw-semibold">to</span>
           <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" onchange="autoSubmitDateFilter()">
-          <a href="?start=<?php echo date('Y-m-d', strtotime('monday this week')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday this week'))); ?>" class="btn btn-outline-secondary">Today</a>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('last monday')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('last monday'))); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
     </div>
@@ -111,8 +113,13 @@ $today = date('Y-m-d');
         <thead class="table-light">
           <tr>
             <th class="text-start">Employee</th>
-            <?php foreach ($mondays as $monday): ?>
-              <th class="<?php echo (date('Y-m-d', $monday) == $today) ? 'highlight-today' : ''; ?>">
+            <?php 
+              // Highlight the week of today's date (using 'week of' calculation)
+              foreach ($mondays as $monday):
+                $weekStart = date('Y-m-d', $monday);
+                $highlightClass = (date('Y-m-d', strtotime($today)) >= $weekStart && date('Y-m-d', strtotime($today)) < date('Y-m-d', strtotime('+7 days', strtotime($weekStart)))) ? 'highlight-today' : '';
+            ?>
+              <th class="<?php echo $highlightClass; ?>">
                 <?php echo date('M j', $monday); ?><br>
                 <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
               </th>
