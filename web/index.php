@@ -30,8 +30,12 @@
           <button type="submit" class="btn" style="background-color: rgb(23,62, 70); color: white;">Login</button>
         </div>
       </form>
-      <p class="text-center">
-        Contact your administrator for account setup.
+      <p class="text-center text-muted">
+        <strong>Contact your administrator for account setup.</strong>
+        <br>
+        <span style="font-size: 10px;">
+            This is a demo application. In production, users would be created by administrators.
+        </span>
       </p>
     </div>
   </div>
