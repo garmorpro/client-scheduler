@@ -522,7 +522,7 @@ function openEngagementModal(engagementId) {
         <!-- Assigned Employees Section -->
         <div class="card mb-4 shadow-sm">
           <div class="card-header bg-light">
-            <h6 class="mb-0">Assigned Employees</h6>
+            <h6 class="mb-0">Assigned Consultants</h6>
           </div>
           <div class="card-body">
             <div id="assignedEmployees" class="list-group"></div>
