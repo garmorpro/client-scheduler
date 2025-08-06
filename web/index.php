@@ -30,6 +30,9 @@
           <button type="submit" class="btn" style="background-color: rgb(23,62, 70); color: white;">Login</button>
         </div>
       </form>
+      <p>
+        Contact your administrator for account setup.
+      </p>
     </div>
   </div>
 
