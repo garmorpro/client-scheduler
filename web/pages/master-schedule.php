@@ -121,12 +121,14 @@ if ($stmt === false) {
             var weeksContainer = document.getElementById("weeksContainer");
             weeksContainer.innerHTML = ''; // Clear any existing inputs
 
+            // Generate input fields for the specified number of weeks
             for (var i = 1; i <= numberOfWeeks; i++) {
                 var inputGroup = document.createElement("div");
                 inputGroup.classList.add("mb-3");
                 inputGroup.innerHTML = `
                     <label for="assigned_hours_${i}" class="form-label">Assigned Hours for Week ${i}</label>
-                    <input type="number" class="form-control" id="assigned_hours_${i}" name="assigned_hours_${i}" required>
+                    <input type="date" class="form-control" id="week_start_${i}" name="week_start_${i}" required>
+                    <input type="number" class="form-control mt-2" id="assigned_hours_${i}" name="assigned_hours_${i}" required placeholder="Assigned Hours for Week ${i}">
                 `;
                 weeksContainer.appendChild(inputGroup);
             }
@@ -244,7 +246,6 @@ if ($stmt === false) {
                             <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
                         </div>
 
-                        
                         <!-- Container for dynamically generated week inputs -->
                         <div id="weeksContainer"></div>
 
