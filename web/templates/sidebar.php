@@ -9,7 +9,7 @@
       </div>
       <div>
         <h5 class="mb-0 fw-bold">AARC-360</h5>
-        <small class="text-muted">Engagement Schedule Manager</small>
+        <small class="text-muted">Schedule Manager</small>
       </div>
     </div>
 
