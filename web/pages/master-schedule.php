@@ -21,6 +21,19 @@ while ($current <= strtotime($endDate)) {
 
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
+// Query to fetch active clients from the engagements table
+$clientQuery = "SELECT engagement_id, client_name FROM engagements WHERE status = 'active'";
+$clientResult = $conn->query($clientQuery);
+
+if ($clientResult === false) {
+    die('MySQL query failed: ' . $conn->error);
+}
+
+$activeClients = [];
+while ($clientRow = $clientResult->fetch_assoc()) {
+    $activeClients[] = $clientRow;
+}
+
 // Modify the query to join 'assignments', 'assignment_weeks', and 'engagements' based on 'assignment_id' and 'engagement_id'
 $query = "
     SELECT 
@@ -178,7 +191,11 @@ if ($stmt === false) {
 
                         <div class="mb-3">
                             <label for="client_name" class="form-label">Client Name</label>
-                            <input type="text" class="form-control" id="client_name" name="client_name" required>
+                            <select class="form-select" id="client_name" name="client_name" required>
+                                <?php foreach ($activeClients as $client): ?>
+                                    <option value="<?php echo $client['engagement_id']; ?>"><?php echo htmlspecialchars($client['client_name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <div class="mb-3">
