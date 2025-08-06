@@ -515,7 +515,7 @@ function openEngagementModal(engagementId) {
             <span id="totalHours" class="text-muted">/ <span id="totalAvailableHours">1000</span> hrs</span>
           </div>
           <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
-            <div id="utilizationBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+            <div id="utilizationBar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
           </div>
         </div>
 
