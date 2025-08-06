@@ -43,7 +43,7 @@
     </div>
     <div>
       <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name'] ?></div>
-      <small class="text-muted"><?php echo $_SESSION['user_role']; ?></small>
+      <small class="text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
     </div>
     <a href="logout.php" class="ms-auto text-decoration-none text-muted">
       <i class="bi bi-box-arrow-right"></i>
