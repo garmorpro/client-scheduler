@@ -1,6 +1,9 @@
 <?php
 require_once '../includes/db.php'; // Your DB connection file
 session_start();
+
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -301,9 +304,15 @@ function deleteAssignment(assignmentId) {
                                 $cellContent = "<span class='text-muted'>+</span>";
                             }
                             ?>
-                            <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
-                                <?php echo $cellContent; ?>
-                            </td>
+                            <?php if ($isAdmin): ?>
+                                <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
+                                    <?php echo $cellContent; ?>
+                                </td>
+                            <?php else: ?>
+    <td>
+        <?php echo $cellContent; ?>
+    </td>
+<?php endif; ?>
                         <?php endforeach; ?>
                     </tr>
                 <?php endforeach; ?>
