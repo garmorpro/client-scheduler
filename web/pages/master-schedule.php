@@ -100,6 +100,7 @@ while ($row = $result->fetch_assoc()) {
 
     // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
+      <?php if (!$isAdmin): ?>
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
@@ -121,9 +122,13 @@ while ($row = $result->fetch_assoc()) {
             // If no existing assignments, directly show Add Engagement modal
             openAddEngagementModal(user_id, employeeName, weekStart);
         }
+        <?php endif; ?>
     }
 
+
+
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+      <?php if (!$isAdmin): ?>
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
@@ -135,12 +140,14 @@ while ($row = $result->fetch_assoc()) {
 
         const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
         assignmentsModal.show();
+      <?php endif; ?>
     }
 
 
 
 
     function openAddEngagementModal(user_id, employeeName, weekStart) {
+      <?php if (!$isAdmin): ?>
         // Prepare modal data for engagement
         document.getElementById('modalEmployee').value = user_id;
         document.getElementById('modalEmployeeName').value = employeeName;
@@ -148,9 +155,11 @@ while ($row = $result->fetch_assoc()) {
 
         const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
         engagementModalElement.show();
+      <?php endif; ?>
     }
 
     function showAssignments(assignmentsForWeek) {
+    <?php if (!$isAdmin): ?>
     let assignmentsList = '';
 
     assignmentsForWeek.forEach((assignment) => {
@@ -169,10 +178,12 @@ while ($row = $result->fetch_assoc()) {
     });
 
     document.getElementById('existingAssignments').innerHTML = assignmentsList;
+    <?php endif; ?>
 }
 
 // Update openEditModal to handle dynamic elements properly
 function openEditModal(event) {
+  <?php if (!$isAdmin): ?>
     const buttonElement = event.target;
     const assignmentId = buttonElement.getAttribute('data-assignment-id');
     const assignedHours = buttonElement.getAttribute('data-assigned-hours');
@@ -196,11 +207,13 @@ function openEditModal(event) {
 
     const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
     editModal.show();
+    <?php endif; ?>
 }
 
 
 // Delete an assignment
 function deleteAssignment(assignmentId) {
+  <?php if (!$isAdmin): ?>
     if (confirm('Are you sure you want to delete this assignment?')) {
         fetch('delete-assignment.php', {
             method: 'POST',
@@ -220,6 +233,7 @@ function deleteAssignment(assignmentId) {
             alert('An error occurred while deleting the assignment.');
         });
     }
+    <?php endif; ?>
 }
 
     </script>
@@ -321,6 +335,8 @@ function deleteAssignment(assignmentId) {
     </div>
 
 </div>
+
+<?php if ($isAdmin): ?>
 
 <!-- Modal for Manage or Add Assignment -->
 <div class="modal fade" id="manageAddModal" tabindex="-1">
@@ -432,9 +448,11 @@ function deleteAssignment(assignmentId) {
     </div>
   </div>
 </div>
+<?php endif; ?>
 
 <script>
 function generateWeekInputs() {
+  <?php if (!$isAdmin): ?>
     const numberOfWeeks = document.getElementById('numberOfWeeks').value;
     const weeksContainer = document.getElementById('weeksContainer');
     weeksContainer.innerHTML = ''; // Clear previous input fields
@@ -459,6 +477,7 @@ function generateWeekInputs() {
         `;
         weeksContainer.appendChild(weekInput);
     }
+    <?php endif; ?>
 }
 
 </script>
