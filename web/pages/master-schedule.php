@@ -194,10 +194,14 @@ function deleteAssignment(assignmentId) {
         .then(response => response.text())
         .then(result => {
             if (result === 'success') {
-                location.reload(); // Reload the page or re-fetch assignments
+                location.reload(); // Reload the page to reflect changes
             } else {
                 alert('Failed to delete assignment.');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the assignment.');
         });
     }
 }
