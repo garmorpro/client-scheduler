@@ -39,7 +39,6 @@ while ($clientRow = $clientResult->fetch_assoc()) {
 // Modify the query to join 'assignments', 'assignment_weeks', and 'engagements' based on 'assignment_id' and 'engagement_id'
 $query = "
     SELECT 
-        aw.assignment_id, 
         e.client_name, 
         aw.assigned_hours, 
         aw.week_start, 
@@ -47,8 +46,6 @@ $query = "
         a.user_id
     FROM 
         assignment_weeks aw
-    JOIN 
-        assignments a ON a.assignment_id = aw.assignment_id  -- join on assignment_id
     JOIN 
         engagements e ON e.engagement_id = a.engagement_id
     WHERE 
