@@ -155,7 +155,7 @@ while ($row = $result->fetch_assoc()) {
                     <small>${assignment.assigned_hours} hrs</small>
                 </div>
                 <div>
-                    <button class="btn btn-sm btn-warning me-1" data-assignment-id="${assignment.assignment_id}" data-assigned-hours="${assignment.assigned_hours}" onclick="openEditModal(this)">Edit</button>
+                    <button class="btn btn-sm btn-warning me-1" data-assignment-id="${assignment.assignment_id}" data-assigned-hours="${assignment.assigned_hours}" onclick="openEditModal(event)">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.engagement_id})">Delete</button>
                 </div>
             </div>
@@ -166,35 +166,39 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Update openEditModal to handle dynamic elements properly
-function openEditModal(buttonElement) {
+function openEditModal(event) {
+    const buttonElement = event.target;
     const assignmentId = buttonElement.getAttribute('data-assignment-id');
     const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
+    // Set the form fields inside the modal
     document.getElementById('editAssignmentId').value = assignmentId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
+    // Initialize the Edit Assignment Modal and show it
     const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
     editModal.show();
 }
 
-
-    function deleteAssignment(assignmentId) {
-        if (confirm('Are you sure you want to delete this assignment?')) {
-            fetch('delete-assignment.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `assignment_id=${assignmentId}`
-            })
-            .then(response => response.text())
-            .then(result => {
-                if (result === 'success') {
-                    location.reload(); // Reload the page or re-fetch assignments
-                } else {
-                    alert('Failed to delete assignment.');
-                }
-            });
-        }
+// Delete an assignment
+function deleteAssignment(assignmentId) {
+    if (confirm('Are you sure you want to delete this assignment?')) {
+        fetch('delete-assignment.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `assignment_id=${assignmentId}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'success') {
+                location.reload(); // Reload the page or re-fetch assignments
+            } else {
+                alert('Failed to delete assignment.');
+            }
+        });
     }
+}
+
     </script>
 
     <style>
