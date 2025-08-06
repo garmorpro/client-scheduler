@@ -595,7 +595,8 @@ function openModal(id, type) {
     if (type === 'employee') {
         openEmployeeModal(id);
     } else if (type === 'client') {
-        openClientModal(id);
+        openEngagementModal(engagementId);
+
     }
 }
 </script>
