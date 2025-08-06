@@ -283,7 +283,7 @@ function deleteAssignment(assignmentId) {
                     <tr>
                         <td class="text-start fw-semibold">
                             <?php echo htmlspecialchars($employees[$userId]['full_name']); ?>
-                            <span class="text-muted small">(<?php echo $employees[$userId]['role']; ?>)</span>
+                            <span class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $employees[$userId]['role']; ?></span>
                         </td>
 
                         <?php foreach ($mondays as $monday): ?>
