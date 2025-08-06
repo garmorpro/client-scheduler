@@ -6,13 +6,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$userId = $_POST['user_id'];
 $employee = $_POST['employee'];
 $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
 // Get the user ID from employee name
-$user_id_query = $conn->prepare("SELECT user_id FROM users WHERE first_name = ? LIMIT 1");
-$user_id_query->bind_param("s", $employee);
+$user_id_query = $conn->prepare("SELECT user_id FROM users WHERE user_id = ? LIMIT 1");
+$user_id_query->bind_param("s", $userId);
 $user_id_query->execute();
 $user_id_result = $user_id_query->get_result();
 $user_id_row = $user_id_result->fetch_assoc();
