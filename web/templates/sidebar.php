@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <hr>
+    <hr style="width: 115% !important;">
 
     <!-- Nav Links -->
     <ul class="nav flex-column">
