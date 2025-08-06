@@ -29,6 +29,19 @@ services:
     networks:
       - app-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      PMA_HOST: db
+    ports:
+      - "8080:80"  # Access phpMyAdmin on port 8080
+    networks:
+      - app-network
+    depends_on:
+      - db
+
 networks:
   app-network:
     driver: bridge
