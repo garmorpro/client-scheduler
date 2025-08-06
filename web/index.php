@@ -33,7 +33,7 @@
       <p class="text-center text-muted">
         Contact your administrator for account setup.
         <br>
-        <span style="font-size: 10px;">
+        <span style="font-size: 10px; line-height: .5px;">
             This is a demo application. In production, users would be created by administrators.
         </span>
       </p>
