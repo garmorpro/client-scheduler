@@ -215,7 +215,93 @@ while ($row = $result->fetch_assoc()) {
     <h3 class="mb-0">Master Schedule</h3>
     <p class="text-muted mb-4">Complete overview of all client engagements and team assignments</p>
 
-    <!-- Filter Form, Search, and Table (unchanged) -->
+    <div class="bg-white border rounded p-4 mb-4">
+        <form id="filterForm" method="get" class="row g-3">
+            <div class="col-md-7">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
+                <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="on_hold">On Hold</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-center gap-3">
+                <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
+                <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start">Employee</th>
+                    <?php foreach ($mondays as $monday): ?>
+                        <?php 
+                        $weekStart = date('Y-m-d', $monday);
+                        $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
+                        ?>
+                        <th class="<?php echo $highlightClass; ?>">
+                            <?php echo date('M j', $monday); ?><br>
+                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                        </th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($employees as $userId => $employeeName): ?>
+                    <tr>
+                        <td class="text-start fw-semibold">
+                            <?php echo htmlspecialchars($employees[$userId]['full_name']); ?>
+                            <span class="text-muted text-capitalize" style="font-size: 10px;">&nbsp;&nbsp;<?php echo $employees[$userId]['role']; ?></span>
+                        </td>
+
+                        <?php foreach ($mondays as $monday): ?>
+                            <?php 
+                            $weekStart = date('Y-m-d', $monday);
+                            $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
+                            $cellContent = "";
+                            
+                            if ($assignmentsForWeek) {
+                                foreach ($assignmentsForWeek as $assignment) {
+                                    $status = strtolower($assignment['status']);
+
+                                    if ($status === 'confirmed') {
+                                        $badgeColor = 'success'; // Green
+                                    } elseif ($status === 'pending') {
+                                        $badgeColor = 'purple'; // Custom class
+                                    } elseif ($status === 'not_confirmed') {
+                                        $badgeColor = 'primary'; // Blue
+                                    } else {
+                                        $badgeColor = 'primary'; // Default
+                                    }
+                                  
+                                    $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
+                                }
+                            } else {
+                                $cellContent = "<span class='text-muted'>+</span>";
+                            }
+                            ?>
+                            <?php if ($isAdmin): ?>
+                                <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
+                                    <?php echo $cellContent; ?>
+                                </td>
+                            <?php else: ?>
+    <td>
+        <?php echo $cellContent; ?>
+    </td>
+<?php endif; ?>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 
