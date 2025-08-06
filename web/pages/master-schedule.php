@@ -29,7 +29,11 @@ $userQuery = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, r
 $userResult = $conn->query($userQuery);
 if ($userResult) {
     while ($userRow = $userResult->fetch_assoc()) {
-        $employees[$userRow['user_id']] = $userRow['full_name'];
+        $employees[$userRow['user_id']] = [
+            'full_name' => $userRow['full_name'],
+            'role' => $userRow['role']
+        ];
+
     }
 }
 
@@ -277,7 +281,11 @@ function deleteAssignment(assignmentId) {
             <tbody>
                 <?php foreach ($employees as $userId => $employeeName): ?>
                     <tr>
-                        <td class="text-start fw-semibold"><?php echo htmlspecialchars($employeeName); ?> <span><?php echo htmlspecialchars($role); ?></span></td>
+                        <td class="text-start fw-semibold">
+                            <?php echo htmlspecialchars($employees[$userId]['full_name']); ?>
+                            <span class="text-muted small">(<?php echo $employees[$userId]['role']; ?>)</span>
+                        </td>
+
                         <?php foreach ($mondays as $monday): ?>
                             <?php 
                             $weekStart = date('Y-m-d', $monday);
