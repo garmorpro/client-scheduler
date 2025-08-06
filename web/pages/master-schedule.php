@@ -325,10 +325,10 @@ function deleteAssignment(assignmentId) {
       </div>
       <div class="modal-body">
         <form id="engagementForm" action="add-engagement-process.php" method="POST">
-          <input type="text" id="modalEmployee" name="employee">
-          <input type="text" id="modalEmployeeName">
-          <input type="text" id="modalWeek" name="week_start">
-          <input type="text" id="modalEngagementId" name="engagement_id">
+          <input type="hidden" id="modalEmployee" name="employee">
+          <input type="hidden" id="modalEmployeeName">
+          <input type="hidden" id="modalWeek" name="week_start">
+          <input type="hidden" id="modalEngagementId" name="engagement_id">
 
           <div id="existingAssignments"></div>
 
