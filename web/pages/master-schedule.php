@@ -98,15 +98,35 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById('modalWeek').value = weekStart;
         document.getElementById('modalEngagementId').value = engagementId ?? '';
 
-        document.getElementById('client_name').selectedIndex = 0;
-        document.getElementById('numberOfWeeks').value = '';
-        document.getElementById('weeksContainer').innerHTML = '';
-
-        document.getElementById('modalTitle').innerText = engagementId ? 'Edit Engagement' : 'Add Engagement';
-        document.getElementById('modalSubmitBtn').innerText = engagementId ? 'Save Changes' : 'Add Engagement';
+        // Open edit modal if assignments are found for the week
+        if (engagementId) {
+            document.getElementById('modalTitle').innerText = 'Edit Engagement';
+            document.getElementById('modalSubmitBtn').innerText = 'Save Changes';
+            showAssignments(weekStart, user_id); // Load existing assignments
+        } else {
+            document.getElementById('modalTitle').innerText = 'Add Engagement';
+            document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
+            document.getElementById('client_name').selectedIndex = 0;
+            document.getElementById('numberOfWeeks').value = '';
+            document.getElementById('weeksContainer').innerHTML = '';
+        }
 
         const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
         modalElement.show();
+    }
+
+    function showAssignments(weekStart, userId) {
+        // Fetch assignments for the specific week and user
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[userId][weekStart] ?? [];
+        let assignmentsList = '';
+
+        if (assignmentsForWeek.length > 0) {
+            assignmentsForWeek.forEach((assignment, index) => {
+                assignmentsList += `<p>Client: ${assignment.client_name}, Hours: ${assignment.assigned_hours}</p>`;
+            });
+            document.getElementById('existingAssignments').innerHTML = assignmentsList;
+        }
     }
 
     function generateWeekInputs() {
@@ -214,6 +234,8 @@ while ($row = $result->fetch_assoc()) {
           <input type="text" id="modalEmployeeName">
           <input type="text" id="modalWeek" name="week_start">
           <input type="text" id="modalEngagementId" name="engagement_id">
+
+          <div id="existingAssignments"></div>
 
           <div class="mb-3">
             <label for="client_name" class="form-label">Client Name</label>
