@@ -26,8 +26,8 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    // Insert into assignments table using INSERT IGNORE (to ignore duplicate entries)
-    $assignmentInsert = $conn->prepare("INSERT IGNORE INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
+    // Insert into assignments table
+    $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
     $assignmentInsert->bind_param("iiss", $employee, $engagementId, $weekStart, $assignedHours);
     if (!$assignmentInsert->execute()) {
         die("Assignment creation failed: " . $conn->error);
