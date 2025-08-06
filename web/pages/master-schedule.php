@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db.php'; // or wherever your DB connection is
+require_once '../includes/db.php'; // Your DB connection file
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
