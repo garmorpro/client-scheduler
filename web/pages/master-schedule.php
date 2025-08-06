@@ -202,6 +202,13 @@ while ($row = $result->fetch_assoc()) {
         }
     }
     </script>
+
+    <style>
+    .bg-purple {
+        background-color: #6f42c1 !important;
+        color: white;
+    }
+</style>
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
