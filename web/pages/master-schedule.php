@@ -315,7 +315,10 @@ function deleteAssignment(assignmentId) {
                             }
                             ?>
                             <?php if ($isAdmin): ?>
-                                <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', <?php echo json_encode($employees[$userId]['full_name']); ?>, '<?php echo $weekStart; ?>')">
+                                <td class="addable" onclick="openManageOrAddModal(
+                                    '<?php echo $userId; ?>', 
+                                    <?php echo json_encode($employees[$userId]['full_name']); ?>, 
+                                    '<?php echo $weekStart; ?>')">
                                     <?php echo $cellContent; ?>
                                 </td>
                             <?php else: ?>
