@@ -96,42 +96,55 @@ while ($row = $result->fetch_assoc()) {
     }
 
     // open modal for Manage Assignments or Add Engagement
-    function openModal(user_id, employeeName, weekStart, engagementId = null) {
+    function openManageOrAddModal(user_id, employeeName, weekStart) {
+        // Fetch assignments for the user and week
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+
+        if (assignmentsForWeek.length > 0) {
+            // Show "Manage" or "Add" modal for existing assignments
+            const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+            manageAddModal.show();
+
+            document.getElementById('manageAssignmentsButton').onclick = function() {
+                // Manage Assignments: Open the Manage Assignments modal
+                openManageAssignmentsModal(user_id, employeeName, weekStart);
+            };
+            document.getElementById('addAssignmentsButton').onclick = function() {
+                // Add Assignment: Open the Add Engagement modal
+                openAddEngagementModal(user_id, employeeName, weekStart);
+            };
+        } else {
+            // If no existing assignments, directly show Add Engagement modal
+            openAddEngagementModal(user_id, employeeName, weekStart);
+        }
+    }
+
+    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+
+        // Fetch assignments for the user and week
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+        showAssignments(assignmentsForWeek);
+
+        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+        assignmentsModal.show();
+    }
+
+    function openAddEngagementModal(user_id, employeeName, weekStart) {
         // Prepare modal data for engagement
         document.getElementById('modalEmployee').value = user_id;
         document.getElementById('modalEmployeeName').value = employeeName;
         document.getElementById('modalWeek').value = weekStart;
-        document.getElementById('modalEngagementId').value = engagementId ?? '';
 
-        // Fetch assignments
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-
-        // Hide all modals first
         const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-        engagementModalElement.hide();
-
-        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModal.hide();
-
-        if (assignmentsForWeek.length > 0) {
-            // Manage assignments modal
-            const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-            document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-            showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
-
-            // Show the Manage Assignments modal
-            assignmentsModal.show();
-        } else {
-            // Engagement modal (no existing assignments)
-            const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-            engagementModalElement.show();
-        }
+        engagementModalElement.show();
     }
 
-    function showAssignments(assignmentsForWeek, user_id, weekStart, employeeName) {
+    function showAssignments(assignmentsForWeek) {
         let assignmentsList = '';
 
         assignmentsForWeek.forEach((assignment) => {
@@ -148,15 +161,6 @@ while ($row = $result->fetch_assoc()) {
                 </div>
             `;
         });
-
-        // Add "Add Assignment" button if there are existing assignments
-        if (assignmentsForWeek.length > 0) {
-            assignmentsList += `
-                <button class="btn btn-sm btn-success mt-2" onclick="openModal('${user_id}', '${employeeName}', '${weekStart}')">
-                    <i class="bi bi-plus-circle"></i> Add Assignment
-                </button>
-            `;
-        }
 
         document.getElementById('existingAssignments').innerHTML = assignmentsList;
     }
@@ -184,24 +188,6 @@ while ($row = $result->fetch_assoc()) {
                     alert('Failed to delete assignment.');
                 }
             });
-        }
-    }
-
-    function generateWeekInputs() {
-        const numberOfWeeks = parseInt(document.getElementById("numberOfWeeks").value) || 0;
-        const weeksContainer = document.getElementById("weeksContainer");
-        weeksContainer.innerHTML = '';
-
-        for (let i = 1; i <= numberOfWeeks; i++) {
-            const inputGroup = document.createElement("div");
-            inputGroup.classList.add("mb-3");
-            inputGroup.innerHTML = `
-                <label class="form-label">Week ${i} Start</label>
-                <input type="date" class="form-control" name="week_start_${i}" required>
-                <label class="form-label mt-2">Assigned Hours</label>
-                <input type="number" class="form-control" name="assigned_hours_${i}" placeholder="e.g. 20" min="1" required>
-            `;
-            weeksContainer.appendChild(inputGroup);
         }
     }
     </script>
@@ -286,7 +272,7 @@ while ($row = $result->fetch_assoc()) {
                                 $cellContent = "<span class='text-muted'>+</span>";
                             }
                             ?>
-                            <td class="addable" onclick="openModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
+                            <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
                                 <?php echo $cellContent; ?>
                             </td>
                         <?php endforeach; ?>
@@ -296,6 +282,22 @@ while ($row = $result->fetch_assoc()) {
         </table>
     </div>
 
+</div>
+
+<!-- Modal for Manage or Add Assignment -->
+<div class="modal fade" id="manageAddModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Manage or Add Assignment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+        <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Modal for Managing Assignments -->
@@ -314,28 +316,6 @@ while ($row = $result->fetch_assoc()) {
         <div id="existingAssignments"></div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Edit Assignment Modal -->
-<div class="modal fade" id="editAssignmentModal" tabindex="-1">
-  <div class="modal-dialog">
-    <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST" class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Assignment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" name="assignment_id" id="editAssignmentId">
-        <div class="mb-3">
-          <label for="editAssignedHours" class="form-label">Assigned Hours</label>
-          <input type="number" class="form-control" name="assigned_hours" id="editAssignedHours" min="1" required>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-      </div>
-    </form>
   </div>
 </div>
 
