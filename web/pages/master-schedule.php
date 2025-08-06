@@ -26,6 +26,15 @@ while ($current <= strtotime($endDate)) {
 
 // Example employees (replace this with DB call if needed)
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
+
+// Fetch engagement data for each employee
+// Assuming $conn is your database connection
+$query = "SELECT `client_name`, `assigned_hours`, `start_date`, `assigned_to`
+          FROM `engagements`
+          WHERE `assigned_to` = ? AND `start_date` >= ? AND `end_date` <= ?
+          ORDER BY `start_date`";
+$stmt = $conn->prepare($query);
+
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +99,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         <!-- Date Selector Toolbar -->
         <div class="col-md-3 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -3 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
     </div>
@@ -102,7 +111,6 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
           <tr>
             <th class="text-start">Employee</th>
             <?php 
-              // Highlight the week of today's date (using 'week of' calculation)
               foreach ($mondays as $monday):
                 $weekStart = date('Y-m-d', $monday);
                 $highlightClass = (date('Y-m-d', strtotime($today)) >= $weekStart && date('Y-m-d', strtotime($today)) < date('Y-m-d', strtotime('+7 days', strtotime($weekStart)))) ? 'highlight-today' : '';
@@ -121,28 +129,23 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
               <?php foreach ($mondays as $monday): ?>
                 <td>
                   <?php
-                    // Query engagements for the current employee and current week (Monday)
-                    $clientAssignments = ''; // Default is empty
-              
-                    // Get the engagements for this employee and week
-                    foreach ($engagements as $engagement) {
-                        // Check if the engagement falls within the current week
+                    $clientAssignments = ''; 
+                    $stmt->bind_param('sss', $employee, $startDate, $endDate);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
                         $weekStart = date('Y-m-d', $monday);
-                        if ($engagement['start_date'] <= $weekStart && $engagement['end_date'] >= $weekStart) {
-                            // Format as "Client Name (Assigned Hours)"
-                            $clientAssignments .= $engagement['client_name'] . ' (' . $engagement['assigned_hours'] . ')<br>';
+                        if ($row['start_date'] <= $weekStart && $row['end_date'] >= $weekStart) {
+                            $clientAssignments .= $row['client_name'] . ' (' . $row['assigned_hours'] . ')<br>';
                         }
                     }
-                  
-                    // Output the client assignments for this employee and week
-                    echo $clientAssignments ? $clientAssignments : '-'; // If no assignments, show '-'
+                    echo $clientAssignments ? $clientAssignments : '-';
                   ?>
                 </td>
               <?php endforeach; ?>
             </tr>
           <?php endforeach; ?>
         </tbody>
-
       </table>
     </div>
   </div>
