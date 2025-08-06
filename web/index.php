@@ -11,8 +11,8 @@
 <body style="background-color: rgba(216, 216, 216, 1);">
 
 
-<div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;padding: 35px;">
-    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+<div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow" style="width: 100%; max-width: 400px;padding: 35px;">
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
       <h5 class="text-center mb-2">Welcome Back</h3>
