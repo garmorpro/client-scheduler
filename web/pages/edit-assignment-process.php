@@ -2,11 +2,13 @@
 require_once '../includes/db.php';
 session_start();
 
+// Check if user is authenticated
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
 
+// Handle POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $assignmentId = isset($_POST['assignment_id']) ? intval($_POST['assignment_id']) : 0;
     $assignedHours = isset($_POST['assigned_hours']) ? intval($_POST['assigned_hours']) : 0;
@@ -16,17 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ii", $assignedHours, $assignmentId);
 
         if ($stmt->execute()) {
-            if ($stmt->affected_rows > 0) {
-                echo "✅ Successfully updated assignment ID $assignmentId to $assignedHours hours.";
-            } else {
-                echo "⚠️ No rows updated. Double check that the assignment exists and values are different.";
-            }
+            // Redirect back to schedule or show a success message
+            header("Location: master-schedule.php?updated=1");
+            exit();
         } else {
-            echo "❌ MySQL error: " . $stmt->error;
+            die("Error updating assignment: " . $conn->error);
         }
     } else {
-        echo "❌ Invalid input.";
+        die("Invalid input.");
     }
 } else {
-    echo "❌ Invalid request method.";
+    header("Location: ../master-schedule.php");
+    exit();
 }
+?>
