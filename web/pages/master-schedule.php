@@ -274,7 +274,7 @@ function deleteAssignment(assignmentId) {
                                 } elseif ($status === 'not_confirmed') {
                                     $badgeColor = 'primary'; // Blue
                                 } else {
-                                    $badgeColor = 'secondary'; // Default
+                                    $badgeColor = 'primary'; // Default
                                 }
                               
                                 $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
