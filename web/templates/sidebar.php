@@ -9,7 +9,7 @@
       </div>
       <div>
         <!-- <h5 class="mb-0 fw-bold">AARC-360</h5> -->
-         <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 15%;">
+         <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="" style="width: 25%;">
         <small class="text-muted">Schedule Manager</small>
       </div>
     </div>
