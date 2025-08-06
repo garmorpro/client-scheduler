@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 $today = date('Y-m-d');
 
 // Adjust start date: if the selected date is not a Monday, shift it to the previous Monday
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -2 weeks'));
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
 
 // Automatically calculate the end date to be 5 weeks after the selected start date, making it a 6-week view
 $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
@@ -90,7 +90,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         <!-- Date Selector Toolbar -->
         <div class="col-md-3 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -3 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
     </div>
