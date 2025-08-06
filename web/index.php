@@ -12,7 +12,7 @@
 
 
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card p-3 shadow" style="width: 100%; max-width: 400px;">
+    <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
         <h5 class="text-center mb-2">Welcome Back</h3>
