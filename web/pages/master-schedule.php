@@ -51,7 +51,8 @@ $query = "
         a.engagement_id,
         e.client_name,
         a.week_start,
-        a.assigned_hours
+        a.assigned_hours,
+        a.status  -- ✅ Add this line
     FROM 
         assignments a
     JOIN 
@@ -69,11 +70,12 @@ $assignments = [];
 while ($row = $result->fetch_assoc()) {
     // Store multiple assignments for each employee and week
     $assignments[$row['user_id']][$row['week_start']][] = [
-      'assignment_id' => $row['assignment_id'],
-      'client_name' => $row['client_name'],
-      'assigned_hours' => $row['assigned_hours'],
-      'engagement_id' => $row['engagement_id']
-  ];
+        'assignment_id' => $row['assignment_id'],
+        'client_name' => $row['client_name'],
+        'assigned_hours' => $row['assigned_hours'],
+        'engagement_id' => $row['engagement_id'],
+        'status' => $row['status']
+    ];
 
 }
 ?>
@@ -199,6 +201,13 @@ function deleteAssignment(assignmentId) {
         }
     }
     </script>
+    <style>
+    .bg-purple {
+        background-color: #6f42c1 !important;
+        color: white;
+    }
+</style>
+
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -255,7 +264,15 @@ function deleteAssignment(assignmentId) {
                         
                         if ($assignmentsForWeek) {
                             foreach ($assignmentsForWeek as $assignment) {
-                                $cellContent .= "<span>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
+                                $status = strtolower($assignment['status']);
+                                $badgeColor = match ($status) {
+                                    'confirmed' => 'success',       // Green
+                                    'pending' => 'purple',          // Custom class
+                                    'not_confirmed' => 'primary',   // Blue
+                                    default => 'secondary'
+                                };
+                              
+                                $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
                             }
                         } else {
                             $cellContent = "<span class='text-muted'>+</span>";
