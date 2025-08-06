@@ -8,6 +8,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+echo '<pre>';
+print_r($_POST);
+echo '</pre>';
+exit;
+
 // Handle POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $assignmentId = isset($_POST['assignment_id']) ? intval($_POST['assignment_id']) : 0;
