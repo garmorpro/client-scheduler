@@ -1,6 +1,10 @@
 <?php
 require_once '../includes/db.php';
 
+// Turn on error reporting to help debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (isset($_GET['id'])) {
     $employeeId = $_GET['id'];
 
@@ -10,33 +14,40 @@ if (isset($_GET['id'])) {
     $stmt->bind_param('i', $employeeId);
     $stmt->execute();
     $employeeResult = $stmt->get_result();
-    $employee = $employeeResult->fetch_assoc();
 
-    // Get the employee's upcoming assignments
-    $assignmentsQuery = "SELECT engagement_name, assigned_hours, assignment_date 
-                         FROM assignments a
-                         JOIN engagements e ON a.engagement_id = e.engagement_id
-                         WHERE a.user_id = ? AND assignment_date >= CURDATE() 
-                         ORDER BY assignment_date";
-    $stmt = $conn->prepare($assignmentsQuery);
-    $stmt->bind_param('i', $employeeId);
-    $stmt->execute();
-    $assignmentsResult = $stmt->get_result();
+    if ($employeeResult->num_rows > 0) {
+        $employee = $employeeResult->fetch_assoc();
 
-    $upcomingAssignments = '';
-    $totalAssignedHours = 0;
-    while ($assignment = $assignmentsResult->fetch_assoc()) {
-        $upcomingAssignments .= "<p class='mb-1'><strong>{$assignment['engagement_name']}</strong> – {$assignment['assigned_hours']} hrs on {$assignment['assignment_date']}</p>";
-        $totalAssignedHours += $assignment['assigned_hours'];
+        // Get the employee's upcoming assignments
+        $assignmentsQuery = "SELECT engagement_name, assigned_hours, assignment_date 
+                             FROM assignments a
+                             JOIN engagements e ON a.engagement_id = e.engagement_id
+                             WHERE a.user_id = ? AND assignment_date >= CURDATE() 
+                             ORDER BY assignment_date";
+        $stmt = $conn->prepare($assignmentsQuery);
+        $stmt->bind_param('i', $employeeId);
+        $stmt->execute();
+        $assignmentsResult = $stmt->get_result();
+
+        $upcomingAssignments = '';
+        $totalAssignedHours = 0;
+        while ($assignment = $assignmentsResult->fetch_assoc()) {
+            $upcomingAssignments .= "<p class='mb-1'><strong>{$assignment['engagement_name']}</strong> – {$assignment['assigned_hours']} hrs on {$assignment['assignment_date']}</p>";
+            $totalAssignedHours += $assignment['assigned_hours'];
+        }
+
+        // Return data as JSON
+        echo json_encode([
+            'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
+            'role' => $employee['role'],
+            'total_hours' => $totalAssignedHours,
+            'max_hours' => $employee['max_hours'],
+            'upcoming_assignments' => $upcomingAssignments
+        ]);
+    } else {
+        echo json_encode(['error' => 'Employee not found']);
     }
-
-    // Return data as JSON
-    echo json_encode([
-        'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
-        'role' => $employee['role'],
-        'total_hours' => $totalAssignedHours,
-        'max_hours' => $employee['max_hours'],
-        'upcoming_assignments' => $upcomingAssignments
-    ]);
+} else {
+    echo json_encode(['error' => 'No employee ID provided']);
 }
 ?>
