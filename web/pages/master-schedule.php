@@ -96,6 +96,8 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
+    
+    
     function openModal(user_id, employeeName, weekStart, engagementId = null) {
     // Prepare modal data for engagement
     document.getElementById('modalEmployee').value = user_id;
@@ -107,33 +109,18 @@ while ($row = $result->fetch_assoc()) {
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    // Hide existing modals first before showing a new one
-    const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-    assignmentsModal.hide(); // Close the Manage Assignments modal
-
+    // Check if there are assignments for the given employee and week
     if (assignmentsForWeek.length > 0) {
-        // Manage assignments modal
-        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-        showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
-
-        // Show the Manage Assignments modal again
-        assignmentsModal.show();
+        // Redirect to the page for managing assignments, passing the necessary data
+        const manageAssignmentsURL = `manage-assignments.php?user_id=${user_id}&week_start=${weekStart}`;
+        window.location.href = manageAssignmentsURL; // Redirect to the manage assignments page
     } else {
-        // Add engagement modal
-        document.getElementById('modalTitle').innerText = 'Add Engagement';
-        document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
-        document.getElementById('client_name').selectedIndex = 0;
-        document.getElementById('numberOfWeeks').value = '';
-        document.getElementById('weeksContainer').innerHTML = '';
-
-        // Show the Add Engagement modal
-        const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-        engagementModalElement.show();
+        // Redirect to the page for adding an engagement if no assignments exist
+        const addEngagementURL = `add-engagement.php?user_id=${user_id}&week_start=${weekStart}`;
+        window.location.href = addEngagementURL; // Redirect to the add engagement page
     }
 }
+
 
 
 
