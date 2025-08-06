@@ -107,6 +107,10 @@ while ($row = $result->fetch_assoc()) {
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
+    // Hide existing modals first before showing a new one
+    const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+    assignmentsModal.hide(); // Close the Manage Assignments modal
+
     if (assignmentsForWeek.length > 0) {
         // Manage assignments modal
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -114,12 +118,8 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
         showAssignments(assignmentsForWeek, user_id, weekStart, employeeName);
-        
-        // Close the current "Manage Assignments" modal if it's open
-        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModal.hide();
 
-        // Show the "Manage Assignments" modal
+        // Show the Manage Assignments modal again
         assignmentsModal.show();
     } else {
         // Add engagement modal
@@ -128,16 +128,13 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById('client_name').selectedIndex = 0;
         document.getElementById('numberOfWeeks').value = '';
         document.getElementById('weeksContainer').innerHTML = '';
-        
-        // Close the current "Manage Assignments" modal if it's open
-        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModal.hide();
 
-        // Show the "Add Engagement" modal
+        // Show the Add Engagement modal
         const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
         engagementModalElement.show();
     }
 }
+
 
 
 
