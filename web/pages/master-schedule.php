@@ -67,20 +67,23 @@ if ($stmt === false) {
         }
 
         function openModal(employee, weekStart, engagementId = null) {
-            // Set values in the modal form based on employee and week
-            document.getElementById('modalEmployee').value = employee;
-            document.getElementById('modalWeek').value = weekStart;
-            if (engagementId) {
-                document.getElementById('modalEngagementId').value = engagementId;
-                document.getElementById('modalTitle').innerText = 'Edit Engagement';
-                document.getElementById('modalSubmitBtn').innerText = 'Save Changes';
-            } else {
-                document.getElementById('modalTitle').innerText = 'Add Engagement';
-                document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
-            }
-            // Show the modal
-            $('#engagementModal').modal('show');
-        }
+    console.log('openModal called', employee, weekStart, engagementId); // Debugging
+
+    document.getElementById('modalEmployee').value = employee;
+    document.getElementById('modalWeek').value = weekStart;
+    if (engagementId) {
+        document.getElementById('modalEngagementId').value = engagementId;
+        document.getElementById('modalTitle').innerText = 'Edit Engagement';
+        document.getElementById('modalSubmitBtn').innerText = 'Save Changes';
+    } else {
+        document.getElementById('modalTitle').innerText = 'Add Engagement';
+        document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
+    }
+
+    // Fallback for modal trigger
+    const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
+    modalElement.show();
+}
     </script>
 </head>
 <body class="d-flex">
