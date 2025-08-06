@@ -66,13 +66,15 @@ $result = $stmt->get_result();
 
 $assignments = [];
 while ($row = $result->fetch_assoc()) {
-    $assignments[$row['user_id']][$row['week_start']] = [
+    // Store multiple assignments for each employee and week
+    $assignments[$row['user_id']][$row['week_start']][] = [
         'client_name' => $row['client_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id']
     ];
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
