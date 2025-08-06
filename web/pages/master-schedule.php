@@ -238,15 +238,20 @@ function openEngagementModal(engagementId) {
 
             // Set total assigned hours
             let totalAssignedHours = data.total_hours;
-            let totalAvailableHours = 1000; // Example total available hours, adjust as needed
+            let totalAvailableHours = data.max_hours ?? 0;
+
 
             // Set total assigned hours text
             document.getElementById('totalAssignedHours').innerText = totalAssignedHours;
+            document.getElementById('totalHours').innerText = `/ ${totalAvailableHours} hrs`;
+
 
             // Set the progress bar width based on the assigned hours
             let utilizationPercent = (totalAssignedHours / totalAvailableHours) * 100;
             document.getElementById('utilizationBar').style.width = utilizationPercent + "%";
             document.getElementById('utilizationBar').setAttribute('aria-valuenow', totalAssignedHours);
+            document.getElementById('utilizationBar').setAttribute('aria-valuemax', totalAvailableHours);
+
 
             // Set assigned employees
             let assignedEmployees = data.assigned_employees;

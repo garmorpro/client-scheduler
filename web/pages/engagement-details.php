@@ -5,7 +5,7 @@ if (isset($_GET['id'])) {
     $engagementId = $_GET['id'];
 
     // Get engagement name and total assigned hours
-    $engagementQuery = "SELECT client_name FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, total_available_hours FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
@@ -36,9 +36,10 @@ if (isset($_GET['id'])) {
 
     // Return data as JSON
     echo json_encode([
-        'client_name' => $engagement['client_name'], // Display engagement (client_name)
-        'total_hours' => $totalHours, // Total assigned hours
-        'assigned_employees' => $assignedEmployees // List of assigned employees and their hours
+        'client_name' => $engagement['client_name'],
+        'total_hours' => $totalHours,
+        'max_hours' => $engagement['total_available_hours'],
+        'assigned_employees' => $assignedEmployees
     ]);
 }
 ?>
