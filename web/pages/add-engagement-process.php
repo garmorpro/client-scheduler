@@ -1,89 +1,55 @@
+// FILE: add-engagement-process.php
+
 <?php
-require_once '../includes/db.php'; // Include database connection
+require_once '../includes/db.php';
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Check if the form was submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get POST variables from the modal form
-    $employee = $_POST['employee'];
-    $weekStart = $_POST['week_start'];
-    $clientName = $_POST['client_name'];
-    $assignedHours = $_POST['assigned_hours'];
-    $engagementId = isset($_POST['engagement_id']) ? $_POST['engagement_id'] : null;
+$employee = $_POST['employee'];
+$engagementId = $_POST['client_name'];
+$numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
-    // Validate input
-    if (empty($clientName) || empty($assignedHours)) {
-        die('Client name and assigned hours are required.');
-    }
+// Get the user ID from employee name
+$user_id_query = $conn->prepare("SELECT id FROM users WHERE name = ? LIMIT 1");
+$user_id_query->bind_param("s", $employee);
+$user_id_query->execute();
+$user_id_result = $user_id_query->get_result();
+$user_id_row = $user_id_result->fetch_assoc();
+$user_id = $user_id_row ? $user_id_row['id'] : null;
 
-    // Check if engagementId exists to determine whether to insert or update
-    if ($engagementId) {
-        // Update existing engagement
-        $query = "
-            UPDATE engagements 
-            SET client_name = ?, assigned_hours = ? 
-            WHERE engagement_id = ?
-        ";
-
-        $stmt = $conn->prepare($query);
-        if ($stmt === false) {
-            die('MySQL prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param('ssi', $clientName, $assignedHours, $engagementId);
-        $stmt->execute();
-        $stmt->close();
-        
-        // Update assignment in assignment_weeks table
-        $updateQuery = "
-            UPDATE assignment_weeks 
-            SET client_name = ?, assigned_hours = ? 
-            WHERE engagement_id = ? AND week_start = ?
-        ";
-
-        $stmt = $conn->prepare($updateQuery);
-        if ($stmt === false) {
-            die('MySQL prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param('ssss', $clientName, $assignedHours, $engagementId, $weekStart);
-        $stmt->execute();
-        $stmt->close();
-    } else {
-        // Insert new engagement
-        $query = "
-            INSERT INTO engagements (client_name, assigned_hours) 
-            VALUES (?, ?)
-        ";
-
-        $stmt = $conn->prepare($query);
-        if ($stmt === false) {
-            die('MySQL prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param('si', $clientName, $assignedHours);
-        $stmt->execute();
-        $engagementId = $stmt->insert_id; // Get the last inserted ID
-        $stmt->close();
-
-        // Insert into assignment_weeks table
-        $insertQuery = "
-            INSERT INTO assignment_weeks (assignment_id, engagement_id, week_start, client_name, assigned_hours)
-            VALUES (?, ?, ?, ?, ?)
-        ";
-
-        $stmt = $conn->prepare($insertQuery);
-        if ($stmt === false) {
-            die('MySQL prepare failed: ' . $conn->error);
-        }
-        $stmt->bind_param('iisss', $employee, $engagementId, $weekStart, $clientName, $assignedHours);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    // Redirect back to the schedule page or show success message
-    header("Location: master-schedule.php?start=" . $weekStart);
-    exit();
+if (!$user_id) {
+    die("User not found.");
 }
-?>
+
+// Insert into assignments table
+$assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id) VALUES (?, ?)");
+$assignmentInsert->bind_param("ii", $user_id, $engagementId);
+if (!$assignmentInsert->execute()) {
+    die("Assignment creation failed: " . $conn->error);
+}
+$assignmentId = $assignmentInsert->insert_id;
+
+// Loop through the number of weeks and insert into assignment_weeks
+for ($i = 1; $i <= $numberOfWeeks; $i++) {
+    $weekKey = 'week_start_' . $i;
+    $hoursKey = 'assigned_hours_' . $i;
+
+    if (!isset($_POST[$weekKey]) || !isset($_POST[$hoursKey])) {
+        continue;
+    }
+
+    $weekStart = $_POST[$weekKey];
+    $assignedHours = $_POST[$hoursKey];
+
+    $weekInsert = $conn->prepare("INSERT INTO assignment_weeks (assignment_id, week_start, assigned_hours) VALUES (?, ?, ?)");
+    $weekInsert->bind_param("iss", $assignmentId, $weekStart, $assignedHours);
+    if (!$weekInsert->execute()) {
+        echo "Error inserting week $i: " . $conn->error . "<br>";
+    }
+}
+
+header("Location: master-schedule.php");
+exit();
