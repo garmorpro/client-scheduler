@@ -8,7 +8,8 @@
         <i class="bi bi-calendar2-week"></i> <!-- Bootstrap icon -->
       </div>
       <div>
-        <h5 class="mb-0 fw-bold">AARC-360</h5>
+        <!-- <h5 class="mb-0 fw-bold">AARC-360</h5> -->
+         <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 15%;">
         <small class="text-muted">Schedule Manager</small>
       </div>
     </div>
