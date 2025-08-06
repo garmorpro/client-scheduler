@@ -106,7 +106,7 @@ while ($row = $result->fetch_assoc()) {
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
     if (assignmentsForWeek.length > 0) {
-        // Format date
+        // Existing assignments logic
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
@@ -115,7 +115,7 @@ while ($row = $result->fetch_assoc()) {
         const assignmentsModalElement = new bootstrap.Modal(document.getElementById('assignmentsModal'));
         assignmentsModalElement.show();
     } else {
-        // Fallback to add engagement modal
+        // Fallback to adding a new engagement
         document.getElementById('modalTitle').innerText = 'Add Engagement';
         document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
         document.getElementById('client_name').selectedIndex = 0;
@@ -125,6 +125,7 @@ while ($row = $result->fetch_assoc()) {
         modalElement.show();
     }
 }
+
 
 
     function showAssignments(assignmentsForWeek, user_id, weekStart, employeeName) {
