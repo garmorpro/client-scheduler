@@ -16,7 +16,7 @@
         <img src="assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
       <h5 class="text-center mb-1">Welcome Back</h3>
-      <p class="text-center">Sign in to access your engagement schedules</p>
+      <p class="text-center text-muted">Sign in to access your engagement schedules</p>
       <form>
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
