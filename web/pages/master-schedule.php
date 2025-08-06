@@ -134,6 +134,24 @@ while ($row = $result->fetch_assoc()) {
         assignmentsModal.show();
     }
 
+    function generateWeekInputs() {
+    const numberOfWeeks = document.getElementById('numberOfWeeks').value;
+    const weeksContainer = document.getElementById('weeksContainer');
+    weeksContainer.innerHTML = ''; // Clear previous input fields
+
+    // Generate the week input fields
+    for (let i = 0; i < numberOfWeeks; i++) {
+        const weekInput = document.createElement('div');
+        weekInput.classList.add('mb-3');
+        weekInput.innerHTML = `
+            <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
+            <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" required>
+        `;
+        weeksContainer.appendChild(weekInput);
+    }
+}
+
+
     function openAddEngagementModal(user_id, employeeName, weekStart) {
         // Prepare modal data for engagement
         document.getElementById('modalEmployee').value = user_id;
