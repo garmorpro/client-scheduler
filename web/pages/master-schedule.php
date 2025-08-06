@@ -588,10 +588,6 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Search Bar -->
-        <div class="mb-4">
-          <input type="text" class="form-control" id="employeeSearch" placeholder="Search Employee..." oninput="searchEmployee()">
-        </div>
 
         <!-- Employee Role -->
         <h4 id="employeeName" class="text-center mb-3 fw-bold"></h4>
