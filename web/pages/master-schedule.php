@@ -423,7 +423,9 @@ function generateWeekInputs() {
                     <option value="not_confirmed">Not Confirmed</option>
                 </select>
             </div>
+            <div class='mt-3'></div>
             <hr>
+            <div class='mt-3'></div>
         `;
         weeksContainer.appendChild(weekInput);
     }
