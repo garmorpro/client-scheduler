@@ -139,13 +139,16 @@ while ($row = $result->fetch_assoc()) {
     const weeksContainer = document.getElementById('weeksContainer');
     weeksContainer.innerHTML = ''; // Clear previous input fields
 
-    // Generate the week input fields
+    // Generate the week input fields with assigned hours
     for (let i = 0; i < numberOfWeeks; i++) {
         const weekInput = document.createElement('div');
         weekInput.classList.add('mb-3');
         weekInput.innerHTML = `
             <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
-            <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" required>
+            <div class="d-flex gap-2">
+                <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" required>
+                <input type="number" class="form-control" id="assigned_hours_${i+1}" name="assigned_hours[]" min="0" placeholder="Assigned Hours" required>
+            </div>
         `;
         weeksContainer.appendChild(weekInput);
     }
