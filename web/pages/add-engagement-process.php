@@ -14,13 +14,13 @@ if (!$employee) {
     die("Invalid user ID.");
 }
 
-// Insert into assignments table
+// Insert into assignments table (without `assigned_hours`)
 $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id) VALUES (?, ?)");
 $assignmentInsert->bind_param("ii", $employee, $engagementId);
 if (!$assignmentInsert->execute()) {
     die("Assignment creation failed: " . $conn->error);
 }
-$assignmentId = $assignmentInsert->insert_id;
+$assignmentId = $assignmentInsert->insert_id;  // Get the ID of the inserted assignment
 
 // Loop through the number of weeks and insert into assignment_weeks
 for ($i = 1; $i <= $numberOfWeeks; $i++) {
