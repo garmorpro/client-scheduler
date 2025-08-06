@@ -495,14 +495,35 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <h5 id="clientName"></h5>
-        <p><strong>Total Assigned Hours:</strong> <span id="totalAssignedHours"></span></p>
-        <h6>Assigned Employees:</h6>
+        <!-- Client Name -->
+        <h4 id="clientName" class="text-center mb-3"></h4>
+
+        <!-- Utilization Progress Bar -->
+        <div class="mb-4">
+          <h6>Total Assigned Hours:</h6>
+          <div class="d-flex justify-content-between">
+            <span id="totalAssignedHours" class="fw-bold"></span>
+            <span id="totalHours" class="text-muted">/ 1000 hrs</span> <!-- Change 1000 to your total hours -->
+          </div>
+          <div class="progress mt-2" style="height: 25px;">
+            <div id="utilizationBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+          </div>
+        </div>
+
+        <!-- Assigned Employees -->
+        <h6 class="mt-4 mb-3">Assigned Employees:</h6>
         <div id="assignedEmployees"></div>
+
+        <!-- Notes Section -->
+        <div class="mt-4">
+          <h6 class="mb-2">Client Notes:</h6>
+          <p id="clientNotes" class="text-muted">No notes available.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 
 
 <!-- Modal for Employee Details -->
