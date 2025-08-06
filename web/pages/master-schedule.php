@@ -104,6 +104,7 @@ while ($row = $result->fetch_assoc()) {
 
     // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
+        console.log("Modal triggered:", user_id, employeeName, weekStart);
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
@@ -314,7 +315,7 @@ function deleteAssignment(assignmentId) {
                             }
                             ?>
                             <?php if ($isAdmin): ?>
-                                <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
+                                <td class="addable" onclick="openManageOrAddModal('<?php echo $userId; ?>', <?php echo json_encode($employees[$userId]['full_name']); ?>, '<?php echo $weekStart; ?>')">
                                     <?php echo $cellContent; ?>
                                 </td>
                             <?php else: ?>
@@ -487,42 +488,7 @@ function generateWeekInputs() {
 
 </script>
 
-<script>
-// function searchQuery() {
-//     var query = document.getElementById('searchInput').value;
-//     if (query.length >= 3) {
-//         fetchSearchResults(query);
-//     } else {
-//         document.getElementById('searchResults').style.display = 'none';
-//     }
-// }
-
-// function fetchSearchResults(query) {
-//     fetch('search.php?query=' + query)
-//         .then(response => response.json())
-//         .then(data => {
-//             let resultsHTML = '';
-//             data.forEach(result => {
-//                 resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
-//             });
-//             if (resultsHTML === '') {
-//                 resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
-//             }
-//             document.getElementById('searchResults').innerHTML = resultsHTML;
-//             document.getElementById('searchResults').style.display = 'block';
-//         })
-//         .catch(error => console.error('Error fetching search results:', error));
-// }
-
-// function openModal(id, type) {
-//     if (type === 'employee') {
-//         openEmployeeModal(id);
-//     } else if (type === 'client') {
-//         openClientModal(id);
-//     }
-// }
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
