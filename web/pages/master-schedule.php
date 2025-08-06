@@ -1,43 +1,30 @@
 <?php
-
-require_once '../includes/db.php'; // or wherever your DB connection is
-
+require_once '../includes/db.php';
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Get today's date
 $today = date('Y-m-d');
-
-// Adjust start date: if the selected date is not a Monday, shift it to the previous Monday
 $startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
-
-// Automatically calculate the end date to be 5 weeks after the selected start date, making it a 6-week view
 $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
-// Get all Mondays between start and end
 $mondays = [];
 $current = strtotime($startDate);
 while ($current <= strtotime($endDate)) {
-    if (date('N', $current) == 1) { // 1 = Monday
+    if (date('N', $current) == 1) {
         $mondays[] = $current;
     }
     $current = strtotime('+1 week', $current);
 }
 
-// Example employees (replace this with DB call if needed)
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
-// Fetch engagement data for each employee
-// Assuming $conn is your database connection
-$query = "SELECT `client_name`, `assigned_hours`, `start_date`, `assigned_to`
+$query = "SELECT `client_name`, `assigned_hours`, `start_date`, `end_date`, `assigned_to`, `engagement_id`
           FROM `engagements`
-          WHERE `assigned_to` = ? AND `start_date` >= ? AND `end_date` <= ?
-          ORDER BY `start_date`";
+          WHERE `start_date` <= ? AND `end_date` >= ?";
 $stmt = $conn->prepare($query);
-
 ?>
 
 <!DOCTYPE html>
@@ -47,49 +34,31 @@ $stmt = $conn->prepare($query);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-      .form-select, .form-control {
-        background-color: #f9fafb;
-        border-radius: 8px;
-      }
-      .highlight-today {
-        background-color: lightblue !important;
-      }
+      .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
+      .highlight-today { background-color: lightblue !important; }
+      td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
     </style>
     <script>
-      // JavaScript function to auto-submit form on date change
       function autoSubmitDateFilter() {
         document.getElementById("filterForm").submit();
+      }
+      function openModal(employee, weekStart, engagementId = null) {
+        const url = engagementId ? `edit-engagement.php?id=${engagementId}` : `add-engagement.php?employee=${encodeURIComponent(employee)}&week=${weekStart}`;
+        window.location.href = url;
       }
     </script>
 </head>
 <body class="d-flex">
-
   <?php include_once '../templates/sidebar.php'; ?>
-
   <div class="flex-grow-1 p-4">
     <h3 class="mb-0">Master Schedule</h3>
     <p class="text-muted mb-4">Complete overview of all client engagements and team assignments</p>
 
-    <!-- Filter Section -->
     <div class="bg-white border rounded p-4 mb-4">
-      <div class="mb-3 d-flex align-items-center gap-2">
-        <i class="bi bi-funnel text-muted"></i>
-        Filters
-      </div>
-
       <form id="filterForm" method="get" class="row g-3">
-        <!-- Search -->
         <div class="col-md-7">
-          <input 
-            type="text" 
-            name="search" 
-            class="form-control" 
-            placeholder="Search projects or clients..."
-            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-          >
+          <input type="text" name="search" class="form-control" placeholder="Search projects or clients..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
         </div>
-
-        <!-- Status Dropdown -->
         <div class="col-md-2">
           <select name="status" class="form-select">
             <option value="">All Statuses</option>
@@ -98,8 +67,6 @@ $stmt = $conn->prepare($query);
             <option value="on_hold" <?php echo (isset($_GET['status']) && $_GET['status'] == 'on_hold') ? 'selected' : ''; ?>>On Hold</option>
           </select>
         </div>
-
-        <!-- Date Selector Toolbar -->
         <div class="col-md-3 d-flex align-items-center gap-3">
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
           <a href="?start=<?php echo date('Y-m-d', strtotime('monday -3 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
@@ -107,16 +74,14 @@ $stmt = $conn->prepare($query);
       </form>
     </div>
 
-    <!-- Schedule Table -->
     <div class="table-responsive">
       <table class="table table-bordered align-middle text-center">
         <thead class="table-light">
           <tr>
             <th class="text-start">Employee</th>
-            <?php 
-              foreach ($mondays as $monday):
-                $weekStart = date('Y-m-d', $monday);
-                $highlightClass = (date('Y-m-d', strtotime($today)) >= $weekStart && date('Y-m-d', strtotime($today)) < date('Y-m-d', strtotime('+7 days', strtotime($weekStart)))) ? 'highlight-today' : '';
+            <?php foreach ($mondays as $monday): 
+              $weekStart = date('Y-m-d', $monday);
+              $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
             ?>
               <th class="<?php echo $highlightClass; ?>">
                 <?php echo date('M j', $monday); ?><br>
@@ -129,22 +94,25 @@ $stmt = $conn->prepare($query);
           <?php foreach ($employees as $employee): ?>
             <tr>
               <td class="text-start fw-semibold"><?php echo htmlspecialchars($employee); ?></td>
-              <?php foreach ($mondays as $monday): ?>
-                <td>
-                  <?php
-                    $clientAssignments = ''; 
-                    $stmt->bind_param('sss', $employee, $startDate, $endDate);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    while ($row = $result->fetch_assoc()) {
-                        $weekStart = date('Y-m-d', $monday);
-                        if ($row['start_date'] <= $weekStart && $row['end_date'] >= $weekStart) {
-                            $clientAssignments .= $row['client_name'] . ' (' . $row['assigned_hours'] . ')<br>';
-                        }
+              <?php foreach ($mondays as $monday): 
+                $weekStart = date('Y-m-d', $monday);
+                $stmt->bind_param('ss', $weekStart, $weekStart);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $cellContent = '-';
+                $engagementId = null;
+                while ($row = $result->fetch_assoc()) {
+                    if ($row['assigned_to'] === $employee && $row['start_date'] <= $weekStart && $row['end_date'] >= $weekStart) {
+                        $cellContent = "<span onclick=\"openModal('{$employee}', '{$weekStart}', '{$row['engagement_id']}')\">{$row['client_name']} ({$row['assigned_hours']})</span>";
+                        $engagementId = $row['engagement_id'];
+                        break;
                     }
-                    echo $clientAssignments ? $clientAssignments : '-';
-                  ?>
-                </td>
+                }
+                if ($cellContent === '-') {
+                    $cellContent = "<span class='text-muted' onclick=\"openModal('{$employee}', '{$weekStart}')\">+</span>";
+                }
+              ?>
+              <td class="addable"><?php echo $cellContent; ?></td>
               <?php endforeach; ?>
             </tr>
           <?php endforeach; ?>
@@ -152,6 +120,5 @@ $stmt = $conn->prepare($query);
       </table>
     </div>
   </div>
-
 </body>
 </html>
