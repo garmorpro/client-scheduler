@@ -39,7 +39,11 @@
   <!-- Bottom User Info -->
   <div class="d-flex align-items-center">
     <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
-      JD
+        <?php
+        $firstInitial = isset($_SESSION['first_name'][0]) ? $_SESSION['first_name'][0] : '';
+        $lastInitial = isset($_SESSION['last_name'][0]) ? $_SESSION['last_name'][0] : '';
+        echo strtoupper($firstInitial . $lastInitial);
+        ?>
     </div>
     <div>
       <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name'] ?></div>
