@@ -21,10 +21,25 @@ while ($current <= strtotime($endDate)) {
 
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
-// Fetch engagement data for each employee
-$query = "SELECT `client_name`, `assigned_hours`, `start_date`, `end_date`, `assigned_to`, `engagement_id`
-          FROM `engagements`
-          WHERE `start_date` <= ? AND `end_date` >= ?";
+// Modify the query to join 'assignment_weeks' and 'engagements'
+$query = "
+    SELECT 
+        aw.assignment_id, 
+        e.client_name, 
+        aw.assigned_hours, 
+        aw.week_start, 
+        e.engagement_id, 
+        e.assigned_to
+    FROM 
+        assignment_weeks aw
+    JOIN 
+        engagements e ON e.engagement_id = aw.engagement_id
+    WHERE 
+        aw.week_start <= ? AND aw.week_start >= ?
+    ORDER BY 
+        aw.week_start
+";
+
 $stmt = $conn->prepare($query);
 
 if ($stmt === false) {
@@ -108,7 +123,7 @@ if ($stmt === false) {
                 $cellContent = '-';
                 $engagementId = null;
                 while ($row = $result->fetch_assoc()) {
-                    if ($row['assigned_to'] === $employee && $row['start_date'] <= $weekStart && $row['end_date'] >= $weekStart) {
+                    if ($row['assigned_to'] === $employee && $row['week_start'] <= $weekStart && $row['week_start'] >= $weekStart) {
                         $cellContent = "<span onclick=\"openModal('{$employee}', '{$weekStart}', '{$row['engagement_id']}')\">{$row['client_name']} ({$row['assigned_hours']})</span>";
                         $engagementId = $row['engagement_id'];
                         break;
