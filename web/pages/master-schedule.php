@@ -277,7 +277,7 @@ function deleteAssignment(assignmentId) {
             <tbody>
                 <?php foreach ($employees as $userId => $employeeName): ?>
                     <tr>
-                        <td class="text-start fw-semibold"><?php echo htmlspecialchars($employeeName); ?></td>
+                        <td class="text-start fw-semibold"><?php echo htmlspecialchars($employeeName); ?> <span><?php echo htmlspecialchars($role); ?></span></td>
                         <?php foreach ($mondays as $monday): ?>
                             <?php 
                             $weekStart = date('Y-m-d', $monday);
