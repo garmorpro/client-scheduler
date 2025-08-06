@@ -246,10 +246,6 @@ function deleteAssignment(assignmentId) {
             <div class="col-md-7">
                 <input type="text" name="search" class="form-control" placeholder="Search projects or clients...">
             </div>
-            <div class="col-md-7 position-relative">
-                <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search projects or employees..." autocomplete="off">
-                <ul id="searchDropdown" class="list-group position-absolute w-100" style="z-index: 1000; display: none;"></ul>
-            </div>
             <div class="col-md-2">
                 <select name="status" class="form-select">
                     <option value="">All Statuses</option>
@@ -477,66 +473,6 @@ function generateWeekInputs() {
 }
 
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const dropdown = document.getElementById('searchDropdown');
-
-    let debounceTimer;
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-
-        clearTimeout(debounceTimer);
-
-        if (query.length < 3) {
-            dropdown.innerHTML = '';
-            dropdown.style.display = 'none';
-            return;
-        }
-
-        debounceTimer = setTimeout(() => {
-            fetch(`search-suggestions.php?term=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    dropdown.innerHTML = '';
-
-                    if (data.length === 0) {
-                        dropdown.style.display = 'none';
-                        return;
-                    }
-
-                    data.forEach(item => {
-                        const li = document.createElement('li');
-                        li.classList.add('list-group-item', 'list-group-item-action');
-                        li.textContent = `${item.name} (${item.type})`;
-                        li.dataset.type = item.type;
-                        li.dataset.value = item.name;
-
-                        li.onclick = () => {
-                            searchInput.value = item.name;
-                            dropdown.style.display = 'none';
-                            document.getElementById("filterForm").submit(); // auto-submit if needed
-                        };
-
-                        dropdown.appendChild(li);
-                    });
-
-                    dropdown.style.display = 'block';
-                });
-        }, 300); // debounce delay
-    });
-
-    // Hide dropdown if clicking outside
-    document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== searchInput) {
-            dropdown.style.display = 'none';
-        }
-    });
-});
-</script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
