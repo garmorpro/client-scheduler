@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db.php';
+require_once '../includes/db.php'; // or wherever your DB connection is
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -21,10 +21,16 @@ while ($current <= strtotime($endDate)) {
 
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
+// Fetch engagement data for each employee
 $query = "SELECT `client_name`, `assigned_hours`, `start_date`, `end_date`, `assigned_to`, `engagement_id`
           FROM `engagements`
           WHERE `start_date` <= ? AND `end_date` >= ?";
 $stmt = $conn->prepare($query);
+
+if ($stmt === false) {
+    // If prepare fails, output the error and exit
+    die('MySQL prepare failed: ' . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
