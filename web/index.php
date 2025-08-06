@@ -12,8 +12,9 @@
 
 
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card p-4 shadow" style="width: 100%; max-width: 550px;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 450px;">
       <h3 class="text-center mb-4">Login</h3>
+      <p>Sign in to access your engagement schedules</p>
       <form>
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
