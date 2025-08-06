@@ -10,27 +10,38 @@ $employee = $_POST['employee']; // Use employee as the user ID
 $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
-if (!$employee || !$engagementId || !$numberOfWeeks) {
-    die("Invalid data.");
+if (!$employee) {
+    die("Invalid user ID.");
 }
 
-// Loop through the number of weeks and insert into the assignments table for each week
+// Loop through the number of weeks and insert into assignments table
 for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekKey = 'week_start_' . $i;
     $hoursKey = 'assigned_hours_' . $i;
 
-    // Check if the required POST fields exist
     if (!isset($_POST[$weekKey]) || !isset($_POST[$hoursKey])) {
-        continue; // Skip if the week or assigned hours are not set
+        continue;
     }
 
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    // Insert a new record into the assignments table for each week
+    // Check if the assignment already exists
+    $checkQuery = $conn->prepare("SELECT COUNT(*) FROM assignments WHERE user_id = ? AND engagement_id = ? AND week_start = ?");
+    $checkQuery->bind_param("iis", $employee, $engagementId, $weekStart);
+    $checkQuery->execute();
+    $checkResult = $checkQuery->get_result();
+    $exists = $checkResult->fetch_row()[0];
+
+    if ($exists) {
+        // Skip inserting this week if it already exists
+        echo "Assignment for this week already exists: User {$employee}, Engagement {$engagementId}, Week Start {$weekStart}.<br>";
+        continue;
+    }
+
+    // Insert into assignments table if it does not exist
     $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours) VALUES (?, ?, ?, ?)");
     $assignmentInsert->bind_param("iiss", $employee, $engagementId, $weekStart, $assignedHours);
-    
     if (!$assignmentInsert->execute()) {
         die("Assignment creation failed: " . $conn->error);
     }
