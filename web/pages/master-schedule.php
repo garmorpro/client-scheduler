@@ -145,8 +145,18 @@ while ($row = $result->fetch_assoc()) {
         `;
     });
 
+    // Add "Add Assignment" button if there are existing assignments
+    if (assignmentsForWeek.length > 0) {
+        assignmentsList += `
+            <button class="btn btn-sm btn-success mt-2" onclick="openModal('${user_id}', '${employeeName}', '${weekStart}')">
+                <i class="bi bi-plus-circle"></i> Add Assignment
+            </button>
+        `;
+    }
+
     document.getElementById('existingAssignments').innerHTML = assignmentsList;
 }
+
 
 function openEditModal(assignmentId, assignedHours) {
     document.getElementById('editAssignmentId').value = assignmentId;
