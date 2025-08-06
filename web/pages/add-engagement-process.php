@@ -44,7 +44,7 @@ for ($i = 1; $i <= $numberOfWeeks; $i++) {
     $weekStart = $_POST[$weekKey];
     $assignedHours = $_POST[$hoursKey];
 
-    $weekInsert = $conn->prepare("INSERT INTO assignment_weeks (assignment_id, week_start, assigned_hours) VALUES (?, ?, ?)");
+    $weekInsert = $conn->prepare("INSERT INTO assignment_weeks (week_start, assigned_hours) VALUES (?, ?, ?)");
     $weekInsert->bind_param("iss", $assignmentId, $weekStart, $assignedHours);
     if (!$weekInsert->execute()) {
         echo "Error inserting week $i: " . $conn->error . "<br>";
