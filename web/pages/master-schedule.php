@@ -91,7 +91,7 @@ while ($row = $result->fetch_assoc()) {
     }
 
     function openModal(userId, employeeName, weekStart, engagementId = null) {
-        document.getElementById('modalEmployee').value = userId;
+        document.getElementById('modalEmployee').value = user_id;
         document.getElementById('modalEmployeeName').value = employeeName;
         document.getElementById('modalWeek').value = weekStart;
         document.getElementById('modalEngagementId').value = engagementId ?? '';

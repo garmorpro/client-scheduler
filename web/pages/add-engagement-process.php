@@ -6,26 +6,20 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$userId = $_POST['user_id'];
-$employee = $_POST['employee'];
+$userId = $_POST['user_id']; // Get user_id from the POST request
+$employee = $_POST['employee']; // Not needed in this case since user_id is already passed
 $engagementId = $_POST['client_name'];
 $numberOfWeeks = isset($_POST['numberOfWeeks']) ? (int)$_POST['numberOfWeeks'] : 0;
 
-// Get the user ID from employee name
-$user_id_query = $conn->prepare("SELECT user_id FROM users WHERE user_id = ? LIMIT 1");
-$user_id_query->bind_param("s", $userId);
-$user_id_query->execute();
-$user_id_result = $user_id_query->get_result();
-$user_id_row = $user_id_result->fetch_assoc();
-$user_id = $user_id_row ? $user_id_row['user_id'] : null;
-
-if (!$user_id) {
-    die("User not found.");
+// We don't need to fetch the user_id from the database since it's already passed
+// Make sure $userId is valid (if necessary)
+if (!$userId) {
+    die("Invalid user ID.");
 }
 
 // Insert into assignments table
 $assignmentInsert = $conn->prepare("INSERT INTO assignments (user_id, engagement_id) VALUES (?, ?)");
-$assignmentInsert->bind_param("ii", $user_id, $engagementId);
+$assignmentInsert->bind_param("ii", $userId, $engagementId);
 if (!$assignmentInsert->execute()) {
     die("Assignment creation failed: " . $conn->error);
 }
