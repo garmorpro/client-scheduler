@@ -105,7 +105,7 @@ while ($row = $result->fetch_assoc()) {
         if (assignmentsForWeek.length > 0) {
             // If there are existing assignments, show them in the new assignments modal
             document.getElementById('assignmentsModalTitle').innerText = 'Manage Assignments';
-            showAssignments(assignmentsForWeek);
+            showAssignments(assignmentsForWeek, weekStart, employeeName);
             const assignmentsModalElement = new bootstrap.Modal(document.getElementById('assignmentsModal'));
             assignmentsModalElement.show();
         } else {
@@ -120,9 +120,10 @@ while ($row = $result->fetch_assoc()) {
         }
     }
 
-    function showAssignments(assignmentsForWeek) {
+    function showAssignments(assignmentsForWeek, weekStart, employeeName) {
         let assignmentsList = '';
-
+        document.getElementById('assignmentsModalHeader').innerHTML = `Manage assignments for week of ${weekStart} <br> Consultant: ${employeeName}`;
+        
         assignmentsForWeek.forEach((assignment) => {
             assignmentsList += `
                 <p>
@@ -137,9 +138,11 @@ while ($row = $result->fetch_assoc()) {
     }
 
     function editAssignment(engagementId) {
-        // Logic for editing an assignment
+        // Logic for opening the edit modal
         console.log('Edit assignment:', engagementId);
-        // You can populate the modal with existing data here for editing
+        // For now, we can load the data into a new modal for editing
+        const editModalElement = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
+        editModalElement.show();
     }
 
     function deleteAssignment(engagementId) {
@@ -249,51 +252,35 @@ while ($row = $result->fetch_assoc()) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div id="assignmentsModalHeader"></div>
         <div id="existingAssignments"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal for Adding Engagements -->
-<div class="modal fade" id="engagementModal" tabindex="-1">
+<!-- Modal for Editing an Assignment -->
+<div class="modal fade" id="editAssignmentModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Add Engagement</h5>
+        <h5 class="modal-title">Edit Assignment</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="engagementForm" action="add-engagement-process.php" method="POST">
-          <input type="text" id="modalEmployee" name="employee">
-          <input type="text" id="modalEmployeeName">
-          <input type="text" id="modalWeek" name="week_start">
-          <input type="text" id="modalEngagementId" name="engagement_id">
-
-          <div id="existingAssignments"></div>
-
-          <div class="mb-3">
-            <label for="client_name" class="form-label">Client Name</label>
-            <select class="form-select" id="client_name" name="client_name" required>
-              <option value="" disabled selected>Select a client</option>
-              <?php foreach ($activeClients as $client): ?>
-                <option value="<?php echo $client['engagement_id']; ?>">
-                  <?php echo htmlspecialchars($client['client_name']); ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label for="numberOfWeeks" class="form-label">Number of Weeks</label>
-            <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
-          </div>
-
-          <div id="weeksContainer"></div>
-
-          <div class="mb-3 text-end">
-            <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
-          </div>
+        <!-- Your form for editing assignment -->
+        <form>
+            <div class="mb-3">
+                <label for="editClientName" class="form-label">Client Name</label>
+                <input type="text" class="form-control" id="editClientName" required>
+            </div>
+            <div class="mb-3">
+                <label for="editAssignedHours" class="form-label">Assigned Hours</label>
+                <input type="number" class="form-control" id="editAssignedHours" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
         </form>
       </div>
     </div>
