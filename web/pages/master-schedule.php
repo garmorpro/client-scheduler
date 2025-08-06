@@ -505,33 +505,44 @@ function openEngagementModal(engagementId) {
       </div>
       <div class="modal-body">
         <!-- Engagement Name -->
-        <h4 id="clientName" class="text-center mb-3"></h4>
+        <h4 id="clientName" class="text-center mb-3 text-primary fw-bold"></h4>
 
         <!-- Utilization Progress Bar -->
         <div class="mb-4">
-          <h6>Total Assigned Hours:</h6>
+          <h6>Total Assigned Hours</h6>
           <div class="d-flex justify-content-between">
-            <span id="totalAssignedHours" class="fw-bold"></span>
-            <span id="totalHours" class="text-muted">/ 1000 hrs</span> <!-- Change 1000 to your total hours -->
+            <span id="totalAssignedHours" class="fw-bold fs-5 text-dark"></span>
+            <span id="totalHours" class="text-muted">/ <span id="totalAvailableHours">1000</span> hrs</span>
           </div>
-          <div class="progress mt-2" style="height: 25px;">
+          <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
             <div id="utilizationBar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
           </div>
         </div>
 
-        <!-- Assigned Employees -->
-        <h6 class="mt-4 mb-3">Assigned Employees:</h6>
-        <div id="assignedEmployees"></div>
+        <!-- Assigned Employees Section -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">Assigned Employees</h6>
+          </div>
+          <div class="card-body">
+            <div id="assignedEmployees" class="list-group"></div>
+          </div>
+        </div>
 
         <!-- Notes Section (Optional) -->
-        <div class="mt-4">
-          <h6 class="mb-2">Client Notes:</h6>
-          <p id="clientNotes" class="text-muted">No notes available.</p>
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">Client Notes</h6>
+          </div>
+          <div class="card-body">
+            <p id="clientNotes" class="text-muted">No notes available.</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 
 
