@@ -21,7 +21,7 @@ while ($current <= strtotime($endDate)) {
 
 $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
-// Modify the query to join 'assignment_weeks' and 'engagements'
+// Modify the query to join 'assignments', 'assignment_weeks', and 'engagements' based on 'user_id' and 'engagement_id'
 $query = "
     SELECT 
         aw.assignment_id, 
@@ -29,13 +29,15 @@ $query = "
         aw.assigned_hours, 
         aw.week_start, 
         e.engagement_id, 
-        e.assigned_to
+        a.user_id
     FROM 
         assignment_weeks aw
     JOIN 
-        engagements e ON e.engagement_id = aw.engagement_id
+        assignments a ON a.engagement_id = aw.engagement_id
+    JOIN 
+        engagements e ON e.engagement_id = a.engagement_id
     WHERE 
-        aw.week_start <= ? AND aw.week_start >= ?
+        aw.week_start <= ? AND aw.week_start >= ? AND a.user_id = ?
     ORDER BY 
         aw.week_start
 ";
@@ -117,13 +119,13 @@ if ($stmt === false) {
               <td class="text-start fw-semibold"><?php echo htmlspecialchars($employee); ?></td>
               <?php foreach ($mondays as $monday): 
                 $weekStart = date('Y-m-d', $monday);
-                $stmt->bind_param('ss', $weekStart, $weekStart);
+                $stmt->bind_param('sss', $weekStart, $weekStart, $employee);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $cellContent = '-';
                 $engagementId = null;
                 while ($row = $result->fetch_assoc()) {
-                    if ($row['assigned_to'] === $employee && $row['week_start'] <= $weekStart && $row['week_start'] >= $weekStart) {
+                    if ($row['user_id'] === $employee && $row['week_start'] <= $weekStart && $row['week_start'] >= $weekStart) {
                         $cellContent = "<span onclick=\"openModal('{$employee}', '{$weekStart}', '{$row['engagement_id']}')\">{$row['client_name']} ({$row['assigned_hours']})</span>";
                         $engagementId = $row['engagement_id'];
                         break;
