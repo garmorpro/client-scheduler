@@ -47,20 +47,30 @@ $stmt->bind_param('is', $employeeId, $today);
 $stmt->execute();
 $assignmentsResult = $stmt->get_result();
 
+
 $totalAssignedHours = 0;
 $assignmentItemsHTML = '';
+$assignedHoursByWeek = []; // new array to hold weekly totals
 
 while ($row = $assignmentsResult->fetch_assoc()) {
     $client = htmlspecialchars($row['client_name']);
-    $weekStart = date('M j, Y', strtotime($row['week_start']));
+    $weekStartRaw = $row['week_start'];
+    $weekStartFormatted = date('M j, Y', strtotime($weekStartRaw));
     $hours = (int)$row['assigned_hours'];
     $totalAssignedHours += $hours;
 
+    // Group by week
+    if (!isset($assignedHoursByWeek[$weekStartRaw])) {
+        $assignedHoursByWeek[$weekStartRaw] = 0;
+    }
+    $assignedHoursByWeek[$weekStartRaw] += $hours;
+
+    // Generate HTML for each assignment
     $assignmentItemsHTML .= "
         <div class='list-group-item d-flex justify-content-between align-items-center'>
             <div>
                 <strong>{$client}</strong><br />
-                <small class='text-muted'>Week of {$weekStart}</small>
+                <small class='text-muted'>Week of {$weekStartFormatted}</small>
             </div>
             <span class='badge bg-primary rounded-pill'>{$hours} hrs</span>
         </div>
