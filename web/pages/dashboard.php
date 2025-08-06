@@ -20,6 +20,15 @@ if (!isset($_SESSION['user_id'])) {
   <div class="flex-grow-1 p-4">
     <!-- Dashboard content goes here -->
     <h1>Welcome to the Dashboard</h1>
+
+
+    <?php
+    // Dump all session variables
+echo '<pre>';  // Pre-format the output for better readability
+var_dump($_SESSION);  // or use print_r($_SESSION) if you prefer
+echo '</pre>';
+?>
+
   </div>
 
 </body>
