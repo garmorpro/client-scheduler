@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 // Get today's date
 $today = date('Y-m-d');
 
-// Set the default start date to 2 weeks before the current date
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('-2 weeks')); // Default start 2 weeks before today
+// Set the default start date to 2 weeks before the current date (start of the week of two weeks ago)
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime($_GET['start'])) : date('Y-m-d', strtotime('monday -2 weeks')); // Start 2 weeks ago
 
 // Set the end date to 5 weeks after the start date, or use the one from GET params
 $endDate = isset($_GET['end']) ? date('Y-m-d', strtotime($_GET['end'])) : date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
@@ -102,7 +102,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
           <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
           <span class="fw-semibold">to</span>
           <input type="date" name="end" class="form-control" value="<?php echo htmlspecialchars($endDate); ?>" onchange="autoSubmitDateFilter()">
-          <a href="?start=<?php echo date('Y-m-d', strtotime('-2 weeks')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('-2 weeks'))); ?>" class="btn btn-outline-secondary">Today</a>
+          <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>&end=<?php echo date('Y-m-d', strtotime('+5 weeks', strtotime('monday -2 weeks'))); ?>" class="btn btn-outline-secondary">Today</a>
         </div>
       </form>
     </div>
