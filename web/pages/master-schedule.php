@@ -67,7 +67,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
 
       <form id="filterForm" method="get" class="row g-3">
         <!-- Search -->
-        <div class="col-md-6">
+        <div class="col-md-8">
           <input 
             type="text" 
             name="search" 
@@ -78,7 +78,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
         </div>
 
         <!-- Status Dropdown -->
-        <div class="col-md-3">
+        <div class="col-md-2">
           <select name="status" class="form-select">
             <option value="">All Statuses</option>
             <option value="active" <?php echo (isset($_GET['status']) && $_GET['status'] == 'active') ? 'selected' : ''; ?>>Active</option>
