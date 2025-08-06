@@ -488,39 +488,39 @@ function generateWeekInputs() {
 </script>
 
 <script>
-function searchQuery() {
-    var query = document.getElementById('searchInput').value;
-    if (query.length >= 3) {
-        fetchSearchResults(query);
-    } else {
-        document.getElementById('searchResults').style.display = 'none';
-    }
-}
+// function searchQuery() {
+//     var query = document.getElementById('searchInput').value;
+//     if (query.length >= 3) {
+//         fetchSearchResults(query);
+//     } else {
+//         document.getElementById('searchResults').style.display = 'none';
+//     }
+// }
 
-function fetchSearchResults(query) {
-    fetch('search.php?query=' + query)
-        .then(response => response.json())
-        .then(data => {
-            let resultsHTML = '';
-            data.forEach(result => {
-                resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
-            });
-            if (resultsHTML === '') {
-                resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
-            }
-            document.getElementById('searchResults').innerHTML = resultsHTML;
-            document.getElementById('searchResults').style.display = 'block';
-        })
-        .catch(error => console.error('Error fetching search results:', error));
-}
+// function fetchSearchResults(query) {
+//     fetch('search.php?query=' + query)
+//         .then(response => response.json())
+//         .then(data => {
+//             let resultsHTML = '';
+//             data.forEach(result => {
+//                 resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
+//             });
+//             if (resultsHTML === '') {
+//                 resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
+//             }
+//             document.getElementById('searchResults').innerHTML = resultsHTML;
+//             document.getElementById('searchResults').style.display = 'block';
+//         })
+//         .catch(error => console.error('Error fetching search results:', error));
+// }
 
-function openModal(id, type) {
-    if (type === 'employee') {
-        openEmployeeModal(id);
-    } else if (type === 'client') {
-        openClientModal(id);
-    }
-}
+// function openModal(id, type) {
+//     if (type === 'employee') {
+//         openEmployeeModal(id);
+//     } else if (type === 'client') {
+//         openClientModal(id);
+//     }
+// }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
