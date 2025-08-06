@@ -98,12 +98,18 @@ while ($row = $result->fetch_assoc()) {
         document.getElementById('modalWeek').value = weekStart;
         document.getElementById('modalEngagementId').value = engagementId ?? '';
 
-        // Open edit modal if assignments are found for the week
-        if (engagementId) {
+        // Fetch assignments for the specific user and week from PHP
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+
+        // Check if there are existing assignments
+        if (assignmentsForWeek.length > 0) {
+            // If there are existing assignments, show them in the modal and allow editing
             document.getElementById('modalTitle').innerText = 'Edit Engagement';
             document.getElementById('modalSubmitBtn').innerText = 'Save Changes';
-            showAssignments(weekStart, user_id); // Load existing assignments
+            showAssignments(assignmentsForWeek);
         } else {
+            // If no assignments, show the form to add a new engagement
             document.getElementById('modalTitle').innerText = 'Add Engagement';
             document.getElementById('modalSubmitBtn').innerText = 'Add Engagement';
             document.getElementById('client_name').selectedIndex = 0;
@@ -111,22 +117,20 @@ while ($row = $result->fetch_assoc()) {
             document.getElementById('weeksContainer').innerHTML = '';
         }
 
+        // Open the modal
         const modalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
         modalElement.show();
     }
 
-    function showAssignments(weekStart, userId) {
-        // Fetch assignments for the specific week and user
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[userId][weekStart] ?? [];
+    function showAssignments(assignmentsForWeek) {
         let assignmentsList = '';
 
-        if (assignmentsForWeek.length > 0) {
-            assignmentsForWeek.forEach((assignment, index) => {
-                assignmentsList += `<p>Client: ${assignment.client_name}, Hours: ${assignment.assigned_hours}</p>`;
-            });
-            document.getElementById('existingAssignments').innerHTML = assignmentsList;
-        }
+        assignmentsForWeek.forEach((assignment) => {
+            assignmentsList += `<p>Client: ${assignment.client_name}, Hours: ${assignment.assigned_hours}</p>`;
+        });
+
+        // Display existing assignments in the modal
+        document.getElementById('existingAssignments').innerHTML = assignmentsList;
     }
 
     function generateWeekInputs() {
