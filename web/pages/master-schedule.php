@@ -59,7 +59,7 @@ $employees = ['John Doe', 'Jane Smith', 'Alex Johnson'];
     <p class="text-muted mb-4">Complete overview of all client engagements and team assignments</p>
 
     <!-- Filter Section -->
-    <div class="bg-white border rounded p-3 mb-4">
+    <div class="bg-white border rounded p-4 mb-4">
       <div class="mb-3 d-flex align-items-center gap-2">
         <i class="bi bi-funnel text-muted"></i>
         Filters
