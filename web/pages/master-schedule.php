@@ -244,6 +244,7 @@ if ($stmt === false) {
                             <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
                         </div>
 
+                        
                         <!-- Container for dynamically generated week inputs -->
                         <div id="weeksContainer"></div>
 
