@@ -8,6 +8,7 @@ require_once '../includes/auth.php';
     <meta charset="UTF-8">
     <title>Login - Client Scheduler</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body style="background-color: rgba(216, 216, 216, 1);">
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
