@@ -226,6 +226,40 @@ function deleteAssignment(assignmentId) {
     }
 }
 
+
+
+function openClientModal(clientId) {
+    fetch(`client-details.php?id=${clientId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('clientName').innerText = data.client_name;
+            document.getElementById('totalAssignedHours').innerText = data.total_hours;
+            document.getElementById('assignedEmployees').innerHTML = data.assigned_employees;
+
+            const clientModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            clientModal.show();
+        })
+        .catch(error => console.error('Error fetching client details:', error));
+}
+
+
+function openEmployeeModal(employeeId) {
+    fetch(`employee-details.php?id=${employeeId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('employeeName').innerText = data.employee_name;
+            document.getElementById('weeklyAssignedHours').innerHTML = data.weekly_hours;
+
+            const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
+            employeeModal.show();
+        })
+        .catch(error => console.error('Error fetching employee details:', error));
+}
+
+
+
+
+
     </script>
 
     <style>
@@ -244,7 +278,8 @@ function deleteAssignment(assignmentId) {
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
             <div class="col-md-7">
-                <input type="text" name="search" class="form-control" placeholder="Search projects or clients...">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
+                <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
             <div class="col-md-2">
                 <select name="status" class="form-select">
@@ -442,7 +477,56 @@ function deleteAssignment(assignmentId) {
     </div>
   </div>
 </div>
+
+
+
+
+
 <?php endif; ?>
+
+
+
+<!-- Modal for Client Details -->
+<div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clientDetailsModalLabel">Client Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5 id="clientName"></h5>
+        <p><strong>Total Assigned Hours:</strong> <span id="totalAssignedHours"></span></p>
+        <h6>Assigned Employees:</h6>
+        <div id="assignedEmployees"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for Employee Details -->
+<div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5 id="employeeName"></h5>
+        <h6>Assigned Hours per Week:</h6>
+        <div id="weeklyAssignedHours"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
 <script>
 function generateWeekInputs() {
@@ -472,6 +556,42 @@ function generateWeekInputs() {
     }
 }
 
+</script>
+
+<script>
+function searchQuery() {
+    var query = document.getElementById('searchInput').value;
+    if (query.length >= 3) {
+        fetchSearchResults(query);
+    } else {
+        document.getElementById('searchResults').style.display = 'none';
+    }
+}
+
+function fetchSearchResults(query) {
+    fetch('search.php?query=' + query)
+        .then(response => response.json())
+        .then(data => {
+            let resultsHTML = '';
+            data.forEach(result => {
+                resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
+            });
+            if (resultsHTML === '') {
+                resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
+            }
+            document.getElementById('searchResults').innerHTML = resultsHTML;
+            document.getElementById('searchResults').style.display = 'block';
+        })
+        .catch(error => console.error('Error fetching search results:', error));
+}
+
+function openModal(id, type) {
+    if (type === 'employee') {
+        openEmployeeModal(id);
+    } else if (type === 'client') {
+        openClientModal(id);
+    }
+}
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
