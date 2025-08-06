@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 $today = date('Y-m-d');
 
 // Adjust start date: if the selected date is not a Monday, shift it to the previous Monday
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -2 weeks'));
 
 // Automatically calculate the end date to be 5 weeks after the selected start date, making it a 6-week view
 $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
