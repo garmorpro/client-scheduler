@@ -155,42 +155,50 @@ while ($row = $result->fetch_assoc()) {
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center">
-            <thead class="table-light">
+    <table class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th class="text-start">Employee</th>
+                <?php foreach ($mondays as $monday): ?>
+                    <?php 
+                    $weekStart = date('Y-m-d', $monday);
+                    $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
+                    ?>
+                    <th class="<?php echo $highlightClass; ?>">
+                        <?php echo date('M j', $monday); ?><br>
+                        <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                    </th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($employees as $userId => $employeeName): ?>
                 <tr>
-                    <th class="text-start">Employee</th>
+                    <td class="text-start fw-semibold"><?php echo htmlspecialchars($employeeName); ?></td>
                     <?php foreach ($mondays as $monday): ?>
                         <?php 
                         $weekStart = date('Y-m-d', $monday);
-                        $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
+                        $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
+                        $cellContent = "";
+                        
+                        if ($assignmentsForWeek) {
+                            foreach ($assignmentsForWeek as $assignment) {
+                                $cellContent .= "<span>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
+                            }
+                        } else {
+                            $cellContent = "<span class='text-muted'>+</span>";
+                        }
                         ?>
-                        <th class="<?php echo $highlightClass; ?>">
-                            <?php echo date('M j', $monday); ?><br>
-                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
-                        </th>
+                        <td class="addable" onclick="openModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>')">
+                            <?php echo $cellContent; ?>
+                        </td>
                     <?php endforeach; ?>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($employees as $userId => $employeeName): ?>
-                    <tr>
-                        <td class="text-start fw-semibold"><?php echo htmlspecialchars($employeeName); ?></td>
-                        <?php foreach ($mondays as $monday): ?>
-                            <?php 
-                            $weekStart = date('Y-m-d', $monday);
-                            $data = $assignments[$userId][$weekStart] ?? null;
-                            $cellContent = $data ? "<span>{$data['client_name']} ({$data['assigned_hours']})</span>" : "<span class='text-muted'>+</span>";
-                            $engagementId = $data['engagement_id'] ?? null;
-                            ?>
-                            <td class="addable" onclick="openModal('<?php echo $userId; ?>', '<?php echo htmlspecialchars($employeeName); ?>', '<?php echo $weekStart; ?>', '<?php echo $engagementId ?? 'null'; ?>')">
-                                <?php echo $cellContent; ?>
-                            </td>
-                        <?php endforeach; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
 </div>
 
 <div class="modal fade" id="engagementModal" tabindex="-1">
