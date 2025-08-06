@@ -203,9 +203,10 @@ function deleteAssignment(assignmentId) {
     </script>
     <style>
     .bg-purple {
-        background-color: #6f42c1 !important;
-        color: white;
-    }
+    background-color: #6f42c1 !important;
+    color: white;
+}
+
 </style>
 
 </head>
@@ -265,12 +266,16 @@ function deleteAssignment(assignmentId) {
                         if ($assignmentsForWeek) {
                             foreach ($assignmentsForWeek as $assignment) {
                                 $status = strtolower($assignment['status']);
-                                $badgeColor = match ($status) {
-                                    'confirmed' => 'success',       // Green
-                                    'pending' => 'purple',          // Custom class
-                                    'not_confirmed' => 'primary',   // Blue
-                                    default => 'secondary'
-                                };
+
+                                if ($status === 'confirmed') {
+                                    $badgeColor = 'success'; // Green
+                                } elseif ($status === 'pending') {
+                                    $badgeColor = 'purple'; // Custom class
+                                } elseif ($status === 'not_confirmed') {
+                                    $badgeColor = 'primary'; // Blue
+                                } else {
+                                    $badgeColor = 'secondary'; // Default
+                                }
                               
                                 $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
                             }
