@@ -70,7 +70,7 @@
 
 <!-- Add Engagement Modal -->
 <div class="modal fade" id="addEngagementModal" tabindex="-1" aria-labelledby="addEngagementModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content rounded-3 shadow">
       <div class="modal-header">
         <h5 class="modal-title fw-bold" id="addEngagementModalLabel">Create New Project</h5>
@@ -79,68 +79,42 @@
 
       <form id="addEngagementForm" action="create-engagement.php" method="POST">
         <div class="modal-body">
-          <p class="text-muted mb-4">Add a new client engagement to the schedule</p>
-
           <div class="mb-3">
-            <label for="projectName" class="form-label">Project Name</label>
-            <input type="text" class="form-control" id="projectName" name="project_name" required>
+            <label for="clientName" class="form-label">Client Name</label>
+            <input type="text" class="form-control" id="clientName" name="client_name" required>
           </div>
 
           <div class="mb-3">
-            <label for="client" class="form-label">Client</label>
-            <input type="text" class="form-control" id="client" name="client" required>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="type" class="form-label">Type</label>
-              <select class="form-select" id="type" name="type" required>
-                <option value="">Select type</option>
-                <option value="Audit">Audit</option>
-                <option value="Consulting">Consulting</option>
-                <option value="Review">Review</option>
-              </select>
-            </div>
-
-            <div class="col-md-6 mb-3">
-              <label for="status" class="form-label">Status</label>
-              <select class="form-select" id="status" name="status" required>
-                <option value="">Select status</option>
-                <option value="Planning">Planning</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Complete">Complete</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="startDate" class="form-label">Start Date</label>
-              <input type="date" class="form-control" id="startDate" name="start_date" required>
-            </div>
-
-            <div class="col-md-6 mb-3">
-              <label for="endDate" class="form-label">End Date</label>
-              <input type="date" class="form-control" id="endDate" name="end_date" required>
-            </div>
+            <label for="totalAvailableHours" class="form-label">Total Available Hours</label>
+            <input type="number" class="form-control" id="totalAvailableHours" name="total_available_hours" min="0" required>
           </div>
 
           <div class="mb-3">
-            <label for="estimatedHours" class="form-label">Estimated Hours</label>
-            <input type="number" class="form-control" id="estimatedHours" name="estimated_hours" min="0" required>
+            <label for="assignedHours" class="form-label">Assigned Hours</label>
+            <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" required>
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label">Description (Optional)</label>
-            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Brief project description..."></textarea>
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="planning">Planning</option>
+              <option value="in_progress">In Progress</option>
+              <option value="complete">Complete</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="notes" class="form-label">Notes</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark">Create Project</button>
+          <button type="submit" class="btn btn-dark">Create Engagement</button>
         </div>
       </form>
+
     </div>
   </div>
 </div>
