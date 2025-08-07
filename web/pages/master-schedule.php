@@ -325,6 +325,9 @@ function openEmployeeModal(employeeId) {
         background-color: #6f42c1 !important;
         color: white;
     }
+    #engagement-status-select {
+  transition: opacity 0.2s ease;
+}
 </style>
 </head>
 <body class="d-flex">
@@ -571,7 +574,7 @@ function openEmployeeModal(employeeId) {
           <label class="form-label fw-semibold">Engagement Status</label>
           <div id="engagement-status-container">
             <span id="engagement-status-display" class="badge bg-warning text-dark" style="cursor: pointer;">Pending</span>
-            <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2" style="display: none;">
+            <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2 d-none">
               <option value="confirmed">Confirmed</option>
               <option value="pending">Pending</option>
               <option value="not-confirmed">Not Confirmed</option>
@@ -626,8 +629,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show the select dropdown on badge click
     statusDisplay.addEventListener('click', function () {
         statusSelect.value = normalizeStatusText(statusDisplay.textContent);
-        statusDisplay.style.display = 'none';
-        statusSelect.style.display = 'inline-block';
+        statusSelect.classList.add('d-none');
+        statusSelect.classList.remove('d-none');
         statusSelect.focus();
     });
 
@@ -653,17 +656,19 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error('Error:', error))
         .finally(() => {
-            statusSelect.style.display = 'none';
-            statusDisplay.style.display = 'inline-block';
+            statusSelect.classList.add('d-none');
+            statusSelect.classList.remove('d-none');
         });
     });
 
     // Reset on modal open
     const modal = document.getElementById('clientDetailsModal');
     modal.addEventListener('shown.bs.modal', function () {
+    setTimeout(() => {
         statusSelect.style.display = 'none';
         statusDisplay.style.display = 'inline-block';
-    });
+    }, 10); // Wait just long enough for Bootstrap to finish rendering
+});
 
     // Helpers
     function capitalize(str) {
