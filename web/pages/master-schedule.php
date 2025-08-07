@@ -247,14 +247,26 @@ function openEngagementModal(engagementId) {
             document.getElementById('totalHours').innerText = `/ ${totalAvailableHours} hrs`;
 
 
-            // Set the progress bar width based on the assigned hours
             let utilizationPercent = totalAvailableHours > 0
                 ? (totalAssignedHours / totalAvailableHours) * 100
                 : 0;
-
-            document.getElementById('utilizationBar').style.width = utilizationPercent + "%";
-            document.getElementById('utilizationBar').setAttribute('aria-valuenow', totalAssignedHours);
-            document.getElementById('utilizationBar').setAttribute('aria-valuemax', totalAvailableHours);
+                    
+            const bar = document.getElementById('utilizationBar');
+                    
+            // Set bar width and ARIA attributes
+            bar.style.width = utilizationPercent + "%";
+            bar.setAttribute('aria-valuenow', totalAssignedHours);
+            bar.setAttribute('aria-valuemax', totalAvailableHours);
+                    
+            // Remove any existing color classes
+            bar.classList.remove('bg-success', 'bg-danger');
+                    
+            // Add the appropriate color
+            if (totalAssignedHours > totalAvailableHours) {
+                bar.classList.add('bg-danger');
+            } else {
+                bar.classList.add('bg-success');
+            }
 
 
             // Set assigned employees
