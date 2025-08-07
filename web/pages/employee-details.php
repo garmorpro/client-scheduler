@@ -53,7 +53,7 @@ $assignmentsByClient = [];
 while ($row = $assignmentsResult->fetch_assoc()) {
     $client = htmlspecialchars($row['client_name']);
     $weekStartRaw = $row['week_start'];
-    $weekStartFormatted = date('M j, Y', strtotime($weekStartRaw));
+    $weekStartFormatted = date('n/J', strtotime($weekStartRaw));
     $hours = (int)$row['assigned_hours'];
     $totalAssignedHours += $hours;
 
