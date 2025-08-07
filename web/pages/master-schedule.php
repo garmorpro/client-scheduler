@@ -626,7 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const engagementIdInput = document.getElementById('engagementId');
     const modal = document.getElementById('clientDetailsModal');
 
-    // Step 2: Listen for clicks on buttons with engagement ID
+    // Listen for clicks on buttons with engagement ID (Opening modal)
     const engagementButtons = document.querySelectorAll('.btn[data-engagement-id]');
     engagementButtons.forEach(button => {
         button.addEventListener('click', function () {
@@ -636,11 +636,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Step 3: Fetch engagement details when the modal is opened
+    // Fetch engagement details when the modal is opened
     modal.addEventListener('shown.bs.modal', function () {
         const engagementId = engagementIdInput.value;
 
-        // Debugging: Check if the engagementId is set correctly
         console.log('Engagement ID on modal open:', engagementId); // Debugging
 
         if (!engagementId) {
@@ -663,9 +662,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Populate modal with fetched data
                 document.getElementById('clientName').textContent = data.client_name;
                 document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
+
+                // Set the initial status display
                 const status = data.status || 'pending';
                 statusDisplay.textContent = capitalize(status.replace('-', ' '));
                 statusDisplay.className = `badge ${getStatusClass(status)}`;
+
+                // Populate the status select dropdown with the current status value
+                statusSelect.value = status;
 
                 // Set utilization bar width
                 const utilizationPercentage = (data.total_assigned_hours / data.total_available_hours) * 100;
@@ -675,6 +679,44 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error fetching engagement details:', error);
                 alert("Failed to fetch engagement details.");
             });
+    });
+
+    // Handle status change and update via AJAX
+    statusSelect.addEventListener('change', function () {
+        const newStatus = this.value;
+        const engagementId = engagementIdInput.value;
+
+        console.log('Updating Engagement ID:', engagementId, 'New Status:', newStatus); // Debugging
+
+        // Send the status update to the server via AJAX
+        fetch('update-engagement-status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                engagement_id: engagementId,
+                status: newStatus,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the status display with the new value
+                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+
+                // Optionally, hide the dropdown and show the status badge again
+                statusSelect.classList.add('d-none');
+                statusDisplay.classList.remove('d-none');
+            } else {
+                alert('Failed to update status.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating status:', error);
+            alert('Failed to update status.');
+        });
     });
 
     // Helpers
@@ -691,9 +733,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
-
-
-
 
 
 
