@@ -649,36 +649,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Fetch engagement details
         fetch(`get-engagement-details.php?id=${engagementId}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Fetched engagement data:', data); // Debugging
-
-                if (data.error) {
-                    console.error('Error:', data.error);
-                    alert(data.error);
-                    return;
-                }
-
-                // Populate modal with fetched data
-                document.getElementById('clientName').textContent = data.client_name;
-                document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
-
-                // Set the initial status display
-                const status = data.status || 'pending';
-                statusDisplay.textContent = capitalize(status.replace('-', ' '));
-                statusDisplay.className = `badge ${getStatusClass(status)}`;
-
-                // Populate the status select dropdown with the current status value
-                statusSelect.value = status;
-
-                // Set utilization bar width
-                const utilizationPercentage = (data.total_assigned_hours / data.total_available_hours) * 100;
-                document.getElementById('utilizationBar').style.width = `${utilizationPercentage}%`;
-            })
-            .catch(error => {
-                console.error('Error fetching engagement details:', error);
-                alert("Failed to fetch engagement details.");
-            });
+    .then(response => response.text()) // Use text() to get the raw response for debugging
+    .then(data => {
+        console.log('Response:', data); // Check the raw response in the console
+        try {
+            const jsonData = JSON.parse(data); // Try to parse it manually
+            console.log('Parsed JSON:', jsonData);
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching engagement details:', error);
+        alert("Failed to fetch engagement details.");
+    });
     });
 
     // Handle status change and update via AJAX
