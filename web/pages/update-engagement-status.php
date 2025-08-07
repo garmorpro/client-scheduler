@@ -6,7 +6,11 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get raw POST data
     $data = json_decode(file_get_contents("php://input"), true);
-    
+
+    // Debug: Log raw input for inspection
+    error_log('Received Data: ' . print_r($data, true));
+
+    // Check if engagement_id and status are set
     $engagementId = $data['engagement_id'] ?? null;
     $newStatus = $data['status'] ?? null;
 
