@@ -257,6 +257,11 @@ function openEngagementModal(engagementId) {
             let assignedEmployees = data.assigned_employees;
             document.getElementById('assignedEmployees').innerHTML = assignedEmployees;
 
+            // Set client notes
+            const notes = data.notes?.trim();
+            document.getElementById('clientNotes').innerText = notes ? notes : "No notes available.";
+
+
             // Show modal
             const engagementModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
             engagementModal.show();

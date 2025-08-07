@@ -5,7 +5,7 @@ if (isset($_GET['id'])) {
     $engagementId = $_GET['id'];
 
     // Get engagement name and total assigned hours
-    $engagementQuery = "SELECT client_name, total_available_hours FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, total_available_hours, notes FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
@@ -42,7 +42,9 @@ if (isset($_GET['id'])) {
         'client_name' => $engagement['client_name'],
         'total_hours' => $totalHours,
         'max_hours' => $engagement['total_available_hours'],
-        'assigned_employees' => $assignedEmployees
+        'assigned_employees' => $assignedEmployees,
+        'notes' => $engagement['notes'] ?? ''
     ]);
+
 }
 ?>
