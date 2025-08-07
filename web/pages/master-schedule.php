@@ -514,8 +514,6 @@ function openEmployeeModal(employeeId) {
             </select>
           </div>
 
-            <label for="startDate" class="form-label">Start Week Date</label>
-            <input type="date" id="startDate" class="form-control" required>
 
 
           <div class="mb-3">
@@ -651,7 +649,7 @@ function openEmployeeModal(employeeId) {
 <script>
 function generateWeekInputs() {
     const numberOfWeeks = parseInt(document.getElementById('numberOfWeeks').value);
-    const selectedStartDate = document.getElementById('startDate').value; // Assume you have a date input with id="startDate"
+    const selectedStartDate = document.getElementById('modalWeek').value; // Assume you have a date input with id="startDate"
     const weeksContainer = document.getElementById('weeksContainer');
     weeksContainer.innerHTML = ''; // Clear previous input fields
 
