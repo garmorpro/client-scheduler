@@ -1,5 +1,18 @@
 <?php
-require_once('../db.php'); // If it's one level above
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Check if db.php exists before including it
+if (!file_exists('../db.php')) {
+    echo json_encode(['error' => 'Database connection file not found.']);
+    exit;
+}
+
+require_once('../db.php');
+
+// Your database query and other logic here...
+?>
+
 
 
 // Ensure that the request is via GET and has the 'id' parameter
