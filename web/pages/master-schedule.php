@@ -553,29 +553,13 @@ function openEmployeeModal(employeeId) {
 <div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      
       <div class="modal-header">
         <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      
       <div class="modal-body">
         <!-- Engagement Name -->
-        <h3 id="clientName" class="text-center mb-3 fw-bold"></h3>
-
-        <!-- Engagement Status Editor -->
-        <div class="mb-4">
-          <label for="engagementStatus" class="form-label fw-semibold">Engagement Status</label>
-          <div class="d-flex gap-2">
-            <select id="engagementStatus" class="form-select w-auto">
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="closed">Closed</option>
-            </select>
-            <button class="btn btn-primary" onclick="saveEngagementStatus()">Save Status</button>
-          </div>
-          <div id="statusSaveMsg" class="mt-2 text-success" style="display: none;">Status updated successfully!</div>
-        </div>
+        <h3 id="clientName" class="text-center mb-3  fw-bold"></h3>
 
         <!-- Utilization Progress Bar -->
         <div class="mb-4">
@@ -599,7 +583,7 @@ function openEmployeeModal(employeeId) {
           </div>
         </div>
 
-        <!-- Notes Section -->
+        <!-- Notes Section (Optional) -->
         <div class="card shadow-sm">
           <div class="card-header bg-light">
             <h6 class="mb-0">Client Notes</h6>
@@ -609,11 +593,9 @@ function openEmployeeModal(employeeId) {
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </div>
-
 
 
 <!-- Modal for Employee Details -->
