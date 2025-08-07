@@ -1,5 +1,6 @@
 <?php
-require_once 'db.php'; // Your DB connection
+require_once('../db.php'); // If it's one level above
+
 
 // Ensure that the request is via GET and has the 'id' parameter
 if (!isset($_GET['id'])) {
