@@ -566,7 +566,7 @@ function openEmployeeModal(employeeId) {
         <h3 id="clientName" class="text-center mb-3 fw-bold"></h3>
 
         <!-- Hidden ID for use in AJAX -->
-        <input type="hidden" id="engagementId" value="">
+        <input type="text" id="engagementId" value="">
 
         <!-- Engagement Status Editor (Inline Editable) -->
         <div class="mb-4">
