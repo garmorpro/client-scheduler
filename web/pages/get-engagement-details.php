@@ -2,13 +2,15 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require_once '../includes/db.php';
+
 // Check if db.php exists before including it
 if (!file_exists('../includes/db.php')) {
     echo json_encode(['error' => 'Database connection file not found.']);
     exit;
 }
 
-require_once '../includes/db.php';
+
 
 // Check if $pdo is defined
 if (!isset($pdo)) {
