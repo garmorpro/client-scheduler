@@ -1,20 +1,28 @@
 <?php
 require_once 'db.php'; // Your DB connection
 
-// Get the posted data
-$data = json_decode(file_get_contents('php://input'), true);
-$engagement_id = $data['engagement_id'];
-$status = $data['status'];
+// Ensure that the request is via GET and has the 'id' parameter
+if (!isset($_GET['id'])) {
+    echo json_encode(['error' => 'Missing engagement ID']);
+    exit;
+}
 
-// Prepare the SQL query to update the status
-$query = "UPDATE engagements SET status = ? WHERE engagement_id = ?";
+// Get the engagement ID
+$engagement_id = $_GET['id'];
+
+// Prepare SQL query to fetch engagement details
+$query = "SELECT * FROM engagements WHERE engagement_id = ?";
 $stmt = $db->prepare($query);
-$stmt->bind_param('si', $status, $engagement_id);
+$stmt->bind_param('i', $engagement_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Execute the query
-if ($stmt->execute()) {
-    echo json_encode(['success' => true]);
+if ($result->num_rows > 0) {
+    // Fetch data as associative array
+    $data = $result->fetch_assoc();
+    echo json_encode($data);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Failed to update status']);
+    // No engagement found
+    echo json_encode(['error' => 'No engagement found with this ID']);
 }
 ?>
