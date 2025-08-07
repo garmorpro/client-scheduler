@@ -639,33 +639,36 @@ statusSelect.addEventListener('change', function () {
     const newStatus = this.value;
     const engagementId = engagementIdInput.value;
 
+    // Add this console log to inspect the values being sent
+    console.log('engagement_id:', engagementId, 'status:', newStatus); // Debugging the values
+
     fetch('update-engagement-status.php', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',  // Set header to JSON
-    },
-    body: JSON.stringify({
-        engagement_id: engagementId, // Make sure this value is correct
-        status: newStatus,           // Make sure this value is correct
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            engagement_id: engagementId,
+            status: newStatus,
+        })
     })
-})
-.then(response => response.json())
-.then(data => {
-    if (data.success) {
-        // Update the badge display
-        statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
-        statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
-    } else {
-        alert("Failed to update status.");
-    }
-})
-.catch(error => console.error('Error:', error))
-.finally(() => {
-    statusSelect.classList.add('d-none');
-    statusSelect.classList.remove('d-none');
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the badge display
+            statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+            statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+        } else {
+            alert("Failed to update status.");
+        }
+    })
+    .catch(error => console.error('Error:', error))
+    .finally(() => {
+        statusSelect.classList.add('d-none');
+        statusSelect.classList.remove('d-none');
+    });
 });
 
-});
 
 
     // Reset on modal open
