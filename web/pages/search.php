@@ -4,25 +4,25 @@ require_once '../includes/db.php';
 if (isset($_GET['query'])) {
     $query = '%' . $_GET['query'] . '%';
 
-    /// For debugging, ensure the query returns results
-$clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ?";
-$stmt = $conn->prepare($clientQuery);
-$stmt->bind_param('s', $query);
-$stmt->execute();
-$clientResult = $stmt->get_result();
+    // Search for clients (engagements)
+    $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ? AND status = 'active'";
+    $stmt = $conn->prepare($clientQuery);
+    $stmt->bind_param('s', $query);
+    $stmt->execute();
+    $clientResult = $stmt->get_result();
+    $clients = [];
+    while ($row = $clientResult->fetch_assoc()) {
+        $clients[] = $row;
+    }
 
-// Check if we get results
-if ($clientResult->num_rows > 0) {
-    echo 'Found engagements!';
-} else {
-    echo 'No engagements found';
-}
-
-$clients = [];
-while ($row = $clientResult->fetch_assoc()) {
-    $clients[] = $row;
-}
-
+    // Check if clients (engagements) were found
+    if (count($clients) > 0) {
+        // Debugging log for found engagements
+        // echo 'Found engagements!';
+    } else {
+        // Debugging log for no engagements found
+        // echo 'No engagements found';
+    }
 
     // Search for employees
     $employeeQuery = "SELECT user_id AS id, CONCAT(first_name, ' ', last_name) AS name, 'employee' AS type FROM users WHERE CONCAT(first_name, ' ', last_name) LIKE ? AND status = 'active'";

@@ -336,9 +336,10 @@ function openEmployeeModal(employeeId) {
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
             <div class="col-md-7">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
-                <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
-            </div>
+    <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
+    <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
+</div>
+
             <div class="col-md-2">
                 <select name="status" class="form-select">
                     <option value="">All Statuses</option>
@@ -702,6 +703,7 @@ function generateWeekInputs() {
 <script>
 function searchQuery() {
     var query = document.getElementById('searchInput').value;
+    console.log(query); // Debug log to check the query value
     if (query.length >= 3) {
         fetchSearchResults(query);
     } else {
@@ -728,13 +730,13 @@ function fetchSearchResults(query) {
 
 function openModal(id, type) {
     if (type === 'employee') {
-        openEmployeeModal(id);
+        openEmployeeModal(id); // Ensure you have this modal function defined
     } else if (type === 'client') {
-        openEngagementModal(id);
-
+        openEngagementModal(id); // Ensure you have this modal function defined
     }
 }
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
