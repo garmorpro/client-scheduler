@@ -635,31 +635,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Handle dropdown change and update via AJAX
-    statusSelect.addEventListener('change', function () {
-        const newStatus = this.value;
-        const engagementId = engagementIdInput.value;
+statusSelect.addEventListener('change', function () {
+    const newStatus = this.value;
+    const engagementId = engagementIdInput.value;
 
-        fetch('update-engagement-status.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `engagement_id=${encodeURIComponent(engagementId)}&status=${encodeURIComponent(newStatus)}`
+    fetch('update-engagement-status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json', // This will send the data as JSON
+        },
+        body: JSON.stringify({
+            engagement_id: engagementId,
+            status: newStatus,
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the badge display
-                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
-                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
-            } else {
-                alert("Failed to update status.");
-            }
-        })
-        .catch(error => console.error('Error:', error))
-        .finally(() => {
-            statusSelect.classList.add('d-none');
-            statusSelect.classList.remove('d-none');
-        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the badge display
+            statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+            statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+        } else {
+            alert("Failed to update status.");
+        }
+    })
+    .catch(error => console.error('Error:', error))
+    .finally(() => {
+        statusSelect.classList.add('d-none');
+        statusSelect.classList.remove('d-none');
     });
+});
+
 
     // Reset on modal open
     const modal = document.getElementById('clientDetailsModal');
