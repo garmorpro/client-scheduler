@@ -60,12 +60,12 @@ while ($row = $assignmentsResult->fetch_assoc()) {
     if (!isset($assignmentsByClient[$client])) {
         $assignmentsByClient[$client] = [
             'total_hours' => 0,
-            'weeks' => [],
+            'weeks' => []
         ];
     }
 
     $assignmentsByClient[$client]['total_hours'] += $hours;
-    $assignmentsByClient[$client]['weeks'][] = $weekStartFormatted;
+    $assignmentsByClient[$client]['weeks'][] = "{$weekStartFormatted} ({$hours})";
 }
 
 // Build final HTML
