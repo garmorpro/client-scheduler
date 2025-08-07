@@ -674,8 +674,12 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.addEventListener('shown.bs.modal', function () {
         const engagementId = engagementIdInput.value;
 
-        // Log engagement ID for debugging
-        console.log('Engagement ID:', engagementId);
+        if (!engagementId) {
+            console.error('Engagement ID is not set.');
+            return;
+        }
+
+        console.log('Engagement ID:', engagementId); // Debugging
 
         // Fetch engagement details
         fetch(`get-engagement-details.php?id=${engagementId}`)
@@ -686,6 +690,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.error) {
                     console.error('Error:', data.error);
+                    alert(data.error);
                     return;
                 }
 
@@ -736,6 +741,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
 
 
 
