@@ -10,6 +10,12 @@ if (!file_exists('../includes/db.php')) {
 
 require_once '../includes/db.php';
 
+// Check if $pdo is defined
+if (!isset($pdo)) {
+    echo json_encode(['error' => 'Database connection not established.']);
+    exit;
+}
+
 // Ensure that the request is via GET and has the 'id' parameter
 if (!isset($_GET['id'])) {
     echo json_encode(['error' => 'Missing engagement ID']);
