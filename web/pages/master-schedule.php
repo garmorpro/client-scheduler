@@ -553,13 +553,31 @@ function openEmployeeModal(employeeId) {
 <div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
+      
       <div class="modal-header">
         <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      
       <div class="modal-body">
         <!-- Engagement Name -->
-        <h3 id="clientName" class="text-center mb-3  fw-bold"></h3>
+        <h3 id="clientName" class="text-center mb-3 fw-bold"></h3>
+
+        <!-- Hidden ID for use in AJAX -->
+        <input type="hidden" id="engagementId" value="">
+
+        <!-- Engagement Status Editor (Inline Editable) -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Engagement Status</label>
+          <div id="engagement-status-container">
+            <span id="engagement-status-display" class="badge bg-warning text-dark" style="cursor: pointer;">Pending</span>
+            <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2" style="display: none;">
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="not-confirmed">Not Confirmed</option>
+            </select>
+          </div>
+        </div>
 
         <!-- Utilization Progress Bar -->
         <div class="mb-4">
@@ -583,7 +601,7 @@ function openEmployeeModal(employeeId) {
           </div>
         </div>
 
-        <!-- Notes Section (Optional) -->
+        <!-- Notes Section -->
         <div class="card shadow-sm">
           <div class="card-header bg-light">
             <h6 class="mb-0">Client Notes</h6>
@@ -593,9 +611,12 @@ function openEmployeeModal(employeeId) {
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 </div>
+
+
 
 
 <!-- Modal for Employee Details -->
