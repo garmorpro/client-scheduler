@@ -1,23 +1,20 @@
 <?php
-require_once '../includes/db.php';
+require_once 'db.php'; // Your DB connection
 
-$engagementId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+// Get the posted data
+$data = json_decode(file_get_contents('php://input'), true);
+$engagement_id = $data['engagement_id'];
+$status = $data['status'];
 
-if ($engagementId > 0) {
-    $query = "SELECT client_name, status, total_assigned_hours, total_available_hours FROM engagements WHERE engagement_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $engagementId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($row = $result->fetch_assoc()) {
-        echo json_encode($row);  // Ensure 'status' is returned here
-    } else {
-        echo json_encode(['error' => 'Engagement not found']);
-    }
-    
-    $stmt->close();
+// Prepare the SQL query to update the status
+$query = "UPDATE engagements SET status = ? WHERE engagement_id = ?";
+$stmt = $db->prepare($query);
+$stmt->bind_param('si', $status, $engagement_id);
+
+// Execute the query
+if ($stmt->execute()) {
+    echo json_encode(['success' => true]);
 } else {
-    echo json_encode(['error' => 'Invalid engagement ID']);
+    echo json_encode(['success' => false, 'error' => 'Failed to update status']);
 }
 ?>
