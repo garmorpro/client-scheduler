@@ -3,6 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once '../includes/db.php';
+echo "DB included"; // Debugging line
+
 
 // Check if db.php exists before including it
 if (!file_exists('../includes/db.php')) {
