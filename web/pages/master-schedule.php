@@ -556,7 +556,6 @@ function openEmployeeModal(employeeId) {
 <div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      
       <div class="modal-header">
         <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -614,10 +613,10 @@ function openEmployeeModal(employeeId) {
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </div>
+
 
 
 <script>
@@ -635,50 +634,70 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Handle dropdown change and update via AJAX
-statusSelect.addEventListener('change', function () {
-    const newStatus = this.value;
-    const engagementId = engagementIdInput.value;
+    statusSelect.addEventListener('change', function () {
+        const newStatus = this.value;
+        const engagementId = engagementIdInput.value;
 
-    // Add this console log to inspect the values being sent
-    console.log('engagement_id:', engagementId, 'status:', newStatus); // Debugging the values
+        console.log('engagement_id:', engagementId, 'status:', newStatus); // Debugging the values
 
-    fetch('update-engagement-status.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            engagement_id: engagementId,
-            status: newStatus,
+        fetch('update-engagement-status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                engagement_id: engagementId,
+                status: newStatus,
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the badge display
-            statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
-            statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
-        } else {
-            alert("Failed to update status.");
-        }
-    })
-    .catch(error => console.error('Error:', error))
-    .finally(() => {
-        statusSelect.classList.add('d-none');
-        statusSelect.classList.remove('d-none');
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the badge display
+                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+            } else {
+                alert("Failed to update status.");
+            }
+        })
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            statusSelect.classList.add('d-none');
+            statusSelect.classList.remove('d-none');
+        });
     });
-});
 
-
-
-    // Reset on modal open
+    // Fetch engagement details and status when the modal is shown
     const modal = document.getElementById('clientDetailsModal');
     modal.addEventListener('shown.bs.modal', function () {
-    setTimeout(() => {
-        statusSelect.style.display = 'none';
-        statusDisplay.style.display = 'inline-block';
-    }, 10); // Wait just long enough for Bootstrap to finish rendering
-});
+        const engagementId = engagementIdInput.value;
+
+        // Fetch engagement details
+        fetch(`get-engagement-details.php?id=${engagementId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Set client name
+                document.getElementById('clientName').textContent = data.client_name;
+
+                // Set total assigned hours and other details
+                document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
+
+                // Set the engagement status
+                const status = data.status;
+                statusDisplay.textContent = capitalize(status.replace('-', ' '));
+                statusDisplay.className = `badge ${getStatusClass(status)}`;
+
+                // Set the hidden engagement ID
+                engagementIdInput.value = engagementId;
+
+                // Set the utilization bar
+                const utilizationPercentage = (data.total_assigned_hours / data.total_available_hours) * 100;
+                document.getElementById('utilizationBar').style.width = `${utilizationPercentage}%`;
+
+                // More data can be added here like assigned employees and notes
+            })
+            .catch(error => console.error('Error fetching engagement details:', error));
+    });
 
     // Helpers
     function capitalize(str) {
@@ -698,6 +717,7 @@ statusSelect.addEventListener('change', function () {
         }
     }
 });
+
 </script>
 
 
