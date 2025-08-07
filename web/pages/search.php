@@ -5,7 +5,7 @@ if (isset($_GET['query'])) {
     $query = '%' . $_GET['query'] . '%';
 
     // Search for clients (engagements)
-    $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ? AND status = 'active'";
+    $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ?";
     $stmt = $conn->prepare($clientQuery);
     $stmt->bind_param('s', $query);
     $stmt->execute();
