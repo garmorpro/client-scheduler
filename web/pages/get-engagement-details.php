@@ -10,10 +10,6 @@ if (!file_exists('../includes/db.php')) {
 
 require_once '../includes/db.php';
 
-// Your database query and other logic here...
-
-
-
 // Ensure that the request is via GET and has the 'id' parameter
 if (!isset($_GET['id'])) {
     echo json_encode(['error' => 'Missing engagement ID']);
@@ -23,19 +19,24 @@ if (!isset($_GET['id'])) {
 // Get the engagement ID
 $engagement_id = $_GET['id'];
 
-// Prepare SQL query to fetch engagement details
-$query = "SELECT * FROM engagements WHERE engagement_id = ?";
-$stmt = $db->prepare($query);
-$stmt->bind_param('i', $engagement_id);
-$stmt->execute();
-$result = $stmt->get_result();
+// Prepare SQL query to fetch engagement details using PDO
+$query = "SELECT * FROM engagements WHERE engagement_id = :engagement_id";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':engagement_id', $engagement_id, PDO::PARAM_INT);
 
-if ($result->num_rows > 0) {
+// Execute the query
+if ($stmt->execute()) {
     // Fetch data as associative array
-    $data = $result->fetch_assoc();
-    echo json_encode($data);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($data) {
+        echo json_encode($data);
+    } else {
+        // No engagement found
+        echo json_encode(['error' => 'No engagement found with this ID']);
+    }
 } else {
-    // No engagement found
-    echo json_encode(['error' => 'No engagement found with this ID']);
+    // Error executing query
+    echo json_encode(['error' => 'Database query failed']);
 }
 ?>
