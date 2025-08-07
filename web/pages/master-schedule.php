@@ -699,39 +699,42 @@ function generateWeekInputs() {
 </script>
 
 
-<?php
-$query = isset($_GET['query']) ? $_GET['query'] : '';
-
-if (!empty($query)) {
-    // Example SQL query to search for employees and engagements
-    $searchResults = [];
-
-    // Search for employees
-    $employeeQuery = "SELECT id, name FROM employees WHERE name LIKE :query";
-    $stmt = $pdo->prepare($employeeQuery);
-    $stmt->execute([':query' => '%' . $query . '%']);
-    $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    foreach ($employees as $employee) {
-        $searchResults[] = ['id' => $employee['id'], 'name' => $employee['name'], 'type' => 'employee'];
+<script>
+function searchQuery() {
+    var query = document.getElementById('searchInput').value;
+    if (query.length >= 3) {
+        fetchSearchResults(query);
+    } else {
+        document.getElementById('searchResults').style.display = 'none';
     }
-
-    // Search for engagements
-    $engagementQuery = "SELECT id, name FROM engagements WHERE name LIKE :query";
-    $stmt = $pdo->prepare($engagementQuery);
-    $stmt->execute([':query' => '%' . $query . '%']);
-    $engagements = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    foreach ($engagements as $engagement) {
-        $searchResults[] = ['id' => $engagement['id'], 'name' => $engagement['name'], 'type' => 'client'];  // Assuming engagements are called clients
-    }
-
-    echo json_encode($searchResults);
-} else {
-    echo json_encode([]);
 }
-?>
 
+function fetchSearchResults(query) {
+    fetch('search.php?query=' + query)
+        .then(response => response.json())
+        .then(data => {
+            let resultsHTML = '';
+            data.forEach(result => {
+                resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
+            });
+            if (resultsHTML === '') {
+                resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
+            }
+            document.getElementById('searchResults').innerHTML = resultsHTML;
+            document.getElementById('searchResults').style.display = 'block';
+        })
+        .catch(error => console.error('Error fetching search results:', error));
+}
+
+function openModal(id, type) {
+    if (type === 'employee') {
+        openEmployeeModal(id);
+    } else if (type === 'client') {
+        openEngagementModal(id);
+
+    }
+}
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
