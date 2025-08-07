@@ -676,6 +676,60 @@ function openEmployeeModal(employeeId) {
 
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const statusDisplay = document.getElementById('engagement-status-display');
+    const statusSelect = document.getElementById('engagement-status-select');
+    const engagementIdInput = document.getElementById('engagementId');
+
+    // Show the select dropdown on click
+    statusDisplay.addEventListener('click', function () {
+        statusSelect.value = statusDisplay.textContent.toLowerCase().replace(' ', '-');
+        statusDisplay.style.display = 'none';
+        statusSelect.style.display = 'inline-block';
+        statusSelect.focus();
+    });
+
+    // Update status on selection change
+    statusSelect.addEventListener('change', function () {
+        const newStatus = this.value;
+        const engagementId = engagementIdInput.value;
+
+        fetch('update-engagement-status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `engagement_id=${engagementId}&status=${newStatus}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update badge text and style
+                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+                statusDisplay.style.display = 'inline-block';
+                statusSelect.style.display = 'none';
+            } else {
+                alert("Failed to update status.");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'confirmed': return 'bg-success';
+            case 'pending': return 'bg-warning text-dark';
+            case 'not-confirmed': return 'bg-danger';
+            default: return 'bg-secondary';
+        }
+    }
+});
+</script>
+
 
 <script>
 function generateWeekInputs() {
