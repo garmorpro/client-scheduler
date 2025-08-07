@@ -11,7 +11,6 @@ if (!file_exists('../includes/db.php')) {
 require_once '../includes/db.php';
 
 // Your database query and other logic here...
-?>
 
 
 
