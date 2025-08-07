@@ -30,7 +30,7 @@ if (isset($_GET['id'])) {
     }
 
     // Total assigned hours
-    $totalHoursQuery = "SELECT SUM(assigned_hours) AS total_hours FROM assignments WHERE engagement_id = ?";
+    $totalHoursQuery = "SELECT SUM(COALESCE(assigned_hours, 0)) AS total_hours FROM assignments WHERE engagement_id = ?";
     $stmt = $conn->prepare($totalHoursQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();

@@ -237,8 +237,9 @@ function openEngagementModal(engagementId) {
             document.getElementById('clientName').innerText = data.client_name;
 
             // Set total assigned hours
-            let totalAssignedHours = data.total_hours;
-            let totalAvailableHours = data.max_hours ?? 0;
+            let totalAssignedHours = parseFloat(data.total_hours) || 0;
+            let totalAvailableHours = parseFloat(data.max_hours) || 0;
+
 
 
             // Set total assigned hours text
@@ -247,7 +248,10 @@ function openEngagementModal(engagementId) {
 
 
             // Set the progress bar width based on the assigned hours
-            let utilizationPercent = (totalAssignedHours / totalAvailableHours) * 100;
+            let utilizationPercent = totalAvailableHours > 0
+                ? (totalAssignedHours / totalAvailableHours) * 100
+                : 0;
+
             document.getElementById('utilizationBar').style.width = utilizationPercent + "%";
             document.getElementById('utilizationBar').setAttribute('aria-valuenow', totalAssignedHours);
             document.getElementById('utilizationBar').setAttribute('aria-valuemax', totalAvailableHours);
