@@ -8,11 +8,14 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get raw POST data
+    // Debugging: Log the raw POST request data
+    error_log('Raw POST data: ' . file_get_contents("php://input"));
+
+    // Decode JSON input data
     $data = json_decode(file_get_contents("php://input"), true);
 
-    // Debug: Log raw input for inspection
-    error_log('Received Data: ' . print_r($data, true));
+    // Debugging: Log the decoded JSON data
+    error_log('Decoded Data: ' . print_r($data, true));
 
     // Check if engagement_id and status are set
     $engagementId = $data['engagement_id'] ?? null;
