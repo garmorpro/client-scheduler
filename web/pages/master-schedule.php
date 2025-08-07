@@ -620,23 +620,61 @@ function openEmployeeModal(employeeId) {
 
 
 <script>
-// Assuming you're triggering the modal by clicking on a button or row
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById('clientDetailsModal');
-    const engagementIdInput = document.getElementById('engagementId');
     const statusDisplay = document.getElementById('engagement-status-display');
     const statusSelect = document.getElementById('engagement-status-select');
+    const engagementIdInput = document.getElementById('engagementId');
+    const modal = document.getElementById('clientDetailsModal');
 
-    // Example: Assuming each engagement has a button or row with a specific engagementId
-    const engagementButton = document.getElementById('engagementButton'); // Replace with your actual selector
-    engagementButton.addEventListener('click', function () {
-        // Dynamically set the engagementId before opening the modal
-        const engagementId = this.dataset.engagementId; // Assuming the button has a data-engagement-id attribute
-        engagementIdInput.value = engagementId;  // Set the value of the engagementId input
+    // Add event listener for dynamically setting the engagement ID
+    const engagementButtons = document.querySelectorAll('.btn[data-engagement-id]');
+    engagementButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const engagementId = this.getAttribute('data-engagement-id');
+            engagementIdInput.value = engagementId; // Set engagement ID in the hidden input field
+        });
+    });
 
-        // Now show the modal
-        const bootstrapModal = new bootstrap.Modal(modal);
-        bootstrapModal.show();
+    // Show the select dropdown on badge click
+    statusDisplay.addEventListener('click', function () {
+        statusSelect.value = normalizeStatusText(statusDisplay.textContent);
+        statusSelect.classList.add('d-none');
+        statusSelect.classList.remove('d-none');
+        statusSelect.focus();
+    });
+
+    // Handle dropdown change and update via AJAX
+    statusSelect.addEventListener('change', function () {
+        const newStatus = this.value;
+        const engagementId = engagementIdInput.value;
+
+        console.log('engagement_id:', engagementId, 'status:', newStatus); // Debugging the values
+
+        fetch('update-engagement-status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                engagement_id: engagementId,
+                status: newStatus,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the badge display
+                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+            } else {
+                alert("Failed to update status.");
+            }
+        })
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            statusSelect.classList.add('d-none');
+            statusSelect.classList.remove('d-none');
+        });
     });
 
     // Fetch engagement details and status when the modal is shown
@@ -691,6 +729,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Failed to fetch engagement details.");
             });
     });
+
+    // Helpers
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function normalizeStatusText(str) {
+        return str.trim().toLowerCase().replace(/\s+/g, '-');
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'confirmed': return 'bg-success';
+            case 'pending': return 'bg-warning text-dark';
+            case 'not-confirmed': return 'bg-danger';
+            default: return 'bg-secondary';
+        }
+    }
 });
 
 
