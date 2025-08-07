@@ -676,6 +676,9 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`get-engagement-details.php?id=${engagementId}`)
             .then(response => response.json())
             .then(data => {
+                // Log the fetched data for debugging
+                console.log('Fetched engagement data:', data);
+
                 // Set client name
                 document.getElementById('clientName').textContent = data.client_name;
 
@@ -684,6 +687,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Ensure status exists before attempting to update status display
                 const status = data.status || 'pending'; // Default to 'pending' if status is not found
+                console.log('Engagement Status:', status);  // Debugging
+
+                // Display the status correctly
                 statusDisplay.textContent = capitalize(status.replace('-', ' '));
                 statusDisplay.className = `badge ${getStatusClass(status)}`;
 
@@ -720,6 +726,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
 
 
 </script>
