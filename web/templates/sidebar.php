@@ -35,9 +35,9 @@
         </a>
       </li>
       <hr>
-      <h5>
+      <h6>
         Admin Settings
-      </h5>
+      </h6>
       <hr>
       <li class="nav-item">
         <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
