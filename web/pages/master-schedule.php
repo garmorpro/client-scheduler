@@ -668,45 +668,53 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Fetch engagement details and status when the modal is shown
-    const modal = document.getElementById('clientDetailsModal');
     modal.addEventListener('shown.bs.modal', function () {
-        const engagementId = engagementIdInput.value;
+    const engagementId = engagementIdInput.value;
+    
+    // Log the engagement ID to verify it's correct
+    console.log('Engagement ID:', engagementId);
 
-        // Fetch engagement details
-        fetch(`get-engagement-details.php?id=${engagementId}`)
-            .then(response => response.json())
-            .then(data => {
-                // Log the fetched data for debugging
-                console.log('Fetched engagement data:', data);
+    // Fetch engagement details
+    fetch(`get-engagement-details.php?id=${engagementId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Log the fetched data for debugging
+            console.log('Fetched engagement data:', data);
 
-                // Set client name
-                document.getElementById('clientName').textContent = data.client_name;
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
 
-                // Set total assigned hours and other details
-                document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
+            // Set client name
+            document.getElementById('clientName').textContent = data.client_name;
 
-                // Ensure status exists before attempting to update status display
-                const status = data.status || 'pending'; // Default to 'pending' if status is not found
-                console.log('Engagement Status:', status);  // Debugging
+            // Set total assigned hours and other details
+            document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
 
-                // Display the status correctly
-                statusDisplay.textContent = capitalize(status.replace('-', ' '));
-                statusDisplay.className = `badge ${getStatusClass(status)}`;
+            // Ensure status exists before attempting to update status display
+            const status = data.status || 'pending'; // Default to 'pending' if status is not found
+            console.log('Engagement Status:', status);  // Debugging
 
-                // Set the hidden engagement ID
-                engagementIdInput.value = engagementId;
+            // Display the status correctly
+            statusDisplay.textContent = capitalize(status.replace('-', ' '));
+            statusDisplay.className = `badge ${getStatusClass(status)}`;
 
-                // Set the utilization bar
-                const utilizationPercentage = (data.total_assigned_hours / data.total_available_hours) * 100;
-                document.getElementById('utilizationBar').style.width = `${utilizationPercentage}%`;
+            // Set the hidden engagement ID
+            engagementIdInput.value = engagementId;
 
-                // More data can be added here like assigned employees and notes
-            })
-            .catch(error => {
-                console.error('Error fetching engagement details:', error);
-                alert("Failed to fetch engagement details.");
-            });
-    });
+            // Set the utilization bar
+            const utilizationPercentage = (data.total_assigned_hours / data.total_available_hours) * 100;
+            document.getElementById('utilizationBar').style.width = `${utilizationPercentage}%`;
+
+            // More data can be added here like assigned employees and notes
+        })
+        .catch(error => {
+            console.error('Error fetching engagement details:', error);
+            alert("Failed to fetch engagement details.");
+        });
+});
+
 
     // Helpers
     function capitalize(str) {
