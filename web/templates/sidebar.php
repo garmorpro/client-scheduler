@@ -23,7 +23,7 @@
         </a>
       </li>
       <li class="nav-item mb-2">
-        <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark active fw-semibold">
+        <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
           <i class="bi bi-calendar3 me-2"></i>
           Master Schedule
         </a>
