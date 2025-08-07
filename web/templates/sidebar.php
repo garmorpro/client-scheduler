@@ -34,8 +34,9 @@
           My Schedule
         </a>
       </li>
+      <div class="mt 2"></div>
       <hr>
-      <span>Admin Settings</span>
+      <span style="font-size: 20px; font-weight: 500;">Admin Settings</span>
       <hr>
       <li class="nav-item">
         <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
