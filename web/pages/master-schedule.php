@@ -82,6 +82,7 @@ while ($row = $result->fetch_assoc()) {
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
         'status' => $row['status']
+        'engagement_status' => $row['engagement_status'],
     ];
 }
 ?>
@@ -413,7 +414,7 @@ function openEmployeeModal(employeeId) {
                                             default:
                                                 $badgeColor = 'secondary'; // Fallback
                                         }
-                                        
+
                                         $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
 
                                 }
