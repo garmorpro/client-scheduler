@@ -182,26 +182,15 @@ function openEditModal(event) {
     const assignmentId = buttonElement.getAttribute('data-assignment-id');
     const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-    // Grab status from assignment array (parsed already in page)
-    const assignments = <?php echo json_encode($assignments); ?>;
-    let currentStatus = 'pending';
-
-    // Try to find the status from the DOM context
-    const parent = buttonElement.closest('.d-flex');
-    if (parent) {
-        const text = parent.innerHTML;
-        if (text.includes('Confirmed')) currentStatus = 'confirmed';
-        else if (text.includes('Not Confirmed')) currentStatus = 'not_confirmed';
-        else currentStatus = 'pending';
-    }
-
+    // Set the assignment ID and assigned hours in the modal
     document.getElementById('editAssignmentId').value = assignmentId;
     document.getElementById('editAssignedHours').value = assignedHours;
-    document.getElementById('editStatus').value = currentStatus;
 
+    // Open the modal
     const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
     editModal.show();
 }
+
 
 
 // Delete an assignment
