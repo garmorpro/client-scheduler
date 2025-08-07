@@ -407,7 +407,7 @@ function openEmployeeModal(employeeId) {
                                             case 'pending':
                                                 $badgeColor = 'purple';
                                                 break;
-                                            case 'not_confirmed':
+                                            case 'not-confirmed':
                                                 $badgeColor = 'primary';
                                                 break;
                                             default:
