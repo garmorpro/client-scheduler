@@ -250,17 +250,17 @@ function openEngagementModal(engagementId) {
             let utilizationPercent = totalAvailableHours > 0
                 ? (totalAssignedHours / totalAvailableHours) * 100
                 : 0;
-                    
+
             const bar = document.getElementById('utilizationBar');
-                    
+
             // Set bar width and ARIA attributes
             bar.style.width = utilizationPercent + "%";
             bar.setAttribute('aria-valuenow', totalAssignedHours);
             bar.setAttribute('aria-valuemax', totalAvailableHours);
-                    
+
             // Remove any existing color classes
             bar.classList.remove('bg-success', 'bg-danger');
-                    
+
             // Add the appropriate color
             if (totalAssignedHours > totalAvailableHours) {
                 bar.classList.add('bg-danger');
@@ -398,16 +398,20 @@ function openEmployeeModal(employeeId) {
                             
                             if ($assignmentsForWeek) {
                                 foreach ($assignmentsForWeek as $assignment) {
-                                    $status = strtolower($assignment['status']);
+                                    $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed'); // fallback just in case
 
-                                    if ($status === 'confirmed') {
-                                        $badgeColor = 'success'; // Green
-                                    } elseif ($status === 'pending') {
-                                        $badgeColor = 'purple'; // Custom class
-                                    } elseif ($status === 'not_confirmed') {
-                                        $badgeColor = 'primary'; // Blue
-                                    } else {
-                                        $badgeColor = 'primary'; // Default
+                                    switch ($engagementStatus) {
+                                        case 'confirmed':
+                                            $badgeColor = 'success'; // Green
+                                            break;
+                                        case 'pending':
+                                            $badgeColor = 'purple'; // Purple (custom class, ensure it's defined)
+                                            break;
+                                        case 'not_confirmed':
+                                            $badgeColor = 'primary'; // Blue
+                                            break;
+                                        default:
+                                            $badgeColor = 'secondary'; // Default/fallback
                                     }
                                   
                                     $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
