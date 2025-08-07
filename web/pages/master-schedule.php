@@ -345,7 +345,7 @@ function openEmployeeModal(employeeId) {
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center border rounded">
+        <table class="table table-bordered align-middle text-center">
             <thead class="table-light">
                 <tr>
                     <th class="text-start">Employee</th>
