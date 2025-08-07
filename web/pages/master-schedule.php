@@ -496,14 +496,14 @@ function openEmployeeModal(employeeId) {
             <label for="editAssignedHours" class="form-label">Assigned Hours</label>
             <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" min="0" required>
           </div>
-          <div class="mb-3">
+          <!-- <div class="mb-3">
               <label for="editStatus" class="form-label">Status</label>
               <select class="form-select" id="editStatus" name="status" required>
                   <option value="confirmed">Confirmed</option>
                   <option value="pending">Pending</option>
                   <option value="not_confirmed">Not Confirmed</option>
               </select>
-          </div>
+          </div> -->
           <div class="mb-3 text-end">
             <button type="submit" id="editSubmitBtn" class="btn btn-primary">Save Changes</button>
           </div>
