@@ -34,7 +34,7 @@
           My Schedule
         </a>
       </li>
-      <div class="mt 2"></div>
+      <div class="mt-2"></div>
       <hr>
       <span style="font-size: 20px; font-weight: 500;">Admin Settings</span>
       <hr>
