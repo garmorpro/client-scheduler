@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/db.php';
 
-// Get the engagement ID from the URL
 $engagementId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($engagementId > 0) {
@@ -12,7 +11,7 @@ if ($engagementId > 0) {
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
-        echo json_encode($row);
+        echo json_encode($row);  // Ensure 'status' is returned here
     } else {
         echo json_encode(['error' => 'Engagement not found']);
     }
