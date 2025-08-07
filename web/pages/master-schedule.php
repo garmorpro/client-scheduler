@@ -682,8 +682,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Set total assigned hours and other details
                 document.getElementById('totalAssignedHours').textContent = data.total_assigned_hours;
 
-                // Set the engagement status
-                const status = data.status;
+                // Ensure status exists before attempting to update status display
+                const status = data.status || 'pending'; // Default to 'pending' if status is not found
                 statusDisplay.textContent = capitalize(status.replace('-', ' '));
                 statusDisplay.className = `badge ${getStatusClass(status)}`;
 
@@ -696,7 +696,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // More data can be added here like assigned employees and notes
             })
-            .catch(error => console.error('Error fetching engagement details:', error));
+            .catch(error => {
+                console.error('Error fetching engagement details:', error);
+                alert("Failed to fetch engagement details.");
+            });
     });
 
     // Helpers
@@ -717,6 +720,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
 
 </script>
 
