@@ -574,14 +574,14 @@ function openEmployeeModal(employeeId) {
         </div>
 
         <!-- Notes Section (Optional) -->
-        <!-- <div class="card shadow-sm">
+        <div class="card shadow-sm">
           <div class="card-header bg-light">
             <h6 class="mb-0">Client Notes</h6>
           </div>
           <div class="card-body">
             <p id="clientNotes" class="text-muted">No notes available.</p>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
