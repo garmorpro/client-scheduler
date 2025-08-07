@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db.php'; // Your DB connection file
+require_once '../includes/db.php';
 session_start();
 
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
@@ -33,7 +33,6 @@ if ($userResult) {
             'full_name' => $userRow['full_name'],
             'role' => $userRow['role']
         ];
-
     }
 }
 
@@ -50,7 +49,7 @@ while ($clientRow = $clientResult->fetch_assoc()) {
     $activeClients[] = $clientRow;
 }
 
-// Query assignments for the date range
+// ✅ Updated: Query assignments for the date range with engagement status
 $query = "
     SELECT 
         a.assignment_id,
@@ -59,7 +58,8 @@ $query = "
         e.client_name,
         a.week_start,
         a.assigned_hours,
-        a.status
+        a.status,
+        e.status AS engagement_status -- 👈 Add this line to get engagement's status
     FROM 
         assignments a
     JOIN 
@@ -75,14 +75,13 @@ $result = $stmt->get_result();
 
 $assignments = [];
 while ($row = $result->fetch_assoc()) {
-    // Store multiple assignments for each employee and week
     $assignments[$row['user_id']][$row['week_start']][] = [
         'assignment_id' => $row['assignment_id'],
         'client_name' => $row['client_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
-        'status' => $row['status']
-        'engagement_status' => $row['engagement_status'],
+        'status' => $row['status'],
+        'engagement_status' => $row['engagement_status'], // ✅ Now available
     ];
 }
 ?>
@@ -403,17 +402,18 @@ function openEmployeeModal(employeeId) {
 
                                         switch ($engagementStatus) {
                                             case 'confirmed':
-                                                $badgeColor = 'success'; // Green
+                                                $badgeColor = 'success';
                                                 break;
                                             case 'pending':
-                                                $badgeColor = 'purple'; // Custom purple (defined in CSS)
+                                                $badgeColor = 'purple';
                                                 break;
                                             case 'not_confirmed':
-                                                $badgeColor = 'primary'; // Blue
+                                                $badgeColor = 'primary';
                                                 break;
                                             default:
-                                                $badgeColor = 'secondary'; // Fallback
+                                                $badgeColor = 'secondary';
                                         }
+
 
                                         $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
 
