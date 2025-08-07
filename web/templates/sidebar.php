@@ -40,8 +40,8 @@
       <hr>
       <li class="nav-item">
         <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-          <i class="bi bi-person-lines-fill me-2"></i>
-          My Schedule
+          <i class="bi bi-building-add me-2"></i>
+          Add Engagement
         </a>
       </li>
     </ul>
