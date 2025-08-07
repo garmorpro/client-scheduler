@@ -18,19 +18,19 @@
     <ul class="nav flex-column">
       <li class="nav-item mb-2">
         <a href="dashboard.php" class="nav-link d-flex align-items-center px-0 text-dark">
-          <i class="bi bi-speedometer2 me-2"></i>
+          <i class="bi bi-layout-wtf me-2"></i>
           Dashboard
         </a>
       </li>
       <li class="nav-item mb-2">
         <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-          <i class="bi bi-calendar3 me-2"></i>
+          <i class="bi bi-calendar-range me-2"></i>
           Master Schedule
         </a>
       </li>
       <li class="nav-item">
         <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-          <i class="bi bi-person-lines-fill me-2"></i>
+          <i class="bi bi-person me-2"></i>
           My Schedule
         </a>
       </li>
