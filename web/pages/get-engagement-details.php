@@ -3,12 +3,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Check if db.php exists before including it
-if (!file_exists('../db.php')) {
+if (!file_exists('../includes/db.php')) {
     echo json_encode(['error' => 'Database connection file not found.']);
     exit;
 }
 
-require_once('../db.php');
+require_once '../includes/db.php';
 
 // Your database query and other logic here...
 ?>
