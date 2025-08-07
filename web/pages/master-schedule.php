@@ -499,7 +499,7 @@ function openEmployeeModal(employeeId) {
         <form id="engagementForm" action="add-engagement-process.php" method="POST">
           <input type="hidden" id="modalEmployee" name="employee">
           <input type="hidden" id="modalEmployeeName">
-          <input type="hidden" id="modalWeek" name="week_start">
+          <input type="text" id="modalWeek" name="week_start">
           <input type="hidden" id="modalEngagementId" name="engagement_id">
 
           <div class="mb-3">
@@ -514,7 +514,7 @@ function openEmployeeModal(employeeId) {
             </select>
           </div>
 
-          <label for="startDate" class="form-label">Start Week Date</label>
+            <label for="startDate" class="form-label">Start Week Date</label>
             <input type="date" id="startDate" class="form-control" required>
 
 
