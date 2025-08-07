@@ -34,6 +34,17 @@
           My Schedule
         </a>
       </li>
+      <hr>
+      <h5>
+        Admin Settings
+      </h5>
+      <hr>
+      <li class="nav-item">
+        <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
+          <i class="bi bi-person-lines-fill me-2"></i>
+          My Schedule
+        </a>
+      </li>
     </ul>
   </div>
 
