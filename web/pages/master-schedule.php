@@ -398,23 +398,24 @@ function openEmployeeModal(employeeId) {
                             
                             if ($assignmentsForWeek) {
                                 foreach ($assignmentsForWeek as $assignment) {
-                                    $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed'); // fallback just in case
+                                    $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
 
-                                    switch ($engagementStatus) {
-                                        case 'confirmed':
-                                            $badgeColor = 'success'; // Green
-                                            break;
-                                        case 'pending':
-                                            $badgeColor = 'purple'; // Purple (custom class, ensure it's defined)
-                                            break;
-                                        case 'not_confirmed':
-                                            $badgeColor = 'primary'; // Blue
-                                            break;
-                                        default:
-                                            $badgeColor = 'secondary'; // Default/fallback
-                                    }
-                                  
-                                    $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
+                                        switch ($engagementStatus) {
+                                            case 'confirmed':
+                                                $badgeColor = 'success'; // Green
+                                                break;
+                                            case 'pending':
+                                                $badgeColor = 'purple'; // Custom purple (defined in CSS)
+                                                break;
+                                            case 'not_confirmed':
+                                                $badgeColor = 'primary'; // Blue
+                                                break;
+                                            default:
+                                                $badgeColor = 'secondary'; // Fallback
+                                        }
+                                        
+                                        $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
+
                                 }
                             } else {
                                 $cellContent = "<span class='text-muted'>+</span>";
