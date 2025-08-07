@@ -47,10 +47,8 @@ $stmt->bind_param('is', $employeeId, $mondayThisWeek);
 $stmt->execute();
 $assignmentsResult = $stmt->get_result();
 
-
 $totalAssignedHours = 0;
-$assignmentItemsHTML = '';
-$assignedHoursByWeek = []; // new array to hold weekly totals
+$assignmentsByClient = [];
 
 while ($row = $assignmentsResult->fetch_assoc()) {
     $client = htmlspecialchars($row['client_name']);
@@ -59,26 +57,37 @@ while ($row = $assignmentsResult->fetch_assoc()) {
     $hours = (int)$row['assigned_hours'];
     $totalAssignedHours += $hours;
 
-    // Group by week
-    if (!isset($assignedHoursByWeek[$weekStartRaw])) {
-        $assignedHoursByWeek[$weekStartRaw] = 0;
+    if (!isset($assignmentsByClient[$client])) {
+        $assignmentsByClient[$client] = [
+            'total_hours' => 0,
+            'weeks' => [],
+        ];
     }
-    $assignedHoursByWeek[$weekStartRaw] += $hours;
 
-    // Generate HTML for each assignment
+    $assignmentsByClient[$client]['total_hours'] += $hours;
+    $assignmentsByClient[$client]['weeks'][] = $weekStartFormatted;
+}
+
+// Build final HTML
+$assignmentItemsHTML = '';
+
+foreach ($assignmentsByClient as $client => $data) {
+    $weeksList = implode(', ', $data['weeks']);
+    $hours = $data['total_hours'];
+
     $assignmentItemsHTML .= "
         <div class='list-group-item d-flex justify-content-between align-items-center'>
             <div>
                 <strong>{$client}</strong><br />
-                <small class='text-muted'>Week of {$weekStartFormatted}</small>
+                <small class='text-muted'>Weeks of: {$weeksList}</small>
             </div>
             <span class='badge bg-primary rounded-pill'>{$hours} hrs</span>
         </div>
     ";
 }
 
-// Optional: You can hardcode or calculate this from elsewhere if needed
-$totalAvailableHours = 40 * 4; // 4 weeks * 40 hrs/week (example)
+// Optional: Calculate total available hours (adjust as needed)
+$totalAvailableHours = 40 * 4; // e.g. 4 weeks * 40 hrs/week
 
 echo json_encode([
     'full_name' => $fullName,
