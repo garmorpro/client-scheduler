@@ -5,17 +5,8 @@ ini_set('display_errors', 1);
 require_once '../includes/db.php';
 echo "DB included"; // Debugging line
 
-
-// Check if db.php exists before including it
-if (!file_exists('../includes/db.php')) {
-    echo json_encode(['error' => 'Database connection file not found.']);
-    exit;
-}
-
-
-
-// Check if $pdo is defined
-if (!isset($pdo)) {
+// Check if $conn (MySQLi) is defined
+if (!isset($conn)) {
     echo json_encode(['error' => 'Database connection not established.']);
     exit;
 }
@@ -26,27 +17,32 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-// Get the engagement ID
-$engagement_id = $_GET['id'];
+$engagement_id = intval($_GET['id']);
 
-// Prepare SQL query to fetch engagement details using PDO
-$query = "SELECT * FROM engagements WHERE engagement_id = :engagement_id";
-$stmt = $pdo->prepare($query);
-$stmt->bindParam(':engagement_id', $engagement_id, PDO::PARAM_INT);
+// Prepare SQL query using MySQLi
+$query = "SELECT * FROM engagements WHERE engagement_id = ?";
+$stmt = $conn->prepare($query);
+
+if ($stmt === false) {
+    echo json_encode(['error' => 'Failed to prepare statement']);
+    exit;
+}
+
+$stmt->bind_param("i", $engagement_id);
 
 // Execute the query
 if ($stmt->execute()) {
-    // Fetch data as associative array
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
 
     if ($data) {
         echo json_encode($data);
     } else {
-        // No engagement found
         echo json_encode(['error' => 'No engagement found with this ID']);
     }
 } else {
-    // Error executing query
     echo json_encode(['error' => 'Database query failed']);
 }
+
+$stmt->close();
 ?>
