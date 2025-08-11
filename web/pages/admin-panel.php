@@ -443,8 +443,27 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <div id="tab-analytics" class="tab-content d-none">
-            <p>Analytics content placeholder</p>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-people"></i></div>
+                        <div class="stat-title">Total Users</div>
+                        <div class="stat-value">45</div>
+                        <div class="stat-sub">+7 this month</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-sub">16 completed</div>
+                    </div>
+                </div>   
+            </div>
         </div>
+
+
 
         <div id="tab-settings" class="tab-content d-none">
             <p>Settings content placeholder</p>
