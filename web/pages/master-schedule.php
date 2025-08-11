@@ -351,14 +351,14 @@ function openEmployeeModal(employeeId) {
                 <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
 
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
                 <select name="status" class="form-select">
                     <option value="">Select a Statuses</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="pending">Pending</option>
                     <option value="not_confirmed">Not Confirmed</option>
                 </select>
-            </div>
+            </div> -->
             <div class="col-md-3 d-flex align-items-center gap-3">
                 <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
                 <a href="?start=<?php echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
@@ -579,9 +579,9 @@ function openEmployeeModal(employeeId) {
             <label for="status" class="form-label">Status</label>
             <select id="status" name="status" class="form-select" required>
               <option value="" disabled selected>Select status</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="on_hold">On Hold</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="not_confirmed">Not Confirmed</option>
             </select>
           </div>
 
