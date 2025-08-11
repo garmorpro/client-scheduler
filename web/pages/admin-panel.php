@@ -246,8 +246,17 @@ if (!isset($_SESSION['user_id'])) {
             border: 1px solid #e5e5e5;
             box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
-
-        .analytics-subtitle {
+        .analytic-util-bar {
+            height: 7px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            overflow: hidden;
+        }
+        .analytic-util-bar-fill {
+            background: #111;
+            height: 100%;
+        }
+        .analytic-subtitle {
             font-size: 0.8rem;
             color: #555;
         }
@@ -461,8 +470,8 @@ if (!isset($_SESSION['user_id'])) {
             <div class="row g-3 ps-3 pe-3">
                 <div class="col-md-6">
                     <div class="analytic-card">
-                        <div class="analytics-title">User Activity Overview</div>
-                        <div class="analytics-subtitle">Active vs Inactive users</div>
+                        <div class="analytic-title">User Activity Overview</div>
+                        <div class="analytic-subtitle">Active vs Inactive users</div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
@@ -482,7 +491,7 @@ if (!isset($_SESSION['user_id'])) {
                                 7
                             </div>
                         </div>
-                        <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
+                        <div class="analytic-util-bar mt-2"><div class="analytic-util-bar-fill" style="width:87%"></div></div>
                     </div>
                 </div>
                 <div class="col-md-6">
