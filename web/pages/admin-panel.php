@@ -310,7 +310,7 @@ if (!isset($_SESSION['user_id'])) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(128, 128, 128, 0.5); /* semi-transparent gray */
+            background: rgba(116, 51, 51, 0.5); /* semi-transparent gray */
             z-index: 2; /* above content */
             pointer-events: none; /* so clicks pass through if needed */
             border-radius: inherit; /* match card’s rounded corners */
