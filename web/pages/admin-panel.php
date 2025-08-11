@@ -69,7 +69,7 @@ if (!isset($_SESSION['user_id'])) {
             margin-top: 2rem;
             margin-bottom: 20px;
             background-color: rgb(235,235,239);
-            border-radius: 40px;
+            border-radius: 25px;
         }
         .custom-tabs button {
             background: none;
