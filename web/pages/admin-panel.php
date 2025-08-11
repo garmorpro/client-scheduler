@@ -862,7 +862,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <div>
                 <h5 id="view_client_name" class="fw-semibold"></h5>
                 <small id="view_email" class="text-muted"></small><br>
-                <small class="text-capitalize badge-status mt-2" style="font-size: 12px;" id="view_engagement_status">...</small>
+                <small class="text-capitalize badge-status" style="font-size: 12px;" id="view_engagement_status">...</small>
               </div>
             </div>
 
@@ -1342,7 +1342,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     <script>
       document.addEventListener('DOMContentLoaded', () => {
           const viewEngagementModal = document.getElementById('viewEngagementModal');
-            
+
           viewEngagementModal.addEventListener('show.bs.modal', async (event) => {
             const button = event.relatedTarget;
             const engagementId = button.getAttribute('data-engagement-id');
