@@ -25,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $assignedHours = $_POST['assigned_hours']; // Array of assigned hours
     $statuses = $_POST['statuses']; // Array of statuses
 
+    if (!is_array($weeks) || !is_array($assignedHours) || !is_array($statuses)) {
+        die('Invalid input data.');
+    }
+
     if (count($weeks) !== count($assignedHours) || count($weeks) !== count($statuses)) {
         die('The number of weeks, assigned hours, and statuses do not match.');
     }
@@ -38,14 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $successCount = 0;
+    $totalAssignedHours = 0;
+
     for ($i = 0; $i < count($weeks); $i++) {
         $weekStart = $weeks[$i];
-        $hours = $assignedHours[$i];
+        $hours = (float)$assignedHours[$i];
         $status = $statuses[$i];
 
-        $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
+        // Bind params with correct types:
+        // i = int, i = int, s = string (date), d = double, s = string
+        $stmt->bind_param('i i s d s', $employeeId, $clientId, $weekStart, $hours, $status);
+
         if ($stmt->execute()) {
             $successCount++;
+            $totalAssignedHours += $hours;
         }
     }
 
@@ -57,7 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-        // Optional: get employee full name for the log message
+        // Get employee full name for the log message
+        $empFirstName = '';
+        $empLastName = '';
         $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
         if ($empStmt) {
             $empStmt->bind_param("i", $employeeId);
@@ -65,17 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $empStmt->bind_result($empFirstName, $empLastName);
             $empStmt->fetch();
             $empStmt->close();
-        } else {
-            $empFirstName = '';
-            $empLastName = '';
         }
         $employeeFullName = trim("$empFirstName $empLastName");
 
-        $title = "Assignments Added";
         // Fetch client name from engagements table
         $clientName = '';
-        $sql = "SELECT client_name FROM engagements WHERE engagement_id = ?";
-        if ($stmtClient = $conn->prepare($sql)) {
+        $stmtClient = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
+        if ($stmtClient) {
             $stmtClient->bind_param("i", $clientId);
             $stmtClient->execute();
             $stmtClient->bind_result($clientName);
@@ -83,25 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmtClient->close();
         }
 
-        $totalAssignedHours = 0;
-
-        for ($i = 0; $i < count($weeks); $i++) {
-            $weekStart = $weeks[$i];
-            $hours = $assignedHours[$i];
-            $status = $statuses[$i];
-        
-            $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
-            $stmt->execute();
-        
-            $totalAssignedHours += $hours;
-        }
+        $title = "Assignments Added";
 
         if ($successCount <= 1) {
-            $description = "$successCount week($assignedHours) added for $employeeFullName on $clientName engagement.";
+            $description = "$successCount week ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
         } else {
-            $description = "$successCount assignments added for $employeeFullName on $clientName engagement.";
+            $description = "$successCount weeks ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
         }
-
 
         logActivity($conn, "assignment_created", $user_id, $email, $full_name, $title, $description);
 
