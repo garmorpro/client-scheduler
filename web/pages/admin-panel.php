@@ -1382,7 +1382,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         if (!engagementId) return;
 
         try {
-          const response = await fetch(`get_engagement.php?engagement_id=${engagementId}`);
+          const response = await fetch(`get_engagements.php?engagement_id=${engagementId}`);
           if (!response.ok) throw new Error('Network response was not ok');
 
           const engagement = await response.json();
