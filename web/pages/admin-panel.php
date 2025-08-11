@@ -414,14 +414,14 @@ if (!isset($_SESSION['user_id'])) {
 
                 <div class="activity-card d-flex justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(235,59,90); font-size: 24px;">
-                            <i class="bi bi-exclamation-triangle"></i>
+                        <div class="activity-icon" style="color:rgb(243,132,48); font-size: 16px; margin-top: -40px; margin-right: -15px;">
+                            <i class="bi bi-database"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">Failed Login Attempt</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Unknown</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Failed login from 10.0.0.50</div>
+                        <div class="activity-title fw-semibold mb-1">System Backup</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: System</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Automated daily backup completed successfully</div>
                     </div>
                     <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
                 </div>
