@@ -57,11 +57,10 @@ if (!isset($_SESSION['user_id'])) {
 
   <div class="flex-grow-1 p-4">
     <h3 class="mb-0">Dashboard</h3>
-    <p class="text-muted mb-">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.
+    <p class="text-muted mb-">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.</p>
 
-    <!-- <div class="p-5"></div> -->
 
-    <!-- <div class="container"> -->
+    <div class="container">
     <div class="admin-card">
       <div class="admin-icon">
         <!-- Shield icon (Bootstrap Icon) -->
@@ -71,19 +70,11 @@ if (!isset($_SESSION['user_id'])) {
       </div>
       <h5 class="fw-bold">Administrator Access</h5>
       <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
-      <button class="admin-btn mt-3">Go to Admin Dashboard</button>
+      <button class="admin-btn mt-2">Go to Admin Dashboard</button>
     </div>
-  <!-- </div> -->
-
-</p>
+  </div>
 
 
-    <?php
-    // Dump all session variables
-echo '<pre>';  // Pre-format the output for better readability
-var_dump($_SESSION);  // or use print_r($_SESSION) if you prefer
-echo '</pre>';
-?>
 
   </div>
 
