@@ -650,8 +650,8 @@ if ($result && $result->num_rows > 0) {
               </div>
               <div>
                 <div id="view_user_fullname" class="fw-semibold"></div>
-                <small id="view_email" class="text-muted"></small>
-                <small class="text-muted text-capitalize badge-role" id="view_user_role">...</small>
+                <small id="view_email" class="text-muted"></small><br>
+                <small class="text-capitalize badge-role" style="font-size: 12px;" id="view_user_role">...</small>
               </div>
             </div>
 
