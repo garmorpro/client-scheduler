@@ -295,10 +295,10 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         <?php echo $E_row['client_name']; ?><br>
                                     </td>
                                     <td>
-                                        <?php echo (int)$E_row['total_available_hours']; ?>
+                                        <?php echo (int)$E_row['total_available_hours']; ?> hours
                                     </td>
                                     <td>
-                                        <?php echo $E_row['total_assigned_hours']; ?>
+                                        <?php echo $E_row['total_assigned_hours']; ?> hours
                                     </td>
                                     <td>
                                         <?php
