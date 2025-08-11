@@ -863,45 +863,54 @@ if ($result && $result->num_rows > 0) {
 
 <!-- view user modal ajax -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          const viewUserModal = document.getElementById('viewUserModal');
+    document.addEventListener('DOMContentLoaded', () => {
+      const viewUserModal = document.getElementById('viewUserModal');
 
-          viewUserModal.addEventListener('show.bs.modal', async (event) => {
-              const button = event.relatedTarget;
-              const userId = button.getAttribute('data-user-id');
-              if (!userId) return;
+      viewUserModal.addEventListener('show.bs.modal', async (event) => {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        if (!userId) return;
 
-              try {
-                const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-                if (!response.ok) throw new Error('Network response was not ok');
-            
-                const user = await response.json();
-            
-                // Set initials
-                const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
-                const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
-                console.log('User data:', user);
+        try {
+          const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
+          if (!response.ok) throw new Error('Network response was not ok');
 
-                document.getElementById('view_user_initials').textContent = (user.first_name ? user.first_name[0].toUpperCase() : '') + (user.last_name ? user.last_name[0].toUpperCase() : '');
-                            
-                document.getElementById('view_user_fullname').textContent = `${user.first_name} ${user.last_name}`;
-                document.getElementById('view_user_role').textContent = user.role;
-                            
-                document.getElementById('view_first_name').textContent = user.first_name || '[No first name]';
-                document.getElementById('view_last_name').textContent = user.last_name || '[No last name]';
-                document.getElementById('view_email').textContent = user.email || '[No email]';
-                document.getElementById('view_role').textContent = user.role || '[No role]';
-                document.getElementById('view_status').textContent = user.status || '[No status]';
+          const user = await response.json();
+          console.log('User data:', user);
 
-            
-              } catch (error) {
-                console.error('Failed to load user data:', error);
-              }
-            });
+          // Helper function to set text if element exists
+          function setText(id, text) {
+            const el = document.getElementById(id);
+            if (el) {
+              el.textContent = text;
+            } else {
+              console.warn(`Element with ID "${id}" not found.`);
+            }
+          }
 
-        });
+          // Set initials
+          const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
+          const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
+          setText('view_user_initials', firstInitial + lastInitial);
 
+          // Set fullname and role
+          setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
+          setText('view_user_role', user.role);
+
+          // Set other info with fallback text
+          setText('view_first_name', user.first_name || '[No first name]');
+          setText('view_last_name', user.last_name || '[No last name]');
+          setText('view_email', user.email || '[No email]');
+          setText('view_role', user.role || '[No role]');
+          setText('view_status', user.status || '[No status]');
+
+        } catch (error) {
+          console.error('Failed to load user data:', error);
+        }
+      });
+    });
     </script>
+
 <!-- end view user modal ajax -->
 
 
