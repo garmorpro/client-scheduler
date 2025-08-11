@@ -138,7 +138,7 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         /* Table */
-        .user-table .table {
+        /* .user-table .table {
             background: #fff;
             border-radius: 15px !important;
             border: 1px solid #e5e7eb;
@@ -152,8 +152,8 @@ if (!isset($_SESSION['user_id'])) {
         .user-table td {
             vertical-align: middle;
             font-size: 14px;
-        }
-        .badge-role {
+        } */
+        /* .badge-role {
             background: #f3f4f6;
             color: #374151;
             padding: 4px 10px;
@@ -183,7 +183,7 @@ if (!isset($_SESSION['user_id'])) {
         }
         .table-actions i:hover {
             color: #111827;
-        }
+        } */
         /* Activity Cards */
         .activity-card {
             background: #fff;
