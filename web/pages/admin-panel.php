@@ -166,78 +166,66 @@ $result = mysqli_query($conn, $sql);
         </div>
 
         <div id="tab-activity" class="tab-content d-none">
-            <div class="activity-header mb-3">
-                <div class="titles">
-                    <p class="text-black"><strong>System Activity Log</strong></p>
-                    <p>Recent system events and user activities</p>
-                </div>
-            </div>
-
-            <div id="activity-list">
-                <div class="activity-card justify-content-between">
-                    <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi bi-shield"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">User Login</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Sarah Senior</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Successful login from 192.168.1.100</div>
-                    </div>
-                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-                </div>
-
-                <div class="activity-card d-flex justify-content-between">
-                    <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi bi-file-earmark-text"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">Project Created</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: John Manager</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Created project: ABC Corp Q1 Audit</div>
-                    </div>
-                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-                </div>
-
-                <div class="activity-card d-flex justify-content-between">
-                    <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi bi-people"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">User Role Updated</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Admin</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Changed Mike Staff role from Staff to Senior</div>
-                    </div>
-                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-                </div>
-
-                <div class="activity-card d-flex justify-content-between">
-                    <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(243,132,48); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi bi-database"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">System Backup</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: System</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Automated daily backup completed successfully</div>
-                    </div>
-                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-                </div>
-
-                <!-- Add more activity cards as needed -->
-            </div>
-
-            <!-- Pagination Controls for activity -->
-            <nav>
-                <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
-            </nav>
+    <div class="activity-header mb-3">
+        <div class="titles">
+            <p class="text-black"><strong>System Activity Log</strong></p>
+            <p>Recent system events and user activities</p>
         </div>
+    </div>
+
+    <div id="activity-list">
+        <?php
+        require_once '../includes/db.php';
+
+        // Fetch all activities, newest first
+        $sql = "SELECT event_type, full_name, title, description, created_at 
+                FROM system_activity_log 
+                ORDER BY created_at DESC";
+        $result = $conn->query($sql);
+
+        // Define icon & color mapping for different event types
+        $icons = [
+            'login' => ['bi-shield', 'rgb(92,141,253)'],
+            'project_created' => ['bi-file-earmark-text', 'rgb(79,198,96)'],
+            'user_role_updated' => ['bi-people', 'rgb(161,77,253)'],
+            'backup' => ['bi-database', 'rgb(243,132,48)'],
+            // Default
+            'default' => ['bi-info-circle', 'rgb(100,100,100)']
+        ];
+
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $type = strtolower($row['event_type']);
+                $iconClass = $icons[$type][0] ?? $icons['default'][0];
+                $iconColor = $icons[$type][1] ?? $icons['default'][1];
+
+                echo '
+                <div class="activity-card d-flex justify-content-between">
+                    <div class="activity-icon-container">
+                        <div class="activity-icon" style="color:'.$iconColor.'; font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
+                            <i class="bi '.$iconClass.'"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="activity-title fw-semibold mb-1">'.htmlspecialchars($row['title']).'</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: '.htmlspecialchars($row['full_name']).'</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">'.htmlspecialchars($row['description']).'</div>
+                    </div>
+                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">'.date("n/j/Y, g:i:s A", strtotime($row['created_at'])).'</div>
+                </div>';
+            }
+        } else {
+            echo '<p class="text-muted">No system activities found.</p>';
+        }
+        ?>
+    </div>
+
+    <!-- Pagination Controls for activity -->
+    <nav>
+        <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
+    </nav>
+</div>
+
 
         <div id="tab-analytics" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">

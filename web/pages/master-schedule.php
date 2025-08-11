@@ -318,11 +318,6 @@ function openEmployeeModal(employeeId) {
         });
 }
 
-
-
-
-
-
     </script>
 </head>
 <body class="d-flex">
