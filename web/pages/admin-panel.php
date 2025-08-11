@@ -1361,6 +1361,16 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 }
                 el.textContent = (text && text.toString().trim()) ? text : '-';
               }
+
+              function formatDate(dateString) {
+                if (!dateString) return '-';
+                const d = new Date(dateString);
+                if (isNaN(d)) return '-';
+                const month = d.getMonth() + 1;
+                const day = d.getDate();
+                const year = d.getFullYear();
+                return `${month}/${day}/${year}`;
+                }
           
               function formatHours(hours) {
                 return hours ? parseInt(hours, 10) : 0;
@@ -1372,8 +1382,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_engagement_team_size', engagement.assigned_user_count + ' members');
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
-              setText('view_engagement_created', engagement.created);
-              setText('view_engagement_updated', engagement.last_updated);
+              setText('view_engagement_created', formatDate(engagement.created));
+              setText('view_engagement_updated', formatDate(engagement.last_updated));
               setText('view_eng_status', engagement.status);
               setText('view_engagement_notes', engagement.notes);
           
