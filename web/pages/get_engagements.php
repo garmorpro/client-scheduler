@@ -23,6 +23,8 @@ $sql = "
         e.total_available_hours,
         e.status,
         e.notes,
+        e.last_updated,
+        e.created,
         COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours,
         COALESCE(COUNT(DISTINCT a.user_id), 0) AS assigned_user_count
     FROM engagements e

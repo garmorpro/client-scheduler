@@ -887,19 +887,19 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
               <div class="col-md-6">
                 <h6 class="mb-3">
-                  <i class="bi bi-person-lock"></i> Account Details
+                  <i class="bi bi-file-earmark-text"></i> Engagement Details
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
-                  <span id="view_acct_created" style="float: right;"></span>
+                  <span id="view_engagement_created" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Last Active:</strong>
-                  <span id="view_acct_last_active" style="float: right;"></span>
+                  <span id="view_engagement_updated" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Status:</strong>
-                  <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_eng_status" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <div class="mt-3"></div>
                 <hr>
@@ -1372,6 +1372,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_engagement_team_size', engagement.assigned_user_count + ' members');
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
+              setText('view_engagement_created', engagement.created);
+              setText('view_engagement_updated', engagement.last_updated);
+              setText('view_eng_notes', engagement.status);
               setText('view_engagement_notes', engagement.notes);
           
               // Handle status text and badge class
