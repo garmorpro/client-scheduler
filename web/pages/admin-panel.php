@@ -21,6 +21,29 @@ $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
+// Total assigned
+$assignedEngagementsQuery = "
+    SELECT COUNT(DISTINCT e.engagement_id) AS total_assigned
+    FROM engagements e
+    JOIN assignments a ON e.engagement_id = a.engagement_id
+";
+
+$assignedResult = mysqli_query($conn, $assignedEngagementsQuery);
+$assignedRow = mysqli_fetch_assoc($assignedResult);
+$totalAssigned = $assignedRow['total_assigned'];
+
+// Total not assigned
+$notAssignedEngagementsQuery = "
+    SELECT COUNT(*) AS total_not_assigned
+    FROM engagements e
+    LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
+    WHERE a.engagement_id IS NULL
+";
+
+$notAssignedResult = mysqli_query($conn, $notAssignedEngagementsQuery);
+$notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
+$totalNotAssigned = $notAssignedRow['total_not_assigned'];
+
 
 $sql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
         FROM users 
@@ -70,7 +93,7 @@ $result = mysqli_query($conn, $sql);
                     <div class="stat-title">Engagement Status</div>
                     <div class="stat-value">100%</div>
                     <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
-                    <div class="stat-sub mt-2">42 assigned - 0 unassigned</div>
+                    <div class="stat-sub mt-2"><?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> unassigned</div>
                 </div>
             </div>
             <div class="col-md-3">
