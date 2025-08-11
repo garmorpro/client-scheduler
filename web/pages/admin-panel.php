@@ -868,19 +868,19 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             <div class="row mt-3">
               <div class="col-md-6">
                 <h6 class="mb-3">
-                  <i class="bi bi-envelope"></i> Personal Information
+                  <i class="bi bi-people"></i> Team Overview
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
-                  <strong style="float: left;">First Name:</strong>
+                  <strong style="float: left;">Team Size:</strong>
                   <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
-                  <strong style="float: left;">Last Name:</strong>
-                  <span id="view_last_name_detail" class="text-capitalize" style="float: right;"></span>
+                  <strong style="float: left;">Estimated Hours:</strong>
+                  <span id="view_engagement_est_hours" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
-                  <strong style="float: left;">Email:</strong>
-                  <span id="view_email_detail" style="float: right;"></span>
+                  <strong style="float: left;">Allocated Hours:</strong>
+                  <span id="view_engagement_allocated_hours" style="float: right;"></span>
                 </p>
                 <div class="mt-3"></div>
                 <hr>
