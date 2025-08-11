@@ -483,7 +483,12 @@ if (!isset($_SESSION['user_id'])) {
 
 
         <div id="tab-activity" class="tab-content d-none">
-
+            <div class="activity-header">
+                <div class="titles">
+                    <p class="text-black"><strong>System Activity Log</strong></p>
+                    <p>Recent system events and user activities</p>
+                </div>
+            </div>
 
 
             <!-- Example activity card -->
