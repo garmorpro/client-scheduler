@@ -851,8 +851,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateEngagementModalLabel">
-                <i class="bi bi-file-earmark-note"></i> Engagement Details <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete profile information for <span id="view_first_name"></span> <span id="view_last_name"></span></span>
+                <i class="bi bi-file-earmark-text"></i> Engagement Details <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete engagement details for <span id="view_client_name"></span></span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1348,18 +1348,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const viewEngagementModal = document.getElementById('viewEngagementModal');
-    
+
         viewEngagementModal.addEventListener('show.bs.modal', async (event) => {
           const button = event.relatedTarget;
           const engagementId = button.getAttribute('data-engagement-id');
           if (!engagementId) return;
-        
+
           try {
             const response = await fetch(`get_engagement.php?engagement_id=${encodeURIComponent(engagementId)}`);
             if (!response.ok) throw new Error('Network response was not ok');
-        
+
             const engagement = await response.json();
-        
+
             function setText(id, text) {
               const el = document.getElementById(id);
               if (!el) {
@@ -1368,18 +1368,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               }
               el.textContent = (text && text.toString().trim()) ? text : '-';
             }
-        
+
             // Format hours to integer (like your 400, not 400.00)
             function formatHours(hours) {
               return hours ? parseInt(hours, 10) : 0;
             }
-        
+
             setText('view_engagement_client_name', engagement.client_name);
             setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
             setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
             setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
             setText('view_engagement_notes', engagement.notes);
-        
+
           } catch (error) {
             console.error('Failed to load engagement data:', error);
           }
