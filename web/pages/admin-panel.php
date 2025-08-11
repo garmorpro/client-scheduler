@@ -446,9 +446,8 @@ if (!isset($_SESSION['user_id'])) {
             <div class="row g-3 ps-3 pe-3">
                 <div class="col-md-6">
                     <div class="stat-card">
-                        <div class="card-icon"><i class="bi bi-people"></i></div>
-                        <div class="stat-title">Total Users</div>
-                        <div class="stat-value">45</div>
+                        <div class="stat-title">User Activity Overview</div>
+                        <div class="analytics-sub-title">Active vs Inactive users</div>
                         <div class="stat-sub">+7 this month</div>
                     </div>
                 </div>
