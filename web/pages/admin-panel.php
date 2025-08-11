@@ -570,7 +570,8 @@ if ($result && $result->num_rows > 0) {
       <div class="modal-dialog">
         <form id="updateUserForm" action="update_user.php" method="POST" class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="updateUserModalLabel"><i class="bi bi-pencil-square"></i> Update User</h5>
+            <h5 class="modal-title" id="updateUserModalLabel"><i class="bi bi-pencil-square"></i> Edit User</h5>
+            <p class="text-muted" style="font-size: 12px !important;">Update user information and permissions</p>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
