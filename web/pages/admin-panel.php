@@ -486,8 +486,12 @@ if (!isset($_SESSION['user_id'])) {
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="analytic-card">
-                        <div class="analytic-title">User Activity Overview</div>
-                        <div class="analytic-subtitle">Active vs Inactive users</div>
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
+                                <p style="font-size: 14px;">Active vs Inactive users</p>
+                            </div>
+                        </div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
@@ -518,8 +522,6 @@ if (!isset($_SESSION['user_id'])) {
                                 <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <!-- <div class="analytic-title">Engagement Status</div>
-                        <div class="analytic-subtitle">Current engagement distribution</div> -->
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
