@@ -146,9 +146,11 @@ $result = mysqli_query($conn, $sql);
                                     ?>
                                 </td>
                                 <td class="table-actions">
-                                    <i class="bi bi-eye overlay-red"></i>
+                                    <a href="#" class="view-user-btn" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <i class="bi bi-eye overlay-blue"></i>
+                                    </a>
                                     <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
-                                      <i class="bi bi-pencil text-purple "></i>
+                                        <i class="bi bi-pencil text-purple "></i>
                                     </a>
 
                                     <i class="bi bi-trash overlay-red"></i>
@@ -627,6 +629,33 @@ if ($result && $result->num_rows > 0) {
     </div>
 <!-- end update user modal -->
 
+<!-- View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="viewUserModalLabel">
+              <i class="bi bi-person-lines-fill"></i> User Info
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <p><strong>First Name:</strong> <span id="view_first_name"></span></p>
+            <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
+            <p><strong>Email:</strong> <span id="view_email"></span></p>
+            <p><strong>Role:</strong> <span id="view_role"></span></p>
+            <p><strong>Status:</strong> <span id="view_status"></span></p>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- end View user modal -->
+
 
 
 
@@ -780,42 +809,73 @@ if ($result && $result->num_rows > 0) {
   document.addEventListener('reinitActivityPagination', initActivityPagination);
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-  const updateUserModal = document.getElementById('updateUserModal');
-  const updateUserForm = document.getElementById('updateUserForm');
 
-  updateUserModal.addEventListener('show.bs.modal', async (event) => {
-    const button = event.relatedTarget; // Button that triggered the modal
-    const userId = button.getAttribute('data-user-id');
+<!-- update modal ajax -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const updateUserModal = document.getElementById('updateUserModal');
+          const updateUserForm = document.getElementById('updateUserForm');
 
-    // Clear previous values
-    updateUserForm.reset();
+          updateUserModal.addEventListener('show.bs.modal', async (event) => {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const userId = button.getAttribute('data-user-id');
 
-    if (!userId) return;
+            // Clear previous values
+            updateUserForm.reset();
 
-    try {
-      const response = await fetch(`get_user.php?user_id=${userId}`);
-      if (!response.ok) throw new Error('Network response was not ok');
+            if (!userId) return;
 
-      const user = await response.json();
+            try {
+              const response = await fetch(`get_user.php?user_id=${userId}`);
+              if (!response.ok) throw new Error('Network response was not ok');
 
-      // Populate form fields using querySelector for accuracy
-      updateUserForm.querySelector('#update_user_id').value = user.user_id;
-      updateUserForm.querySelector('#update_first_name').value = user.first_name;
-      updateUserForm.querySelector('#update_last_name').value = user.last_name;
-      updateUserForm.querySelector('#update_email').value = user.email;
-      updateUserForm.querySelector('#update_role').value = user.role;
-      updateUserForm.querySelector('#update_status').value = user.status;
-    } catch (error) {
-      console.error('Failed to load user data:', error);
-      // Optionally show an alert or close modal here
-    }
-  });
-});
+              const user = await response.json();
 
+              // Populate form fields using querySelector for accuracy
+              updateUserForm.querySelector('#update_user_id').value = user.user_id;
+              updateUserForm.querySelector('#update_first_name').value = user.first_name;
+              updateUserForm.querySelector('#update_last_name').value = user.last_name;
+              updateUserForm.querySelector('#update_email').value = user.email;
+              updateUserForm.querySelector('#update_role').value = user.role;
+              updateUserForm.querySelector('#update_status').value = user.status;
+            } catch (error) {
+              console.error('Failed to load user data:', error);
+              // Optionally show an alert or close modal here
+            }
+          });
+        });
+    </script>
+<!-- end update modal ajax -->
 
-</script>
+<!-- view user modal ajax -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const viewUserModal = document.getElementById('viewUserModal');
+
+          viewUserModal.addEventListener('show.bs.modal', async (event) => {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            if (!userId) return;
+        
+            try {
+              const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
+              if (!response.ok) throw new Error('Network response was not ok');
+              const user = await response.json();
+            
+              document.getElementById('view_first_name').textContent = user.first_name || '';
+              document.getElementById('view_last_name').textContent = user.last_name || '';
+              document.getElementById('view_email').textContent = user.email || '';
+              document.getElementById('view_role').textContent = user.role || '';
+              document.getElementById('view_status').textContent = user.status || '';
+            } catch (error) {
+              console.error('Failed to load user data:', error);
+              // Optional: show an error or close the modal
+            }
+          });
+        });
+
+    </script>
+<!-- end view user modal ajax -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
