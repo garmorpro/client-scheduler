@@ -239,7 +239,7 @@ if (!isset($_SESSION['user_id'])) {
 
 
         .analytics-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #555;
         }
     </style>
@@ -453,7 +453,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-6">
                     <div class="stat-card">
                         <div class="analytics-title">User Activity Overview</div>
-                        <div class="analytics-sub-title">Active vs Inactive users</div>
+                        <div class="analytics-subtitle">Active vs Inactive users</div>
                         <div class="stat-sub">+7 this month</div>
                     </div>
                 </div>
