@@ -290,7 +290,7 @@ if (!isset($_SESSION['user_id'])) {
         }
         .settings-card {
             position: relative;
-            height: 255px;
+            height: 270px;
             background: #fff;
             border-radius: 12px;
             padding: 1.5rem;
