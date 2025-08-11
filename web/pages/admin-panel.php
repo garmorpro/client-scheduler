@@ -657,41 +657,42 @@ if ($result && $result->num_rows > 0) {
             </div>
 
             <div class="row mt-3">
-                <div class="col-md-6">
-                    <h6>
-                        <i class="bi bi-envelope"></i> Personal Information
-                    </h6>
-                    <p class="text-muted">
-                      <strong>First Name:</strong>
-                      <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
-                    </p>
-                    <p class="text-muted">
-                        <strong>Last Name:</strong> 
-                        <span id="view_last_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
-                    </p>
-                    <p class="text-muted">
-                        <strong>Email:</strong> 
-                        <span id="view_email_detail" class="d-inline-block text-end" style="min-width: 75%;"></span>
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <h6>
-                        <i class="bi bi-person-lock"></i> Account Details
-                    </h6>
-                    <p class="text-muted">
-                      <strong>Created:</strong>
-                      <span id="view_acct_created" class="d-inline-block text-end" style="min-width: 75%;"></span>
-                    </p>
-                    <p class="text-muted">
-                        <strong>Last Active:</strong> 
-                        <span id="view_acct_last_active" class="d-inline-block text-end" style="min-width: 65%;"></span>
-                    </p>
-                    <p class="text-muted">
-                        <strong>Status:</strong> 
-                        <span id="view_acct_status" class="d-inline-block text-end" style="min-width: 75%;"></span>
-                    </p>
-                </div>
-            </div>
+  <div class="col-md-6">
+    <h6>
+      <i class="bi bi-envelope"></i> Personal Information
+    </h6>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">First Name:</strong>
+      <span id="view_first_name_detail" style="float: right; width: 65%;"></span>
+    </p>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">Last Name:</strong>
+      <span id="view_last_name_detail" style="float: right; width: 65%;"></span>
+    </p>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">Email:</strong>
+      <span id="view_email_detail" style="float: right; width: 65%;"></span>
+    </p>
+  </div>
+  <div class="col-md-6">
+    <h6>
+      <i class="bi bi-person-lock"></i> Account Details
+    </h6>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">Created:</strong>
+      <span id="view_acct_created" style="float: right; width: 65%;"></span>
+    </p>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">Last Active:</strong>
+      <span id="view_acct_last_active" style="float: right; width: 65%;"></span>
+    </p>
+    <p class="text-muted" style="overflow: hidden;">
+      <strong style="float: left; width: 30%;">Status:</strong>
+      <span id="view_acct_status" style="float: right; width: 65%;"></span>
+    </p>
+  </div>
+</div>
+
             <hr>
 
         
