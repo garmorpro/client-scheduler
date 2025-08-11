@@ -84,7 +84,7 @@ $result = mysqli_query($conn, $sql);
         <!-- Tabs -->
         <div class="custom-tabs">
             <button class="active" data-tab="users">User Management</button>
-            <button class="overlay-red" data-tab="activity">System Activity</button>
+            <button data-tab="activity">System Activity</button>
             <button class="overlay-red" data-tab="analytics">Analytics</button>
             <button class="overlay-red" data-tab="settings">Settings</button>
         </div>
