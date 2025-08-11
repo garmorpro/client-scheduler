@@ -540,7 +540,7 @@ function openEmployeeModal(employeeId) {
           <div id="weeksContainer"></div>
 
           <div class="mb-3 text-end">
-            <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Engagement</button>
+            <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Assignment</button>
           </div>
         </form>
       </div>

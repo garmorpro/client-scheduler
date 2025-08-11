@@ -7,6 +7,17 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// LOG ACTIVITY FUNCTION
+function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $employeeId = $_POST['employee'];
     $clientId = $_POST['client_name'];
@@ -22,17 +33,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, status)
         VALUES (?, ?, ?, ?, ?)
     ");
+    if (!$stmt) {
+        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+    }
 
+    $successCount = 0;
     for ($i = 0; $i < count($weeks); $i++) {
         $weekStart = $weeks[$i];
         $hours = $assignedHours[$i];
         $status = $statuses[$i];
 
         $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            $successCount++;
+        }
     }
 
-    if ($stmt->affected_rows > 0) {
+    $stmt->close();
+
+    if ($successCount > 0) {
+        // Prepare log info
+        $user_id = $_SESSION['user_id'];
+        $email = $_SESSION['email'] ?? '';
+        $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+
+        // Optional: get employee full name for the log message
+        $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
+        if ($empStmt) {
+            $empStmt->bind_param("i", $employeeId);
+            $empStmt->execute();
+            $empStmt->bind_result($empFirstName, $empLastName);
+            $empStmt->fetch();
+            $empStmt->close();
+        } else {
+            $empFirstName = '';
+            $empLastName = '';
+        }
+        $employeeFullName = trim("$empFirstName $empLastName");
+
+        $title = "Assignments Added";
+        $description = "$successCount assignments added for $employeeFullName on engagement ID $clientId";
+
+        logActivity($conn, "assignment_created", $user_id, $email, $full_name, $title, $description);
+
         header("Location: master-schedule.php?status=success");
         exit();
     } else {
@@ -41,4 +84,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     die('Invalid request.');
 }
-?>
