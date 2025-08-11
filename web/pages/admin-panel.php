@@ -739,7 +739,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end update user modal -->
 
 <!-- update engagement modal -->
- <div class="modal fade" id="updateEngagementModal" tabindex="-1" aria-labelledby="updateEngagementModalLabel" aria-hidden="true">
+<!-- Engagement Edit Modal -->
+<div class="modal fade" id="updateEngagementModal" tabindex="-1" aria-labelledby="updateEngagementModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form id="updateEngagementForm" action="update_engagement.php" method="POST" class="modal-content">
       <div class="modal-header">
@@ -788,6 +789,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </form>
   </div>
 </div>
+
 
 <!-- end update engagement modal -->
 
