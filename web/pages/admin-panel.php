@@ -931,6 +931,16 @@ if ($result && $result->num_rows > 0) {
         else console.warn(`Element with ID "${id}" not found.`);
       }
 
+      function formatDate(dateString) {
+        if (!dateString) return '';
+        const d = new Date(dateString);
+        if (isNaN(d)) return ''; // invalid date
+        const month = d.getMonth() + 1; // months are 0-based
+        const day = d.getDate();
+        const year = d.getFullYear();
+        return `${month}/${day}/${year}`;
+      }
+
       const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
       const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
       setText('view_user_initials', firstInitial + lastInitial);
@@ -946,8 +956,8 @@ if ($result && $result->num_rows > 0) {
 
       setText('view_status', user.status);
       setText('view_acct_status', user.status);
-      setText('view_acct_created', user.created);
-      setText('view_acct_last_active', user.last_active);
+      setText('view_acct_created', formatDate(user.created));
+      setText('view_acct_last_active', formatDate(user.last_active));
 
       // Update badge class for status
       const statusEl = document.getElementById('view_status');
