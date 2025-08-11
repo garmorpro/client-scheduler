@@ -446,7 +446,7 @@ $result = mysqli_query($conn, $sql);
                     <!-- Email Notifications -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <div>
-                        <p class="text-black fs-6 fw-semibold mb-0">Email Notifications</p>
+                        <p class="text-black fw-semibold mb-0" class="font-size: 16px;">Email Notifications</p>
                         <p class="mb-0 fs-6">Send system notifications via email</p>
                       </div>
                       <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
