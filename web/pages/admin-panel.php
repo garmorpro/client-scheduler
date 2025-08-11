@@ -995,21 +995,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${month}/${day}/${year}`;
       }
 
-      // Returns relative time string (e.g. '2h ago', '3d ago')
       function timeSince(dateString) {
-        if (!dateString) return '-';
-        const now = new Date();
-        const past = new Date(dateString);
-        const seconds = Math.floor((now - past) / 1000);
-        if (seconds < 60) return `${seconds}s ago`;
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes}m ago`;
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours}h ago`;
-        const days = Math.floor(hours / 24);
-        if (days < 7) return `${days}d ago`;
-        return formatDate(dateString);
-      }
+  if (!dateString) return '-';
+  const now = new Date();
+  const past = new Date(dateString);
+
+  if (isNaN(past.getTime())) return '-';  // invalid date
+
+  let seconds = Math.floor((now - past) / 1000);
+
+  if (seconds < 0) seconds = 0;  // if future date, treat as now
+
+  if (seconds < 5) return 'just now';
+  if (seconds < 60) return `${seconds}s ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+
+  // fallback: show formatted date
+  return formatDate(dateString);
+}
+
 
       const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
       const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
