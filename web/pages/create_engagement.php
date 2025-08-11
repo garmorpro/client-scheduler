@@ -15,17 +15,26 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $clientName = $_POST['client_name'];
-    $totalHours = $_POST['total_available_hours'];
-    $assignedHours = $_POST['assigned_hours'];
-    $status = $_POST['status'];
-    $notes = $_POST['notes'] ?? '';
+    // Validate and sanitize inputs
+    $clientName = trim($_POST['client_name'] ?? '');
+    $totalHours = $_POST['total_available_hours'] ?? 0;
+    $status = $_POST['status'] ?? '';
+    $notes = trim($_POST['notes'] ?? '');
+
+    // assigned_hours is not in modal, so default to 0 here
+    $assignedHours = 0;
+
+    // Basic validation
+    if ($clientName === '' || $totalHours === '' || $status === '') {
+        die("Please fill all required fields.");
+    }
 
     $stmt = $conn->prepare("INSERT INTO engagements (client_name, total_available_hours, assigned_hours, status, notes, last_updated, created) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
 
+    // Bind parameters: s = string, i = int, i = int, s = string, s = string
     $stmt->bind_param("siiss", $clientName, $totalHours, $assignedHours, $status, $notes);
 
     if ($stmt->execute()) {
@@ -43,10 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "Created engagement: " . $clientName
         );
 
-        header("Location: my-schedule.php");
+        header("Location: my-schedule.php?status=success");
         exit();
     } else {
         echo "Error creating engagement: " . $stmt->error;
     }
+} else {
+    die('Invalid request method.');
 }
-?>
