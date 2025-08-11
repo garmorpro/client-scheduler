@@ -328,7 +328,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         <a href="#" class="view-engagement-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewEngagementModal" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
                                             <i class="bi bi-eye text-success"></i>
                                         </a>
-                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateEngagementModal" data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateEngagementModal" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
