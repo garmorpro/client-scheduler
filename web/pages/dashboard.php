@@ -32,8 +32,8 @@ if (!isset($_SESSION['user_id'])) {
       justify-content: center;
       margin: 0 auto 1rem auto;
     }
-    .admin-icon img {
-      font-size: 28px;
+    .admin-icon i {
+      font-size: 28px !important;
       color: #2c2c2c;
     }
     .admin-btn {
