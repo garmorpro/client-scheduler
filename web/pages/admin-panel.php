@@ -481,16 +481,30 @@ if (!isset($_SESSION['user_id'])) {
 
 
         <div id="tab-activity" class="tab-content d-none">
-            <div class="activity-card">
-                <div class="activity-info">
-                    <div class="activity-icon" style="background:#e0f2fe;">🔑</div>
-                    <div>
-                        <div class="activity-title">User Login</div>
-                        <div class="activity-sub">By: Sarah Senior — Successful login from 192.168.1.100</div>
-                    </div>
+
+
+
+            <!-- Example activity card -->
+            <div class="activity-card d-flex align-items-center justify-content-between">
+              <!-- Left: Icon -->
+              <div class="activity-icon d-flex align-items-center justify-content-center" style="background:#e0f2fe; width: 48px; height: 48px; border-radius: 8px; font-size: 24px; flex-shrink: 0;">
+                <i class="bi bi-shield"></i>
+              </div>
+
+              <!-- Center: Description -->
+              <div class="flex-grow-1 mx-3">
+                <div class="activity-title fw-semibold mb-1">User Login</div>
+                <div class="activity-sub text-muted" style="font-size: 0.9rem;">
+                  By: Sarah Senior — Successful login from 192.168.1.100
                 </div>
-                <div class="text-muted small">1/7/2025, 2:30 PM</div>
+              </div>
+
+              <!-- Right: Timestamp -->
+              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
+                1/7/2025, 2:30:00 PM
+              </div>
             </div>
+            
             <div class="activity-card">
                 <div class="activity-info">
                     <div class="activity-icon" style="background:#dcfce7;">📁</div>
@@ -501,6 +515,9 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="text-muted small">1/7/2025, 1:15 PM</div>
             </div>
+
+
+
         </div>
 
         <div id="tab-analytics" class="tab-content d-none">
