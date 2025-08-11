@@ -698,24 +698,24 @@ if ($result && $result->num_rows > 0) {
             <div class="row mt-4">
               <div class="col-md-6">
                 <h6>
-                  <i class="bi bi-envelope"></i> Personal Information
+                  <i class="bi bi-shield"></i> Access & Permissions
                 </h6>
                 <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">First Name:</strong>
-                  <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
+                  <strong style="float: left;">Role:</strong>
+                  <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Last Name:</strong>
-                  <span id="view_last_name_detail" class="text-capitalize" style="float: right;"></span>
+                  <strong style="float: left;">Access Level:</strong>
+                  <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Email:</strong>
-                  <span id="view_email_detail" style="float: right;"></span>
+                  <strong style="float: left;">Two-Factor Auth:</strong>
+                  <span id="view_acct_mfa" style="float: right;"></span>
                 </p>
               </div>
               <div class="col-md-6">
                 <h6>
-                  <i class="bi bi-person-lock"></i> Account Details
+                  <i class="bi bi-clock"></i> Activity Summary
                 </h6>
                 <p class="text-muted" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
@@ -998,6 +998,31 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('view_status', user.status);
       setText('view_acct_status', user.status);
       setText('view_acct_created', formatDate(user.created));
+      setText('view_acct_last_active', formatDate(user.last_active));
+
+      function getAccessLevel(role) {
+        switch(role.toLowerCase()) {
+          case 'admin':
+            return 'Full Access';
+          case 'manager':
+            return 'High Access';
+          case 'senior':
+            return 'Moderate Access';
+          case 'staff':
+            return 'Basic Access';
+          case 'intern':
+            return 'Restricted Access';
+          default:
+            return 'Unknown Access';
+        }
+      }
+      
+      // Inside your modal loading script, after you fetch user data:
+      
+      setText('view_acct_role', user.role);
+      
+      const accessLevel = getAccessLevel(user.role || '');
+      setText('view_acct_access_level', accessLevel);
       setText('view_acct_last_active', formatDate(user.last_active));
 
       // Update badge class for status
