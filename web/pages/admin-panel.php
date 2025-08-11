@@ -739,58 +739,55 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end update user modal -->
 
 <!-- update engagement modal -->
-<!-- Engagement Edit Modal -->
-<div class="modal fade" id="updateEngagementModal" tabindex="-1" aria-labelledby="updateEngagementModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form id="updateEngagementForm" action="update_engagement.php" method="POST" class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="updateEngagementModalLabel">
-          <i class="bi bi-pencil-square"></i> Edit Engagement <br>
-          <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Update engagement details</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="updateEngagementModal" tabindex="-1" aria-labelledby="updateEngagementModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="updateEngagementForm" action="update_engagement.php" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateEngagementModalLabel">
+              <i class="bi bi-pencil-square"></i> Edit Engagement <br>
+              <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Update engagement details</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+
+            <input type="hidden" id="update_engagement_id" name="engagement_id" required>
+
+            <div class="mb-3">
+              <label for="update_client_name" class="form-label">Client Name</label>
+              <input type="text" class="form-control" id="update_client_name" name="client_name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_total_available_hours" class="form-label">Estimated Hours</label>
+              <input type="number" min="0" class="form-control" id="update_total_available_hours" name="total_available_hours" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_status" class="form-label">Status</label>
+              <select class="form-select" id="update_status" name="status" required>
+                <option value="" disabled>Select status</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="not_confirmed">Not Confirmed</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_notes" class="form-label">Notes</label>
+              <textarea class="form-control" id="update_notes" name="notes" rows="3"></textarea>
+            </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"   data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Update     Engagement</button>
+          </div>
+        </form>
       </div>
-
-      <div class="modal-body">
-
-        <input type="hidden" id="update_engagement_id" name="engagement_id" required>
-
-        <div class="mb-3">
-          <label for="update_client_name" class="form-label">Client Name</label>
-          <input type="text" class="form-control" id="update_client_name" name="client_name" required>
-        </div>
-
-        <div class="mb-3">
-          <label for="update_total_available_hours" class="form-label">Estimated Hours</label>
-          <input type="number" min="0" class="form-control" id="update_total_available_hours" name="total_available_hours" required>
-        </div>
-
-        <div class="mb-3">
-          <label for="update_status" class="form-label">Status</label>
-          <select class="form-select" id="update_status" name="status" required>
-            <option value="" disabled>Select status</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="pending">Pending</option>
-            <option value="not_confirmed">Not Confirmed</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="update_notes" class="form-label">Notes</label>
-          <textarea class="form-control" id="update_notes" name="notes" rows="3"></textarea>
-        </div>
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Update Engagement</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
+    </div>
 <!-- end update engagement modal -->
 
 <!-- View User Modal -->
@@ -1452,7 +1449,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_engagement_client_name', engagement.client_name);
               setText('view_client_name', engagement.client_name);
               const count = engagement.assigned_user_count || 0;
-              const memberText = count <= 1 ? 'member' : 'members';
+              const memberText = count = 1 ? 'member' : 'members';
               setText('view_engagement_team_size', `${count} ${memberText}`);
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
