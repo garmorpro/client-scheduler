@@ -733,19 +733,6 @@ if ($result && $result->num_rows > 0) {
             </div>
         
 
-          <!-- For initials -->
-<div id="view_user_initials"></div>
-
-<!-- For full name and role -->
-<div id="view_user_fullname"></div>
-<div id="view_user_role"></div>
-
-<!-- Individual user info -->
-<p><strong>First Name:</strong> <span id="view_first_name"></span></p>
-<p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
-<p><strong>Email:</strong> <span id="view_email"></span></p>
-<p><strong>Status:</strong> <span id="view_status" class="badge-status"></span></p>
-
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1023,7 +1010,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const accessLevel = getAccessLevel(user.role || '');
       setText('view_acct_access_level', accessLevel);
-      setText('view_acct_last_active', formatDate(user.last_active));
+      
+      function boolToEnabledDisabled(value) {
+        return value == 1 ? 'Enabled' : 'Disabled';
+      }
+      
+      // Then:
+      
+      setText('view_acct_mfa', boolToEnabledDisabled(user.mfa_enabled));
 
       // Update badge class for status
       const statusEl = document.getElementById('view_status');
