@@ -147,7 +147,9 @@ $result = mysqli_query($conn, $sql);
                                 </td>
                                 <td class="table-actions">
                                     <i class="bi bi-eye overlay-red"></i>
-                                    <i class="bi bi-pencil overlay-red"></i>
+                                    <a href="#" class="edit-user-btn" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <i class="bi bi-pencil overlay-red"></i>
+                                    </a>
                                     <i class="bi bi-trash overlay-red"></i>
                                 </td>
                             </tr>
@@ -562,6 +564,66 @@ if ($result && $result->num_rows > 0) {
 <!-- end add user modal -->
 
 
+<!-- Update User Modal -->
+    <div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="updateUserForm" action="update_user.php" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <input type="hidden" id="update_user_id" name="user_id" required>
+
+            <div class="mb-3">
+              <label for="update_first_name" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="update_first_name" name="first_name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_last_name" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="update_last_name" name="last_name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="update_email" name="email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_role" class="form-label">Role</label>
+              <select class="form-select" id="update_role" name="role" required>
+                <option value="" disabled>Select role</option>
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="staff">Staff</option>
+                <!-- Add more roles as needed -->
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="update_status" class="form-label">Status</label>
+              <select class="form-select" id="update_status" name="status" required>
+                <option value="" disabled>Select status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <!-- Add more statuses as needed -->
+              </select>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+<!-- end update user modal -->
+
+
+
 
 
 
@@ -711,6 +773,42 @@ if ($result && $result->num_rows > 0) {
   // Reinit paginations on tab switch
   document.addEventListener('reinitUserPagination', initUserPagination);
   document.addEventListener('reinitActivityPagination', initActivityPagination);
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const updateUserModal = document.getElementById('updateUserModal');
+  const updateUserForm = document.getElementById('updateUserForm');
+
+  updateUserModal.addEventListener('show.bs.modal', async (event) => {
+    const button = event.relatedTarget; // Button that triggered the modal
+    const userId = button.getAttribute('data-user-id');
+
+    // Clear previous values
+    updateUserForm.reset();
+
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`get_user.php?user_id=${userId}`);
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      const user = await response.json();
+
+      // Populate form fields
+      updateUserForm.user_id.value = user.user_id;
+      updateUserForm.first_name.value = user.first_name;
+      updateUserForm.last_name.value = user.last_name;
+      updateUserForm.email.value = user.email;
+      updateUserForm.role.value = user.role;
+      updateUserForm.status.value = user.status;
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      // Optionally, close modal or show an error message
+    }
+  });
+});
+
 </script>
 
 
