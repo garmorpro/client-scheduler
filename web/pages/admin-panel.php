@@ -681,7 +681,7 @@ if ($result && $result->num_rows > 0) {
                 <h6 class="mb-3">
                   <i class="bi bi-person-lock"></i> Account Details
                 </h6>
-                <p class="text-muted" style="overflow: hidden;">
+                <p class="text-muted mb-0" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
                   <span id="view_acct_created" style="float: right;"></span>
                 </p>
