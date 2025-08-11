@@ -517,6 +517,7 @@ if (!isset($_SESSION['user_id'])) {
                             <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
                             <p style="font-size: 14px;">Current engagement distribution</p>
                         </div>
+    </div>
                         <!-- <div class="analytic-title">Engagement Status</div>
                         <div class="analytic-subtitle">Current engagement distribution</div> -->
                         <div class="pb-4"></div>
