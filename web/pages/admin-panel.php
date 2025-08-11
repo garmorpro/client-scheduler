@@ -659,7 +659,7 @@ if ($result && $result->num_rows > 0) {
 
             <div class="row mt-3">
               <div class="col-md-6">
-                <h6 class="mb-2">
+                <h6 class="mb-3">
                   <i class="bi bi-envelope"></i> Personal Information
                 </h6>
                 <p class="text-muted" style="overflow: hidden;">
@@ -678,7 +678,7 @@ if ($result && $result->num_rows > 0) {
                 <hr>
               </div>
               <div class="col-md-6">
-                <h6 class="mb-2">
+                <h6 class="mb-3">
                   <i class="bi bi-person-lock"></i> Account Details
                 </h6>
                 <p class="text-muted" style="overflow: hidden;">
@@ -700,7 +700,7 @@ if ($result && $result->num_rows > 0) {
 
             <div class="row mt-2">
                 <div class="col-md-6">
-                    <h6 class="mb-2">
+                    <h6 class="mb-3">
                         <i class="bi bi-shield"></i> Access & Permissions
                     </h6>
                     <p class="text-muted" style="overflow: hidden;">
