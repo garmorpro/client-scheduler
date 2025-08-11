@@ -652,6 +652,7 @@ if ($result && $result->num_rows > 0) {
                 <div id="view_user_fullname" class="fw-semibold"></div>
                 <small id="view_email" class="text-muted"></small><br>
                 <small class="text-capitalize badge-role mt-2" style="font-size: 12px;" id="view_user_role">...</small>
+                <small class="text-capitalize badge-status mt-2" style="font-size: 12px;" id="view_status">...</small>
               </div>
             </div>
 
@@ -863,52 +864,57 @@ if ($result && $result->num_rows > 0) {
 
 <!-- view user modal ajax -->
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const viewUserModal = document.getElementById('viewUserModal');
+        document.addEventListener('DOMContentLoaded', () => {
+  const viewUserModal = document.getElementById('viewUserModal');
 
-      viewUserModal.addEventListener('show.bs.modal', async (event) => {
-        const button = event.relatedTarget;
-        const userId = button.getAttribute('data-user-id');
-        if (!userId) return;
+  viewUserModal.addEventListener('show.bs.modal', async (event) => {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    if (!userId) return;
 
-        try {
-          const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-          if (!response.ok) throw new Error('Network response was not ok');
+    try {
+      const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
+      if (!response.ok) throw new Error('Network response was not ok');
 
-          const user = await response.json();
-          console.log('User data:', user);
+      const user = await response.json();
 
-          // Helper function to set text if element exists
-          function setText(id, text) {
-            const el = document.getElementById(id);
-            if (el) {
-              el.textContent = text;
-            } else {
-              console.warn(`Element with ID "${id}" not found.`);
-            }
-          }
-
-          // Set initials
-          const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
-          const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
-          setText('view_user_initials', firstInitial + lastInitial);
-
-          // Set fullname and role
-          setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
-          setText('view_user_role', user.role);
-
-          // Set other info with fallback text
-          setText('view_first_name', user.first_name || '[No first name]');
-          setText('view_last_name', user.last_name || '[No last name]');
-          setText('view_email', user.email || '[No email]');
-          setText('view_role', user.role || '[No role]');
-          setText('view_status', user.status || '[No status]');
-
-        } catch (error) {
-          console.error('Failed to load user data:', error);
+      function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = text;
+        } else {
+          console.warn(`Element with ID "${id}" not found.`);
         }
-      });
-    });
+      }
+
+      // Set initials, fullname, role, etc.
+      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
+      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
+      setText('view_user_initials', firstInitial + lastInitial);
+      setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
+      setText('view_user_role', user.role);
+      setText('view_first_name', user.first_name || '[No first name]');
+      setText('view_last_name', user.last_name || '[No last name]');
+      setText('view_email', user.email || '[No email]');
+      setText('view_status', user.status || '[No status]');
+
+      // Now update the badge class based on status:
+      const statusEl = document.getElementById('view_status');
+      if (statusEl) {
+        statusEl.classList.remove('active', 'inactive');
+        if (user.status && user.status.toLowerCase() === 'active') {
+          statusEl.classList.add('active');
+        } else {
+          statusEl.classList.add('inactive');
+        }
+      }
+
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+    }
+  });
+});
+
     </script>
 
 <!-- end view user modal ajax -->
