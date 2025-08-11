@@ -106,254 +106,259 @@ $result = mysqli_query($conn, $sql);
 
     <div class="container-fluid">
         <!-- Stat cards -->
-        <div class="row g-3">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-people"></i></div>
-                    <div class="stat-title">Total Users</div>
-                    <div class="stat-value"><?php echo $totalUsers; ?></div>
-                    <div class="stat-sub">+<?php echo $newUsers; ?> this month</div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-people"></i></div>
+                        <div class="stat-title">Total Users</div>
+                        <div class="stat-value"><?php echo $totalUsers; ?></div>
+                        <div class="stat-sub">+<?php echo $newUsers; ?> this month</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-person-up"></i></div>
-                    <div class="stat-title">Active Users</div>
-                    <div class="stat-value"><?php echo $totalActiveUsers; ?></div>
-                    <div class="stat-sub"><?php echo $totalInactiveUsers; ?> inactive users</div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-person-up"></i></div>
+                        <div class="stat-title">Active Users</div>
+                        <div class="stat-value"><?php echo $totalActiveUsers; ?></div>
+                        <div class="stat-sub"><?php echo $totalInactiveUsers; ?> inactive users</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
-                    <div class="stat-title">Cnnfirmed Engagements</div>
-                    <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
-                    <div class="stat-sub"><?php echo $totalPendingEngagements; ?> pending <i class="bi bi-dot"></i> <?php echo $totalNotConfirmedEngagements; ?> not confirmed</div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
+                        <div class="stat-title">Cnnfirmed Engagements</div>
+                        <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
+                        <div class="stat-sub"><?php echo $totalPendingEngagements; ?> pending <i class="bi bi-dot"></i> <?php echo $totalNotConfirmedEngagements; ?> not confirmed</div>
+                    </div>
                 </div>
-            </div>
-            <?php
+                <?php
 
-            // Avoid division by zero
-            $percentageAssigned = ($totalUsers > 0) ? round(($totalAssigned / $totalEngagements) * 100) : 0;
-            ?>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                    <div class="stat-title">Engagement Status</div>
-                    <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
-                    <div class="util-bar mt-2">
-                        <div class="util-bar-fill" style="width: <?php echo $percentageAssigned; ?>%"></div>
-                    </div>
-                    <div class="stat-sub mt-2">
-                        <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
+                // Avoid division by zero
+                $percentageAssigned = ($totalUsers > 0) ? round(($totalAssigned / $totalEngagements) * 100) : 0;
+                ?>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="stat-title">Engagement Status</div>
+                        <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
+                        <div class="util-bar mt-2">
+                            <div class="util-bar-fill" style="width: <?php echo $percentageAssigned; ?>%"></div>
+                        </div>
+                        <div class="stat-sub mt-2">
+                            <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        <!-- end stats cards -->
 
         <!-- Tabs -->
-        <div class="custom-tabs">
-            <button class="active" data-tab="users">User Management</button>
-            <button data-tab="activity">System Activity</button>
-            <button class="overlay-red" data-tab="analytics">Analytics</button>
-            <button class="overlay-red" data-tab="settings">Settings</button>
-        </div>
-
-        <!-- Tab Content -->
-        <div id="tab-users" class="tab-content">
-            <div class="user-management-header">
-                <div class="titles">
-                    <p class="text-black"><strong>User Management</strong></p>
-                    <p>Manage user accounts, roles, and permissions</p>
-                </div>
-                <div class="user-management-buttons">
-                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                        <i class="bi bi-upload me-3"></i>Import Users
-                    </a>
-                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus me-3"></i>Add User
-                    </a>
-                </div>
+            <div class="custom-tabs">
+                <button class="active" data-tab="users">User Management</button>
+                <button data-tab="activity">System Activity</button>
+                <button class="overlay-red" data-tab="analytics">Analytics</button>
+                <button class="overlay-red" data-tab="settings">Settings</button>
             </div>
-            
+        <!-- end Tabs -->
 
-            <div class="user-table">
-                <table id="user-table" class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Last Active</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <!-- user management -->
+            <div id="tab-users" class="tab-content">
+                <div class="user-management-header">
+                    <div class="titles">
+                        <p class="text-black"><strong>User Management</strong></p>
+                        <p>Manage user accounts, roles, and permissions</p>
+                    </div>
+                    <div class="user-management-buttons">
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                            <i class="bi bi-upload me-3"></i>Import Users
+                        </a>
+                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus me-3"></i>Add User
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="user-table">
+                    <table id="user-table" class="table table-hover mb-0">
+                        <thead>
                             <tr>
-                                <td>
-                                    <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?><br>
-                                    <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
-                                </td>
-                                <td>
-                                    <span class="badge-role">
-                                        <?php echo ucfirst(htmlspecialchars($row['role'])); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
-                                        <?php echo ucfirst($row['status']); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php 
-                                        if (empty($row['last_active']) || $row['last_active'] === null) {
-                                            echo "Never";
-                                        } else {
-                                            echo date("n/j/Y", strtotime($row['last_active']));
-                                        }
-                                    ?>
-                                </td>
-                                <td class="table-actions">
-                                    <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
-                                        <i class="bi bi-eye text-success"></i>
-                                    </a>
-                                    <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
-                                        <i class="bi bi-pencil text-purple "></i>
-                                    </a>
-
-                                    <i class="bi bi-trash overlay-red"></i>
-                                </td>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
                             </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr><td colspan="5" class="text-center">No users found</td></tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-                    
-            <!-- Pagination Controls -->
-            <nav>
-                <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
-            </nav>
-        </div>
+                        </thead>
+                        <tbody>
+                        <?php if (mysqli_num_rows($result) > 0): ?>
+                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                                <tr>
+                                    <td>
+                                        <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?><br>
+                                        <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge-role">
+                                            <?php echo ucfirst(htmlspecialchars($row['role'])); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                                            <?php echo ucfirst($row['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (empty($row['last_active']) || $row['last_active'] === null) {
+                                                echo "Never";
+                                            } else {
+                                                echo date("n/j/Y", strtotime($row['last_active']));
+                                            }
+                                        ?>
+                                    </td>
+                                    <td class="table-actions">
+                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                            <i class="bi bi-eye text-success"></i>
+                                        </a>
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                            <i class="bi bi-pencil text-purple "></i>
+                                        </a>
 
-        <div id="tab-activity" class="tab-content d-none">
-    <div class="activity-header mb-3">
-        <div class="titles">
-            <p class="text-black"><strong>System Activity Log</strong></p>
-            <p>Recent system events and user activities</p>
-        </div>
-    </div>
-
-    <div id="activity-list">
-        <?php
-
-        // Fetch all activities, newest first
-$sql = "SELECT event_type, full_name, title, description, created_at 
-        FROM system_activity_log 
-        ORDER BY created_at DESC";
-$result = $conn->query($sql);
-
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $icon = "";
-        $color = "";
-
-        switch ($row['event_type']) {
-            case 'failed_login':
-                $icon = 'bi-shield';
-                $color = 'rgb(220,53,69)'; // red
-                break;
-
-            case 'successful_login':
-                $icon = 'bi-shield';
-                $color = 'rgb(40,167,69)'; // green
-                break;
-
-            case 'assignment_created':
-                $icon = 'bi-file-earmark-plus';
-                $color = 'rgb(40,167,69)'; // green
-                break;
-
-            case 'assignment_deleted':
-                $icon = 'bi-file-earmark-minus';
-                $color = 'rgb(220,53,69)'; // green
-                break;
-
-            case 'assignment_updated':
-                $icon = 'bi-file-earmark-check';
-                $color = 'rgb(161,77,253)'; // green
-                break;
-
-            case 'engagement_created':
-                $icon = 'bi-building-add';
-                $color = 'rgb(40,167,69)'; // green
-                break;
-
-            case 'engagement_deleted':
-                $icon = 'bi-building-dash';
-                $color = 'rgb(220,53,69)'; // green
-                break;
-
-            case 'engagement_updated':
-                $icon = 'bi-building-check';
-                $color = 'rgb(161,77,253)'; // green
-                break;
-
-            case 'user_created':
-                $icon = 'bi-person-add';
-                $color = 'rgb(40,167,69)'; // green
-                break;
-
-            case 'user_deleted':
-                $icon = 'bi-person-dash';
-                $color = 'rgb(220,53,69)'; // green
-                break;
-
-            case 'user_updated':
-                $icon = 'bi-person-check';
-                $color = 'rgb(161,77,253)'; // purple
-                break;
-
-            case 'backup':
-                $icon = 'bi-database';
-                $color = 'rgb(243,132,48)'; // orange
-                break;
-
-            default:
-                $icon = 'bi-info-circle';
-                $color = 'gray';
-        }
-
-        echo '
-        <div class="activity-card d-flex justify-content-between">
-            <div class="activity-icon-container">
-                <div class="activity-icon" style="color:'.$color.'; font-size: 18px; margin-top: -40px; margin-left: 15px !important;">
-                    <i class="bi '.$icon.'"></i>
+                                        <i class="bi bi-trash overlay-red"></i>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr><td colspan="5" class="text-center">No users found</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
+                        
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
             </div>
-            <div class="flex-grow-1 mx-3">
-                <div class="activity-title fw-semibold mb-1">'.htmlspecialchars($row['title']).'</div>
-                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: '.htmlspecialchars($row['full_name']).'</div>
-                <div class="activity-sub text-black" style="font-size: 0.9rem;">'.htmlspecialchars($row['description']).'</div>
-            </div>
-            <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">'.date("n/j/Y, g:i:s A", strtotime($row['created_at'])).'</div>
-        </div>';
-    }
-} else {
-    echo '<p class="text-muted">No system activities found.</p>';
-}
-?>
-    </div>
+        <!-- end user management -->
 
-    <!-- Pagination Controls for activity -->
-    <nav>
-        <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
-    </nav>
-</div>
+        <!-- system activty -->
+            <div id="tab-activity" class="tab-content d-none">
+                <div class="activity-header mb-3">
+                    <div class="titles">
+                        <p class="text-black"><strong>System Activity Log</strong></p>
+                        <p>Recent system events and user activities</p>
+                    </div>
+                </div>
+
+                <div id="activity-list">
+                    <?php
+
+                    // Fetch all activities, newest first
+                    $sql = "SELECT event_type, full_name, title, description, created_at 
+                            FROM system_activity_log 
+                            ORDER BY created_at DESC";
+                    $result = $conn->query($sql);
+
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $icon = "";
+                            $color = "";
+                        
+                            switch ($row['event_type']) {
+                                case 'failed_login':
+                                    $icon = 'bi-shield';
+                                    $color = 'rgb(220,53,69)'; // red
+                                    break;
+                                
+                                case 'successful_login':
+                                    $icon = 'bi-shield';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'assignment_created':
+                                    $icon = 'bi-file-earmark-plus';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'assignment_deleted':
+                                    $icon = 'bi-file-earmark-minus';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;
+                                
+                                case 'assignment_updated':
+                                    $icon = 'bi-file-earmark-check';
+                                    $color = 'rgb(161,77,253)'; // green
+                                    break;
+                                
+                                case 'engagement_created':
+                                    $icon = 'bi-building-add';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'engagement_deleted':
+                                    $icon = 'bi-building-dash';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;
+                                
+                                case 'engagement_updated':
+                                    $icon = 'bi-building-check';
+                                    $color = 'rgb(161,77,253)'; // green
+                                    break;
+                                
+                                case 'user_created':
+                                    $icon = 'bi-person-add';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'user_deleted':
+                                    $icon = 'bi-person-dash';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;
+                                
+                                case 'user_updated':
+                                    $icon = 'bi-person-check';
+                                    $color = 'rgb(161,77,253)'; // purple
+                                    break;
+                                
+                                case 'backup':
+                                    $icon = 'bi-database';
+                                    $color = 'rgb(243,132,48)'; // orange
+                                    break;
+                                
+                                default:
+                                    $icon = 'bi-info-circle';
+                                    $color = 'gray';
+                            }
+                        
+                            echo '
+                            <div class="activity-card d-flex justify-content-between">
+                                <div class="activity-icon-container">
+                                    <div class="activity-icon" style="color:'.$color.'; font-size: 18px; margin-top: -40px; margin-left: 15px !important;">
+                                        <i class="bi '.$icon.'"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 mx-3">
+                                    <div class="activity-title fw-semibold mb-1">'.htmlspecialchars($row['title']).'</div>
+                                    <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: '.htmlspecialchars($row['full_name']).'</div>
+                                    <div class="activity-sub text-black" style="font-size: 0.9rem;">'.htmlspecialchars($row['description']).'</div>
+                                </div>
+                                <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">'.date("n/j/Y, g:i:s A", strtotime($row['created_at'])).'</div>
+                            </div>';
+                        }
+                    } else {
+                        echo '<p class="text-muted">No system activities found.</p>';
+                    }
+                    ?>
+                </div>
+
+                        <!-- Pagination Controls for activity -->
+                <nav>
+                    <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
+            </div>
+        <!-- end system activty -->
 
 
         <div id="tab-analytics" class="tab-content d-none">
@@ -566,6 +571,43 @@ if ($result && $result->num_rows > 0) {
                             </a>
                     </div>
                 </div>
+                <div class="row g-3 ps-3 pe-3 mt-2">
+                <div class="col-md-12">
+                    <div class="analytic-card" style="height: 215px !important;">
+                        <div class="user-management-header">
+                        <div class="titles">
+                            <p class="text-black" style="font-size: 14px;"><strong>Advanced Reports</strong></p>
+                            <p style="font-size: 14px;">Generate detailed system reports</p>
+                        </div>
+                        <div class="user-management-buttons">
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 14px; border: 1px solid rgb(229,229,229);">
+                                <i class="bi bi-download me-3"></i>Export All Data
+                            </a>
+                        </div>
+                    </div>
+                        <div class="d-flex justify-content-between pb-2">
+                            <div class="reports-card">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
+                                <div class="analytic-subtitle">Staff and engagement utilization</div>
+                            </div>
+
+                            <div class="reports-card">
+                                <i class="bi bi-people"></i>
+                                <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
+                                <div class="analytic-subtitle">Login and engagement metrics</div>
+                            </div>
+
+                            <div class="reports-card">
+                                <i class="bi bi-clock"></i>
+                                <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
+                                <div class="analytic-subtitle">Hours and productivity analysis</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             </div>
             
