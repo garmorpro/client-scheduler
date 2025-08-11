@@ -336,8 +336,20 @@ function openEmployeeModal(employeeId) {
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="flex-grow-1 p-4">
-    <h3 class="mb-0">Master Schedule</h3>
-    <p class="text-muted mb-4">Complete overview of all client engagements and team assignments</p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-0">Master Schedule</h3>
+        <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
+    </div>
+    <div>
+        <a href="master_schedule.php" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </a>
+        <a href="new_engagement.php" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> + New Engagement
+        </a>
+    </div>
+</div>
 
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
