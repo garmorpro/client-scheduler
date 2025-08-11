@@ -68,7 +68,7 @@ $result = mysqli_query($conn, $sql);
                 <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="stat-title">Engagement Status</div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value" style="font-size: 14px;">12</div>
                     <div class="stat-sub">16 completed</div>
                     <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
                 </div>
