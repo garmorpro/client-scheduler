@@ -645,7 +645,7 @@ if ($result && $result->num_rows > 0) {
             <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
               <div id="view_user_initials" 
                    class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                   style="padding: 25px !important; width: 42px; height: 42px; font-weight: 500; font-size: 18px;">
+                   style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
                 <!-- Initials will go here -->
               </div>
               <div>
