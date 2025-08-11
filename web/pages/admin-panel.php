@@ -454,7 +454,7 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="stat-card">
                         <div class="analytics-title">User Activity Overview</div>
                         <div class="analytics-subtitle">Active vs Inactive users</div>
-                        <div class="d-flex">
+                        <div class="d-flex justify-space-between">
                             <div class="float-start">
                                 <i class="bi bi-check2-circle"></i>
                                 Active Users
