@@ -602,21 +602,29 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="analytic-card">
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+                                <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
+                                <p style="font-size: 14px;">Manage system-wide settings</p>
                             </div>
                         </div>
                         <div class="pb-4"></div>
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+                                <p class="text-black" style="font-size: 14px;"><strong>Email Notifications</strong></p>
+                                <p style="font-size: 14px;">Send system notifications via email</p>
                             </div>
                         </div>
+                        <div class="pb-2"></div>
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+                                <p class="text-black" style="font-size: 14px;"><strong>Backup Settings</strong></p>
+                                <p style="font-size: 14px;">Automated data backup configuration</p>
+                            </div>
+                        </div>
+                        <div class="pb-2"></div>
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Security Policies</strong></p>
+                                <p style="font-size: 14px;">Password and access requirements</p>
                             </div>
                         </div>
                     </div>
