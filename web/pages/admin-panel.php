@@ -671,7 +671,7 @@ if (!isset($_SESSION['user_id'])) {
                                 Assigned Engagements
                             </div>
                             <div class="float-end">
-                                92
+                                <span class="badge alert-success">Healthy</span>
                             </div>
                         </div>
 
