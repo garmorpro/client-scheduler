@@ -664,7 +664,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-
+                        <div class="mb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
                                 <i class="bi bi-clipboard-check text-success"></i>
@@ -675,7 +675,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                         </div>
 
-                        
+
                     </div>
                 </div>
             </div>
