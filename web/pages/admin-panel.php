@@ -21,6 +21,18 @@ $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
+// Get total active users
+$totalActiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'active'";
+$totalActiveUsersResult = mysqli_query($conn, $totalActiveUsersQuery);
+$totalActiveUsersRow = mysqli_fetch_assoc($totalActiveUsersResult);
+$totalActiveUsers = $totalActiveUsersRow['total'];
+
+// Get total inactive users
+$totalInactiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'inactive'";
+$totalInactiveUsersResult = mysqli_query($conn, $totalInactiveUsersQuery);
+$totalInactiveUsersRow = mysqli_fetch_assoc($totalInactiveUsersResult);
+$totalInactiveUsers = $totalInactiveUsersRow['total'];
+
 // Total Confirmed engagements
 $totalConfirmedEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements WHERE status = 'confirmed'";
 $totalConfirmedResult = mysqli_query($conn, $totalConfirmedEngagementsQuery);
@@ -105,6 +117,14 @@ $result = mysqli_query($conn, $sql);
             </div>
             <div class="col-md-3">
                 <div class="stat-card overlay-red">
+                    <div class="card-icon"><i class="bi bi-people"></i></div>
+                    <div class="stat-title">Active Users</div>
+                    <div class="stat-value"><?php echo $totalActiveUsers; ?></div>
+                    <div class="stat-sub"><?php echo $totalInactiveUsers; ?> inactive users</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
                     <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
                     <div class="stat-title">Cnnfirmed Engagements</div>
                     <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
@@ -117,7 +137,7 @@ $result = mysqli_query($conn, $sql);
             $percentageAssigned = ($totalUsers > 0) ? round(($totalAssigned / $totalEngagements) * 100) : 0;
             ?>
             <div class="col-md-3">
-                <div class="stat-card overlay-red">
+                <div class="stat-card">
                     <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="stat-title">Engagement Status</div>
                     <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
@@ -127,14 +147,6 @@ $result = mysqli_query($conn, $sql);
                     <div class="stat-sub mt-2">
                         <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card overlay-red">
-                    <div class="card-icon"><i class="bi bi-clock-history"></i></div>
-                    <div class="stat-title">Total Hours</div>
-                    <div class="stat-value">4,580</div>
-                    <div class="stat-sub">All time logged</div>
                 </div>
             </div>
         </div>
