@@ -2,11 +2,11 @@
 require_once 'db.php';
 
 // LOG ACTIVITY FUNCTION
-function logActivity($conn, $eventType, $userId, $username, $title, $description) {
-    $sql = "INSERT INTO system_activity_log (event_type, user_id, username, title, description) VALUES (?, ?, ?, ?, ?)";
+function logActivity($conn, $eventType, $user_id, $username, $fullName, $title, $description) {
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, username, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sisss", $eventType, $userId, $username, $title, $description);
+        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $username, $fullName, $title, $description);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
     }
@@ -45,13 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['email'] = $email;
 
             // Log successful login
-            logActivity($conn, "login", $user_id, $email, "User Login", "Successful login");
+            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            logActivity($conn, "successful_login", $user_id, $email, $fullName, "User Login", "Successful login");
 
             header("Location: dashboard.php");
             exit;
         } else {
-            
-            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Failed login attempt");
+            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            logActivity($conn, "failed_login", $user_id, $email, $fullName, "Failed Login", "Failed login attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
