@@ -304,3 +304,29 @@ body {
   border-top: none;
   box-shadow: none; /* Just in case there's a shadow mimicking a border */
 }
+
+
+.activity-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.activity-description {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 12px;
+}
+
+.activity-time {
+  flex-shrink: 0;
+  color: #888;
+  font-size: 12px;
+  white-space: nowrap;
+}

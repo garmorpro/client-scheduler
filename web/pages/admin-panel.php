@@ -718,13 +718,16 @@ if ($result && $result->num_rows > 0) {
                 <div class="col-md-6"></div>
             </div>
 
+            <hr>
+
 
             <div class="col-md-12">
-                <h6>Recent Activity</h6>
-                <ul id="view_recent_activity" class="list-group list-group-flush" style="max-height: 150px; overflow-y: auto;">
-                    <!-- Activities will be inserted here -->
-                </ul>
+              <h6>Recent Activity</h6>
+              <div id="view_recent_activity" style="max-height: 150px; overflow-y: auto;">
+                <!-- Activities will be inserted here as cards -->
+              </div>
             </div>
+
         
 
           </div>
@@ -928,7 +931,37 @@ if ($result && $result->num_rows > 0) {
 <!-- end update modal ajax -->
 
 <!-- view user modal ajax -->
-    <script>
+    <style>
+  /* Put this in your CSS or inside a <style> tag */
+  #view_recent_activity {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  .activity-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .activity-description {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 12px;
+  }
+  .activity-time {
+    flex-shrink: 0;
+    color: #888;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+</style>
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
   const viewUserModal = document.getElementById('viewUserModal');
 
@@ -949,18 +982,33 @@ document.addEventListener('DOMContentLoaded', () => {
           console.warn(`Element with ID "${id}" not found.`);
           return;
         }
-        // Show '-' if text is null, undefined, empty string, or only whitespace
         el.textContent = (text && text.toString().trim()) ? text : '-';
       }
 
       function formatDate(dateString) {
         if (!dateString) return '-';
         const d = new Date(dateString);
-        if (isNaN(d)) return '-'; // invalid date
-        const month = d.getMonth() + 1; // months are 0-based
+        if (isNaN(d)) return '-';
+        const month = d.getMonth() + 1;
         const day = d.getDate();
         const year = d.getFullYear();
         return `${month}/${day}/${year}`;
+      }
+
+      // Returns relative time string (e.g. '2h ago', '3d ago')
+      function timeSince(dateString) {
+        if (!dateString) return '-';
+        const now = new Date();
+        const past = new Date(dateString);
+        const seconds = Math.floor((now - past) / 1000);
+        if (seconds < 60) return `${seconds}s ago`;
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h ago`;
+        const days = Math.floor(hours / 24);
+        if (days < 7) return `${days}d ago`;
+        return formatDate(dateString);
       }
 
       const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
@@ -971,7 +1019,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('view_email', user.email);
       setText('view_user_role', user.role);
 
-      // For details section
       setText('view_first_name_detail', user.first_name);
       setText('view_last_name_detail', user.last_name);
       setText('view_email_detail', user.email);
@@ -983,37 +1030,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function getAccessLevel(role) {
         switch(role.toLowerCase()) {
-          case 'admin':
-            return 'Full Access';
-          case 'manager':
-            return 'High Access';
-          case 'senior':
-            return 'Restricted Access';
-          case 'staff':
-            return 'Restricted Access';
-          case 'intern':
-            return 'Restricted Access';
-          default:
-            return 'Unknown Access';
+          case 'admin': return 'Full Access';
+          case 'manager': return 'High Access';
+          case 'senior': return 'Restricted Access';
+          case 'staff': return 'Restricted Access';
+          case 'intern': return 'Restricted Access';
+          default: return 'Unknown Access';
         }
       }
-      
-      // Inside your modal loading script, after you fetch user data:
-      
+
       setText('view_acct_role', user.role);
-      
-      const accessLevel = getAccessLevel(user.role || '');
-      setText('view_acct_access_level', accessLevel);
+      setText('view_acct_access_level', getAccessLevel(user.role || ''));
 
       function boolToEnabledDisabled(value) {
         return value == 1 ? 'Enabled' : 'Disabled';
       }
-      
+
       const mfaEl = document.getElementById('view_acct_mfa');
       if (mfaEl) {
         const statusText = boolToEnabledDisabled(user.mfa_enabled);
         mfaEl.textContent = statusText;
-      
         mfaEl.classList.remove('text-success', 'text-danger');
         if (statusText === 'Enabled') {
           mfaEl.classList.add('text-success');
@@ -1022,26 +1058,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Render recent activities as cards with description ellipsis + relative time
       const activityList = document.getElementById('view_recent_activity');
-if (activityList) {
-  activityList.innerHTML = ''; // clear previous entries
-  if (user.recent_activities && user.recent_activities.length > 0) {
-    user.recent_activities.forEach(act => {
-      const date = new Date(act.created_at);
-      const formattedDate = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
-      const li = document.createElement('li');
-      li.classList.add('list-group-item', 'py-1');
-      li.textContent = `${formattedDate}: ${act.description}`;
-      activityList.appendChild(li);
-    });
-  } else {
-    const li = document.createElement('li');
-    li.classList.add('list-group-item', 'text-muted');
-    li.textContent = 'No recent activity found.';
-    activityList.appendChild(li);
-  }
-}
+      if (activityList) {
+        activityList.innerHTML = ''; // clear previous
+        if (user.recent_activities && user.recent_activities.length > 0) {
+          user.recent_activities.forEach(act => {
+            const card = document.createElement('div');
+            card.className = 'activity-card';
 
+            const desc = document.createElement('div');
+            desc.className = 'activity-description';
+            desc.title = act.description;
+            desc.textContent = act.description;
+
+            const time = document.createElement('div');
+            time.className = 'activity-time';
+            time.textContent = timeSince(act.created_at);
+
+            card.appendChild(desc);
+            card.appendChild(time);
+            activityList.appendChild(card);
+          });
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'text-muted px-3';
+          empty.textContent = 'No recent activity found.';
+          activityList.appendChild(empty);
+        }
+      }
 
       // Update badge class for status
       const statusEl = document.getElementById('view_status');
@@ -1060,6 +1105,7 @@ if (activityList) {
   });
 });
 </script>
+
 
 
 <!-- end view user modal ajax -->
