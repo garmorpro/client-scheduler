@@ -872,11 +872,11 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Team Size:</strong>
-                  <span id="view_engagement_team_size" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_engagement_team_size" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Estimated Hours:</strong>
-                  <span id="view_engagement_estimated_hours" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_engagement_estimated_hours" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Allocated Hours:</strong>
