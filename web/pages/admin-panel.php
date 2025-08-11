@@ -68,7 +68,7 @@ $result = mysqli_query($conn, $sql);
                 <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="stat-title">Engagement Status</div>
-                    <div class="stat-value">100% <span class="text-muted" style="font-size: 24px;">Assigned</span></div>
+                    <div class="stat-value">100% <span class="text-muted" style="font-size: 16px;">assigned</span></div>
                     <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
                     <div class="stat-sub mt-2">0 unassigned</div>
                 </div>
