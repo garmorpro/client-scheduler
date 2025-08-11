@@ -30,8 +30,16 @@ $sql = "
     FROM engagements e
     LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
     WHERE e.engagement_id = ?
-    GROUP BY e.engagement_id, e.client_name, e.total_available_hours, e.status, e.notes
+    GROUP BY 
+        e.engagement_id, 
+        e.client_name, 
+        e.total_available_hours, 
+        e.status, 
+        e.notes,
+        e.last_updated,
+        e.created
 ";
+
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $engagement_id);
