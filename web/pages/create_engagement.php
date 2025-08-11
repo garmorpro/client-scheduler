@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "Created engagement: " . $clientName . "(" . $status . ")"
         );
 
-        header("Location: my-schedule.php?status=success");
+        header("Location: master-schedule.php?status=success");
         exit();
     } else {
         echo "Error creating engagement: " . $stmt->error;
