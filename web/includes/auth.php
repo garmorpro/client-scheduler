@@ -1,6 +1,7 @@
 <?php
 require_once 'db.php';
 
+// LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $userId, $username, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, username, title, description) VALUES (?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
@@ -50,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } else {
             
-            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Incorrect password attempt");
+            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Failed login attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
