@@ -33,7 +33,7 @@ if (!isset($_SESSION['user_id'])) {
       margin: 0 auto 1rem auto;
     }
     .admin-icon i {
-      font-size: 28px !important;
+      font-size: 24px !important;
       color: #2c2c2c;
     }
     .admin-btn {
