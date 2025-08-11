@@ -73,7 +73,7 @@ if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
 
         $title = "Assignment Deleted";
         $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
-        $description = "Deleted assignment for $employeeFullName on $clientName, $formattedWeekStart ($assignedHours).";
+        $description = "Deleted assignment for $employeeFullName on $clientName, $formattedWeekStart($assignedHours hrs).";
 
 
         logActivity($conn, "assignment_deleted", $user_id, $email, $full_name, $title, $description);
