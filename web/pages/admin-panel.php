@@ -372,7 +372,7 @@ if (!isset($_SESSION['user_id'])) {
             <div id="activity-list">
                 <div class="activity-card justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 24px;">
+                        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
                             <i class="bi bi-shield"></i>
                         </div>
                     </div>
@@ -386,7 +386,7 @@ if (!isset($_SESSION['user_id'])) {
 
                 <div class="activity-card d-flex justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 24px;">
+                        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
                             <i class="bi bi-file-earmark-text"></i>
                         </div>
                     </div>
@@ -400,7 +400,7 @@ if (!isset($_SESSION['user_id'])) {
 
                 <div class="activity-card d-flex justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 24px;">
+                        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
                             <i class="bi bi-people"></i>
                         </div>
                     </div>
