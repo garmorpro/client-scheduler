@@ -345,7 +345,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         
                 <!-- Pagination Controls -->
                 <nav>
-                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                  <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
                 </nav>
                             
             </div>
@@ -845,6 +845,112 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </div>
 <!-- end View user modal -->
 
+<!-- View Engagement Modal -->
+    <div class="modal fade" id="viewEngagementModal" tabindex="-1" aria-labelledby="viewEngagementModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="min-width: 600px !important;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateEngagementModalLabel">
+                <i class="bi bi-file-earmark-note"></i> Engagement Details <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete profile information for <span id="view_first_name"></span> <span id="view_last_name"></span></span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
+              <div id="view_user_initials" 
+                   class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                   style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
+                <!-- Initials will go here -->
+              </div>
+              <div>
+                <div id="view_user_fullname" class="fw-semibold"></div>
+                <small id="view_email" class="text-muted"></small><br>
+                <small class="text-capitalize badge-role mt-2" style="font-size: 12px;" id="view_user_role">...</small>
+                <small class="text-capitalize badge-status mt-2" style="font-size: 12px;" id="view_status">...</small>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <h6 class="mb-3">
+                  <i class="bi bi-envelope"></i> Personal Information
+                </h6>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">First Name:</strong>
+                  <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
+                </p>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Last Name:</strong>
+                  <span id="view_last_name_detail" class="text-capitalize" style="float: right;"></span>
+                </p>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Email:</strong>
+                  <span id="view_email_detail" style="float: right;"></span>
+                </p>
+                <div class="mt-3"></div>
+                <hr>
+              </div>
+              <div class="col-md-6">
+                <h6 class="mb-3">
+                  <i class="bi bi-person-lock"></i> Account Details
+                </h6>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Created:</strong>
+                  <span id="view_acct_created" style="float: right;"></span>
+                </p>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Last Active:</strong>
+                  <span id="view_acct_last_active" style="float: right;"></span>
+                </p>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Status:</strong>
+                  <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
+                </p>
+                <div class="mt-3"></div>
+                <hr>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <h6 class="mb-3">
+                        <i class="bi bi-shield"></i> Access & Permissions
+                    </h6>
+                    <p class="text-muted mb-1" style="overflow: hidden;">
+                        <strong style="float: left;">Role:</strong>
+                        <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
+                     </p>
+                    <p class="text-muted mb-1" style="overflow: hidden;">
+                        <strong style="float: left;">Access Level:</strong>
+                        <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
+                    </p>
+                    <p class="text-muted mb-1" style="overflow: hidden;">
+                        <strong style="float: left;">Two-Factor Auth:</strong>
+                        <span id="view_acct_mfa" style="float: right;"></span>
+                    </p>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+
+            <hr>
+
+            <div class="col-md-12">
+              <h6>Recent Activity</h6>
+              <div id="view_recent_activity" style="max-height: 150px; overflow-y: auto;">
+                <!-- Activities will be inserted here as cards -->
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn text-muted" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- end View user modal -->
 
 
 
@@ -894,7 +1000,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         if (!table) return;
         const tbody = table.querySelector('tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
-        const paginationContainer = document.getElementById('pagination');
+        const paginationContainer = document.getElementById('pagination-users');
 
         let currentPage = 1;
         const totalPages = Math.ceil(rows.length / rowsPerPage);
@@ -925,49 +1031,43 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         renderTablePage(1);
       }
 
-      // System Activity pagination (3 cards per page)
-      function initActivityPagination() {
-      const cardsPerPage = 3;
-      const activityList = document.getElementById('activity-list');
-      if (!activityList) return;
-      const cards = Array.from(activityList.querySelectorAll('.activity-card'));
-      const paginationContainer = document.getElementById('activity-pagination');
+      // Engagement Management pagination (5 rows per page)
+      function initEngagementPagination() {
+        const rowsPerPage = 5;
+        const table = document.querySelector('#tab-engagements table');
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const paginationContainer = document.getElementById('pagination-engagements');
 
-      let currentPage = 1;
-      const totalPages = Math.ceil(cards.length / cardsPerPage);
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
 
-      function showPage(page) {
-        currentPage = page;
-        cards.forEach(card => {
-          card.style.display = 'none';
-          card.classList.remove('d-flex');
-        });
-        const start = (page - 1) * cardsPerPage;
-        const end = start + cardsPerPage;
-        for (let i = start; i < end && i < cards.length; i++) {
-          cards[i].style.display = '';
-          cards[i].classList.add('d-flex');
+        function renderTablePage(page) {
+          currentPage = page;
+          rows.forEach(row => (row.style.display = 'none'));
+          const start = (page - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+          rows.slice(start, end).forEach(row => (row.style.display = ''));
+          renderPagination();
         }
-        renderPagination();
-      }
 
-      function renderPagination() {
-        paginationContainer.innerHTML = '';
-        if (totalPages <= 1) {
-          paginationContainer.style.display = 'none';
-          return;
+        function renderPagination() {
+          paginationContainer.innerHTML = '';
+          if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+          }
+          paginationContainer.style.display = 'flex';
+
+          const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+            renderTablePage(page);
+          });
+          paginationContainer.appendChild(paginationControls);
         }
-        paginationContainer.style.display = 'flex';
 
-        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-          showPage(page);
-        });
-        paginationContainer.appendChild(paginationControls);
+        renderTablePage(1);
       }
-
-      showPage(1);
-    }
-
 
       // Tab switching + reset pagination
       document.querySelectorAll('.custom-tabs button').forEach(btn => {
@@ -983,6 +1083,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             document.dispatchEvent(new Event('reinitUserPagination'));
           } else if (btn.dataset.tab === 'activity') {
             document.dispatchEvent(new Event('reinitActivityPagination'));
+          } else if (btn.dataset.tab === 'engagements') {
+            document.dispatchEvent(new Event('reinitEngagementPagination'));
           }
         });
       });
@@ -991,12 +1093,58 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       document.addEventListener('DOMContentLoaded', () => {
         initUserPagination();
         initActivityPagination();
+        initEngagementPagination();
       });
 
       // Reinit paginations on tab switch
       document.addEventListener('reinitUserPagination', initUserPagination);
       document.addEventListener('reinitActivityPagination', initActivityPagination);
+      document.addEventListener('reinitEngagementPagination', initEngagementPagination);
+
+      // System Activity pagination (3 cards per page)
+      function initActivityPagination() {
+        const cardsPerPage = 3;
+        const activityList = document.getElementById('activity-list');
+        if (!activityList) return;
+        const cards = Array.from(activityList.querySelectorAll('.activity-card'));
+        const paginationContainer = document.getElementById('activity-pagination');
+
+        let currentPage = 1;
+        const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+        function showPage(page) {
+          currentPage = page;
+          cards.forEach(card => {
+            card.style.display = 'none';
+            card.classList.remove('d-flex');
+          });
+          const start = (page - 1) * cardsPerPage;
+          const end = start + cardsPerPage;
+          for (let i = start; i < end && i < cards.length; i++) {
+            cards[i].style.display = '';
+            cards[i].classList.add('d-flex');
+          }
+          renderPagination();
+        }
+
+        function renderPagination() {
+          paginationContainer.innerHTML = '';
+          if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+          }
+          paginationContainer.style.display = 'flex';
+
+          const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+            showPage(page);
+          });
+          paginationContainer.appendChild(paginationControls);
+        }
+
+        showPage(1);
+      }
     </script>
+
 <!-- end Pagination -->
 
 <!-- update modal ajax -->
