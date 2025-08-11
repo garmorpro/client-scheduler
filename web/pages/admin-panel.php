@@ -265,15 +265,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             <div id="tab-engagements" class="tab-content d-none">
                 <div class="user-management-header">
                     <div class="titles">
-                        <p class="text-black"><strong>User Management</strong></p>
-                        <p>Manage user accounts, roles, and permissions</p>
+                        <p class="text-black"><strong>Engagement Management</strong></p>
+                        <p>Manage all engagements and assignments</p>
                     </div>
                     <div class="user-management-buttons">
-                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                            <i class="bi bi-upload me-3"></i>Import Users
-                        </a>
-                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="bi bi-person-plus me-3"></i>Add User
+                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                            <i class="bi bi-person-plus me-3"></i>Add Engagement
                         </a>
                     </div>
                 </div>
@@ -298,7 +295,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         <?php echo $E_row['client_name']; ?><br>
                                     </td>
                                     <td>
-                                        <?php echo $E_row['total_available_hours']; ?>
+                                        <?php echo (int)$E_row['total_available_hours']; ?>
                                     </td>
                                     <td>
                                         <?php echo $E_row['total_assigned_hours']; ?>
