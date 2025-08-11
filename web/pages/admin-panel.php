@@ -87,7 +87,7 @@ if (!isset($_SESSION['user_id'])) {
             border: none;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: #6b7280;
             cursor: pointer;
@@ -118,7 +118,7 @@ if (!isset($_SESSION['user_id'])) {
         /* User Management Header & sub-header + buttons */
         .user-management-header, 
         .activity-header {
-            font-size: 14px !important;
+            font-size: 16px !important;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -127,18 +127,18 @@ if (!isset($_SESSION['user_id'])) {
             gap: 10px;
         }
         .user-management-header .titles, .activity-header .titles, .analytic-header .titles, .settings-header .titles {
-            font-size: 14px !important;
+            font-size: 16px !important;
             flex-grow: 1;
             min-width: 200px;
         }
         .user-management-header h2, .activity-header h2, .analytic-header h2, .settings-header h2 {
-            font-size: 14px !important;
+            font-size: 16px !important;
             margin: 0;
             font-weight: 700;
             font-size: 1.75rem;
         }
         .user-management-header p, .activity-header p, .analytic-header p, .settings-header p {
-            font-size: 14px !important;
+            font-size: 16px !important;
             margin: 0;
             color: #6b7280;
             font-size: 1rem;
