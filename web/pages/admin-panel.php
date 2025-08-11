@@ -126,25 +126,27 @@ if (!isset($_SESSION['user_id'])) {
             flex-wrap: wrap;
             gap: 10px;
         }
-        .user-management-header .titles, .activity-header .titles, .analytic-header .titles {
+        .user-management-header .titles, .activity-header .titles, .analytic-header .titles, .settings-header .titles {
             font-size: 14px !important;
             flex-grow: 1;
             min-width: 200px;
         }
-        .user-management-header h2, .activity-header .h2, .analytic-header h2 {
+        .user-management-header h2, .activity-header h2, .analytic-header h2, .settings-header h2 {
             font-size: 14px !important;
             margin: 0;
             font-weight: 700;
             font-size: 1.75rem;
         }
-        .user-management-header p, .activity-header p, .analytic-header p {
+        .user-management-header p, .activity-header p, .analytic-header p, .settings-header p {
             font-size: 14px !important;
             margin: 0;
             color: #6b7280;
             font-size: 1rem;
         }
         .user-management-buttons button,
-        .user-management-buttons a {
+        .user-management-buttons a.,
+        .settings-headers button,
+        .settings-headers a {
             font-size: 14px !important;
             margin-left: 10px;
             min-width: 120px;
@@ -616,10 +618,15 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                         </div>
                         <div class="pb-4"></div>
-                        <div class="analytic-header">
+                        <div class="settings-header">
                             <div class="titles">
                                 <p class="text-black" style="font-size: 14px;"><strong>Email Notifications</strong></p>
                                 <p style="font-size: 14px;">Send system notifications via email</p>
+                            </div>
+                            <div class="settings-buttons">
+                                <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                                    Configure
+                                </a>
                             </div>
                         </div>
                         <div class="pb-2"></div>
