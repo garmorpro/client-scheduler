@@ -527,7 +527,8 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <div class="row g-3 ps-3 pe-3 mt-2">
                 <div class="col-md-12">
-                    <div class="user-management-header">
+                    <div class="analytic-card">
+                        <div class="user-management-header">
                         <div class="titles">
                             <p class="text-black"><strong>Advanced Reports</strong></p>
                             <p>Generate detailed system reports</p>
@@ -541,10 +542,6 @@ if (!isset($_SESSION['user_id'])) {
                             </a>
                         </div>
                     </div>
-
-                    <div class="analytic-card">
-                        <div class="analytic-title">Engagement Status</div>
-                        <div class="analytic-subtitle">Current engagement distribution</div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
