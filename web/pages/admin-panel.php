@@ -1045,7 +1045,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
             <div class="modal-body">
               <p>
-                Please use the <a href="user_template.csv" download>CSV template</a> to ensure correct format.
+                Please use the <a href="../assets/templates/bulk_user_template.csv" download>CSV template</a> to ensure correct format.
               </p>
 
               <div class="mb-3">
@@ -1631,12 +1631,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       const importForm = document.getElementById('importUsersForm');
       const fileInput = document.getElementById('csv_file');
       const importSummary = document.getElementById('importSummary');
-        
+
       importForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         importSummary.style.display = 'none';
         importSummary.innerHTML = '';
-    
+
         const file = fileInput.files[0];
         if (!file) {
           alert('Please select a CSV file to upload.');
@@ -1646,24 +1646,24 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           alert('Only CSV files are allowed.');
           return;
         }
-    
+
         // Prepare form data for AJAX
         const formData = new FormData();
         formData.append('csv_file', file);
-    
+
         try {
           const response = await fetch('import_users.php', {
             method: 'POST',
             body: formData
           });
           const result = await response.json();
-      
+
           // Show import summary in modal
           importSummary.style.display = 'block';
-      
+
           let html = `<p><strong>Import Results:</strong></p>`;
           html += `<p>Successfully imported: ${result.successCount}</p>`;
-      
+
           if (result.errors.length > 0) {
             html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
             result.errors.forEach(err => {
@@ -1673,20 +1673,20 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           } else {
             html += `<p class="text-success">No errors found.</p>`;
           }
-      
+
           importSummary.innerHTML = html;
-      
+
           if(result.successCount > 0) {
             // Optionally reset the file input so user can import again easily
             fileInput.value = '';
           }
-      
+
         } catch (error) {
           alert('Error processing import: ' + error.message);
         }
       });
     });
-    
+
     </script>
 <!-- end import users csv -->
 
