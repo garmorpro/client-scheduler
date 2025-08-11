@@ -673,7 +673,7 @@ if ($result && $result->num_rows > 0) {
                   <strong style="float: left;">Email:</strong>
                   <span id="view_email_detail" style="float: right;"></span>
                 </p>
-                <hr>
+                <hr class="mt-2">
               </div>
               <div class="col-md-6">
                 <h6>
@@ -691,7 +691,7 @@ if ($result && $result->num_rows > 0) {
                   <strong style="float: left;">Status:</strong>
                   <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
                 </p>
-                <hr>
+                <hr class="mt-2">
               </div>
             </div>
 
