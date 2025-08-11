@@ -719,6 +719,12 @@ if ($result && $result->num_rows > 0) {
             </div>
 
 
+            <div class="col-md-12">
+                <h6>Recent Activity</h6>
+                <ul id="view_recent_activity" class="list-group list-group-flush" style="max-height: 150px; overflow-y: auto;">
+                    <!-- Activities will be inserted here -->
+                </ul>
+            </div>
         
 
           </div>
@@ -1015,6 +1021,26 @@ document.addEventListener('DOMContentLoaded', () => {
           mfaEl.classList.add('text-danger');
         }
       }
+
+      const activityList = document.getElementById('view_recent_activity');
+if (activityList) {
+  activityList.innerHTML = ''; // clear previous entries
+  if (user.recent_activities && user.recent_activities.length > 0) {
+    user.recent_activities.forEach(act => {
+      const date = new Date(act.created_at);
+      const formattedDate = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'py-1');
+      li.textContent = `${formattedDate}: ${act.description}`;
+      activityList.appendChild(li);
+    });
+  } else {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'text-muted');
+    li.textContent = 'No recent activity found.';
+    activityList.appendChild(li);
+  }
+}
 
 
       // Update badge class for status

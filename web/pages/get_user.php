@@ -16,6 +16,7 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 
 $user_id = (int)$_GET['user_id'];
 
+// Fetch user info
 $stmt = $conn->prepare("SELECT user_id, first_name, last_name, email, role, status, created, last_active, mfa_enabled FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -23,6 +24,20 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if ($user) {
+    // Fetch last 3 activity logs for this user
+    $activityStmt = $conn->prepare("SELECT description, created_at FROM system_activity_log WHERE user_id = ? ORDER BY created_at DESC LIMIT 3");
+    $activityStmt->bind_param("i", $user_id);
+    $activityStmt->execute();
+    $activityResult = $activityStmt->get_result();
+
+    $activities = [];
+    while ($row = $activityResult->fetch_assoc()) {
+        $activities[] = $row;
+    }
+    $activityStmt->close();
+
+    $user['recent_activities'] = $activities;
+
     header('Content-Type: application/json');
     echo json_encode($user);
 } else {
