@@ -674,7 +674,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Healthy</span>
                             </div>
                         </div>
-                        <div class="mb-4"></div>
+                        <div class="mb-2"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
                                 <i class="bi bi-check2-circle text-success"></i>
@@ -684,7 +684,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Operational</span>
                             </div>
                         </div>
-                        <div class="mb-4"></div>
+                        <div class="mb-2"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
                                 <i class="bi bi-exclamation-circle text-warning"></i>
