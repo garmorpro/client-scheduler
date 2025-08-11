@@ -494,10 +494,10 @@ if (!isset($_SESSION['user_id'])) {
               <!-- Center: Description -->
               <div class="flex-grow-1 mx-3">
                 <div class="activity-title fw-semibold mb-1">User Login</div>
-                <div class="activity-sub text-muted" style="font-size: 0.9rem;">
+                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
                   By: Sarah Senior
                 </div>
-                <div class="activity-sub text-muted" style="font-size: 0.9rem;">
+                <div class="activity-sub" style="font-size: 0.9rem;">
                   Successful login from 192.168.1.100
                 </div>
               </div>
