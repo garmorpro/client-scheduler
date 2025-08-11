@@ -489,11 +489,11 @@ if (!isset($_SESSION['user_id'])) {
             <!-- Example activity card -->
             <div class="activity-card d-flex justify-content-between">
               <!-- Left: Icon -->
-              <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x;">
-    <div class="activity-icon" style="color:#0ea5e9; font-size: 24px;">
-      <i class="bi bi-shield"></i>
-    </div>
-  </div>
+                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x;">
+                    <div class="activity-icon" style="color:#0ea5e9; font-size: 12px;">
+                        <i class="bi bi-shield"></i>
+                    </div>
+                </div>
 
               <!-- Center: Description -->
               <div class="flex-grow-1 mx-3">
