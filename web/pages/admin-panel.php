@@ -443,7 +443,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <div id="tab-analytics" class="tab-content d-none">
-            <div class="row g-3 p-5">
+            <div class="row g-3 ps-5 pe-5">
                 <div class="col-md-6">
                     <div class="stat-card">
                         <div class="card-icon"><i class="bi bi-people"></i></div>
