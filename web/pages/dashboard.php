@@ -70,8 +70,8 @@ if (!isset($_SESSION['user_id'])) {
         </svg>
       </div>
       <h5 class="fw-bold">Administrator Access</h5>
-      <p class="text-muted mb-4">Access advanced system management, user administration, and detailed analytics.</p>
-      <button class="admin-btn">Go to Admin Dashboard</button>
+      <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
+      <button class="admin-btn mt-3">Go to Admin Dashboard</button>
     </div>
   <!-- </div> -->
 
