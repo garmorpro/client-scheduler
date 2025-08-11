@@ -277,7 +277,7 @@ if (!isset($_SESSION['user_id'])) {
         <div id="tab-users" class="tab-content">
             <div class="user-management-header">
                 <div class="titles">
-                    <h2>User Management</h2>
+                    <h4>User Management</h4>
                     <p>Manage user accounts, roles, and permissions</p>
                 </div>
                 <div class="user-management-buttons">
