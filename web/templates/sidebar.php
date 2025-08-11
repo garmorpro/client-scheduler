@@ -34,14 +34,10 @@
           My Schedule
         </a>
       </li>
-      <div class="mt-4"></div>
-      <hr>
-      <span style="font-size: 20px; font-weight: 500;">Admin Settings</span>
-      <hr>
       <li class="nav-item">
-        <a href="#" class="nav-link d-flex align-items-center px-0 text-dark" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
-          <i class="bi bi-building-add me-2"></i>
-          Add Engagement
+        <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
+          <i class="bi bi-shielf me-2"></i>
+          Admin Panel
         </a>
       </li>
 
