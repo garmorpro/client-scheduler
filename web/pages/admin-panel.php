@@ -282,6 +282,9 @@ if (!isset($_SESSION['user_id'])) {
             border: 1px solid #e5e5e5;
             box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
+        .reports-card:hover {
+            background-color: rgb(233,235,239);
+        }
     </style>
 </head>
 <body class="d-flex">
