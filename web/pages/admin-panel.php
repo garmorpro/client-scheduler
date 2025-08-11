@@ -255,7 +255,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         
                 <!-- Pagination Controls -->
                 <nav>
-                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                    <ul id="pagination-users" class="pagination justify-content-center mt-3"></ul>
                 </nav>
             </div>
         <!-- end user management -->
