@@ -186,9 +186,14 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p>Manage user accounts, roles, and permissions</p>
                     </div>
                     <div class="user-management-buttons">
-                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                        <a href="#" 
+                           class="badge text-black p-2 text-decoration-none fw-medium overlay-red" 
+                           style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                           data-bs-toggle="modal" 
+                           data-bs-target="#importUsersModal">
                             <i class="bi bi-upload me-3"></i>Import Users
                         </a>
+
                         <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bi bi-person-plus me-3"></i>Add User
                         </a>
@@ -1028,6 +1033,46 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </div>
 <!-- end View user modal -->
 
+<!-- import users modal -->
+    <div class="modal fade" id="importUsersModal" tabindex="-1" aria-labelledby="importUsersModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="importUsersForm" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="importUsersModalLabel">Import Users from CSV</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <p>
+                Please use the <a href="user_template.csv" download>CSV template</a> to ensure correct format.
+              </p>
+
+              <div class="mb-3">
+                <label for="csv_file" class="form-label">Select CSV File</label>
+                <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+              </div>
+
+              <div class="alert alert-info small">
+                Only CSV files are supported. Required columns: 
+                <strong>first_name, last_name, email, role</strong>
+              </div>
+
+              <!-- Import Summary Container -->
+              <div id="importSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
+                <!-- Filled dynamically by JS -->
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Import</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<!-- end import users modal -->
 
 
 
@@ -1579,6 +1624,71 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         });
     </script>
 <!-- end delete user -->
+
+<!-- import users csv -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+      const importForm = document.getElementById('importUsersForm');
+      const fileInput = document.getElementById('csv_file');
+      const importSummary = document.getElementById('importSummary');
+        
+      importForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        importSummary.style.display = 'none';
+        importSummary.innerHTML = '';
+    
+        const file = fileInput.files[0];
+        if (!file) {
+          alert('Please select a CSV file to upload.');
+          return;
+        }
+        if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+          alert('Only CSV files are allowed.');
+          return;
+        }
+    
+        // Prepare form data for AJAX
+        const formData = new FormData();
+        formData.append('csv_file', file);
+    
+        try {
+          const response = await fetch('import_users.php', {
+            method: 'POST',
+            body: formData
+          });
+          const result = await response.json();
+      
+          // Show import summary in modal
+          importSummary.style.display = 'block';
+      
+          let html = `<p><strong>Import Results:</strong></p>`;
+          html += `<p>Successfully imported: ${result.successCount}</p>`;
+      
+          if (result.errors.length > 0) {
+            html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
+            result.errors.forEach(err => {
+              html += `<li>Row ${err.row}: ${err.message}</li>`;
+            });
+            html += `</ul>`;
+          } else {
+            html += `<p class="text-success">No errors found.</p>`;
+          }
+      
+          importSummary.innerHTML = html;
+      
+          if(result.successCount > 0) {
+            // Optionally reset the file input so user can import again easily
+            fileInput.value = '';
+          }
+      
+        } catch (error) {
+          alert('Error processing import: ' + error.message);
+        }
+      });
+    });
+    
+    </script>
+<!-- end import users csv -->
 
 
 
