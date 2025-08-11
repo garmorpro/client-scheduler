@@ -146,9 +146,9 @@ $result = mysqli_query($conn, $sql);
                                     ?>
                                 </td>
                                 <td class="table-actions">
-                                    <i class="bi bi-eye"></i>
-                                    <i class="bi bi-pencil"></i>
-                                    <i class="bi bi-trash"></i>
+                                    <i class="bi bi-eye overlay-red"></i>
+                                    <i class="bi bi-pencil overlay-red"></i>
+                                    <i class="bi bi-trash overlay-red"></i>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
