@@ -31,6 +31,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
 
+            // --- Add login event to system_activity_log ---
+            $eventType = "login";
+            $username = $email; // or "$first_name $last_name"
+            $title = "User Login";
+            $description = "Successful login";
+                
+            $logSql = "INSERT INTO system_activity_log (event_type, user_id, username, title, description) VALUES (?, ?, ?, ?, ?)";
+            $logStmt = mysqli_prepare($conn, $logSql);
+            if ($logStmt) {
+                mysqli_stmt_bind_param($logStmt, "sisss", $eventType, $user_id, $username, $title, $description);
+                mysqli_stmt_execute($logStmt);
+                mysqli_stmt_close($logStmt);
+            }
+            // ----------------------------------------------
+
             header("Location: dashboard.php");
             exit;
         } else {
