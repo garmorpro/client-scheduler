@@ -218,6 +218,49 @@ if (!isset($_SESSION['user_id'])) {
             font-size: 13px;
             color: #6b7280;
         }
+
+        /* Vertically center all table cells */
+.user-table table tbody tr td {
+  vertical-align: middle !important;
+}
+
+/* Role badge style: white background, subtle border, rounded, padding */
+.badge-role {
+  background-color: white;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Status badge: default styling */
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Active status: green background with white text */
+.badge-status.active {
+  background-color: #16a34a; /* Tailwind green-600 */
+  color: white;
+}
+
+/* Inactive status: amber/yellow background with dark text */
+.badge-status.inactive {
+  background-color: #fbbf24; /* Tailwind amber-400 */
+  color: #92400e; /* Dark amber text */
+}
+
     </style>
 </head>
 <body class="d-flex">
