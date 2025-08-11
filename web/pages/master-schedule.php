@@ -331,6 +331,13 @@ function openEmployeeModal(employeeId) {
     #engagement-status-select {
   transition: opacity 0.2s ease;
 }
+
+.header-buttons { 
+    font-size: 14px !important;
+    margin-left: 10px;
+    min-width: 120px;
+    font-weight: 600;
+}
 </style>
 </head>
 <body class="d-flex">
@@ -341,11 +348,11 @@ function openEmployeeModal(employeeId) {
         <h3 class="mb-0">Master Schedule</h3>
         <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
     </div>
-    <div>
-        <a href="master_schedule.php" class="btn btn-outline-secondary me-2">
+    <div class="header-buttons">
+        <a href="master_schedule.php" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
             <i class="bi bi-arrow-clockwise me-1"></i> Refresh
         </a>
-        <a href="new_engagement.php" class="btn btn-primary">
+        <a href="new_engagement.php" class="badge text-white p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; background-color: rgb(3,2,18);">
             <i class="bi bi-plus-lg me-1"></i> + New Engagement
         </a>
     </div>
