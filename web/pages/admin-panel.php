@@ -172,7 +172,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         <!-- Tabs -->
             <div class="custom-tabs">
                 <button class="active" data-tab="users">User Management</button>
-                <button class="overlay-red" data-tab="engagements">Engagement Management</button>
+                <button data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
                 <button class="overlay-red" data-tab="settings">Settings</button>
             </div>
@@ -684,20 +684,20 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <h5 class="modal-title" id="addEngagementModalLabel">Add New Engagement</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-                    
+
             <div class="modal-body">
               <!-- Client Name -->
               <div class="mb-3">
                 <label for="client_name" class="form-label">Client Name</label>
                 <input type="text" class="form-control" id="client_name" name="client_name" required>
               </div>
-                    
+
               <!-- Total Available Hours -->
               <div class="mb-3">
                 <label for="total_available_hours" class="form-label">Total Available Hours</label>
                 <input type="number" class="form-control" id="total_available_hours" name="total_available_hours" min="1" required>
               </div>
-                    
+
               <!-- Status -->
               <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
@@ -708,18 +708,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                   <option value="not_confirmed">Not Confirmed</option>
                 </select>
               </div>
-                    
+
               <!-- Notes -->
               <div class="mb-3">
                 <label for="notes" class="form-label">Notes</label>
                 <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
               </div>
-                    
+
               <div class="alert alert-info small">
                 You can assign team members to this engagement after creating it.
               </div>
             </div>
-                    
+
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button type="submit" class="btn btn-primary">Add Engagement</button>
