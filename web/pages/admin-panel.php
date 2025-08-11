@@ -537,9 +537,6 @@ if (!isset($_SESSION['user_id'])) {
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 14px; border: 1px solid rgb(229,229,229);">
                                 <i class="bi bi-upload me-3"></i>Export All Data
                             </a>
-                            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: 14px; background-color: rgb(3,2,18);">
-                                <i class="bi bi-person-plus me-3"></i>Add User
-                            </a>
                         </div>
                     </div>
                         <div class="pb-4"></div>
