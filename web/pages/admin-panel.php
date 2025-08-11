@@ -880,18 +880,19 @@ if ($result && $result->num_rows > 0) {
                 // Set initials
                 const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
                 const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
-                document.getElementById('view_user_initials').textContent = firstInitial + lastInitial;
-            
-                // Set fullname and role
+                console.log('User data:', user);
+
+                document.getElementById('view_user_initials').textContent = (user.first_name ? user.first_name[0].toUpperCase() : '') + (user.last_name ? user.last_name[0].toUpperCase() : '');
+                            
                 document.getElementById('view_user_fullname').textContent = `${user.first_name} ${user.last_name}`;
                 document.getElementById('view_user_role').textContent = user.role;
-            
-                // Set other info
-                document.getElementById('view_first_name').textContent = user.first_name || '';
-                document.getElementById('view_last_name').textContent = user.last_name || '';
-                document.getElementById('view_email').textContent = user.email || '';
-                document.getElementById('view_role').textContent = user.role || '';
-                document.getElementById('view_status').textContent = user.status || '';
+                            
+                document.getElementById('view_first_name').textContent = user.first_name || '[No first name]';
+                document.getElementById('view_last_name').textContent = user.last_name || '[No last name]';
+                document.getElementById('view_email').textContent = user.email || '[No email]';
+                document.getElementById('view_role').textContent = user.role || '[No role]';
+                document.getElementById('view_status').textContent = user.status || '[No status]';
+
             
               } catch (error) {
                 console.error('Failed to load user data:', error);
