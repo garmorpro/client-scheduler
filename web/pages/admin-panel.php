@@ -1374,7 +1374,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               return hours ? parseInt(hours, 10) : 0;
             }
 
-            setText('view_engagement_client_name', engagement.client_name);
+            setText('view_client_name', engagement.client_name);
             setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
             setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
             setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
