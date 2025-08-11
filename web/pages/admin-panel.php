@@ -619,7 +619,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="pb-4"></div>
                         <div class="settings-header">
-                            <div class="titles">
+                            <div class="titles float-start">
                                 <p class="text-black" style="font-size: 14px;"><strong>Email Notifications</strong></p>
                                 <p style="font-size: 14px;">Send system notifications via email</p>
                             </div>
