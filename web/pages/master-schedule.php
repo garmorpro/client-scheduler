@@ -353,10 +353,10 @@ function openEmployeeModal(employeeId) {
 
             <div class="col-md-2">
                 <select name="status" class="form-select">
-                    <option value="">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="on_hold">On Hold</option>
+                    <option value="">Select a Statuses</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="not_confirmed">Not Confirmed</option>
                 </select>
             </div>
             <div class="col-md-3 d-flex align-items-center gap-3">
@@ -408,7 +408,7 @@ function openEmployeeModal(employeeId) {
                                             case 'pending':
                                                 $badgeColor = 'purple';
                                                 break;
-                                            case 'not-confirmed':
+                                            case 'not_confirmed':
                                                 $badgeColor = 'primary';
                                                 break;
                                             default:
@@ -632,7 +632,7 @@ function openEmployeeModal(employeeId) {
             <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2 d-none">
               <option value="confirmed">Confirmed</option>
               <option value="pending">Pending</option>
-              <option value="not-confirmed">Not Confirmed</option>
+              <option value="not_confirmed">Not Confirmed</option>
             </select>
           </div>
         </div>
@@ -768,7 +768,7 @@ document.addEventListener("DOMContentLoaded", function () {
         switch (status) {
             case 'confirmed': return 'bg-success';
             case 'pending': return 'bg-warning text-dark';
-            case 'not-confirmed': return 'bg-danger';
+            case 'not_confirmed': return 'bg-danger';
             default: return 'bg-secondary';
         }
     }
