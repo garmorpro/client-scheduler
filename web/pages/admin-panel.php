@@ -859,13 +859,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           <div class="modal-body">
 
             <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
-              <div id="view_user_initials" 
-                   class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                   style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
-                <!-- Initials will go here -->
-              </div>
               <div>
-                <div id="view_user_fullname" class="fw-semibold"></div>
+                <div id="view_client_name" class="fw-semibold"></div>
                 <small id="view_email" class="text-muted"></small><br>
                 <small class="text-capitalize badge-role mt-2" style="font-size: 12px;" id="view_user_role">...</small>
                 <small class="text-capitalize badge-status mt-2" style="font-size: 12px;" id="view_status">...</small>
@@ -1375,6 +1370,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             }
 
             setText('view_engagement_client_name', engagement.client_name);
+            setText('view_client_name', engagement.client_name);
             setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
             setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
             setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
