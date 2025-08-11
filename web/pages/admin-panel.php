@@ -631,7 +631,7 @@ if ($result && $result->num_rows > 0) {
 
 <!-- View User Modal -->
     <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-      <div class="modal-dialog" style="min-width: 650px !important;">
+      <div class="modal-dialog" style="min-width: 600px !important;">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
