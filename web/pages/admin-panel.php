@@ -230,7 +230,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="card-icon">
-                    <i class="bi bi-folder-fill"></i>
+                    <i class="bi bi-file-earmark-text"></i>
                 </div>
 
                 <div class="stat-title">Active Projects</div>
@@ -241,7 +241,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="card-icon">
-                    <i class="bi bi-cpu-fill"></i>
+                    <i class="bi bi-graph-up-arrow"></i>
                 </div>
                 
                 <div class="stat-title">System Utilization</div>
