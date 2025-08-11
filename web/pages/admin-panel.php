@@ -125,15 +125,18 @@ if (!isset($_SESSION['user_id'])) {
             gap: 10px;
         }
         .user-management-header .titles, .activity-header .titles, .analytic-header .titles {
+            font-size: 14px;
             flex-grow: 1;
             min-width: 200px;
         }
         .user-management-header h2, .activity-header .h2, .analytic-header h2 {
+            font-size: 14px;
             margin: 0;
             font-weight: 700;
             font-size: 1.75rem;
         }
         .user-management-header p, .activity-header p, .analytic-header p {
+            font-size: 14px;
             margin: 0;
             color: #6b7280;
             font-size: 1rem;
