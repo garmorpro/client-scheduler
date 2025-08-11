@@ -275,57 +275,167 @@ if (!isset($_SESSION['user_id'])) {
 
         <!-- Tab Content -->
         <div id="tab-users" class="tab-content">
-            <div class="user-management-header">
-                <div class="titles">
-                    <p class="text-black"><strong>User Management</strong></p>
-                    <p>Manage user accounts, roles, and permissions</p>
-                </div>
-                <div class="user-management-buttons">
-                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"><i class="bi bi-upload me-3"></i>Import Users</a>
-                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);"><i class="bi bi-person-plus me-3"></i>Add User</a>
-                </div>
-            </div>
-
-            <div class="user-table">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
-                            <td><span class="badge-role">Manager</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/6/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
-                            <td><span class="badge-role">Senior</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/6/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
-                            <td><span class="badge-role">Staff</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/5/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
-                            <td><span class="badge-role">CRM Member</span></td>
-                            <td><span class="badge-status inactive">Inactive</span></td>
-                            <td>1/4/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="user-management-header">
+        <div class="titles">
+            <p class="text-black"><strong>User Management</strong></p>
+            <p>Manage user accounts, roles, and permissions</p>
         </div>
+        <div class="user-management-buttons">
+            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                <i class="bi bi-upload me-3"></i>Import Users
+            </a>
+            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                <i class="bi bi-person-plus me-3"></i>Add User
+            </a>
+        </div>
+    </div>
+
+    <div class="user-table">
+        <table id="user-table" class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
+                    <td><span class="badge-role">Manager</span></td>
+                    <td><span class="badge-status active">Active</span></td>
+                    <td>1/6/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                    <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
+                    <td><span class="badge-role">Senior</span></td>
+                    <td><span class="badge-status active">Active</span></td>
+                    <td>1/6/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                    <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
+                    <td><span class="badge-role">Staff</span></td>
+                    <td><span class="badge-status active">Active</span></td>
+                    <td>1/5/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                    <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
+                    <td><span class="badge-role">CRM Member</span></td>
+                    <td><span class="badge-status inactive">Inactive</span></td>
+                    <td>1/4/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+                <!-- Add more rows here for testing pagination -->
+                <tr>
+                    <td>Extra User 1<br><small class="text-muted">extra1@company.com</small></td>
+                    <td><span class="badge-role">Staff</span></td>
+                    <td><span class="badge-status active">Active</span></td>
+                    <td>1/3/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                    <td>Extra User 2<br><small class="text-muted">extra2@company.com</small></td>
+                    <td><span class="badge-role">Manager</span></td>
+                    <td><span class="badge-status inactive">Inactive</span></td>
+                    <td>1/2/2025</td>
+                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+     <!-- Pagination Controls -->
+    <nav>
+        <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+    </nav>
+</div>
+
+<script>
+    (function(){
+        const rowsPerPage = 5;
+        const table = document.getElementById('user-table');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const paginationContainer = document.getElementById('pagination');
+
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function renderTablePage(page) {
+            currentPage = page;
+            // Hide all rows
+            rows.forEach(row => row.style.display = 'none');
+
+            // Calculate start/end slice
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            // Show only current page rows
+            rows.slice(start, end).forEach(row => row.style.display = '');
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            paginationContainer.innerHTML = '';
+
+            // Prev button
+            const prevLi = document.createElement('li');
+            prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+            const prevLink = document.createElement('a');
+            prevLink.className = 'page-link';
+            prevLink.href = '#';
+            prevLink.innerText = 'Prev';
+            prevLink.onclick = (e) => {
+                e.preventDefault();
+                if(currentPage > 1) renderTablePage(currentPage - 1);
+            };
+            prevLi.appendChild(prevLink);
+            paginationContainer.appendChild(prevLi);
+
+            // Page numbers
+            for(let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = 'page-item' + (i === currentPage ? ' active' : '');
+                const link = document.createElement('a');
+                link.className = 'page-link';
+                link.href = '#';
+                link.innerText = i;
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    renderTablePage(i);
+                };
+                li.appendChild(link);
+                paginationContainer.appendChild(li);
+            }
+
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+            const nextLink = document.createElement('a');
+            nextLink.className = 'page-link';
+            nextLink.href = '#';
+            nextLink.innerText = 'Next';
+            nextLink.onclick = (e) => {
+                e.preventDefault();
+                if(currentPage < totalPages) renderTablePage(currentPage + 1);
+            };
+            nextLi.appendChild(nextLink);
+            paginationContainer.appendChild(nextLi);
+        }
+
+        // Initialize
+        if(rows.length > rowsPerPage) {
+            renderTablePage(1);
+        } else {
+            // Show all rows if 5 or fewer and hide pagination controls
+            rows.forEach(row => row.style.display = '');
+            paginationContainer.style.display = 'none';
+        }
+    })();
+</script>
+
+
 
         <div id="tab-activity" class="tab-content d-none">
             <div class="activity-card">
