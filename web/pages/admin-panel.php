@@ -219,7 +219,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="card-icon">
-                    <i class="bi bi-people-fill"></i>
+                    <i class="bi bi-people"></i>
                 </div>
 
                 <div class="stat-title">Total Users</div>
