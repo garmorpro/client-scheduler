@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Redirect non-admins to dashboard.php
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['role']) || strtolower($_SESSION['user_role']) === 'admin') {
     header("Location: dashboard.php");
     exit();
 }

@@ -2,7 +2,7 @@
 require_once '../includes/db.php';
 session_start();
 
-$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+$isAdmin = isset($_SESSION['role']) && strtolower($_SESSION['user_role']) === 'admin';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");

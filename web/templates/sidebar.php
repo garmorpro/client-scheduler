@@ -1,4 +1,13 @@
 <!-- sidebar.php -->
+ <?php
+ if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+
+ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+ ?>
 <div class="d-flex flex-column justify-content-between bg-light border-end" style="width: 250px; height: 100vh; padding: 1.5rem;">
 
   <!-- Branding -->
