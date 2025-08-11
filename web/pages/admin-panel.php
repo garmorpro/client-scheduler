@@ -63,35 +63,43 @@ if (!isset($_SESSION['user_id'])) {
             background: #111;
             height: 100%;
         }
-        /* Tabs */
         .custom-tabs {
-            display: flex;
-            margin-top: 2rem;
-            margin-bottom: 20px;
-            background-color: rgb(235,235,239);
-            border-radius: 15px;
-            padding:5px;
-            justify-content: space-between;
-        }
-        .custom-tabs button {
-            background: none;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7280;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-        }
-        .custom-tabs button:hover {
-            background: #f3f4f6;
-            color: #111827;
-        }
-        .custom-tabs button.active {
-            background: #111827;
-            color: #fff;
-        }
+    display: flex;
+    margin-top: 2rem;
+    margin-bottom: 20px;
+    background-color: rgb(235,235,239);
+    border-radius: 15px;
+    padding: 5px;
+    /* Remove justify-content or set it to center */
+    justify-content: center;
+}
+
+.custom-tabs button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    flex: 1;           /* add this */
+    text-align: center; /* center text */
+    margin: 0 4px;      /* spacing between tabs */
+}
+
+.custom-tabs button:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.custom-tabs button.active {
+    background: #111827;
+    color: #fff;
+}
+
         /* Table */
         .user-table .table {
             background: #fff;
