@@ -852,7 +852,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           <div class="modal-header">
             <h5 class="modal-title" id="updateEngagementModalLabel">
                 <i class="bi bi-file-earmark-text"></i> Engagement Details <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete engagement details for <span id="view_client_name"></span></span>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete engagement details for <span id="view_engagement_client_name"></span></span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1374,7 +1374,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               return hours ? parseInt(hours, 10) : 0;
             }
 
-            setText('view_client_name', engagement.client_name);
+            setText('view_engagement_client_name', engagement.client_name);
             setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
             setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
             setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
