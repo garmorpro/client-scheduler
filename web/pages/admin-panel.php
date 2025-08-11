@@ -658,7 +658,10 @@ if ($result && $result->num_rows > 0) {
 
             <div class="row">
                 <div class="col-md-6">
-                    test
+                    <i class="bi bi-envelope"></i> Personal Information
+                    <p class="text-muted"><strong>First Name:</strong> <span id="view_first_name"></span></p>
+                    <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
+                    <p><strong>Email:</strong> <span id="view_email"></span></p>
                 </div>
                 <div class="col-md-6">
                     test
