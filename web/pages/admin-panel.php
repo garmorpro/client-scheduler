@@ -251,8 +251,8 @@ if (!isset($_SESSION['user_id'])) {
 
 /* Active status: green background with white text */
 .badge-status.active {
-  background-color: #16a34a; /* Tailwind green-600 */
-  color: white;
+  background-color: rgb(226,251,232); /* Tailwind green-600 */
+  color: rgb(50,107,61);
 }
 
 /* Inactive status: amber/yellow background with dark text */
