@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
       .admin-card {
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      padding: 2rem;
+      
       text-align: center;
       background-color: #fff;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -57,7 +57,7 @@ if (!isset($_SESSION['user_id'])) {
 
   <div class="flex-grow-1 p-4">
     <h3 class="mb-0">Dashboard</h3>
-    <p class="text-muted mb-4">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.
+    <p class="text-muted mb-">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.
 
     <!-- <div class="p-5"></div> -->
 
