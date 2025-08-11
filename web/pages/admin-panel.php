@@ -175,49 +175,68 @@ $result = mysqli_query($conn, $sql);
 
     <div id="activity-list">
         <?php
-        require_once '../includes/db.php';
 
         // Fetch all activities, newest first
-        $sql = "SELECT event_type, full_name, title, description, created_at 
-                FROM system_activity_log 
-                ORDER BY created_at DESC";
-        $result = $conn->query($sql);
+$sql = "SELECT event_type, full_name, title, description, created_at 
+        FROM system_activity_log 
+        ORDER BY created_at DESC";
+$result = $conn->query($sql);
 
-        // Define icon & color mapping for different event types
-        $icons = [
-            'login' => ['bi-shield', 'rgb(92,141,253)'],
-            'project_created' => ['bi-file-earmark-text', 'rgb(79,198,96)'],
-            'user_role_updated' => ['bi-people', 'rgb(161,77,253)'],
-            'backup' => ['bi-database', 'rgb(243,132,48)'],
-            // Default
-            'default' => ['bi-info-circle', 'rgb(100,100,100)']
-        ];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $icon = "";
+        $color = "";
 
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $type = strtolower($row['event_type']);
-                $iconClass = $icons[$type][0] ?? $icons['default'][0];
-                $iconColor = $icons[$type][1] ?? $icons['default'][1];
+        switch ($row['event_type']) {
+            case 'failed_login':
+                $icon = 'bi-shield';
+                $color = 'rgb(220,53,69)'; // red
+                break;
 
-                echo '
-                <div class="activity-card d-flex justify-content-between">
-                    <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:'.$iconColor.'; font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi '.$iconClass.'"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 mx-3">
-                        <div class="activity-title fw-semibold mb-1">'.htmlspecialchars($row['title']).'</div>
-                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: '.htmlspecialchars($row['full_name']).'</div>
-                        <div class="activity-sub text-black" style="font-size: 0.9rem;">'.htmlspecialchars($row['description']).'</div>
-                    </div>
-                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">'.date("n/j/Y, g:i:s A", strtotime($row['created_at'])).'</div>
-                </div>';
-            }
-        } else {
-            echo '<p class="text-muted">No system activities found.</p>';
+            case 'success_login':
+                $icon = 'bi-shield';
+                $color = 'rgb(40,167,69)'; // green
+                break;
+
+            case 'engagement_created':
+                $icon = 'bi-file-earmark-text';
+                $color = 'rgb(40,167,69)'; // green
+                break;
+
+            case 'role_updated':
+                $icon = 'bi-people';
+                $color = 'rgb(161,77,253)'; // purple
+                break;
+
+            case 'backup':
+                $icon = 'bi-database';
+                $color = 'rgb(243,132,48)'; // orange
+                break;
+
+            default:
+                $icon = 'bi-info-circle';
+                $color = 'gray';
         }
-        ?>
+
+        echo '
+        <div class="activity-card d-flex justify-content-between">
+            <div class="activity-icon-container">
+                <div class="activity-icon" style="color:'.$color.'; font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
+                    <i class="bi '.$icon.'"></i>
+                </div>
+            </div>
+            <div class="flex-grow-1 mx-3">
+                <div class="activity-title fw-semibold mb-1">'.htmlspecialchars($row['title']).'</div>
+                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: '.htmlspecialchars($row['full_name']).'</div>
+                <div class="activity-sub text-black" style="font-size: 0.9rem;">'.htmlspecialchars($row['description']).'</div>
+            </div>
+            <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">'.date("n/j/Y, g:i:s A", strtotime($row['created_at'])).'</div>
+        </div>';
+    }
+} else {
+    echo '<p class="text-muted">No system activities found.</p>';
+}
+?>
     </div>
 
     <!-- Pagination Controls for activity -->
