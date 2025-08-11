@@ -657,26 +657,25 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
 
                 <div class="col-md-6">
-                    <div class="analytic-card">
-                        <div class="analytic-header">
+                    <div class="settings-card">
+                        <div class="settings-header">
                             <div class="titles">
                                 <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
                                 <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <div class="pb-4"></div>
-                        <div class="analytic-header">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-clipboard-check text-success"></i>
+                                Assigned Engagements
+                            </div>
+                            <div class="float-end">
+                                92
                             </div>
                         </div>
-                        <div class="analytic-header">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
-                            </div>
-                        </div>
+
+                        
                     </div>
                 </div>
             </div>
