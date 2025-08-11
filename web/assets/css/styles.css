@@ -8,7 +8,7 @@ body {
 /* Stat cards */
 .stat-card {
     position: relative;
-    height: 140px;
+    height: 150px;
     background: #fff;
     border-radius: 12px;
     padding: 1.5rem;
