@@ -525,7 +525,7 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-            <div class="row g-3 ps-3 pe-3 mt-2">
+            <div class="row g-3 ps-3 pe-3 mt-2" style="font-size: 14px;">
                 <div class="col-md-12">
                     <div class="analytic-card">
                         <div class="user-management-header">
@@ -535,7 +535,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="user-management-buttons">
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                <i class="bi bi-upload me-3"></i>Import Users
+                                <i class="bi bi-upload me-3"></i>Export All Data
                             </a>
                             <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
                                 <i class="bi bi-person-plus me-3"></i>Add User
