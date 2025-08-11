@@ -621,7 +621,7 @@ if (!isset($_SESSION['user_id'])) {
                         <!-- Email Notifications -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <p class="text-black" style="font-size: 14px;"><strong>Email Notifications</strong></p>
+                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Email Notifications</strong></p>
                                 <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
@@ -633,7 +633,7 @@ if (!isset($_SESSION['user_id'])) {
                         <!-- Backup Settings -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <p class="text-black" style="font-size: 14px;"><strong>Backup Settings</strong></p>
+                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Backup Settings</strong></p>
                                 <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
@@ -645,7 +645,7 @@ if (!isset($_SESSION['user_id'])) {
                         <!-- Security Policies -->
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <p class="text-black" style="font-size: 14px;"><strong>Security Policies</strong></p>
+                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Security Policies</strong></p>
                                 <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
