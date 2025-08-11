@@ -93,7 +93,7 @@ while ($row = $result->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
-    
+
     <style>
       body {
         font-size: 14px !important;
@@ -125,11 +125,11 @@ while ($row = $result->fetch_assoc()) {
             };
             document.getElementById('addAssignmentsButton').onclick = function() {
                 // Add Assignment: Open the Add Engagement modal
-                openAddEngagementModal(user_id, employeeName, weekStart);
+                openAddassignmentModal(user_id, employeeName, weekStart);
             };
         } else {
             // If no existing assignments, directly show Add Engagement modal
-            openAddEngagementModal(user_id, employeeName, weekStart);
+            openAddassignmentModal(user_id, employeeName, weekStart);
         }
     }
 
@@ -150,14 +150,14 @@ while ($row = $result->fetch_assoc()) {
 
 
 
-    function openAddEngagementModal(user_id, employeeName, weekStart) {
+    function openAddassignmentModal(user_id, employeeName, weekStart) {
         // Prepare modal data for engagement
         document.getElementById('modalEmployee').value = user_id;
         document.getElementById('modalEmployeeName').value = employeeName;
         document.getElementById('modalWeek').value = weekStart;
 
-        const engagementModalElement = new bootstrap.Modal(document.getElementById('engagementModal'));
-        engagementModalElement.show();
+        const assignmentModalElement = new bootstrap.Modal(document.getElementById('assignmentModal'));
+        assignmentModalElement.show();
     }
 
     function showAssignments(assignmentsForWeek) {
@@ -223,7 +223,7 @@ function deleteAssignment(assignmentId) {
 
 
 
-function openEngagementModal(engagementId) {
+function openassignmentModal(engagementId) {
     // Set the engagementId in the hidden input field before fetching the data
     document.getElementById('engagementId').value = engagementId;
 
@@ -272,8 +272,8 @@ function openEngagementModal(engagementId) {
             document.getElementById('clientNotes').innerText = notes ? notes : "No notes available.";
 
             // Show the modal after the engagement details are set
-            const engagementModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
-            engagementModal.show();
+            const assignmentModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            assignmentModal.show();
         })
         .catch(error => console.error('Error fetching engagement details:', error));
 }
@@ -507,8 +507,8 @@ function openEmployeeModal(employeeId) {
 
 
 
-<!-- Modal for Adding Engagements -->
-<div class="modal fade" id="engagementModal" tabindex="-1">
+<!-- Modal for Adding assignment -->
+<div class="modal fade" id="assignmentModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -863,7 +863,7 @@ function openModal(id, type) {
     if (type === 'employee') {
         openEmployeeModal(id); // Ensure you have this modal function defined
     } else if (type === 'client') {
-        openEngagementModal(id); // Ensure you have this modal function defined
+        openassignmentModal(id); // Ensure you have this modal function defined
     }
 }
 </script>
