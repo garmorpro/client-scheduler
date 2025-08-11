@@ -447,7 +447,7 @@ if (!isset($_SESSION['user_id'])) {
             </nav>
         </div>
 
-        <div id="tab-activity" class="tab-conten overlay-red d-none">
+        <div id="tab-activity" class="overlay-red tab-conten d-none">
             <div class="activity-header mb-3">
                 <div class="titles">
                     <p class="text-black"><strong>System Activity Log</strong></p>
@@ -521,7 +521,7 @@ if (!isset($_SESSION['user_id'])) {
             </nav>
         </div>
 
-        <div id="tab-analytics" class="tab-content overlay-red d-none">
+        <div id="tab-analytics" class="overlay-red tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="analytic-card">
@@ -625,7 +625,7 @@ if (!isset($_SESSION['user_id'])) {
 
 
 
-        <div id="tab-settings" class="tab-content overlay-red d-none">
+        <div id="tab-settings" class="overlay-red tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="settings-card">
