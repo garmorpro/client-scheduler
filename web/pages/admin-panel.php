@@ -631,16 +631,26 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="pb-2"></div>
                         <div class="analytic-header">
-                            <div class="titles">
+                            <div class="titles float-start">
                                 <p class="text-black" style="font-size: 14px;"><strong>Backup Settings</strong></p>
                                 <p style="font-size: 14px;">Automated data backup configuration</p>
+                            </div>
+                            <div class="settings-buttons float-end">
+                                <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                    Configure
+                                </a>
                             </div>
                         </div>
                         <div class="pb-2"></div>
                         <div class="analytic-header">
-                            <div class="titles">
+                            <div class="titles float-start">
                                 <p class="text-black" style="font-size: 14px;"><strong>Security Policies</strong></p>
                                 <p style="font-size: 14px;">Password and access requirements</p>
+                            </div>
+                            <div class="settings-buttons float-end">
+                                <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                    Configure
+                                </a>
                             </div>
                         </div>
                     </div>
