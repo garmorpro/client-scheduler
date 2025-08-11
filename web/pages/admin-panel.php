@@ -257,8 +257,8 @@ if (!isset($_SESSION['user_id'])) {
 
 /* Inactive status: amber/yellow background with dark text */
 .badge-status.inactive {
-  background-color: #fbbf24; /* Tailwind amber-400 */
-  color: #92400e; /* Dark amber text */
+  background-color: rgb(253, 249, 200); /* Tailwind amber-400 */
+  color: rgb(131,82,23); /* Dark amber text */
 }
 
     </style>
