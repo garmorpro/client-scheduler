@@ -468,7 +468,7 @@ if (!isset($_SESSION['user_id'])) {
 
         <div id="tab-analytics" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3">
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <div class="analytic-card">
                         <div class="analytic-title">User Activity Overview</div>
                         <div class="analytic-subtitle">Active vs Inactive users</div>
@@ -494,8 +494,61 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
                     </div>
                 </div>
-                <div class="me-4"></div>
-                <div class="col-md-5">
+                <div class="col-md-6">
+                    <div class="analytic-card">
+                        <div class="analytic-title">Engagement Status</div>
+                        <div class="analytic-subtitle">Current engagement distribution</div>
+                        <div class="pb-4"></div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-clipboard-check text-success"></i>
+                                Assigned Engagements
+                            </div>
+                            <div class="float-end">
+                                92
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-clipboard-x text-danger"></i>
+                                Unassigned Engagements
+                            </div>
+                            <div class="float-end">
+                                8
+                            </div>
+                        </div>
+                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 ps-3 pe-3">
+                <div class="col-md-6">
+                    <div class="analytic-card">
+                        <div class="analytic-title">User Activity Overview</div>
+                        <div class="analytic-subtitle">Active vs Inactive users</div>
+                        <div class="pb-4"></div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                Active Users
+                            </div>
+                            <div class="float-end">
+                                38
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-x-circle text-danger"></i>
+                                Inactive Users
+                            </div>
+                            <div class="float-end">
+                                7
+                            </div>
+                        </div>
+                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="analytic-card">
                         <div class="analytic-title">Engagement Status</div>
                         <div class="analytic-subtitle">Current engagement distribution</div>
