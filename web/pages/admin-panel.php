@@ -199,13 +199,33 @@ if ($result && $result->num_rows > 0) {
                 break;
 
             case 'assignment_created':
-                $icon = 'bi-file-earmark-text';
+                $icon = 'bi-file-earmark-plus';
                 $color = 'rgb(40,167,69)'; // green
                 break;
 
+            case 'assignment_deleted':
+                $icon = 'bi-file-earmark-minus';
+                $color = 'rgb(220,53,69)'; // green
+                break;
+
+            case 'assignment_updated':
+                $icon = 'bi-file-earmark-check';
+                $color = 'rgb(161,77,253)'; // green
+                break;
+
             case 'engagement_created':
-                $icon = 'bi-building-check';
+                $icon = 'bi-building-add';
                 $color = 'rgb(40,167,69)'; // green
+                break;
+
+            case 'engagement_deleted':
+                $icon = 'bi-building-dash';
+                $color = 'rgb(220,53,69)'; // green
+                break;
+
+            case 'engagement_updated':
+                $icon = 'bi-building-check';
+                $color = 'rgb(161,77,253)'; // green
                 break;
 
             case 'role_updated':
