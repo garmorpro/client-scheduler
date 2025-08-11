@@ -695,7 +695,7 @@ if ($result && $result->num_rows > 0) {
               </div>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-2">
                 <div class="col-md-6">
                     <h6>
                         <i class="bi bi-shield"></i> Access & Permissions
