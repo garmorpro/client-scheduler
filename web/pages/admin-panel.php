@@ -497,7 +497,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
                   By: Sarah Senior
                 </div>
-                <div class="activity-sub" style="font-size: 0.9rem;">
+                <div class="activity-sub text-black" style="font-size: 0.9rem;">
                   Successful login from 192.168.1.100
                 </div>
               </div>
