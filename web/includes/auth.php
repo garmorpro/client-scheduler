@@ -45,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['email'] = $email;
 
             // Log successful login
-            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
-            logActivity($conn, "successful_login", $user_id, $email, $fullName, "User Login", "Successful login");
+            $full_name = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
             header("Location: dashboard.php");
             exit;
         } else {
-            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
-            logActivity($conn, "failed_login", $user_id, $email, $fullName, "Failed Login", "Failed login attempt");
+            $full_name = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Failed login attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
