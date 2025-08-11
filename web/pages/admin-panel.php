@@ -169,64 +169,52 @@ if (!isset($_SESSION['user_id'])) {
     <p class="text-muted mb-4">System overview and user management for Admin User</p>
 
     
-    <div class="container">
-  
-  <!-- Stats Row -->
-  <div class="row g-3 mb-4">
+    <div class="container-fluid">
+
+  <!-- Stat cards -->
+  <div class="row g-3">
     <div class="col-md-3">
       <div class="stat-card">
         <div class="stat-title">Total Users</div>
         <div class="stat-value">45</div>
-        <small class="text-success">+7 this month</small>
+        <div class="stat-sub">+7 this month</div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="stat-card">
         <div class="stat-title">Active Projects</div>
         <div class="stat-value">12</div>
-        <small class="text-muted">16 completed</small>
+        <div class="stat-sub">16 completed</div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="stat-card">
         <div class="stat-title">System Utilization</div>
         <div class="stat-value">87%</div>
-        <div class="progress" style="height: 6px;">
-          <div class="progress-bar bg-dark" style="width: 87%"></div>
-        </div>
+        <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="stat-card">
         <div class="stat-title">Total Hours</div>
         <div class="stat-value">4,580</div>
-        <small class="text-muted">All time logged</small>
+        <div class="stat-sub">All time logged</div>
       </div>
     </div>
   </div>
 
   <!-- Tabs -->
-  <ul class="nav nav-tabs" id="adminTabs">
-    <li class="nav-item">
-      <a class="nav-link active" data-bs-toggle="tab" href="#users">User Management</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-bs-toggle="tab" href="#activity">System Activity</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-bs-toggle="tab" href="#analytics">Analytics</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-bs-toggle="tab" href="#settings">Settings</a>
-    </li>
-  </ul>
+  <div class="custom-tabs">
+    <button class="active" data-tab="users">User Management</button>
+    <button data-tab="activity">System Activity</button>
+    <button data-tab="analytics">Analytics</button>
+    <button data-tab="settings">Settings</button>
+  </div>
 
-  <div class="tab-content">
-    <!-- User Management Tab -->
-    <div class="tab-pane fade show active" id="users">
-      <h6>User Management</h6>
-      <p class="text-muted">Manage user accounts, roles, and permissions</p>
-      <table class="table align-middle">
+  <!-- Tab content -->
+  <div id="tab-users" class="tab-content">
+    <div class="user-table">
+      <table class="table mb-0">
         <thead>
           <tr>
             <th>User</th>
@@ -239,57 +227,66 @@ if (!isset($_SESSION['user_id'])) {
         <tbody>
           <tr>
             <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
-            <td>Manager</td>
-            <td><span class="status-badge status-active">Active</span></td>
+            <td><span class="badge-role">Manager</span></td>
+            <td><span class="badge-status active">Active</span></td>
             <td>1/6/2025</td>
-            <td>
-              <button class="btn btn-sm btn-outline-secondary">👁</button>
-              <button class="btn btn-sm btn-outline-secondary">✏</button>
-              <button class="btn btn-sm btn-outline-danger">🗑</button>
-            </td>
+            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+          </tr>
+          <tr>
+            <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
+            <td><span class="badge-role">Senior</span></td>
+            <td><span class="badge-status active">Active</span></td>
+            <td>1/6/2025</td>
+            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+          </tr>
+          <tr>
+            <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
+            <td><span class="badge-role">Staff</span></td>
+            <td><span class="badge-status active">Active</span></td>
+            <td>1/5/2025</td>
+            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
           </tr>
           <tr>
             <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
-            <td>CRM Member</td>
-            <td><span class="status-badge status-inactive">Inactive</span></td>
+            <td><span class="badge-role">CRM Member</span></td>
+            <td><span class="badge-status inactive">Inactive</span></td>
             <td>1/4/2025</td>
-            <td>
-              <button class="btn btn-sm btn-outline-secondary">👁</button>
-              <button class="btn btn-sm btn-outline-secondary">✏</button>
-              <button class="btn btn-sm btn-outline-danger">🗑</button>
-            </td>
+            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- System Activity Tab -->
-    <div class="tab-pane fade" id="activity">
-      <h6>System Activity Log</h6>
-      <p class="text-muted">Recent system events and user activities</p>
-      <div class="activity-item">
-        <div><strong>👤 User Login</strong> - By: Sarah Senior</div>
-        <small>Successful login from 192.168.1.100</small><br>
-        <small class="text-muted">1/7/2025, 2:30 PM</small>
+  <div id="tab-activity" class="tab-content d-none">
+    <div class="activity-card">
+      <div class="activity-info">
+        <div class="activity-icon" style="background:#e0f2fe;">🔑</div>
+        <div>
+          <div class="activity-title">User Login</div>
+          <div class="activity-sub">By: Sarah Senior — Successful login from 192.168.1.100</div>
+        </div>
       </div>
-      <div class="activity-item">
-        <div><strong>📄 Project Created</strong> - By: John Manager</div>
-        <small>Created project: ABC Corp Q1 Audit</small><br>
-        <small class="text-muted">1/7/2025, 1:15 PM</small>
+      <div class="text-muted small">1/7/2025, 2:30 PM</div>
+    </div>
+    <div class="activity-card">
+      <div class="activity-info">
+        <div class="activity-icon" style="background:#dcfce7;">📁</div>
+        <div>
+          <div class="activity-title">Project Created</div>
+          <div class="activity-sub">By: John Manager — Created project: ABC Corp Q1 Audit</div>
+        </div>
       </div>
+      <div class="text-muted small">1/7/2025, 1:15 PM</div>
     </div>
+  </div>
 
-    <!-- Analytics Tab -->
-    <div class="tab-pane fade" id="analytics">
-      <h6>Data Analytics</h6>
-      <p class="text-muted">Analytics and insights will appear here.</p>
-    </div>
+  <div id="tab-analytics" class="tab-content d-none">
+    <div class="p-4 bg-white border rounded">Analytics content here...</div>
+  </div>
 
-    <!-- Settings Tab -->
-    <div class="tab-pane fade" id="settings">
-      <h6>Settings</h6>
-      <p class="text-muted">System configuration options go here.</p>
-    </div>
+  <div id="tab-settings" class="tab-content d-none">
+    <div class="p-4 bg-white border rounded">Settings content here...</div>
   </div>
 
 </div>
