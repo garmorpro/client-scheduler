@@ -72,7 +72,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $employeeFullName = trim("$empFirstName $empLastName");
 
         $title = "Assignments Added";
-        $description = "$successCount assignments added for $employeeFullName on engagement ID $clientId";
+        // Fetch client name from engagements table
+        $clientName = '';
+        $sql = "SELECT client_name FROM engagements WHERE engagement_id = ?";
+        if ($stmtClient = $conn->prepare($sql)) {
+            $stmtClient->bind_param("i", $clientId);
+            $stmtClient->execute();
+            $stmtClient->bind_result($clientName);
+            $stmtClient->fetch();
+            $stmtClient->close();
+        }
+        
+        if ($successCount <= 1) {
+            $description = "$successCount assignment added for $employeeFullName on engagement \"$clientName\"";
+        } else {
+            $description = "$successCount assignments added for $employeeFullName on engagement \"$clientName\"";
+        }
+
 
         logActivity($conn, "assignment_created", $user_id, $email, $full_name, $title, $description);
 
