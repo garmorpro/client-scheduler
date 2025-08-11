@@ -662,15 +662,15 @@ if ($result && $result->num_rows > 0) {
                 <h6 class="mb-3">
                   <i class="bi bi-envelope"></i> Personal Information
                 </h6>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">First Name:</strong>
                   <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
                 </p>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Last Name:</strong>
                   <span id="view_last_name_detail" class="text-capitalize" style="float: right;"></span>
                 </p>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Email:</strong>
                   <span id="view_email_detail" style="float: right;"></span>
                 </p>
@@ -681,15 +681,15 @@ if ($result && $result->num_rows > 0) {
                 <h6 class="mb-3">
                   <i class="bi bi-person-lock"></i> Account Details
                 </h6>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
                   <span id="view_acct_created" style="float: right;"></span>
                 </p>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Last Active:</strong>
                   <span id="view_acct_last_active" style="float: right;"></span>
                 </p>
-                <p class="text-muted mb-0" style="overflow: hidden;">
+                <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Status:</strong>
                   <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
                 </p>
@@ -703,15 +703,15 @@ if ($result && $result->num_rows > 0) {
                     <h6 class="mb-3">
                         <i class="bi bi-shield"></i> Access & Permissions
                     </h6>
-                    <p class="text-muted mb-0" style="overflow: hidden;">
+                    <p class="text-muted mb-1" style="overflow: hidden;">
                         <strong style="float: left;">Role:</strong>
                         <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
                      </p>
-                    <p class="text-muted mb-0" style="overflow: hidden;">
+                    <p class="text-muted mb-1" style="overflow: hidden;">
                         <strong style="float: left;">Access Level:</strong>
                         <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
                     </p>
-                    <p class="text-muted mb-0" style="overflow: hidden;">
+                    <p class="text-muted mb-1" style="overflow: hidden;">
                         <strong style="float: left;">Two-Factor Auth:</strong>
                         <span id="view_acct_mfa" style="float: right;"></span>
                     </p>
