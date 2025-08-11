@@ -282,7 +282,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="user-management-buttons">
                     <a class="badge text-black p-2 text-decoration-none fw-medium" style="border: 1px solid rgb(229,229,229);"><i class="bi bi-upload me-3"></i>Import Users</a>
-                    <button class="btn btn-primary btn-sm">Add User +</button>
+                    <a class="badge text-black p-2 text-decoration-none fw-medium"><i class="bi bi-person-plus me-3"></i>Add User</a>
                 </div>
             </div>
 
