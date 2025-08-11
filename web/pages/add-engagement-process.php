@@ -82,11 +82,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmtClient->fetch();
             $stmtClient->close();
         }
+
+        $totalAssignedHours = 0;
+
+        for ($i = 0; $i < count($weeks); $i++) {
+            $weekStart = $weeks[$i];
+            $hours = $assignedHours[$i];
+            $status = $statuses[$i];
         
+            $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
+            $stmt->execute();
+        
+            $totalAssignedHours += $hours;
+        }
+
         if ($successCount <= 1) {
-            $description = "$successCount assignment added for $employeeFullName on engagement \"$clientName\"";
+            $description = "$successCount week($assignedHours) added for $employeeFullName on $clientName engagement.";
         } else {
-            $description = "$successCount assignments added for $employeeFullName on engagement \"$clientName\"";
+            $description = "$successCount assignments added for $employeeFullName on $clientName engagement.";
         }
 
 
