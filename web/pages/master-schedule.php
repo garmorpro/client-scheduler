@@ -346,7 +346,7 @@ function openEmployeeModal(employeeId) {
 
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
-            <div class="col-md-7">
+            <div class="col-md-9">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
                 <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
@@ -359,7 +359,7 @@ function openEmployeeModal(employeeId) {
                     <option value="not_confirmed">Not Confirmed</option>
                 </select>
             </div> -->
-            <div class="col-md-4 d-flex align-items-center gap-3">
+            <div class="col-md-3 d-flex align-items-center gap-3">
                 <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
                 <a href="?start=<?php echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
             </div>
