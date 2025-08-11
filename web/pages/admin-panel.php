@@ -487,7 +487,7 @@ if (!isset($_SESSION['user_id'])) {
             <!-- Example activity card -->
             <div class="activity-card d-flex justify-content-between">
               <!-- Left: Icon -->
-              <div class="activity-icon d-flex justify-content-center" style="background:#e0f2fe; width: 48px; height: 48px; border-radius: 8px; font-size: 24px; flex-shrink: 0;">
+              <div class="activity-icon d-flex" style="background:#e0f2fe; width: 48px; height: 48px; border-radius: 8px; font-size: 24px; flex-shrink: 0;">
                 <i class="bi bi-shield"></i>
               </div>
 
