@@ -21,6 +21,12 @@ $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
+// Total engagements
+$totalEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements";
+$totalResult = mysqli_query($conn, $totalEngagementsQuery);
+$totalRow = mysqli_fetch_assoc($totalResult);
+$totalEngagements = $totalRow['total'];
+
 // Total assigned
 $assignedEngagementsQuery = "
     SELECT COUNT(DISTINCT e.engagement_id) AS total_assigned
@@ -87,13 +93,22 @@ $result = mysqli_query($conn, $sql);
                     <div class="stat-sub">16 completed</div>
                 </div>
             </div>
+            <?php
+
+            // Avoid division by zero
+            $percentageAssigned = ($totalUsers > 0) ? round(($totalAssigned / $totalEngagements) * 100) : 0;
+            ?>
             <div class="col-md-3">
                 <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="stat-title">Engagement Status</div>
-                    <div class="stat-value">100%</div>
-                    <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
-                    <div class="stat-sub mt-2"><?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> unassigned</div>
+                    <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
+                    <div class="util-bar mt-2">
+                        <div class="util-bar-fill" style="width: <?php echo $percentageAssigned; ?>%"></div>
+                    </div>
+                    <div class="stat-sub mt-2">
+                        <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
+                    </div>
                 </div>
             </div>
             <div class="col-md-3">
