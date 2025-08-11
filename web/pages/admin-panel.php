@@ -631,7 +631,7 @@ if ($result && $result->num_rows > 0) {
 
 <!-- View User Modal -->
     <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
@@ -661,11 +661,11 @@ if ($result && $result->num_rows > 0) {
                     <i class="bi bi-envelope"></i> Personal Information
                     <p class="text-muted">
                       <strong>First Name:</strong>
-                      <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 50%;"></span>
+                      <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
                     </p>
                     <p class="text-muted">
                         <strong>Last Name:</strong> 
-                        <span id="view_last_name_detail" class="d-inline-block text-end" style="min-width: 50%;"></span>
+                        <span id="view_last_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
                     </p>
                     <p class="text-muted">
                         <strong>Email:</strong> 
