@@ -1007,9 +1007,9 @@ document.addEventListener('DOMContentLoaded', () => {
           case 'manager':
             return 'High Access';
           case 'senior':
-            return 'Moderate Access';
+            return 'Restricted Access';
           case 'staff':
-            return 'Basic Access';
+            return 'Restricted Access';
           case 'intern':
             return 'Restricted Access';
           default:
