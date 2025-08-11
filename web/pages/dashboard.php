@@ -77,7 +77,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
         <h5 class="fw-bold">Administrator Access</h5>
         <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
-        <a href="admin-panel.php" class="admin-btn mt-2">Go to Admin Dashboard</a>
+        <a href="admin-panel.php" class="admin-btn mt-2 text-decoration-none">Go to Admin Dashboard</a>
       </div>
     <?php else: ?>
       Non-admin
