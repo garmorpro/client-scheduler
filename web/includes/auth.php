@@ -49,7 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: dashboard.php");
             exit;
         } else {
-            logActivity($conn, "failed_login", null, $email, "Failed Login", "Incorrect password attempt");
+            
+            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Incorrect password attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
