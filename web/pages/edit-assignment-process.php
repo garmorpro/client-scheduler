@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $infoStmt->fetch();
     $infoStmt->close();
 
-    $stmt = $conn->prepare("UPDATE assignments SET assigned_hours = ?, status = ? WHERE assignment_id = ?");
-    $stmt->bind_param('isi', $assignedHours, $status, $assignmentId);
+    $stmt = $conn->prepare("UPDATE assignments SET assigned_hours = ? WHERE assignment_id = ?");
+    $stmt->bind_param('isi', $assignedHours, $assignmentId);
     $stmt->execute();
 
     if ($stmt->affected_rows > 0) {
