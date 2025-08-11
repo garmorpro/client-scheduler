@@ -86,6 +86,23 @@ $sql = "SELECT user_id, first_name, last_name, email, role, status, last_active
         ORDER BY first_name ASC";
 $result = mysqli_query($conn, $sql);
 
+$engagementSQL = "
+  SELECT 
+    e.engagement_id,
+    e.client_name,
+    e.total_available_hours,
+    e.status,
+    e.notes,
+    COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours
+  FROM engagements e
+  LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
+  GROUP BY e.engagement_id, e.client_name, e.total_available_hours, e.status, e.notes
+  ORDER BY e.client_name ASC
+";
+
+$engagementResults = mysqli_query($conn, $engagementSQL);
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -246,68 +263,74 @@ $result = mysqli_query($conn, $sql);
         <!-- engagement management -->
 
             <div id="tab-engagements" class="tab-content d-none">
-                <div class="row g-3 ps-3 pe-3 mt-1">
-                    <div class="col-md-6">
-                        <div class="analytic-card">
-                            <div class="analytic-header">
-                                <div class="titles">
-                                    <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
-                                    <p style="font-size: 14px;">Active vs Inactive users</p>
-                                </div>
-                            </div>
-                            <div class="pb-4"></div>
-                            <div class="d-flex justify-content-between pb-1">
-                                <div class="float-start" style="font-size: 14px;">
-                                    <i class="bi bi-check2-circle text-success"></i>
-                                    Active Users
-                                </div>
-                                <div class="float-end">
-                                    38
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <div class="float-start" style="font-size: 14px;">
-                                    <i class="bi bi-x-circle text-danger"></i>
-                                    Inactive Users
-                                </div>
-                                <div class="float-end">
-                                    7
-                                </div>
-                            </div>
-                            <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
-                        </div>
+                <div class="user-management-header">
+                    <div class="titles">
+                        <p class="text-black"><strong>User Management</strong></p>
+                        <p>Manage user accounts, roles, and permissions</p>
                     </div>
-                    <div class="col-md-6">
-                        <div class="analytic-card">
-                            <div class="analytic-header">
-                                <div class="titles">
-                                    <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                    <p style="font-size: 14px;">Current engagement distribution</p>
-                                </div>
-                            </div>
-                            <div class="pb-4"></div>
-                            <div class="d-flex justify-content-between pb-1">
-                                <div class="float-start" style="font-size: 14px;">
-                                    <i class="bi bi-clipboard-check text-success"></i>
-                                    Assigned Engagements
-                                </div>
-                                <div class="float-end">
-                                    92
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <div class="float-start" style="font-size: 14px;">
-                                    <i class="bi bi-clipboard-x text-danger"></i>
-                                    Unassigned Engagements
-                                </div>
-                                <div class="float-end">
-                                    8
-                                </div>
-                            </div>
-                            <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
-                        </div>
+                    <div class="user-management-buttons">
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                            <i class="bi bi-upload me-3"></i>Import Users
+                        </a>
+                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus me-3"></i>Add User
+                        </a>
                     </div>
                 </div>
+
+
+                <div class="user-table">
+                    <table id="user-table" class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Est. Hours</th>
+                                <th>Assigned Hours</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php if (mysqli_num_rows($engagementResults) > 0): ?>
+                            <?php while ($E_row = mysqli_fetch_assoc($engagementResults)): ?>
+                                <tr>
+                                    <td>
+                                        <?php echo $E_row['client_name']; ?><br>
+                                    </td>
+                                    <td>
+                                        <?php echo $E_row['total_available_hours']; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $E_row['total_assigned_hours']; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                                            <?php echo ucfirst($row['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td class="table-actions">
+                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                            <i class="bi bi-eye text-success"></i>
+                                        </a>
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                            <i class="bi bi-pencil text-purple "></i>
+                                        </a>
+
+                                        <i class="bi bi-trash overlay-red"></i>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr><td colspan="5" class="text-center">No users found</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                        
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
                             
             </div>
 
