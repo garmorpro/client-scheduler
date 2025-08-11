@@ -135,13 +135,11 @@ if (!isset($_SESSION['user_id'])) {
             font-size: 16px !important;
             margin: 0;
             font-weight: 700;
-            font-size: 1.75rem;
         }
         .user-management-header p, .activity-header p, .analytic-header p, .settings-header p {
             font-size: 16px !important;
             margin: 0;
             color: #6b7280;
-            font-size: 1rem;
         }
         .user-management-buttons button,
         .user-management-buttons a.,
@@ -265,11 +263,11 @@ if (!isset($_SESSION['user_id'])) {
             height: 100%;
         }
         .analytic-title {
-            font-size: 0.8rem;
+            font-size: 16px;
             color: black;
         }
         .analytic-subtitle {
-            font-size: 0.8rem;
+            font-size: 16px;
             color: #555;
         }
 
