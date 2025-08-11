@@ -684,7 +684,7 @@ if ($result && $result->num_rows > 0) {
                     </p>
                     <p class="text-muted">
                         <strong>Last Active:</strong> 
-                        <span id="view_acct_last_active" class="d-inline-block text-end" style="min-width: 75%;"></span>
+                        <span id="view_acct_last_active" class="d-inline-block text-end" style="min-width: 65%;"></span>
                     </p>
                     <p class="text-muted">
                         <strong>Status:</strong> 
