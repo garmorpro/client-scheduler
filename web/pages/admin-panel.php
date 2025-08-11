@@ -730,7 +730,7 @@ if ($result && $result->num_rows > 0) {
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="text-muted" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn text-muted" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
