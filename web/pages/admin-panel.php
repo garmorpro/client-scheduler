@@ -490,7 +490,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="activity-card d-flex justify-content-between">
               <!-- Left: Icon -->
                 <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
-                    <div class="activity-icon" style="color:#0ea5e9; font-size: 14px; height: 10px;">
+                    <div class="activity-icon" style="color:rgb(92,141,253); font-size: 14px; height: 10px;">
                         <i class="bi bi-shield"></i>
                     </div>
                 </div>
