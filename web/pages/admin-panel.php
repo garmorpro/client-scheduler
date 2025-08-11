@@ -1,4 +1,5 @@
 <?php
+require_once '../includes/db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -6,11 +7,19 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Redirect non-admins to dashboard.php
-// if (!isset($_SESSION['role']) || strtolower($_SESSION['user_role']) === 'admin') {
-//     header("Location: dashboard.php");
-//     exit();
-// }
+
+// Get total users
+$totalUsersQuery = "SELECT COUNT(*) AS total FROM users";
+$totalUsersResult = mysqli_query($conn, $totalUsersQuery);
+$totalUsersRow = mysqli_fetch_assoc($totalUsersResult);
+$totalUsers = $totalUsersRow['total'];
+
+// Get users added in last 30 days
+$newUsersQuery = "SELECT COUNT(*) AS recent FROM users WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+$newUsersResult = mysqli_query($conn, $newUsersQuery);
+$newUsersRow = mysqli_fetch_assoc($newUsersResult);
+$newUsers = $newUsersRow['recent'];
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -332,8 +341,8 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-people"></i></div>
                     <div class="stat-title">Total Users</div>
-                    <div class="stat-value">45</div>
-                    <div class="stat-sub">+7 this month</div>
+                    <div class="stat-value"><?php echo $totalUsers; ?></div>
+                    <div class="stat-sub">+<?php echo $newUsers; ?> this month</div>
                 </div>
             </div>
             <div class="col-md-3">
