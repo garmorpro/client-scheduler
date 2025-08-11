@@ -162,6 +162,20 @@ body {
     background-color: rgb(253, 249, 200);
     color: rgb(131,82,23);
 }
+.badge-status.badge-confirmed {
+    background-color: rgb(226,251,232);
+    color: rgb(50,107,61);
+}
+.badge-status.badge-pending {
+    background-color: #6f42c1;
+    color: white;
+}
+.badge-status.badge-not-confirmed {
+    background-color: rgb(226, 235, 251);
+    color: rgb(50, 71, 107);
+}
+
+
 /* Table actions icons */
 .table-actions i {
     margin: 0 6px;

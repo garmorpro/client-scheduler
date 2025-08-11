@@ -281,7 +281,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <thead>
                             <tr>
                                 <th>Client</th>
-                                <th>Est. Hours</th>
+                                <th>Estimated Hours</th>
                                 <th>Assigned Hours</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -301,9 +301,28 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         <?php echo $E_row['total_assigned_hours']; ?>
                                     </td>
                                     <td>
-                                        <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
-                                            <?php echo ucfirst($row['status']); ?>
+                                        <?php
+                                        $status = strtolower($row['status']);
+                                        switch ($status) {
+                                            case 'confirmed':
+                                                $badgeClass = 'badge-confirmed';   // e.g., green badge
+                                                break;
+                                            case 'pending':
+                                                $badgeClass = 'badge-pending';     // e.g., yellow badge
+                                                break;
+                                            case 'not_confirmed':
+                                                $badgeClass = 'badge-not-confirmed'; // e.g., red badge
+                                                break;
+                                            default:
+                                                $badgeClass = 'badge-default';     // fallback class
+                                                break;
+                                        }
+                                        ?>
+                                        
+                                        <span class="badge-status <?php echo $badgeClass; ?>">
+                                            <?php echo ucfirst(str_replace('_', ' ', $row['status'])); ?>
                                         </span>
+
                                     </td>
                                     <td class="table-actions">
                                         <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
