@@ -59,7 +59,7 @@ if (!isset($_SESSION['user_id'])) {
     <h3 class="mb-0">Dashboard</h3>
     <p class="text-muted mb-4">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.
 
-    <div class="p-5"></div>
+    <!-- <div class="p-5"></div> -->
 
     <div class="container">
     <div class="admin-card">
