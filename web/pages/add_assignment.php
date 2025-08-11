@@ -38,9 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $successCount = 0;
-    $totalAssignedHours = 0;
-
-    // Insert assignments and sum assigned hours
     for ($i = 0; $i < count($weeks); $i++) {
         $weekStart = $weeks[$i];
         $hours = $assignedHours[$i];
@@ -49,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
         if ($stmt->execute()) {
             $successCount++;
-            $totalAssignedHours += $hours;
         }
     }
 
@@ -61,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-        // Get employee full name for the log message
+        // Optional: get employee full name for the log message
         $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
         if ($empStmt) {
             $empStmt->bind_param("i", $employeeId);
@@ -75,10 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $employeeFullName = trim("$empFirstName $empLastName");
 
+        $title = "Assignments Added";
         // Fetch client name from engagements table
         $clientName = '';
-        $stmtClient = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
-        if ($stmtClient) {
+        $sql = "SELECT client_name FROM engagements WHERE engagement_id = ?";
+        if ($stmtClient = $conn->prepare($sql)) {
             $stmtClient->bind_param("i", $clientId);
             $stmtClient->execute();
             $stmtClient->bind_result($clientName);
@@ -86,13 +83,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmtClient->close();
         }
 
-        $title = "Assignments Added";
+        $totalAssignedHours = 0;
+
+        for ($i = 0; $i < count($weeks); $i++) {
+            $weekStart = $weeks[$i];
+            $hours = $assignedHours[$i];
+            $status = $statuses[$i];
+        
+            $stmt->bind_param('iisis', $employeeId, $clientId, $weekStart, $hours, $status);
+            $stmt->execute();
+        
+            $totalAssignedHours += $hours;
+        }
 
         if ($successCount <= 1) {
-            $description = "$successCount week ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
+            $description = "$successCount week($assignedHours) added for $employeeFullName on $clientName engagement.";
         } else {
-            $description = "$successCount weeks ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
+            $description = "$successCount assignments added for $employeeFullName on $clientName engagement.";
         }
+
 
         logActivity($conn, "assignment_created", $user_id, $email, $full_name, $title, $description);
 

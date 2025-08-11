@@ -517,7 +517,7 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="engagementForm" action="add-engagement-process.php" method="POST">
+        <form id="engagementForm" action="add_assignment.php" method="POST">
           <input type="hidden" id="modalEmployee" name="employee">
           <input type="hidden" id="modalEmployeeName">
           <input type="hidden" id="modalWeek" name="week_start">
