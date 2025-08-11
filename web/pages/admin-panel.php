@@ -287,7 +287,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
 
             <div class="user-table">
-                <table class="table mb-0">
+                <table class="table-hover mb-0">
                     <thead>
                         <tr>
                             <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
