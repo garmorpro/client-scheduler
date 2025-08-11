@@ -298,8 +298,8 @@ body {
     font-weight: 600;
 }
 
-#updateUserModal .modal-header,
-#updateUserModal .modal-footer {
+.modal-header,
+.modal-footer {
   border-bottom: none;
   border-top: none;
   box-shadow: none; /* Just in case there's a shadow mimicking a border */
