@@ -55,9 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminUserId = $_SESSION['user_id'];
         $adminEmail = $_SESSION['email'] ?? '';
         $adminName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+        $status_uc = ucfirst($status);
 
         $title = "Engagement Updated";
-        $description = "Updated engagement \"$clientName\" with status \"$status\" and $totalAvailableHours hours";
+        $description = "Updated $clientName engagement. ($status_uc - $totalAvailableHours hrs)";
 
         logActivity($conn, "engagement_updated", $adminUserId, $adminEmail, $adminName, $title, $description);
 
