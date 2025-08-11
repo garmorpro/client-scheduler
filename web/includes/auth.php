@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Log failed login with known user info (password incorrect)
             $full_name = trim($first_name . ' ' . $last_name);
-            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect login attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
