@@ -672,6 +672,14 @@ if ($result && $result->num_rows > 0) {
             </div>
             <hr>
 
+            <span id="view_user_initials"></span>
+<span id="view_user_fullname"></span>
+<span id="view_user_role"></span>
+<span id="view_first_name"></span>
+<span id="view_last_name"></span>
+<span id="view_email"></span>
+<span id="view_status"></span>
+
             <p><strong>First Name:</strong> <span id="view_first_name"></span></p>
             <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
             <p><strong>Email:</strong> <span id="view_email"></span></p>
