@@ -214,51 +214,54 @@ if (!isset($_SESSION['user_id'])) {
     
     <div class="container-fluid">
 
-  <!-- Stat cards -->
-<div class="row g-3">
-  <div class="col-md-3">
-  <div class="stat-card">
-    <div class="card-icon">
-      <i class="bi bi-people-fill"></i>
-    </div>
+    <!-- Stat cards -->
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
 
-    <div class="stat-title">Total Users</div>
-    <div class="stat-value">45</div>
-    <div class="stat-sub">+7 this month</div>
-  </div>
-</div>
-  <div class="col-md-3">
-    <div class="stat-card">
-      <div class="stat-title">
-        <i class="bi bi-folder-fill text-success"></i>
-        Active Projects
-      </div>
-      <div class="stat-value">12</div>
-      <div class="stat-sub">16 completed</div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="stat-card">
-      <div class="stat-title">
-        <i class="bi bi-cpu-fill text-warning"></i>
-        System Utilization
-      </div>
-      <div class="stat-value">87%</div>
-      <div class="util-bar mt-2">
-        <div class="util-bar-fill" style="width:87%"></div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="stat-card">
-      <div class="stat-title">
-        <i class="bi bi-clock-history text-danger"></i>
-        Total Hours
-      </div>
-      <div class="stat-value">4,580</div>
-      <div class="stat-sub">All time logged</div>
-    </div>
-  </div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value">45</div>
+                <div class="stat-sub">+7 this month</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="bi bi-folder-fill"></i>
+                </div>
+
+                <div class="stat-title">Active Projects</div>
+                <div class="stat-value">12</div>
+                <div class="stat-sub">16 completed</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="bi bi-cpu-fill"></i>
+                </div>
+                
+                <div class="stat-title">System Utilization</div>
+                <div class="stat-value">87%</div>
+                <div class="util-bar mt-2">
+                    <div class="util-bar-fill" style="width:87%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div class="stat-title">Total Hours</div>
+                <div class="stat-value">4,580</div>
+                <div class="stat-sub">All time logged</div>
+            </div>
+        </div>
 </div>
 
 
