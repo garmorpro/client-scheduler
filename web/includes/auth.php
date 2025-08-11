@@ -6,7 +6,7 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $fullName, $title, $description);
+        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
     }
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['email'] = $email;
 
             // Log successful login
-            $fullName = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
+            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
             logActivity($conn, "successful_login", $user_id, $email, $fullName, "User Login", "Successful login");
 
             header("Location: dashboard.php");
