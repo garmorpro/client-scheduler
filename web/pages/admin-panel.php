@@ -861,8 +861,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; padding: 10px;">
               <div>
                 <h5 id="view_client_name" class="fw-semibold"></h5>
-                <small id="view_email" class="text-muted"></small><br>
-                <small class="text-capitalize badge-status" style="font-size: 12px;" id="view_engagement_status">...</small>
+                <span class="text-capitalize badge-status" style="font-size: 12px;" id="view_engagement_status">...</span>
               </div>
             </div>
 
