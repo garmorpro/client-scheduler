@@ -24,7 +24,7 @@ $newUsers = $newUsersRow['recent'];
 
 $sql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
         FROM users 
-        ORDER BY last_active DESC";
+        ORDER BY first_name DESC";
 $result = mysqli_query($conn, $sql);
 
 ?>
@@ -185,7 +185,7 @@ $result = mysqli_query($conn, $sql);
         // Fetch all activities, newest first
 $sql = "SELECT event_type, full_name, title, description, created_at 
         FROM system_activity_log 
-        ORDER BY created_at DESC";
+        ORDER BY created_at ASC";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
