@@ -656,6 +656,16 @@ if ($result && $result->num_rows > 0) {
               </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    test
+                </div>
+                <div class="col-md-3">
+                    test
+                </div>
+            </div>
+            <hr>
+
             <p><strong>First Name:</strong> <span id="view_first_name"></span></p>
             <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
             <p><strong>Email:</strong> <span id="view_email"></span></p>
