@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_id'])) {
         body {
             background-color: #fafafa;
             color: #1a1a1a;
-            font-size: 14px !important;
+            font-size: 16px !important;
         }
         /* Stat cards */
         .stat-card {
