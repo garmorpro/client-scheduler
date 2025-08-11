@@ -71,6 +71,7 @@ if (!isset($_SESSION['user_id'])) {
             background-color: rgb(235,235,239);
             border-radius: 15px;
             padding:5px;
+            justify-content: space-between;
         }
         .custom-tabs button {
             background: none;
