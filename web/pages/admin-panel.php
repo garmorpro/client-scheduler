@@ -657,62 +657,62 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
 
                 <div class="col-md-6">
-    <div class="settings-card d-flex flex-column h-100">
-        <div class="settings-header">
-            <div class="titles">
-                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                <p style="font-size: 14px;">Current engagement distribution</p>
-            </div>
-        </div>
+                    <div class="settings-card d-flex flex-column h-100">
+                        <div class="settings-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
+                            </div>
+                        </div>
 
-        <div class="mb-4"></div>
+                        <div class="mb-4"></div>
 
-        <div class="d-flex justify-content-between pb-1">
-            <div style="font-size: 14px;">
-                <i class="bi bi-check2-circle text-success"></i>
-                Database Status
-            </div>
-            <span class="badge text-bg-success pe-3 ps-3" 
-                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
-                Healthy
-            </span>
-        </div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div style="font-size: 14px;">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                Database Status
+                            </div>
+                            <span class="badge text-bg-success pe-3 ps-3" 
+                                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
+                                Healthy
+                            </span>
+                        </div>
 
-        <div class="mb-2"></div>
+                        <div class="mb-2"></div>
 
-        <div class="d-flex justify-content-between pb-1">
-            <div style="font-size: 14px;">
-                <i class="bi bi-check2-circle text-success"></i>
-                API Status
-            </div>
-            <span class="badge text-bg-success pe-3 ps-3" 
-                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
-                Operational
-            </span>
-        </div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div style="font-size: 14px;">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                API Status
+                            </div>
+                            <span class="badge text-bg-success pe-3 ps-3" 
+                                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
+                                Operational
+                            </span>
+                        </div>
 
-        <div class="mb-2"></div>
+                        <div class="mb-2"></div>
 
-        <div class="d-flex justify-content-between pb-1">
-            <div style="font-size: 14px;">
-                <i class="bi bi-exclamation-circle text-warning"></i>
-                Storage Usage
-            </div>
-            <span class="badge pe-3 ps-3" 
-                  style="font-size: 11px !important; background-color: rgb(253,249,200) !important; color: rgba(135,88,30) !important;">
-                75% Used
-            </span>
-        </div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div style="font-size: 14px;">
+                                <i class="bi bi-exclamation-circle text-warning"></i>
+                                Storage Usage
+                            </div>
+                            <span class="badge pe-3 ps-3" 
+                                  style="font-size: 11px !important; background-color: rgb(253,249,200) !important; color: rgba(135,88,30) !important;">
+                                75% Used
+                            </span>
+                        </div>
 
-        <!-- Spacer pushes button to bottom -->
-        <div class="flex-grow-1"></div>
+                        <!-- Spacer pushes button to bottom -->
+                        <div class="flex-grow-1"></div>
 
-        <!-- Full-width button -->
-        <a href="#" class="btn btn-primary w-100 mt-3">
-            View Full Report
-        </a>
-    </div>
-</div>
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3"
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                Configure
+                            </a>
+                    </div>
+                </div>
 
             </div>
             
