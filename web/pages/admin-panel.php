@@ -65,9 +65,7 @@ if (!isset($_SESSION['user_id'])) {
         }
         /* Tabs */
         .custom-tabs {
-            display: inline;
-            /* gap: 8px; */
-            border-bottom: 1px solid #e5e7eb;
+            display: flex;
             margin-top: 2rem;
             margin-bottom: 20px;
             background-color: rgb(235,235,239);
