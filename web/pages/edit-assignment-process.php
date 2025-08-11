@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
         $title = "Assignment Updated";
 
-        $description = "Updated assignment for $employeeFullName on $clientName, week of $formattedWeekStart($assignedHours hrs - $status).";
+        $description = "Updated assignment for $employeeFullName on $clientName, week of $formattedWeekStart($assignedHours hrs).";
 
         logActivity($conn, "assignment_updated", $user_id, $email, $full_name, $title, $description);
 
