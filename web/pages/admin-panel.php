@@ -709,7 +709,7 @@ if (!isset($_SESSION['user_id'])) {
 
                         <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3"
                                style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                Configure
+                                <i class="bi bi-activity pe-2"></i>View Detailed Metrics
                             </a>
                     </div>
                 </div>
