@@ -311,7 +311,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 6px 12px;
-  border-bottom: 1px solid rgb(249,249,250);
+  /* border-bottom: 1px solid rgb(249,249,250); */
   font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
