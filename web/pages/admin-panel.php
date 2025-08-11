@@ -651,7 +651,7 @@ if ($result && $result->num_rows > 0) {
               <div>
                 <div id="view_user_fullname" class="fw-semibold"></div>
                 <small id="view_email" class="text-muted"></small>
-                <span class="badge-role" id="view_role"></span>
+                <small class="text-muted text-capitalize badge-role" id="view_user_role">...</small>
               </div>
             </div>
 
