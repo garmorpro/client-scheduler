@@ -364,14 +364,14 @@ if (!isset($_SESSION['user_id'])) {
 
         <!-- Tabs -->
         <div class="custom-tabs">
-            <button class="active" data-tab="users">User Management</button>
-            <button data-tab="activity">System Activity</button>
-            <button data-tab="analytics">Analytics</button>
-            <button data-tab="settings">Settings</button>
+            <button class="overlay-red" class="active" data-tab="users">User Management</button>
+            <button class="overlay-red" data-tab="activity">System Activity</button>
+            <button class="overlay-red" data-tab="analytics">Analytics</button>
+            <button class="overlay-red" data-tab="settings">Settings</button>
         </div>
 
         <!-- Tab Content -->
-        <div id="tab-users" class="tab-content overlay-red">
+        <div id="tab-users" class="tab-content">
             <div class="user-management-header">
                 <div class="titles">
                     <p class="text-black"><strong>User Management</strong></p>
@@ -447,7 +447,7 @@ if (!isset($_SESSION['user_id'])) {
             </nav>
         </div>
 
-        <div id="tab-activity" class="overlay-red tab-conten d-none">
+        <div id="tab-activity" class="tab-content d-none">
             <div class="activity-header mb-3">
                 <div class="titles">
                     <p class="text-black"><strong>System Activity Log</strong></p>
@@ -521,7 +521,7 @@ if (!isset($_SESSION['user_id'])) {
             </nav>
         </div>
 
-        <div id="tab-analytics" class="overlay-red tab-content d-none">
+        <div id="tab-analytics" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="analytic-card">
@@ -625,7 +625,7 @@ if (!isset($_SESSION['user_id'])) {
 
 
 
-        <div id="tab-settings" class="overlay-red tab-content d-none">
+        <div id="tab-settings" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="settings-card">
