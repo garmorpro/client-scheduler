@@ -512,8 +512,13 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="col-md-6">
                     <div class="analytic-card">
-                        <div class="analytic-title">Engagement Status</div>
-                        <div class="analytic-subtitle">Current engagement distribution</div>
+                        <div class="user-management-header">
+                        <div class="titles">
+                            <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                            <p style="font-size: 14px;">Current engagement distribution</p>
+                        </div>
+                        <!-- <div class="analytic-title">Engagement Status</div>
+                        <div class="analytic-subtitle">Current engagement distribution</div> -->
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
