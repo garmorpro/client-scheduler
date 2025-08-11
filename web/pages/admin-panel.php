@@ -91,13 +91,13 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 .custom-tabs button:hover {
-    background: #f3f4f6;
-    color: #111827;
+    background: #ffffff95;
+    color: black;
 }
 
 .custom-tabs button.active {
-    background: #111827;
-    color: #fff;
+    background: #ffffff;
+    color: black;
 }
 
         /* Table */
