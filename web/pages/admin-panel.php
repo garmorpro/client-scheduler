@@ -1553,6 +1553,33 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </script>
 <!-- end view engagement modal ajax -->
 
+<!-- delete user -->
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.delete-user-btn')) {
+                e.preventDefault();
+                const userId = e.target.closest('.delete-user-btn').dataset.userId;
+                if (confirm('Are you sure you want to delete this user?')) {
+                    fetch('delete_user.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'user_id=' + encodeURIComponent(userId)
+                    })
+                    .then(res => res.text())
+                    .then(response => {
+                        if (response.trim() === 'success') {
+                            alert('User deleted successfully');
+                            location.reload();
+                        } else {
+                            alert('Error deleting user');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+<!-- end delete user -->
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
