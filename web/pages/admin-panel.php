@@ -663,11 +663,11 @@ if ($result && $result->num_rows > 0) {
                 </h6>
                 <p class="text-muted" style="overflow: hidden;">
                   <strong style="float: left;">First Name:</strong>
-                  <span id="view_first_name_detail" style="float: right;"></span>
+                  <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted" style="overflow: hidden;">
                   <strong style="float: left;">Last Name:</strong>
-                  <span id="view_last_name_detail" style="float: right;"></span>
+                  <span id="view_last_name_detail" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted" style="overflow: hidden;">
                   <strong style="float: left;">Email:</strong>
@@ -688,7 +688,7 @@ if ($result && $result->num_rows > 0) {
                 </p>
                 <p class="text-muted" style="overflow: hidden;">
                   <strong style="float: left;">Status:</strong>
-                  <span id="view_acct_status" style="float: right;"></span>
+                  <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
                 </p>
               </div>
             </div>
