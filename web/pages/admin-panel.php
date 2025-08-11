@@ -84,7 +84,6 @@ if (!isset($_SESSION['user_id'])) {
             color: #6b7280;
             cursor: pointer;
             transition: background 0.2s, color 0.2s;
-
             flex: 1;
             text-align: center;
             margin: 0 4px;
@@ -100,7 +99,7 @@ if (!isset($_SESSION['user_id'])) {
             color: black;
         }
 
-        /* Tab content wrapper with background and border radius */
+        /* Tab content wrapper */
         .tab-content {
             background: white;
             border-radius: 15px;
@@ -132,50 +131,52 @@ if (!isset($_SESSION['user_id'])) {
             color: #6b7280;
             font-size: 1rem;
         }
-        .user-management-buttons button {
+        .user-management-buttons button,
+        .user-management-buttons a {
             margin-left: 10px;
             min-width: 120px;
             font-weight: 600;
         }
 
-        /* Table */
-        /* .user-table .table {
-            background: #fff;
-            border-radius: 15px !important;
-            border: 1px solid #e5e7eb;
+        /* Vertically center all table cells */
+        .user-table table tbody tr td {
+            vertical-align: middle !important;
         }
-        .user-table th {
-            background: #f9fafb;
-            font-size: 13px;
-            font-weight: 600;
-            color: #6b7280;
-        }
-        .user-table td {
-            vertical-align: middle;
-            font-size: 14px;
-        } */
-        /* .badge-role {
-            background: #f3f4f6;
-            color: #374151;
+
+        /* Role badge style */
+        .badge-role {
+            background-color: white;
+            border: 1px solid #ddd;
+            color: #333;
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 12px;
             font-weight: 500;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
         }
+
+        /* Status badge */
         .badge-status {
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
         }
         .badge-status.active {
-            background: #dcfce7;
-            color: #15803d;
+            background-color: rgb(226,251,232);
+            color: rgb(50,107,61);
         }
         .badge-status.inactive {
-            background: #fef3c7;
-            color: #b45309;
+            background-color: rgb(253, 249, 200);
+            color: rgb(131,82,23);
         }
+
+        /* Table actions icons */
         .table-actions i {
             margin: 0 6px;
             cursor: pointer;
@@ -184,7 +185,8 @@ if (!isset($_SESSION['user_id'])) {
         }
         .table-actions i:hover {
             color: #111827;
-        } */
+        }
+
         /* Activity Cards */
         .activity-card {
             background: #fff;
@@ -210,60 +212,23 @@ if (!isset($_SESSION['user_id'])) {
             justify-content: center;
             font-size: 20px;
         }
-        .activity-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
+
+        /* Fix for activity icon container */
+        .activity-icon-container {
+            flex-shrink: 0;
+            width: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            margin-top: 0;
+            margin-right: 0;
         }
-        .activity-sub {
-            font-size: 13px;
-            color: #6b7280;
+
+        /* Disable pointer events on disabled pagination */
+        .page-item.disabled > .page-link {
+            pointer-events: none;
+            cursor: default;
         }
-
-        /* Vertically center all table cells */
-.user-table table tbody tr td {
-  vertical-align: middle !important;
-}
-
-/* Role badge style: white background, subtle border, rounded, padding */
-.badge-role {
-  background-color: white;
-  border: 1px solid #ddd;
-  color: #333;
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 500;
-  display: inline-block;
-  min-width: 60px;
-  text-align: center;
-}
-
-/* Status badge: default styling */
-.badge-status {
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  min-width: 70px;
-  text-align: center;
-}
-
-/* Active status: green background with white text */
-.badge-status.active {
-  background-color: rgb(226,251,232); /* Tailwind green-600 */
-  color: rgb(50,107,61);
-}
-
-/* Inactive status: amber/yellow background with dark text */
-.badge-status.inactive {
-  background-color: rgb(253, 249, 200); /* Tailwind amber-400 */
-  color: rgb(131,82,23); /* Dark amber text */
-}
-
-
-
     </style>
 </head>
 <body class="d-flex">
@@ -321,85 +286,194 @@ if (!isset($_SESSION['user_id'])) {
 
         <!-- Tab Content -->
         <div id="tab-users" class="tab-content">
-    <div class="user-management-header">
-        <div class="titles">
-            <p class="text-black"><strong>User Management</strong></p>
-            <p>Manage user accounts, roles, and permissions</p>
-        </div>
-        <div class="user-management-buttons">
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                <i class="bi bi-upload me-3"></i>Import Users
-            </a>
-            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
-                <i class="bi bi-person-plus me-3"></i>Add User
-            </a>
-        </div>
-    </div>
+            <div class="user-management-header">
+                <div class="titles">
+                    <p class="text-black"><strong>User Management</strong></p>
+                    <p>Manage user accounts, roles, and permissions</p>
+                </div>
+                <div class="user-management-buttons">
+                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                        <i class="bi bi-upload me-3"></i>Import Users
+                    </a>
+                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                        <i class="bi bi-person-plus me-3"></i>Add User
+                    </a>
+                </div>
+            </div>
 
-    <div class="user-table">
-        <table id="user-table" class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
-                    <td><span class="badge-role">Manager</span></td>
-                    <td><span class="badge-status active">Active</span></td>
-                    <td>1/6/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                    <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
-                    <td><span class="badge-role">Senior</span></td>
-                    <td><span class="badge-status active">Active</span></td>
-                    <td>1/6/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                    <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
-                    <td><span class="badge-role">Staff</span></td>
-                    <td><span class="badge-status active">Active</span></td>
-                    <td>1/5/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                    <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
-                    <td><span class="badge-role">CRM Member</span></td>
-                    <td><span class="badge-status inactive">Inactive</span></td>
-                    <td>1/4/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-                <!-- Add more rows here for testing pagination -->
-                <tr>
-                    <td>Extra User 1<br><small class="text-muted">extra1@company.com</small></td>
-                    <td><span class="badge-role">Staff</span></td>
-                    <td><span class="badge-status active">Active</span></td>
-                    <td>1/3/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                    <td>Extra User 2<br><small class="text-muted">extra2@company.com</small></td>
-                    <td><span class="badge-role">Manager</span></td>
-                    <td><span class="badge-status inactive">Inactive</span></td>
-                    <td>1/2/2025</td>
-                    <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                </tr>
-            </tbody>
-        </table>
+            <div class="user-table">
+                <table id="user-table" class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
+                            <td><span class="badge-role">Manager</span></td>
+                            <td><span class="badge-status active">Active</span></td>
+                            <td>1/6/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
+                            <td><span class="badge-role">Senior</span></td>
+                            <td><span class="badge-status active">Active</span></td>
+                            <td>1/6/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
+                            <td><span class="badge-role">Staff</span></td>
+                            <td><span class="badge-status active">Active</span></td>
+                            <td>1/5/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
+                            <td><span class="badge-role">CRM Member</span></td>
+                            <td><span class="badge-status inactive">Inactive</span></td>
+                            <td>1/4/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                        <!-- Extra rows for pagination -->
+                        <tr>
+                            <td>Extra User 1<br><small class="text-muted">extra1@company.com</small></td>
+                            <td><span class="badge-role">Staff</span></td>
+                            <td><span class="badge-status active">Active</span></td>
+                            <td>1/3/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Extra User 2<br><small class="text-muted">extra2@company.com</small></td>
+                            <td><span class="badge-role">Manager</span></td>
+                            <td><span class="badge-status inactive">Inactive</span></td>
+                            <td>1/2/2025</td>
+                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Controls -->
+            <nav>
+                <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+            </nav>
+        </div>
+
+        <div id="tab-activity" class="tab-content d-none">
+            <div class="activity-header mb-3">
+                <div class="titles">
+                    <p class="text-black"><strong>System Activity Log</strong></p>
+                    <p>Recent system events and user activities</p>
+                </div>
+            </div>
+
+            <div id="activity-list">
+                <div class="activity-card d-flex justify-content-between">
+                    <div class="activity-icon-container">
+                        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 24px;">
+                            <i class="bi bi-shield"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="activity-title fw-semibold mb-1">User Login</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Sarah Senior</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Successful login from 192.168.1.100</div>
+                    </div>
+                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+                </div>
+
+                <div class="activity-card d-flex justify-content-between">
+                    <div class="activity-icon-container">
+                        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 24px;">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="activity-title fw-semibold mb-1">Project Created</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: John Manager</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Created project: ABC Corp Q1 Audit</div>
+                    </div>
+                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+                </div>
+
+                <div class="activity-card d-flex justify-content-between">
+                    <div class="activity-icon-container">
+                        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 24px;">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="activity-title fw-semibold mb-1">User Role Updated</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Admin</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Changed Mike Staff role from Staff to Senior</div>
+                    </div>
+                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+                </div>
+
+                <div class="activity-card d-flex justify-content-between">
+                    <div class="activity-icon-container">
+                        <div class="activity-icon" style="color:rgb(235,59,90); font-size: 24px;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="activity-title fw-semibold mb-1">Failed Login Attempt</div>
+                        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Unknown</div>
+                        <div class="activity-sub text-black" style="font-size: 0.9rem;">Failed login from 10.0.0.50</div>
+                    </div>
+                    <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+                </div>
+
+                <!-- Add more activity cards as needed -->
+            </div>
+
+            <!-- Pagination Controls for activity -->
+            <nav>
+                <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
+            </nav>
+        </div>
+
+        <div id="tab-analytics" class="tab-content d-none">
+            <p>Analytics content placeholder</p>
+        </div>
+
+        <div id="tab-settings" class="tab-content d-none">
+            <p>Settings content placeholder</p>
+        </div>
     </div>
-     <!-- Pagination Controls -->
-    <nav>
-        <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
-    </nav>
 </div>
 
 <script>
-    (function(){
+    // Tab switching + reset pagination
+    document.querySelectorAll('.custom-tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active from all
+            document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
+            const currentTab = document.getElementById('tab-' + btn.dataset.tab);
+            currentTab.classList.remove('d-none');
+
+            // Reset pagination when switching tabs
+            if (btn.dataset.tab === 'users') {
+                const event = new Event('reinitUserPagination');
+                document.dispatchEvent(event);
+            } else if (btn.dataset.tab === 'activity') {
+                const event = new Event('reinitActivityPagination');
+                document.dispatchEvent(event);
+            }
+        });
+    });
+
+    // User Management pagination
+    function initUserPagination() {
         const rowsPerPage = 5;
         const table = document.getElementById('user-table');
+        if (!table) return;
         const tbody = table.querySelector('tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
         const paginationContainer = document.getElementById('pagination');
@@ -409,23 +483,17 @@ if (!isset($_SESSION['user_id'])) {
 
         function renderTablePage(page) {
             currentPage = page;
-            // Hide all rows
             rows.forEach(row => row.style.display = 'none');
-
-            // Calculate start/end slice
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
-
-            // Show only current page rows
             rows.slice(start, end).forEach(row => row.style.display = '');
-
             renderPagination();
         }
 
         function renderPagination() {
             paginationContainer.innerHTML = '';
 
-            // Prev button
+            // Prev
             const prevLi = document.createElement('li');
             prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
             const prevLink = document.createElement('a');
@@ -455,7 +523,7 @@ if (!isset($_SESSION['user_id'])) {
                 paginationContainer.appendChild(li);
             }
 
-            // Next button
+            // Next
             const nextLi = document.createElement('li');
             nextLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
             const nextLink = document.createElement('a');
@@ -470,196 +538,98 @@ if (!isset($_SESSION['user_id'])) {
             paginationContainer.appendChild(nextLi);
         }
 
-        // Initialize
         if(rows.length > rowsPerPage) {
             renderTablePage(1);
+            paginationContainer.style.display = 'flex';
         } else {
-            // Show all rows if 5 or fewer and hide pagination controls
             rows.forEach(row => row.style.display = '');
             paginationContainer.style.display = 'none';
         }
-    })();
-</script>
-
-
-
-        <div id="tab-activity" class="tab-content d-none">
-  <div class="activity-header mb-3">
-    <div class="titles">
-      <p class="text-black"><strong>System Activity Log</strong></p>
-      <p>Recent system events and user activities</p>
-    </div>
-  </div>
-
-  <div id="activity-list">
-    <!-- All activity cards here (hidden by default, JS shows 3 per page) -->
-    <div class="activity-card d-flex justify-content-between">
-      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
-        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 24px;">
-          <i class="bi bi-shield"></i>
-        </div>
-      </div>
-      <div class="flex-grow-1 mx-3">
-        <div class="activity-title fw-semibold mb-1">User Login</div>
-        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Sarah Senior</div>
-        <div class="activity-sub text-black" style="font-size: 0.9rem;">Successful login from 192.168.1.100</div>
-      </div>
-      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-    </div>
-
-    <div class="activity-card d-flex justify-content-between">
-      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
-        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 24px;">
-          <i class="bi bi-file-earmark-text"></i>
-        </div>
-      </div>
-      <div class="flex-grow-1 mx-3">
-        <div class="activity-title fw-semibold mb-1">Project Created</div>
-        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: John Manager</div>
-        <div class="activity-sub text-black" style="font-size: 0.9rem;">Created project: ABC Corp Q1 Audit</div>
-      </div>
-      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-    </div>
-
-    <div class="activity-card d-flex justify-content-between">
-      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
-        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 24px;">
-          <i class="bi bi-people"></i>
-        </div>
-      </div>
-      <div class="flex-grow-1 mx-3">
-        <div class="activity-title fw-semibold mb-1">User Role Updated</div>
-        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Admin</div>
-        <div class="activity-sub text-black" style="font-size: 0.9rem;">Changed Mike Staff role from Staff to Senior</div>
-      </div>
-      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-    </div>
-
-    <div class="activity-card d-flex justify-content-between">
-      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
-        <div class="activity-icon" style="color:rgb(243, 132, 48); font-size: 24px;">
-          <i class="bi bi-people"></i>
-        </div>
-      </div>
-      <div class="flex-grow-1 mx-3">
-        <div class="activity-title fw-semibold mb-1">System Backup</div>
-        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: System</div>
-        <div class="activity-sub text-black" style="font-size: 0.9rem;">Automated daily backup completed successfully</div>
-      </div>
-      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
-    </div>
-  </div>
-
-  <!-- Pagination controls -->
-  <nav aria-label="Activity pagination" class="mt-3">
-    <ul class="pagination justify-content-center" id="activity-pagination">
-      <!-- JS will inject page buttons here -->
-    </ul>
-  </nav>
-</div>
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const cardsPerPage = 3;
-    const activityList = document.getElementById('activity-list');
-    const cards = activityList.querySelectorAll('.activity-card');
-    const pagination = document.getElementById('activity-pagination');
-
-    let currentPage = 1;
-    const totalPages = Math.ceil(cards.length / cardsPerPage);
-
-    function showPage(page) {
-      currentPage = page;
-      // Hide all cards
-      cards.forEach(card => card.style.display = 'none');
-      // Show only cards for current page
-      const start = (page - 1) * cardsPerPage;
-      const end = start + cardsPerPage;
-      for(let i = start; i < end && i < cards.length; i++) {
-        cards[i].style.display = 'flex';
-      }
-      updatePagination();
     }
 
-    function updatePagination() {
-      pagination.innerHTML = '';
+    // System Activity pagination
+    function initActivityPagination() {
+        const cardsPerPage = 3;
+        const activityList = document.getElementById('activity-list');
+        if (!activityList) return;
+        const cards = activityList.querySelectorAll('.activity-card');
+        const pagination = document.getElementById('activity-pagination');
 
-      // Prev button
-      const prevLi = document.createElement('li');
-      prevLi.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
-      const prevLink = document.createElement('a');
-      prevLink.className = 'page-link';
-      prevLink.href = '#';
-      prevLink.innerText = 'Previous';
-      prevLink.addEventListener('click', e => {
-        e.preventDefault();
-        if (currentPage > 1) showPage(currentPage - 1);
-      });
-      prevLi.appendChild(prevLink);
-      pagination.appendChild(prevLi);
+        let currentPage = 1;
+        const totalPages = Math.ceil(cards.length / cardsPerPage);
 
-      // Page number buttons
-      for(let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li');
-        li.className = 'page-item ' + (i === currentPage ? 'active' : '');
-        const a = document.createElement('a');
-        a.className = 'page-link';
-        a.href = '#';
-        a.innerText = i;
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          showPage(i);
-        });
-        li.appendChild(a);
-        pagination.appendChild(li);
-      }
+        function showPage(page) {
+            currentPage = page;
+            cards.forEach(card => card.style.display = 'none');
+            const start = (page - 1) * cardsPerPage;
+            const end = start + cardsPerPage;
+            for(let i = start; i < end && i < cards.length; i++) {
+                cards[i].style.display = 'flex';
+            }
+            updatePagination();
+        }
 
-      // Next button
-      const nextLi = document.createElement('li');
-      nextLi.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
-      const nextLink = document.createElement('a');
-      nextLink.className = 'page-link';
-      nextLink.href = '#';
-      nextLink.innerText = 'Next';
-      nextLink.addEventListener('click', e => {
-        e.preventDefault();
-        if (currentPage < totalPages) showPage(currentPage + 1);
-      });
-      nextLi.appendChild(nextLink);
-      pagination.appendChild(nextLi);
+        function updatePagination() {
+            pagination.innerHTML = '';
+
+            // Prev
+            const prevLi = document.createElement('li');
+            prevLi.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            const prevLink = document.createElement('a');
+            prevLink.className = 'page-link';
+            prevLink.href = '#';
+            prevLink.innerText = 'Previous';
+            prevLink.addEventListener('click', e => {
+                e.preventDefault();
+                if (currentPage > 1) showPage(currentPage - 1);
+            });
+            prevLi.appendChild(prevLink);
+            pagination.appendChild(prevLi);
+
+            // Page numbers
+            for(let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = 'page-item ' + (i === currentPage ? 'active' : '');
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.innerText = i;
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    showPage(i);
+                });
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+
+            // Next
+            const nextLi = document.createElement('li');
+            nextLi.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            const nextLink = document.createElement('a');
+            nextLink.className = 'page-link';
+            nextLink.href = '#';
+            nextLink.innerText = 'Next';
+            nextLink.addEventListener('click', e => {
+                e.preventDefault();
+                if (currentPage < totalPages) showPage(currentPage + 1);
+            });
+            nextLi.appendChild(nextLink);
+            pagination.appendChild(nextLi);
+        }
+
+        showPage(1);
     }
 
-    // Initialize
-    showPage(1);
-  });
-</script>
-
-
-
-
-
-        <div id="tab-analytics" class="tab-content d-none">
-            <div class="p-4 bg-white border rounded">Analytics content here...</div>
-        </div>
-
-        <div id="tab-settings" class="tab-content d-none">
-            <div class="p-4 bg-white border rounded">Settings content here...</div>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.querySelectorAll('.custom-tabs button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
-            document.getElementById('tab-' + btn.dataset.tab).classList.remove('d-none');
-        });
+    // Init both paginations on DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+        initUserPagination();
+        initActivityPagination();
     });
+
+    // Listen for pagination reset events on tab switch
+    document.addEventListener('reinitUserPagination', initUserPagination);
+    document.addEventListener('reinitActivityPagination', initActivityPagination);
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
