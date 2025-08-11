@@ -228,8 +228,18 @@ if ($result && $result->num_rows > 0) {
                 $color = 'rgb(161,77,253)'; // green
                 break;
 
-            case 'role_updated':
-                $icon = 'bi-people';
+            case 'user_created':
+                $icon = 'bi-person-add';
+                $color = 'rgb(40,167,69)'; // green
+                break;
+
+            case 'user_deleted':
+                $icon = 'bi-person-dash';
+                $color = 'rgb(220,53,69)'; // green
+                break;
+
+            case 'user_updated':
+                $icon = 'bi-person-check';
                 $color = 'rgb(161,77,253)'; // purple
                 break;
 
