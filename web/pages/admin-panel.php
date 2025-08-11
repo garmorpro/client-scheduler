@@ -65,12 +65,13 @@ if (!isset($_SESSION['user_id'])) {
         }
         /* Tabs */
         .custom-tabs {
-            display: flex;
-            gap: 8px;
+            display: inline;
+            /* gap: 8px; */
             border-bottom: 1px solid #e5e7eb;
             margin-top: 2rem;
             margin-bottom: 20px;
             background-color: rgb(235,235,239);
+            
         }
         .custom-tabs button {
             background: none;
