@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $today = date('Y-m-d');
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -3 weeks'));
+$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous sunday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('sunday -2 weeks'));
 $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
 // Initialize mondays array
