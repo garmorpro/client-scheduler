@@ -267,7 +267,8 @@ if (!isset($_SESSION['user_id'])) {
 
         .reports-card {
             position: relative;
-            max-width: 350px;
+            max-width: 550px;
+            height: 100px;
             background: #fff;
             border-radius: 12px;
             padding: 1.5rem;
