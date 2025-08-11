@@ -83,7 +83,7 @@ $result = mysqli_query($conn, $sql);
 
         <!-- Tabs -->
         <div class="custom-tabs">
-            <button class="overlay-red" class="active" data-tab="users">User Management</button>
+            <button class="active" data-tab="users">User Management</button>
             <button class="overlay-red" data-tab="activity">System Activity</button>
             <button class="overlay-red" data-tab="analytics">Analytics</button>
             <button class="overlay-red" data-tab="settings">Settings</button>
@@ -97,10 +97,10 @@ $result = mysqli_query($conn, $sql);
                     <p>Manage user accounts, roles, and permissions</p>
                 </div>
                 <div class="user-management-buttons">
-                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                         <i class="bi bi-upload me-3"></i>Import Users
                     </a>
-                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; background-color: rgb(3,2,18);">
                         <i class="bi bi-person-plus me-3"></i>Add User
                     </a>
                 </div>
