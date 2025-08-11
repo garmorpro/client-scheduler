@@ -14,63 +14,150 @@ if (!isset($_SESSION['user_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-    .stat-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      background: #fff;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .stat-title {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .tab-content {
-      border: 1px solid #e0e0e0;
-      border-top: none;
-      border-radius: 0 0 12px 12px;
-      background: #fff;
-      padding: 1.5rem;
-    }
-    .nav-tabs .nav-link {
-      border: none;
-      border-bottom: 2px solid transparent;
-      font-weight: 500;
-      color: #6c757d;
-    }
-    .nav-tabs .nav-link.active {
-      border-bottom: 2px solid #000;
-      color: #000;
-    }
-    .status-badge {
-      padding: 0.35em 0.65em;
-      font-size: 0.75rem;
-      border-radius: 0.5rem;
-    }
-    .status-active {
-      background-color: #d1fae5;
-      color: #065f46;
-    }
-    .status-inactive {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-    .activity-item {
-      border: 1px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background: #fff;
-    }
-    .activity-icon {
-      font-size: 1.2rem;
-      margin-right: 0.5rem;
-    }
-  </style>
+  body {
+    background-color: #fafafa;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+  }
+
+  /* Top cards */
+  .stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e5e5e5;
+  }
+  .stat-title {
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0.25rem 0 0;
+  }
+  .stat-sub {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  .util-bar {
+    height: 5px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    overflow: hidden;
+  }
+  .util-bar-fill {
+    background: #111;
+    height: 100%;
+  }
+
+  /* Tabs */
+  .custom-tabs {
+    display: flex;
+    border-radius: 8px;
+    background: #f5f5f5;
+    padding: 4px;
+    gap: 4px;
+    margin: 1.5rem 0;
+  }
+  .custom-tabs button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #444;
+  }
+  .custom-tabs button.active {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Table */
+  .user-table {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+  }
+  .user-table th {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #555;
+    background: #fff;
+    padding: 1rem;
+  }
+  .user-table td {
+    padding: 1rem;
+    font-size: 0.9rem;
+    vertical-align: middle;
+    border-top: 1px solid #f0f0f0;
+  }
+  .badge-role {
+    font-size: 0.75rem;
+    background: #f5f5f5;
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+  }
+  .badge-status.active {
+    background: #d1fae5;
+    color: #047857;
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  .badge-status.inactive {
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  .table-actions i {
+    cursor: pointer;
+    margin-right: 8px;
+    color: #555;
+  }
+
+  /* Activity log */
+  .activity-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .activity-info {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .activity-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  .activity-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .activity-sub {
+    font-size: 0.8rem;
+    color: #666;
+  }
+</style>
 
 </head>
 <body class="d-flex">
