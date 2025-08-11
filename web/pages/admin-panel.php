@@ -297,6 +297,24 @@ if (!isset($_SESSION['user_id'])) {
             border: 1px solid #e5e5e5;
             box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
+
+
+        .overlay-gray {
+            position: relative; /* make positioning context for the overlay */
+        }
+
+        .overlay-gray::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(128, 128, 128, 0.5); /* semi-transparent gray */
+            z-index: 2; /* above content */
+            pointer-events: none; /* so clicks pass through if needed */
+            border-radius: inherit; /* match card’s rounded corners */
+        }
     </style>
 </head>
 <body class="d-flex">
@@ -310,7 +328,7 @@ if (!isset($_SESSION['user_id'])) {
     <div class="container-fluid">
         <!-- Stat cards -->
         <div class="row g-3">
-            <div class="col-md-3">
+            <div class="col-md-3 overlay-gray">
                 <div class="stat-card">
                     <div class="card-icon"><i class="bi bi-people"></i></div>
                     <div class="stat-title">Total Users</div>
