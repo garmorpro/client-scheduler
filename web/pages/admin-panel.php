@@ -1354,7 +1354,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               // Set engagement details
               setText('view_engagement_client_name', engagement.client_name);
               setText('view_client_name', engagement.client_name);
-              setText('view_engagement_team_size', engagement.assigned_user_count + ' members');
+              const count = engagement.assigned_user_count || 0;
+              const memberText = count <= 1 ? 'member' : 'members';
+              setText('view_engagement_team_size', `${count} ${memberText}`);
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
               setText('view_engagement_created', formatDate(engagement.created));
