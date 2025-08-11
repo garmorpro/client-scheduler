@@ -658,9 +658,9 @@ if ($result && $result->num_rows > 0) {
 
             <div class="row">
                 <div class="col-md-6">
-                    <h5>
+                    <h6>
                         <i class="bi bi-envelope"></i> Personal Information
-                    </h5>
+                    </h6>
                     <p class="text-muted">
                       <strong>First Name:</strong>
                       <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
