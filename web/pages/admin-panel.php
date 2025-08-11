@@ -691,7 +691,7 @@ if (!isset($_SESSION['user_id'])) {
                                 Storage Usage
                             </div>
                             <div class="float-end">
-                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">75% Used</span>
+                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(253,249,200) !important; color: rgba(135,88,30) !important;">75% Used</span>
                             </div>
                         </div>
 
