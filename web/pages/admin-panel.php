@@ -495,13 +495,31 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="stat-card">
-                        <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
-                        <div class="stat-title">Active Projects</div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-sub">16 completed</div>
+                    <div class="analytic-card">
+                        <div class="analytic-title">User Activity Overview</div>
+                        <div class="analytic-subtitle">Active vs Inactive users</div>
+                        <div class="pb-4"></div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                Active Users
+                            </div>
+                            <div class="float-end">
+                                38
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-x-circle text-danger"></i>
+                                Inactive Users
+                            </div>
+                            <div class="float-end">
+                                7
+                            </div>
+                        </div>
+                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
                     </div>
-                </div>   
+                </div>
             </div>
         </div>
 
