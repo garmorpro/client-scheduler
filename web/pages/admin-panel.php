@@ -1010,14 +1010,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const accessLevel = getAccessLevel(user.role || '');
       setText('view_acct_access_level', accessLevel);
-      
+
       function boolToEnabledDisabled(value) {
         return value == 1 ? 'Enabled' : 'Disabled';
       }
       
-      // Then:
+      const mfaEl = document.getElementById('view_acct_mfa');
+      if (mfaEl) {
+        const statusText = boolToEnabledDisabled(user.mfa_enabled);
+        mfaEl.textContent = statusText;
       
-      setText('view_acct_mfa', boolToEnabledDisabled(user.mfa_enabled));
+        mfaEl.classList.remove('text-success', 'text-danger');
+        if (statusText === 'Enabled') {
+          mfaEl.classList.add('text-success');
+        } else {
+          mfaEl.classList.add('text-danger');
+        }
+      }
+
 
       // Update badge class for status
       const statusEl = document.getElementById('view_status');
