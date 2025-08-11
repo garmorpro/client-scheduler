@@ -370,7 +370,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
 
             <div id="activity-list">
-                <div class="activity-card d-flex justify-content-between">
+                <div class="activity-card justify-content-between">
                     <div class="activity-icon-container">
                         <div class="activity-icon" style="color:rgb(92,141,253); font-size: 24px;">
                             <i class="bi bi-shield"></i>
@@ -522,42 +522,47 @@ if (!isset($_SESSION['user_id'])) {
 
   // System Activity pagination (3 cards per page)
   function initActivityPagination() {
-    const cardsPerPage = 3;
-    const activityList = document.getElementById('activity-list');
-    if (!activityList) return;
-    const cards = Array.from(activityList.querySelectorAll('.activity-card'));
-    const paginationContainer = document.getElementById('activity-pagination');
+  const cardsPerPage = 3;
+  const activityList = document.getElementById('activity-list');
+  if (!activityList) return;
+  const cards = Array.from(activityList.querySelectorAll('.activity-card'));
+  const paginationContainer = document.getElementById('activity-pagination');
 
-    let currentPage = 1;
-    const totalPages = Math.ceil(cards.length / cardsPerPage);
+  let currentPage = 1;
+  const totalPages = Math.ceil(cards.length / cardsPerPage);
 
-    function showPage(page) {
-      currentPage = page;
-      cards.forEach(card => (card.style.display = 'none'));
-      const start = (page - 1) * cardsPerPage;
-      const end = start + cardsPerPage;
-      for (let i = start; i < end && i < cards.length; i++) {
-        cards[i].style.display = 'flex'; // Show cards as flex
-      }
-      renderPagination();
+  function showPage(page) {
+    currentPage = page;
+    cards.forEach(card => {
+      card.style.display = 'none';
+      card.classList.remove('d-flex');
+    });
+    const start = (page - 1) * cardsPerPage;
+    const end = start + cardsPerPage;
+    for (let i = start; i < end && i < cards.length; i++) {
+      cards[i].style.display = '';
+      cards[i].classList.add('d-flex');
     }
-
-    function renderPagination() {
-      paginationContainer.innerHTML = '';
-      if (totalPages <= 1) {
-        paginationContainer.style.display = 'none';
-        return;
-      }
-      paginationContainer.style.display = 'flex';
-
-      const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-        showPage(page);
-      });
-      paginationContainer.appendChild(paginationControls);
-    }
-
-    showPage(1);
+    renderPagination();
   }
+
+  function renderPagination() {
+    paginationContainer.innerHTML = '';
+    if (totalPages <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    paginationContainer.style.display = 'flex';
+
+    const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+      showPage(page);
+    });
+    paginationContainer.appendChild(paginationControls);
+  }
+
+  showPage(1);
+}
+
 
   // Tab switching + reset pagination
   document.querySelectorAll('.custom-tabs button').forEach(btn => {
