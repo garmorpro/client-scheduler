@@ -512,15 +512,82 @@ if (!isset($_SESSION['user_id'])) {
               </div>
             </div>
 
-            <div class="activity-card">
-                <div class="activity-info">
-                    <div class="activity-icon" style="background:#dcfce7;">📁</div>
-                    <div>
-                        <div class="activity-title">Project Created</div>
-                        <div class="activity-sub">By: John Manager — Created project: ABC Corp Q1 Audit</div>
+            <!-- Example activity card -->
+            <div class="activity-card d-flex justify-content-between">
+              <!-- Left: Icon -->
+                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
+                    <div class="activity-icon" style="color:rgb(79,198,96); font-size: 14px; height: 10px;">
+                        <i class="bi bi-file-earmark-text"></i>
                     </div>
                 </div>
-                <div class="text-muted small">1/7/2025, 1:15 PM</div>
+
+              <!-- Center: Description -->
+              <div class="flex-grow-1 mx-3">
+                <div class="activity-title fw-semibold mb-1">Project Created</div>
+                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
+                  By: John Manager
+                </div>
+                <div class="activity-sub text-black" style="font-size: 0.9rem;">
+                  Created project: ABC Corp Q1 Audit
+                </div>
+              </div>
+
+              <!-- Right: Timestamp -->
+              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
+                1/7/2025, 2:30:00 PM
+              </div>
+            </div>
+
+            <!-- Example activity card -->
+            <div class="activity-card d-flex justify-content-between">
+              <!-- Left: Icon -->
+                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
+                    <div class="activity-icon" style="color:rgb(161,77,253); font-size: 14px; height: 10px;">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+
+              <!-- Center: Description -->
+              <div class="flex-grow-1 mx-3">
+                <div class="activity-title fw-semibold mb-1">User Role Updated</div>
+                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
+                  By: Admin
+                </div>
+                <div class="activity-sub text-black" style="font-size: 0.9rem;">
+                  Changed Mike Staff role from Staff to Senior
+                </div>
+              </div>
+
+              <!-- Right: Timestamp -->
+              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
+                1/7/2025, 2:30:00 PM
+              </div>
+            </div>
+
+            <!-- Example activity card -->
+            <div class="activity-card d-flex justify-content-between">
+              <!-- Left: Icon -->
+                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
+                    <div class="activity-icon" style="color:rgb(243, 132, 48); font-size: 14px; height: 10px;">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+
+              <!-- Center: Description -->
+              <div class="flex-grow-1 mx-3">
+                <div class="activity-title fw-semibold mb-1">System Backup</div>
+                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
+                  By: System
+                </div>
+                <div class="activity-sub text-black" style="font-size: 0.9rem;">
+                  Automated daily backup completed successfully
+                </div>
+              </div>
+
+              <!-- Right: Timestamp -->
+              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
+                1/7/2025, 2:30:00 PM
+              </div>
             </div>
 
 
