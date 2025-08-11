@@ -695,7 +695,7 @@ if ($result && $result->num_rows > 0) {
 
             <hr>
 
-            <div class="row mt-3">
+            <div class="row mt-4">
               <div class="col-md-6">
                 <h6>
                   <i class="bi bi-envelope"></i> Personal Information
