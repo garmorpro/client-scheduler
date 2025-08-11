@@ -296,6 +296,17 @@ if (!isset($_SESSION['user_id'])) {
 
   </div>
 
+  <script>
+  document.querySelectorAll('.custom-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
+      document.getElementById('tab-' + btn.dataset.tab).classList.remove('d-none');
+    });
+  });
+</script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
