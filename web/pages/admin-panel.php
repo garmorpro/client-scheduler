@@ -103,7 +103,7 @@ if (!isset($_SESSION['user_id'])) {
         /* Table */
         .user-table .table {
             background: #fff;
-            border-radius: 12px;
+            border-radius: 15px !important;
             border: 1px solid #e5e7eb;
         }
         .user-table th {
