@@ -14,7 +14,6 @@ if (!isset($_SESSION['user_id'])) {
     <style>
         body {
             background-color: #fafafa;
-            font-family: 'Inter', sans-serif;
             color: #1a1a1a;
         }
         /* Stat cards */
