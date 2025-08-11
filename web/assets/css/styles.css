@@ -167,8 +167,8 @@ body {
     color: rgb(50,107,61);
 }
 .badge-status.badge-pending {
-    background-color: #6f42c1;
-    color: white;
+    background-color: #ece1ff;
+    color: #6f42c1;
 }
 .badge-status.badge-not-confirmed {
     background-color: rgb(226, 235, 251);
