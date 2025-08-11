@@ -26,6 +26,7 @@ if (!isset($_SESSION['user_id'])) {
         /* Stat cards */
         .stat-card {
             position: relative;
+            height: 25px;
             background: #fff;
             border-radius: 12px;
             padding: 1.5rem;
