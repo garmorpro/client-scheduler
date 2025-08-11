@@ -876,7 +876,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Estimated Hours:</strong>
-                  <span id="view_engagement_est_hours" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_engagement_estimated_hours" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Allocated Hours:</strong>
@@ -1371,7 +1371,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_client_name', engagement.client_name);
               setText('view_engagement_team_size', engagement.assigned_user_count);
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
-              setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
+              setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hours');
               setText('view_engagement_notes', engagement.notes);
           
               // Handle status text and badge class
