@@ -63,42 +63,79 @@ if (!isset($_SESSION['user_id'])) {
             background: #111;
             height: 100%;
         }
+
         .custom-tabs {
-    display: flex;
-    margin-top: 2rem;
-    margin-bottom: 20px;
-    background-color: rgb(235,235,239);
-    border-radius: 15px;
-    padding: 5px;
-    /* Remove justify-content or set it to center */
-    justify-content: center;
-}
+            display: flex;
+            margin-top: 2rem;
+            margin-bottom: 20px;
+            background-color: rgb(235,235,239);
+            border-radius: 15px;
+            padding: 5px;
+            justify-content: center;
+        }
 
-.custom-tabs button {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6b7280;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+        .custom-tabs button {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
 
-    flex: 1;           /* add this */
-    text-align: center; /* center text */
-    margin: 0 4px;      /* spacing between tabs */
-}
+            flex: 1;
+            text-align: center;
+            margin: 0 4px;
+        }
 
-.custom-tabs button:hover {
-    background: #ffffff95;
-    color: black;
-}
+        .custom-tabs button:hover {
+            background: #ffffff95;
+            color: black;
+        }
 
-.custom-tabs button.active {
-    background: #ffffff;
-    color: black;
-}
+        .custom-tabs button.active {
+            background: #ffffff;
+            color: black;
+        }
+
+        /* Tab content wrapper with background and border radius */
+        .tab-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+        }
+
+        /* User Management Header & sub-header + buttons */
+        .user-management-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .user-management-header .titles {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        .user-management-header h2 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+        .user-management-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        .user-management-buttons button {
+            margin-left: 10px;
+            min-width: 120px;
+            font-weight: 600;
+        }
 
         /* Table */
         .user-table .table {
@@ -238,6 +275,17 @@ if (!isset($_SESSION['user_id'])) {
 
         <!-- Tab Content -->
         <div id="tab-users" class="tab-content">
+            <div class="user-management-header">
+                <div class="titles">
+                    <h2>User Management</h2>
+                    <p>Manage user accounts, roles, and permissions</p>
+                </div>
+                <div class="user-management-buttons">
+                    <button class="btn btn-outline-primary btn-sm">Import Users</button>
+                    <button class="btn btn-primary btn-sm">Add User +</button>
+                </div>
+            </div>
+
             <div class="user-table">
                 <table class="table mb-0">
                     <thead>
