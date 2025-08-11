@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert user
     $stmt = $conn->prepare("
         INSERT INTO users (idno, first_name, last_name, email, password, role, is_verified, last_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
