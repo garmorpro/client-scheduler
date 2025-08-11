@@ -496,28 +496,28 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="col-md-6">
                     <div class="analytic-card">
-                        <div class="analytic-title">User Activity Overview</div>
-                        <div class="analytic-subtitle">Active vs Inactive users</div>
+                        <div class="analytic-title">Engagement Status</div>
+                        <div class="analytic-subtitle">Current engagement distribution</div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
                                 <i class="bi bi-check2-circle text-success"></i>
-                                Active Users
+                                Assigned Engagements
                             </div>
                             <div class="float-end">
-                                38
+                                92
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <div class="float-start" style="font-size: 14px;">
                                 <i class="bi bi-x-circle text-danger"></i>
-                                Inactive Users
+                                Unassigned Engagements
                             </div>
                             <div class="float-end">
-                                7
+                                8
                             </div>
                         </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
+                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
                     </div>
                 </div>
             </div>
