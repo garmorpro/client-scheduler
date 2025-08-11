@@ -353,7 +353,7 @@ function openEmployeeModal(employeeId) {
             </div>
             <div class="col-md-3 d-flex align-items-center gap-3">
                 <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-                <a href="?start=<?php echo date('Y-m-d', strtotime('monday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
+                <a href="?start=<?php echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
             </div>
         </form>
     </div>
