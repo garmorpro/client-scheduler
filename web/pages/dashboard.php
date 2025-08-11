@@ -62,9 +62,7 @@ if (!isset($_SESSION['user_id'])) {
     <div class="admin-card">
       <div class="admin-icon">
         <!-- Shield icon (Bootstrap Icon) -->
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3l7.5 3v6.75A9.75 9.75 0 0112 21a9.75 9.75 0 01-7.5-8.25V6L12 3z" />
-        </svg>
+        <i class="bi bi-shield"></i>
       </div>
       <h5 class="fw-bold">Administrator Access</h5>
       <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
