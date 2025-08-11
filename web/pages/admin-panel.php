@@ -673,6 +673,7 @@ if ($result && $result->num_rows > 0) {
                   <strong style="float: left;">Email:</strong>
                   <span id="view_email_detail" style="float: right;"></span>
                 </p>
+                <hr>
               </div>
               <div class="col-md-6">
                 <h6>
@@ -690,33 +691,32 @@ if ($result && $result->num_rows > 0) {
                   <strong style="float: left;">Status:</strong>
                   <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
                 </p>
+                <hr>
               </div>
             </div>
-
-            <hr>
 
             <div class="row mt-4">
-              <div class="col-md-6">
-                <h6>
-                  <i class="bi bi-shield"></i> Access & Permissions
-                </h6>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Role:</strong>
-                  <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
-                </p>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Access Level:</strong>
-                  <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
-                </p>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Two-Factor Auth:</strong>
-                  <span id="view_acct_mfa" style="float: right;"></span>
-                </p>
-              </div>
-              <div class="col-md-6">
-                
-              </div>
+                <div class="col-md-6">
+                    <h6>
+                        <i class="bi bi-shield"></i> Access & Permissions
+                    </h6>
+                    <p class="text-muted" style="overflow: hidden;">
+                        <strong style="float: left;">Role:</strong>
+                        <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
+                     </p>
+                    <p class="text-muted" style="overflow: hidden;">
+                        <strong style="float: left;">Access Level:</strong>
+                        <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
+                    </p>
+                    <p class="text-muted" style="overflow: hidden;">
+                        <strong style="float: left;">Two-Factor Auth:</strong>
+                        <span id="view_acct_mfa" style="float: right;"></span>
+                    </p>
+                </div>
+                <div class="col-md-6"></div>
             </div>
+
+
         
 
           </div>
