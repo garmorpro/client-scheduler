@@ -147,8 +147,8 @@ $result = mysqli_query($conn, $sql);
                                 </td>
                                 <td class="table-actions">
                                     <i class="bi bi-eye overlay-red"></i>
-                                    <a href="#" class="edit-user-btn text-purple text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
-                                      <i class="bi bi-pencil"></i>
+                                    <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                      <i class="bi bi-pencil text-purple "></i>
                                     </a>
 
                                     <i class="bi bi-trash overlay-red"></i>
