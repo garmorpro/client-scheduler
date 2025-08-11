@@ -909,7 +909,7 @@ if ($result && $result->num_rows > 0) {
       setText('view_user_initials', firstInitial + lastInitial);
       setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
       setText('view_user_role', user.role);
-      setText('view_first_name', user.first_name || '[No first name]');
+      setText('view_first_name', `${user.first_name}`|| '[No first name]');
       setText('view_last_name', user.last_name || '[No last name]');
       setText('view_email', user.email || '[No email]');
       setText('view_status', user.status || '[No status]');
