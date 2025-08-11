@@ -542,25 +542,26 @@ $result = mysqli_query($conn, $sql);
                       </div>
                     </div>
 
-                    <div class="d-flex justify-content-between pb-2">
-                      <div class="reports-card text-center" style="margin-top: 15px !important;">
+                    <div class="d-flex justify-content-between align-items-center pb-2">
+                      <div class="reports-card text-center">
                         <i class="bi bi-graph-up-arrow fs-3"></i>
                         <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
                         <div class="analytic-subtitle">Staff and engagement utilization</div>
                       </div>
-
+                                    
                       <div class="reports-card text-center">
                         <i class="bi bi-people fs-3"></i>
                         <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
                         <div class="analytic-subtitle">Login and engagement metrics</div>
                       </div>
-
+                                    
                       <div class="reports-card text-center">
                         <i class="bi bi-clock fs-3"></i>
                         <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
                         <div class="analytic-subtitle">Hours and productivity analysis</div>
                       </div>
                     </div>
+
                   </div>
                 </div>
               </div>
