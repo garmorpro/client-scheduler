@@ -28,7 +28,7 @@
           Master Schedule
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item mb-2">
         <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
           <i class="bi bi-person me-2"></i>
           My Schedule
