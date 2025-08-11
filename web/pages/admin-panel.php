@@ -667,11 +667,31 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="mb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-check text-success"></i>
-                                Assigned Engagements
+                                <i class="bi bi-check2-circle text-success"></i>
+                                Database Status
                             </div>
                             <div class="float-end">
                                 <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Healthy</span>
+                            </div>
+                        </div>
+                        <div class="mb-4"></div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                API Status
+                            </div>
+                            <div class="float-end">
+                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Operational</span>
+                            </div>
+                        </div>
+                        <div class="mb-4"></div>
+                        <div class="d-flex justify-content-between pb-1">
+                            <div class="float-start" style="font-size: 14px;">
+                                <i class="bi bi-exclamation-circle text-warning"></i>
+                                Storage Usage
+                            </div>
+                            <div class="float-end">
+                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">75% Used</span>
                             </div>
                         </div>
 
