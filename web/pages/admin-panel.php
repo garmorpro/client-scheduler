@@ -721,7 +721,6 @@ if ($result && $result->num_rows > 0) {
 
             <hr>
 
-
             <div class="col-md-12">
               <h6>Recent Activity</h6>
               <div id="view_recent_activity" style="max-height: 150px; overflow-y: auto;">
@@ -729,11 +728,9 @@ if ($result && $result->num_rows > 0) {
               </div>
             </div>
 
-        
-
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="text-muted" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -744,155 +741,155 @@ if ($result && $result->num_rows > 0) {
 
 
 
+<!-- Pagination -->
+    <script>
+      // Helper: create pagination controls (Prev, pages, Next)
+      function createPaginationControls(totalPages, currentPage, onPageChange) {
+        const ul = document.createElement('ul');
+        ul.className = 'pagination justify-content-center';
 
-<script>
-  // Helper: create pagination controls (Prev, pages, Next)
-  function createPaginationControls(totalPages, currentPage, onPageChange) {
-    const ul = document.createElement('ul');
-    ul.className = 'pagination justify-content-center';
+        function createPageItem(label, disabled, active, clickHandler) {
+          const li = document.createElement('li');
+          li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+          const a = document.createElement('a');
+          a.className = 'page-link';
+          a.href = '#';
+          a.innerText = label;
+          if (!disabled) {
+            a.addEventListener('click', e => {
+              e.preventDefault();
+              clickHandler();
+            });
+          }
+          li.appendChild(a);
+          return li;
+        }
 
-    function createPageItem(label, disabled, active, clickHandler) {
-      const li = document.createElement('li');
-      li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
-      const a = document.createElement('a');
-      a.className = 'page-link';
-      a.href = '#';
-      a.innerText = label;
-      if (!disabled) {
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          clickHandler();
+        // Prev button
+        ul.appendChild(createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1)));
+
+        // Page number buttons
+        for (let i = 1; i <= totalPages; i++) {
+          ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
+        }
+
+        // Next button
+        ul.appendChild(createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1)));
+
+        return ul;
+      }
+
+      // User Management pagination (5 rows per page)
+      function initUserPagination() {
+        const rowsPerPage = 5;
+        const table = document.getElementById('user-table');
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const paginationContainer = document.getElementById('pagination');
+
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function renderTablePage(page) {
+          currentPage = page;
+          rows.forEach(row => (row.style.display = 'none'));
+          const start = (page - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+          rows.slice(start, end).forEach(row => (row.style.display = ''));
+          renderPagination();
+        }
+
+        function renderPagination() {
+          paginationContainer.innerHTML = '';
+          if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+          }
+          paginationContainer.style.display = 'flex';
+
+          const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+            renderTablePage(page);
+          });
+          paginationContainer.appendChild(paginationControls);
+        }
+
+        renderTablePage(1);
+      }
+
+      // System Activity pagination (3 cards per page)
+      function initActivityPagination() {
+      const cardsPerPage = 3;
+      const activityList = document.getElementById('activity-list');
+      if (!activityList) return;
+      const cards = Array.from(activityList.querySelectorAll('.activity-card'));
+      const paginationContainer = document.getElementById('activity-pagination');
+
+      let currentPage = 1;
+      const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+      function showPage(page) {
+        currentPage = page;
+        cards.forEach(card => {
+          card.style.display = 'none';
+          card.classList.remove('d-flex');
         });
+        const start = (page - 1) * cardsPerPage;
+        const end = start + cardsPerPage;
+        for (let i = start; i < end && i < cards.length; i++) {
+          cards[i].style.display = '';
+          cards[i].classList.add('d-flex');
+        }
+        renderPagination();
       }
-      li.appendChild(a);
-      return li;
-    }
 
-    // Prev button
-    ul.appendChild(createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1)));
+      function renderPagination() {
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) {
+          paginationContainer.style.display = 'none';
+          return;
+        }
+        paginationContainer.style.display = 'flex';
 
-    // Page number buttons
-    for (let i = 1; i <= totalPages; i++) {
-      ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
-    }
-
-    // Next button
-    ul.appendChild(createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1)));
-
-    return ul;
-  }
-
-  // User Management pagination (5 rows per page)
-  function initUserPagination() {
-    const rowsPerPage = 5;
-    const table = document.getElementById('user-table');
-    if (!table) return;
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    const paginationContainer = document.getElementById('pagination');
-
-    let currentPage = 1;
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-    function renderTablePage(page) {
-      currentPage = page;
-      rows.forEach(row => (row.style.display = 'none'));
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      rows.slice(start, end).forEach(row => (row.style.display = ''));
-      renderPagination();
-    }
-
-    function renderPagination() {
-      paginationContainer.innerHTML = '';
-      if (totalPages <= 1) {
-        paginationContainer.style.display = 'none';
-        return;
+        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+          showPage(page);
+        });
+        paginationContainer.appendChild(paginationControls);
       }
-      paginationContainer.style.display = 'flex';
 
-      const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-        renderTablePage(page);
+      showPage(1);
+    }
+
+
+      // Tab switching + reset pagination
+      document.querySelectorAll('.custom-tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
+          const currentTab = document.getElementById('tab-' + btn.dataset.tab);
+          currentTab.classList.remove('d-none');
+
+          if (btn.dataset.tab === 'users') {
+            document.dispatchEvent(new Event('reinitUserPagination'));
+          } else if (btn.dataset.tab === 'activity') {
+            document.dispatchEvent(new Event('reinitActivityPagination'));
+          }
+        });
       });
-      paginationContainer.appendChild(paginationControls);
-    }
 
-    renderTablePage(1);
-  }
+      // Initialize paginations on DOM ready
+      document.addEventListener('DOMContentLoaded', () => {
+        initUserPagination();
+        initActivityPagination();
+      });
 
-  // System Activity pagination (3 cards per page)
-  function initActivityPagination() {
-  const cardsPerPage = 3;
-  const activityList = document.getElementById('activity-list');
-  if (!activityList) return;
-  const cards = Array.from(activityList.querySelectorAll('.activity-card'));
-  const paginationContainer = document.getElementById('activity-pagination');
-
-  let currentPage = 1;
-  const totalPages = Math.ceil(cards.length / cardsPerPage);
-
-  function showPage(page) {
-    currentPage = page;
-    cards.forEach(card => {
-      card.style.display = 'none';
-      card.classList.remove('d-flex');
-    });
-    const start = (page - 1) * cardsPerPage;
-    const end = start + cardsPerPage;
-    for (let i = start; i < end && i < cards.length; i++) {
-      cards[i].style.display = '';
-      cards[i].classList.add('d-flex');
-    }
-    renderPagination();
-  }
-
-  function renderPagination() {
-    paginationContainer.innerHTML = '';
-    if (totalPages <= 1) {
-      paginationContainer.style.display = 'none';
-      return;
-    }
-    paginationContainer.style.display = 'flex';
-
-    const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-      showPage(page);
-    });
-    paginationContainer.appendChild(paginationControls);
-  }
-
-  showPage(1);
-}
-
-
-  // Tab switching + reset pagination
-  document.querySelectorAll('.custom-tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
-      const currentTab = document.getElementById('tab-' + btn.dataset.tab);
-      currentTab.classList.remove('d-none');
-
-      if (btn.dataset.tab === 'users') {
-        document.dispatchEvent(new Event('reinitUserPagination'));
-      } else if (btn.dataset.tab === 'activity') {
-        document.dispatchEvent(new Event('reinitActivityPagination'));
-      }
-    });
-  });
-
-  // Initialize paginations on DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    initUserPagination();
-    initActivityPagination();
-  });
-
-  // Reinit paginations on tab switch
-  document.addEventListener('reinitUserPagination', initUserPagination);
-  document.addEventListener('reinitActivityPagination', initActivityPagination);
-</script>
-
+      // Reinit paginations on tab switch
+      document.addEventListener('reinitUserPagination', initUserPagination);
+      document.addEventListener('reinitActivityPagination', initActivityPagination);
+    </script>
+<!-- end Pagination -->
 
 <!-- update modal ajax -->
     <script>
@@ -932,195 +929,162 @@ if ($result && $result->num_rows > 0) {
 <!-- end update modal ajax -->
 
 <!-- view user modal ajax -->
-    <style>
-  /* Put this in your CSS or inside a <style> tag */
-  #view_recent_activity {
-    max-height: 150px;
-    overflow-y: auto;
-  }
-  .activity-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 12px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .activity-description {
-    flex-grow: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 12px;
-  }
-  .activity-time {
-    flex-shrink: 0;
-    color: #888;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const viewUserModal = document.getElementById('viewUserModal');
-
-  viewUserModal.addEventListener('show.bs.modal', async (event) => {
-    const button = event.relatedTarget;
-    const userId = button.getAttribute('data-user-id');
-    if (!userId) return;
-
-    try {
-      const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-      if (!response.ok) throw new Error('Network response was not ok');
-
-      const user = await response.json();
-
-      function setText(id, text) {
-        const el = document.getElementById(id);
-        if (!el) {
-          console.warn(`Element with ID "${id}" not found.`);
-          return;
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const viewUserModal = document.getElementById('viewUserModal');
+        
+          viewUserModal.addEventListener('show.bs.modal', async (event) => {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            if (!userId) return;
+        
+            try {
+              const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
+                  if (!response.ok) throw new Error('Network response was not ok');
+            
+                  const user = await response.json();
+            
+              function setText(id, text) {
+                const el = document.getElementById(id);
+                if (!el) {
+                  console.warn(`Element with ID "${id}" not found.`);
+                  return;
+                }
+                el.textContent = (text && text.toString().trim()) ? text : '-';
+                }
+          
+              function formatDate(dateString) {
+                if (!dateString) return '-';
+                const d = new Date(dateString);
+                if (isNaN(d)) return '-';
+                const month = d.getMonth() + 1;
+                const day = d.getDate();
+                const year = d.getFullYear();
+                return `${month}/${day}/${year}`;
+                }
+          
+              function timeSince(dateString) {
+          if (!dateString) return '-';
+          const now = new Date();
+              const past = new Date(dateString);
+            
+              if (isNaN(past.getTime())) return '-';  // invalid date
+            
+              let seconds = Math.floor((now - past) / 1000);
+            
+              if (seconds < 0) seconds = 0;  // if future date, treat as now
+            
+          if (seconds < 5) return 'just now';
+              if (seconds < 60) return `${seconds}s ago`;
+            
+          const minutes = Math.floor(seconds / 60);
+              if (minutes < 60) return `${minutes}m ago`;
+            
+          const hours = Math.floor(minutes / 60);
+              if (hours < 24) return `${hours}h ago`;
+            
+          const days = Math.floor(hours / 24);
+              if (days < 7) return `${days}d ago`;
+            
+          // fallback: show formatted date
+          return formatDate(dateString);
         }
-        el.textContent = (text && text.toString().trim()) ? text : '-';
-      }
-
-      function formatDate(dateString) {
-        if (!dateString) return '-';
-        const d = new Date(dateString);
-        if (isNaN(d)) return '-';
-        const month = d.getMonth() + 1;
-        const day = d.getDate();
-        const year = d.getFullYear();
-        return `${month}/${day}/${year}`;
-      }
-
-      function timeSince(dateString) {
-  if (!dateString) return '-';
-  const now = new Date();
-  const past = new Date(dateString);
-
-  if (isNaN(past.getTime())) return '-';  // invalid date
-
-  let seconds = Math.floor((now - past) / 1000);
-
-  if (seconds < 0) seconds = 0;  // if future date, treat as now
-
-  if (seconds < 5) return 'just now';
-  if (seconds < 60) return `${seconds}s ago`;
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-
-  // fallback: show formatted date
-  return formatDate(dateString);
-}
 
 
-      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
-      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
-      setText('view_user_initials', firstInitial + lastInitial);
+              const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
+              const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
+              setText('view_user_initials', firstInitial + lastInitial);
 
-      setText('view_user_fullname', `${user.first_name || '-'} ${user.last_name || '-'}`);
-      setText('view_email', user.email);
-      setText('view_user_role', user.role);
+              setText('view_user_fullname', `${user.first_name || '-'} ${user.last_name || '-'}`);
+              setText('view_email', user.email);
+              setText('view_user_role', user.role);
 
-      setText('view_first_name_detail', user.first_name);
-      setText('view_last_name_detail', user.last_name);
-      setText('view_email_detail', user.email);
+              setText('view_first_name_detail', user.first_name);
+              setText('view_last_name_detail', user.last_name);
+              setText('view_email_detail', user.email);
 
-      setText('view_status', user.status);
-      setText('view_acct_status', user.status);
-      setText('view_acct_created', formatDate(user.created));
-      setText('view_acct_last_active', formatDate(user.last_active));
+              setText('view_status', user.status);
+              setText('view_acct_status', user.status);
+              setText('view_acct_created', formatDate(user.created));
+              setText('view_acct_last_active', formatDate(user.last_active));
 
-      function getAccessLevel(role) {
-        switch(role.toLowerCase()) {
-          case 'admin': return 'Full Access';
-          case 'manager': return 'High Access';
-          case 'senior': return 'Restricted Access';
-          case 'staff': return 'Restricted Access';
-          case 'intern': return 'Restricted Access';
-          default: return 'Unknown Access';
-        }
-      }
-
-      setText('view_acct_role', user.role);
-      setText('view_acct_access_level', getAccessLevel(user.role || ''));
-
-      function boolToEnabledDisabled(value) {
-        return value == 1 ? 'Enabled' : 'Disabled';
-      }
-
-      const mfaEl = document.getElementById('view_acct_mfa');
-      if (mfaEl) {
-        const statusText = boolToEnabledDisabled(user.mfa_enabled);
-        mfaEl.textContent = statusText;
-        mfaEl.classList.remove('text-success', 'text-danger');
-        if (statusText === 'Enabled') {
-          mfaEl.classList.add('text-success');
-        } else {
-          mfaEl.classList.add('text-danger');
-        }
-      }
-
-      // Render recent activities as cards with description ellipsis + relative time
-      const activityList = document.getElementById('view_recent_activity');
-      if (activityList) {
-        activityList.innerHTML = ''; // clear previous
-        if (user.recent_activities && user.recent_activities.length > 0) {
-          user.recent_activities.forEach(act => {
-            const card = document.createElement('div');
-            card.className = 'activity-card';
-
-            const desc = document.createElement('div');
-            desc.className = 'activity-description';
-            desc.title = act.description;
-            desc.textContent = act.description;
-
-            const time = document.createElement('div');
-            time.className = 'activity-time';
-            time.textContent = timeSince(act.created_at);
-
-            card.appendChild(desc);
-            card.appendChild(time);
-            activityList.appendChild(card);
+              function getAccessLevel(role) {
+                switch(role.toLowerCase()) {
+                  case 'admin': return 'Full Access';
+                  case 'manager': return 'High Access';
+                  case 'senior': return 'Restricted Access';
+                  case 'staff': return 'Restricted Access';
+                  case 'intern': return 'Restricted Access';
+                  default: return 'Unknown Access';
+                }
+                }
+          
+              setText('view_acct_role', user.role);
+                setText('view_acct_access_level', getAccessLevel(user.role || ''));
+          
+              function boolToEnabledDisabled(value) {
+                return value == 1 ? 'Enabled' : 'Disabled';
+                }
+          
+              const mfaEl = document.getElementById('view_acct_mfa');
+              if (mfaEl) {
+                const statusText = boolToEnabledDisabled(user.mfa_enabled);
+                mfaEl.textContent = statusText;
+                mfaEl.classList.remove('text-success', 'text-danger');
+                if (statusText === 'Enabled') {
+                  mfaEl.classList.add('text-success');
+                } else {
+                  mfaEl.classList.add('text-danger');
+                }
+                }
+          
+              // Render recent activities as cards with description ellipsis + relative time
+              const activityList = document.getElementById('view_recent_activity');
+              if (activityList) {
+                activityList.innerHTML = ''; // clear previous
+                if (user.recent_activities && user.recent_activities.length > 0) {
+                  user.recent_activities.forEach(act => {
+                    const card = document.createElement('div');
+                        card.className = 'activity-card';
+                
+                    const desc = document.createElement('div');
+                    desc.className = 'activity-description';
+                    desc.title = act.description;
+                        desc.textContent = act.description;
+                
+                    const time = document.createElement('div');
+                    time.className = 'activity-time';
+                        time.textContent = timeSince(act.created_at);
+                
+                    card.appendChild(desc);
+                    card.appendChild(time);
+                    activityList.appendChild(card);
+                  });
+                } else {
+                  const empty = document.createElement('div');
+                  empty.className = 'text-muted px-3';
+                  empty.textContent = 'No recent activity found.';
+                  activityList.appendChild(empty);
+                }
+                }
+          
+              // Update badge class for status
+              const statusEl = document.getElementById('view_status');
+              if (statusEl) {
+                statusEl.classList.remove('active', 'inactive');
+                if (user.status && user.status.toLowerCase() === 'active') {
+                  statusEl.classList.add('active');
+                } else {
+                  statusEl.classList.add('inactive');
+                }
+                }
+          
+            } catch (error) {
+              console.error('Failed to load user data:', error);
+            }
           });
-        } else {
-          const empty = document.createElement('div');
-          empty.className = 'text-muted px-3';
-          empty.textContent = 'No recent activity found.';
-          activityList.appendChild(empty);
-        }
-      }
-
-      // Update badge class for status
-      const statusEl = document.getElementById('view_status');
-      if (statusEl) {
-        statusEl.classList.remove('active', 'inactive');
-        if (user.status && user.status.toLowerCase() === 'active') {
-          statusEl.classList.add('active');
-        } else {
-          statusEl.classList.add('inactive');
-        }
-      }
-
-    } catch (error) {
-      console.error('Failed to load user data:', error);
-    }
-  });
-});
-</script>
-
-
-
+        });
+    </script>
 <!-- end view user modal ajax -->
 
 
