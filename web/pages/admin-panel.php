@@ -325,10 +325,10 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
                                     </td>
                                     <td class="table-actions">
-                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <a href="#" class="view-engagement-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewEngagementModal" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
                                             <i class="bi bi-eye text-success"></i>
                                         </a>
-                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-engagement-id="<?php echo $row['user_id']; ?>">
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
@@ -1342,6 +1342,52 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         });
     </script>
 <!-- end view user modal ajax -->
+
+
+<!-- view engagement modal ajax -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const viewEngagementModal = document.getElementById('viewEngagementModal');
+    
+        viewEngagementModal.addEventListener('show.bs.modal', async (event) => {
+          const button = event.relatedTarget;
+          const engagementId = button.getAttribute('data-engagement-id');
+          if (!engagementId) return;
+        
+          try {
+            const response = await fetch(`get_engagement.php?engagement_id=${encodeURIComponent(engagementId)}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+        
+            const engagement = await response.json();
+        
+            function setText(id, text) {
+              const el = document.getElementById(id);
+              if (!el) {
+                console.warn(`Element with ID "${id}" not found.`);
+                return;
+              }
+              el.textContent = (text && text.toString().trim()) ? text : '-';
+            }
+        
+            // Format hours to integer (like your 400, not 400.00)
+            function formatHours(hours) {
+              return hours ? parseInt(hours, 10) : 0;
+            }
+        
+            setText('view_engagement_client_name', engagement.client_name);
+            setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
+            setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
+            setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
+            setText('view_engagement_notes', engagement.notes);
+        
+          } catch (error) {
+            console.error('Failed to load engagement data:', error);
+          }
+        });
+      });
+    </script>
+<!-- end view engagement modal ajax -->
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
