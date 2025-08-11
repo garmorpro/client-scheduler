@@ -669,7 +669,7 @@ if ($result && $result->num_rows > 0) {
                     </p>
                     <p class="text-muted">
                         <strong>Email:</strong> 
-                        <span id="view_email_detail" class="d-inline-block text-end" style="min-width: 100px;"></span>
+                        <span id="view_email_detail" class="d-inline-block text-end" style="min-width: 150px;"></span>
                     </p>
                 </div>
                 <div class="col-md-6">
