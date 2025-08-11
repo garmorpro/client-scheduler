@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['email'] = $email;
 
             // Log successful login
-            $fullName = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            $fullName = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
             logActivity($conn, "successful_login", $user_id, $email, $fullName, "User Login", "Successful login");
 
             header("Location: dashboard.php");
