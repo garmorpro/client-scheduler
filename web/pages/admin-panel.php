@@ -237,6 +237,15 @@ if (!isset($_SESSION['user_id'])) {
             cursor: default;
         }
 
+        .analytic-card {
+            position: relative;
+            /* height: 140px; */
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
 
         .analytics-subtitle {
             font-size: 0.8rem;
@@ -451,7 +460,7 @@ if (!isset($_SESSION['user_id'])) {
         <div id="tab-analytics" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3">
                 <div class="col-md-6">
-                    <div class="stat-card">
+                    <div class="analytic-card">
                         <div class="analytics-title">User Activity Overview</div>
                         <div class="analytics-subtitle">Active vs Inactive users</div>
                         <div class="pb-4"></div>
