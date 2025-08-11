@@ -452,7 +452,7 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="stat-sub">+7 this month</div>
                     </div>
                 </div>
-                <div class="me-1"></div>
+                <div class="pe-1"></div>
                 <div class="col-md-6">
                     <div class="stat-card">
                         <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
