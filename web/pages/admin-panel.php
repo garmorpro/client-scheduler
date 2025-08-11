@@ -714,21 +714,7 @@ if ($result && $result->num_rows > 0) {
                 </p>
               </div>
               <div class="col-md-6">
-                <h6>
-                  <i class="bi bi-clock"></i> Activity Summary
-                </h6>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Created:</strong>
-                  <span id="view_acct_created" style="float: right;"></span>
-                </p>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Last Active:</strong>
-                  <span id="view_acct_last_active" style="float: right;"></span>
-                </p>
-                <p class="text-muted" style="overflow: hidden;">
-                  <strong style="float: left;">Status:</strong>
-                  <span id="view_acct_status" class="text-capitalize" style="float: right;"></span>
-                </p>
+                
               </div>
             </div>
         
