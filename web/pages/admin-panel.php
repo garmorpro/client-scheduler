@@ -302,7 +302,7 @@ if (!isset($_SESSION['user_id'])) {
         .overlay-gray {
             position: relative; /* make positioning context for the overlay */
         }
-
+        
         .overlay-gray::after {
             content: "";
             position: absolute;
@@ -328,8 +328,8 @@ if (!isset($_SESSION['user_id'])) {
     <div class="container-fluid">
         <!-- Stat cards -->
         <div class="row g-3">
-            <div class="col-md-3 overlay-gray">
-                <div class="stat-card">
+            <div class="col-md-3">
+                <div class="stat-card overlay-gray">
                     <div class="card-icon"><i class="bi bi-people"></i></div>
                     <div class="stat-title">Total Users</div>
                     <div class="stat-value">45</div>
