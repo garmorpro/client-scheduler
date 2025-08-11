@@ -230,7 +230,7 @@ if (!isset($_SESSION['user_id'])) {
   border: 1px solid #ddd;
   color: #333;
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 500;
   display: inline-block;
@@ -241,7 +241,7 @@ if (!isset($_SESSION['user_id'])) {
 /* Status badge: default styling */
 .badge-status {
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   display: inline-block;
