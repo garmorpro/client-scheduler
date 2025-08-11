@@ -495,7 +495,10 @@ if (!isset($_SESSION['user_id'])) {
               <div class="flex-grow-1 mx-3">
                 <div class="activity-title fw-semibold mb-1">User Login</div>
                 <div class="activity-sub text-muted" style="font-size: 0.9rem;">
-                  By: Sarah Senior — Successful login from 192.168.1.100
+                  By: Sarah Senior
+                </div>
+                <div class="activity-sub text-muted" style="font-size: 0.9rem;">
+                  Successful login from 192.168.1.100
                 </div>
               </div>
 
@@ -504,7 +507,7 @@ if (!isset($_SESSION['user_id'])) {
                 1/7/2025, 2:30:00 PM
               </div>
             </div>
-            
+
             <div class="activity-card">
                 <div class="activity-info">
                     <div class="activity-icon" style="background:#dcfce7;">📁</div>
