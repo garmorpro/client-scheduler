@@ -642,7 +642,7 @@ if ($result && $result->num_rows > 0) {
           </div>
           <div class="modal-body">
 
-            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px;">
+            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -25px;">
               <div id="view_user_initials" 
                    class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" 
                    style="width: 36px; height: 36px; font-weight: 700; font-size: 18px;">
