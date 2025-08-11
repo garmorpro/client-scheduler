@@ -571,7 +571,7 @@ if ($result && $result->num_rows > 0) {
         <form id="updateUserForm" action="update_user.php" method="POST" class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel"><i class="bi bi-pencil-square"></i> Edit User <br>
-            <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; margin-top: -10px !important;">Update user information and permissions</span>
+            <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Update user information and permissions</span>
         </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
