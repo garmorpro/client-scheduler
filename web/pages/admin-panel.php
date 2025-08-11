@@ -539,26 +539,14 @@ if (!isset($_SESSION['user_id'])) {
                             </a>
                         </div>
                     </div>
-                        <!-- <div class="pb-4"></div> -->
                         <div class="d-flex justify-content-between pb-2">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-check text-success"></i>
-                                Assigned Engagements
+                            <div class="analytic-card">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <div class="analytic-title">User Activity Overview</div>
+                                <div class="analytic-subtitle">Active vs Inactive users</div>
                             </div>
-                            <div class="float-end">
-                                92
-                            </div>
+                            
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-x text-danger"></i>
-                                Unassigned Engagements
-                            </div>
-                            <div class="float-end">
-                                8
-                            </div>
-                        </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
                     </div>
                 </div>
             </div>
