@@ -473,6 +473,7 @@ if (!isset($_SESSION['user_id'])) {
                                 7
                             </div>
                         </div>
+                        <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
                     </div>
                 </div>
                 <div class="col-md-6">
