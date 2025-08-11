@@ -37,7 +37,7 @@ if ($userResult) {
 }
 
 // Query to fetch active clients from the engagements table
-$clientQuery = "SELECT engagement_id, client_name FROM engagements WHERE status = 'confirmed'";
+$clientQuery = "SELECT engagement_id, client_name FROM engagements";
 $clientResult = $conn->query($clientQuery);
 
 if ($clientResult === false) {
