@@ -661,10 +661,10 @@ if ($result && $result->num_rows > 0) {
                     <i class="bi bi-envelope"></i> Personal Information
                     <p class="text-muted">
                       <strong>First Name:</strong>
-                      <span id="view_first_name" class="d-inline-block text-end" style="min-width: 100px;"></span>
+                      <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 100px;"></span>
                     </p>
-                    <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
-                    <p><strong>Email:</strong> <span id="view_email"></span></p>
+                    <p><strong>Last Name:</strong> <span id="view_last_name_detail"></span></p>
+                    <p><strong>Email:</strong> <span id="view_email_detail"></span></p>
                 </div>
                 <div class="col-md-6">
                     test
