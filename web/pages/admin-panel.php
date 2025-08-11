@@ -570,9 +570,10 @@ if ($result && $result->num_rows > 0) {
       <div class="modal-dialog">
         <form id="updateUserForm" action="update_user.php" method="POST" class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="updateUserModalLabel"><i class="bi bi-pencil-square"></i> Edit User <br>
-            <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Update user information and permissions</span>
-        </h5>
+            <h5 class="modal-title" id="updateUserModalLabel">
+                <i class="bi bi-pencil-square"></i> Edit User <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Update user information and permissions</span>
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
@@ -618,8 +619,8 @@ if ($result && $result->num_rows > 0) {
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">Update User</button>
+            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Update User</button>
           </div>
         </form>
       </div>
