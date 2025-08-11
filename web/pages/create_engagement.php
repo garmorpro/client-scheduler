@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email,
             $full_name,
             "Engagement Created",
-            "Created engagement: " . $clientName . " with IDNO: " . $idno
+            "Created engagement: " . $clientName . "(" . $status . ")"
         );
 
         header("Location: my-schedule.php?status=success");
