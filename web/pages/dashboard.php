@@ -69,15 +69,19 @@ if (!isset($_SESSION['user_id'])) {
       <?php endif; ?>
     </p>
 
-    <div class="admin-card">
-      <div class="admin-icon">
-        <!-- Shield icon (Bootstrap Icon) -->
-        <i class="bi bi-shield"></i>
+    <?php if ($isAdmin): ?>
+      <div class="admin-card">
+        <div class="admin-icon">
+          <!-- Shield icon (Bootstrap Icon) -->
+          <i class="bi bi-shield"></i>
+        </div>
+        <h5 class="fw-bold">Administrator Access</h5>
+        <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
+        <button class="admin-btn mt-2">Go to Admin Dashboard</button>
       </div>
-      <h5 class="fw-bold">Administrator Access</h5>
-      <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
-      <button class="admin-btn mt-2">Go to Admin Dashboard</button>
-    </div>
+    <?php else: ?>
+      Non-admin
+    <?php endif; ?>
 
   </div>
 
