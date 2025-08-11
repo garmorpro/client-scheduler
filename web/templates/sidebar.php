@@ -36,7 +36,7 @@
       </li>
       <li class="nav-item">
         <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
-          <i class="bi bi-shielf me-2"></i>
+          <i class="bi bi-shield me-2"></i>
           Admin Panel
         </a>
       </li>
