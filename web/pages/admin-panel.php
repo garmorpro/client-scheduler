@@ -172,7 +172,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         <!-- Tabs -->
             <div class="custom-tabs">
                 <button class="active" data-tab="users">User Management</button>
-                <button class="overlay-red" data-tab="engagements">Analytics</button>
+                <button class="overlay-red" data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
                 <button class="overlay-red" data-tab="settings">Settings</button>
             </div>
