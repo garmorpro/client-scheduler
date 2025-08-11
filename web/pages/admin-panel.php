@@ -20,6 +20,12 @@ $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
+
+$sql = "SELECT id, first_name, last_name, email, role, status, last_active 
+        FROM users 
+        ORDER BY last_active DESC";
+$result = mysqli_query($conn, $sql);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -104,56 +110,48 @@ $newUsers = $newUsersRow['recent'];
                 <table id="user-table" class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>John Manager<br><small class="text-muted">john.manager@company.com</small></td>
-                            <td><span class="badge-role">Manager</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/6/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Sarah Senior<br><small class="text-muted">sarah.senior@company.com</small></td>
-                            <td><span class="badge-role">Senior</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/6/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Mike Staff<br><small class="text-muted">mike.staff@company.com</small></td>
-                            <td><span class="badge-role">Staff</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/5/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Lisa CRM<br><small class="text-muted">lisa.crm@company.com</small></td>
-                            <td><span class="badge-role">CRM Member</span></td>
-                            <td><span class="badge-status inactive">Inactive</span></td>
-                            <td>1/4/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <!-- Extra rows for pagination -->
-                        <tr>
-                            <td>Extra User 1<br><small class="text-muted">extra1@company.com</small></td>
-                            <td><span class="badge-role">Staff</span></td>
-                            <td><span class="badge-status active">Active</span></td>
-                            <td>1/3/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Extra User 2<br><small class="text-muted">extra2@company.com</small></td>
-                            <td><span class="badge-role">Manager</span></td>
-                            <td><span class="badge-status inactive">Inactive</span></td>
-                            <td>1/2/2025</td>
-                            <td class="table-actions"><i class="bi bi-eye"></i><i class="bi bi-pencil"></i><i class="bi bi-trash"></i></td>
-                        </tr>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr>
+                                <td>
+                                    <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?><br>
+                                    <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
+                                </td>
+                                <td>
+                                    <span class="badge-role">
+                                        <?php echo htmlspecialchars($row['role']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                                        <?php echo ucfirst($row['status']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php echo date("n/j/Y", strtotime($row['last_active'])); ?>
+                                </td>
+                                <td class="table-actions">
+                                    <i class="bi bi-eye"></i>
+                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-trash"></i>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="5" class="text-center">No users found</td></tr>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
+                    
             <!-- Pagination Controls -->
             <nav>
                 <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
