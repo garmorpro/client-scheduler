@@ -547,7 +547,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="user-management-buttons">
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 14px; border: 1px solid rgb(229,229,229);">
-                                <i class="bi bi-upload me-3"></i>Export All Data
+                                <i class="bi bi-download me-3"></i>Export All Data
                             </a>
                         </div>
                     </div>
