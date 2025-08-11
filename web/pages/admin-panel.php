@@ -858,7 +858,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           </div>
           <div class="modal-body">
 
-            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px;">
+            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; padding: 10px;">
               <div>
                 <h5 id="view_client_name" class="fw-semibold"></h5>
                 <small id="view_email" class="text-muted"></small><br>
