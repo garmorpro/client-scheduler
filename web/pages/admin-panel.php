@@ -264,6 +264,16 @@ if (!isset($_SESSION['user_id'])) {
             font-size: 0.8rem;
             color: #555;
         }
+
+        .reports-card {
+            position: relative;
+            max-width: 150px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
     </style>
 </head>
 <body class="d-flex">
@@ -540,7 +550,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                     </div>
                         <div class="d-flex justify-content-between pb-2">
-                            <div class="analytic-card">
+                            <div class="reports-card">
                                 <i class="bi bi-graph-up-arrow"></i>
                                 <div class="analytic-title">User Activity Overview</div>
                                 <div class="analytic-subtitle">Active vs Inactive users</div>
