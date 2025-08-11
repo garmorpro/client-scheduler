@@ -185,7 +185,7 @@ $result = mysqli_query($conn, $sql);
         // Fetch all activities, newest first
 $sql = "SELECT event_type, full_name, title, description, created_at 
         FROM system_activity_log 
-        ORDER BY created_at ASC";
+        ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
