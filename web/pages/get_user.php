@@ -16,7 +16,7 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 
 $user_id = (int)$_GET['user_id'];
 
-$stmt = $conn->prepare("SELECT user_id, first_name, last_name, email, role, status FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT user_id, first_name, last_name, email, role, status, created, last_active FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();

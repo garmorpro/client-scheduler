@@ -675,7 +675,21 @@ if ($result && $result->num_rows > 0) {
                     </p>
                 </div>
                 <div class="col-md-6">
-                    test
+                    <h6>
+                        <i class="bi bi-person-lock"></i> Account Details
+                    </h6>
+                    <p class="text-muted">
+                      <strong>Created:</strong>
+                      <span id="view_first_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
+                    </p>
+                    <p class="text-muted">
+                        <strong>Last Active:</strong> 
+                        <span id="view_last_name_detail" class="d-inline-block text-end" style="min-width: 60%;"></span>
+                    </p>
+                    <p class="text-muted">
+                        <strong>Status:</strong> 
+                        <span id="view" class="d-inline-block text-end" style="min-width: 75%;"></span>
+                    </p>
                 </div>
             </div>
             <hr>
@@ -931,6 +945,10 @@ if ($result && $result->num_rows > 0) {
       setText('view_email_detail', user.email);
 
       setText('view_status', user.status);
+      setText('view_acct_status', user.status);
+      setText('view_acct_status', user.status);
+      setText('view_acct_created', user.created);
+      setText('view_acct_last_active', user.last_active);
 
       // Update badge class for status
       const statusEl = document.getElementById('view_status');
