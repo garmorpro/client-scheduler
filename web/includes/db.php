@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Chicago');
+
 $host = getenv('DB_HOST');
 $db   = getenv('DB_NAME');
 $user = getenv('DB_USER');
