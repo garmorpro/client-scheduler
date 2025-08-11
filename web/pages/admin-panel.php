@@ -236,6 +236,12 @@ if (!isset($_SESSION['user_id'])) {
             pointer-events: none;
             cursor: default;
         }
+
+
+        .analytics-subtitle {
+            font-size: 0.9rem;
+            color: #555;
+        }
     </style>
 </head>
 <body class="d-flex">
@@ -446,7 +452,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="row g-3 ps-3 pe-3">
                 <div class="col-md-6">
                     <div class="stat-card">
-                        <div class="stat-title">User Activity Overview</div>
+                        <div class="analytics-title">User Activity Overview</div>
                         <div class="analytics-sub-title">Active vs Inactive users</div>
                         <div class="stat-sub">+7 this month</div>
                     </div>
