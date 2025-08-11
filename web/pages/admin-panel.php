@@ -14,40 +14,63 @@ if (!isset($_SESSION['user_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-      .admin-card {
+    .stat-card {
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
-      background-color: #fff;
+      padding: 1.5rem;
+      background: #fff;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .admin-icon {
-      width: 50px;
-      height: 50px;
-      background-color: #f0f0f0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1rem auto;
+    .stat-title {
+      font-size: 0.9rem;
+      color: #6c757d;
     }
-    .admin-icon i {
-      font-size: 24px !important;
-      color: #2c2c2c;
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
     }
-    .admin-btn {
-      background-color: #0b0b16;
-      color: #fff;
-      border-radius: 8px;
-      padding: 0.5rem 1.5rem;
-      font-weight: 500;
+    .tab-content {
+      border: 1px solid #e0e0e0;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      background: #fff;
+      padding: 1.5rem;
+    }
+    .nav-tabs .nav-link {
       border: none;
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+      color: #6c757d;
     }
-    .admin-btn:hover {
-      background-color: #1a1a2e;
+    .nav-tabs .nav-link.active {
+      border-bottom: 2px solid #000;
+      color: #000;
     }
-    </style>
+    .status-badge {
+      padding: 0.35em 0.65em;
+      font-size: 0.75rem;
+      border-radius: 0.5rem;
+    }
+    .status-active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    .status-inactive {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .activity-item {
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+    .activity-icon {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+  </style>
 
 </head>
 <body class="d-flex">
