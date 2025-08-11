@@ -550,13 +550,13 @@ $result = mysqli_query($conn, $sql);
                       </div>
 
                       <div class="reports-card text-center">
-                        <i class="bi bi-people fs-3"></i>
+                        <i class="bi bi-people"></i>
                         <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
                         <div class="analytic-subtitle">Login and engagement metrics</div>
                       </div>
 
                       <div class="reports-card text-center">
-                        <i class="bi bi-clock fs-3"></i>
+                        <i class="bi bi-clock"></i>
                         <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
                         <div class="analytic-subtitle">Hours and productivity analysis</div>
                       </div>
