@@ -1,9 +1,14 @@
 <?php
 session_start();
+
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +61,13 @@ if (!isset($_SESSION['user_id'])) {
 
   <div class="flex-grow-1 p-4">
     <h3 class="mb-0">Dashboard</h3>
-    <p class="text-muted mb-4">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.</p>
+    <p class="text-muted mb-4">Welcome back, <?php echo $_SESSION['first_name']; ?>. 
+      <?php if ($isAdmin): ?>
+      As an administrator, you have access to the enhanced admin dashboard.
+      <?php else: ?>
+      Here's an overview of your team's engagements.
+      <?php endif; ?>
+    </p>
 
     <div class="admin-card">
       <div class="admin-icon">
