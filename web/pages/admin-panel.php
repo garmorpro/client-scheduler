@@ -372,7 +372,7 @@ if (!isset($_SESSION['user_id'])) {
             <div id="activity-list">
                 <div class="activity-card justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
+                        <div class="activity-icon fw-semibold" style="color:rgb(92,141,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
                             <i class="bi bi-shield"></i>
                         </div>
                     </div>
