@@ -1,6 +1,8 @@
 <?php
 require_once 'db.php';
 
+session_start();  // START SESSION AT TOP!
+
 // LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
@@ -11,8 +13,6 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
         mysqli_stmt_close($stmt);
     }
 }
-
-
 
 $error = '';
 
@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->fetch();
 
         if (password_verify($password, $hashed_password)) {
-            session_start();
             session_regenerate_id(true);
 
             $_SESSION['user_id'] = $user_id;
@@ -44,18 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
 
-            // Log successful login
-            $full_name = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+            // Log successful login with actual user info
+            $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
             header("Location: dashboard.php");
             exit;
         } else {
-            $full_name = trim($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
-            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Failed login attempt");
+            // Log failed login with known user info (password incorrect)
+            $full_name = trim($first_name . ' ' . $last_name);
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
+        // Log failed login due to email not found
+        logActivity($conn, "failed_login", null, $email, "", "Failed Login", "Email not found");
         $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
     }
 
