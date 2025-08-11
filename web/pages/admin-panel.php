@@ -1350,6 +1350,13 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               function formatHours(hours) {
                 return hours ? parseInt(hours, 10) : 0;
               }
+
+              function formatStatus(status) {
+                if (!status) return '-';
+                return status
+                  .replace(/_/g, ' ')          // Replace underscores with spaces
+                  .replace(/\b\w/g, c => c.toUpperCase()); // Capitalize first letter of each word
+              }
           
               // Set engagement details
               setText('view_engagement_client_name', engagement.client_name);
@@ -1361,7 +1368,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
               setText('view_engagement_created', formatDate(engagement.created));
               setText('view_engagement_updated', formatDate(engagement.last_updated));
-              setText('view_eng_status', engagement.status);
+              setText('view_eng_status', formatStatus(engagement.status));
               setText('view_engagement_notes', engagement.notes);
           
               // Handle status text and badge class
