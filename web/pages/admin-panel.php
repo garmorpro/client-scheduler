@@ -117,7 +117,7 @@ $result = mysqli_query($conn, $sql);
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-people"></i></div>
+                    <div class="card-icon"><i class="bi bi-person-up"></i></div>
                     <div class="stat-title">Active Users</div>
                     <div class="stat-value"><?php echo $totalActiveUsers; ?></div>
                     <div class="stat-sub"><?php echo $totalInactiveUsers; ?> inactive users</div>
