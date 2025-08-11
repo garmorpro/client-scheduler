@@ -610,51 +610,51 @@ if (!isset($_SESSION['user_id'])) {
         <div id="tab-settings" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
-    <div class="settings-card">
-        <div class="analytic-header mb-4">
-            <div class="titles">
-                <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
-                <p style="font-size: 14px;">Manage system-wide settings</p>
-            </div>
-        </div>
+                    <div class="settings-card">
+                        <div class="analytic-header mb-4">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
+                                <p style="font-size: 14px;">Manage system-wide settings</p>
+                            </div>
+                        </div>
 
-        <!-- Email Notifications -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-                <p class="text-black mb-1" style="font-size: 14px;"><strong>Email Notifications</strong></p>
-                <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
-            </div>
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                Configure
-            </a>
-        </div>
+                        <!-- Email Notifications -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <p class="text-black mb-1" style="font-size: 14px;"><strong>Email Notifications</strong></p>
+                                <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
+                            </div>
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                Configure
+                            </a>
+                        </div>
 
-        <!-- Backup Settings -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-                <p class="text-black mb-1" style="font-size: 14px;"><strong>Backup Settings</strong></p>
-                <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
-            </div>
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                Configure
-            </a>
-        </div>
+                        <!-- Backup Settings -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <p class="text-black mb-1" style="font-size: 14px;"><strong>Backup Settings</strong></p>
+                                <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
+                            </div>
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                Configure
+                            </a>
+                        </div>
 
-        <!-- Security Policies -->
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <p class="text-black mb-1" style="font-size: 14px;"><strong>Security Policies</strong></p>
-                <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
-            </div>
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                Configure
-            </a>
-        </div>
-    </div>
-</div>
+                        <!-- Security Policies -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-black mb-1" style="font-size: 14px;"><strong>Security Policies</strong></p>
+                                <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
+                            </div>
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                                Configure
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-md-6">
                     <div class="analytic-card">
