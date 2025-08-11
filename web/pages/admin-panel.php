@@ -54,109 +54,134 @@ if (!isset($_SESSION['user_id'])) {
     height: 100%;
   }
 
-  /* Tabs */
-  .custom-tabs {
-    display: flex;
-    border-radius: 8px;
-    background: #f5f5f5;
-    padding: 4px;
-    gap: 4px;
-    margin: 1.5rem 0;
-  }
-  .custom-tabs button {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    color: #444;
-  }
-  .custom-tabs button.active {
-    background: #fff;
-    color: #000;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  }
+  /* Tabs container */
+.custom-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
 
-  /* Table */
-  .user-table {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e5e5e5;
-    overflow: hidden;
-  }
-  .user-table th {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #555;
-    background: #fff;
-    padding: 1rem;
-  }
-  .user-table td {
-    padding: 1rem;
-    font-size: 0.9rem;
-    vertical-align: middle;
-    border-top: 1px solid #f0f0f0;
-  }
-  .badge-role {
-    font-size: 0.75rem;
-    background: #f5f5f5;
-    border-radius: 999px;
-    padding: 0.3rem 0.75rem;
-  }
-  .badge-status.active {
-    background: #d1fae5;
-    color: #047857;
-    border-radius: 999px;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.75rem;
-  }
-  .badge-status.inactive {
-    background: #fef3c7;
-    color: #92400e;
-    border-radius: 999px;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.75rem;
-  }
-  .table-actions i {
-    cursor: pointer;
-    margin-right: 8px;
-    color: #555;
-  }
+/* Tab buttons */
+.custom-tabs button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
 
-  /* Activity log */
-  .activity-card {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e5e5e5;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
-  }
-  .activity-info {
-    display: flex;
-    gap: 0.75rem;
-  }
-  .activity-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-  }
-  .activity-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  .activity-sub {
-    font-size: 0.8rem;
-    color: #666;
-  }
+.custom-tabs button:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.custom-tabs button.active {
+  background: #111827;
+  color: #fff;
+}
+
+/* Table styling */
+.user-table .table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.user-table th {
+  background: #f9fafb;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.user-table td {
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.user-table .badge-role {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-status.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-status.inactive {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* Table actions */
+.table-actions i {
+  margin: 0 6px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.table-actions i:hover {
+  color: #111827;
+}
+
+/* System Activity Cards */
+.activity-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.activity-sub {
+  font-size: 13px;
+  color: #6b7280;
+}
 
  
   
