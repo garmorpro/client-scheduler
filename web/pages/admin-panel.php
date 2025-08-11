@@ -267,8 +267,9 @@ if (!isset($_SESSION['user_id'])) {
 
         .reports-card {
             position: relative;
-            max-width: 550px;
-            height: 100px;
+            width: 400px;
+            max-width: 450px;
+            height: 115px;
             background: #fff;
             border-radius: 12px;
             padding: 1.5rem;
@@ -538,7 +539,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <div class="row g-3 ps-3 pe-3 mt-2">
                 <div class="col-md-12">
-                    <div class="analytic-card">
+                    <div class="analytic-card" style="height: 215px !important;">
                         <div class="user-management-header">
                         <div class="titles">
                             <p class="text-black" style="font-size: 14px;"><strong>Advanced Reports</strong></p>
@@ -562,7 +563,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
                                 <div class="analytic-subtitle">Login and engagement metrics</div>
                             </div>
-                            
+
                             <div class="reports-card">
                                 <i class="bi bi-clock"></i>
                                 <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
