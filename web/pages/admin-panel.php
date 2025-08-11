@@ -501,7 +501,7 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
                             <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-building-fill-check text-success"></i>
+                                <i class="bi bi-clipboard-check text-success"></i>
                                 Assigned Engagements
                             </div>
                             <div class="float-end">
@@ -510,7 +510,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="d-flex justify-content-between">
                             <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-building-fill-x text-danger"></i>
+                                <i class="bi bi-clipboard-x text-danger"></i>
                                 Unassigned Engagements
                             </div>
                             <div class="float-end">
