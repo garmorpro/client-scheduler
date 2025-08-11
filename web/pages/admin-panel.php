@@ -284,6 +284,7 @@ if (!isset($_SESSION['user_id'])) {
         }
         .reports-card:hover {
             background-color: rgb(233,235,239);
+            cursor: pointer;
         }
     </style>
 </head>
