@@ -30,7 +30,7 @@ if (!isset($_SESSION['user_id'])) {
       display: flex;
       align-items: center;
       justify-content: center;
-      /* margin: 0 auto 1rem auto; */
+      margin: 0 auto 1rem auto;
     }
     .admin-icon svg {
       width: 24px;
@@ -61,7 +61,7 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- <div class="p-5"></div> -->
 
-    <div class="container">
+    <!-- <div class="container"> -->
     <div class="admin-card">
       <div class="admin-icon">
         <!-- Shield icon (Bootstrap Icon) -->
@@ -73,7 +73,7 @@ if (!isset($_SESSION['user_id'])) {
       <p class="text-muted mb-4">Access advanced system management, user administration, and detailed analytics.</p>
       <button class="admin-btn">Go to Admin Dashboard</button>
     </div>
-  </div>
+  <!-- </div> -->
 
 </p>
 
