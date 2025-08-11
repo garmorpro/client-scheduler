@@ -261,43 +261,6 @@ if (!isset($_SESSION['user_id'])) {
   color: rgb(131,82,23); /* Dark amber text */
 }
 
-.activity-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.activity-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.activity-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.activity-sub {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-.text-muted {
-  color: #6b7280 !important;
-}
 
 
     </style>
@@ -526,9 +489,11 @@ if (!isset($_SESSION['user_id'])) {
             <!-- Example activity card -->
             <div class="activity-card d-flex justify-content-between">
               <!-- Left: Icon -->
-              <div class="activity-icon" style="color:#e0f2fe; font-size: 16px; flex-shrink: 0;">
-                <i class="bi bi-shield"></i>
-              </div>
+              <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
+    <div class="activity-icon" style="color:#0ea5e9; font-size: 24px;">
+      <i class="bi bi-shield"></i>
+    </div>
+  </div>
 
               <!-- Center: Description -->
               <div class="flex-grow-1 mx-3">
