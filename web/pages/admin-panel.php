@@ -872,7 +872,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Team Size:</strong>
-                  <span id="view_first_name_detail" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_engagement_team_size" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Estimated Hours:</strong>
@@ -1369,6 +1369,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               // Set engagement details
               setText('view_engagement_client_name', engagement.client_name);
               setText('view_client_name', engagement.client_name);
+              setText('view_engagement_team_size', engagement.assigned_user_count);
               setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
               setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
               setText('view_engagement_notes', engagement.notes);
