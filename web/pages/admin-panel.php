@@ -509,13 +509,13 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="analytic-card">
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
-                                <p style="font-size: 14px;">Active vs Inactive users</p>
+                                <p class="text-black" style="font-size: 16px;"><strong>User Activity Overview</strong></p>
+                                <p style="font-size: 16px;">Active vs Inactive users</p>
                             </div>
                         </div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
+                            <div class="float-start" style="font-size: 16px;">
                                 <i class="bi bi-check2-circle text-success"></i>
                                 Active Users
                             </div>
@@ -524,7 +524,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
+                            <div class="float-start" style="font-size: 16px;">
                                 <i class="bi bi-x-circle text-danger"></i>
                                 Inactive Users
                             </div>
@@ -539,13 +539,13 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="analytic-card">
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+                                <p class="text-black" style="font-size: 16px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 16px;">Current engagement distribution</p>
                             </div>
                         </div>
                         <div class="pb-4"></div>
                         <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
+                            <div class="float-start" style="font-size: 16px;">
                                 <i class="bi bi-clipboard-check text-success"></i>
                                 Assigned Engagements
                             </div>
@@ -554,7 +554,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
+                            <div class="float-start" style="font-size: 16px;">
                                 <i class="bi bi-clipboard-x text-danger"></i>
                                 Unassigned Engagements
                             </div>
@@ -571,11 +571,11 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="analytic-card" style="height: 215px !important;">
                         <div class="user-management-header">
                         <div class="titles">
-                            <p class="text-black" style="font-size: 14px;"><strong>Advanced Reports</strong></p>
-                            <p style="font-size: 14px;">Generate detailed system reports</p>
+                            <p class="text-black" style="font-size: 16px;"><strong>Advanced Reports</strong></p>
+                            <p style="font-size: 16px;">Generate detailed system reports</p>
                         </div>
                         <div class="user-management-buttons">
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 14px; border: 1px solid rgb(229,229,229);">
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 16px; border: 1px solid rgb(229,229,229);">
                                 <i class="bi bi-download me-3"></i>Export All Data
                             </a>
                         </div>
@@ -613,16 +613,16 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="settings-card">
                         <div class="analytic-header mb-4">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
-                                <p style="font-size: 14px;">Manage system-wide settings</p>
+                                <p class="text-black" style="font-size: 16px;"><strong>System Configuration</strong></p>
+                                <p style="font-size: 16px;">Manage system-wide settings</p>
                             </div>
                         </div>
 
                         <!-- Email Notifications -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Email Notifications</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
+                                <p class="text-black mb-0" style="font-size: 16px;"><strong>Email Notifications</strong></p>
+                                <p class="mb-0" style="font-size: 16px;">Send system notifications via email</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
                                style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
@@ -633,8 +633,8 @@ if (!isset($_SESSION['user_id'])) {
                         <!-- Backup Settings -->
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Backup Settings</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
+                                <p class="text-black mb-0" style="font-size: 16px;"><strong>Backup Settings</strong></p>
+                                <p class="mb-0" style="font-size: 16px;">Automated data backup configuration</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
                                style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
@@ -645,8 +645,8 @@ if (!isset($_SESSION['user_id'])) {
                         <!-- Security Policies -->
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Security Policies</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
+                                <p class="text-black mb-0" style="font-size: 16px;"><strong>Security Policies</strong></p>
+                                <p class="mb-0" style="font-size: 16px;">Password and access requirements</p>
                             </div>
                             <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
                                style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
@@ -660,15 +660,15 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="settings-card d-flex flex-column h-100">
                         <div class="settings-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
+                                <p class="text-black" style="font-size: 16px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 16px;">Current engagement distribution</p>
                             </div>
                         </div>
 
                         <div class="mb-4"></div>
 
                         <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
+                            <div style="font-size: 16px;">
                                 <i class="bi bi-check2-circle text-success"></i>
                                 Database Status
                             </div>
@@ -681,7 +681,7 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="mb-2"></div>
 
                         <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
+                            <div style="font-size: 16px;">
                                 <i class="bi bi-check2-circle text-success"></i>
                                 API Status
                             </div>
@@ -694,7 +694,7 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="mb-2"></div>
 
                         <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
+                            <div style="font-size: 16px;">
                                 <i class="bi bi-exclamation-circle text-warning"></i>
                                 Storage Usage
                             </div>
