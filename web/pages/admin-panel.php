@@ -281,8 +281,8 @@ if (!isset($_SESSION['user_id'])) {
                     <p>Manage user accounts, roles, and permissions</p>
                 </div>
                 <div class="user-management-buttons">
-                    <a class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"><i class="bi bi-upload me-3"></i>Import Users</a>
-                    <a class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);"><i class="bi bi-person-plus me-3"></i>Add User</a>
+                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"><i class="bi bi-upload me-3"></i>Import Users</a>
+                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);"><i class="bi bi-person-plus me-3"></i>Add User</a>
                 </div>
             </div>
 
