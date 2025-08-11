@@ -414,7 +414,7 @@ if (!isset($_SESSION['user_id'])) {
 
                 <div class="activity-card d-flex justify-content-between">
                     <div class="activity-icon-container">
-                        <div class="activity-icon" style="color:rgb(243,132,48); font-size: 16px; margin-top: -40px; margin-right: -35px !important;">
+                        <div class="activity-icon" style="color:rgb(243,132,48); font-size: 16px; margin-top: -40px; margin-left: 35px !important;">
                             <i class="bi bi-database"></i>
                         </div>
                     </div>
