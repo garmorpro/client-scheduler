@@ -543,7 +543,7 @@ $result = mysqli_query($conn, $sql);
                     </div>
 
                     <div class="d-flex justify-content-between pb-2">
-                      <div class="reports-card text-center" style="margin-top: 15px;">
+                      <div class="reports-card text-center" style="margin-top: 15px !important;">
                         <i class="bi bi-graph-up-arrow fs-3"></i>
                         <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
                         <div class="analytic-subtitle">Staff and engagement utilization</div>
