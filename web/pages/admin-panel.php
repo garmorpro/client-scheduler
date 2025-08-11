@@ -1369,9 +1369,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               // Set engagement details
               setText('view_engagement_client_name', engagement.client_name);
               setText('view_client_name', engagement.client_name);
-              setText('view_engagement_team_size', engagement.assigned_user_count);
-              setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
-              setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hours');
+              setText('view_engagement_team_size', engagement.assigned_user_count + ' members');
+              setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
+              setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
               setText('view_engagement_notes', engagement.notes);
           
               // Handle status text and badge class
