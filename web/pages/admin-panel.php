@@ -484,121 +484,161 @@ if (!isset($_SESSION['user_id'])) {
 
 
         <div id="tab-activity" class="tab-content d-none">
-            <div class="activity-header">
-                <div class="titles">
-                    <p class="text-black"><strong>System Activity Log</strong></p>
-                    <p>Recent system events and user activities</p>
-                </div>
-            </div>
+  <div class="activity-header mb-3">
+    <div class="titles">
+      <p class="text-black"><strong>System Activity Log</strong></p>
+      <p>Recent system events and user activities</p>
+    </div>
+  </div>
 
-
-            <!-- Example activity card -->
-            <div class="activity-card d-flex justify-content-between">
-              <!-- Left: Icon -->
-                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
-                    <div class="activity-icon" style="color:rgb(92,141,253); font-size: 14px; height: 10px;">
-                        <i class="bi bi-shield"></i>
-                    </div>
-                </div>
-
-              <!-- Center: Description -->
-              <div class="flex-grow-1 mx-3">
-                <div class="activity-title fw-semibold mb-1">User Login</div>
-                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
-                  By: Sarah Senior
-                </div>
-                <div class="activity-sub text-black" style="font-size: 0.9rem;">
-                  Successful login from 192.168.1.100
-                </div>
-              </div>
-
-              <!-- Right: Timestamp -->
-              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
-                1/7/2025, 2:30:00 PM
-              </div>
-            </div>
-
-            <!-- Example activity card -->
-            <div class="activity-card d-flex justify-content-between">
-              <!-- Left: Icon -->
-                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
-                    <div class="activity-icon" style="color:rgb(79,198,96); font-size: 14px; height: 10px;">
-                        <i class="bi bi-file-earmark-text"></i>
-                    </div>
-                </div>
-
-              <!-- Center: Description -->
-              <div class="flex-grow-1 mx-3">
-                <div class="activity-title fw-semibold mb-1">Project Created</div>
-                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
-                  By: John Manager
-                </div>
-                <div class="activity-sub text-black" style="font-size: 0.9rem;">
-                  Created project: ABC Corp Q1 Audit
-                </div>
-              </div>
-
-              <!-- Right: Timestamp -->
-              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
-                1/7/2025, 2:30:00 PM
-              </div>
-            </div>
-
-            <!-- Example activity card -->
-            <div class="activity-card d-flex justify-content-between">
-              <!-- Left: Icon -->
-                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
-                    <div class="activity-icon" style="color:rgb(161,77,253); font-size: 14px; height: 10px;">
-                        <i class="bi bi-people"></i>
-                    </div>
-                </div>
-
-              <!-- Center: Description -->
-              <div class="flex-grow-1 mx-3">
-                <div class="activity-title fw-semibold mb-1">User Role Updated</div>
-                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
-                  By: Admin
-                </div>
-                <div class="activity-sub text-black" style="font-size: 0.9rem;">
-                  Changed Mike Staff role from Staff to Senior
-                </div>
-              </div>
-
-              <!-- Right: Timestamp -->
-              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
-                1/7/2025, 2:30:00 PM
-              </div>
-            </div>
-
-            <!-- Example activity card -->
-            <div class="activity-card d-flex justify-content-between">
-              <!-- Left: Icon -->
-                <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 16x; height: 16px; margin-top: -40px; margin-right: -15px;">
-                    <div class="activity-icon" style="color:rgb(243, 132, 48); font-size: 14px; height: 10px;">
-                        <i class="bi bi-people"></i>
-                    </div>
-                </div>
-
-              <!-- Center: Description -->
-              <div class="flex-grow-1 mx-3">
-                <div class="activity-title fw-semibold mb-1">System Backup</div>
-                <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">
-                  By: System
-                </div>
-                <div class="activity-sub text-black" style="font-size: 0.9rem;">
-                  Automated daily backup completed successfully
-                </div>
-              </div>
-
-              <!-- Right: Timestamp -->
-              <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">
-                1/7/2025, 2:30:00 PM
-              </div>
-            </div>
-
-
-
+  <div id="activity-list">
+    <!-- All activity cards here (hidden by default, JS shows 3 per page) -->
+    <div class="activity-card d-flex justify-content-between">
+      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
+        <div class="activity-icon" style="color:rgb(92,141,253); font-size: 24px;">
+          <i class="bi bi-shield"></i>
         </div>
+      </div>
+      <div class="flex-grow-1 mx-3">
+        <div class="activity-title fw-semibold mb-1">User Login</div>
+        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Sarah Senior</div>
+        <div class="activity-sub text-black" style="font-size: 0.9rem;">Successful login from 192.168.1.100</div>
+      </div>
+      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+    </div>
+
+    <div class="activity-card d-flex justify-content-between">
+      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
+        <div class="activity-icon" style="color:rgb(79,198,96); font-size: 24px;">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+      </div>
+      <div class="flex-grow-1 mx-3">
+        <div class="activity-title fw-semibold mb-1">Project Created</div>
+        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: John Manager</div>
+        <div class="activity-sub text-black" style="font-size: 0.9rem;">Created project: ABC Corp Q1 Audit</div>
+      </div>
+      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+    </div>
+
+    <div class="activity-card d-flex justify-content-between">
+      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
+        <div class="activity-icon" style="color:rgb(161,77,253); font-size: 24px;">
+          <i class="bi bi-people"></i>
+        </div>
+      </div>
+      <div class="flex-grow-1 mx-3">
+        <div class="activity-title fw-semibold mb-1">User Role Updated</div>
+        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: Admin</div>
+        <div class="activity-sub text-black" style="font-size: 0.9rem;">Changed Mike Staff role from Staff to Senior</div>
+      </div>
+      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+    </div>
+
+    <div class="activity-card d-flex justify-content-between">
+      <div class="activity-icon-container d-flex flex-column align-items-start" style="flex-shrink: 0; width: 48px;">
+        <div class="activity-icon" style="color:rgb(243, 132, 48); font-size: 24px;">
+          <i class="bi bi-people"></i>
+        </div>
+      </div>
+      <div class="flex-grow-1 mx-3">
+        <div class="activity-title fw-semibold mb-1">System Backup</div>
+        <div class="activity-sub text-muted mb-1" style="font-size: 0.8rem;">By: System</div>
+        <div class="activity-sub text-black" style="font-size: 0.9rem;">Automated daily backup completed successfully</div>
+      </div>
+      <div class="text-muted small flex-shrink-0" style="min-width: 130px; text-align: right;">1/7/2025, 2:30:00 PM</div>
+    </div>
+  </div>
+
+  <!-- Pagination controls -->
+  <nav aria-label="Activity pagination" class="mt-3">
+    <ul class="pagination justify-content-center" id="activity-pagination">
+      <!-- JS will inject page buttons here -->
+    </ul>
+  </nav>
+</div>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const cardsPerPage = 3;
+    const activityList = document.getElementById('activity-list');
+    const cards = activityList.querySelectorAll('.activity-card');
+    const pagination = document.getElementById('activity-pagination');
+
+    let currentPage = 1;
+    const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+    function showPage(page) {
+      currentPage = page;
+      // Hide all cards
+      cards.forEach(card => card.style.display = 'none');
+      // Show only cards for current page
+      const start = (page - 1) * cardsPerPage;
+      const end = start + cardsPerPage;
+      for(let i = start; i < end && i < cards.length; i++) {
+        cards[i].style.display = 'flex';
+      }
+      updatePagination();
+    }
+
+    function updatePagination() {
+      pagination.innerHTML = '';
+
+      // Prev button
+      const prevLi = document.createElement('li');
+      prevLi.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+      const prevLink = document.createElement('a');
+      prevLink.className = 'page-link';
+      prevLink.href = '#';
+      prevLink.innerText = 'Previous';
+      prevLink.addEventListener('click', e => {
+        e.preventDefault();
+        if (currentPage > 1) showPage(currentPage - 1);
+      });
+      prevLi.appendChild(prevLink);
+      pagination.appendChild(prevLi);
+
+      // Page number buttons
+      for(let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = 'page-item ' + (i === currentPage ? 'active' : '');
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = '#';
+        a.innerText = i;
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          showPage(i);
+        });
+        li.appendChild(a);
+        pagination.appendChild(li);
+      }
+
+      // Next button
+      const nextLi = document.createElement('li');
+      nextLi.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+      const nextLink = document.createElement('a');
+      nextLink.className = 'page-link';
+      nextLink.href = '#';
+      nextLink.innerText = 'Next';
+      nextLink.addEventListener('click', e => {
+        e.preventDefault();
+        if (currentPage < totalPages) showPage(currentPage + 1);
+      });
+      nextLi.appendChild(nextLink);
+      pagination.appendChild(nextLi);
+    }
+
+    // Initialize
+    showPage(1);
+  });
+</script>
+
+
+
+
 
         <div id="tab-analytics" class="tab-content d-none">
             <div class="p-4 bg-white border rounded">Analytics content here...</div>
