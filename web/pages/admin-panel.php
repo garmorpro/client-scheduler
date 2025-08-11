@@ -158,16 +158,47 @@ if (!isset($_SESSION['user_id'])) {
     color: #666;
   }
 
-  .stat-title {
-  font-size: 0.9rem;
-  color: #555;
+ 
+  
+  .stat-card {
+  position: relative;         /* needed for absolute icon */
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e5e5e5;
+}
+
+.card-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  background: #f6f6f7;        /* subtle grey circle */
+  color: #111;
+  font-size: 1.05rem;
+  box-shadow: none;
 }
-.stat-title i {
-  font-size: 1rem;
-  align-items: right;
+
+.stat-title {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.stat-sub {
+  font-size: 0.8rem;
+  color: #888;
 }
 </style>
 
@@ -186,15 +217,16 @@ if (!isset($_SESSION['user_id'])) {
   <!-- Stat cards -->
 <div class="row g-3">
   <div class="col-md-3">
-    <div class="stat-card">
-      <div class="stat-title">
-        <i class="bi bi-people-fill text-primary"></i>
-        Total Users
-      </div>
-      <div class="stat-value">45</div>
-      <div class="stat-sub">+7 this month</div>
+  <div class="stat-card">
+    <div class="card-icon">
+      <i class="bi bi-people-fill"></i>
     </div>
+
+    <div class="stat-title">Total Users</div>
+    <div class="stat-value">45</div>
+    <div class="stat-sub">+7 this month</div>
   </div>
+</div>
   <div class="col-md-3">
     <div class="stat-card">
       <div class="stat-title">
