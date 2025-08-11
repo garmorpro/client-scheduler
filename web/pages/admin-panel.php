@@ -148,8 +148,9 @@ $result = mysqli_query($conn, $sql);
                                 <td class="table-actions">
                                     <i class="bi bi-eye overlay-red"></i>
                                     <a href="#" class="edit-user-btn" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
-                                        <i class="bi bi-pencil overlay-red"></i>
+                                      <i class="bi bi-pencil overlay-red"></i>
                                     </a>
+
                                     <i class="bi bi-trash overlay-red"></i>
                                 </td>
                             </tr>
@@ -795,19 +796,20 @@ if ($result && $result->num_rows > 0) {
 
       const user = await response.json();
 
-      // Populate form fields
-      updateUserForm.user_id.value = user.user_id;
-      updateUserForm.first_name.value = user.first_name;
-      updateUserForm.last_name.value = user.last_name;
-      updateUserForm.email.value = user.email;
-      updateUserForm.role.value = user.role;
-      updateUserForm.status.value = user.status;
+      // Populate form fields using querySelector for accuracy
+      updateUserForm.querySelector('#update_user_id').value = user.user_id;
+      updateUserForm.querySelector('#update_first_name').value = user.first_name;
+      updateUserForm.querySelector('#update_last_name').value = user.last_name;
+      updateUserForm.querySelector('#update_email').value = user.email;
+      updateUserForm.querySelector('#update_role').value = user.role;
+      updateUserForm.querySelector('#update_status').value = user.status;
     } catch (error) {
       console.error('Failed to load user data:', error);
-      // Optionally, close modal or show an error message
+      // Optionally show an alert or close modal here
     }
   });
 });
+
 
 </script>
 
