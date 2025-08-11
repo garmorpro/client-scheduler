@@ -299,11 +299,11 @@ if (!isset($_SESSION['user_id'])) {
         }
 
 
-        .overlay-gray {
+        .overlay-red {
             position: relative; /* make positioning context for the overlay */
         }
         
-        .overlay-gray::after {
+        .overlay-red::after {
             content: "";
             position: absolute;
             top: 0;
@@ -329,7 +329,7 @@ if (!isset($_SESSION['user_id'])) {
         <!-- Stat cards -->
         <div class="row g-3">
             <div class="col-md-3">
-                <div class="stat-card overlay-gray">
+                <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-people"></i></div>
                     <div class="stat-title">Total Users</div>
                     <div class="stat-value">45</div>
@@ -337,7 +337,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
+                <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
                     <div class="stat-title">Active Projects</div>
                     <div class="stat-value">12</div>
@@ -345,7 +345,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
+                <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
                     <div class="stat-title">System Utilization</div>
                     <div class="stat-value">87%</div>
@@ -353,7 +353,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
+                <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-clock-history"></i></div>
                     <div class="stat-title">Total Hours</div>
                     <div class="stat-value">4,580</div>
@@ -371,7 +371,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <!-- Tab Content -->
-        <div id="tab-users" class="tab-content">
+        <div id="tab-users" class="tab-content overlay-red">
             <div class="user-management-header">
                 <div class="titles">
                     <p class="text-black"><strong>User Management</strong></p>
