@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Bind params with correct types:
         // i = int, i = int, s = string (date), d = double, s = string
-        $stmt->bind_param('i i s d s', $employeeId, $clientId, $weekStart, $hours, $status);
+        $stmt->bind_param('iisds', $employeeId, $clientId, $weekStart, $hours, $status);
 
         if ($stmt->execute()) {
             $successCount++;
