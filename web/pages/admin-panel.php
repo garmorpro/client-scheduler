@@ -70,7 +70,7 @@ $result = mysqli_query($conn, $sql);
                     <div class="stat-title">Engagement Status</div>
                     <div class="stat-value">12</div>
                     <div class="util-bar mt-2"><div class="util-bar-fill" style="width:87%"></div></div>
-                    <div class="stat-sub">16 unassigned</div>
+                    <div class="stat-sub mt-2">16 unassigned</div>
                 </div>
             </div>
             <div class="col-md-3">
