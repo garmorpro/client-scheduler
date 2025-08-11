@@ -23,8 +23,8 @@ if (!isset($_SESSION['user_id'])) {
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .admin-icon {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       background-color: #f0f0f0;
       border-radius: 50%;
       display: flex;
@@ -32,7 +32,7 @@ if (!isset($_SESSION['user_id'])) {
       justify-content: center;
       margin: 0 auto 1rem auto;
     }
-    .admin-icon svg {
+    .admin-icon img {
       width: 24px;
       height: 24px;
       color: #2c2c2c;
