@@ -128,7 +128,7 @@ $result = mysqli_query($conn, $sql);
                                 </td>
                                 <td>
                                     <span class="badge-role">
-                                        <?php echo htmlspecialchars($row['role']); ?>
+                                        <?php echo ucfirst(htmlspecialchars($row['role'])); ?>
                                     </span>
                                 </td>
                                 <td>
