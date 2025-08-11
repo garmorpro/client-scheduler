@@ -22,58 +22,95 @@ $errors = [];
 $successCount = 0;
 
 if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
-    $rowNum = 0;
-    // Read header row and verify columns if you want here (optional)
+    $rowNum = 1; // Start with 1 for header row
+
+    // Read header row
     $header = fgetcsv($handle, 1000, ",");
-    $expectedHeaders = ['first_name', 'last_name', 'email', 'role'];
-    $headerLower = array_map('strtolower', $header);
-    if (array_diff($expectedHeaders, $headerLower)) {
+    if (!$header) {
         http_response_code(400);
-        echo json_encode(['error' => 'CSV headers do not match expected format.', 'expected' => $expectedHeaders, 'found' => $header]);
-        fclose($handle);
+        echo json_encode(['error' => 'Failed to read CSV header']);
         exit();
     }
 
+    $expectedHeaders = ['first_name', 'last_name', 'email', 'role'];
+    $headerLower = array_map('strtolower', $header);
+
+    // Map expected columns to their indexes in CSV
+    $headerIndexes = [];
+    foreach ($expectedHeaders as $colName) {
+        $pos = array_search($colName, $headerLower);
+        if ($pos === false) {
+            http_response_code(400);
+            echo json_encode(['error' => "CSV missing expected column: $colName"]);
+            fclose($handle);
+            exit();
+        }
+        $headerIndexes[$colName] = $pos;
+    }
+
+    // Prepare default password hash once
+    $defaultPasswordHash = password_hash("change_me", PASSWORD_DEFAULT);
+
+    // Loop through each data row
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         $rowNum++;
-        // Map columns by header index to allow flexible column order
+
+        // Skip empty rows
+        if (count(array_filter($data)) === 0) {
+            continue;
+        }
+
+        // Map CSV columns dynamically by header
         $rowAssoc = [];
-        foreach ($expectedHeaders as $index => $colName) {
-            $rowAssoc[$colName] = $data[$index] ?? '';
+        foreach ($expectedHeaders as $colName) {
+            $rowAssoc[$colName] = isset($data[$headerIndexes[$colName]]) ? trim($data[$headerIndexes[$colName]]) : '';
         }
 
         // Validate required fields
         if (empty($rowAssoc['first_name']) || empty($rowAssoc['last_name']) || empty($rowAssoc['email']) || empty($rowAssoc['role'])) {
-            $errors[] = ['row' => $rowNum + 1, 'message' => 'Missing required fields.'];
+            $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields.'];
             continue;
         }
         if (!filter_var($rowAssoc['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = ['row' => $rowNum + 1, 'message' => 'Invalid email address.'];
+            $errors[] = ['row' => $rowNum, 'message' => 'Invalid email address.'];
             continue;
         }
-        // Optional: check if role is allowed here, e.g. in ['admin', 'manager', 'staff']
+
+        // Optional: Validate role against allowed values
+        $allowedRoles = ['admin', 'manager', 'senior', 'staff'];
+        if (!in_array(strtolower($rowAssoc['role']), $allowedRoles)) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Invalid role. Allowed: ' . implode(', ', $allowedRoles)];
+            continue;
+        }
 
         // Check for duplicate email in DB
         $dupCheck = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
+        if (!$dupCheck) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
+            continue;
+        }
         $dupCheck->bind_param("s", $rowAssoc['email']);
         $dupCheck->execute();
         $dupCheck->store_result();
         if ($dupCheck->num_rows > 0) {
-            $errors[] = ['row' => $rowNum + 1, 'message' => 'Email already exists in database.'];
+            $errors[] = ['row' => $rowNum, 'message' => 'Email already exists in database.'];
             $dupCheck->close();
             continue;
         }
         $dupCheck->close();
 
-        // Insert user with default password hash
+        // Insert user
         $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, role, status, password) VALUES (?, ?, ?, ?, 'active', ?)");
-        $defaultPasswordHash = password_hash("change_me", PASSWORD_DEFAULT);
+        if (!$stmt) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Prepare statement failed: ' . $conn->error];
+            continue;
+        }
         $stmt->bind_param("sssss", $rowAssoc['first_name'], $rowAssoc['last_name'], $rowAssoc['email'], $rowAssoc['role'], $defaultPasswordHash);
 
         if ($stmt->execute()) {
             $successCount++;
         } else {
-            $errors[] = ['row' => $rowNum + 1, 'message' => 'Database insert error.'];
+            $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
         }
         $stmt->close();
     }
