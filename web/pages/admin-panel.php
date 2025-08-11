@@ -256,7 +256,7 @@ if ($result && $result->num_rows > 0) {
         echo '
         <div class="activity-card d-flex justify-content-between">
             <div class="activity-icon-container">
-                <div class="activity-icon" style="color:'.$color.'; font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
+                <div class="activity-icon" style="color:'.$color.'; font-size: 18px; margin-top: -45px; margin-left: 15px !important;">
                     <i class="bi '.$icon.'"></i>
                 </div>
             </div>
