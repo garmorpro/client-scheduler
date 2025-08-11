@@ -193,13 +193,18 @@ if ($result && $result->num_rows > 0) {
                 $color = 'rgb(220,53,69)'; // red
                 break;
 
-            case 'success_login':
+            case 'successful_login':
                 $icon = 'bi-shield';
                 $color = 'rgb(40,167,69)'; // green
                 break;
 
-            case 'engagement_created':
+            case 'assignment_created':
                 $icon = 'bi-file-earmark-text';
+                $color = 'rgb(40,167,69)'; // green
+                break;
+
+            case 'engagement_created':
+                $icon = 'bi-building-check';
                 $color = 'rgb(40,167,69)'; // green
                 break;
 
