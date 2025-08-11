@@ -553,8 +553,28 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="d-flex justify-content-between pb-2">
                             <div class="reports-card">
                                 <i class="bi bi-graph-up-arrow"></i>
-                                <div class="analytic-title">User Activity Overview</div>
-                                <div class="analytic-subtitle">Active vs Inactive users</div>
+                                <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
+                                <div class="analytic-subtitle">Staff and engagement utilization</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    </div>
+                        <div class="d-flex justify-content-between pb-2">
+                            <div class="reports-card">
+                                <i class="bi bi-people"></i>
+                                <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
+                                <div class="analytic-subtitle">Login and engagement metrics</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    </div>
+                        <div class="d-flex justify-content-between pb-2">
+                            <div class="reports-card">
+                                <i class="bi bi-clock"></i>
+                                <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
+                                <div class="analytic-subtitle">Hours and productivity analysis</div>
                             </div>
                             
                         </div>
