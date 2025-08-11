@@ -21,7 +21,7 @@ $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
 
-$sql = "SELECT id, first_name, last_name, email, role, status, last_active 
+$sql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
         FROM users 
         ORDER BY last_active DESC";
 $result = mysqli_query($conn, $sql);
@@ -105,6 +105,7 @@ $result = mysqli_query($conn, $sql);
                     </a>
                 </div>
             </div>
+            
 
             <div class="user-table">
                 <table id="user-table" class="table table-hover mb-0">
