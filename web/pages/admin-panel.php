@@ -302,7 +302,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     </td>
                                     <td>
                                         <?php
-                                        $status = strtolower($row['status']);
+                                        $status = strtolower($E_row['status']);
                                         switch ($status) {
                                             case 'confirmed':
                                                 $badgeClass = 'badge-confirmed';   // e.g., green badge
@@ -318,9 +318,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                                 break;
                                         }
                                         ?>
-                                        
+
                                         <span class="badge-status <?php echo $badgeClass; ?>">
-                                            <?php echo ucfirst(str_replace('_', ' ', $row['status'])); ?>
+                                            <?php echo ucfirst(str_replace('_', ' ', $E_row['status'])); ?>
                                         </span>
 
                                     </td>
