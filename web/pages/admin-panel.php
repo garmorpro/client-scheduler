@@ -239,7 +239,7 @@ if (!isset($_SESSION['user_id'])) {
 
         .analytic-card {
             position: relative;
-            /* height: 140px; */
+            height: 350px;
             background: #fff;
             border-radius: 12px;
             padding: 1.5rem;
