@@ -24,7 +24,7 @@ $newUsers = $newUsersRow['recent'];
 
 $sql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
         FROM users 
-        ORDER BY first_name DESC";
+        ORDER BY first_name ASC";
 $result = mysqli_query($conn, $sql);
 
 ?>
