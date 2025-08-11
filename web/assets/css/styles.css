@@ -278,3 +278,19 @@ body {
     pointer-events: none; /* so clicks pass through if needed */
     border-radius: inherit; /* match card’s rounded corners */
 }
+
+
+.bg-purple {
+        background-color: #6f42c1 !important;
+        color: white;
+    }
+    #engagement-status-select {
+  transition: opacity 0.2s ease;
+}
+
+.header-buttons { 
+    font-size: 14px !important;
+    margin-left: 10px;
+    min-width: 120px;
+    font-weight: 600;
+}

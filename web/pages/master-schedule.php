@@ -92,6 +92,8 @@ while ($row = $result->fetch_assoc()) {
     <title>Master Schedule</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    
     <style>
       body {
         font-size: 14px !important;
@@ -322,23 +324,6 @@ function openEmployeeModal(employeeId) {
 
 
     </script>
-
-    <style>
-    .bg-purple {
-        background-color: #6f42c1 !important;
-        color: white;
-    }
-    #engagement-status-select {
-  transition: opacity 0.2s ease;
-}
-
-.header-buttons { 
-    font-size: 14px !important;
-    margin-left: 10px;
-    min-width: 120px;
-    font-weight: 600;
-}
-</style>
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -349,7 +334,7 @@ function openEmployeeModal(employeeId) {
         <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
     </div>
     <div class="header-buttons">
-        <a href="master_schedule.php" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+        <a href="master_schedule.php" class="badge text-black p-2 text-decoration-none fw-medium overlay-red me-1" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
             <i class="bi bi-arrow-clockwise me-1"></i> Refresh
         </a>
         <a href="new_engagement.php" class="badge text-white p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; background-color: rgb(3,2,18);">
