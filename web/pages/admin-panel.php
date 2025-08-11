@@ -1341,45 +1341,75 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- view engagement modal ajax -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const viewEngagementModal = document.getElementById('viewEngagementModal');
-
-        viewEngagementModal.addEventListener('show.bs.modal', async (event) => {
-          const button = event.relatedTarget;
-          const engagementId = button.getAttribute('data-engagement-id');
-          if (!engagementId) return;
-
-          try {
-            const response = await fetch(`get_engagements.php?engagement_id=${encodeURIComponent(engagementId)}`);
-            if (!response.ok) throw new Error('Network response was not ok');
-
-            const engagement = await response.json();
-
-            function setText(id, text) {
-              const el = document.getElementById(id);
-              if (!el) {
-                console.warn(`Element with ID "${id}" not found.`);
-                return;
+          const viewEngagementModal = document.getElementById('viewEngagementModal');
+            
+          viewEngagementModal.addEventListener('show.bs.modal', async (event) => {
+            const button = event.relatedTarget;
+            const engagementId = button.getAttribute('data-engagement-id');
+            if (!engagementId) return;
+        
+            try {
+              const response = await fetch(`get_engagements.php?engagement_id=${encodeURIComponent(engagementId)}`);
+              if (!response.ok) throw new Error('Network response was not ok');
+            
+              const engagement = await response.json();
+            
+              function setText(id, text) {
+                const el = document.getElementById(id);
+                if (!el) {
+                  console.warn(`Element with ID "${id}" not found.`);
+                  return;
+                }
+                el.textContent = (text && text.toString().trim()) ? text : '-';
               }
-              el.textContent = (text && text.toString().trim()) ? text : '-';
+          
+              function formatHours(hours) {
+                return hours ? parseInt(hours, 10) : 0;
+              }
+          
+              // Set engagement details
+              setText('view_engagement_client_name', engagement.client_name);
+              setText('view_client_name', engagement.client_name);
+              setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
+              setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
+              setText('view_engagement_notes', engagement.notes);
+          
+              // Handle status text and badge class
+              const statusEl = document.getElementById('view_engagement_status');
+              if (statusEl) {
+                // Clean previous badge classes
+                statusEl.classList.remove('badge-confirmed', 'badge-pending', 'badge-not-confirmed', 'badge-default');
+            
+                // Normalize status for comparison
+                const statusNormalized = engagement.status.toLowerCase();
+            
+                // Map status to badge classes
+                let badgeClass = 'badge-default'; // default fallback
+                switch (statusNormalized) {
+                  case 'confirmed':
+                    badgeClass = 'badge-confirmed';   // green or whatever you define
+                    break;
+                  case 'pending':
+                    badgeClass = 'badge-pending';     // yellow
+                    break;
+                  case 'not_confirmed':
+                    badgeClass = 'badge-not-confirmed'; // red
+                    break;
+                }
+            
+                // Add the badge class
+                statusEl.classList.add(badgeClass);
+            
+                // Set formatted status text
+                statusEl.textContent = engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+              }
+          
+            } catch (error) {
+              console.error('Failed to load engagement data:', error);
             }
-
-            // Format hours to integer (like your 400, not 400.00)
-            function formatHours(hours) {
-              return hours ? parseInt(hours, 10) : 0;
-            }
-
-            setText('view_engagement_client_name', engagement.client_name);
-            setText('view_client_name', engagement.client_name);
-            setText('view_engagement_status', engagement.status.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()));
-            setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hours');
-            setText('view_engagement_assigned_hours', formatHours(engagement.total_assigned_hours) + ' hours');
-            setText('view_engagement_notes', engagement.notes);
-
-          } catch (error) {
-            console.error('Failed to load engagement data:', error);
-          }
+          });
         });
-      });
+
     </script>
 <!-- end view engagement modal ajax -->
 
