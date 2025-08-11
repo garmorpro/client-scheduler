@@ -23,8 +23,8 @@ if (!isset($_SESSION['user_id'])) {
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .admin-icon {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       background-color: #f0f0f0;
       border-radius: 50%;
       display: flex;
@@ -60,10 +60,10 @@ if (!isset($_SESSION['user_id'])) {
     <p class="text-muted mb-4">Welcome back, <?php echo $_SESSION['first_name']; ?>. As an administrator, you have access to the enhanced admin dashboard.</p>
 
     <div class="admin-card">
-      <!-- <div class="admin-icon"> -->
+      <div class="admin-icon">
         <!-- Shield icon (Bootstrap Icon) -->
         <i class="bi bi-shield"></i>
-      <!-- </div> -->
+      </div>
       <h5 class="fw-bold">Administrator Access</h5>
       <p class="text-muted mb-5">Access advanced system management, user administration, and detailed analytics.</p>
       <button class="admin-btn mt-2">Go to Admin Dashboard</button>
