@@ -553,7 +553,7 @@ function openEmployeeModal(employeeId) {
 <div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="engagementForm" action="create_engagement.php" method="POST">
+      <form id="engagementForm" action="add_engagement.php" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="engagementModalLabel">Add Engagement</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
