@@ -680,11 +680,11 @@ if ($result && $result->num_rows > 0) {
                     </h6>
                     <p class="text-muted">
                       <strong>Created:</strong>
-                      <span id="view_acct_created" class="d-inline-block text-end" style="min-width: 60%;"></span>
+                      <span id="view_acct_created" class="d-inline-block text-end" style="min-width: 75%;"></span>
                     </p>
                     <p class="text-muted">
                         <strong>Last Active:</strong> 
-                        <span id="view_acct_last_active" class="d-inline-block text-end" style="min-width: 60%;"></span>
+                        <span id="view_acct_last_active" class="d-inline-block text-end" style="min-width: 75%;"></span>
                     </p>
                     <p class="text-muted">
                         <strong>Status:</strong> 
