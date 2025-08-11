@@ -657,41 +657,41 @@ if ($result && $result->num_rows > 0) {
             </div>
 
             <div class="row mt-3">
-  <div class="col-md-6">
-    <h6>
-      <i class="bi bi-envelope"></i> Personal Information
-    </h6>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">First Name:</strong>
-      <span id="view_first_name_detail" style="float: right;"></span>
-    </p>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">Last Name:</strong>
-      <span id="view_last_name_detail" style="float: right;"></span>
-    </p>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">Email:</strong>
-      <span id="view_email_detail" style="float: right;"></span>
-    </p>
-  </div>
-  <div class="col-md-6">
-    <h6>
-      <i class="bi bi-person-lock"></i> Account Details
-    </h6>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">Created:</strong>
-      <span id="view_acct_created" style="float: right;"></span>
-    </p>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">Last Active:</strong>
-      <span id="view_acct_last_active" style="float: right;"></span>
-    </p>
-    <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left;">Status:</strong>
-      <span id="view_acct_status" style="float: right;"></span>
-    </p>
-  </div>
-</div>
+              <div class="col-md-6">
+                <h6>
+                  <i class="bi bi-envelope"></i> Personal Information
+                </h6>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">First Name:</strong>
+                  <span id="view_first_name_detail" style="float: right;"></span>
+                </p>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">Last Name:</strong>
+                  <span id="view_last_name_detail" style="float: right;"></span>
+                </p>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">Email:</strong>
+                  <span id="view_email_detail" style="float: right;"></span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h6>
+                  <i class="bi bi-person-lock"></i> Account Details
+                </h6>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">Created:</strong>
+                  <span id="view_acct_created" style="float: right;"></span>
+                </p>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">Last Active:</strong>
+                  <span id="view_acct_last_active" style="float: right;"></span>
+                </p>
+                <p class="text-muted" style="overflow: hidden;">
+                  <strong style="float: left;">Status:</strong>
+                  <span id="view_acct_status" style="float: right;"></span>
+                </p>
+              </div>
+            </div>
 
             <hr>
 
@@ -912,7 +912,7 @@ if ($result && $result->num_rows > 0) {
 
 <!-- view user modal ajax -->
     <script>
-       document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const viewUserModal = document.getElementById('viewUserModal');
 
   viewUserModal.addEventListener('show.bs.modal', async (event) => {
@@ -928,25 +928,29 @@ if ($result && $result->num_rows > 0) {
 
       function setText(id, text) {
         const el = document.getElementById(id);
-        if (el) el.textContent = text;
-        else console.warn(`Element with ID "${id}" not found.`);
+        if (!el) {
+          console.warn(`Element with ID "${id}" not found.`);
+          return;
+        }
+        // Show '-' if text is null, undefined, empty string, or only whitespace
+        el.textContent = (text && text.toString().trim()) ? text : '-';
       }
 
       function formatDate(dateString) {
-        if (!dateString) return '';
+        if (!dateString) return '-';
         const d = new Date(dateString);
-        if (isNaN(d)) return ''; // invalid date
+        if (isNaN(d)) return '-'; // invalid date
         const month = d.getMonth() + 1; // months are 0-based
         const day = d.getDate();
         const year = d.getFullYear();
         return `${month}/${day}/${year}`;
       }
 
-      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
-      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
+      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
+      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
       setText('view_user_initials', firstInitial + lastInitial);
 
-      setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
+      setText('view_user_fullname', `${user.first_name || '-'} ${user.last_name || '-'}`);
       setText('view_email', user.email);
       setText('view_user_role', user.role);
 
@@ -976,10 +980,8 @@ if ($result && $result->num_rows > 0) {
     }
   });
 });
+</script>
 
-
-
-    </script>
 
 <!-- end view user modal ajax -->
 
