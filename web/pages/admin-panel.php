@@ -100,8 +100,7 @@ $result = mysqli_query($conn, $sql);
                     <a href="#" class="badge text-black p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                         <i class="bi bi-upload me-3"></i>Import Users
                     </a>
-                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium overlay-red" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" 
-   data-bs-target="#addUserModal">
+                    <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="bi bi-person-plus me-3"></i>Add User
                     </a>
                 </div>
