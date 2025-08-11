@@ -642,6 +642,18 @@ if ($result && $result->num_rows > 0) {
           </div>
           <div class="modal-body">
 
+            <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px;">
+              <div id="view_user_initials" 
+                   class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" 
+                   style="width: 36px; height: 36px; font-weight: 700; font-size: 18px;">
+                <!-- Initials will go here -->
+              </div>
+              <div>
+                <div id="view_user_fullname" class="fw-semibold"></div>
+                <small id="view_user_role" class="text-muted text-capitalize"></small>
+              </div>
+            </div>
+
             <p><strong>First Name:</strong> <span id="view_first_name"></span></p>
             <p><strong>Last Name:</strong> <span id="view_last_name"></span></p>
             <p><strong>Email:</strong> <span id="view_email"></span></p>
@@ -854,25 +866,37 @@ if ($result && $result->num_rows > 0) {
           const viewUserModal = document.getElementById('viewUserModal');
 
           viewUserModal.addEventListener('show.bs.modal', async (event) => {
-            const button = event.relatedTarget;
-            const userId = button.getAttribute('data-user-id');
-            if (!userId) return;
-        
-            try {
-              const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-              if (!response.ok) throw new Error('Network response was not ok');
-              const user = await response.json();
+              const button = event.relatedTarget;
+              const userId = button.getAttribute('data-user-id');
+              if (!userId) return;
+
+              try {
+                const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
             
-              document.getElementById('view_first_name').textContent = user.first_name || '';
-              document.getElementById('view_last_name').textContent = user.last_name || '';
-              document.getElementById('view_email').textContent = user.email || '';
-              document.getElementById('view_role').textContent = user.role || '';
-              document.getElementById('view_status').textContent = user.status || '';
-            } catch (error) {
-              console.error('Failed to load user data:', error);
-              // Optional: show an error or close the modal
-            }
-          });
+                const user = await response.json();
+            
+                // Set initials
+                const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
+                const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
+                document.getElementById('view_user_initials').textContent = firstInitial + lastInitial;
+            
+                // Set fullname and role
+                document.getElementById('view_user_fullname').textContent = `${user.first_name} ${user.last_name}`;
+                document.getElementById('view_user_role').textContent = user.role;
+            
+                // Set other info
+                document.getElementById('view_first_name').textContent = user.first_name || '';
+                document.getElementById('view_last_name').textContent = user.last_name || '';
+                document.getElementById('view_email').textContent = user.email || '';
+                document.getElementById('view_role').textContent = user.role || '';
+                document.getElementById('view_status').textContent = user.status || '';
+            
+              } catch (error) {
+                console.error('Failed to load user data:', error);
+              }
+            });
+
         });
 
     </script>
