@@ -446,61 +446,44 @@ if (!isset($_SESSION['user_id'])) {
 </div>
 
 <script>
-    // Tab switching + reset pagination
-document.querySelectorAll('.custom-tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
-        const currentTab = document.getElementById('tab-' + btn.dataset.tab);
-        currentTab.classList.remove('d-none');
-
-        if (btn.dataset.tab === 'users') {
-            document.dispatchEvent(new Event('reinitUserPagination'));
-        } else if (btn.dataset.tab === 'activity') {
-            document.dispatchEvent(new Event('reinitActivityPagination'));
-        }
-    });
-});
-
-function createPaginationControls(totalPages, currentPage, onPageChange) {
+  // Helper: create pagination controls (Prev, pages, Next)
+  function createPaginationControls(totalPages, currentPage, onPageChange) {
     const ul = document.createElement('ul');
     ul.className = 'pagination justify-content-center';
 
     function createPageItem(label, disabled, active, clickHandler) {
-        const li = document.createElement('li');
-        li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
-        const a = document.createElement('a');
-        a.className = 'page-link';
-        a.href = '#';
-        a.innerText = label;
-        if (!disabled) {
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                clickHandler();
-            });
-        }
-        li.appendChild(a);
-        return li;
+      const li = document.createElement('li');
+      li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = '#';
+      a.innerText = label;
+      if (!disabled) {
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          clickHandler();
+        });
+      }
+      li.appendChild(a);
+      return li;
     }
 
-    // Prev
+    // Prev button
     ul.appendChild(createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1)));
 
-    // Pages
+    // Page number buttons
     for (let i = 1; i <= totalPages; i++) {
-        ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
+      ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
     }
 
-    // Next
+    // Next button
     ul.appendChild(createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1)));
 
     return ul;
-}
+  }
 
-// User Management pagination
-function initUserPagination() {
+  // User Management pagination (5 rows per page)
+  function initUserPagination() {
     const rowsPerPage = 5;
     const table = document.getElementById('user-table');
     if (!table) return;
@@ -512,33 +495,33 @@ function initUserPagination() {
     const totalPages = Math.ceil(rows.length / rowsPerPage);
 
     function renderTablePage(page) {
-        currentPage = page;
-        rows.forEach(row => (row.style.display = 'none'));
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        rows.slice(start, end).forEach(row => (row.style.display = ''));
-        renderPagination();
+      currentPage = page;
+      rows.forEach(row => (row.style.display = 'none'));
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      rows.slice(start, end).forEach(row => (row.style.display = ''));
+      renderPagination();
     }
 
     function renderPagination() {
-        paginationContainer.innerHTML = '';
-        if (totalPages <= 1) {
-            paginationContainer.style.display = 'none';
-            return;
-        }
-        paginationContainer.style.display = 'flex';
+      paginationContainer.innerHTML = '';
+      if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+      }
+      paginationContainer.style.display = 'flex';
 
-        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-            renderTablePage(page);
-        });
-        paginationContainer.appendChild(paginationControls);
+      const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+        renderTablePage(page);
+      });
+      paginationContainer.appendChild(paginationControls);
     }
 
     renderTablePage(1);
-}
+  }
 
-// System Activity pagination
-function initActivityPagination() {
+  // System Activity pagination (3 cards per page)
+  function initActivityPagination() {
     const cardsPerPage = 3;
     const activityList = document.getElementById('activity-list');
     if (!activityList) return;
@@ -549,48 +532,62 @@ function initActivityPagination() {
     const totalPages = Math.ceil(cards.length / cardsPerPage);
 
     function showPage(page) {
-        currentPage = page;
-        cards.forEach(card => (card.style.display = 'none'));
-        const start = (page - 1) * cardsPerPage;
-        const end = start + cardsPerPage;
-        for (let i = start; i < end && i < cards.length; i++) {
-            cards[i].style.display = 'flex';
-        }
-        renderPagination();
+      currentPage = page;
+      cards.forEach(card => (card.style.display = 'none'));
+      const start = (page - 1) * cardsPerPage;
+      const end = start + cardsPerPage;
+      for (let i = start; i < end && i < cards.length; i++) {
+        cards[i].style.display = 'flex'; // Show cards as flex
+      }
+      renderPagination();
     }
 
     function renderPagination() {
-        paginationContainer.innerHTML = '';
-        if (totalPages <= 1) {
-            paginationContainer.style.display = 'none';
-            return;
-        }
-        paginationContainer.style.display = 'flex';
+      paginationContainer.innerHTML = '';
+      if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+      }
+      paginationContainer.style.display = 'flex';
 
-        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-            showPage(page);
-        });
-        paginationContainer.appendChild(paginationControls);
+      const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+        showPage(page);
+      });
+      paginationContainer.appendChild(paginationControls);
     }
 
     showPage(1);
-}
+  }
 
-// Initialize paginations on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+  // Tab switching + reset pagination
+  document.querySelectorAll('.custom-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.custom-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('d-none'));
+      const currentTab = document.getElementById('tab-' + btn.dataset.tab);
+      currentTab.classList.remove('d-none');
+
+      if (btn.dataset.tab === 'users') {
+        document.dispatchEvent(new Event('reinitUserPagination'));
+      } else if (btn.dataset.tab === 'activity') {
+        document.dispatchEvent(new Event('reinitActivityPagination'));
+      }
+    });
+  });
+
+  // Initialize paginations on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
     initUserPagination();
     initActivityPagination();
-});
+  });
 
-// Reinit pagination on tab switch
-document.addEventListener('reinitUserPagination', () => {
-    initUserPagination();
-});
-document.addEventListener('reinitActivityPagination', () => {
-    initActivityPagination();
-});
-
+  // Reinit paginations on tab switch
+  document.addEventListener('reinitUserPagination', initUserPagination);
+  document.addEventListener('reinitActivityPagination', initActivityPagination);
 </script>
+
 
 </body>
 </html>
