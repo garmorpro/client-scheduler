@@ -281,7 +281,7 @@ if (!isset($_SESSION['user_id'])) {
                     <p>Manage user accounts, roles, and permissions</p>
                 </div>
                 <div class="user-management-buttons">
-                    <button class="btn btn-outline-primary btn-sm">Import Users</button>
+                    <button class="btn btn-sm" style="border-color: rgb(229,229,229);"><i class="bi bi-upload"></i> Import Users</button>
                     <button class="btn btn-primary btn-sm">Add User +</button>
                 </div>
             </div>
