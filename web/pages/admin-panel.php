@@ -525,10 +525,10 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-            <div class="row g-3 ps-3 pe-3 mt-2" style="font-size: 14px;">
+            <div class="row g-3 ps-3 pe-3 mt-2">
                 <div class="col-md-12">
                     <div class="analytic-card">
-                        <div class="user-management-header">
+                        <div class="analytic-header" style="font-size: 14px;">
                         <div class="titles">
                             <p class="text-black"><strong>Advanced Reports</strong></p>
                             <p>Generate detailed system reports</p>
