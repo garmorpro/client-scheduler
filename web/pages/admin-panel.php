@@ -167,6 +167,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 .stat-title i {
   font-size: 1rem;
+  align-items: right;
 }
 </style>
 
