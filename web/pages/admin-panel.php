@@ -888,7 +888,7 @@ if ($result && $result->num_rows > 0) {
 
 <!-- view user modal ajax -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+       document.addEventListener('DOMContentLoaded', () => {
   const viewUserModal = document.getElementById('viewUserModal');
 
   viewUserModal.addEventListener('show.bs.modal', async (event) => {
@@ -901,6 +901,7 @@ if ($result && $result->num_rows > 0) {
       if (!response.ok) throw new Error('Network response was not ok');
 
       const user = await response.json();
+      console.log('User data:', user);
 
       function setText(id, text) {
         const el = document.getElementById(id);
@@ -911,18 +912,23 @@ if ($result && $result->num_rows > 0) {
         }
       }
 
-      // Set initials, fullname, role, etc.
+      // Check for missing keys in user object
+      ['first_name', 'last_name', 'email', 'role', 'status'].forEach(key => {
+        if (!(key in user)) {
+          console.warn(`Missing key "${key}" in user data.`);
+        }
+      });
+
       const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
       const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
       setText('view_user_initials', firstInitial + lastInitial);
-      setText('view_user_fullname', `${user.first_name} ${user.last_name}`);
-      setText('view_user_role', user.role);
-      setText('view_first_name', `${user.first_name}`|| '[No first name]');
+      setText('view_user_fullname', `${user.first_name || ''} ${user.last_name || ''}`.trim());
+      setText('view_user_role', user.role || '[No role]');
+      setText('view_first_name', user.first_name || '[No first name]');
       setText('view_last_name', user.last_name || '[No last name]');
       setText('view_email', user.email || '[No email]');
       setText('view_status', user.status || '[No status]');
 
-      // Now update the badge class based on status:
       const statusEl = document.getElementById('view_status');
       if (statusEl) {
         statusEl.classList.remove('active', 'inactive');
@@ -938,6 +944,7 @@ if ($result && $result->num_rows > 0) {
     }
   });
 });
+
 
     </script>
 
