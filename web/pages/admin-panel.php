@@ -155,8 +155,8 @@ $result = mysqli_query($conn, $sql);
         <!-- Tabs -->
             <div class="custom-tabs">
                 <button class="active" data-tab="users">User Management</button>
+                <button class="overlay-red" data-tab="engagements">Analytics</button>
                 <button data-tab="activity">System Activity</button>
-                <button class="overlay-red" data-tab="analytics">Analytics</button>
                 <button class="overlay-red" data-tab="settings">Settings</button>
             </div>
         <!-- end Tabs -->
@@ -242,6 +242,76 @@ $result = mysqli_query($conn, $sql);
                 </nav>
             </div>
         <!-- end user management -->
+
+        <!-- engagement management -->
+
+            <div id="tab-engagements" class="tab-content d-none">
+                <div class="row g-3 ps-3 pe-3 mt-1">
+                    <div class="col-md-6">
+                        <div class="analytic-card">
+                            <div class="analytic-header">
+                                <div class="titles">
+                                    <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
+                                    <p style="font-size: 14px;">Active vs Inactive users</p>
+                                </div>
+                            </div>
+                            <div class="pb-4"></div>
+                            <div class="d-flex justify-content-between pb-1">
+                                <div class="float-start" style="font-size: 14px;">
+                                    <i class="bi bi-check2-circle text-success"></i>
+                                    Active Users
+                                </div>
+                                <div class="float-end">
+                                    38
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="float-start" style="font-size: 14px;">
+                                    <i class="bi bi-x-circle text-danger"></i>
+                                    Inactive Users
+                                </div>
+                                <div class="float-end">
+                                    7
+                                </div>
+                            </div>
+                            <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analytic-card">
+                            <div class="analytic-header">
+                                <div class="titles">
+                                    <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                    <p style="font-size: 14px;">Current engagement distribution</p>
+                                </div>
+                            </div>
+                            <div class="pb-4"></div>
+                            <div class="d-flex justify-content-between pb-1">
+                                <div class="float-start" style="font-size: 14px;">
+                                    <i class="bi bi-clipboard-check text-success"></i>
+                                    Assigned Engagements
+                                </div>
+                                <div class="float-end">
+                                    92
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="float-start" style="font-size: 14px;">
+                                    <i class="bi bi-clipboard-x text-danger"></i>
+                                    Unassigned Engagements
+                                </div>
+                                <div class="float-end">
+                                    8
+                                </div>
+                            </div>
+                            <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
+                        </div>
+                    </div>
+                </div>
+                            
+            </div>
+
+        <!-- end engagement management -->
 
         <!-- system activty -->
             <div id="tab-activity" class="tab-content d-none">
@@ -360,227 +430,148 @@ $result = mysqli_query($conn, $sql);
             </div>
         <!-- end system activty -->
 
-
-        <div id="tab-analytics" class="tab-content d-none">
-            <div class="row g-3 ps-3 pe-3 mt-1">
+        <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-content d-none">
+              <div class="row g-3 ps-3 pe-3 mt-1">
+                <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
-                    <div class="analytic-card">
-                        <div class="analytic-header">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
-                                <p style="font-size: 14px;">Active vs Inactive users</p>
-                            </div>
-                        </div>
-                        <div class="pb-4"></div>
-                        <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-check2-circle text-success"></i>
-                                Active Users
-                            </div>
-                            <div class="float-end">
-                                38
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-x-circle text-danger"></i>
-                                Inactive Users
-                            </div>
-                            <div class="float-end">
-                                7
-                            </div>
-                        </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
+                  <div class="settings-card">
+                    <div class="analytic-header mb-4">
+                      <div class="titles">
+                        <p class="text-black fs-6 fw-bold mb-1">System Configuration</p>
+                        <p class="fs-6 mb-0">Manage system-wide settings</p>
+                      </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="analytic-card">
-                        <div class="analytic-header">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
-                            </div>
-                        </div>
-                        <div class="pb-4"></div>
-                        <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-check text-success"></i>
-                                Assigned Engagements
-                            </div>
-                            <div class="float-end">
-                                92
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-x text-danger"></i>
-                                Unassigned Engagements
-                            </div>
-                            <div class="float-end">
-                                8
-                            </div>
-                        </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
+
+                    <!-- Email Notifications -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <p class="text-black fs-6 fw-semibold mb-0">Email Notifications</p>
+                        <p class="mb-0 fs-6">Send system notifications via email</p>
+                      </div>
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                        Configure
+                      </a>
                     </div>
-                </div>
-            </div>
-            
-        </div>
 
-
-
-        <div id="tab-settings" class="tab-content d-none">
-            <div class="row g-3 ps-3 pe-3 mt-1">
-                <div class="col-md-6">
-                    <div class="settings-card">
-                        <div class="analytic-header mb-4">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
-                                <p style="font-size: 14px;">Manage system-wide settings</p>
-                            </div>
-                        </div>
-
-                        <!-- Email Notifications -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Email Notifications</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
-                            </div>
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                Configure
-                            </a>
-                        </div>
-
-                        <!-- Backup Settings -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Backup Settings</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
-                            </div>
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                Configure
-                            </a>
-                        </div>
-
-                        <!-- Security Policies -->
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-black mb-0" style="font-size: 14px;"><strong>Security Policies</strong></p>
-                                <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
-                            </div>
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium"
-                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                Configure
-                            </a>
-                        </div>
+                    <!-- Backup Settings -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <p class="text-black fs-6 fw-semibold mb-0">Backup Settings</p>
+                        <p class="mb-0 fs-6">Automated data backup configuration</p>
+                      </div>
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                        Configure
+                      </a>
                     </div>
+
+                    <!-- Security Policies -->
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p class="text-black fs-6 fw-semibold mb-0">Security Policies</p>
+                        <p class="mb-0 fs-6">Password and access requirements</p>
+                      </div>
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                        Configure
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
+                <!-- Right Column: Engagement Status -->
                 <div class="col-md-6">
-                    <div class="settings-card d-flex flex-column h-100">
-                        <div class="settings-header">
-                            <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
-                                <p style="font-size: 14px;">Current engagement distribution</p>
-                            </div>
-                        </div>
-
-                        <div class="mb-4"></div>
-
-                        <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
-                                <i class="bi bi-check2-circle text-success"></i>
-                                Database Status
-                            </div>
-                            <span class="badge text-bg-success pe-3 ps-3" 
-                                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
-                                Healthy
-                            </span>
-                        </div>
-
-                        <div class="mb-2"></div>
-
-                        <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
-                                <i class="bi bi-check2-circle text-success"></i>
-                                API Status
-                            </div>
-                            <span class="badge text-bg-success pe-3 ps-3" 
-                                  style="font-size: 11px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">
-                                Operational
-                            </span>
-                        </div>
-
-                        <div class="mb-2"></div>
-
-                        <div class="d-flex justify-content-between pb-1">
-                            <div style="font-size: 14px;">
-                                <i class="bi bi-exclamation-circle text-warning"></i>
-                                Storage Usage
-                            </div>
-                            <span class="badge pe-3 ps-3" 
-                                  style="font-size: 11px !important; background-color: rgb(253,249,200) !important; color: rgba(135,88,30) !important;">
-                                75% Used
-                            </span>
-                        </div>
-
-                        <!-- Spacer pushes button to bottom -->
-                        <div class="flex-grow-1"></div>
-
-                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3"
-                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-                                <i class="bi bi-activity pe-3"></i>View Detailed Metrics
-                            </a>
+                  <div class="settings-card d-flex flex-column h-100">
+                    <div class="settings-header mb-4">
+                      <div class="titles">
+                        <p class="text-black fs-6 fw-bold mb-1">Engagement Status</p>
+                        <p class="fs-6 mb-0">Current engagement distribution</p>
+                      </div>
                     </div>
+
+                    <div class="mb-4"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-check2-circle text-success me-1"></i>Database Status
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
+                        Healthy
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-check2-circle text-success me-1"></i>API Status
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
+                        Operational
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-exclamation-circle text-warning me-1"></i>Storage Usage
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(253,249,200); color: rgba(135,88,30);">
+                        75% Used
+                      </span>
+                    </div>
+
+                    <!-- Spacer pushes button to bottom -->
+                    <div class="flex-grow-1"></div>
+
+                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3 border" style="font-size: .875rem;">
+                      <i class="bi bi-activity pe-3"></i>View Detailed Metrics
+                    </a>
+                  </div>
                 </div>
-                
+              </div>
 
-            </div>
-
-            <div class="row g-3 ps-3 pe-3 mt-2">
+              <div class="row g-3 ps-3 pe-3 mt-2">
                 <div class="col-md-12">
-                    <div class="analytic-card" style="height: 215px !important;">
-                        <div class="user-management-header">
-                        <div class="titles">
-                            <p class="text-black" style="font-size: 14px;"><strong>Advanced Reports</strong></p>
-                            <p style="font-size: 14px;">Generate detailed system reports</p>
-                        </div>
-                        <div class="user-management-buttons">
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: 14px; border: 1px solid rgb(229,229,229);">
-                                <i class="bi bi-download me-3"></i>Export All Data
-                            </a>
-                        </div>
+                  <div class="analytic-card" style="height: 215px !important;">
+                    <div class="user-management-header d-flex justify-content-between align-items-center mb-3">
+                      <div class="titles">
+                        <p class="text-black fs-6 fw-bold mb-1">Advanced Reports</p>
+                        <p class="fs-6 mb-0">Generate detailed system reports</p>
+                      </div>
+                      <div class="user-management-buttons">
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border fs-6">
+                          <i class="bi bi-download me-3"></i>Export All Data
+                        </a>
+                      </div>
                     </div>
-                        <div class="d-flex justify-content-between pb-2">
-                            <div class="reports-card">
-                                <i class="bi bi-graph-up-arrow"></i>
-                                <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
-                                <div class="analytic-subtitle">Staff and engagement utilization</div>
-                            </div>
 
-                            <div class="reports-card">
-                                <i class="bi bi-people"></i>
-                                <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
-                                <div class="analytic-subtitle">Login and engagement metrics</div>
-                            </div>
+                    <div class="d-flex justify-content-between pb-2">
+                      <div class="reports-card text-center">
+                        <i class="bi bi-graph-up-arrow fs-3"></i>
+                        <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
+                        <div class="analytic-subtitle">Staff and engagement utilization</div>
+                      </div>
 
-                            <div class="reports-card">
-                                <i class="bi bi-clock"></i>
-                                <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
-                                <div class="analytic-subtitle">Hours and productivity analysis</div>
-                            </div>
-                            
-                        </div>
+                      <div class="reports-card text-center">
+                        <i class="bi bi-people fs-3"></i>
+                        <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
+                        <div class="analytic-subtitle">Login and engagement metrics</div>
+                      </div>
+
+                      <div class="reports-card text-center">
+                        <i class="bi bi-clock fs-3"></i>
+                        <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
+                        <div class="analytic-subtitle">Hours and productivity analysis</div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-            
-        
-        </div>
-    </div>
-</div>
+        <!-- end settings tab -->
+
+
+
+
+    </div> <!-- end container -->
+</div> <!-- end flex-grow -->
 
 
 <!-- Modal for Adding User -->
