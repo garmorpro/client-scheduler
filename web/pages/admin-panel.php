@@ -137,7 +137,13 @@ $result = mysqli_query($conn, $sql);
                                     </span>
                                 </td>
                                 <td>
-                                    <?php echo date("n/j/Y", strtotime($row['last_active'])); ?>
+                                    <?php 
+                                        if (empty($row['last_active']) || $row['last_active'] === null) {
+                                            echo "Never";
+                                        } else {
+                                            echo date("n/j/Y", strtotime($row['last_active']));
+                                        }
+                                    ?>
                                 </td>
                                 <td class="table-actions">
                                     <i class="bi bi-eye"></i>
