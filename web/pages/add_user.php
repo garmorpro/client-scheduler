@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminName   = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
         $title = "User Created";
-        $description = "Created new user for $firstName $lastName ($role)";
+        $description = "Created account for $firstName $lastName ($role)";
 
         logActivity($conn, "user_created", $adminUserId, $adminEmail, $adminName, $title, $description);
 
