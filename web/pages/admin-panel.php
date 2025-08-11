@@ -1076,7 +1076,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Import</button>
+              <button type="submit" class="btn btn-primary" id="importSubmitBtn">Import</button>
+              <button type="button" class="btn btn-success d-none" id="importCloseBtn">OK</button>
             </div>
           </form>
         </div>
@@ -1638,64 +1639,77 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- import users csv -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-      const importForm = document.getElementById('importUsersForm');
-      const fileInput = document.getElementById('csv_file');
-      const importSummary = document.getElementById('importSummary');
-
-      importForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        importSummary.style.display = 'none';
-        importSummary.innerHTML = '';
-
-        const file = fileInput.files[0];
-        if (!file) {
-          alert('Please select a CSV file to upload.');
-          return;
-        }
-        if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-          alert('Only CSV files are allowed.');
-          return;
-        }
-
-        // Prepare form data for AJAX
-        const formData = new FormData();
-        formData.append('csv_file', file);
-
-        try {
-          const response = await fetch('import_users.php', {
-            method: 'POST',
-            body: formData
+          const importForm = document.getElementById('importUsersForm');
+          const fileInput = document.getElementById('csv_file');
+          const importSummary = document.getElementById('importSummary');
+          const importSubmitBtn = document.getElementById('importSubmitBtn');
+          const importCloseBtn = document.getElementById('importCloseBtn');
+          const importUsersModal = new bootstrap.Modal(document.getElementById('importUsersModal'));
+                
+          importForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+        
+            // Hide summary & OK button, show Import button
+            importSummary.style.display = 'none';
+            importSummary.innerHTML = '';
+            importCloseBtn.classList.add('d-none');
+            importSubmitBtn.classList.remove('d-none');
+            
+            const file = fileInput.files[0];
+            if (!file) {
+              alert('Please select a CSV file to upload.');
+              return;
+            }
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+              alert('Only CSV files are allowed.');
+              return;
+            }
+        
+            const formData = new FormData();
+            formData.append('csv_file', file);
+        
+            try {
+              const response = await fetch('import_users.php', {
+                method: 'POST',
+                body: formData
+              });
+              const result = await response.json();
+          
+              // Show import summary in modal
+              importSummary.style.display = 'block';
+          
+              let html = `<p><strong>Import Results:</strong></p>`;
+              html += `<p>Successfully imported: ${result.successCount}</p>`;
+          
+              if (result.errors.length > 0) {
+                html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
+                result.errors.forEach(err => {
+                  html += `<li>Row ${err.row}: ${err.message}</li>`;
+                });
+                html += `</ul>`;
+              } else {
+                html += `<p class="text-success">No errors found.</p>`;
+              }
+          
+              importSummary.innerHTML = html;
+          
+              // Show OK button, hide Import button
+              importCloseBtn.classList.remove('d-none');
+              importSubmitBtn.classList.add('d-none');
+          
+              // Clear file input so user can re-import if needed
+              fileInput.value = '';
+          
+            } catch (error) {
+              alert('Error processing import: ' + error.message);
+            }
           });
-          const result = await response.json();
-
-          // Show import summary in modal
-          importSummary.style.display = 'block';
-
-          let html = `<p><strong>Import Results:</strong></p>`;
-          html += `<p>Successfully imported: ${result.successCount}</p>`;
-
-          if (result.errors.length > 0) {
-            html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
-            result.errors.forEach(err => {
-              html += `<li>Row ${err.row}: ${err.message}</li>`;
-            });
-            html += `</ul>`;
-          } else {
-            html += `<p class="text-success">No errors found.</p>`;
-          }
-
-          importSummary.innerHTML = html;
-
-          if(result.successCount > 0) {
-            // Optionally reset the file input so user can import again easily
-            fileInput.value = '';
-          }
-
-        } catch (error) {
-          alert('Error processing import: ' + error.message);
-        }
-      });
-    });
+      
+          importCloseBtn.addEventListener('click', () => {
+            importUsersModal.hide();
+            location.reload(); // Reload page to show new users
+          });
+        });
 
     </script>
 <!-- end import users csv -->
