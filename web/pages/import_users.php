@@ -138,12 +138,12 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             $successCount++;
 
             // Log activity per user imported
-            $title = "Successful Bulk Import";
-            $description = "Successful bulk user import.";
+            $title = "Successful User Imported";
+            $description = "Imported user {$rowAssoc['first_name']} {$rowAssoc['last_name']} ({$rowAssoc['role']}).";
             logActivity($conn, "successful_user_imported", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
         } else {
-            $title = "Failed Bulk Import";
-            $description = "Failed bulk user import.";
+            $title = "Failed User Imported";
+            $description = "Imported user {$rowAssoc['first_name']} {$rowAssoc['last_name']} ({$rowAssoc['email']}).";
             logActivity($conn, "failed_user_imported", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
             $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
         }
