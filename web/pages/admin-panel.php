@@ -286,6 +286,15 @@ if (!isset($_SESSION['user_id'])) {
             background-color: rgb(233,235,239);
             cursor: pointer;
         }
+        .settings-card {
+            position: relative;
+            height: 400px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
     </style>
 </head>
 <body class="d-flex">
@@ -599,7 +608,7 @@ if (!isset($_SESSION['user_id'])) {
         <div id="tab-settings" class="tab-content d-none">
             <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
-                    <div class="analytic-card">
+                    <div class="settings-card">
                         <div class="analytic-header">
                             <div class="titles">
                                 <p class="text-black" style="font-size: 14px;"><strong>System Configuration</strong></p>
