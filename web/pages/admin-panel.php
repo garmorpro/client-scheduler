@@ -602,30 +602,23 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="analytic-card">
                         <div class="analytic-header">
                             <div class="titles">
-                                <p class="text-black" style="font-size: 14px;"><strong>User Activity Overview</strong></p>
-                                <p style="font-size: 14px;">Active vs Inactive users</p>
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
                         <div class="pb-4"></div>
-                        <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-check2-circle text-success"></i>
-                                Active Users
-                            </div>
-                            <div class="float-end">
-                                38
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-x-circle text-danger"></i>
-                                Inactive Users
-                            </div>
-                            <div class="float-end">
-                                7
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:85%"></div></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -637,25 +630,18 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                         </div>
                         <div class="pb-4"></div>
-                        <div class="d-flex justify-content-between pb-1">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-check text-success"></i>
-                                Assigned Engagements
-                            </div>
-                            <div class="float-end">
-                                92
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="float-start" style="font-size: 14px;">
-                                <i class="bi bi-clipboard-x text-danger"></i>
-                                Unassigned Engagements
-                            </div>
-                            <div class="float-end">
-                                8
+                        <div class="analytic-header">
+                            <div class="titles">
+                                <p class="text-black" style="font-size: 14px;"><strong>Engagement Status</strong></p>
+                                <p style="font-size: 14px;">Current engagement distribution</p>
                             </div>
                         </div>
-                        <div class="analytic-util-bar mt-3"><div class="analytic-util-bar-fill" style="width:92%"></div></div>
                     </div>
                 </div>
             </div>
