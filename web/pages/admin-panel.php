@@ -1374,7 +1374,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
               setText('view_engagement_created', engagement.created);
               setText('view_engagement_updated', engagement.last_updated);
-              setText('view_eng_notes', engagement.status);
+              setText('view_eng_status', engagement.status);
               setText('view_engagement_notes', engagement.notes);
           
               // Handle status text and badge class
