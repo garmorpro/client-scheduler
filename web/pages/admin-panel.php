@@ -467,7 +467,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <div id="tab-analytics" class="tab-content d-none">
-            <div class="row g-3 ps-3 pe-3">
+            <div class="row g-3 ps-3 pe-3 mt-1">
                 <div class="col-md-6">
                     <div class="analytic-card">
                         <div class="analytic-title">User Activity Overview</div>
@@ -522,7 +522,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="row g-3 ps-3 pe-3 mt-2">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="analytic-card">
                         <div class="analytic-title">Engagement Status</div>
                         <div class="analytic-subtitle">Current engagement distribution</div>
