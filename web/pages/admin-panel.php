@@ -87,7 +87,7 @@ if (!isset($_SESSION['user_id'])) {
             border: none;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 500;
             color: #6b7280;
             cursor: pointer;
