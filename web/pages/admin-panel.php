@@ -373,7 +373,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="activity-card justify-content-between">
                     <div class="activity-icon-container">
                         <div class="activity-icon" style="color:rgb(92,141,253); font-size: 16px; margin-top: -45px; margin-left: 15px !important;">
-                            <i class="bi bi-shield fw-semibold"></i>
+                            <i class="bi bi-shield"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1 mx-3">
