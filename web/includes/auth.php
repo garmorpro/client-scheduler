@@ -1,6 +1,18 @@
 <?php
 require_once 'db.php';
 
+function logActivity($conn, $eventType, $userId, $username, $title, $description) {
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, username, title, description) VALUES (?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "sisss", $eventType, $userId, $username, $title, $description);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
+
+
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (password_verify($password, $hashed_password)) {
             session_start();
-            session_regenerate_id(true); // prevent session fixation
+            session_regenerate_id(true);
 
             $_SESSION['user_id'] = $user_id;
             $_SESSION['role'] = $role;
@@ -31,24 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
 
-            // --- Add login event to system_activity_log ---
-            $eventType = "login";
-            $username = $email; // or "$first_name $last_name"
-            $title = "User Login";
-            $description = "Successful login";
-                
-            $logSql = "INSERT INTO system_activity_log (event_type, user_id, username, title, description) VALUES (?, ?, ?, ?, ?)";
-            $logStmt = mysqli_prepare($conn, $logSql);
-            if ($logStmt) {
-                mysqli_stmt_bind_param($logStmt, "sisss", $eventType, $user_id, $username, $title, $description);
-                mysqli_stmt_execute($logStmt);
-                mysqli_stmt_close($logStmt);
-            }
-            // ----------------------------------------------
+            // Log successful login
+            logActivity($conn, "login", $user_id, $email, "User Login", "Successful login");
 
             header("Location: dashboard.php");
             exit;
         } else {
+            logActivity($conn, "failed_login", null, $email, "Failed Login", "Incorrect password attempt");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
     } else {
