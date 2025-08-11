@@ -662,16 +662,16 @@ if ($result && $result->num_rows > 0) {
       <i class="bi bi-envelope"></i> Personal Information
     </h6>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">First Name:</strong>
-      <span id="view_first_name_detail" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">First Name:</strong>
+      <span id="view_first_name_detail" style="float: right;"></span>
     </p>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">Last Name:</strong>
-      <span id="view_last_name_detail" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">Last Name:</strong>
+      <span id="view_last_name_detail" style="float: right;"></span>
     </p>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">Email:</strong>
-      <span id="view_email_detail" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">Email:</strong>
+      <span id="view_email_detail" style="float: right;"></span>
     </p>
   </div>
   <div class="col-md-6">
@@ -679,16 +679,16 @@ if ($result && $result->num_rows > 0) {
       <i class="bi bi-person-lock"></i> Account Details
     </h6>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">Created:</strong>
-      <span id="view_acct_created" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">Created:</strong>
+      <span id="view_acct_created" style="float: right;"></span>
     </p>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">Last Active:</strong>
-      <span id="view_acct_last_active" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">Last Active:</strong>
+      <span id="view_acct_last_active" style="float: right;"></span>
     </p>
     <p class="text-muted" style="overflow: hidden;">
-      <strong style="float: left; width: 30%;">Status:</strong>
-      <span id="view_acct_status" style="float: right; width: 65%;"></span>
+      <strong style="float: left;">Status:</strong>
+      <span id="view_acct_status" style="float: right;"></span>
     </p>
   </div>
 </div>
