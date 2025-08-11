@@ -449,7 +449,7 @@ $result = mysqli_query($conn, $sql);
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Email Notifications</p>
                         <p class="mb-0 fs-6">Send system notifications via email</p>
                       </div>
-                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
@@ -457,10 +457,10 @@ $result = mysqli_query($conn, $sql);
                     <!-- Backup Settings -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <div>
-                        <p class="text-black fs-6 fw-semibold mb-0">Backup Settings</p>
-                        <p class="mb-0 fs-6">Automated data backup configuration</p>
+                        <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Backup Settings</p>
+                        <p class="mb-0" style="font-size: 14px;">Automated data backup configuration</p>
                       </div>
-                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
@@ -468,10 +468,10 @@ $result = mysqli_query($conn, $sql);
                     <!-- Security Policies -->
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
-                        <p class="text-black fs-6 fw-semibold mb-0">Security Policies</p>
-                        <p class="mb-0 fs-6">Password and access requirements</p>
+                        <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Security Policies</p>
+                        <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
                       </div>
-                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: .875rem;">
+                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
@@ -483,8 +483,8 @@ $result = mysqli_query($conn, $sql);
                   <div class="settings-card d-flex flex-column h-100">
                     <div class="settings-header mb-4">
                       <div class="titles">
-                        <p class="text-black fs-6 fw-bold mb-1">Engagement Status</p>
-                        <p class="fs-6 mb-0">Current engagement distribution</p>
+                        <p class="text-black fw-bold mb-1" style="font-size: 14px;">Engagement Status</p>
+                        <p class="fs-6" style="font-size: 14px;">Current engagement distribution</p>
                       </div>
                     </div>
 
