@@ -21,6 +21,24 @@ $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
+// Total Confirmed engagements
+$totalConfirmedEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements WHERE status = 'confirmed'";
+$totalConfirmedResult = mysqli_query($conn, $totalConfirmedEngagementsQuery);
+$totalConfirmedRow = mysqli_fetch_assoc($totalConfirmedResult);
+$totalConfirmedEngagements = $totalConfirmedRow['total'];
+
+// Total Pending engagements
+$totalPendingEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements WHERE status = 'pending'";
+$totalPendingResult = mysqli_query($conn, $totalPendingEngagementsQuery);
+$totalPendingRow = mysqli_fetch_assoc($totalPendingResult);
+$totalPendingEngagements = $totalPendingRow['total'];
+
+// Total Confirmed engagements
+$totalNotConfirmedEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements WHERE status = 'not_confirmed'";
+$totalNotConfirmedResult = mysqli_query($conn, $totalNotConfirmedEngagementsQuery);
+$totalNotConfirmedRow = mysqli_fetch_assoc($totalNotConfirmedResult);
+$totalNotConfirmedEngagements = $totalNotConfirmedRow['total'];
+
 // Total engagements
 $totalEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements";
 $totalResult = mysqli_query($conn, $totalEngagementsQuery);
@@ -88,9 +106,9 @@ $result = mysqli_query($conn, $sql);
             <div class="col-md-3">
                 <div class="stat-card overlay-red">
                     <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
-                    <div class="stat-title">Active Projects</div>
-                    <div class="stat-value">12</div>
-                    <div class="stat-sub">16 completed</div>
+                    <div class="stat-title">Cnnfirmed Engagements</div>
+                    <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
+                    <div class="stat-sub"><?php echo $totalPendingEngagements; ?> pending <i class="bi bi-dot"></i> <?php echo $totalNotConfirmedEngagements; ?> not confirmed</div>
                 </div>
             </div>
             <?php
