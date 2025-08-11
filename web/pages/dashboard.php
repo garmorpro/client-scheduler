@@ -19,6 +19,9 @@ if (!isset($_SESSION['user_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+      body {
+        font-size: 14px !important;
+      }
       .admin-card {
       border: 1px solid #e0e0e0;
       border-radius: 12px;

@@ -93,6 +93,9 @@ while ($row = $result->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+      body {
+        font-size: 14px !important;
+      }
         .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
         .highlight-today { background-color: lightblue !important; }
         td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
