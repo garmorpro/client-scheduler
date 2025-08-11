@@ -521,7 +521,7 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-            <div class="row g-3 ps-3 pe-3 mt-4">
+            <div class="row g-3 ps-3 pe-3 mt-2">
                 <div class="col-md-6">
                     <div class="analytic-card">
                         <div class="analytic-title">Engagement Status</div>
