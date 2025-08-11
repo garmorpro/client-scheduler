@@ -894,7 +894,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                   <span id="view_engagement_created" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
-                  <strong style="float: left;">Last Active:</strong>
+                  <strong style="float: left;">Last Updated:</strong>
                   <span id="view_engagement_updated" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
@@ -906,34 +906,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
             </div>
 
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <h6 class="mb-3">
-                        <i class="bi bi-shield"></i> Access & Permissions
-                    </h6>
-                    <p class="text-muted mb-1" style="overflow: hidden;">
-                        <strong style="float: left;">Role:</strong>
-                        <span id="view_acct_role" class="text-capitalize" style="float: right;"></span>
-                     </p>
-                    <p class="text-muted mb-1" style="overflow: hidden;">
-                        <strong style="float: left;">Access Level:</strong>
-                        <span id="view_acct_access_level" class="text-capitalize" style="float: right;"></span>
-                    </p>
-                    <p class="text-muted mb-1" style="overflow: hidden;">
-                        <strong style="float: left;">Two-Factor Auth:</strong>
-                        <span id="view_acct_mfa" style="float: right;"></span>
-                    </p>
-                </div>
-                <div class="col-md-6"></div>
-            </div>
-
-            <hr>
-
             <div class="col-md-12">
-              <h6>Recent Activity</h6>
-              <div id="view_recent_activity" style="max-height: 150px; overflow-y: auto;">
-                <!-- Activities will be inserted here as cards -->
-              </div>
+              <h6>Notes</h6>
+              <div id="view_engagement_notes" style="max-height: 150px; overflow-y: auto;"></div>
             </div>
 
           </div>
