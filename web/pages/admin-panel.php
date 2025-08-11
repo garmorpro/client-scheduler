@@ -437,6 +437,16 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $icon = 'bi-person-check';
                                     $color = 'rgb(161,77,253)'; // purple
                                     break;
+
+                                case 'successful_user_imported':
+                                    $icon = 'bi-clipboard2-check';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'failed_user_imported':
+                                    $icon = 'bi-clipboard2-x';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;
                                 
                                 case 'backup':
                                     $icon = 'bi-database';
