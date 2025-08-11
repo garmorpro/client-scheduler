@@ -671,7 +671,7 @@ if (!isset($_SESSION['user_id'])) {
                                 Assigned Engagements
                             </div>
                             <div class="float-end">
-                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 14px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Healthy</span>
+                                <span class="badge text-bg-success pe-3 ps-3" style="font-size: 12px !important; background-color: rgb(226,251,232) !important; color: rgba(64, 109, 72, 1) !important;">Healthy</span>
                             </div>
                         </div>
 
