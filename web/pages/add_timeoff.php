@@ -18,11 +18,11 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $employeeId = $_POST['user_id'] ?? null;
+    $userID = $_POST['user_id'] ?? null;
     $weekStart = $_POST['week_start'] ?? null;
     $reason = $_POST['reason'] ?? '';
 
-    if (!$employeeId || !$weekStart) {
+    if (!$userID || !$weekStart) {
         die('Invalid input data: missing user or week.');
     }
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $stmt = $conn->prepare("
-        INSERT INTO time_off (employee_id, week_start, hours_off, reason)
+        INSERT INTO time_off (user_id, week_start, hours_off, reason)
         VALUES (?, ?, ?, ?)
     ");
     if (!$stmt) {
@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Bind parameters carefully to allow NULL for reason
     if ($reason === null) {
         // 's' type needs to be passed as null explicitly
-        $stmt->bind_param('isds', $employeeId, $weekStart, $hoursOff, $reason);
+        $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
     } else {
-        $stmt->bind_param('isds', $employeeId, $weekStart, $hoursOff, $reason);
+        $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
     }
 
     if ($stmt->execute()) {
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $empLastName = '';
         $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
         if ($empStmt) {
-            $empStmt->bind_param("i", $employeeId);
+            $empStmt->bind_param("i", $userID);
             $empStmt->execute();
             $empStmt->bind_result($empFirstName, $empLastName);
             $empStmt->fetch();

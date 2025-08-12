@@ -254,6 +254,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   }
 // end open addTimeOffModal
 
+
+
+
+
+
+
 // Update openEditModal to handle dynamic elements properly
 function openEditModal(event) {
     const buttonElement = event.target;
