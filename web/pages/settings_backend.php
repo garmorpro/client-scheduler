@@ -1,29 +1,7 @@
-
 <?php
-// DEBUG: Dump raw input and exit early to check PHP is running correctly
-// Remove or comment out after testing
-header('Content-Type: text/plain');
-echo "Raw POST body:\n";
-echo file_get_contents('php://input');
-exit;
-
-ob_start();  // Start output buffering to catch any unexpected output
-
-require_once '../includes/db.php'; // $conn as mysqli connection
+// Make sure this is the very first line of the file with no whitespace before it
+require_once '../includes/db.php';
 session_start();
-
-header('Content-Type: application/json');
-
-// Uncomment to enable error reporting to log file (recommended for production)
-// ini_set('display_errors', 0);
-// ini_set('log_errors', 1);
-// ini_set('error_log', __DIR__ . '/error_log.txt');
-
-// You can add your admin/session checks here
-// if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-//     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-//     exit;
-// }
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -61,27 +39,23 @@ try {
 
             mysqli_stmt_reset($stmtUpdate);
             mysqli_stmt_bind_param($stmtUpdate, "si", $value, $id);
-            if (!mysqli_stmt_execute($stmtUpdate)) {
-                throw new Exception('Update failed for key ' . $key . ': ' . mysqli_stmt_error($stmtUpdate));
-            }
+            mysqli_stmt_execute($stmtUpdate);
         } else {
             mysqli_stmt_reset($stmtInsert);
             mysqli_stmt_bind_param($stmtInsert, "sss", $masterKey, $key, $value);
-            if (!mysqli_stmt_execute($stmtInsert)) {
-                throw new Exception('Insert failed for key ' . $key . ': ' . mysqli_stmt_error($stmtInsert));
-            }
+            mysqli_stmt_execute($stmtInsert);
         }
         mysqli_stmt_free_result($stmtCheck);
     }
     mysqli_commit($conn);
-    ob_end_clean(); // clear output buffer before sending JSON
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     mysqli_rollback($conn);
-    ob_end_clean();
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
 
 mysqli_stmt_close($stmtCheck);
 mysqli_stmt_close($stmtUpdate);
 mysqli_stmt_close($stmtInsert);
+
+// No closing PHP tag at the end of the file to avoid accidental whitespace
