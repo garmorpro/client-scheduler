@@ -143,37 +143,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     </style>
-
-    <script>
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const addEntryModal = document.getElementById('addEntryModal');
-  //   if (!addEntryModal) {
-  //     console.warn('addEntryModal not found');
-  //     return;
-  //   }
-
-  //   addEntryModal.addEventListener('show.bs.modal', event => {
-  //     const button = event.relatedTarget; // Button that triggered the modal
-  //     if (!button) return;
-
-  //     const userId = button.getAttribute('data-user-id') || '';
-  //     const weekStart = button.getAttribute('data-week-start') || '';
-  //     const employeeName = button.getAttribute('data-employee-name') || '';
-
-  //     openAddEntryModal(userId, employeeName, weekStart);
-  //   });
-  // });
-</script>
-
-
-
     <script>
     function autoSubmitDateFilter() {
         document.getElementById("filterForm").submit();
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
+function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
   console.log("Modal triggered with arguments:");
   console.log("user_id:", user_id);
   console.log("employeeName:", employeeName);
@@ -236,19 +212,23 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
   if (assignmentsForWeek.length > 0) {
     console.log("Assignments found for this user/week, rendering list and showing manage modal");
-    renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
-    manageEntryModal.show();
+    renderAssignmentsList(user_id, weekStart);  // your existing function to update assignment UI
   } else {
-    console.log("No assignments found for this user/week, opening Add Entry modal");
-    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
+    console.log("No assignments found for this user/week, clearing assignment list");
+    document.getElementById('assignmentsListContainer').innerHTML = '<p class="text-muted">No assignments for this week.</p>';
   }
-}
 
+  // Always render time off entries for this user/week
+  renderTimeOffList(user_id, weekStart);
+
+  // Show the modal
+  manageEntryModal.show();
+}
 // end Open modal for Manage Assignments or Add Entry
 
+
 // Open Add Entry modal
-    // Open Add Entry modal function
-function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
+  function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
     // Set inputs for user and week in the forms
     document.getElementById('modalUserId').value = user_id;
     document.getElementById('modalWeek').value = weekStart;
@@ -309,34 +289,32 @@ function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '',
     } else {
         console.warn('Tab trigger element not found:', tabSelector);
     }
-}
+  } 
 
-// Add event listener on DOM load to catch modal open triggered by buttons
-document.addEventListener('DOMContentLoaded', () => {
-  const addEntryModal = document.getElementById('addEntryModal');
-  if (!addEntryModal) {
-    console.warn('addEntryModal not found');
-    return;
-  }
+  // Add event listener on DOM load to catch modal open triggered by buttons
+  document.addEventListener('DOMContentLoaded', () => {
+    const addEntryModal = document.getElementById('addEntryModal');
+    if (!addEntryModal) {
+      console.warn('addEntryModal not found');
+      return;
+    }
 
-  addEntryModal.addEventListener('show.bs.modal', event => {
-    const button = event.relatedTarget; // Button that triggered the modal
-    if (!button) return;
+    addEntryModal.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget; // Button that triggered the modal
+      if (!button) return;
 
-    // Grab data attributes from the triggering button
-    const userId = button.getAttribute('data-user-id') || '';
-    const weekStart = button.getAttribute('data-week-start') || '';
-    const employeeName = button.getAttribute('data-employee-name') || '';
+      // Grab data attributes from the triggering button
+      const userId = button.getAttribute('data-user-id') || '';
+      const weekStart = button.getAttribute('data-week-start') || '';
+      const employeeName = button.getAttribute('data-employee-name') || '';
 
-    // Call your modal opening function with actual data
-    openAddEntryModal(userId, employeeName, weekStart);
+      // Call your modal opening function with actual data
+      openAddEntryModal(userId, employeeName, weekStart);
+    });
   });
-});
 
 
 // end Open Add Entry modal
-
-
 
 // openEditModal remains unchanged
     function openEditModal(event) {
@@ -352,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 // end openEditModal
 
-
 // Manage assignments modal
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
   const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -366,7 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
   assignmentsModal.show();
   }
 // end Manage assignments modal
-
 
 // Delete assignment function
     function deleteAssignment(assignmentId) {
@@ -391,7 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 // end Delete assignment function
-
 
 // open assignement modal
   function openassignmentModal(engagementId) {
@@ -450,7 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 // end open assignement modal
 
-
 // open employee modal
   function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
@@ -491,11 +465,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 // end open employee modal
 
-    </script>
+</script>
+
 </head>
 <body class="d-flex">
+
 <?php include_once '../templates/sidebar.php'; ?>
+
 <div class="flex-grow-1 p-4">
+
+<!-- header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h3 class="mb-0">Master Schedule</h3>
@@ -509,8 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <i class="bi bi-arrow-clockwise me-3"></i>Refresh
         </a>
 
-    </div>
-</div>
+      </div>
+  </div>
+<!-- end header -->
 
 <!-- upper search and week range selector -->
   <div class="bg-white border rounded p-4 mb-4">
@@ -1610,6 +1590,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   </script>
 <!-- end Script: Render Assignments Listing -->
+
+<!-- Script: Render Time Off Listing -->
+ <script>
+  function renderTimeOffList(user_id, weekStart) {
+  const container = document.getElementById('timeOffTabPane');
+  if (!container) {
+    console.warn('timeOffTabPane element not found');
+    return;
+  }
+
+  // Clear previous content except maybe the placeholder <p> tag
+  container.innerHTML = ''; // Or you could keep some header text if you want
+
+  // Get time off entries for this user and week
+  const entries = (timeOffData[user_id] && timeOffData[user_id][weekStart]) || [];
+
+  if (entries.length === 0) {
+    container.innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
+    return;
+  }
+
+  // Build a list or table of entries
+  const list = document.createElement('ul');
+  list.classList.add('list-group');
+
+  entries.forEach(entry => {
+    const item = document.createElement('li');
+    item.className = 'list-group-item';
+
+    // Customize display with relevant fields, e.g. hours and reason
+    const hours = entry.hours ?? 'N/A';
+    const reason = entry.reason ?? 'No reason provided';
+    item.textContent = `Hours: ${hours}, Reason: ${reason}`;
+
+    list.appendChild(item);
+  });
+
+  container.appendChild(list);
+  }
+
+ </script>
+<!-- end Script: Time Off Listing -->
 
 
 
