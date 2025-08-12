@@ -19,67 +19,55 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $employeeId = $_POST['user_id'] ?? null;
+    $clientId = $_POST['engagement_id'] ?? null; // might be null for time off
     $weekStart = $_POST['week_start'] ?? null;
-    $isTimeOff = isset($_POST['is_timeoff']) ? (int)$_POST['is_timeoff'] : 1;
 
-    if (!$employeeId || !$weekStart) {
+    // For time off, hours might come as 'time_off_hours', for assignments 'assigned_hours'
+    // So check both and prioritize assigned_hours if exists
+    $assignedHours = $_POST['assigned_hours'] ?? null;
+    $timeOffHours = $_POST['time_off_hours'] ?? null;
+
+    // Determine which hours field to use:
+    if ($assignedHours !== null) {
+        $hours = floatval($assignedHours);
+    } elseif ($timeOffHours !== null) {
+        $hours = floatval($timeOffHours);
+    } else {
+        die('Hours must be submitted.');
+    }
+
+    // Basic validation
+    if (!$employeeId || !$weekStart || $hours <= 0) {
         die('Invalid input data.');
     }
 
-    if ($isTimeOff === 1) {
-        // Time Off entry
-        $timeOffHours = $_POST['time_off_hours'] ?? null;
-        if ($timeOffHours === null || $timeOffHours === '') {
-            die('Please enter time off hours.');
-        }
+    // Determine if time off or assignment
+    $isTimeOff = (empty($clientId)) ? 1 : 0;
 
-        $stmt = $conn->prepare("
-            INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
-            VALUES (?, NULL, ?, ?, 1)
-        ");
-        if (!$stmt) {
-            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-        }
-
-        $stmt->bind_param('isd', $employeeId, $weekStart, $timeOffHours);
-        $descHours = $timeOffHours;
-        $descClient = 'Time Off';
-
-    } else {
-        // Assignment entry
-        $clientId = $_POST['engagement_id'] ?? null;
-        $assignedHours = $_POST['assigned_hours'] ?? null;
-
-        if (!$clientId || !$assignedHours) {
-            die('Please select a client and enter assigned hours.');
-        }
-
-        $stmt = $conn->prepare("
-            INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
-            VALUES (?, ?, ?, ?, 0)
-        ");
-        if (!$stmt) {
-            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-        }
-
-        $stmt->bind_param('iisd', $employeeId, $clientId, $weekStart, $assignedHours);
-        $descHours = $assignedHours;
-
-        // Get client name for logging
-        $clientName = '';
-        $stmtClient = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
-        if ($stmtClient) {
-            $stmtClient->bind_param("i", $clientId);
-            $stmtClient->execute();
-            $stmtClient->bind_result($clientName);
-            $stmtClient->fetch();
-            $stmtClient->close();
-        }
-        $descClient = $clientName;
+    // If no clientId (time off), set clientId to NULL or 0 depending on your DB design
+    if ($isTimeOff) {
+        $clientId = null; // or 0, if your DB uses zero
     }
 
+    // Prepare the insert statement, adding is_timeoff column
+    $stmt = $conn->prepare("
+        INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    if (!$stmt) {
+        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+    }
+
+    // Bind params, assuming engagement_id can be null, use 'i' for integer or 's' if string type
+    // Note: For null, use `bind_param` with 'i' but pass NULL, it works with mysqli
+    // week_start assumed string or date, so 's'
+    // hours is float 'd'
+    // is_timeoff is int 'i'
+
+    $stmt->bind_param('isddi', $employeeId, $clientId, $weekStart, $hours, $isTimeOff);
+
     if ($stmt->execute()) {
-        // Log activity
+        // Log activity (adjust description for time off vs assignment)
         $user_id = $_SESSION['user_id'];
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
@@ -97,15 +85,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $employeeFullName = trim("$empFirstName $empLastName");
 
-        $title = $isTimeOff ? "Time Off Added" : "Assignment Added";
-        $description = "1 week ({$descHours} hrs) added for {$employeeFullName} on {$descClient}.";
+        if ($isTimeOff) {
+            $title = "Time Off Added";
+            $description = "1 week ({$hours} hrs) time off added for {$employeeFullName}.";
+        } else {
+            // Get client name
+            $clientName = '';
+            $stmtClient = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
+            if ($stmtClient) {
+                $stmtClient->bind_param("i", $clientId);
+                $stmtClient->execute();
+                $stmtClient->bind_result($clientName);
+                $stmtClient->fetch();
+                $stmtClient->close();
+            }
+            $title = "Assignment Added";
+            $description = "1 week ({$hours} hrs) added for {$employeeFullName} on {$clientName} engagement.";
+        }
 
         logActivity($conn, $isTimeOff ? "timeoff_created" : "assignment_created", $user_id, $email, $full_name, $title, $description);
 
         header("Location: master-schedule.php?status=success");
         exit();
     } else {
-        die('Error adding assignment: ' . $stmt->error);
+        die('Error adding entry: ' . $stmt->error);
     }
 } else {
     die('Invalid request.');

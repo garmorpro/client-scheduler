@@ -605,11 +605,8 @@ function openEmployeeModal(employeeId) {
         </div>
 
         <div class="modal-body">
-
           <!-- Hidden inputs -->
-          <input type="hidden" id="modalUserId" name="user_id" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
-          <input type="hidden" id="isTimeOff" name="is_timeoff" value="1"> <!-- Default: Time Off -->
+          
 
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
@@ -619,7 +616,7 @@ function openEmployeeModal(employeeId) {
           </div>
 
           <!-- Time Off Entry content: only hours input -->
-          <div id="timeOffEntryContent" class="">
+          <div id="timeOffEntryContent" class="d-none">
             <div class="mb-3">
               <label for="timeOffHours" class="form-label">Hours</label>
               <input type="number" class="form-control" id="timeOffHours" name="time_off_hours" min="0" step="0.25" required>
@@ -629,6 +626,8 @@ function openEmployeeModal(employeeId) {
           <!-- New Assignment content: client dropdown + hours input -->
           <div id="newAssignmentContent" class="d-none">
 
+          <input type="hidden" id="modalUserId" name="user_id" value="">
+          <input type="hidden" id="modalWeek" name="week_start" value="">
             <!-- Custom Client Dropdown -->
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
@@ -648,11 +647,11 @@ function openEmployeeModal(employeeId) {
               <div
                 class="dropdown-list"
                 id="dropdownList"
-                aria-expanded="false"
+                aria-expanded="true"
                 role="listbox"
                 tabindex="-1"
                 aria-labelledby="selectedClient"
-                style="display: none;"
+                style="display: block !important;"
               >
                 <?php 
                   $statusDisplayMap = [
@@ -711,7 +710,6 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
-
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
@@ -1072,107 +1070,86 @@ function openEmployeeModal(employeeId) {
 
 <!-- dropdown menu -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-  const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
-  const btnNewAssignment = document.getElementById('btnNewAssignment');
-  const entryTypePrompt = document.getElementById('entryTypePrompt');
-  const timeOffEntryContent = document.getElementById('timeOffEntryContent');
-  const newAssignmentContent = document.getElementById('newAssignmentContent');
+  document.addEventListener('DOMContentLoaded', () => {
+  const assignmentModal = document.getElementById('assignmentModal');
 
-  const dropdownBtn = document.getElementById('dropdownBtn');
-  const dropdownList = document.getElementById('dropdownList');
-  const selectedClient = document.getElementById('selectedClient');
-  const engagementInput = document.getElementById('engagementInput');
-  const isTimeOffInput = document.getElementById('isTimeOff');
+  assignmentModal.addEventListener('show.bs.modal', () => {
+    const dropdownBtn = document.getElementById('dropdownBtn');
+    const dropdownList = document.getElementById('dropdownList');
+    const selectedClient = document.getElementById('selectedClient');
+    const engagementInput = document.getElementById('engagementInput');
 
-  const timeOffHoursInput = document.getElementById('timeOffHours');
-  const assignedHoursInput = document.getElementById('assignedHours');
+    // Reset dropdown on modal open
+    closeDropdown();
 
-  // Show Time Off Entry content, hide assignment content
-  function showTimeOffEntry() {
-    entryTypePrompt.classList.add('d-none');
-    timeOffEntryContent.classList.remove('d-none');
-    newAssignmentContent.classList.add('d-none');
-    isTimeOffInput.value = '1';
+    dropdownBtn.addEventListener('click', toggleDropdown);
+    dropdownBtn.addEventListener('keydown', dropdownBtnKeyHandler);
 
-    timeOffHoursInput.required = true;
-    assignedHoursInput.required = false;
-    engagementInput.required = false;
+    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => selectClient(item));
+      item.addEventListener('keydown', dropdownItemKeyHandler);
+    });
 
-    // Reset dropdown & inputs
-    selectedClient.textContent = 'Select a client';
-    engagementInput.value = '';
-    assignedHoursInput.value = '';
+    // Close dropdown if clicking outside
+    document.addEventListener('click', outsideClickHandler);
+
+    function toggleDropdown() {
+  const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+  dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
+  dropdownList.style.setProperty('display', expanded ? 'block' : 'none', 'important');
+
   }
 
-  // Show Assignment content, hide time off content
-  function showNewAssignment() {
-    entryTypePrompt.classList.add('d-none');
-    timeOffEntryContent.classList.add('d-none');
-    newAssignmentContent.classList.remove('d-none');
-    isTimeOffInput.value = '0';
 
-    timeOffHoursInput.required = false;
-    assignedHoursInput.required = true;
-    engagementInput.required = true;
+    function dropdownBtnKeyHandler(e) {
+      if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
+        e.preventDefault();
+        dropdownList.style.display = 'block';
+        dropdownBtn.setAttribute('aria-expanded', 'true');
+        const firstItem = dropdownList.querySelector('.dropdown-item');
+        if (firstItem) firstItem.focus();
+      }
+    }
 
-    // Reset time off hours
-    timeOffHoursInput.value = '';
-  }
+    function dropdownItemKeyHandler(e) {
+      const item = e.target;
+      if (['Enter', ' '].includes(e.key)) {
+        e.preventDefault();
+        selectClient(item);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+        if (next) next.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+        if (prev) prev.focus();
+      } else if (e.key === 'Escape') {
+        closeDropdown();
+        dropdownBtn.focus();
+      }
+    }
 
-  btnTimeOffEntry.addEventListener('click', showTimeOffEntry);
-  btnNewAssignment.addEventListener('click', showNewAssignment);
+    function outsideClickHandler(e) {
+      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+        closeDropdown();
+      }
+    }
 
-  // Dropdown toggle
-  dropdownBtn.addEventListener('click', () => {
-    const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-    dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
-    dropdownList.style.display = expanded ? 'none' : 'block';
-  });
-
-  // Dropdown option select
-  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-    item.addEventListener('click', () => {
+    function selectClient(item) {
       const clientName = item.getAttribute('data-client-name');
       const engagementId = item.getAttribute('data-engagement-id');
-
       selectedClient.textContent = clientName;
       engagementInput.value = engagementId;
+      closeDropdown();
+    }
 
-      // Close dropdown
-      dropdownList.style.display = 'none';
-      dropdownBtn.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // Clicking outside dropdown closes it
-  document.addEventListener('click', e => {
-    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+    function closeDropdown() {
       dropdownList.style.display = 'none';
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
   });
-
-  // Initialize modal to show entry prompt and clear inputs on modal show
-  const assignmentModal = document.getElementById('assignmentModal');
-  assignmentModal.addEventListener('show.bs.modal', () => {
-    entryTypePrompt.classList.remove('d-none');
-    timeOffEntryContent.classList.add('d-none');
-    newAssignmentContent.classList.add('d-none');
-
-    isTimeOffInput.value = '1';
-
-    timeOffHoursInput.value = '';
-    assignedHoursInput.value = '';
-    engagementInput.value = '';
-    selectedClient.textContent = 'Select a client';
-
-    timeOffHoursInput.required = false;
-    assignedHoursInput.required = false;
-    engagementInput.required = false;
   });
-});
-
   </script>
 
 
