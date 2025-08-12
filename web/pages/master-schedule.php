@@ -523,94 +523,94 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           </thead>
 
           <tbody>
-              <?php foreach ($employees as $userId => $employee): ?>
-                  <?php
-                  $fullName = htmlspecialchars($employee['full_name']);
-                  $nameParts = explode(' ', trim($fullName));
-                  $initials = '';
-                  foreach ($nameParts as $part) {
-                      $initials .= strtoupper(substr($part, 0, 1));
-                  }
-                  $role = htmlspecialchars($employee['role']);
+            <?php foreach ($employees as $userId => $employee): ?>
+              <?php
+                $fullName = htmlspecialchars($employee['full_name']);
+                $nameParts = explode(' ', trim($fullName));
+                $initials = '';
+                foreach ($nameParts as $part) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
+                $role = htmlspecialchars($employee['role']);
+              ?>
+              <tr>
+                <td class="text-start">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                         style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                      <?php echo $initials; ?>
+                    </div>
+                    <div>
+                      <div class="fw-semibold"><?php echo $fullName; ?></div>
+                      <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                    </div>
+                  </div>
+                </td>
+              
+                <?php foreach ($mondays as $idx => $monday): ?>
+                  <?php 
+                    $weekStart = $monday;
+                    $isCurrent = ($idx === $currentWeekIndex);
+                    $weekKey = date('Y-m-d', $weekStart);
+                    $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
+                    $cellContent = "";
+                    $engagement_id = '';
+                
+                    if (!empty($assignmentsForWeek)) {
+                        $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
+                        foreach ($assignmentsForWeek as $assignment) {
+                            $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                            switch ($engagementStatus) {
+                                case 'confirmed': $badgeColor = 'success'; break;
+                                case 'pending': $badgeColor = 'purple'; break;
+                                case 'not_confirmed': $badgeColor = 'primary'; break;
+                                default: $badgeColor = 'secondary'; break;
+                            }
+                            $clientName = htmlspecialchars($assignment['client_name']);
+                            $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+                            $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
+                        }
+                    } else {
+                        $cellContent = "<span class='text-muted'>+</span>";
+                    }
+                  
+                    $tdClass = $isCurrent ? 'highlight-today' : '';
+                    $hasAssignment = isset($assignments[$userId][$weekKey]);
                   ?>
-                  <tr>
-                      <td class="text-start">
-                          <div class="d-flex align-items-center">
-                              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                                   style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                                  <?php echo $initials; ?>
-                              </div>
-                              <div>
-                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                              </div>
-                          </div>
-                      </td>
-
-                      <?php foreach ($mondays as $idx => $monday): ?>
-                        <?php 
-                          $weekStart = $monday;
-                          $isCurrent = ($idx === $currentWeekIndex);
-                                            
-                          $weekKey = date('Y-m-d', $weekStart);
-                                            
-                          $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
-                          $cellContent = "";
-                          $engagement_id = '';
-                                            
-                          if (!empty($assignmentsForWeek)) {
-                              $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
-                              foreach ($assignmentsForWeek as $assignment) {
-                                  $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                                  switch ($engagementStatus) {
-                                      case 'confirmed': $badgeColor = 'success'; break;
-                                      case 'pending': $badgeColor = 'purple'; break;
-                                      case 'not_confirmed': $badgeColor = 'primary'; break;
-                                      default: $badgeColor = 'secondary'; break;
-                                  }
-                                  $clientName = htmlspecialchars($assignment['client_name']);
-                                  $assignedHours = htmlspecialchars($assignment['assigned_hours']);
-                                  $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
-                              }
-                          } else {
-                              $cellContent = "<span class='text-muted'>+</span>";
-                          }
-                        
-                          $tdClass = $isCurrent ? 'highlight-today' : '';
-                          $hasAssignment = isset($assignments[$userId][$weekKey]);
-                        ?>
-                      
-                        <?php if ($isAdmin): ?>
-                          <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer"
-                              onclick='
-                                <?php if ($hasAssignment): ?>
-                                  openManageEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>", 
-                                    "<?php echo htmlspecialchars($engagement_id, ENT_QUOTES); ?>"
-                                  )
-                                <?php else: ?>
-                                  openAddEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>", 
-                                    ""
-                                  )
-                                <?php endif; ?>
-                              '
-                          >
-                            <?php echo $cellContent; ?>
-                          </td>
-                        <?php else: ?>
-                          <td class="<?php echo $tdClass; ?>">
-                            <?php echo $cellContent; ?>
-                          </td>
-                        <?php endif; ?>
-                        
-                      <?php endforeach; ?>
-
+          
+                  <?php if ($isAdmin): ?>
+                    <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer"
+                        onclick='
+                          <?php if ($hasAssignment): ?>
+                            openManageEntryModal(
+                              "<?php echo $userId; ?>",
+                              <?php echo json_encode($fullName); ?>,
+                              "<?php echo $weekKey; ?>", 
+                              "<?php echo htmlspecialchars($engagement_id, ENT_QUOTES); ?>"
+                            )
+                          <?php else: ?>
+                            openAddEntryModal(
+                              "<?php echo $userId; ?>",
+                              <?php echo json_encode($fullName); ?>,
+                              "<?php echo $weekKey; ?>", 
+                              ""
+                            )
+                          <?php endif; ?>
+                        '
+                    >
+                      <?php echo $cellContent; ?>
+                    </td>
+                  <?php else: ?>
+                    <td class="<?php echo $tdClass; ?>">
+                      <?php echo $cellContent; ?>
+                    </td>
+                  <?php endif; ?>
+                  
+                <?php endforeach; // end mondays ?>
+              </tr>
+            <?php endforeach; // end employees ?>
           </tbody>
+
       </table>
   </div>
 
