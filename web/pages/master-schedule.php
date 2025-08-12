@@ -138,6 +138,11 @@ while ($row = $result->fetch_assoc()) {
         .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
         .highlight-today { background-color: lightblue !important; }
         td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
+
+        .highlight-today {
+    background-color: #fff3cd !important; /* Soft yellow */
+    border: 2px solid #ffc107 !important; /* Bright yellow border */
+  }
     </style>
     <script>
     function autoSubmitDateFilter() {
