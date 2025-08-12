@@ -346,7 +346,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
-                                        <a href="#" class="delete-engagement-btn text-decoration-none" data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                        <a href="#" class="delete-engagement-btn text-decoration-none" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
                                           <i class="bi bi-trash"></i>
                                         </a>
 
