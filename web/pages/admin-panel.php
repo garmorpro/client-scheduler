@@ -455,6 +455,16 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
                                 
+                                case 'bulk_user_delete_success':
+                                    $icon = 'bi-people';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
+                                case 'bulk_user_delete_failed':
+                                    $icon = 'bi-people';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;    
+
                                 case 'backup':
                                     $icon = 'bi-database';
                                     $color = 'rgb(243,132,48)'; // orange

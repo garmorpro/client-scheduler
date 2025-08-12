@@ -4,7 +4,18 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Simple authentication check - you can expand with role check for admin only
+// LOG ACTIVITY FUNCTION
+function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+}
+
+// Simple authentication check
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -39,13 +50,25 @@ if (!$stmt) {
 $types = str_repeat('i', count($userIds));
 $stmt->bind_param($types, ...$userIds);
 
+$currentUserId = $_SESSION['user_id'];
+$currentUserEmail = $_SESSION['email'] ?? '';
+$currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+
 if ($stmt->execute()) {
     $deletedCount = $stmt->affected_rows;
 
-    // Optionally: log bulk delete action here
+    // Log success activity
+    $title = "Successful Bulk User Delete";
+    $description = "Successfully deleted $deletedCount user(s) by {$currentUserFullName} (ID: $currentUserId).";
+    logActivity($conn, "bulk_user_delete_success", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode(['success' => true, 'deletedCount' => $deletedCount]);
 } else {
+    // Log failure activity
+    $title = "Failed Bulk User Delete";
+    $description = "Failed to bulk delete users.";
+    logActivity($conn, "bulk_user_delete_failed", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+
     echo json_encode(['success' => false, 'error' => 'Database execute error: ' . $stmt->error]);
 }
 
