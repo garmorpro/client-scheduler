@@ -408,7 +408,7 @@ input, select {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 15px;
+  margin-top: 5px;
   max-height: 200px;
   overflow-y: auto;
   border: 1px solid #ccc;
