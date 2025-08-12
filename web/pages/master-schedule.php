@@ -149,7 +149,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
+  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
   console.log("Modal triggered with arguments:");
   console.log("user_id:", user_id);
   console.log("employeeName:", employeeName);
@@ -212,20 +212,16 @@ function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = 
 
   if (assignmentsForWeek.length > 0) {
     console.log("Assignments found for this user/week, rendering list and showing manage modal");
-    renderAssignmentsList(user_id, weekStart);  // your existing function to update assignment UI
+    renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
+    renderTimeOffList(user_id, weekStart);
+    manageEntryModal.show();
   } else {
-    console.log("No assignments found for this user/week, clearing assignment list");
-    document.getElementById('assignmentsListContainer').innerHTML = '<p class="text-muted">No assignments for this week.</p>';
+    console.log("No assignments found for this user/week, opening Add Entry modal");
+    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
+  }
   }
 
-  // Always render time off entries for this user/week
-  renderTimeOffList(user_id, weekStart);
-
-  // Show the modal
-  manageEntryModal.show();
-}
 // end Open modal for Manage Assignments or Add Entry
-
 
 // Open Add Entry modal
   function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
