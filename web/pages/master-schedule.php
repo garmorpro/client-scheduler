@@ -223,6 +223,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         document.getElementById('modalWeek').value = weekStart;
         document.getElementById('timeOFFuser_id').value = user_id;
         document.getElementById('timeOFFweek_start').value = weekStart;
+        document.getElementById('manageModalUserId').value = user_id;
+        document.getElementById('manageModalWeek').value = weekStart;
 
         // Update display spans
         document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
@@ -247,6 +249,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         if (tab === 'assignment') {
             document.getElementById('selectedClient').textContent = 'Select a client';
             document.getElementById('engagementInput').value = '';
+            document.getElementById('manageEngagementInput').value = '';
             document.getElementById('assignedHours').value = '';
         } else if (tab === 'timeoff') {
             document.getElementById('timeoffHours').value = '';
@@ -665,8 +668,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="text" id="modalUserId" name="user_id" value="">
-            <input type="text" id="modalWeek" name="week_start" value="">
+            <input type="text" id="manageModalUserId" name="user_id" value="">
+            <input type="text" id="manageModalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -728,7 +731,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <?php endforeach; ?>
               </div>
 
-              <input type="text" id="engagementInput" name="engagement_id" required>
+              <input type="text" id="manageEngagementInput" name="engagement_id" required>
             </div>
 
             <!-- Assigned hours -->
