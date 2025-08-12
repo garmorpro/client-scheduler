@@ -248,7 +248,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         </a>
 
                                         <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $row['user_id']; ?>">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash text-danger"></i>
                                         </a>
                                     </td>
                                 </tr>
