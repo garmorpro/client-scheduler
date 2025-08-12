@@ -231,20 +231,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // end open addAssignmentModal
 
 
-// Update openEditModal to handle dynamic elements properly
-function openEditModal(event) {
-    const buttonElement = event.target;
+// Edit Modal
+  function openEditModal(event) {
+    const buttonElement = event.currentTarget; // safer than event.target in case of icon click
     const assignmentId = buttonElement.getAttribute('data-assignment-id');
     const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-    // Set the assignment ID and assigned hours in the modal
     document.getElementById('editAssignmentId').value = assignmentId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
-    // Open the modal
     const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
     editModal.show();
-}
+  }
+// end Edit Modal
 
 
 
@@ -1385,11 +1384,11 @@ function openEmployeeModal(employeeId) {
       editLink.className = "text-primary me-3";
       editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
       editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
-          
+
       // Set data attributes for use in the modal
       editLink.setAttribute('data-assignment-id', assignment.assignment_id);
       editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
-          
+
       // Attach the click handler
       editLink.onclick = (e) => {
         e.preventDefault();
