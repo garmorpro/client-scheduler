@@ -1089,75 +1089,106 @@ function openEmployeeModal(employeeId) {
 <!-- end script: search -->
 
 <!-- dropdown menu -->
-<script>
-  const dropdownBtn = document.getElementById('dropdownBtn');
-const dropdownList = document.getElementById('dropdownList');
-const selectedClient = document.getElementById('selectedClient');
-const engagementInput = document.getElementById('engagementInput');
+    <script>
+      const dropdownBtn = document.getElementById('dropdownBtn');
+    const dropdownList = document.getElementById('dropdownList');
+    const selectedClient = document.getElementById('selectedClient');
+    const engagementInput = document.getElementById('engagementInput');
 
-dropdownBtn.addEventListener('click', () => {
-  const isOpen = dropdownList.style.display === 'block';
-  dropdownList.style.display = isOpen ? 'none' : 'block';
-  dropdownBtn.setAttribute('aria-expanded', !isOpen);
-});
+    dropdownBtn.addEventListener('click', () => {
+      const isOpen = dropdownList.style.display === 'block';
+      dropdownList.style.display = isOpen ? 'none' : 'block';
+      dropdownBtn.setAttribute('aria-expanded', !isOpen);
+    });
 
-dropdownBtn.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    dropdownList.style.display = 'block';
-    dropdownBtn.setAttribute('aria-expanded', 'true');
-    dropdownList.querySelector('.dropdown-item').focus();
-  }
-});
+    dropdownBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        dropdownList.style.display = 'block';
+        dropdownBtn.setAttribute('aria-expanded', 'true');
+        dropdownList.querySelector('.dropdown-item').focus();
+      }
+    });
 
-dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-  item.addEventListener('click', () => {
-    selectClient(item);
-  });
-  item.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      selectClient(item);
-    }
-    else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-      next.focus();
-    }
-    else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-      prev.focus();
-    }
-    else if (e.key === 'Escape') {
+    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        selectClient(item);
+      });
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectClient(item);
+        }
+        else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+          next.focus();
+        }
+        else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+          prev.focus();
+        }
+        else if (e.key === 'Escape') {
+          closeDropdown();
+          dropdownBtn.focus();
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    function selectClient(item) {
+      const clientName = item.getAttribute('data-client-name');
+      const engagementId = item.getAttribute('data-engagement-id');
+      selectedClient.textContent = clientName;
+      engagementInput.value = engagementId;
       closeDropdown();
-      dropdownBtn.focus();
     }
-  });
-});
 
-document.addEventListener('click', (e) => {
-  if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-    closeDropdown();
-  }
-});
+    function closeDropdown() {
+      dropdownList.style.display = 'none';
+      dropdownBtn.setAttribute('aria-expanded', 'false');
+    }
 
-function selectClient(item) {
-  const clientName = item.getAttribute('data-client-name');
-  const engagementId = item.getAttribute('data-engagement-id');
-  selectedClient.textContent = clientName;
-  engagementInput.value = engagementId;
-  closeDropdown();
-}
-
-function closeDropdown() {
-  dropdownList.style.display = 'none';
-  dropdownBtn.setAttribute('aria-expanded', 'false');
-}
-
-</script>
-
+    </script>
 <!-- end dropdown menu -->
+
+<!-- Script: Custom Tabs -->
+ <script>
+  // Tab switching logic for custom tabs
+  document.querySelectorAll('.custom-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab');
+      if (!targetTab) return;
+
+      // Remove active class on all buttons
+      document.querySelectorAll('.custom-tabs button').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+
+      // Add active class on clicked button
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      btn.setAttribute('tabindex', '0');
+      btn.focus();
+
+      // Hide all tab panes
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+      // Show target tab pane
+      const activePane = document.getElementById(targetTab);
+      if (activePane) activePane.classList.add('active');
+    });
+  });
+</script>
+<!-- end Script: Custom Tabs -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
