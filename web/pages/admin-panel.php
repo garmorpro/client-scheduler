@@ -1379,8 +1379,8 @@ if ($settingResult) {
               </div>
 
               <div class="mb-4">
-                <label for="retentionPeriod" class="form-label">Retention Period (days)</label>
-                <input type="number" min="1" class="form-control" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings    ['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
+                <label for="retentionPeriod" style="font-size: 14px !important;" class="form-label">Retention Period (days)</label>
+                <input type="number" min="1" class="form-control" style="font-size: 14px !important;" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings    ['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
               </div>
 
               <hr>
@@ -1403,8 +1403,8 @@ if ($settingResult) {
                       $label = $labelChunks[$colIndex][$i];
                     ?>
                       <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
-                        <label class="form-check-label" for="<?php echo $key; ?>"><?php echo $label; ?></label>
+                        <input class="form-check-input" style="font-size: 14px !important;" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
+                        <label class="form-check-label" style="font-size: 14px !important;" for="<?php echo $key; ?>"><?php echo $label; ?></label>
                       </div>
                     <?php endforeach; ?>
                   </div>
@@ -1416,7 +1416,7 @@ if ($settingResult) {
 
               <!-- Storage Location -->
               <h6 class="mb-3">Storage Location</h6>
-              <select class="form-select mb-3" id="storageLocation" name="storage_location" required>
+              <select class="form-select mb-3" style="font-size: 14px !important;" id="storageLocation" name="storage_location" required>
                 <?php 
                 $storageOptions = ['local' => 'Local Storage', 'cloud' => 'Cloud Storage', 'network' => 'Network Storage'];
                 foreach ($storageOptions as $val => $label) {
@@ -1430,8 +1430,8 @@ if ($settingResult) {
               <div id="cloudStorageSettings" style="display: none;">
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <label for="cloudProvider" class="form-label">Cloud Provider</label>
-                    <select class="form-select" id="cloudProvider" name="cloud_provider">
+                    <label for="cloudProvider" style="font-size: 14px !important;" class="form-label">Cloud Provider</label>
+                    <select class="form-select" style="font-size: 14px !important;" id="cloudProvider" name="cloud_provider">
                       <?php
                       $cloudProviders = ['aws' => 'Amazon S3', 'azure' => 'Azure Blob', 'gcp' => 'Google Cloud', 'dropbox' => 'Dropbox'];
                       foreach ($cloudProviders as $val => $label) {
@@ -1442,25 +1442,25 @@ if ($settingResult) {
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label for="bucketName" class="form-label">Bucket/Container Name</label>
-                    <input type="text" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '',   ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
+                    <label for="bucketName" style="font-size: 14px !important;" class="form-label">Bucket/Container Name</label>
+                    <input type="text" style="font-size: 14px !important;" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '',   ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <label for="accessKey" class="form-label">Access Key</label>
-                    <input type="text" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter access key">
+                    <label for="accessKey" style="font-size: 14px !important;" class="form-label">Access Key</label>
+                    <input type="text" style="font-size: 14px !important;" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter access key">
                   </div>
                   <div class="col-md-6">
-                    <label for="secretKey" class="form-label">Secret Key</label>
-                    <input type="password" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter secret key">
+                    <label for="secretKey" style="font-size: 14px !important;" class="form-label">Secret Key</label>
+                    <input type="password" style="font-size: 14px !important;" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter secret key">
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label for="region" class="form-label">Region</label>
-                  <input type="text" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>"  placeholder="Enter region">
+                  <label for="region" style="font-size: 14px !important;" class="form-label">Region</label>
+                  <input type="text" style="font-size: 14px !important;" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>"  placeholder="Enter region">
                 </div>
               </div>
 
@@ -1468,7 +1468,7 @@ if ($settingResult) {
 
               <!-- Test Configuration -->
               <h6 class="mb-3">Test Configuration</h6>
-              <button type="button" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
+              <button type="button" style="font-size: 14px !important;" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
 
             </div>
 
