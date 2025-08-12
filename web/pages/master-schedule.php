@@ -596,8 +596,7 @@ function openEmployeeModal(employeeId) {
 
       <div class="modal-header">
         <h5 class="modal-title" id="assignmentModalLabel">
-          <i class="bi bi-calendar-range me-2"></i>
-          New Entry
+          <i class="bi bi-calendar-range me-2"></i> New Entry
           <br>
           <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
             For <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
@@ -606,47 +605,16 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <!-- Tabs Nav -->
-      <ul class="nav nav-tabs" id="assignmentTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="assignment-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#assignmentTabPane"
-            type="button"
-            role="tab"
-            aria-controls="assignmentTabPane"
-            aria-selected="true"
-          >
-            Add Assignment
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="timeoff-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#timeoffTabPane"
-            type="button"
-            role="tab"
-            aria-controls="timeoffTabPane"
-            aria-selected="false"
-          >
-            Add Time Off
-          </button>
-        </li>
-      </ul>
+      <!-- Custom Tabs -->
+      <div class="custom-tabs" role="tablist">
+        <button class="active" data-tab="assignmentTabPane" role="tab" aria-selected="true" aria-controls="assignmentTabPane" tabindex="0">Add Assignment</button>
+        <button data-tab="timeoffTabPane" role="tab" aria-selected="false" aria-controls="timeoffTabPane" tabindex="-1">Add Time Off</button>
+      </div>
 
-      <!-- Tabs Content -->
-      <div class="tab-content p-3" id="assignmentTabsContent">
+      <!-- Tab Content -->
+      <div class="tab-content">
         <!-- Assignment Tab Pane -->
-        <div
-          class="tab-pane fade show active"
-          id="assignmentTabPane"
-          role="tabpanel"
-          aria-labelledby="assignment-tab"
-        >
+        <div id="assignmentTabPane" class="tab-pane active" role="tabpanel" aria-labelledby="assignmentTab">
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
             <input type="hidden" id="modalUserId" name="user_id" value="">
@@ -676,7 +644,6 @@ function openEmployeeModal(employeeId) {
                 aria-labelledby="selectedClient"
               >
                 <?php
-                  // Status display and class maps (adjust CSS classes as needed)
                   $statusDisplayMap = [
                     'confirmed' => 'Confirmed',
                     'pending' => 'Pending',
@@ -723,19 +690,17 @@ function openEmployeeModal(employeeId) {
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
+                data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
             </div>
           </form>
         </div>
 
         <!-- Time Off Tab Pane -->
-        <div
-          class="tab-pane fade"
-          id="timeoffTabPane"
-          role="tabpanel"
-          aria-labelledby="timeoff-tab"
-        >
+        <div id="timeoffTabPane" class="tab-pane" role="tabpanel" aria-labelledby="timeoffTab">
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
             <input type="hidden" name="user_id" id="timeoffUserId" value="">
             <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
@@ -751,8 +716,11 @@ function openEmployeeModal(employeeId) {
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
+                data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
             </div>
           </form>
         </div>
