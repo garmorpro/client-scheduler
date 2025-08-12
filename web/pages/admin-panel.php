@@ -122,6 +122,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     <p class="text-muted mb-4">System overview and user management for Admin User</p>
 
     <div class="container-fluid">
+
         <!-- Stat cards -->
             <div class="row g-3">
                 <div class="col-md-3">
@@ -187,8 +188,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     </div>
                     <div class="user-management-buttons">
                         <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
-                          <i class="bi bi-trash me-2"></i>Delete Selected
+                          <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
+
                         <a href="#" 
                            class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
@@ -628,9 +630,6 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
             </div>
         <!-- end settings tab -->
-
-
-
 
     </div> <!-- end container -->
 </div> <!-- end flex-grow -->
@@ -1739,6 +1738,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       function updateBulkDeleteVisibility() {
         const anyChecked = Array.from(userCheckboxes).some(cb => cb.checked);
         bulkDeleteBtn.style.display = anyChecked ? 'inline-block' : 'none';
+      }
+
+      function updateBulkDeleteVisibility() {
+        const checkedCheckboxes = Array.from(userCheckboxes).filter(cb => cb.checked);
+        const count = checkedCheckboxes.length;
+        bulkDeleteBtn.style.display = count > 0 ? 'inline-block' : 'none';
+          
+        // Update the number displayed
+        const selectedCountSpan = document.getElementById('selectedCount');
+        if (selectedCountSpan) {
+          selectedCountSpan.textContent = count;
+        }
       }
 
       selectAllCheckbox.addEventListener('change', () => {
