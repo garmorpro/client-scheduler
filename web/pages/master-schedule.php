@@ -1564,35 +1564,41 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     // Left side: client name and hours
     const leftDiv = document.createElement('div');
     leftDiv.innerHTML = `
-      <div class="fw-semibold fs-5">${assignment.client_name || 'Unnamed Client'}</div>
+      <div class="fw-semibold fs-6">${assignment.client_name || 'Unnamed Client'}</div>
       <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
     `;
 
-    // Right side: action buttons
+    // Right side: action links (styled as icons)
     const rightDiv = document.createElement('div');
 
-    const editBtn = document.createElement('button');
-    editBtn.type = 'button';
-    editBtn.className = 'btn btn-sm btn-outline-primary me-2';
-    editBtn.title = 'Edit Assignment';
-    editBtn.innerHTML = `<i class="bi bi-pencil-square"></i>`;
-    editBtn.onclick = () => {
+    // Edit link
+    const editLink = document.createElement('a');
+    editLink.href = "#";
+    editLink.title = "Edit Assignment";
+    editLink.className = "text-primary me-3";
+    editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+    editLink.innerHTML = `<i class="bi bi-pencil-square"></i>`;
+    editLink.onclick = (e) => {
+      e.preventDefault();
       console.log('Edit clicked for assignment:', assignment);
       // Your edit logic here
     };
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'btn btn-sm btn-outline-danger';
-    deleteBtn.title = 'Delete Assignment';
-    deleteBtn.innerHTML = `<i class="bi bi-trash"></i>`;
-    deleteBtn.onclick = () => {
+    // Delete link
+    const deleteLink = document.createElement('a');
+    deleteLink.href = "#";
+    deleteLink.title = "Delete Assignment";
+    deleteLink.className = "text-danger";
+    deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+    deleteLink.innerHTML = `<i class="bi bi-trash"></i>`;
+    deleteLink.onclick = (e) => {
+      e.preventDefault();
       console.log('Delete clicked for assignment:', assignment);
       // Your delete logic here
     };
 
-    rightDiv.appendChild(editBtn);
-    rightDiv.appendChild(deleteBtn);
+    rightDiv.appendChild(editLink);
+    rightDiv.appendChild(deleteLink);
 
     cardBody.appendChild(leftDiv);
     cardBody.appendChild(rightDiv);
