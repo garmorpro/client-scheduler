@@ -612,7 +612,7 @@ function openEmployeeModal(employeeId) {
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);border:none !important;" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
             <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
           </div>
         </form>
