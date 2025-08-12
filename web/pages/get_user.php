@@ -25,7 +25,7 @@ $user = $result->fetch_assoc();
 
 if ($user) {
     // Fetch last 3 activity logs for this user
-    $activityStmt = $conn->prepare("SELECT description, created_at FROM system_activity_log WHERE user_id = ? ORDER BY created_at ASC LIMIT 3");
+    $activityStmt = $conn->prepare("SELECT description, created_at FROM system_activity_log WHERE user_id = ? ORDER BY created_at DESC LIMIT 3");
     $activityStmt->bind_param("i", $user_id);
     $activityStmt->execute();
     $activityResult = $activityStmt->get_result();
