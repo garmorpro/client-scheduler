@@ -248,7 +248,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                         </a>
 
                                         <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $row['user_id']; ?>">
-                                            <i class="bi bi-trash overlay-red"></i>
+                                            <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -1624,7 +1624,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     .then(res => res.text())
                     .then(response => {
                         if (response.trim() === 'success') {
-                            alert('User deleted successfully');
+                            // alert('User deleted successfully');
                             location.reload();
                         } else {
                             alert('Error deleting user');
