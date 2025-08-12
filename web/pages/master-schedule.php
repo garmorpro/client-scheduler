@@ -1553,22 +1553,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   }
 
   assignmentsForWeek.forEach(assignment => {
-    // Create card container
     const card = document.createElement('div');
     card.classList.add('card', 'mb-3', 'shadow-sm');
 
-    // Inner card body with flex layout
     const cardBody = document.createElement('div');
     cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
 
-    // Left side: client name and hours
     const leftDiv = document.createElement('div');
     leftDiv.innerHTML = `
       <div class="fw-semibold fs-6">${assignment.client_name || 'Unnamed Client'}</div>
       <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
     `;
 
-    // Right side: action links (styled as icons)
     const rightDiv = document.createElement('div');
 
     // Edit link
@@ -1580,8 +1576,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
     editLink.onclick = (e) => {
       e.preventDefault();
-      console.log('Edit clicked for assignment:', assignment);
-      // Your edit logic here
+      // Populate and show edit modal
+      const modalEl = document.getElementById('editAssignmentModal');
+      const editModal = new bootstrap.Modal(modalEl);
+      document.getElementById('editAssignmentId').value = assignment.assignment_id || assignment.id || ''; // adjust field as needed
+      document.getElementById('editAssignedHours').value = assignment.assigned_hours || 0;
+      editModal.show();
     };
 
     // Delete link
@@ -1594,7 +1594,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     deleteLink.onclick = (e) => {
       e.preventDefault();
       console.log('Delete clicked for assignment:', assignment);
-      // Your delete logic here
+      // Your delete logic here (confirm and delete)
     };
 
     rightDiv.appendChild(editLink);
