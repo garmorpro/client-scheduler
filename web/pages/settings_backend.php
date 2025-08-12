@@ -1,20 +1,19 @@
 <?php
-// Make sure this is the very first line of the file with no whitespace before it
+ob_start(); // Start output buffering to prevent accidental output
+
 header('Content-Type: application/json; charset=utf-8');
 
-// Disable error output to client; log errors instead
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);  // Disable error display (hide warnings/notices)
+ini_set('log_errors', 1);      // Enable error logging
+error_reporting(E_ALL);        // Report all errors for logging
 
-require_once '../includes/db.php';
+require_once '../includes/db.php'; // your mysqli connection $conn
 session_start();
-
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['setting_master_key'], $data['settings']) || !is_array($data['settings'])) {
+    ob_clean(); // Clear any output before JSON
     echo json_encode(['success' => false, 'error' => 'Invalid input']);
     exit;
 }
@@ -27,6 +26,7 @@ $stmtUpdate = mysqli_prepare($conn, "UPDATE settings SET setting_value = ? WHERE
 $stmtInsert = mysqli_prepare($conn, "INSERT INTO settings (setting_master_key, setting_key, setting_value) VALUES (?, ?, ?)");
 
 if (!$stmtCheck || !$stmtUpdate || !$stmtInsert) {
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Failed to prepare statements']);
     exit;
 }
@@ -55,14 +55,20 @@ try {
         mysqli_stmt_free_result($stmtCheck);
     }
     mysqli_commit($conn);
+
+    ob_clean();
     echo json_encode(['success' => true]);
     exit;
+
 } catch (Exception $e) {
     mysqli_rollback($conn);
+
+    ob_clean();
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     exit;
 }
 
+// Close statements (won't be reached if exit runs above, but good practice)
 mysqli_stmt_close($stmtCheck);
 mysqli_stmt_close($stmtUpdate);
 mysqli_stmt_close($stmtInsert);
