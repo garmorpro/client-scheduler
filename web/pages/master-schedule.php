@@ -210,10 +210,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     console.warn('Add New Entry button inside manageEntryModal NOT found!');
   }
 
+  renderTimeOffList(user_id, weekStart);
+
   if (assignmentsForWeek.length > 0) {
     console.log("Assignments found for this user/week, rendering list and showing manage modal");
     renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
-    renderTimeOffList(user_id, weekStart);
+    
     manageEntryModal.show();
   } else {
     console.log("No assignments found for this user/week, opening Add Entry modal");
