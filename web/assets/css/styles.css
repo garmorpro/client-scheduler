@@ -369,5 +369,5 @@ body {
     border-right: 3px solid #ffc107 !important;
 }
 .highlight-today:hover {
-    background-color: blue;
+    background-color: blue !important;
 }
