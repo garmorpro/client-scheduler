@@ -216,7 +216,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // open addTimeOffModal
   // open addTimeOffModal - reuse the same modal, just switch tab and set fields
   function openAddTimeOffModal(user_id, employeeName, weekStart) {
-    // Set hidden inputs for user_id and week_start
+    console.log('openAddTimeOffModal called with:', user_id, employeeName, weekStart);
+
     document.getElementById('timeoffUserId').value = user_id;
     document.getElementById('timeoffWeekStart').value = weekStart;
 
