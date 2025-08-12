@@ -1576,12 +1576,23 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
     editLink.onclick = (e) => {
       e.preventDefault();
-      // Populate and show edit modal
-      const modalEl = document.getElementById('editAssignmentModal');
-      const editModal = new bootstrap.Modal(modalEl);
-      document.getElementById('editAssignmentId').value = assignment.assignment_id || assignment.id || ''; // adjust field as needed
+      const parentModalEl = document.getElementById('manageEntryModal');
+      const editModalEl = document.getElementById('editAssignmentModal');
+        
+      // Hide parent modal
+      const parentModal = bootstrap.Modal.getInstance(parentModalEl) || new bootstrap.Modal(parentModalEl);
+      parentModal.hide();
+        
+      // Show edit modal
+      const editModal = new bootstrap.Modal(editModalEl);
+      document.getElementById('editAssignmentId').value = assignment.assignment_id || assignment.id || '';
       document.getElementById('editAssignedHours').value = assignment.assigned_hours || 0;
       editModal.show();
+        
+      // When edit modal closes, re-show parent modal
+      editModalEl.addEventListener('hidden.bs.modal', () => {
+        parentModal.show();
+      }, { once: true });
     };
 
     // Delete link
