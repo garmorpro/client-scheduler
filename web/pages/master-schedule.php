@@ -40,7 +40,7 @@ for ($i = 0; $i < 7; $i++) {
 
 $firstWeekDisplay = date('n/j', $mondays[0]);
 $lastWeekDisplay  = date('n/j', $mondays[6]);
-?>
+
 
 
 
