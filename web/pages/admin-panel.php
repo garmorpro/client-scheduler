@@ -2247,7 +2247,6 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </script>
 <!-- end bulk delete engagements -->
 
-
 <!-- email notifications script -->
      <script>
       // Show modal on configure button click
@@ -2323,6 +2322,58 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       });
     </script>
 <!-- end email notification script -->
+
+<!-- email notification db script -->
+<script>
+    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  // Build data object mapping setting_key => setting_value
+  const data = {};
+  
+  // Master key for this form
+  const settingMasterKey = 'email';
+
+  // Single checkbox (enable_email_notifications)
+  data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+
+  // notification_types[] is an array — store as JSON string
+  const notifTypes = formData.getAll('notification_types[]');
+  data['notification_types'] = JSON.stringify(notifTypes);
+
+  // Other fields
+  data['notification_frequency'] = formData.get('notification_frequency') || '';
+  data['smtp_server'] = formData.get('smtp_server') || '';
+  data['smtp_port'] = formData.get('smtp_port') || '';
+  data['smtp_username'] = formData.get('smtp_username') || '';
+  data['smtp_password'] = formData.get('smtp_password') || '';
+  data['sender_name'] = formData.get('sender_name') || '';
+  data['sender_email'] = formData.get('sender_email') || '';
+
+  try {
+    const resp = await fetch('/api/settings_backend.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
+    });
+    const result = await resp.json();
+    if (result.success) {
+      alert('Settings saved successfully!');
+      const modalEl = document.getElementById('emailNotifConfigModal');
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      modalInstance.hide();
+    } else {
+      alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+    }
+  } catch (err) {
+    alert('Network error: ' + err.message);
+  }
+});
+
+</script>
+<!-- end email notification db script -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
