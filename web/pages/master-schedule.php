@@ -212,15 +212,22 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // end Open modal for Manage Assignments or Add Entry
 
 // Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
-    // Set inputs for user and week in the forms
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;
-    document.getElementById('timeOFFuser_id').value = user_id;
-    document.getElementById('timeOFFweek_start').value = weekStart;
+    function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment', suffix = '') {
+  const suffixStr = suffix ? `-${suffix}` : '';
 
-    // Update display spans
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+  // inputs
+  const modalUserId = document.getElementById(`modalUserId${suffixStr}`);
+  const modalWeek = document.getElementById(`modalWeek${suffixStr}`);
+  const timeOFFuserId = document.getElementById(`timeOFFuser_id${suffixStr}`);
+  const timeOFFweekStart = document.getElementById(`timeOFFweek_start${suffixStr}`);
+
+  if (modalUserId) modalUserId.value = user_id;
+  if (modalWeek) modalWeek.value = weekStart;
+  if (timeOFFuserId) timeOFFuserId.value = user_id;
+  if (timeOFFweekStart) timeOFFweekStart.value = weekStart;
+
+  const modalEmployeeNameDisplay = document.getElementById(`modalEmployeeNameDisplay${suffixStr}`);
+  if (modalEmployeeNameDisplay) modalEmployeeNameDisplay.textContent = employeeName;
 
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const date = new Date(weekStart);
@@ -234,45 +241,58 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     const mondayDate = new Date(date);
     mondayDate.setDate(date.getDate() + diffToMonday);
 
-    document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
+    // Then update modalWeekDisplay
+  const modalWeekDisplay = document.getElementById(`modalWeekDisplay${suffixStr}`);
+  if (modalWeekDisplay) modalWeekDisplay.textContent = mondayDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 
-    // Reset inputs depending on the tab
-    if (tab === 'assignment') {
-        document.getElementById('selectedClient').textContent = 'Select a client';
-        const engagementInputEl = document.getElementById('engagementInput');
-        
-        console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
-        console.log('engagementInput element found:', engagementInputEl);
-        if (engagementInputEl) {
-            console.log('Before set, engagementInput value:', engagementInputEl.value);
-            engagementInputEl.value = engagement_id;
-            console.log('After set, engagementInput value:', engagementInputEl.value);
-        }
-        
-        document.getElementById('assignedHours').value = '';
-    } else if (tab === 'timeoff') {
-        document.getElementById('timeoffHours').value = '';
-        document.getElementById('timeoffReason').value = '';
+  if (tab === 'assignment') {
+    const selectedClient = document.getElementById(`selectedClient${suffixStr}`);
+    const engagementInputEl = document.getElementById(`engagementInput${suffixStr}`);
+    const assignedHours = document.getElementById(`assignedHours${suffixStr}`);
+
+    if (selectedClient) {
+      selectedClient.textContent = 'Select a client';
+      selectedClient.classList.add('text-muted');
     }
 
-    // Show the addEntryModal modal
-    const addEntryModalEl = document.getElementById('addEntryModal');
-    const addEntryModal = new bootstrap.Modal(addEntryModalEl);
-    addEntryModal.show();
-
-    // Use Bootstrap's Tab API to activate the correct tab button
-    const tabSelector = tab === 'assignment'
-        ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
-        : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
-
-    const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
-
-    if (tabTriggerEl) {
-        const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
-        tabInstance.show();
-    } else {
-        console.warn('Tab trigger element not found:', tabSelector);
+    console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
+    console.log('engagementInput element found:', engagementInputEl);
+    if (engagementInputEl) {
+      console.log('Before set, engagementInput value:', engagementInputEl.value);
+      engagementInputEl.value = engagement_id;
+      console.log('After set, engagementInput value:', engagementInputEl.value);
     }
+
+    if (assignedHours) assignedHours.value = '';
+  } else if (tab === 'timeoff') {
+    const timeoffHours = document.getElementById(`timeoffHours${suffixStr}`);
+    const timeoffReason = document.getElementById(`timeoffReason${suffixStr}`);
+
+    if (timeoffHours) timeoffHours.value = '';
+    if (timeoffReason) timeoffReason.value = '';
+  }
+
+  // Show modal by suffix as well
+  const addEntryModalEl = document.getElementById(`addEntryModal${suffixStr}`);
+  if (!addEntryModalEl) {
+    console.warn(`Modal element addEntryModal${suffixStr} not found`);
+    return;
+  }
+  const addEntryModal = new bootstrap.Modal(addEntryModalEl);
+  addEntryModal.show();
+
+  // Activate tab
+  const tabSelector = tab === 'assignment'
+    ? `.custom-tabs-modal button[data-tab="assignmentTabPane${suffixStr}"]`
+    : `.custom-tabs-modal button[data-tab="timeoffTabPane${suffixStr}"]`;
+
+  const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
+  if (tabTriggerEl) {
+    const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
+    tabInstance.show();
+  } else {
+    console.warn('Tab trigger element not found:', tabSelector);
+  }
 }
 
 
