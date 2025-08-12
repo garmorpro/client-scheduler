@@ -417,13 +417,20 @@ function openEmployeeModal(employeeId) {
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
+                    // If $monday is timestamp:
                     $weekStart = date('Y-m-d', $monday);
-                    $isCurrentWeek = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday)));
+
+                    // If $monday is already Y-m-d string, use this instead:
+                    // $weekStart = $monday;
+
+                    $weekEnd = date('Y-m-d', strtotime($weekStart . ' +7 days'));
+
+                    $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
                     $highlightClass = $isCurrentWeek ? 'highlight-today' : '';
                     ?>
                     <th class="<?php echo $highlightClass; ?> align-middle">
-                        <?php echo date('M j', $monday); ?><br>
-                        <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                        <?php echo date('M j', strtotime($weekStart)); ?><br>
+                        <small class="text-muted">Week of <?php echo date('n/j', strtotime($weekStart)); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
@@ -432,7 +439,6 @@ function openEmployeeModal(employeeId) {
         <tbody>
             <?php foreach ($employees as $userId => $employee): ?>
                 <?php
-                // Extract initials for avatar
                 $fullName = htmlspecialchars($employee['full_name']);
                 $nameParts = explode(' ', trim($fullName));
                 $initials = '';
@@ -444,57 +450,44 @@ function openEmployeeModal(employeeId) {
                 <tr>
                     <td class="text-start">
                         <div class="d-flex align-items-center">
-                            <!-- Avatar -->
                             <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                                  style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
                                 <?php echo $initials; ?>
                             </div>
-
-                            <!-- Name + Role -->
                             <div>
                                 <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                <div class="text-muted text-capitalize" style="font-size: 12px;">
-                                    <?php echo $role; ?>
-                                </div>
+                                <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
                             </div>
                         </div>
                     </td>
 
                     <?php foreach ($mondays as $monday): ?>
                         <?php 
+                        // Same logic for week start and end
                         $weekStart = date('Y-m-d', $monday);
-                        $isCurrentWeek = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday)));
+                        $weekEnd = date('Y-m-d', strtotime($weekStart . ' +7 days'));
+                        $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
+
                         $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
                         $cellContent = "";
 
                         if ($assignmentsForWeek) {
                             foreach ($assignmentsForWeek as $assignment) {
                                 $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
-
                                 switch ($engagementStatus) {
-                                    case 'confirmed':
-                                        $badgeColor = 'success';
-                                        break;
-                                    case 'pending':
-                                        $badgeColor = 'purple';
-                                        break;
-                                    case 'not_confirmed':
-                                        $badgeColor = 'primary';
-                                        break;
-                                    default:
-                                        $badgeColor = 'secondary';
+                                    case 'confirmed': $badgeColor = 'success'; break;
+                                    case 'pending': $badgeColor = 'purple'; break;
+                                    case 'not_confirmed': $badgeColor = 'primary'; break;
+                                    default: $badgeColor = 'secondary';
                                 }
-
                                 $clientName = htmlspecialchars($assignment['client_name']);
                                 $assignedHours = htmlspecialchars($assignment['assigned_hours']);
-
                                 $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
                             }
                         } else {
                             $cellContent = "<span class='text-muted'>+</span>";
                         }
 
-                        // Add highlight class to <td> if current week
                         $tdClass = $isCurrentWeek ? 'highlight-today' : '';
                         ?>
                         <?php if ($isAdmin): ?>
