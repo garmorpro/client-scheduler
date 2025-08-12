@@ -462,6 +462,7 @@ function openEmployeeModal(employeeId) {
                     <?php foreach ($mondays as $monday): ?>
                         <?php 
                         $weekStart = date('Y-m-d', $monday);
+                        $isCurrentWeek = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday)));
                         $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
                         $cellContent = "";
 
@@ -487,6 +488,7 @@ function openEmployeeModal(employeeId) {
                                 $assignedHours = htmlspecialchars($assignment['assigned_hours']);
 
                                 $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
+                                $tdClass = $isCurrentWeek ? 'highlight-today' : '';
                             }
                         } else {
                             $cellContent = "<span class='text-muted'>+</span>";
