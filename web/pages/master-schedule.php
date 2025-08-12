@@ -578,16 +578,14 @@ function openEmployeeModal(employeeId) {
         <form id="assignmentForm" action="add_assignment.php" method="POST">
           <div class="modal-header">
             <h5 class="modal-title" id="assignmentModalLabel">
-              <i class="bi bi-calendar me-2"></i>New Assignment <br>
+              <i class="bi bi-calendar-range me-2"></i>New Assignment <br>
               <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">
                 Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
               </span>
             </h5>
-            
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <!-- Subtitle -->
 
             <!-- Hidden inputs -->
             <input type="hidden" id="modalUserId" name="user_id" value="">
@@ -596,7 +594,7 @@ function openEmployeeModal(employeeId) {
             <!-- Client select -->
             <div class="mb-3">
               <label for="clientSelect" class="form-label">Client Name</label>
-              <select class="form-select" id="clientSelect" name="engagement_id" required>
+              <select class="form-select" id="clientSelect" name="engagement_id" required style="border: none !important; background-color: rgb(243,243,245) !important;">
                 <option value="" disabled selected>Select a client</option>
                 <?php foreach ($activeClients as $client): ?>
                   <option value="<?php echo htmlspecialchars($client['engagement_id']); ?>">
