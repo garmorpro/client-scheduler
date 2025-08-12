@@ -810,7 +810,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <?php endforeach; ?>
               </div>
 
-              <input type="text" id="engagementInput" name="engagement_id" required>
+              <input type="hidden" id="engagementInput" name="engagement_id" required>
             </div>
 
             <!-- Assigned hours -->
