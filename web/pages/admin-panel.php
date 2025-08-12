@@ -1374,7 +1374,7 @@ if ($settingResult) {
                 </div>
                 <div class="col-md-6">
                   <label for="backupTime" class="form-label">Backup Time</label>
-                  <input type="time" class="form-control" id="backupTime" style="font-size: 14px;" name="backup_time" value="<?php echo htmlspecialchars($settings['backup_time'] ?? '',     ENT_QUOTES); ?>" required>
+                  <input type="time" class="form-control" id="backupTime" style="font-size: 14px !important;" name="backup_time" value="<?php echo htmlspecialchars($settings['backup_time'] ?? '',     ENT_QUOTES); ?>" required>
                 </div>
               </div>
 
