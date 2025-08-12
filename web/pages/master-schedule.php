@@ -626,8 +626,8 @@ function openEmployeeModal(employeeId) {
           <!-- New Assignment content: client dropdown + hours input -->
           <div id="newAssignmentContent" class="d-none">
 
-          <input type="text" id="modalUserId" name="user_id" value="">
-          <input type="text" id="modalWeek" name="week_start" value="">
+          <input type="hidden" id="modalUserId" name="user_id" value="">
+          <input type="hidden" id="modalWeek" name="week_start" value="">
             <!-- Custom Client Dropdown -->
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
@@ -1098,7 +1098,7 @@ function openEmployeeModal(employeeId) {
   dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
   dropdownList.style.setProperty('display', expanded ? 'block' : 'none', 'important');
 
-}
+  }
 
 
     function dropdownBtnKeyHandler(e) {
@@ -1149,7 +1149,7 @@ function openEmployeeModal(employeeId) {
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
   });
-});
+  });
   </script>
 
 
