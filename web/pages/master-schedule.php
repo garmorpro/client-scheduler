@@ -426,21 +426,30 @@ foreach ($mondays as $idx => $monday) {
                         $cellContent = '';
 
                         if ($assignmentsForWeek) {
-                            foreach ($assignmentsForWeek as $assignment) {
-                                $status = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                                $badgeColor = match($status) {
-                                    'confirmed' => 'success',
-                                    'pending' => 'purple',
-                                    'not_confirmed' => 'primary',
-                                    default => 'secondary',
-                                };
-                                $clientName = htmlspecialchars($assignment['client_name']);
-                                $hours = htmlspecialchars($assignment['assigned_hours']);
-                                $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$hours})</span><br>";
-                            }
-                        } else {
-                            $cellContent = "<span class='text-muted'>+</span>";
-                        }
+                          foreach ($assignmentsForWeek as $assignment) {
+                              $status = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                              switch ($status) {
+                                  case 'confirmed':
+                                      $badgeColor = 'success';
+                                      break;
+                                  case 'pending':
+                                      $badgeColor = 'purple';
+                                      break;
+                                  case 'not_confirmed':
+                                      $badgeColor = 'primary';
+                                      break;
+                                  default:
+                                      $badgeColor = 'secondary';
+                                      break;
+                              }
+                              $clientName = htmlspecialchars($assignment['client_name']);
+                              $hours = htmlspecialchars($assignment['assigned_hours']);
+                              $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$hours})</span><br>";
+                          }
+                      } else {
+                          $cellContent = "<span class='text-muted'>+</span>";
+                      }
+
                         ?>
                         <td class="<?= $isCurrent ? 'highlight-today' : '' ?>">
                             <?= $cellContent ?>
