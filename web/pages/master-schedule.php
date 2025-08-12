@@ -160,9 +160,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   // Set hidden inputs here for Add Assignment tab form:
   const manageUserIdInput = document.getElementById('manageModalUserId');
   const manageWeekInput = document.getElementById('manageModalWeek');
+  const manageEngagementInput = document.getElementById('manageEngagementInput');
 
   if (manageUserIdInput) manageUserIdInput.value = user_id;
   if (manageWeekInput) manageWeekInput.value = weekStart;
+  if (manageEngagementInput) manageEngagementInput.value = '';
 
     const manageBtn = document.getElementById('manageAssignmentsButton');
     const addBtn = document.getElementById('addAssignmentsButton');
