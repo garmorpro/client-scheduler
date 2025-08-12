@@ -644,7 +644,7 @@ function openEmployeeModal(employeeId) {
                   <div>
                     <?php echo htmlspecialchars($client['client_name']); ?><br>
                     <small class="text-muted">
-                      [<?php echo htmlspecialchars($client['status']); ?>] - 
+                      [<?php echo ucfirst(htmlspecialchars($client['status'])); ?>] - 
                       <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
                     </small>
                   </div>
