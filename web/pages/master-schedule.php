@@ -743,17 +743,31 @@ function openEmployeeModal(employeeId) {
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
             <input type="hidden" name="user_id" id="timeoffUserId" value="">
             <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
-
-            <div class="mb-3">
-              <label for="timeoffReason" class="form-label">Reason for Time Off</label>
-              <textarea class="form-control" id="timeoffReason" name="reason" rows="3" required></textarea>
-            </div>
-
+                          
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
-              <input type="number" class="form-control" id="timeoffHours" name="hours" min="0" step="0.25" required>
+              <input
+                type="number"
+                class="form-control"
+                id="timeoffHours"
+                name="hours"
+                min="0"
+                step="0.25"
+                required
+              >
             </div>
-
+                          
+            <div class="mb-3">
+              <label for="timeoffReason" class="form-label">Reason for Time Off (optional)</label>
+              <textarea
+                class="form-control"
+                id="timeoffReason"
+                name="reason"
+                rows="3"
+                placeholder="Optional"
+              ></textarea>
+            </div>
+                          
             <div class="modal-footer p-0 pt-3 border-0">
               <button
                 type="button"
@@ -772,6 +786,7 @@ function openEmployeeModal(employeeId) {
               </button>
             </div>
           </form>
+
         </div>
       </div>
 
