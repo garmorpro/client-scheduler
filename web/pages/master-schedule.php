@@ -594,7 +594,7 @@ function openEmployeeModal(employeeId) {
             <!-- Client select -->
             <div class="mb-3">
               <label for="clientSelect" class="form-label">Client Name</label>
-              <select class="form-select" id="clientSelect" name="engagement_id" required style="border: none !important; background-color: rgb(243,243,245) !important;">
+              <select class="form-select" id="clientSelect" name="engagement_id" required style="">
                 <option value="" disabled selected>Select a client</option>
                 <?php foreach ($activeClients as $client): ?>
                   <option value="<?php echo htmlspecialchars($client['engagement_id']); ?>">

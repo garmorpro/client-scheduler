@@ -372,3 +372,10 @@ body {
     background-color: #e0f7fa !important; 
     cursor: pointer !important;
 }
+
+
+input, select {
+    border: none !important; 
+    background-color: rgb(243,243,245) !important; 
+    font-size: 14px !important;
+}
