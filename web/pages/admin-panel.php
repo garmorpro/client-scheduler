@@ -1801,7 +1801,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           const result = await response.json();
 
           if (result.success) {
-            alert(`Deleted ${result.deletedCount} user(s) successfully.`);
+            // alert(`Deleted ${result.deletedCount} user(s) successfully.`);
             // Optionally reload page or remove deleted rows from table
             location.reload();
           } else {
