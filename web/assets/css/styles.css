@@ -346,3 +346,11 @@ body {
   font-size: 12px;
   white-space: nowrap;
 }
+
+
+/* form toggle */
+
+.form-check-input:checked {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+}
