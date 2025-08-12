@@ -1318,8 +1318,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             </div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Save Settings</button>
+
+                <a href="#" 
+                    class="badge text-black p-2 text-decoration-none fw-medium" 
+                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                    data-bs-dismiss="modal">
+                    Cancel
+                </a>
+
+
+                <a href="#" type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                    <i class="bi bi-person-plus me-3"></i>Save Settings
+                </a>
             </div>
           </form>
         </div>
