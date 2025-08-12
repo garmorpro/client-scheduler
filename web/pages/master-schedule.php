@@ -148,54 +148,49 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
+    // Open modal for Manage Assignments or Add Entry (new modal)
     function openManageOrAddModal(user_id, employeeName, weekStart) {
-    console.log("Modal triggered:", user_id, employeeName, weekStart);
-    const assignments = <?php echo json_encode($assignments); ?>;
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+        console.log("Modal triggered:", user_id, employeeName, weekStart);
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    const manageAddModalElement = document.getElementById('manageAddModal');
-    const manageAddModal = new bootstrap.Modal(manageAddModalElement);
+        const manageAddModalElement = document.getElementById('manageAddModal');
+        const manageAddModal = new bootstrap.Modal(manageAddModalElement);
 
-    // Attach click handlers once, outside modal show (or check if already attached)
-    const manageBtn = document.getElementById('manageAssignmentsButton');
-    const addBtn = document.getElementById('addAssignmentsButton');
+        // Clone buttons to remove old event listeners
+        const manageBtn = document.getElementById('manageAssignmentsButton');
+        const addBtn = document.getElementById('addAssignmentsButton');
 
-    // Remove old listeners to prevent multiple calls (optional safety)
-    manageBtn.replaceWith(manageBtn.cloneNode(true));
-    addBtn.replaceWith(addBtn.cloneNode(true));
+        manageBtn.replaceWith(manageBtn.cloneNode(true));
+        addBtn.replaceWith(addBtn.cloneNode(true));
 
-    // Re-select new buttons after clone
-    const newManageBtn = document.getElementById('manageAssignmentsButton');
-    const newAddBtn = document.getElementById('addAssignmentsButton');
+        const newManageBtn = document.getElementById('manageAssignmentsButton');
+        const newAddBtn = document.getElementById('addAssignmentsButton');
 
-    newManageBtn.onclick = function() {
-        openManageAssignmentsModal(user_id, employeeName, weekStart);
-        manageAddModal.hide();
-    };
-    newAddBtn.onclick = function() {
-        openModal(user_id, employeeName, weekStart, 'assignment');
-        manageAddModal.hide();
-    };
+        newManageBtn.onclick = function() {
+            openManageAssignmentsModal(user_id, employeeName, weekStart);
+            manageAddModal.hide();
+        };
+        newAddBtn.onclick = function() {
+            openAddEntryModal(user_id, employeeName, weekStart);
+            manageAddModal.hide();
+        };
 
-    if (assignmentsForWeek.length > 0) {
-        manageAddModal.show();
-    } else {
-        // No assignments, directly open add modal
-        openModal(user_id, employeeName, weekStart, 'assignment');
+        if (assignmentsForWeek.length > 0) {
+            manageAddModal.show();
+        } else {
+            // No assignments — open addEntryModal directly
+            openAddEntryModal(user_id, employeeName, weekStart);
+        }
     }
-}
 
 
-
-
-
-
+    // Manage assignments modal
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
-        // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
         showAssignments(assignmentsForWeek);
@@ -205,97 +200,89 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 
+    // NEW: Open Add Entry modal (was openModal)
+    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
+        // Set inputs for user and week in the forms
+        document.getElementById('modalUserId').value = user_id;
+        document.getElementById('modalWeek').value = weekStart;
+        document.getElementById('timeOFFuser_id').value = user_id;
+        document.getElementById('timeOFFweek_start').value = weekStart;
 
-function openModal(user_id, employeeName, weekStart, tab = 'assignment') {
-  // Set inputs
-  document.getElementById('modalUserId').value = user_id;
-  document.getElementById('modalWeek').value = weekStart;
-  document.getElementById('timeOFFuser_id').value = user_id;
-  document.getElementById('timeOFFweek_start').value = weekStart;
+        // Update display spans
+        document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const weekDate = new Date(weekStart);
+        document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
-  // Update display
-  document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  const weekDate = new Date(weekStart);
-  document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+        // Reset inputs depending on the tab
+        if (tab === 'assignment') {
+            document.getElementById('selectedClient').textContent = 'Select a client';
+            document.getElementById('engagementInput').value = '';
+            document.getElementById('assignedHours').value = '';
+        } else if (tab === 'timeoff') {
+            document.getElementById('timeoffHours').value = '';
+            document.getElementById('timeoffReason').value = '';
+        }
 
-  // Reset inputs depending on tab
-  if (tab === 'assignment') {
-    document.getElementById('selectedClient').textContent = 'Select a client';
-    document.getElementById('engagementInput').value = '';
-    document.getElementById('assignedHours').value = '';
-  } else if (tab === 'timeoff') {
-    document.getElementById('timeoffHours').value = '';
-    document.getElementById('timeoffReason').value = '';
-  }
+        // Show the addEntryModal modal
+        const addEntryModalEl = document.getElementById('addEntryModal');
+        const addEntryModal = new bootstrap.Modal(addEntryModalEl);
+        addEntryModal.show();
 
-  // Show modal
-  const assignmentModalEl = document.getElementById('assignmentModal');
-  const assignmentModal = new bootstrap.Modal(assignmentModalEl);
-  assignmentModal.show();
+        // Use Bootstrap's Tab API to activate the correct tab button
+        const tabSelector = tab === 'assignment'
+            ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
+            : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
 
-  // Use Bootstrap's Tab API to show the correct tab button
-  const tabSelector = tab === 'assignment' 
-    ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
-    : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
+        const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
 
-  const tabTriggerEl = assignmentModalEl.querySelector(tabSelector);
-
-  if (tabTriggerEl) {
-    // Initialize Bootstrap tab for this element if not done
-    const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
-    tabInstance.show();
-  } else {
-    console.warn('Tab trigger element not found:', tabSelector);
-  }
-}
-
-
-
-
-
-
-
-
-// Update openEditModal to handle dynamic elements properly
-function openEditModal(event) {
-    const buttonElement = event.target;
-    const assignmentId = buttonElement.getAttribute('data-assignment-id');
-    const assignedHours = buttonElement.getAttribute('data-assigned-hours');
-
-    // Set the assignment ID and assigned hours in the modal
-    document.getElementById('editAssignmentId').value = assignmentId;
-    document.getElementById('editAssignedHours').value = assignedHours;
-
-    // Open the modal
-    const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
-    editModal.show();
-}
-
-
-
-// Delete an assignment
-function deleteAssignment(assignmentId) {
-    if (confirm('Are you sure you want to delete this assignment?')) {
-        fetch('delete-assignment.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `assignment_id=${assignmentId}`
-        })
-        .then(response => response.text())
-        .then(result => {
-            if (result === 'success') {
-                location.reload(); // Reload the page to reflect changes
-            } else {
-                alert('Failed to delete assignment.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while deleting the assignment.');
-        });
+        if (tabTriggerEl) {
+            const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
+            tabInstance.show();
+        } else {
+            console.warn('Tab trigger element not found:', tabSelector);
+        }
     }
-}
+
+
+    // openEditModal remains unchanged
+    function openEditModal(event) {
+        const buttonElement = event.target;
+        const assignmentId = buttonElement.getAttribute('data-assignment-id');
+        const assignedHours = buttonElement.getAttribute('data-assigned-hours');
+
+        document.getElementById('editAssignmentId').value = assignmentId;
+        document.getElementById('editAssignedHours').value = assignedHours;
+
+        const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
+        editModal.show();
+    }
+
+
+    // Delete assignment function unchanged
+    function deleteAssignment(assignmentId) {
+        if (confirm('Are you sure you want to delete this assignment?')) {
+            fetch('delete-assignment.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `assignment_id=${assignmentId}`
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'success') {
+                    location.reload();
+                } else {
+                    alert('Failed to delete assignment.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the assignment.');
+            });
+        }
+    }
+
+
 
 
 
