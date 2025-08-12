@@ -23,30 +23,32 @@ if (!isset($_SESSION['user_id'])) {
 //     $current = strtotime('+1 week', $current);
 // }
 
-// Get current Monday
 $today = date('Y-m-d');
-$currentMonday = strtotime('monday this week');
 
-// The 3rd week (index 2) will be the current one
-$startMonday = strtotime('-2 weeks', $currentMonday);
+// 1. Determine first Monday to display
+if (isset($_GET['start_monday'])) {
+    // From the week navigation
+    $startMonday = (int) $_GET['start_monday'];
+} else {
+    // Default view → current Monday is in the 3rd position
+    $currentMonday = strtotime('monday this week');
+    $startMonday   = strtotime('-2 weeks', $currentMonday);
+}
 
-// Build the 7-week range
+// 2. Build the 7-week array
 $mondays = [];
 for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+$i week", $startMonday);
 }
 
-// For display in navigation bar
+// 3. For display in navigation bar
 $firstWeekDisplay = date('n/j', $mondays[0]);
 $lastWeekDisplay  = date('n/j', $mondays[6]);
 
 
-if (isset($_GET['start_monday'])) {
-    $startMonday = (int) $_GET['start_monday'];
-} else {
-    $currentMonday = strtotime('monday this week');
-    $startMonday = strtotime('-2 weeks', $currentMonday);
-}
+
+
+
 
 
 
@@ -393,35 +395,35 @@ function openEmployeeModal(employeeId) {
             </div> -->
         </form>
 
+
         <div class="d-flex align-items-center justify-content-center mb-3" id="weekNav">
-            <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="prevWeek">&lt;</button>
-            <strong>
-                Week of <?php echo $firstWeekDisplay; ?> - Week of <?php echo $lastWeekDisplay; ?>
-            </strong>
-            <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="nextWeek">&gt;</button>
-        </div>
+    <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="prevWeek">&lt;</button>
+    <strong>
+        Week of <?php echo $firstWeekDisplay; ?> - Week of <?php echo $lastWeekDisplay; ?>
+    </strong>
+    <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="nextWeek">&gt;</button>
+</div>
+
 
         <script>
-          document.addEventListener('DOMContentLoaded', () => {
-              let startMondayTs = <?php echo $startMonday; ?>; // timestamp of first week
-              const weekCount = 7;
-              const weekNavEl = document.getElementById('weekNav');
-          
-              function loadWeeks() {
-                  const url = `master_schedule.php?start_monday=${startMondayTs}`;
-                  window.location.href = url; // reload with new start date
-              }
-            
-              document.getElementById('prevWeek').addEventListener('click', () => {
-                  startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
-                  loadWeeks();
-              });
-            
-              document.getElementById('nextWeek').addEventListener('click', () => {
-                  startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
-                  loadWeeks();
-              });
-          });
+document.addEventListener('DOMContentLoaded', () => {
+    let startMondayTs = <?php echo $startMonday; ?>; // timestamp of first week
+
+    function loadWeeks() {
+        window.location.href = `master_schedule.php?start_monday=${startMondayTs}`;
+    }
+
+    document.getElementById('prevWeek').addEventListener('click', () => {
+        startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
+        loadWeeks();
+    });
+
+    document.getElementById('nextWeek').addEventListener('click', () => {
+        startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
+        loadWeeks();
+    });
+});
+
           </script>
 
 
