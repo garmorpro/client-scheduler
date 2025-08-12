@@ -50,6 +50,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
 
+    console_log([
+    'userID (int cast)' => $userID,
+    'weekStart' => $weekStart,
+    'hoursOff' => $hoursOff,
+    'reason' => $reason,
+    'types' => [
+        'userID' => gettype($userID),
+        'weekStart' => gettype($weekStart),
+        'hoursOff' => gettype($hoursOff),
+        'reason' => gettype($reason),
+    ],
+]);
+
     // Binding parameters, 's' type for string fields, 'i' for int, 'd' for double
     $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
 
