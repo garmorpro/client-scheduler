@@ -817,7 +817,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST">
+          <form id="editAssignmentForm" action="update_assignment.php" method="POST">
             <input type="hidden" id="editAssignmentId" name="assignment_id">
             <div class="mb-3">
               <label for="editAssignedHours" class="form-label">Assigned Hours</label>
