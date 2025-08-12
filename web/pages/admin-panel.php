@@ -109,7 +109,7 @@ $settingResult = $conn->query($settingSQL);
 
 if ($settingResult) {
     while ($S_row = $settingResult->fetch_assoc()) {
-        $settings[$row['setting_key']] = $S_row['setting_value'];
+        $settings[$S_row['setting_key']] = $S_row['setting_value'];
     }
 }
 
