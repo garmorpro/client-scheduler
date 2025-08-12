@@ -217,16 +217,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   function openAddTimeOffModal(user_id, employeeName, weekStart) {
   console.log('openAddTimeOffModal called with:', { user_id, employeeName, weekStart });
 
-  const userInput = document.getElementById('timeOFFuser_id');
-  const weekInput = document.getElementById('timeOFFweek_start');
+  // const userInput = document.getElementById('timeOFFuser_id').value = user_id;
+  // const weekInput = document.getElementById('timeOFFweek_start');
+    document.getElementById('timeOFFuser_id').value = user_id;
+    document.getElementById('timeOFFweek_start').value = weekStart;
 
-  userInput.value = user_id;
-  weekInput.value = weekStart;
+  // userInput.value = user_id;
+  // weekInput.value = weekStart;
 
-  console.log('After setting inputs:', {
-    timeoffUserId: userInput.value,
-    timeoffWeekStart: weekInput.value
-  });
+  // console.log('After setting inputs:', {
+  //   timeoffUserId: userInput.value,
+  //   timeoffWeekStart: weekInput.value
+  // });
 
   document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
@@ -792,8 +794,8 @@ function openEmployeeModal(employeeId) {
           aria-hidden="true"
         >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="hidden" name="user_id" id="timeOFFuser_id">
-            <input type="hidden" name="week_start" id="timeOFFweek_start">
+            <input type="text" name="user_id" id="timeOFFuser_id">
+            <input type="text" name="week_start" id="timeOFFweek_start">
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
