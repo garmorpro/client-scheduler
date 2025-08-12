@@ -9,19 +9,48 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$today = date('Y-m-d');
-$startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -2 weeks'));
-$endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
+// $today = date('Y-m-d');
+// $startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -2 weeks'));
+// $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
 
-// Initialize mondays array
+// // Initialize mondays array
+// $mondays = [];
+// $current = strtotime($startDate);
+// while ($current <= strtotime($endDate)) {
+//     if (date('N', $current) == 1) {
+//         $mondays[] = $current;
+//     }
+//     $current = strtotime('+1 week', $current);
+// }
+
+// Get current Monday
+$today = date('Y-m-d');
+$currentMonday = strtotime('monday this week');
+
+// The 3rd week (index 2) will be the current one
+$startMonday = strtotime('-2 weeks', $currentMonday);
+
+// Build the 7-week range
 $mondays = [];
-$current = strtotime($startDate);
-while ($current <= strtotime($endDate)) {
-    if (date('N', $current) == 1) {
-        $mondays[] = $current;
-    }
-    $current = strtotime('+1 week', $current);
+for ($i = 0; $i < 7; $i++) {
+    $mondays[] = strtotime("+$i week", $startMonday);
 }
+
+// For display in navigation bar
+$firstWeekDisplay = date('n/j', $mondays[0]);
+$lastWeekDisplay  = date('n/j', $mondays[6]);
+
+
+if (isset($_GET['start_monday'])) {
+    $startMonday = (int) $_GET['start_monday'];
+} else {
+    $currentMonday = strtotime('monday this week');
+    $startMonday = strtotime('-2 weeks', $currentMonday);
+}
+
+
+
+
 
 // Get employees from users table
 $employees = [];
@@ -358,11 +387,45 @@ function openEmployeeModal(employeeId) {
                     <option value="not_confirmed">Not Confirmed</option>
                 </select>
             </div> -->
-            <div class="col-md-3 d-flex align-items-center gap-3">
+            <!-- <div class="col-md-3 d-flex align-items-center gap-3">
                 <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
                 <a href="?start=<?php echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
-            </div>
+            </div> -->
         </form>
+
+        <div class="d-flex align-items-center justify-content-center mb-3" id="weekNav">
+            <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="prevWeek">&lt;</button>
+            <strong>
+                Week of <?php echo $firstWeekDisplay; ?> - Week of <?php echo $lastWeekDisplay; ?>
+            </strong>
+            <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="nextWeek">&gt;</button>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+              let startMondayTs = <?php echo $startMonday; ?>; // timestamp of first week
+              const weekCount = 7;
+              const weekNavEl = document.getElementById('weekNav');
+          
+              function loadWeeks() {
+                  const url = `master_schedule.php?start_monday=${startMondayTs}`;
+                  window.location.href = url; // reload with new start date
+              }
+            
+              document.getElementById('prevWeek').addEventListener('click', () => {
+                  startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
+                  loadWeeks();
+              });
+            
+              document.getElementById('nextWeek').addEventListener('click', () => {
+                  startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
+                  loadWeeks();
+              });
+          });
+          </script>
+
+
+
     </div>
 
     <div class="table-responsive">
