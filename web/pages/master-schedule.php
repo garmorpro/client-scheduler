@@ -414,19 +414,20 @@ function openEmployeeModal(employeeId) {
     <table class="table table-bordered align-middle text-center">
         <thead class="table-light">
             <tr>
-                <th class="text-start"><i class="bi bi-people me-2"></i>Employee</th>
+                <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
                     $weekStart = date('Y-m-d', $monday);
                     $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
                     ?>
-                    <th class="<?php echo $highlightClass; ?>">
+                    <th class="<?php echo $highlightClass; ?> align-middle">
                         <?php echo date('M j', $monday); ?><br>
                         <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
         </thead>
+
         <tbody>
             <?php foreach ($employees as $userId => $employee): ?>
                 <?php
