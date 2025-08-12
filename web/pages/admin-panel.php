@@ -438,12 +438,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(161,77,253)'; // purple
                                     break;
 
-                                case 'successful_user_imported':
+                                case 'bulk_user_import_success':
                                     $icon = 'bi-clipboard2-check';
                                     $color = 'rgb(40,167,69)'; // green
                                     break;
                                 
-                                case 'failed_user_imported':
+                                case 'bulk_user_import_failed':
                                     $icon = 'bi-clipboard2-x';
                                     $color = 'rgb(220,53,69)'; // green
                                     break;

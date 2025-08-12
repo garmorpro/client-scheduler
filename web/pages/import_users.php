@@ -88,7 +88,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         $rowNum++;
 
         if (count(array_filter($data)) === 0) {
-            continue;
+            continue; // skip empty rows
         }
 
         $rowAssoc = [];
@@ -96,6 +96,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             $rowAssoc[$colName] = isset($data[$headerIndexes[$colName]]) ? trim($data[$headerIndexes[$colName]]) : '';
         }
 
+        // Validate required fields
         if (empty($rowAssoc['first_name']) || empty($rowAssoc['last_name']) || empty($rowAssoc['email']) || empty($rowAssoc['role'])) {
             $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields.'];
             continue;
@@ -109,6 +110,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             continue;
         }
 
+        // Check for duplicate email
         $dupCheck = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
         if (!$dupCheck) {
             $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
@@ -136,20 +138,26 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
 
         if ($stmt->execute()) {
             $successCount++;
-
-            // Log activity per user imported
-            $title = "Successful User Imported";
-            $description = "Imported user: {$rowAssoc['first_name']} {$rowAssoc['last_name']} ({$rowAssoc['role']}).";
-            logActivity($conn, "successful_user_imported", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
         } else {
-            $title = "Failed User Imported";
-            $description = "Failed user import: {$rowAssoc['first_name']} {$rowAssoc['last_name']} ({$rowAssoc['email']}).";
-            logActivity($conn, "failed_user_imported", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
             $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
         }
         $stmt->close();
     }
     fclose($handle);
+
+    // Determine event type based on errors
+    $description = "Successfully imported $successCount users.";
+
+    if (count($errors) > 0) {
+        $description .= " Failed to import " . count($errors) . " users.";
+        $eventType = "bulk_user_import_failed";
+        $title = "Failed Bulk User Import";
+    } else {
+        $eventType = "bulk_user_import_success";
+        $title = "Successful Bulk User Import";
+    }
+
+    logActivity($conn, $eventType, $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode([
         'successCount' => $successCount,
