@@ -590,108 +590,177 @@ function openEmployeeModal(employeeId) {
 <!-- end editing assignment -->
 
 <!-- Modal for Adding assignment -->
-  <!-- Modal -->
-<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="assignmentForm" action="add_assignment.php" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="assignmentModalLabel">
-            <i class="bi bi-calendar-range me-2"></i>New Assignment<br>
-            <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
-              Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
-            </span>
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
 
-        <div class="modal-body">
-          <!-- Hidden inputs -->
-          <input type="hidden" id="modalUserId" name="user_id" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignmentModalLabel">
+          <i class="bi bi-calendar-range me-2"></i>
+          New Entry
+          <br>
+          <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
+            For <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
+          </span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-          <!-- Custom Client Dropdown -->
-          <div class="mb-3 custom-dropdown">
-            <label for="engagementInput" class="form-label">Client Name</label>
-            <div
-              class="dropdown-btn"
-              id="dropdownBtn"
-              tabindex="0"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              role="combobox"
-              aria-labelledby="selectedClient"
-            >
-              <span id="selectedClient" class="text-muted">Select a client</span>
-              <span>&#9662;</span> <!-- Down arrow -->
-            </div>
+      <!-- Tabs Nav -->
+      <ul class="nav nav-tabs" id="assignmentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="assignment-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#assignmentTabPane"
+            type="button"
+            role="tab"
+            aria-controls="assignmentTabPane"
+            aria-selected="true"
+          >
+            Add Assignment
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="timeoff-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#timeoffTabPane"
+            type="button"
+            role="tab"
+            aria-controls="timeoffTabPane"
+            aria-selected="false"
+          >
+            Add Time Off
+          </button>
+        </li>
+      </ul>
 
-            <div
-              class="dropdown-list"
-              id="dropdownList"
-              role="listbox"
-              tabindex="-1"
-              aria-labelledby="selectedClient"
-            >
-              <?php 
-                // Map statuses to display names
-                $statusDisplayMap = [
-                  'confirmed' => 'Confirmed',
-                  'pending' => 'Pending',
-                  'not_confirmed' => 'Not Confirmed'
-                ];
-                // Map statuses to CSS classes
-                $statusClassMap = [
-                  'confirmed' => 'text-confirmed',
-                  'pending' => 'text-pending',
-                  'not_confirmed' => 'text-not-confirmed'
-                ];
-              ?>
-              <?php foreach ($clientsWithHours as $client): ?>
+      <!-- Tabs Content -->
+      <div class="tab-content p-3" id="assignmentTabsContent">
+        <!-- Assignment Tab Pane -->
+        <div
+          class="tab-pane fade show active"
+          id="assignmentTabPane"
+          role="tabpanel"
+          aria-labelledby="assignment-tab"
+        >
+          <form id="assignmentForm" action="add_assignment.php" method="POST">
+            <!-- Hidden inputs -->
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
+
+            <!-- Client Dropdown -->
+            <div class="mb-3 custom-dropdown">
+              <label for="engagementInput" class="form-label">Client Name</label>
+              <div
+                class="dropdown-btn"
+                id="dropdownBtn"
+                tabindex="0"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                role="combobox"
+                aria-labelledby="selectedClient"
+              >
+                <span id="selectedClient" class="text-muted">Select a client</span>
+                <span>&#9662;</span>
+              </div>
+
+              <div
+                class="dropdown-list"
+                id="dropdownList"
+                role="listbox"
+                tabindex="-1"
+                aria-labelledby="selectedClient"
+              >
                 <?php
-                  $statusKey = strtolower($client['status']);
-                  $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
-                  $statusClass = $statusClassMap[$statusKey] ?? 'badge-default';
+                  // Status display and class maps (adjust CSS classes as needed)
+                  $statusDisplayMap = [
+                    'confirmed' => 'Confirmed',
+                    'pending' => 'Pending',
+                    'not_confirmed' => 'Not Confirmed'
+                  ];
+                  $statusClassMap = [
+                    'confirmed' => 'text-confirmed',
+                    'pending' => 'text-pending',
+                    'not_confirmed' => 'text-not-confirmed'
+                  ];
                 ?>
-                <div
-                  class="dropdown-item"
-                  data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
-                  data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                  role="option"
-                  tabindex="0"
-                >
-                  <div>
-                    <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
-                    <small class="text-muted">
-                      <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
-                      <i class="bi bi-dot"></i> 
-                      <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
-                    </small>
+                <?php foreach ($clientsWithHours as $client): ?>
+                  <?php
+                    $statusKey = strtolower($client['status']);
+                    $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                    $statusClass = $statusClassMap[$statusKey] ?? '';
+                  ?>
+                  <div
+                    class="dropdown-item"
+                    data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
+                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    role="option"
+                    tabindex="0"
+                  >
+                    <div>
+                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
+                      <small class="text-muted">
+                        <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                        <i class="bi bi-dot"></i> 
+                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                      </small>
+                    </div>
                   </div>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              </div>
+
+              <input type="hidden" id="engagementInput" name="engagement_id" required>
             </div>
 
-            <!-- Hidden input to hold selected value for form submission -->
-            <input type="hidden" id="engagementInput" name="engagement_id" required>
-          </div>
+            <!-- Assigned hours -->
+            <div class="mb-3">
+              <label for="assignedHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+            </div>
 
-          <!-- Assigned hours -->
-          <div class="mb-3">
-            <label for="assignedHours" class="form-label">Hours</label>
-            <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
-          </div>
+            <div class="modal-footer p-0 pt-3 border-0">
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+            </div>
+          </form>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+        <!-- Time Off Tab Pane -->
+        <div
+          class="tab-pane fade"
+          id="timeoffTabPane"
+          role="tabpanel"
+          aria-labelledby="timeoff-tab"
+        >
+          <form id="timeoffForm" action="add_timeoff.php" method="POST">
+            <input type="hidden" name="user_id" id="timeoffUserId" value="">
+            <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
+
+            <div class="mb-3">
+              <label for="timeoffReason" class="form-label">Reason for Time Off</label>
+              <textarea class="form-control" id="timeoffReason" name="reason" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="timeoffHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="timeoffHours" name="hours" min="0" step="0.25" required>
+            </div>
+
+            <div class="modal-footer p-0 pt-3 border-0">
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
+
     </div>
   </div>
 </div>
-
 
 <!-- end Adding assignment -->
 
