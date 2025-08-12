@@ -1284,16 +1284,34 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
 
               <!-- Test Configuration -->
-              <h6 class="mb-3">Test Configuration</h6>
-              <div class=" mb-3">
-                <input type="email" class="form-control mb-2" id="testEmail" placeholder="test@example.com" aria-label="Test email">
-                
-                <a href="#" 
-                   class="badge text-black p-2 text-decoration-none fw-medium" 
-                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                <h6 class="mb-3">Test Configuration</h6>
+                <div class="mb-3">
+                  <input type="email" class="form-control mb-2" id="testEmail" placeholder="test@example.com" aria-label="Test email">
+
+                  <a href="#"
+                     id="sendTestEmailBtn"
+                     class="badge text-black p-2 text-decoration-none fw-medium disabled"
+                     style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
                     <i class="bi bi-upload me-3"></i>Send Test Email
-                </a>
-              </div>
+                  </a>
+                </div>
+
+                <script>
+                  const testEmailInput = document.getElementById('testEmail');
+                  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+                                
+                  testEmailInput.addEventListener('input', function () {
+                    if (testEmailInput.checkValidity()) {
+                      sendTestEmailBtn.classList.remove('disabled');
+                      sendTestEmailBtn.style.pointerEvents = 'auto';
+                      sendTestEmailBtn.style.opacity = '1';
+                    } else {
+                      sendTestEmailBtn.classList.add('disabled');
+                      sendTestEmailBtn.style.pointerEvents = 'none';
+                      sendTestEmailBtn.style.opacity = '0.5';
+                    }
+                  });
+                </script>
 
               <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
 
