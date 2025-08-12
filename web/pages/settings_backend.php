@@ -1,8 +1,8 @@
 <?php
-require_once '../includes/db.php'; // your mysqli connection $conn
+require_once '../includes/db.php'; // $conn as mysqli connection
 session_start();
 
-// TODO: Check admin permissions here
+// TODO: Add admin permission checks here
 
 // Read JSON input
 $data = json_decode(file_get_contents('php://input'), true);
@@ -15,7 +15,6 @@ if (!isset($data['setting_master_key'], $data['settings']) || !is_array($data['s
 $masterKey = $data['setting_master_key'];
 $settings = $data['settings'];
 
-// Prepare statements
 $stmtCheck = mysqli_prepare($conn, "SELECT id FROM settings WHERE setting_master_key = ? AND setting_key = ?");
 $stmtUpdate = mysqli_prepare($conn, "UPDATE settings SET setting_value = ? WHERE id = ?");
 $stmtInsert = mysqli_prepare($conn, "INSERT INTO settings (setting_master_key, setting_key, setting_value) VALUES (?, ?, ?)");
@@ -27,35 +26,47 @@ if (!$stmtCheck || !$stmtUpdate || !$stmtInsert) {
 
 mysqli_begin_transaction($conn);
 
-try {
-    foreach ($settings as $key => $value) {
-        // Check if setting exists
-        mysqli_stmt_bind_param($stmtCheck, "ss", $masterKey, $key);
-        mysqli_stmt_execute($stmtCheck);
-        mysqli_stmt_bind_result($stmtCheck, $id);
-        mysqli_stmt_store_result($stmtCheck);
+foreach ($settings as $key => $value) {
+    // Check if setting exists
+    mysqli_stmt_reset($stmtCheck);
+    mysqli_stmt_bind_param($stmtCheck, "ss", $masterKey, $key);
+    if (!mysqli_stmt_execute($stmtCheck)) {
+        mysqli_rollback($conn);
+        echo json_encode(['success' => false, 'error' => 'Failed to execute check statement']);
+        exit;
+    }
+    mysqli_stmt_store_result($stmtCheck);
 
-        if (mysqli_stmt_num_rows($stmtCheck) > 0) {
-            mysqli_stmt_fetch($stmtCheck);
-            // Update
-            mysqli_stmt_bind_param($stmtUpdate, "si", $value, $id);
-            mysqli_stmt_execute($stmtUpdate);
-        } else {
-            // Insert
-            mysqli_stmt_bind_param($stmtInsert, "sss", $masterKey, $key, $value);
-            mysqli_stmt_execute($stmtInsert);
+    if (mysqli_stmt_num_rows($stmtCheck) > 0) {
+        mysqli_stmt_bind_result($stmtCheck, $id);
+        mysqli_stmt_fetch($stmtCheck);
+
+        // Update existing setting
+        mysqli_stmt_reset($stmtUpdate);
+        mysqli_stmt_bind_param($stmtUpdate, "si", $value, $id);
+        if (!mysqli_stmt_execute($stmtUpdate)) {
+            mysqli_rollback($conn);
+            echo json_encode(['success' => false, 'error' => 'Failed to update setting for key: ' . $key]);
+            exit;
         }
-        mysqli_stmt_free_result($stmtCheck);
+    } else {
+        // Insert new setting
+        mysqli_stmt_reset($stmtInsert);
+        mysqli_stmt_bind_param($stmtInsert, "sss", $masterKey, $key, $value);
+        if (!mysqli_stmt_execute($stmtInsert)) {
+            mysqli_rollback($conn);
+            echo json_encode(['success' => false, 'error' => 'Failed to insert setting for key: ' . $key]);
+            exit;
+        }
     }
 
-    mysqli_commit($conn);
-    echo json_encode(['success' => true]);
-} catch (Exception $e) {
-    mysqli_rollback($conn);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    mysqli_stmt_free_result($stmtCheck);
 }
 
-// Close statements
+mysqli_commit($conn);
+
 mysqli_stmt_close($stmtCheck);
 mysqli_stmt_close($stmtUpdate);
 mysqli_stmt_close($stmtInsert);
+
+echo json_encode(['success' => true]);
