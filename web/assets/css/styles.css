@@ -383,7 +383,7 @@ input, select {
 
 .custom-dropdown {
   position: relative;
-  max-width: 400px;
+  /* max-width: 400px; */
   font-size: 14px;
 }
 
