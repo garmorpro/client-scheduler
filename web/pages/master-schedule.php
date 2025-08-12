@@ -1096,7 +1096,7 @@ function openEmployeeModal(employeeId) {
     function toggleDropdown() {
   const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
   dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
-  dropdownList.style.setProperty('display', expanded ? 'none' : 'block', 'important');
+  dropdownList.style.setProperty('display', expanded ? 'block' : 'none', 'important');
 
 }
 
