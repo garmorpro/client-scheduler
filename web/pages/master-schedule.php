@@ -150,7 +150,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // Open modal for Manage Assignments or Add Entry (new modal)
   const assignments = <?php echo json_encode($assignments); ?>;
-  const timeOffData = <?php echo json_encode($timeOff); ?>;
+  const timeOffData = <?php echo json_encode($timeOff ?? []); ?>;
+
+  
 
   function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
     console.log("Modal triggered with arguments:");
@@ -632,8 +634,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
 <?php if ($isAdmin): ?>
+
+
   <?php
-var_dump($timeOff);
+
+  echo '<pre>TimeOff Data: ';
+print_r($timeOff);
+echo '</pre>';
+
 ?>
 
 <!-- Modal for Manage Entry -->
