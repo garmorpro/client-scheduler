@@ -693,8 +693,8 @@ function openEmployeeModal(employeeId) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="hidden" id="modalUserId" name="user_id" value="">
-            <input type="hidden" id="modalWeek" name="week_start" value="">
+            <input type="text" id="modalUserId" name="user_id" value="">
+            <input type="text" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
