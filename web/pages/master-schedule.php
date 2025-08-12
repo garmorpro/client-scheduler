@@ -1141,10 +1141,10 @@ function openEmployeeModal(employeeId) {
      const entryTypePrompt = document.getElementById('entryTypePrompt');
      const timeOffEntryContent = document.getElementById('timeOffEntryContent');
      const newAssignmentContent = document.getElementById('newAssignmentContent');
-     const modalTitle = document.getElementById('modalTitle');
-     const modalSubtitle = document.getElementById('modalSubtitle');
-     const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
-     const btnNewAssignment = document.getElementById('btnNewAssignment');
+    //  const modalTitle = document.getElementById('modalTitle');
+    //  const modalSubtitle = document.getElementById('modalSubtitle');
+    //  const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
+    //  const btnNewAssignment = document.getElementById('btnNewAssignment');
      const engagementInput = document.getElementById('engagementInput');
      const selectedClient = document.getElementById('selectedClient');
      const assignedHours = document.getElementById('assignedHours');
