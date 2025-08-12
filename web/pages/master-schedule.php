@@ -150,29 +150,27 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
-        console.log("Modal triggered:", user_id, employeeName, weekStart);
-        // Fetch assignments for the user and week
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    console.log("Modal triggered:", user_id, employeeName, weekStart);
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-        if (assignmentsForWeek.length > 0) {
-            // Show "Manage" or "Add" modal for existing assignments
-            const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-            manageAddModal.show();
+    if (assignmentsForWeek.length > 0) {
+        // There are existing assignments - open the Manage/Add modal
+        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+        manageAddModal.show();
 
-            document.getElementById('manageAssignmentsButton').onclick = function() {
-                // Manage Assignments: Open the Manage Assignments modal
-                openManageAssignmentsModal(user_id, employeeName, weekStart);
-            };
-            document.getElementById('addAssignmentsButton').onclick = function() {
-                // Add Assignment: Open the Add Engagement modal
-                openAddassignmentModal(user_id, employeeName, weekStart);
-            };
-        } else {
-            // If no existing assignments, directly show Add Engagement modal
+        document.getElementById('manageAssignmentsButton').onclick = function() {
+            openManageAssignmentsModal(user_id, employeeName, weekStart);
+        };
+        document.getElementById('addAssignmentsButton').onclick = function() {
             openAddassignmentModal(user_id, employeeName, weekStart);
-        }
+        };
+    } else {
+        // No assignments - open Add Engagement modal immediately
+        openAddassignmentModal(user_id, employeeName, weekStart);
     }
+}
+
 
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
