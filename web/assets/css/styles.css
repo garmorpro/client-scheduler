@@ -379,3 +379,63 @@ input, select {
     background-color: rgb(243,243,245) !important; 
     font-size: 14px !important;
 }
+
+
+ /* Container */
+  .custom-dropdown {
+    position: relative;
+    max-width: 400px;
+    font-size: 14px;
+  }
+
+  /* Dropdown button */
+  .dropdown-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Dropdown list */
+  .dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background: white;
+    z-index: 1000;
+    display: none;
+  }
+
+  /* Dropdown list item */
+  .dropdown-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .dropdown-item:hover {
+    background: #f0f0f0;
+  }
+
+  /* Status badge */
+  .status-badge {
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  /* Assigned hours */
+  .hours-info {
+    color: #666;
+    font-size: 12px;
+    margin-left: 8px;
+  }
