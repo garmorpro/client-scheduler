@@ -7,31 +7,36 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
-    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-    }
+// Helper function to output PHP variable to browser console
+function console_log($data) {
+    $json = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    echo "<script>console.log('PHP debug:', $json);</script>";
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Debug: log all POST data
+    console_log($_POST);
+
     $userID = $_POST['user_id'] ?? null;
     $weekStart = $_POST['week_start'] ?? null;
+
+    // Debug: log userID and weekStart individually
+    console_log(['user_id' => $userID, 'week_start' => $weekStart]);
+
     $reason = $_POST['reason'] ?? '';
 
     if (!$userID || !$weekStart) {
+        // Also output an error console log before die
+        echo "<script>console.error('Invalid input data: missing user or week.');</script>";
         die('Invalid input data: missing user or week.');
     }
 
     if (!isset($_POST['hours']) || !is_numeric($_POST['hours']) || floatval($_POST['hours']) <= 0) {
+        echo "<script>console.error('Invalid input data: hours must be a positive number.');</script>";
         die('Invalid input data: hours must be a positive number.');
     }
     $hoursOff = floatval($_POST['hours']);
 
-    // Trim and convert empty reason to null
     $reason = trim($reason);
     if ($reason === '') {
         $reason = null;
@@ -45,21 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
 
-    // Bind parameters carefully to allow NULL for reason
-    if ($reason === null) {
-        // 's' type needs to be passed as null explicitly
-        $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
-    } else {
-        $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
-    }
+    // Binding parameters, 's' type for string fields, 'i' for int, 'd' for double
+    $stmt->bind_param('isds', $userID, $weekStart, $hoursOff, $reason);
 
     if ($stmt->execute()) {
-        // Log activity
+        // Log activity (no change here)
         $user_id = $_SESSION['user_id'];
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-        // Get employee full name
         $empFirstName = '';
         $empLastName = '';
         $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
