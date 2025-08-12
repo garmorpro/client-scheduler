@@ -606,8 +606,8 @@ function openEmployeeModal(employeeId) {
   </div>
 <!-- end editing assignment -->
 
-<!-- Modal for Adding assignment -->
-<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+<!-- WORKING Modal for Adding assignment -->
+  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="assignmentForm" action="add_assignment.php" method="POST">
@@ -630,8 +630,8 @@ function openEmployeeModal(employeeId) {
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
             <p>Please choose the type of entry:</p>
-            <button type="button" class="btn btn-outline-primary me-2" id="btnTimeOffEntry">Time Off Entry</button>
-            <button type="button" class="btn btn-primary" id="btnNewAssignment">New Assignment</button>
+            <button type="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" id="btnTimeOffEntry">Time Off Entry</button>
+            <button type="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" id="btnNewAssignment">New Assignment</button>
           </div>
 
           <!-- Time Off Entry content: only hours input -->
@@ -727,14 +727,7 @@ function openEmployeeModal(employeeId) {
       </form>
     </div>
   </div>
-</div>
-
-<script>
-  document.getElementById('assignmentForm').addEventListener('submit', function(e) {
-  const weekStartVal = document.getElementById('modalWeek').value;
-  console.log('Submitting week_start:', weekStartVal);
-});
-</script>
+  </div>
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
