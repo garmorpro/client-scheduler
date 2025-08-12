@@ -663,7 +663,7 @@ function openEmployeeModal(employeeId) {
                   <div>
                     <?php echo htmlspecialchars($client['client_name']); ?><br>
                     <small class="text-muted">
-                      <span class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                      <span class="badge-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
                       <i class="bi bi-dot"></i> 
                       <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
                     </small>
