@@ -360,8 +360,27 @@ body {
   overflow-y: auto !important;
 }
 
-  /* Highlight style for current week */
-  .highlight-today {
-    background-color: #fff3cd !important; /* Soft yellow */
-    border: 2px solid #ffc107 !important; /* Bright yellow border */
-  }
+
+
+/* Highlight entire current week column */
+.highlight-today {
+    background-color: #fff3cd !important;  /* soft yellow */
+    border-left: 3px solid #ffc107 !important;
+    border-right: 3px solid #ffc107 !important;
+}
+
+/* Fix borders for the table cells in those columns */
+.highlight-today + td,
+.highlight-today + th {
+    /* This selector is tricky, col styling is limited */
+}
+
+/* Because <col> can’t style borders on TD/TH in many browsers,
+   you may need to add this CSS to the TDs themselves: */
+
+table tbody td.highlight-today,
+table thead th.highlight-today {
+    background-color: #fff3cd !important;
+    border-left: 3px solid #ffc107 !important;
+    border-right: 3px solid #ffc107 !important;
+}

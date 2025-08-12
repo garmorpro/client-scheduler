@@ -132,13 +132,10 @@ while ($row = $result->fetch_assoc()) {
         font-size: 14px !important;
       }
         .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
-        .highlight-today { background-color: lightblue !important; }
+        /* .highlight-today { background-color: lightblue !important; } */
         td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
 
-        .highlight-today {
-    background-color: #fff3cd !important; /* Soft yellow */
-    border: 2px solid #ffc107 !important; /* Bright yellow border */
-  }
+
     </style>
     <script>
     function autoSubmitDateFilter() {
@@ -413,25 +410,35 @@ function openEmployeeModal(employeeId) {
 
   <div class="table-responsive">
     <table class="table table-bordered align-middle text-center">
+
+        <colgroup>
+            <col> <!-- Employee column, no highlight -->
+
+            <?php foreach ($mondays as $monday): 
+                $weekStart = $monday;
+                $weekEnd = strtotime('+7 days', $weekStart);
+                $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
+                $colClass = $isCurrentWeek ? 'highlight-today' : '';
+            ?>
+                <col class="<?php echo $colClass; ?>">
+            <?php endforeach; ?>
+        </colgroup>
+
         <thead class="table-light">
             <tr>
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
-                    // $monday is timestamp
                     $weekStart = $monday;
-                    $weekEnd = strtotime('+7 days', $weekStart);
-                    $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
-                    $highlightClass = $isCurrentWeek ? 'highlight-today' : '';
                     ?>
-                    <th class="<?php echo $highlightClass; ?> align-middle">
+                    <th class="align-middle">
                         <?php echo date('M j', $weekStart); ?><br>
                         <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
         </thead>
-
+        
         <tbody>
             <?php foreach ($employees as $userId => $employee): ?>
                 <?php
