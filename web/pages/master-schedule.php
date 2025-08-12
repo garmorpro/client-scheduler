@@ -1158,8 +1158,8 @@ function openEmployeeModal(employeeId) {
        timeOffEntryContent.classList.add('d-none');
        newAssignmentContent.classList.add('d-none');
 
-       modalTitle.textContent = 'Select Entry Type';
-       modalSubtitle.textContent = '';
+      //  modalTitle.textContent = 'Select Entry Type';
+      //  modalSubtitle.textContent = '';
 
        // Reset form fields and requirements
        engagementInput.value = '';
@@ -1179,8 +1179,8 @@ function openEmployeeModal(employeeId) {
        timeOffEntryContent.classList.remove('d-none');
        newAssignmentContent.classList.add('d-none');
 
-       modalTitle.textContent = 'Time Off Entry';
-       modalSubtitle.textContent = 'Enter hours for time off';
+      //  modalTitle.textContent = 'Time Off Entry';
+      //  modalSubtitle.textContent = 'Enter hours for time off';
 
        // Set required fields accordingly
        timeOffHours.required = true;
@@ -1197,8 +1197,8 @@ function openEmployeeModal(employeeId) {
        timeOffEntryContent.classList.add('d-none');
        newAssignmentContent.classList.remove('d-none');
 
-       modalTitle.textContent = 'New Assignment';
-       modalSubtitle.textContent = 'Assign work for <strong><span id="modalEmployeeNameDisplayInModal"></span></strong> during week of <strong><span id="modalWeekDisplayInModal"></span></strong>';
+      //  modalTitle.textContent = 'New Assignment';
+      //  modalSubtitle.textContent = 'Assign work for <strong><span id="modalEmployeeNameDisplayInModal"></span></strong> during week of <strong><span id="modalWeekDisplayInModal"></span></strong>';
 
        // Make engagement and hours required
        engagementInput.required = true;
