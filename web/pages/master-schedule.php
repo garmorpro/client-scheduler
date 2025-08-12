@@ -368,10 +368,14 @@ function openEmployeeModal(employeeId) {
 
 <!-- Master Schedule table -->
   <?php
-// $today should be midnight timestamp
-$today = strtotime('today');
+// Make sure these are set and valid:
+// $today = strtotime('today');
+// $mondays = array of Monday timestamps (7 weeks shown)
+// $employees = array of employees keyed by userId, each with 'full_name' and 'role'
+// $assignments = nested array as explained above
+// $isAdmin = bool if current user is admin
 
-// $mondays is an array of timestamps for Mondays (already prepared)
+// Find current week index for highlight
 $currentWeekIndex = null;
 foreach ($mondays as $idx => $monday) {
     $weekStart = $monday;
@@ -388,20 +392,29 @@ foreach ($mondays as $idx => $monday) {
         <thead class="table-light">
             <tr>
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+
                 <?php foreach ($mondays as $idx => $monday): ?>
-                    <?php $isCurrent = ($idx === $currentWeekIndex); ?>
+                    <?php 
+                    $weekStart = $monday;
+                    $isCurrent = ($idx === $currentWeekIndex);
+                    ?>
                     <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                        <?= date('M j', $monday); ?><br>
-                        <small class="text-muted">Week of <?= date('n/j', $monday); ?></small>
+                        <?php echo date('M j', $weekStart); ?><br>
+                        <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
         </thead>
+
         <tbody>
             <?php foreach ($employees as $userId => $employee): ?>
                 <?php
                 $fullName = htmlspecialchars($employee['full_name']);
-                $initials = implode('', array_map(fn($p) => strtoupper($p[0]), explode(' ', trim($fullName))));
+                $nameParts = explode(' ', trim($fullName));
+                $initials = '';
+                foreach ($nameParts as $part) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
                 $role = htmlspecialchars($employee['role']);
                 ?>
                 <tr>
@@ -409,51 +422,61 @@ foreach ($mondays as $idx => $monday) {
                         <div class="d-flex align-items-center">
                             <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                                  style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                                <?= $initials ?>
+                                <?php echo $initials; ?>
                             </div>
                             <div>
-                                <div class="fw-semibold"><?= $fullName ?></div>
-                                <div class="text-muted text-capitalize" style="font-size: 12px;"><?= $role ?></div>
+                                <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
                             </div>
                         </div>
                     </td>
 
                     <?php foreach ($mondays as $idx => $monday): ?>
-                        <?php
+                        <?php 
+                        $weekStart = $monday;
                         $isCurrent = ($idx === $currentWeekIndex);
-                        $weekKey = date('Y-m-d', $monday);
+
+                        // Format weekStart as Y-m-d string for key lookup
+                        $weekKey = date('Y-m-d', $weekStart);
+
+                        // Get assignments for this user and week, default empty array
                         $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
-                        $cellContent = '';
+                        $cellContent = "";
 
-                        if ($assignmentsForWeek) {
-                          foreach ($assignmentsForWeek as $assignment) {
-                              $status = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                              switch ($status) {
-                                  case 'confirmed':
-                                      $badgeColor = 'success';
-                                      break;
-                                  case 'pending':
-                                      $badgeColor = 'purple';
-                                      break;
-                                  case 'not_confirmed':
-                                      $badgeColor = 'primary';
-                                      break;
-                                  default:
-                                      $badgeColor = 'secondary';
-                                      break;
-                              }
-                              $clientName = htmlspecialchars($assignment['client_name']);
-                              $hours = htmlspecialchars($assignment['assigned_hours']);
-                              $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$hours})</span><br>";
-                          }
-                      } else {
-                          $cellContent = "<span class='text-muted'>+</span>";
-                      }
+                        if (!empty($assignmentsForWeek)) {
+                            foreach ($assignmentsForWeek as $assignment) {
+                                $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                                switch ($engagementStatus) {
+                                    case 'confirmed': $badgeColor = 'success'; break;
+                                    case 'pending': $badgeColor = 'purple'; break;
+                                    case 'not_confirmed': $badgeColor = 'primary'; break;
+                                    default: $badgeColor = 'secondary'; break;
+                                }
+                                $clientName = htmlspecialchars($assignment['client_name']);
+                                $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+                                $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
+                            }
+                        } else {
+                            $cellContent = "<span class='text-muted'>+</span>";
+                        }
 
+                        $tdClass = $isCurrent ? 'highlight-today' : '';
                         ?>
-                        <td class="<?= $isCurrent ? 'highlight-today' : '' ?>">
-                            <?= $cellContent ?>
-                        </td>
+
+                        <?php if ($isAdmin): ?>
+                            <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                                "<?php echo $userId; ?>",
+                                <?php echo json_encode($fullName); ?>,
+                                "<?php echo $weekKey; ?>"
+                            )'>
+                                <?php echo $cellContent; ?>
+                            </td>
+                        <?php else: ?>
+                            <td class="<?php echo $tdClass; ?>">
+                                <?php echo $cellContent; ?>
+                            </td>
+                        <?php endif; ?>
+
                     <?php endforeach; ?>
                 </tr>
             <?php endforeach; ?>
