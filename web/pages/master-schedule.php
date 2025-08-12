@@ -151,6 +151,22 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
         console.log("Modal triggered:", user_id, employeeName, weekStart);
+
+        // Then use these variables to fetch assignments:
+        fetch(`get_assignments.php?user_id=${userId}&week_start=${weekStart}`)
+          .then(res => {
+            if (!res.ok) throw new Error("Network response was not OK");
+            return res.json();
+          })
+          .then(data => {
+            // render your assignments here with data
+            renderAssignmentsList(data);
+          })
+          .catch(err => {
+            console.error("Error fetching assignments:", err);
+          });
+
+
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
