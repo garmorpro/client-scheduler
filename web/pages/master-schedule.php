@@ -612,7 +612,7 @@ function openEmployeeModal(employeeId) {
       </div>
 
       <!-- Tab Content -->
-      <div class="tab-content">
+      <div class="tab-content-modal">
         <!-- Assignment Tab Pane -->
         <div id="assignmentTabPane" class="tab-pane active" role="tabpanel" aria-labelledby="assignmentTab">
           <form id="assignmentForm" action="add_assignment.php" method="POST">
@@ -1161,13 +1161,13 @@ function openEmployeeModal(employeeId) {
 <!-- Script: Custom Tabs -->
  <script>
   // Tab switching logic for custom tabs
-  document.querySelectorAll('.custom-tabs button').forEach(btn => {
+  document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.getAttribute('data-tab');
       if (!targetTab) return;
 
       // Remove active class on all buttons
-      document.querySelectorAll('.custom-tabs button').forEach(b => {
+      document.querySelectorAll('.custom-tabs-modal button').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
         b.setAttribute('tabindex', '-1');
