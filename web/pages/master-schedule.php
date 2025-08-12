@@ -149,53 +149,52 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
-  console.log("Modal triggered with arguments:");
-  console.log("user_id:", user_id);
-  console.log("employeeName:", employeeName);
-  console.log("weekStart:", weekStart);
-  console.log("engagement_id:", engagement_id);
-
   const assignments = <?php echo json_encode($assignments); ?>;
-  console.log("Assignments data loaded from PHP:", assignments);
+  const timeOffData = <?php echo json_encode($timeOff); ?>;
 
-  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-  console.log("Assignments for user and week:", assignmentsForWeek);
+  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
+    console.log("Modal triggered with arguments:");
+    console.log("user_id:", user_id);
+    console.log("employeeName:", employeeName);
+    console.log("weekStart:", weekStart);
+    console.log("engagement_id:", engagement_id);
 
-  const manageEntryModalElement = document.getElementById('manageEntryModal');
-  if (!manageEntryModalElement) {
-    console.warn("manageEntryModal element NOT found!");
-    return;
-  }
-  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    console.log("Assignments for user and week:", assignmentsForWeek);
 
+    const manageEntryModalElement = document.getElementById('manageEntryModal');
+    if (!manageEntryModalElement) {
+      console.warn("manageEntryModal element NOT found!");
+      return;
+    }
+    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-  // Update the "Add New Entry" button inside Manage modal with correct data attributes
-  const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
-  if (addNewEntryBtn) {
-    addNewEntryBtn.setAttribute('data-user-id', user_id);
-    addNewEntryBtn.setAttribute('data-week-start', weekStart);
-    addNewEntryBtn.setAttribute('data-employee-name', employeeName);
-    console.log('Set Add New Entry button data attributes:', {
-      user_id,
-      weekStart,
-      employeeName
-    });
-  } else {
-    console.warn('Add New Entry button inside manageEntryModal NOT found!');
-  }
+    // Update the "Add New Entry" button inside Manage modal with correct data attributes
+    const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
+    if (addNewEntryBtn) {
+      addNewEntryBtn.setAttribute('data-user-id', user_id);
+      addNewEntryBtn.setAttribute('data-week-start', weekStart);
+      addNewEntryBtn.setAttribute('data-employee-name', employeeName);
+      console.log('Set Add New Entry button data attributes:', {
+        user_id,
+        weekStart,
+        employeeName
+      });
+    } else {
+      console.warn('Add New Entry button inside manageEntryModal NOT found!');
+    }
 
-  renderTimeOffList(user_id, weekStart);
+    // Call render functions with valid data present
+    renderTimeOffList(user_id, weekStart);
 
-  if (assignmentsForWeek.length > 0) {
-    console.log("Assignments found for this user/week, rendering list and showing manage modal");
-    renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
-    
-    manageEntryModal.show();
-  } else {
-    console.log("No assignments found for this user/week, opening Add Entry modal");
-    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
-  }
+    if (assignmentsForWeek.length > 0) {
+      console.log("Assignments found for this user/week, rendering list and showing manage modal");
+      renderAssignmentsList(user_id, weekStart);
+      manageEntryModal.show();
+    } else {
+      console.log("No assignments found for this user/week, opening Add Entry modal");
+      openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
+    }
   }
 
 // end Open modal for Manage Assignments or Add Entry
