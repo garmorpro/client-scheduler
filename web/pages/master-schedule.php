@@ -1412,7 +1412,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- end dropdown menu -->
 
 <!-- Script: Custom Tabs -->
- <script>
+<script>
   // Tab switching logic for custom tabs
   document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1446,7 +1446,46 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       }
     });
   });
-  </script>
+
+  // Reset tabs on modal close - Replace '#yourModalId' with your modal ID
+  document.querySelectorAll('.modal').forEach(modalEl => {
+    modalEl.addEventListener('hidden.bs.modal', () => {
+      const tabsContainer = modalEl.querySelector('.custom-tabs-modal');
+      if (!tabsContainer) return;
+
+      const tabButtons = tabsContainer.querySelectorAll('button');
+      if (tabButtons.length === 0) return;
+
+      // Reset all buttons
+      tabButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        btn.setAttribute('tabindex', '-1');
+      });
+
+      // Activate first tab button
+      tabButtons[0].classList.add('active');
+      tabButtons[0].setAttribute('aria-selected', 'true');
+      tabButtons[0].setAttribute('tabindex', '0');
+
+      // Reset all tab panes inside this modal
+      const tabPanes = modalEl.querySelectorAll('.tab-pane');
+      tabPanes.forEach(pane => {
+        pane.classList.remove('active', 'show');
+        pane.setAttribute('aria-hidden', 'true');
+      });
+
+      // Show first tab pane
+      const firstTabId = tabButtons[0].getAttribute('data-tab');
+      const firstPane = modalEl.querySelector(`#${firstTabId}`);
+      if (firstPane) {
+        firstPane.classList.add('active', 'show');
+        firstPane.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+</script>
+
 <!-- end Script: Custom Tabs -->
 
 <!-- Script: manageEntryModal Custom Tabs -->
