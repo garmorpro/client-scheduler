@@ -548,18 +548,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                       </td>
 
                       <?php foreach ($mondays as $idx => $monday): ?>
-                          <?php 
+                        <?php 
                           $weekStart = $monday;
                           $isCurrent = ($idx === $currentWeekIndex);
-
-                          // Format weekStart as Y-m-d string for key lookup
+                                            
                           $weekKey = date('Y-m-d', $weekStart);
-
-                      
+                                            
                           $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
                           $cellContent = "";
-                          $engagement_id = ''; // define early so it's always set
-
+                          $engagement_id = '';
+                                            
                           if (!empty($assignmentsForWeek)) {
                               $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
                               foreach ($assignmentsForWeek as $assignment) {
@@ -577,30 +575,41 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                           } else {
                               $cellContent = "<span class='text-muted'>+</span>";
                           }
-
-
+                        
                           $tdClass = $isCurrent ? 'highlight-today' : '';
-                          ?>
-
-                          <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                  onclick='openManageEntryModal(
-                                      "<?php echo $userId; ?>",
-                                      <?php echo json_encode($fullName); ?>,
-                                      "<?php echo $weekKey; ?>", 
-                                      "<?php echo $engagement_id; ?>"
-                                  )'>
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php else: ?>
-                              <td class="<?php echo $tdClass; ?>">
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php endif; ?>
-
+                          $hasAssignment = isset($assignments[$userId][$weekKey]);
+                        ?>
+                      
+                        <?php if ($isAdmin): ?>
+                          <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer"
+                              onclick='
+                                <?php if ($hasAssignment): ?>
+                                  openManageEntryModal(
+                                    "<?php echo $userId; ?>",
+                                    <?php echo json_encode($fullName); ?>,
+                                    "<?php echo $weekKey; ?>", 
+                                    "<?php echo htmlspecialchars($engagement_id, ENT_QUOTES); ?>"
+                                  )
+                                <?php else: ?>
+                                  openAddEntryModal(
+                                    "<?php echo $userId; ?>",
+                                    <?php echo json_encode($fullName); ?>,
+                                    "<?php echo $weekKey; ?>", 
+                                    ""
+                                  )
+                                <?php endif; ?>
+                              '
+                          >
+                            <?php echo $cellContent; ?>
+                          </td>
+                        <?php else: ?>
+                          <td class="<?php echo $tdClass; ?>">
+                            <?php echo $cellContent; ?>
+                          </td>
+                        <?php endif; ?>
+                        
                       <?php endforeach; ?>
-                  </tr>
-              <?php endforeach; ?>
+
           </tbody>
       </table>
   </div>
@@ -611,7 +620,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <?php if ($isAdmin): ?>
 
-<!-- WORKING ON -> Modal for Manage Entry -->
+<!-- Modal for Manage Entry -->
   <div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -637,18 +646,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           Manage Assignments
         </button>
         <button
-  class="btn btn-link flex-fill text-center text-decoration-none"
-  type="button"
-  data-bs-toggle="modal"
-  data-bs-target="#addEntryModal"
-  aria-controls="assignmentTabPane"
-  role="tab"
-  aria-selected="false"
-  tabindex="-1"
-  data-tab="assignmentTabPane"
->
-  Add New Entry
-</button>
+          class="btn btn-link flex-fill text-center text-decoration-none"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#addEntryModal"
+          role="tab"
+          aria-selected="false"
+          tabindex="-1"
+        >
+          Add New Entry
+        </button>
         <button
           class="btn btn-link flex-fill text-center text-decoration-none"
           data-tab="timeOffTabPane"
