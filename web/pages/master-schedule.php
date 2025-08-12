@@ -192,20 +192,25 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // open addAssignmentModal
     function openAddassignmentModal(user_id, employeeName, weekStart) {
-      document.getElementById('modalUserId').value = user_id;
-      document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-      document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+  document.getElementById('modalUserId').value = user_id;
+  document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
+  document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
-      const weekDate = new Date(weekStart);
-      document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const weekDate = new Date(weekStart);
+  document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
-      document.getElementById('clientSelect').value = '';
-      document.getElementById('assignedHours').value = '';
+  // Reset custom dropdown selection and hidden input
+  document.getElementById('selectedClient').textContent = 'Select a client';
+  document.getElementById('engagementInput').value = '';
 
-      const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-      assignmentModal.show();
-  }
+  // Reset assigned hours input
+  document.getElementById('assignedHours').value = '';
+
+  const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+  assignmentModal.show();
+}
+
 // end open addAssignmentModal
 
 
