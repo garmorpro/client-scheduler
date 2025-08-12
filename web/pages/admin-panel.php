@@ -1391,16 +1391,26 @@ if ($settingResult) {
                 <?php
                 $contentKeys = ['backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'];
                 $contentLabels = ['Users', 'Engagements', 'Assignments', 'Settings'];
-                foreach ($contentKeys as $i => $key):
+                              
+                // Split array into columns of max 3 items per column
+                $chunks = array_chunk($contentKeys, 3);
+                $labelChunks = array_chunk($contentLabels, 3);
+                              
+                foreach ($chunks as $colIndex => $chunk):
                 ?>
                   <div class="col-md-3">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings   [$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
-                      <label class="form-check-label" for="<?php echo $key; ?>"><?php echo $contentLabels[$i]; ?></label>
-                    </div>
+                    <?php foreach ($chunk as $i => $key):
+                      $label = $labelChunks[$colIndex][$i];
+                    ?>
+                      <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
+                        <label class="form-check-label" for="<?php echo $key; ?>"><?php echo $label; ?></label>
+                      </div>
+                    <?php endforeach; ?>
                   </div>
                 <?php endforeach; ?>
               </div>
+
 
               <hr>
 
