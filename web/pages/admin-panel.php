@@ -651,7 +651,7 @@ if ($settingResult) {
                     <!-- Spacer pushes button to bottom -->
                     <div class="flex-grow-1"></div>
 
-                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3 border" style="font-size: .875rem;">
+                    <a href="#" class="badge text-black p-2 text-decoration-none fw-medium w-100 mt-3 border overlay-red" style="font-size: .875rem;">
                       <i class="bi bi-activity pe-3"></i>View Detailed Metrics
                     </a>
                   </div>
@@ -668,7 +668,7 @@ if ($settingResult) {
                       </div>
                       <div class="user-management-buttons">
                         <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border fs-6">
-                          <i class="bi bi-download me-3"></i>Export All Data
+                          <i class="bi bi-download me-3 overlay-red"></i>Export All Data
                         </a>
                       </div>
                     </div>
