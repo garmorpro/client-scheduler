@@ -238,8 +238,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         // Reset inputs depending on the tab
         if (tab === 'assignment') {
             document.getElementById('selectedClient').textContent = 'Select a client';
-            document.getElementById('engagementInput').value = '';
-            document.getElementById('manageEngagementInput').value = '';
+            document.getElementById('engagementInput').value = engagement_id;
             document.getElementById('assignedHours').value = '';
         } else if (tab === 'timeoff') {
             document.getElementById('timeoffHours').value = '';
