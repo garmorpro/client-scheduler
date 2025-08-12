@@ -23,27 +23,27 @@ if (!isset($_SESSION['user_id'])) {
 //     $current = strtotime('+1 week', $current);
 // }
 
+
 $today = date('Y-m-d');
 
-// 1. Determine first Monday to display
 if (isset($_GET['start_monday'])) {
-    // From the week navigation
     $startMonday = (int) $_GET['start_monday'];
 } else {
-    // Default view → current Monday is in the 3rd position
     $currentMonday = strtotime('monday this week');
     $startMonday   = strtotime('-2 weeks', $currentMonday);
 }
 
-// 2. Build the 7-week array
 $mondays = [];
 for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+$i week", $startMonday);
 }
 
-// 3. For display in navigation bar
 $firstWeekDisplay = date('n/j', $mondays[0]);
 $lastWeekDisplay  = date('n/j', $mondays[6]);
+?>
+
+
+
 
 
 
@@ -396,13 +396,14 @@ function openEmployeeModal(employeeId) {
         </form>
 
 
-        <div class="d-flex align-items-center justify-content-center mb-3" id="weekNav">
+<div class="d-flex align-items-center justify-content-center mb-3" id="weekNav">
     <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="prevWeek">&lt;</button>
     <strong>
         Week of <?php echo $firstWeekDisplay; ?> - Week of <?php echo $lastWeekDisplay; ?>
     </strong>
     <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="nextWeek">&gt;</button>
 </div>
+
 
 
         <script>
