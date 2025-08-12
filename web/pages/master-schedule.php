@@ -1066,7 +1066,7 @@ function openEmployeeModal(employeeId) {
 
 <!-- dropdown menu -->
   <script>
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
   const dropdownBtn = document.getElementById('dropdownBtn');
   const dropdownList = document.getElementById('dropdownList');
   const selectedClient = document.getElementById('selectedClient');
@@ -1129,8 +1129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownList.style.display = 'none';
     dropdownBtn.setAttribute('aria-expanded', 'false');
   }
-});
-</script>
+  });
+  </script>
 
 
 <!-- end dropdown menu -->
