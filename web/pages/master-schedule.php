@@ -1302,6 +1302,55 @@ function openEmployeeModal(employeeId) {
   </script>
 <!-- end Script: dynamic buttons on add modal -->
 
+<!-- Script: Dynamic buttons on Manage Modal -->
+ <script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const manageAddModal = document.getElementById('manageAddModal');
+  const manageAddButtons = document.getElementById('manageAddButtons');
+  const assignmentsListing = document.getElementById('assignmentsListing');
+  const assignmentsContainer = document.getElementById('assignmentsContainer');
+  const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
+  const backToButtons = document.getElementById('backToButtons');
+
+  manageAssignmentsButton.addEventListener('click', () => {
+    // Hide buttons
+    manageAddButtons.classList.add('d-none');
+    // Show assignments listing container
+    assignmentsListing.classList.remove('d-none');
+
+    // Load assignments (replace with your actual logic, e.g. fetch from server)
+    assignmentsContainer.innerHTML = '<p>Loading assignments...</p>';
+
+    // Simulate async loading with setTimeout
+    setTimeout(() => {
+      // Example: assignments data — replace with your real data
+      const assignments = [
+        { id: 1, type: 'Regular', client: 'Client A', hours: 40 },
+        { id: 2, type: 'Time Off', client: '-', hours: 8 },
+        { id: 3, type: 'Regular', client: 'Client B', hours: 20 },
+      ];
+
+      // Render assignments
+      const listHtml = assignments.map(a =>
+        `<div>
+          <strong>${a.type} Assignment</strong> - Client: ${a.client}, Hours: ${a.hours}
+        </div>`
+      ).join('');
+
+      assignmentsContainer.innerHTML = listHtml;
+    }, 500); // simulate loading delay
+  });
+
+  backToButtons.addEventListener('click', () => {
+    // Show buttons again
+    manageAddButtons.classList.remove('d-none');
+    // Hide assignments listing
+    assignmentsListing.classList.add('d-none');
+  });
+ });
+ </script>
+<!-- end script: dynamic buttons on manage modal -->
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
