@@ -104,12 +104,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
 
 $settings = [];
-$sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
-$result = $conn->query($sql);
+$settingSQL = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
+$settingResult = $conn->query($settingSQL);
 
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $settings[$row['setting_key']] = $row['setting_value'];
+if ($settingResult) {
+    while ($S_row = $settingResult->fetch_assoc()) {
+        $settings[$row['setting_key']] = $S_row['setting_value'];
     }
 }
 
