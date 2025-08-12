@@ -562,12 +562,12 @@ function openEmployeeModal(employeeId) {
   <div id="assignmentsListing" class="d-none">
   <button id="backToButtons" class="btn btn-secondary mb-3">Back</button>
   <div id="assignmentsListContainer"><!-- Cards will render here --></div>
-</div>
+  </div>
 
-</div>
+  </div>
     </div>
   </div>
-</div>
+  </div>
 
 <!-- end manage or add assignment -->
 
@@ -600,7 +600,7 @@ function openEmployeeModal(employeeId) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST">
+          <form id="editAssignmentForm" action="update_entry.php" method="POST">
             <input type="hidden" id="editAssignmentId" name="assignment_id">
             <div class="mb-3">
               <label for="editAssignedHours" class="form-label">Assigned Hours</label>
