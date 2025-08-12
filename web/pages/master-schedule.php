@@ -151,22 +151,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
         console.log("Modal triggered:", user_id, employeeName, weekStart);
-
-        // Then use these variables to fetch assignments:
-        fetch(`get_assignments.php?user_id=${user_id}&week_start=${weekStart}`)
-          .then(res => {
-            if (!res.ok) throw new Error("Network response was not OK");
-            return res.json();
-          })
-          .then(data => {
-            // render your assignments here with data
-            renderAssignmentsList(data);
-          })
-          .catch(err => {
-            console.error("Error fetching assignments:", err);
-          });
-
-
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
@@ -1316,31 +1300,45 @@ function openEmployeeModal(employeeId) {
 
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
-  const currentUserId = <?php echo json_encode($currentUserId); ?>;
-  const currentWeekStart = <?php echo json_encode($currentWeekStart); ?>;
-</script>
- <script>
-  document.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener('DOMContentLoaded', () => {
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
   const assignmentsListContainer = document.getElementById('assignmentsListContainer');
   const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
   const backToButtons = document.getElementById('backToButtons');
 
-  // Use current userId and weekStart — replace with your actual way of getting these
-  // For example, from global JS variables injected by server-side or from the UI selection
-  const userId = window.currentUserId;      // assume set by server or page script
-  const weekStart = window.currentWeekStart;
+  // We'll store the current userId and weekStart here dynamically
+  let currentUserId = null;
+  let currentWeekStart = null;
+
+  // This function will be called externally when opening modal
+  window.openManageOrAddModal = function(userId, employeeName, weekStart) {
+    currentUserId = userId;
+    currentWeekStart = weekStart;
+
+    // Show the modal with buttons (make sure modal is shown here or elsewhere)
+    // For example:
+    const modalEl = document.getElementById('manageAddModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+
+    // Show buttons view, hide assignments list initially
+    manageAddButtons.classList.remove('d-none');
+    assignmentsListing.classList.add('d-none');
+  };
 
   manageAssignmentsButton.addEventListener('click', () => {
+    if (!currentUserId || !currentWeekStart) {
+      assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
+      return;
+    }
+
     manageAddButtons.classList.add('d-none');
     assignmentsListing.classList.remove('d-none');
-
-    // Show loading placeholder
     assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
 
-    // Fetch real assignments from server API endpoint (you'll need to create this endpoint)
-    fetch(`get_assignments.php?user_id=${currentUserId}&week_start=${currentWeekStart}`)
+    fetch(`get_assignments.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
       .then(response => {
         if (!response.ok) throw new Error('Network response was not OK');
         return response.json();
@@ -1414,9 +1412,8 @@ function openEmployeeModal(employeeId) {
     });
   }
 });
+</script>
 
-
- </script>
 <!-- end script: dynamic buttons on manage modal -->
 
 
