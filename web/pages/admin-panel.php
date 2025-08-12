@@ -570,9 +570,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Email Notifications</p>
                         <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
                       </div>
-                      <a href="#" id="configureEmailBtn" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
+                      <button id="configureEmailBtn" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
-                      </a>
+                      </button>
                     </div>
 
                     <!-- Backup Settings -->
