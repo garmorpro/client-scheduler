@@ -651,7 +651,7 @@ function openEmployeeModal(employeeId) {
                 role="listbox"
                 tabindex="-1"
                 aria-labelledby="selectedClient"
-                style="display: in-line;"
+                style="display: block !important;"
               >
                 <?php 
                   $statusDisplayMap = [
