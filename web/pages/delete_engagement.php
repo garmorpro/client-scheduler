@@ -19,52 +19,50 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
-if (isset($_POST['user_id']) && is_numeric($_POST['user_id'])) {
-    $deleteUserId = (int)$_POST['user_id'];
+if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
+    $deleteEngagementId = (int)$_POST['engagement_id'];
 
-    // Fetch user details before deletion
-    $detailsStmt = $conn->prepare("SELECT first_name, last_name, email FROM users WHERE user_id = ?");
+    // Fetch engagement details before deletion
+    $detailsStmt = $conn->prepare("SELECT client_name, notes FROM engagements WHERE engagement_id = ?");
     if (!$detailsStmt) {
         echo json_encode(['success' => false, 'error' => 'Database error']);
         exit();
     }
-    $detailsStmt->bind_param('i', $deleteUserId);
+    $detailsStmt->bind_param('i', $deleteEngagementId);
     $detailsStmt->execute();
-    $detailsStmt->bind_result($firstName, $lastName, $emailAddress);
+    $detailsStmt->bind_result($clientName, $notes);
     if (!$detailsStmt->fetch()) {
         $detailsStmt->close();
-        echo json_encode(['success' => false, 'error' => 'User not found']);
+        echo json_encode(['success' => false, 'error' => 'Engagement not found']);
         exit();
     }
     $detailsStmt->close();
 
-    $userFullName = trim("$firstName $lastName");
-
-    // Delete user
-    $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
-    $stmt->bind_param('i', $deleteUserId);
+    // Delete engagement
+    $stmt = $conn->prepare("DELETE FROM engagements WHERE engagement_id = ?");
+    $stmt->bind_param('i', $deleteEngagementId);
     
     $currentUserId = $_SESSION['user_id'];
     $currentUserEmail = $_SESSION['email'] ?? '';
     $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
     if ($stmt->execute()) {
-        $title = "User Deleted";
-        $description = "Deleted user $userFullName ($emailAddress).";
+        $title = "Engagement Deleted";
+        $description = "Successfully deleted engagement for client: $clientName.";
 
-        logActivity($conn, "user_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+        logActivity($conn, "successful_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
         echo json_encode(['success' => true]);
     } else {
-        $title = "Failed User Deletion";
-        $description = "Failed to delete user $userFullName ($emailAddress).";
+        $title = "Failed Engagement Deletion";
+        $description = "Failed to delete engagement for client: $clientName.";
 
-        logActivity($conn, "failed_user_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+        logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-        echo json_encode(['success' => false, 'error' => 'Failed to delete user']);
+        echo json_encode(['success' => false, 'error' => 'Failed to delete engagement']);
     }
     $stmt->close();
 } else {
-    echo json_encode(['success' => false, 'error' => 'Invalid user ID']);
+    echo json_encode(['success' => false, 'error' => 'Invalid engagement ID']);
     exit();
 }

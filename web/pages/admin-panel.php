@@ -346,7 +346,10 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
-                                        <i class="bi bi-trash overlay-red"></i>
+                                        <a href="#" class="delete-engagement-btn text-decoration-none" data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                          <i class="bi bi-trash"></i>
+                                        </a>
+
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -1659,6 +1662,33 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         });
     </script>
 <!-- end delete user -->
+
+<!-- delete engagement -->
+    <script>
+        document.addEventListener('click', function(e) {
+          // Engagement delete button
+          if (e.target.closest('.delete-engagement-btn')) {
+            e.preventDefault();
+            const engagementId = e.target.closest('.delete-engagement-btn').dataset.engagementId;
+            if (confirm('Are you sure you want to delete this engagement?')) {
+              fetch('delete_engagement.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'engagement_id=' + encodeURIComponent(engagementId)
+              })
+              .then(res => res.text())
+              .then(response => {
+                if (response.trim() === 'success') {
+                  location.reload();
+                } else {
+                  alert('Error deleting engagement');
+                }
+              });
+            }
+          }
+        });
+    </script>
+<!-- end delete engagement -->
 
 <!-- import users csv -->
     <script>
