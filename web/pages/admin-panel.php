@@ -1193,6 +1193,108 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
 <!-- end import engagements modal -->
 
+<!-- Configure Email Notifications Modal -->
+    <div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <form id="emailNotifConfigForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="emailNotifConfigLabel">Email Notification Settings</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+              <!-- General Settings -->
+              <h6 class="mb-3">General Settings</h6>
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
+                <label class="form-check-label" for="enableEmailNotifications">Enable Email Notifications (Master switch)</label>
+              </div>
+
+              <!-- Notification Types -->
+              <h6 class="mb-3">Notification Types</h6>
+              <div class="row mb-4">
+                <div class="col-6">
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[]" value="admin_alerts" checked>
+                    <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
+                  </div>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[]" value="project_updates" checked>
+                    <label class="form-check-label" for="projectUpdates">Project Updates</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[]" value="user_notifications" checked>
+                    <label class="form-check-label" for="userNotifications">User Notifications</label>
+                  </div>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[]" value="login_alerts" checked>
+                    <label class="form-check-label" for="loginAlerts">Login Alerts</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notification Frequency -->
+              <h6 class="mb-3">Notification Frequency</h6>
+              <select class="form-select mb-4" id="notificationFrequency" name="notification_frequency" required>
+                <option value="immediately" selected>Immediately</option>
+                <option value="hourly_digest">Hourly Digest</option>
+                <option value="daily_digest">Daily Digest</option>
+                <option value="weekly_digest">Weekly Digest</option>
+              </select>
+
+              <!-- SMTP Configuration -->
+              <h6 class="mb-3">SMTP Configuration</h6>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label for="smtpServer" class="form-label">SMTP Server</label>
+                  <input type="text" class="form-control" id="smtpServer" name="smtp_server" placeholder="smtp.example.com" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpPort" class="form-label">SMTP Port</label>
+                  <input type="number" class="form-control" id="smtpPort" name="smtp_port" placeholder="587" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpUsername" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="smtpUsername" name="smtp_username" placeholder="user@example.com" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="smtpPassword" name="smtp_password" placeholder="••••••••" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="senderName" class="form-label">Sender Name</label>
+                  <input type="text" class="form-control" id="senderName" name="sender_name" placeholder="Your Company" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="senderEmail" class="form-label">Sender Email</label>
+                  <input type="email" class="form-control" id="senderEmail" name="sender_email" placeholder="no-reply@example.com" required>
+                </div>
+              </div>
+
+              <!-- Test Configuration -->
+              <h6 class="mb-3">Test Configuration</h6>
+              <div class="input-group mb-3">
+                <input type="email" class="form-control" id="testEmail" placeholder="test@example.com" aria-label="Test email">
+                <button class="btn btn-outline-primary" type="button" id="sendTestEmailBtn">Send Test Email</button>
+              </div>
+
+              <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Settings</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<!-- end Configure Email Notifications Modal -->
 
 
 <!-- Pagination -->
@@ -2103,6 +2205,82 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     });
     </script>
 <!-- end bulk delete engagements -->
+
+
+<!-- email notifications script -->
+     <script>
+      // Show modal on configure button click
+      document.querySelector('a.badge.text-black').addEventListener('click', e => {
+        e.preventDefault();
+        const modal = new bootstrap.Modal(document.getElementById('emailNotifConfigModal'));
+        modal.show();
+      });   
+
+      // Send test email button handler
+      document.getElementById('sendTestEmailBtn').addEventListener('click', async () => {
+        const testEmail = document.getElementById('testEmail').value.trim();
+        const statusEl = document.getElementById('testEmailStatus');
+        statusEl.classList.add('d-none');
+        statusEl.classList.remove('text-danger', 'text-success');
+        if (!testEmail) {
+          alert('Please enter a test email address.');
+          return;
+        }
+        statusEl.textContent = 'Sending test email...';
+        statusEl.classList.remove('d-none');
+        try {
+          const resp = await fetch('/api/send_test_email.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ test_email: testEmail })
+          });
+          const result = await resp.json();
+          if (result.success) {
+            statusEl.textContent = 'Test email sent successfully!';
+            statusEl.classList.add('text-success');
+          } else {
+            statusEl.textContent = 'Failed to send test email: ' + (result.error || 'Unknown error');
+            statusEl.classList.add('text-danger');
+          }
+        } catch (err) {
+          statusEl.textContent = 'Network error: ' + err.message;
+          statusEl.classList.add('text-danger');
+        }
+      });   
+
+      // Save settings handler
+      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+
+        const formData = new FormData(e.target);
+        // Convert FormData to JSON object
+        const data = Object.fromEntries(formData.entries());
+        // Because notification_types[] is multi-value, gather all checked ones:
+        data.notification_types = formData.getAll('notification_types[]');
+        // Checkbox sends 'on' if checked, undefined if not
+        data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? true : false;   
+
+        try {
+          const resp = await fetch('/api/save_email_settings.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+          });
+          const result = await resp.json();
+          if (result.success) {
+            alert('Settings saved successfully!');
+            const modalEl = document.getElementById('emailNotifConfigModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            modalInstance.hide();
+          } else {
+            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('Network error: ' + err.message);
+        }
+      });
+    </script>
+<!-- end email notification script -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
