@@ -103,6 +103,24 @@ $engagementSQL = "
 $engagementResults = mysqli_query($conn, $engagementSQL);
 
 
+$settings = [];
+$sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
+$result = $conn->query($sql);
+
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+}
+
+// Decode notification_types JSON or default empty array
+$notifTypes = [];
+if (!empty($settings['notification_types'])) {
+    $notifTypes = json_decode($settings['notification_types'], true);
+    if (!is_array($notifTypes)) {
+        $notifTypes = [];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -1194,7 +1212,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end import engagements modal -->
 
 <!-- Configure Email Notifications Modal -->
-    <div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
+<div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
   <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
@@ -1216,7 +1234,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 Master switch for all email notifications
               </span>
             </label>
-            <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
+            <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" <?php if (!empty($settings['enable_email_notifications']) && $settings['enable_email_notifications'] === 'true') echo 'checked'; ?>>
           </div>
 
           <!-- Notification Types -->
@@ -1224,21 +1242,21 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           <div class="row mb-2">
             <div class="col-6">
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[]" value="admin_alerts" checked>
+                <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[]" value="admin_alerts" <?php if (in_array('admin_alerts', $notifTypes)) echo 'checked'; ?>>
                 <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
               </div>
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[]" value="project_updates" checked>
+                <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[]" value="project_updates" <?php if (in_array('project_updates', $notifTypes)) echo 'checked'; ?>>
                 <label class="form-check-label" for="projectUpdates">Project Updates</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[]" value="user_notifications" checked>
+                <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[]" value="user_notifications" <?php if (in_array('user_notifications', $notifTypes)) echo 'checked'; ?>>
                 <label class="form-check-label" for="userNotifications">User Notifications</label>
               </div>
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[]" value="login_alerts" checked>
+                <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[]" value="login_alerts" <?php if (in_array('login_alerts', $notifTypes)) echo 'checked'; ?>>
                 <label class="form-check-label" for="loginAlerts">Login Alerts</label>
               </div>
             </div>
@@ -1247,10 +1265,10 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           <!-- Notification Frequency -->
           <h6 class="mb-2">Notification Frequency</h6>
           <select class="form-select mb-4" id="notificationFrequency" name="notification_frequency" required>
-            <option value="immediately" selected>Immediately</option>
-            <option value="hourly_digest">Hourly Digest</option>
-            <option value="daily_digest">Daily Digest</option>
-            <option value="weekly_digest">Weekly Digest</option>
+            <option value="immediately" <?php if (($settings['notification_frequency'] ?? '') === 'immediately') echo 'selected'; ?>>Immediately</option>
+            <option value="hourly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'hourly_digest') echo 'selected'; ?>>Hourly Digest</option>
+            <option value="daily_digest" <?php if (($settings['notification_frequency'] ?? '') === 'daily_digest') echo 'selected'; ?>>Daily Digest</option>
+            <option value="weekly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'weekly_digest') echo 'selected'; ?>>Weekly Digest</option>
           </select>
 
           <!-- SMTP Configuration -->
@@ -1258,27 +1276,27 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label for="smtpServer" class="form-label">SMTP Server</label>
-              <input type="text" class="form-control" id="smtpServer" name="smtp_server" placeholder="smtp.example.com" required>
+              <input type="text" class="form-control" id="smtpServer" name="smtp_server" placeholder="smtp.example.com" value="<?php echo htmlspecialchars($settings['smtp_server'] ?? '', ENT_QUOTES); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="smtpPort" class="form-label">SMTP Port</label>
-              <input type="number" class="form-control" id="smtpPort" name="smtp_port" placeholder="587" required>
+              <input type="number" class="form-control" id="smtpPort" name="smtp_port" placeholder="587" value="<?php echo htmlspecialchars($settings['smtp_port'] ?? '', ENT_QUOTES); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="smtpUsername" class="form-label">Username</label>
-              <input type="text" class="form-control" id="smtpUsername" name="smtp_username" placeholder="user@example.com" required>
+              <input type="text" class="form-control" id="smtpUsername" name="smtp_username" placeholder="user@example.com" value="<?php echo htmlspecialchars($settings['smtp_username'] ?? '', ENT_QUOTES); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="smtpPassword" class="form-label">Password</label>
-              <input type="password" class="form-control" id="smtpPassword" name="smtp_password" placeholder="••••••••" required>
+              <input type="password" class="form-control" id="smtpPassword" name="smtp_password" placeholder="••••••••" value="<?php echo htmlspecialchars($settings['smtp_password'] ?? '', ENT_QUOTES); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="senderName" class="form-label">Sender Name</label>
-              <input type="text" class="form-control" id="senderName" name="sender_name" placeholder="Your Company" required>
+              <input type="text" class="form-control" id="senderName" name="sender_name" placeholder="Your Company" value="<?php echo htmlspecialchars($settings['sender_name'] ?? '', ENT_QUOTES); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="senderEmail" class="form-label">Sender Email</label>
-              <input type="email" class="form-control" id="senderEmail" name="sender_email" placeholder="no-reply@example.com" required>
+              <input type="email" class="form-control" id="senderEmail" name="sender_email" placeholder="no-reply@example.com" value="<?php echo htmlspecialchars($settings['sender_email'] ?? '', ENT_QUOTES); ?>" required>
             </div>
           </div>
 
@@ -1314,7 +1332,6 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </div>
   </div>
 </div>
-<!-- end Configure Email Notifications Modal -->
 
 
 <!-- Pagination -->
@@ -2227,7 +2244,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
-     <script>
+ <script>
   // Show modal on configure button click
   document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
     e.preventDefault();
@@ -2306,6 +2323,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       });
       const result = await resp.json();
       if (result.success) {
+        // Optionally alert success
         // alert('Settings saved successfully!');
         const modalEl = document.getElementById('emailNotifConfigModal');
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
@@ -2318,65 +2336,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     }
   });
 </script>
+
 <!-- end email notification script -->
-
-<!-- email notification db script -->
-    <!-- <script>
-    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const formData = new FormData(e.target);
-
-      const data = {};
-      const settingMasterKey = 'email';
-
-      data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-
-      const notifTypes = formData.getAll('notification_types[]');
-      data['notification_types'] = JSON.stringify(notifTypes);
-
-      data['notification_frequency'] = formData.get('notification_frequency') || '';
-      data['smtp_server'] = formData.get('smtp_server') || '';
-      data['smtp_port'] = formData.get('smtp_port') || '';
-      data['smtp_username'] = formData.get('smtp_username') || '';
-      data['smtp_password'] = formData.get('smtp_password') || '';
-      data['sender_name'] = formData.get('sender_name') || '';
-      data['sender_email'] = formData.get('sender_email') || '';
-
-      try {
-        const resp = await fetch('settings_backend.php', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
-        });
-
-        const text = await resp.text();
-        console.log("Raw response text:", text);
-
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch (e) {
-          throw new Error("Invalid JSON response");
-        }
-
-        console.log("Parsed JSON:", result);
-
-        if (result.success) {
-        //   alert('Settings saved successfully!');
-          const modalEl = document.getElementById('emailNotifConfigModal');
-          const modalInstance = bootstrap.Modal.getInstance(modalEl);
-          modalInstance.hide();
-        } else {
-          alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
-        console.error('Fetch error:', err);
-      }
-    });
-    </script> -->
-<!-- end email notification db script -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
