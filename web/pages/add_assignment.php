@@ -50,17 +50,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die('Invalid or missing week_start date.');
     }
 
-    $assignedHours = $_POST['assigned_hours'] ?? null;
-    $timeOffHours = $_POST['time_off_hours'] ?? null;
+    function toPositiveFloat($val) {
+    $f = floatval($val);
+    return ($f > 0) ? $f : null;
+}
 
-    if ($assignedHours !== null) {
-        $hours = floatval($assignedHours);
-    } elseif ($timeOffHours !== null) {
-        $hours = floatval($timeOffHours);
-    } else {
-        console_log("Hours must be submitted.");
-        die('Hours must be submitted.');
-    }
+$assignedHoursVal = toPositiveFloat($_POST['assigned_hours'] ?? '');
+$timeOffHoursVal = toPositiveFloat($_POST['time_off_hours'] ?? '');
+
+if ($assignedHoursVal !== null) {
+    $hours = $assignedHoursVal;
+} elseif ($timeOffHoursVal !== null) {
+    $hours = $timeOffHoursVal;
+} else {
+    console_log("Hours must be submitted and > 0.");
+    die('Hours must be submitted and > 0.');
+}
+
+
 
     console_log([
         'assignedHours' => $assignedHours,
@@ -69,9 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ]);
 
     // Basic validation
-    if (!$employeeId || !$weekStart || $hours <= 0) {
+    if (empty($employeeId) || empty($weekStart) || $hours <= 0) {
         die('Invalid input data.');
     }
+
 
     // Determine if time off or assignment
     $isTimeOff = (empty($clientId)) ? 1 : 0;
