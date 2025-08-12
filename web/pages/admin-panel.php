@@ -1539,7 +1539,7 @@ if ($settingResult) {
           <div class="mb-4">
             <label for="passwordExpiration" style="font-size: 14px;" class="form-label">Password Expiration (days)</label>
             <input type="number" style="font-size: 14px;" class="form-control" id="passwordExpiration" name="password_expiration_days" min="0" value="<?php echo htmlspecialchars($settings['password_expiration_days'] ?? 0); ?>" required>
-            <small class="text-muted">Set to 0 to disable password expiration</small>
+            <small  style="font-size: 12px;" class="text-muted">Set to 0 to disable password expiration</small>
           </div>
 
           <hr>
