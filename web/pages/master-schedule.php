@@ -178,8 +178,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-        document.getElementById('manage_user_id').textContent = user_id;
-        document.getElementById('manage_week_start').textContent = week_start;
 
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
@@ -555,8 +553,6 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <span id="manage_user_id"></span>
-        <span id="manage_week_start"></span>
 
   <!-- Initial buttons -->
   <div id="manageAddButtons">
@@ -1311,24 +1307,34 @@ function openEmployeeModal(employeeId) {
   const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
   const backToButtons = document.getElementById('backToButtons');
 
-  // Example assignments data — replace with actual data loading/fetch
-  const exampleAssignments = [
-    { assignment_id: 1, type: 'Regular', client_name: 'Client A', assigned_hours: 40 },
-    { assignment_id: 2, type: 'Time Off', client_name: '', assigned_hours: 8 },
-    { assignment_id: 3, type: 'Regular', client_name: 'Client B', assigned_hours: 20 },
-  ];
+  // Use current userId and weekStart — replace with your actual way of getting these
+  // For example, from global JS variables injected by server-side or from the UI selection
+  const userId = window.currentUserId;      // assume set by server or page script
+  const weekStart = window.currentWeekStart;
 
   manageAssignmentsButton.addEventListener('click', () => {
-    // Hide buttons, show assignments listing
     manageAddButtons.classList.add('d-none');
     assignmentsListing.classList.remove('d-none');
 
-    // Render the assignments with the styled function
-    renderAssignmentsList(exampleAssignments);
+    // Show loading placeholder
+    assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
+
+    // Fetch real assignments from server API endpoint (you'll need to create this endpoint)
+    fetch(`get_assignments.php?user_id=${encodeURIComponent(userId)}&week_start=${encodeURIComponent(weekStart)}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not OK');
+        return response.json();
+      })
+      .then(assignments => {
+        renderAssignmentsList(assignments);
+      })
+      .catch(error => {
+        console.error('Error fetching assignments:', error);
+        assignmentsListContainer.innerHTML = `<p class="text-danger">Error loading assignments.</p>`;
+      });
   });
 
   backToButtons.addEventListener('click', () => {
-    // Show buttons, hide assignments listing
     manageAddButtons.classList.remove('d-none');
     assignmentsListing.classList.add('d-none');
   });
@@ -1356,7 +1362,6 @@ function openEmployeeModal(employeeId) {
 
       const rightDiv = document.createElement('div');
 
-      // Edit link
       const editLink = document.createElement('a');
       editLink.href = "#";
       editLink.title = "Edit Assignment";
@@ -1365,11 +1370,9 @@ function openEmployeeModal(employeeId) {
       editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
       editLink.onclick = (e) => {
         e.preventDefault();
-        // Your edit logic here, e.g. show edit modal with assignment data
         alert(`Edit assignment ${assignment.assignment_id}`);
       };
 
-      // Delete link
       const deleteLink = document.createElement('a');
       deleteLink.href = "#";
       deleteLink.title = "Delete Assignment";
@@ -1378,7 +1381,6 @@ function openEmployeeModal(employeeId) {
       deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
       deleteLink.onclick = (e) => {
         e.preventDefault();
-        // Your delete logic here, e.g. confirm then delete
         alert(`Delete assignment ${assignment.assignment_id}`);
       };
 
@@ -1392,6 +1394,7 @@ function openEmployeeModal(employeeId) {
     });
   }
 });
+
 
  </script>
 <!-- end script: dynamic buttons on manage modal -->
