@@ -560,20 +560,21 @@ function openEmployeeModal(employeeId) {
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage or Add Assignment -->
-  <div class="modal fade" id="manageAddModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Manage or Add Assignment</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
-          <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
-        </div>
+  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-hidden="true" aria-labelledby="manageAddModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageAddModalLabel">Manage or Add Assignments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+        <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
       </div>
     </div>
   </div>
+</div>
+
 <!-- end manage or add assignment -->
 
 <!-- Modal for Managing Assignments -->
