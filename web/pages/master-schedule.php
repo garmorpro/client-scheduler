@@ -205,10 +205,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
   }
 }
-
-
-
-
 // end Open modal for Manage Assignments or Add Entry
 
 // Open Add Entry modal
@@ -249,13 +245,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
 
         console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
-const engagementInputEl = document.getElementById('engagementInput');
-console.log('engagementInput element found:', engagementInputEl);
-if (engagementInputEl) {
-  console.log('Before set, engagementInput value:', engagementInputEl.value);
-  engagementInputEl.value = engagement_id;
-  console.log('After set, engagementInput value:', engagementInputEl.value);
-}
+        const engagementInputEl = document.getElementById('engagementInput');
+        console.log('engagementInput element found:', engagementInputEl);
+        if (engagementInputEl) {
+          console.log('Before set, engagementInput value:', engagementInputEl.value);
+          engagementInputEl.value = engagement_id;
+          console.log('After set, engagementInput value:', engagementInputEl.value);
+        }
 
         // Show the addEntryModal modal
         const addEntryModalEl = document.getElementById('addEntryModal');
@@ -277,6 +273,9 @@ if (engagementInputEl) {
         }
     }
 
+// end Open Add Entry modal
+
+
 
 // openEditModal remains unchanged
     function openEditModal(event) {
@@ -290,7 +289,7 @@ if (engagementInputEl) {
         const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
         editModal.show();
     }
-// end Open Add Entry modal
+// end openEditModal
 
 
 // Manage assignments modal
@@ -638,16 +637,18 @@ if (engagementInputEl) {
           Manage Assignments
         </button>
         <button
-          class="btn btn-link flex-fill text-center text-decoration-none"
-          data-tab="assignmentTabPane"
-          role="tab"
-          aria-selected="false"
-          aria-controls="assignmentTabPane"
-          tabindex="-1"
-          type="button"
-        >
-          Add Assignment
-        </button>
+  class="btn btn-link flex-fill text-center text-decoration-none"
+  type="button"
+  data-bs-toggle="modal"
+  data-bs-target="#addEntryModal"
+  aria-controls="assignmentTabPane"
+  role="tab"
+  aria-selected="false"
+  tabindex="-1"
+  data-tab="assignmentTabPane"
+>
+  Add New Entry
+</button>
         <button
           class="btn btn-link flex-fill text-center text-decoration-none"
           data-tab="timeOffTabPane"
@@ -680,7 +681,7 @@ if (engagementInputEl) {
 
         <!-- Add Assignement Tab -->
 
-        <div
+        <!-- <div
           id="assignmentTabPane"
           class="tab-pane"
           role="tabpanel"
@@ -688,11 +689,11 @@ if (engagementInputEl) {
           aria-hidden="true"
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
-            <!-- Hidden inputs -->
+         
             <input type="text" id="manageModalUserId" name="user_id" value="">
             <input type="text" id="manageModalWeek" name="week_start" value="">
 
-            <!-- Client Dropdown -->
+   
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
               <div
@@ -716,46 +717,46 @@ if (engagementInputEl) {
                 aria-labelledby="selectedClient"
               >
                 <?php
-                  $statusDisplayMap = [
-                    'confirmed' => 'Confirmed',
-                    'pending' => 'Pending',
-                    'not_confirmed' => 'Not Confirmed'
-                  ];
-                  $statusClassMap = [
-                    'confirmed' => 'text-confirmed',
-                    'pending' => 'text-pending',
-                    'not_confirmed' => 'text-not-confirmed'
-                  ];
+                  // $statusDisplayMap = [
+                  //   'confirmed' => 'Confirmed',
+                  //   'pending' => 'Pending',
+                  //   'not_confirmed' => 'Not Confirmed'
+                  // ];
+                  // $statusClassMap = [
+                  //   'confirmed' => 'text-confirmed',
+                  //   'pending' => 'text-pending',
+                  //   'not_confirmed' => 'text-not-confirmed'
+                  // ];
                 ?>
-                <?php foreach ($clientsWithHours as $client): ?>
+                <?php //foreach ($clientsWithHours as $client): ?>
                   <?php
-                    $statusKey = strtolower($client['status']);
-                    $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
-                    $statusClass = $statusClassMap[$statusKey] ?? '';
+                    // $statusKey = strtolower($client['status']);
+                    // $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                    // $statusClass = $statusClassMap[$statusKey] ?? '';
                   ?>
                   <div
                     class="dropdown-item"
-                    data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
-                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    data-engagement-id="<?php //echo htmlspecialchars($client['engagement_id']); ?>"
+                    data-client-name="<?php //echo htmlspecialchars($client['client_name']); ?>"
                     role="option"
                     tabindex="0"
                   >
                     <div>
-                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
+                      <span class="fw-semibold"><?php //echo htmlspecialchars($client['client_name']); ?></span><br>
                       <small class="text-muted">
-                        <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                        <span class="text-status <?php //echo $statusClass; ?>"><?php //echo htmlspecialchars($statusText); ?></span>
                         <i class="bi bi-dot"></i> 
-                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                        <?php //echo number_format($client['assigned_hours'], 2); ?> / <?php //echo number_format($client['total_available_hours'], 2); ?> hrs
                       </small>
                     </div>
                   </div>
-                <?php endforeach; ?>
+                <?php //endforeach; ?>
               </div>
 
               <input type="text" id="manageEngagementInput" name="engagement_id" required>
             </div>
 
-            <!-- Assigned hours -->
+       
             <div class="mb-3">
               <label for="assignedHours" class="form-label">Hours</label>
               <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
@@ -779,7 +780,9 @@ if (engagementInputEl) {
               </button>
             </div>
           </form>
-        </div>
+        </div> -->
+
+
 
         <!-- Time Off Tab -->
         <div
