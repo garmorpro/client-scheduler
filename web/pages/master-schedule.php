@@ -371,14 +371,11 @@ function openEmployeeModal(employeeId) {
           <i class="bi bi-arrow-clockwise me-3"></i>Refresh
         </a>
 
-        <a href="#" role="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#engagementModal" onclick="return false;">
-            <i class="bi bi-plus-lg me-3"></i>New Engagement
-        </a>
-
     </div>
 </div>
 
-    <div class="bg-white border rounded p-4 mb-4">
+<!-- upper search and week range selector -->
+  <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3 align-items-center">
 
             <!-- Search Bar -->
@@ -406,587 +403,587 @@ function openEmployeeModal(employeeId) {
 
         </form>
     </div>
+<!-- end upper search and week range selector -->
 
+<!-- Master Schedule table -->
+  <?php
+  // Assume $today, $mondays, $employees, $assignments, $isAdmin already defined as you said
 
-<?php
-// Assume $today, $mondays, $employees, $assignments, $isAdmin already defined as you said
+  // Find current week column index for highlighting entire column
+  $currentWeekIndex = null;
+  foreach ($mondays as $idx => $monday) {
+      $weekStart = $monday;
+      $weekEnd = strtotime('+7 days', $weekStart);
+      if ($today >= $weekStart && $today < $weekEnd) {
+          $currentWeekIndex = $idx;
+          break;
+      }
+  }
+  ?>
 
-// Find current week column index for highlighting entire column
-$currentWeekIndex = null;
-foreach ($mondays as $idx => $monday) {
-    $weekStart = $monday;
-    $weekEnd = strtotime('+7 days', $weekStart);
-    if ($today >= $weekStart && $today < $weekEnd) {
-        $currentWeekIndex = $idx;
-        break;
-    }
-}
-?>
+  <div class="table-responsive">
+      <table class="table table-bordered align-middle text-center">
+          <thead class="table-light">
+              <tr>
+                  <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
 
-<div class="table-responsive">
-    <table class="table table-bordered align-middle text-center">
-        <thead class="table-light">
-            <tr>
-                <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                  <?php foreach ($mondays as $idx => $monday): ?>
+                      <?php 
+                      $weekStart = $monday;
+                      $isCurrent = ($idx === $currentWeekIndex);
+                      ?>
+                      <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                          <?php echo date('M j', $weekStart); ?><br>
+                          <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+                      </th>
+                  <?php endforeach; ?>
+              </tr>
+          </thead>
 
-                <?php foreach ($mondays as $idx => $monday): ?>
-                    <?php 
-                    $weekStart = $monday;
-                    $isCurrent = ($idx === $currentWeekIndex);
-                    ?>
-                    <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                        <?php echo date('M j', $weekStart); ?><br>
-                        <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-                    </th>
-                <?php endforeach; ?>
-            </tr>
-        </thead>
+          <tbody>
+              <?php foreach ($employees as $userId => $employee): ?>
+                  <?php
+                  $fullName = htmlspecialchars($employee['full_name']);
+                  $nameParts = explode(' ', trim($fullName));
+                  $initials = '';
+                  foreach ($nameParts as $part) {
+                      $initials .= strtoupper(substr($part, 0, 1));
+                  }
+                  $role = htmlspecialchars($employee['role']);
+                  ?>
+                  <tr>
+                      <td class="text-start">
+                          <div class="d-flex align-items-center">
+                              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                                   style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                                  <?php echo $initials; ?>
+                              </div>
+                              <div>
+                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                              </div>
+                          </div>
+                      </td>
 
-        <tbody>
-            <?php foreach ($employees as $userId => $employee): ?>
-                <?php
-                $fullName = htmlspecialchars($employee['full_name']);
-                $nameParts = explode(' ', trim($fullName));
-                $initials = '';
-                foreach ($nameParts as $part) {
-                    $initials .= strtoupper(substr($part, 0, 1));
-                }
-                $role = htmlspecialchars($employee['role']);
-                ?>
-                <tr>
-                    <td class="text-start">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                                 style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                                <?php echo $initials; ?>
-                            </div>
-                            <div>
-                                <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                            </div>
-                        </div>
-                    </td>
+                      <?php foreach ($mondays as $idx => $monday): ?>
+                          <?php 
+                          $weekStart = $monday;
+                          $isCurrent = ($idx === $currentWeekIndex);
 
-                    <?php foreach ($mondays as $idx => $monday): ?>
-                        <?php 
-                        $weekStart = $monday;
-                        $isCurrent = ($idx === $currentWeekIndex);
+                          $assignmentsForWeek = $assignments[$userId][date('Y-m-d', $weekStart)] ?? [];
+                          $cellContent = "";
 
-                        $assignmentsForWeek = $assignments[$userId][date('Y-m-d', $weekStart)] ?? [];
-                        $cellContent = "";
+                          if ($assignmentsForWeek) {
+                              foreach ($assignmentsForWeek as $assignment) {
+                                  $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                                  switch ($engagementStatus) {
+                                      case 'confirmed': $badgeColor = 'success'; break;
+                                      case 'pending': $badgeColor = 'purple'; break;
+                                      case 'not_confirmed': $badgeColor = 'primary'; break;
+                                      default: $badgeColor = 'secondary'; break;
+                                  }
+                                  $clientName = htmlspecialchars($assignment['client_name']);
+                                  $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+                                  $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
+                              }
+                          } else {
+                              $cellContent = "<span class='text-muted'>+</span>";
+                          }
 
-                        if ($assignmentsForWeek) {
-                            foreach ($assignmentsForWeek as $assignment) {
-                                $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                                switch ($engagementStatus) {
-                                    case 'confirmed': $badgeColor = 'success'; break;
-                                    case 'pending': $badgeColor = 'purple'; break;
-                                    case 'not_confirmed': $badgeColor = 'primary'; break;
-                                    default: $badgeColor = 'secondary'; break;
-                                }
-                                $clientName = htmlspecialchars($assignment['client_name']);
-                                $assignedHours = htmlspecialchars($assignment['assigned_hours']);
-                                $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
-                            }
-                        } else {
-                            $cellContent = "<span class='text-muted'>+</span>";
-                        }
-
-                        $tdClass = $isCurrent ? 'highlight-today' : '';
-                        ?>
-                        <?php if ($isAdmin): ?>
-                            <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
-                                "<?php echo $userId; ?>",
-                                <?php echo json_encode($fullName); ?>,
-                                "<?php echo date('Y-m-d', $weekStart); ?>"
-                            )'>
-                                <?php echo $cellContent; ?>
-                            </td>
-                        <?php else: ?>
-                            <td class="<?php echo $tdClass; ?>">
-                                <?php echo $cellContent; ?>
-                            </td>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
+                          $tdClass = $isCurrent ? 'highlight-today' : '';
+                          ?>
+                          <?php if ($isAdmin): ?>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                                  "<?php echo $userId; ?>",
+                                  <?php echo json_encode($fullName); ?>,
+                                  "<?php echo date('Y-m-d', $weekStart); ?>"
+                              )'>
+                                  <?php echo $cellContent; ?>
+                              </td>
+                          <?php else: ?>
+                              <td class="<?php echo $tdClass; ?>">
+                                  <?php echo $cellContent; ?>
+                              </td>
+                          <?php endif; ?>
+                      <?php endforeach; ?>
+                  </tr>
+              <?php endforeach; ?>
+          </tbody>
+      </table>
+  </div>
+<!-- end master schedule table -->
 
 
 
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage or Add Assignment -->
-<div class="modal fade" id="manageAddModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Manage or Add Assignment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
-        <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+  <div class="modal fade" id="manageAddModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Manage or Add Assignment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+          <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<!-- end manage or add assignment -->
 
 <!-- Modal for Managing Assignments -->
-<div class="modal fade" id="assignmentsModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <h5 class="modal-title" id="assignmentsModalTitle">Manage Assignments</h5>
-          <small id="assignmentsModalSubheading" class="text-muted"></small>
+  <div class="modal fade" id="assignmentsModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title" id="assignmentsModalTitle">Manage Assignments</h5>
+            <small id="assignmentsModalSubheading" class="text-muted"></small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
 
-      <div class="modal-body">
-        <div id="existingAssignments"></div>
+        <div class="modal-body">
+          <div id="existingAssignments"></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<!-- end mangaging assignments -->
 
 <!-- Modal for Editing Assignment -->
-<div class="modal fade" id="editAssignmentModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Assignment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST">
-          <input type="hidden" id="editAssignmentId" name="assignment_id">
-          <div class="mb-3">
-            <label for="editAssignedHours" class="form-label">Assigned Hours</label>
-            <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" min="0" required>
-          </div>
-          <div class="mb-3 text-end">
-            <button type="submit" id="editSubmitBtn" class="btn btn-primary">Save Changes</button>
-          </div>
-        </form>
+  <div class="modal fade" id="editAssignmentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Assignment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST">
+            <input type="hidden" id="editAssignmentId" name="assignment_id">
+            <div class="mb-3">
+              <label for="editAssignedHours" class="form-label">Assigned Hours</label>
+              <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" min="0" required>
+            </div>
+            <div class="mb-3 text-end">
+              <button type="submit" id="editSubmitBtn" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-
+<!-- end editing assignment -->
 
 <!-- Modal for Adding assignment -->
-<div class="modal fade" id="assignmentModal" tabindex="-1">
+  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Add Engagement</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="engagementForm" action="add_assignment.php" method="POST">
-          <input type="hidden" id="modalEmployee" name="employee">
-          <input type="hidden" id="modalEmployeeName">
-          <input type="hidden" id="modalWeek" name="week_start">
-          <input type="hidden" id="modalEngagementId" name="engagement_id">
+      <form id="assignmentForm" action="add_assignment.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="assignmentModalLabel">New Assignment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Subtitle -->
+          <p class="mb-3 text-secondary" id="assignmentSubtitle">
+            Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
+          </p>
 
+          <!-- Hidden inputs -->
+          <input type="hidden" id="modalUserId" name="user_id" value="">
+          <input type="hidden" id="modalWeek" name="week_start" value="">
+
+          <!-- Client select -->
           <div class="mb-3">
-            <label for="client_name" class="form-label">Client Name</label>
-            <select class="form-select" id="client_name" name="client_name" required>
+            <label for="clientSelect" class="form-label">Client Name</label>
+            <select class="form-select" id="clientSelect" name="engagement_id" required>
               <option value="" disabled selected>Select a client</option>
               <?php foreach ($activeClients as $client): ?>
-                <option value="<?php echo $client['engagement_id']; ?>">
+                <option value="<?php echo htmlspecialchars($client['engagement_id']); ?>">
                   <?php echo htmlspecialchars($client['client_name']); ?>
                 </option>
               <?php endforeach; ?>
             </select>
           </div>
 
-
-
+          <!-- Assigned hours -->
           <div class="mb-3">
-            <label for="numberOfWeeks" class="form-label">Number of Weeks</label>
-            <input type="number" class="form-control" id="numberOfWeeks" name="numberOfWeeks" min="1" onchange="generateWeekInputs()" required>
+            <label for="assignedHours" class="form-label">Hours</label>
+            <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
           </div>
-
-          <div id="weeksContainer"></div>
-
-          <div class="mb-3 text-end">
-            <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Add Assignment</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal for Adding Engagement -->
-<div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="engagementForm" action="add_engagement.php" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="engagementModalLabel">Add Engagement</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
 
-          <div class="mb-3">
-            <label for="client_name" class="form-label">Client Name</label>
-            <input type="text" class="form-control" id="client_name" name="client_name" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="total_available_hours" class="form-label">Total Available Hours</label>
-            <input type="number" step="0.1" min="0" class="form-control" id="total_available_hours" name="total_available_hours" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
-            <select id="status" name="status" class="form-select" required>
-              <option value="" disabled selected>Select status</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-              <option value="not_confirmed">Not Confirmed</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label for="notes" class="form-label">Notes</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Add any notes here..."></textarea>
-          </div>
-
-        </div>
         <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Add Assignment</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add Engagement</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
+<!-- end Adding assignment -->
 
+<!-- Modal for Adding Engagement -->
+  <div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="engagementForm" action="add_engagement.php" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="engagementModalLabel">Add Engagement</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
 
+            <div class="mb-3">
+              <label for="client_name" class="form-label">Client Name</label>
+              <input type="text" class="form-control" id="client_name" name="client_name" required>
+            </div>
 
+            <div class="mb-3">
+              <label for="total_available_hours" class="form-label">Total Available Hours</label>
+              <input type="number" step="0.1" min="0" class="form-control" id="total_available_hours" name="total_available_hours" required>
+            </div>
 
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select id="status" name="status" class="form-select" required>
+                <option value="" disabled selected>Select status</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="not_confirmed">Not Confirmed</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="notes" class="form-label">Notes</label>
+              <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Add any notes here..."></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Engagement</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- end adding engagement -->
 
 <?php endif; ?>
 
-
 <!-- Modal for Engagement Details -->
-<div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <div class="modal-body">
-        <!-- Engagement Name -->
-        <h3 id="clientName" class="text-center mb-3 fw-bold"></h3>
-
-        <!-- Hidden ID for use in AJAX -->
-        <input type="text" id="engagementId" value="">
-
-        <!-- Engagement Status Editor (Inline Editable) -->
-        <div class="mb-4">
-          <label class="form-label fw-semibold">Engagement Status</label>
-          <div id="engagement-status-container">
-            <span id="engagement-status-display" class="badge bg-warning text-dark" style="cursor: pointer;">Pending</span>
-            <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2 d-none">
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-              <option value="not_confirmed">Not Confirmed</option>
-            </select>
-          </div>
+  <div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clientDetailsModalLabel">Engagement Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+                  
+        <div class="modal-body">
+          <!-- Engagement Name -->
+          <h3 id="clientName" class="text-center mb-3 fw-bold"></h3>
 
-        <!-- Utilization Progress Bar -->
-        <div class="mb-4">
-          <h6>Total Assigned Hours</h6>
-          <div class="d-flex justify-content-between">
-            <span id="totalAssignedHours" class="fw-bold fs-5 text-dark"></span>
-            <span id="totalHours" class="text-muted">/ <span id="totalAvailableHours">1000</span> hrs</span>
-          </div>
-          <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
-            <div id="utilizationBar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
-          </div>
-        </div>
+          <!-- Hidden ID for use in AJAX -->
+          <input type="text" id="engagementId" value="">
 
-        <!-- Assigned Employees Section -->
-        <div class="card mb-4 shadow-sm">
-          <div class="card-header bg-light">
-            <h6 class="mb-0">Assigned Consultants</h6>
+          <!-- Engagement Status Editor (Inline Editable) -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Engagement Status</label>
+            <div id="engagement-status-container">
+              <span id="engagement-status-display" class="badge bg-warning text-dark" style="cursor: pointer;">Pending</span>
+              <select id="engagement-status-select" class="form-select w-auto d-inline-block mt-2 d-none">
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="not_confirmed">Not Confirmed</option>
+              </select>
+            </div>
           </div>
-          <div class="card-body">
-            <div id="assignedEmployees" class="list-group"></div>
-          </div>
-        </div>
 
-        <!-- Notes Section -->
-        <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h6 class="mb-0">Client Notes</h6>
+          <!-- Utilization Progress Bar -->
+          <div class="mb-4">
+            <h6>Total Assigned Hours</h6>
+            <div class="d-flex justify-content-between">
+              <span id="totalAssignedHours" class="fw-bold fs-5 text-dark"></span>
+              <span id="totalHours" class="text-muted">/ <span id="totalAvailableHours">1000</span> hrs</span>
+            </div>
+            <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
+              <div id="utilizationBar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+            </div>
           </div>
-          <div class="card-body">
-            <p id="clientNotes" class="text-muted">No notes available.</p>
+
+          <!-- Assigned Employees Section -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">Assigned Consultants</h6>
+            </div>
+            <div class="card-body">
+              <div id="assignedEmployees" class="list-group"></div>
+            </div>
+          </div>
+
+          <!-- Notes Section -->
+          <div class="card shadow-sm">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">Client Notes</h6>
+            </div>
+            <div class="card-body">
+              <p id="clientNotes" class="text-muted">No notes available.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+<!-- end engagement details -->
 
 
+<!-- Script: view engagement details -->
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const statusDisplay = document.getElementById('engagement-status-display');
+      const statusSelect = document.getElementById('engagement-status-select');
+      const engagementIdInput = document.getElementById('engagementId');
+      const modal = document.getElementById('clientDetailsModal');
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const statusDisplay = document.getElementById('engagement-status-display');
-    const statusSelect = document.getElementById('engagement-status-select');
-    const engagementIdInput = document.getElementById('engagementId');
-    const modal = document.getElementById('clientDetailsModal');
+      // Listen for clicks on buttons with engagement ID (Opening modal)
+      const engagementButtons = document.querySelectorAll('.btn[data-engagement-id]');
+      engagementButtons.forEach(button => {
+          button.addEventListener('click', function () {
+              const engagementId = this.getAttribute('data-engagement-id');
+              engagementIdInput.value = engagementId; // Set engagement ID in the hidden input field
+              console.log('Set Engagement ID:', engagementId);  // Debugging
+          });
+      });
 
-    // Listen for clicks on buttons with engagement ID (Opening modal)
-    const engagementButtons = document.querySelectorAll('.btn[data-engagement-id]');
-    engagementButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const engagementId = this.getAttribute('data-engagement-id');
-            engagementIdInput.value = engagementId; // Set engagement ID in the hidden input field
-            console.log('Set Engagement ID:', engagementId);  // Debugging
-        });
-    });
+      // Fetch engagement details when the modal is opened
+      modal.addEventListener('shown.bs.modal', function () {
+          const engagementId = engagementIdInput.value;
 
-    // Fetch engagement details when the modal is opened
-    modal.addEventListener('shown.bs.modal', function () {
-        const engagementId = engagementIdInput.value;
+          console.log('Engagement ID on modal open:', engagementId); // Debugging
 
-        console.log('Engagement ID on modal open:', engagementId); // Debugging
+          if (!engagementId) {
+              console.error('Engagement ID is not set.');
+              return;
+          }
 
-        if (!engagementId) {
-            console.error('Engagement ID is not set.');
-            return;
-        }
+          // Fetch engagement details
+          fetch(`get-engagement-details.php?id=${engagementId}`)
+      .then(response => response.text()) // Use text() to get the raw response for debugging
+      .then(data => {
+          console.log('Response:', data); // Check the raw response in the console
+          try {
+              const jsonData = JSON.parse(data); // Try to parse it manually
+              console.log('Parsed JSON:', jsonData);
+          } catch (error) {
+              console.error('Error parsing JSON:', error);
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching engagement details:', error);
+          alert("Failed to fetch engagement details.");
+      });
+      });
 
-        // Fetch engagement details
-        fetch(`get-engagement-details.php?id=${engagementId}`)
-    .then(response => response.text()) // Use text() to get the raw response for debugging
-    .then(data => {
-        console.log('Response:', data); // Check the raw response in the console
-        try {
-            const jsonData = JSON.parse(data); // Try to parse it manually
-            console.log('Parsed JSON:', jsonData);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching engagement details:', error);
-        alert("Failed to fetch engagement details.");
-    });
-    });
+      // Handle status change and update via AJAX
+      statusSelect.addEventListener('change', function () {
+          const newStatus = this.value;
+          const engagementId = engagementIdInput.value;
 
-    // Handle status change and update via AJAX
-    statusSelect.addEventListener('change', function () {
-        const newStatus = this.value;
-        const engagementId = engagementIdInput.value;
+          console.log('Updating Engagement ID:', engagementId, 'New Status:', newStatus); // Debugging
 
-        console.log('Updating Engagement ID:', engagementId, 'New Status:', newStatus); // Debugging
+          // Send the status update to the server via AJAX
+          fetch('update-engagement-status.php', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  engagement_id: engagementId,
+                  status: newStatus,
+              })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Update the status display with the new value
+                  statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
+                  statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
 
-        // Send the status update to the server via AJAX
-        fetch('update-engagement-status.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                engagement_id: engagementId,
-                status: newStatus,
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the status display with the new value
-                statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
-                statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
+                  // Optionally, hide the dropdown and show the status badge again
+                  statusSelect.classList.add('d-none');
+                  statusDisplay.classList.remove('d-none');
+              } else {
+                  alert('Failed to update status.');
+              }
+          })
+          .catch(error => {
+              console.error('Error updating status:', error);
+              alert('Failed to update status.');
+          });
+      });
 
-                // Optionally, hide the dropdown and show the status badge again
-                statusSelect.classList.add('d-none');
-                statusDisplay.classList.remove('d-none');
-            } else {
-                alert('Failed to update status.');
-            }
-        })
-        .catch(error => {
-            console.error('Error updating status:', error);
-            alert('Failed to update status.');
-        });
-    });
+      // Helpers
+      function capitalize(str) {
+          return str.charAt(0).toUpperCase() + str.slice(1);
+      }
 
-    // Helpers
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+      function getStatusClass(status) {
+          switch (status) {
+              case 'confirmed': return 'bg-success';
+              case 'pending': return 'bg-warning text-dark';
+              case 'not_confirmed': return 'bg-danger';
+              default: return 'bg-secondary';
+          }
+      }
+  });
 
-    function getStatusClass(status) {
-        switch (status) {
-            case 'confirmed': return 'bg-success';
-            case 'pending': return 'bg-warning text-dark';
-            case 'not_confirmed': return 'bg-danger';
-            default: return 'bg-secondary';
-        }
-    }
-});
-
-
-
-
-</script>
-
-
-
+  </script>
+<!-- end Script: view engagement details -->
 
 
 <!-- Modal for Employee Details -->
-<div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-
-        <!-- Employee Role -->
-        <h4 id="employeeName" class="text-center mb-3 fw-bold"></h4>
-        <p id="employeeRole" class="text-muted mb-3"></p>
-
-        <!-- Assigned Hours and Assignments -->
-        <div class="mb-4">
-          <h6>Total Assigned Hours:</h6>
-          <div class="d-flex justify-content-between">
-            <span id="totalAssignedHoursEmployee" class="fw-bold fs-5 text-dark"></span>
-            <span id="totalAvailableHoursEmployee" class="text-muted">/ <span id="totalAvailableHoursEmployeeVal">1000</span> hrs</span>
-          </div>
-          <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
-            <div id="utilizationBarEmployee" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
-          </div>
+  <div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
 
-        <!-- Assigned Assignments Section -->
-        <div class="card mb-4 shadow-sm">
-          <div class="card-header bg-light">
-            <h6 class="mb-0">Upcoming Assignments</h6>
+          <!-- Employee Role -->
+          <h4 id="employeeName" class="text-center mb-3 fw-bold"></h4>
+          <p id="employeeRole" class="text-muted mb-3"></p>
+
+          <!-- Assigned Hours and Assignments -->
+          <div class="mb-4">
+            <h6>Total Assigned Hours:</h6>
+            <div class="d-flex justify-content-between">
+              <span id="totalAssignedHoursEmployee" class="fw-bold fs-5 text-dark"></span>
+              <span id="totalAvailableHoursEmployee" class="text-muted">/ <span id="totalAvailableHoursEmployeeVal">1000</span> hrs</span>
+            </div>
+            <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
+              <div id="utilizationBarEmployee" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+            </div>
           </div>
-          <div class="card-body">
-            <div id="assignedAssignments" class="list-group"></div>
+
+          <!-- Assigned Assignments Section -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">Upcoming Assignments</h6>
+            </div>
+            <div class="card-body">
+              <div id="assignedAssignments" class="list-group"></div>
+            </div>
           </div>
+
+          <!-- Notes Section (Optional) -->
+          <!-- <div class="card shadow-sm">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">Employee Notes</h6>
+            </div>
+            <div class="card-body">
+              <p id="employeeNotes" class="text-muted">No notes available.</p>
+            </div>
+          </div> -->
         </div>
-
-        <!-- Notes Section (Optional) -->
-        <!-- <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h6 class="mb-0">Employee Notes</h6>
-          </div>
-          <div class="card-body">
-            <p id="employeeNotes" class="text-muted">No notes available.</p>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
-</div>
+<!-- end employee details modal -->
 
 
+<!-- Script: number of weeks -->
+  <script>
+  function generateWeekInputs() {
+      const numberOfWeeks = parseInt(document.getElementById('numberOfWeeks').value);
+      const selectedStartDate = document.getElementById('modalWeek').value; // Assume you have a date input with id="startDate"
+      const weeksContainer = document.getElementById('weeksContainer');
+      weeksContainer.innerHTML = ''; // Clear previous input fields
 
+      if (!selectedStartDate) {
+          alert("Please select a start date.");
+          return;
+      }
 
-<script>
-function generateWeekInputs() {
-    const numberOfWeeks = parseInt(document.getElementById('numberOfWeeks').value);
-    const selectedStartDate = document.getElementById('modalWeek').value; // Assume you have a date input with id="startDate"
-    const weeksContainer = document.getElementById('weeksContainer');
-    weeksContainer.innerHTML = ''; // Clear previous input fields
+      const startDate = new Date(selectedStartDate);
 
-    if (!selectedStartDate) {
-        alert("Please select a start date.");
-        return;
-    }
+      for (let i = 0; i < numberOfWeeks; i++) {
+          const weekDate = new Date(startDate);
+          weekDate.setDate(startDate.getDate() + (i * 7)); // Add 7 days per week
 
-    const startDate = new Date(selectedStartDate);
+          // Format the date to YYYY-MM-DD for input[type="date"]
+          const formattedDate = weekDate.toISOString().split('T')[0];
 
-    for (let i = 0; i < numberOfWeeks; i++) {
-        const weekDate = new Date(startDate);
-        weekDate.setDate(startDate.getDate() + (i * 7)); // Add 7 days per week
+          const weekInput = document.createElement('div');
+          weekInput.classList.add('mb-3');
+          weekInput.innerHTML = `
+              <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
+              <div class="d-flex gap-2 flex-wrap">
+                  <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" value="${formattedDate}" required>
+                  <input type="number" class="form-control" id="assigned_hours_${i+1}" name="assigned_hours[]" min="0" placeholder="Assigned Hours" required>
+                  <select class="form-select" name="statuses[]" required>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="pending">Pending</option>
+                      <option value="not_confirmed">Not Confirmed</option>
+                  </select>
+              </div>
+              <div class='mt-3'></div>
+              <hr>
+              <div class='mt-3'></div>
+          `;
+          weeksContainer.appendChild(weekInput);
+      }
+  }
+  </script>
+<!-- end script: number of weeks -->
 
-        // Format the date to YYYY-MM-DD for input[type="date"]
-        const formattedDate = weekDate.toISOString().split('T')[0];
+<!-- Script: search -->
+  <script>
+  function searchQuery() {
+      var query = document.getElementById('searchInput').value;
+      console.log(query); // Debug log to check the query value
+      if (query.length >= 3) {
+          fetchSearchResults(query);
+      } else {
+          document.getElementById('searchResults').style.display = 'none';
+      }
+  }
 
-        const weekInput = document.createElement('div');
-        weekInput.classList.add('mb-3');
-        weekInput.innerHTML = `
-            <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
-            <div class="d-flex gap-2 flex-wrap">
-                <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" value="${formattedDate}" required>
-                <input type="number" class="form-control" id="assigned_hours_${i+1}" name="assigned_hours[]" min="0" placeholder="Assigned Hours" required>
-                <select class="form-select" name="statuses[]" required>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                    <option value="not_confirmed">Not Confirmed</option>
-                </select>
-            </div>
-            <div class='mt-3'></div>
-            <hr>
-            <div class='mt-3'></div>
-        `;
-        weeksContainer.appendChild(weekInput);
-    }
-}
-</script>
+  function fetchSearchResults(query) {
+      fetch('search.php?query=' + query)
+          .then(response => response.json())
+          .then(data => {
+              let resultsHTML = '';
+              data.forEach(result => {
+                  resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
+              });
+              if (resultsHTML === '') {
+                  resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
+              }
+              document.getElementById('searchResults').innerHTML = resultsHTML;
+              document.getElementById('searchResults').style.display = 'block';
+          })
+          .catch(error => console.error('Error fetching search results:', error));
+  }
 
-
-<script>
-function searchQuery() {
-    var query = document.getElementById('searchInput').value;
-    console.log(query); // Debug log to check the query value
-    if (query.length >= 3) {
-        fetchSearchResults(query);
-    } else {
-        document.getElementById('searchResults').style.display = 'none';
-    }
-}
-
-function fetchSearchResults(query) {
-    fetch('search.php?query=' + query)
-        .then(response => response.json())
-        .then(data => {
-            let resultsHTML = '';
-            data.forEach(result => {
-                resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
-            });
-            if (resultsHTML === '') {
-                resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
-            }
-            document.getElementById('searchResults').innerHTML = resultsHTML;
-            document.getElementById('searchResults').style.display = 'block';
-        })
-        .catch(error => console.error('Error fetching search results:', error));
-}
-
-function openModal(id, type) {
-    if (type === 'employee') {
-        openEmployeeModal(id); // Ensure you have this modal function defined
-    } else if (type === 'client') {
-        openassignmentModal(id); // Ensure you have this modal function defined
-    }
-}
-</script>
+  function openModal(id, type) {
+      if (type === 'employee') {
+          openEmployeeModal(id); // Ensure you have this modal function defined
+      } else if (type === 'client') {
+          openassignmentModal(id); // Ensure you have this modal function defined
+      }
+  }
+  </script>
+<!-- end script: search -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
