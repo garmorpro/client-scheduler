@@ -1343,7 +1343,7 @@ if ($settingResult) {
               <!-- Last Backup Info Card -->
               <div class="d-flex align-items-center p-2 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
                 <div class="me-3" style="font-size: 14px !important; color: #6c757d;">
-                  <i class="bi bi-clock-history"></i> <!-- Bootstrap Icons clock/history icon -->
+                  <i class="bi bi-check2-circle"></i> <!-- Bootstrap Icons clock/history icon -->
                 </div>
                 <div style="color: #6c757d; font-size: 14px !important;">
                   Last backup: <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?> 
