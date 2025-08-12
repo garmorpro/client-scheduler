@@ -1237,17 +1237,17 @@ if ($settingResult) {
                 <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
               </div>
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[project_updates]" value="true" <?php if (!empty($settings['project_updates']) && $settings['project_updates'] === 'true') echo 'checked'; ?>>
+                <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[project_updates]" value="true" <?php if (!empty($settings['notification_types[project_updates]']) && $settings['notification_types[project_updates]'] === 'true') echo 'checked'; ?>>
                 <label class="form-check-label" for="projectUpdates">Project Updates</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[user_notifications]" value="true" <?php if (!empty($settings['user_notifications']) && $settings['user_notifications'] === 'true') echo 'checked'; ?>>
+                <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[user_notifications]" value="true" <?php if (!empty($settings['notification_types[user_notifications]']) && $settings['notification_types[user_notifications]'] === 'true') echo 'checked'; ?>>
                 <label class="form-check-label" for="userNotifications">User Notifications</label>
               </div>
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[login_alerts]" value="true" <?php if (!empty($settings['login_alerts']) && $settings['login_alerts'] === 'true') echo 'checked'; ?>>
+                <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[login_alerts]" value="true" <?php if (!empty($settings['notification_types[login_alerts]']) && $settings['notification_types[login_alerts]'] === 'true') echo 'checked'; ?>>
                 <label class="form-check-label" for="loginAlerts">Login Alerts</label>
               </div>
             </div>
