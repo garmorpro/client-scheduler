@@ -647,10 +647,11 @@ function openEmployeeModal(employeeId) {
               <div
                 class="dropdown-list"
                 id="dropdownList"
-                aria-expanded="true"
+                aria-expanded="false"
                 role="listbox"
                 tabindex="-1"
                 aria-labelledby="selectedClient"
+                style="display: in-line;"
               >
                 <?php 
                   $statusDisplayMap = [
