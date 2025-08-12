@@ -1355,11 +1355,11 @@ if ($settingResult) {
 
               <!-- Backup Schedule -->
               <h6 class="mb-3">Backup Schedule</h6>
-              <div class="form-check form-switch mb-3">
-                <input class="form-check-input" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="enableAutomatedBackups">Enable Automated Backups <br>
+              <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
+                <label class="form-check-label float-start" for="enableAutomatedBackups">Enable Automated Backups <br>
                   <span class="text-muted" style="font-size: 12px;">
                     Master switch for all email notifications</label>
+                <input class="form-check-input float-end" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
               </div>
 
               <div class="row mb-3">
