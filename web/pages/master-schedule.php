@@ -1300,6 +1300,10 @@ function openEmployeeModal(employeeId) {
 
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
+  const currentUserId = <?php echo json_encode($currentUserId); ?>;
+  const currentWeekStart = <?php echo json_encode($currentWeekStart); ?>;
+</script>
+ <script>
   document.addEventListener('DOMContentLoaded', () => {
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
