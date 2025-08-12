@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $stmt = $conn->prepare("
-        INSERT INTO time_off (user_id, week_start, hours_off, reason, created, updated)
+        INSERT INTO time_off (employee_id, week_start, hours_off, reason, created, updated)
         VALUES (?, ?, ?, ?, NOW(), NOW())
     ");
     if (!$stmt) {
