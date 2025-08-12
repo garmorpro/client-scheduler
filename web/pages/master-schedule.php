@@ -622,7 +622,7 @@ function openEmployeeModal(employeeId) {
               role="combobox"
               aria-labelledby="selectedClient"
             >
-              <span id="selectedClient">Select a client</span>
+              <span id="selectedClient" class="text-muted">Select a client</span>
               <span>&#9662;</span> <!-- Down arrow -->
             </div>
 
