@@ -1566,41 +1566,38 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- Script: Render Time Off Listing -->
  <script>
   function renderTimeOffList(user_id, weekStart) {
-  const container = document.getElementById('timeOffTabPane');
-  if (!container) {
-    console.warn('timeOffTabPane element not found');
+  if (!timeOffData) {
+    console.warn("timeOffData not defined");
+    return;
+  }
+  const userTimeOff = timeOffData[user_id];
+  if (!userTimeOff) {
+    console.log(`No time off data found for user_id ${user_id}`);
+    // Clear the container or show "No entries"
+    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
+    return;
+  }
+  const weekTimeOff = userTimeOff[weekStart];
+  if (!weekTimeOff || weekTimeOff.length === 0) {
+    console.log(`No time off entries for user ${user_id} in week ${weekStart}`);
+    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
     return;
   }
 
-  // Clear previous content except maybe the placeholder <p> tag
-  container.innerHTML = ''; // Or you could keep some header text if you want
-
-  // Get time off entries for this user and week
-  const entries = (timeOffData[user_id] && timeOffData[user_id][weekStart]) || [];
-
-  if (entries.length === 0) {
-    container.innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
-    return;
-  }
-
-  // Build a list or table of entries
-  const list = document.createElement('ul');
-  list.classList.add('list-group');
-
-  entries.forEach(entry => {
-    const item = document.createElement('li');
-    item.className = 'list-group-item';
-
-    // Customize display with relevant fields, e.g. hours and reason
-    const hours = entry.hours ?? 'N/A';
-    const reason = entry.reason ?? 'No reason provided';
-    item.textContent = `Hours: ${hours}, Reason: ${reason}`;
-
-    list.appendChild(item);
+  // Otherwise, build the HTML for entries
+  let html = '';
+  weekTimeOff.forEach(entry => {
+    // Customize based on your data structure, e.g.:
+    html += `<div class="timeoff-entry mb-2 p-2 border rounded">
+      <strong>Reason:</strong> ${entry.reason || 'N/A'}<br>
+      <strong>Hours:</strong> ${entry.hours || 'N/A'}<br>
+      <strong>Date:</strong> ${entry.date || 'N/A'}
+    </div>`;
   });
 
-  container.appendChild(list);
-  }
+  document.getElementById('timeOffListContainer').innerHTML = html;
+}
+
 
  </script>
 <!-- end Script: Time Off Listing -->
