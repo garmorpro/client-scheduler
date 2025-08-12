@@ -148,7 +148,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
-    // Open modal for Manage Assignments or Add Entry (new modal)
+// Open modal for Manage Assignments or Add Entry (new modal)
     function openManageOrAddModal(user_id, employeeName, weekStart) {
         console.log("Modal triggered:", user_id, employeeName, weekStart);
         const assignments = <?php echo json_encode($assignments); ?>;
@@ -183,9 +183,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             openAddEntryModal(user_id, employeeName, weekStart);
         }
     }
+// end Open modal for Manage Assignments or Add Entry
 
 
-    // Manage assignments modal
+// Manage assignments modal
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
@@ -198,9 +199,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
         assignmentsModal.show();
     }
+// end Manage assignments modal
 
 
-    // NEW: Open Add Entry modal (was openModal)
+// Open Add Entry modal
     function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
         // Set inputs for user and week in the forms
         document.getElementById('modalUserId').value = user_id;
@@ -257,9 +259,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
         editModal.show();
     }
+// end Open Add Entry modal
 
 
-    // Delete assignment function unchanged
+// Delete assignment function
     function deleteAssignment(assignmentId) {
         if (confirm('Are you sure you want to delete this assignment?')) {
             fetch('delete-assignment.php', {
@@ -281,12 +284,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             });
         }
     }
+// end Delete assignment function
 
 
-
-
-
-function openassignmentModal(engagementId) {
+// open assignement modal
+  function openassignmentModal(engagementId) {
     // Set the engagementId in the hidden input field before fetching the data
     document.getElementById('engagementId').value = engagementId;
 
@@ -339,11 +341,12 @@ function openassignmentModal(engagementId) {
             assignmentModal.show();
         })
         .catch(error => console.error('Error fetching engagement details:', error));
-}
+  }
+// end open assignement modal
 
 
-
-function openEmployeeModal(employeeId) {
+// open employee modal
+  function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
         .then(response => {
             if (!response.ok) throw new Error("Network error");
@@ -379,7 +382,8 @@ function openEmployeeModal(employeeId) {
             console.error("Error fetching employee details:", err);
             alert("Failed to load employee details.");
         });
-}
+  }
+// end open employee modal
 
     </script>
 </head>
@@ -823,7 +827,7 @@ function openEmployeeModal(employeeId) {
 
     </div>
   </div>
-</div>
+  </div>
 
 
 <!-- end Adding assignment -->
