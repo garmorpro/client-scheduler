@@ -108,7 +108,6 @@ body {
     /* REMOVE flex: 1; so buttons only take needed space */
     text-align: center;
     margin: 0 8px;  /* space between buttons */
-    min-width: 100px; /* optional for consistent button size */
 }
 
 .custom-tabs-modal button:hover {
