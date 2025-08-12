@@ -1327,7 +1327,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 </a>
 
 
-                <a href="#" type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                <a href="#" type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
                     <i class="bi bi-person-plus me-3"></i>Save Settings
                 </a>
             </div>
