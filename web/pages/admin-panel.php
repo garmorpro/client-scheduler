@@ -283,8 +283,8 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p>Manage all engagements and assignments</p>
                     </div>
                     <div class="user-management-buttons">
-                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
-                          <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
+                        <a href="#" id="bulkDeleteEngagementBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
+                          <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
                         </a>
 
                         <a href="#" 
@@ -307,6 +307,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     <table id="user-table" class="table table-hover mb-0">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="selectAllEngagements"></th>
                                 <th>Client</th>
                                 <th>Estimated Hours</th>
                                 <th>Assigned Hours</th>
@@ -318,6 +319,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <?php if (mysqli_num_rows($engagementResults) > 0): ?>
                             <?php while ($E_row = mysqli_fetch_assoc($engagementResults)): ?>
                                 <tr>
+                                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo E_$row['engagement_id']; ?>"></td>
                                     <td>
                                         <?php echo $E_row['client_name']; ?><br>
                                     </td>
@@ -476,6 +478,11 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
 
+                                case 'bulk_engagement_delete':
+                                    $icon = 'bi-people';
+                                    $color = 'rgb(220,53,69)'; // green
+                                    break;
+
                                 case 'bulk_engagement_import_failed':
                                     $icon = 'bi-exclamation-triangle';
                                     $color = 'rgb(243,132,48)'; // green
@@ -490,6 +497,11 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $icon = 'bi-exclamation-triangle';
                                     $color = 'rgb(243,132,48)'; // green
                                     break;
+
+                                case 'bulk_engagement_delete_failed':
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
+                                    break; 
                                 
                                 case 'bulk_user_delete_failed':
                                     $icon = 'bi-exclamation-triangle';
@@ -1999,6 +2011,74 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
     </script>
 <!-- end bulk delete users -->
+
+<!-- bulk delete engagements -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const selectAllCheckbox = document.getElementById('selectAllEngagements');
+      const engagementCheckboxes = document.querySelectorAll('.selectEngagement');
+      const bulkDeleteBtn = document.getElementById('bulkDeleteEngagementBtn');
+
+      function updateBulkDeleteVisibility() {
+        const checkedCheckboxes = Array.from(engagementCheckboxes).filter(cb => cb.checked);
+        const count = checkedCheckboxes.length;
+        bulkDeleteBtn.style.display = count > 0 ? 'inline-block' : 'none';
+
+        // Update count display
+        const selectedCountSpan = document.getElementById('selectedEngagementCount');
+        if (selectedCountSpan) selectedCountSpan.textContent = count;
+      }
+
+      if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', () => {
+          engagementCheckboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
+          updateBulkDeleteVisibility();
+        });
+      }
+
+      engagementCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (!cb.checked && selectAllCheckbox) {
+            selectAllCheckbox.checked = false;
+          } else if (selectAllCheckbox && Array.from(engagementCheckboxes).every(cb => cb.checked)) {
+            selectAllCheckbox.checked = true;
+          }
+          updateBulkDeleteVisibility();
+        });
+      });
+
+      bulkDeleteBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const selectedIds = Array.from(engagementCheckboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.getAttribute('data-engagement-id'));
+
+        if (selectedIds.length === 0) return;
+
+        if (!confirm(`Are you sure you want to delete ${selectedIds.length} engagement(s)? This action cannot be undone.`)) {
+          return;
+        }
+
+        try {
+          const response = await fetch('bulk_delete_engagements.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ engagement_ids: selectedIds })
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            location.reload();
+          } else {
+            alert('Error deleting engagements: ' + (result.error || 'Unknown error'));
+          }
+        } catch (error) {
+          alert('Network or server error: ' + error.message);
+        }
+      });
+    });
+    </script>
+<!-- end bulk delete engagements -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
