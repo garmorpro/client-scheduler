@@ -100,6 +100,29 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
+// Example: fetch clients with assigned hours and status
+
+$dropdownquery = "
+  SELECT 
+    e.engagement_id,
+    e.client_name,
+    e.status,
+    e.total_available_hours,
+    IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
+  FROM engagements e
+  LEFT JOIN assignments a ON a.engagement_id = e.engagement_id
+  GROUP BY e.engagement_id
+  ORDER BY e.client_name
+";
+
+$dropdownresult = $conn->query($dropdownquery);
+
+$clientsWithHours = [];
+while ($D_row = $dropdownresult->fetch_assoc()) {
+  $clientsWithHours[] = $D_row;
+}
+
+
 ?>
 
 <!DOCTYPE html>
