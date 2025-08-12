@@ -444,7 +444,7 @@ function openEmployeeModal(employeeId) {
                         <div class="d-flex align-items-center">
                             <!-- Avatar -->
                             <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                                 style="width: 40px; height: 40px; font-size: 14px; font-weight: 700;">
+                                 style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
                                 <?php echo $initials; ?>
                             </div>
 
