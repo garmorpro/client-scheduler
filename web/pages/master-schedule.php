@@ -213,69 +213,68 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // Open Add Entry modal
     function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
-        // Set inputs for user and week in the forms
-        document.getElementById('modalUserId').value = user_id;
-        document.getElementById('modalWeek').value = weekStart;
-        document.getElementById('timeOFFuser_id').value = user_id;
-        document.getElementById('timeOFFweek_start').value = weekStart;
+    // Set inputs for user and week in the forms
+    document.getElementById('modalUserId').value = user_id;
+    document.getElementById('modalWeek').value = weekStart;
+    document.getElementById('timeOFFuser_id').value = user_id;
+    document.getElementById('timeOFFweek_start').value = weekStart;
 
-        // Update display spans
-        document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+    // Update display spans
+    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const date = new Date(weekStart);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const date = new Date(weekStart);
 
-        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-        // If Sunday (0), go forward 1 day to Monday
-        // Else go back (day - 1) days to Monday
-        const diffToMonday = (day === 0) ? 1 : 1 - day;
+    // If Sunday (0), go forward 1 day to Monday
+    // Else go back (day - 1) days to Monday
+    const diffToMonday = (day === 0) ? 1 : 1 - day;
 
-        const mondayDate = new Date(date);
-        mondayDate.setDate(date.getDate() + diffToMonday);
+    const mondayDate = new Date(date);
+    mondayDate.setDate(date.getDate() + diffToMonday);
 
-        document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
+    document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
 
-
-
-        // Reset inputs depending on the tab
-        if (tab === 'assignment') {
-            document.getElementById('selectedClient').textContent = 'Select a client';
-            document.getElementById('engagementInput').value = engagement_id;
-            document.getElementById('assignedHours').value = '';
-        } else if (tab === 'timeoff') {
-            document.getElementById('timeoffHours').value = '';
-            document.getElementById('timeoffReason').value = '';
-        }
-
+    // Reset inputs depending on the tab
+    if (tab === 'assignment') {
+        document.getElementById('selectedClient').textContent = 'Select a client';
+        const engagementInputEl = document.getElementById('engagementInput');
+        
         console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
-const engagementInputEl = document.getElementById('engagementInput');
-console.log('engagementInput element found:', engagementInputEl);
-if (engagementInputEl) {
-  console.log('Before set, engagementInput value:', engagementInputEl.value);
-  engagementInputEl.value = engagement_id;
-  console.log('After set, engagementInput value:', engagementInputEl.value);
+        console.log('engagementInput element found:', engagementInputEl);
+        if (engagementInputEl) {
+            console.log('Before set, engagementInput value:', engagementInputEl.value);
+            engagementInputEl.value = engagement_id;
+            console.log('After set, engagementInput value:', engagementInputEl.value);
+        }
+        
+        document.getElementById('assignedHours').value = '';
+    } else if (tab === 'timeoff') {
+        document.getElementById('timeoffHours').value = '';
+        document.getElementById('timeoffReason').value = '';
+    }
+
+    // Show the addEntryModal modal
+    const addEntryModalEl = document.getElementById('addEntryModal');
+    const addEntryModal = new bootstrap.Modal(addEntryModalEl);
+    addEntryModal.show();
+
+    // Use Bootstrap's Tab API to activate the correct tab button
+    const tabSelector = tab === 'assignment'
+        ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
+        : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
+
+    const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
+
+    if (tabTriggerEl) {
+        const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
+        tabInstance.show();
+    } else {
+        console.warn('Tab trigger element not found:', tabSelector);
+    }
 }
 
-        // Show the addEntryModal modal
-        const addEntryModalEl = document.getElementById('addEntryModal');
-        const addEntryModal = new bootstrap.Modal(addEntryModalEl);
-        addEntryModal.show();
-
-        // Use Bootstrap's Tab API to activate the correct tab button
-        const tabSelector = tab === 'assignment'
-            ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
-            : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
-
-        const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
-
-        if (tabTriggerEl) {
-            const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
-            tabInstance.show();
-        } else {
-            console.warn('Tab trigger element not found:', tabSelector);
-        }
-    }
 
 
 // openEditModal remains unchanged
