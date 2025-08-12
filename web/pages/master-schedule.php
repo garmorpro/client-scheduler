@@ -398,12 +398,12 @@ function openEmployeeModal(employeeId) {
             <!-- Week Selector -->
             <div class="col-md-6 d-flex justify-content-end align-items-center">
                 <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
-                   class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);">&lt;</a>
+                   class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
 
                 <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
 
                 <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
-                   class="btn btn-outline-secondary btn-sm ms-2">&gt;</a>
+                   class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
             </div>
 
         </form>
