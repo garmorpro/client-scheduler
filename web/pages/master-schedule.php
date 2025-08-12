@@ -665,8 +665,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="hidden" id="modalUserId" name="user_id" value="">
-            <input type="hidden" id="modalWeek" name="week_start" value="">
+            <input type="text" id="modalUserId" name="user_id" value="">
+            <input type="text" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -728,7 +728,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <?php endforeach; ?>
               </div>
 
-              <input type="hidden" id="engagementInput" name="engagement_id" required>
+              <input type="text" id="engagementInput" name="engagement_id" required>
             </div>
 
             <!-- Assigned hours -->
@@ -1578,17 +1578,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       e.preventDefault();
       const parentModalEl = document.getElementById('manageEntryModal');
       const editModalEl = document.getElementById('editAssignmentModal');
-        
+
       // Hide parent modal
       const parentModal = bootstrap.Modal.getInstance(parentModalEl) || new bootstrap.Modal(parentModalEl);
       parentModal.hide();
-        
+
       // Show edit modal
       const editModal = new bootstrap.Modal(editModalEl);
       document.getElementById('editAssignmentId').value = assignment.assignment_id || assignment.id || '';
       document.getElementById('editAssignedHours').value = assignment.assigned_hours || 0;
       editModal.show();
-        
+
       // When edit modal closes, re-show parent modal
       editModalEl.addEventListener('hidden.bs.modal', () => {
         parentModal.show();
@@ -1616,7 +1616,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     card.appendChild(cardBody);
     container.appendChild(card);
   });
-}
+  }
 
   </script>
 <!-- end Script: Render Assignments Listing -->
