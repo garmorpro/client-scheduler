@@ -1,5 +1,4 @@
 <?php
-file_put_contents('post_debug.log', print_r($_POST, true));
 require_once '../includes/db.php';
 session_start();
 

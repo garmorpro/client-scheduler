@@ -728,6 +728,13 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('assignmentForm').addEventListener('submit', function(e) {
+  const weekStartVal = document.getElementById('modalWeek').value;
+  console.log('Submitting week_start:', weekStartVal);
+});
+</script>
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
