@@ -643,7 +643,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       <!-- Tabs -->
       <div class="custom-tabs-modal d-flex" role="tablist" style="border-bottom: 1px solid #dee2e6;">
         <button
-          class="active btn btn-link flex-fill text-center"
+          class="active btn btn-link flex-fill text-center text-decoration-none"
           data-tab="manageTabPane"
           role="tab"
           aria-selected="true"
@@ -654,7 +654,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           Manage Assignments
         </button>
         <button
-          class="btn btn-link flex-fill text-center"
+          class="btn btn-link flex-fill text-center text-decoration-none"
           data-tab="timeOffTabPane"
           role="tab"
           aria-selected="false"
@@ -1411,72 +1411,74 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     </script>
 <!-- end dropdown menu -->
 
-<script>
-  // Generic Tab switching logic for all modals with custom tabs
-  document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modal = btn.closest('.modal');
-      const targetTab = btn.getAttribute('data-tab');
-      if (!targetTab || !modal) return;
+<!-- Script: Custom Tabs -->
+  <script>
+    // Generic Tab switching logic for all modals with custom tabs
+    document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const modal = btn.closest('.modal');
+        const targetTab = btn.getAttribute('data-tab');
+        if (!targetTab || !modal) return;
 
-      // Tab buttons within this modal
-      const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
-      tabButtons.forEach(b => {
-        const isActive = (b === btn);
-        b.classList.toggle('active', isActive);
-        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        b.setAttribute('tabindex', isActive ? '0' : '-1');
-      });
+        // Tab buttons within this modal
+        const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
+        tabButtons.forEach(b => {
+          const isActive = (b === btn);
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          b.setAttribute('tabindex', isActive ? '0' : '-1');
+        });
 
-      // Tab panes within this modal
-      const tabPanes = modal.querySelectorAll('.tab-content-modal > .tab-pane');
-      tabPanes.forEach(pane => {
-        const isActive = (pane.id === targetTab);
-        pane.classList.toggle('active', isActive);
-        pane.classList.toggle('show', isActive);
-        pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        // Tab panes within this modal
+        const tabPanes = modal.querySelectorAll('.tab-content-modal > .tab-pane');
+        tabPanes.forEach(pane => {
+          const isActive = (pane.id === targetTab);
+          pane.classList.toggle('active', isActive);
+          pane.classList.toggle('show', isActive);
+          pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        });
       });
     });
-  });
 
-  // Generic reset tabs on any modal close (for modals that have custom-tabs-modal)
-  document.querySelectorAll('.modal').forEach(modalEl => {
-    modalEl.addEventListener('hidden.bs.modal', () => {
-      const tabsContainer = modalEl.querySelector('.custom-tabs-modal');
-      if (!tabsContainer) return;
+    // Generic reset tabs on any modal close (for modals that have custom-tabs-modal)
+    document.querySelectorAll('.modal').forEach(modalEl => {
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        const tabsContainer = modalEl.querySelector('.custom-tabs-modal');
+        if (!tabsContainer) return;
 
-      const tabButtons = tabsContainer.querySelectorAll('button');
-      if (tabButtons.length === 0) return;
+        const tabButtons = tabsContainer.querySelectorAll('button');
+        if (tabButtons.length === 0) return;
 
-      // Reset all tab buttons
-      tabButtons.forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-selected', 'false');
-        btn.setAttribute('tabindex', '-1');
+        // Reset all tab buttons
+        tabButtons.forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+          btn.setAttribute('tabindex', '-1');
+        });
+
+        // Activate first tab button
+        tabButtons[0].classList.add('active');
+        tabButtons[0].setAttribute('aria-selected', 'true');
+        tabButtons[0].setAttribute('tabindex', '0');
+
+        // Reset all tab panes inside this modal
+        const tabPanes = modalEl.querySelectorAll('.tab-content-modal > .tab-pane');
+        tabPanes.forEach(pane => {
+          pane.classList.remove('active', 'show');
+          pane.setAttribute('aria-hidden', 'true');
+        });
+
+        // Show first tab pane
+        const firstTabId = tabButtons[0].getAttribute('data-tab');
+        const firstPane = modalEl.querySelector(`#${firstTabId}`);
+        if (firstPane) {
+          firstPane.classList.add('active', 'show');
+          firstPane.setAttribute('aria-hidden', 'false');
+        }
       });
-
-      // Activate first tab button
-      tabButtons[0].classList.add('active');
-      tabButtons[0].setAttribute('aria-selected', 'true');
-      tabButtons[0].setAttribute('tabindex', '0');
-
-      // Reset all tab panes inside this modal
-      const tabPanes = modalEl.querySelectorAll('.tab-content-modal > .tab-pane');
-      tabPanes.forEach(pane => {
-        pane.classList.remove('active', 'show');
-        pane.setAttribute('aria-hidden', 'true');
-      });
-
-      // Show first tab pane
-      const firstTabId = tabButtons[0].getAttribute('data-tab');
-      const firstPane = modalEl.querySelector(`#${firstTabId}`);
-      if (firstPane) {
-        firstPane.classList.add('active', 'show');
-        firstPane.setAttribute('aria-hidden', 'false');
-      }
     });
-  });
-</script>
+  </script>
+<!-- end Script: Custom Tabs -->
 
 
 
