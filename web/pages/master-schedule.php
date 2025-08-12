@@ -217,18 +217,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   function openAddTimeOffModal(user_id, employeeName, weekStart) {
   console.log('openAddTimeOffModal called with:', { user_id, employeeName, weekStart });
 
-  // const userInput = document.getElementById('timeOFFuser_id').value = user_id;
-  // const weekInput = document.getElementById('timeOFFweek_start');
     document.getElementById('timeOFFuser_id').value = user_id;
-    document.getElementById('timeOFFweek_start').value = weekStart;
+    document.getElementById('timeOFFweek_start').value = weekStart;  // must be "YYYY-MM-DD"
 
-  // userInput.value = user_id;
-  // weekInput.value = weekStart;
-
-  // console.log('After setting inputs:', {
-  //   timeoffUserId: userInput.value,
-  //   timeoffWeekStart: weekInput.value
-  // });
 
   document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
