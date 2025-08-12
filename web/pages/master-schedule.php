@@ -164,7 +164,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
   if (manageUserIdInput) manageUserIdInput.value = user_id;
   if (manageWeekInput) manageWeekInput.value = weekStart;
-  if (manageEngagementInput) manageEngagementInput.value = '';
+  if (manageEngagementInput) manageEngagementInput.value = engagement_id;
 
     const manageBtn = document.getElementById('manageAssignmentsButton');
     const addBtn = document.getElementById('addAssignmentsButton');
@@ -736,7 +736,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <?php endforeach; ?>
               </div>
 
-              <!-- <input type="text" id="manageEngagementInput" name="engagement_id" required> -->
+              <input type="text" id="manageEngagementInput" name="engagement_id" required>
             </div>
 
             <!-- Assigned hours -->
