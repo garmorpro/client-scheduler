@@ -382,58 +382,61 @@ input, select {
 
 
 .custom-dropdown {
-    position: relative;
-    max-width: 400px;
-    font-size: 14px;
-  }
+  position: relative;
+  max-width: 400px;
+  font-size: 14px;
+}
 
-  .dropdown-btn {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    background: #f9f9f9;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none;
-  }
+.dropdown-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  border-radius: 4px;
+}
 
-  .dropdown-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    background: white;
-    z-index: 1050;
-    display: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background: white;
+  z-index: 1050;
+  display: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 0 0 4px 4px;
+}
 
-  .dropdown-item {
-    padding: 8px 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-  }
+.dropdown-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
 
-  .dropdown-item:hover {
-    background: #f0f0f0;
-  }
+.dropdown-item:last-child {
+  border-bottom: none;
+}
 
-  .status-badge {
-    font-weight: 600;
-    text-transform: capitalize;
-    margin-left: 8px;
-    color: #555;
-  }
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: #f0f0f0;
+  outline: none;
+}
 
-  .hours-info {
-    color: #666;
-    font-size: 12px;
-    margin-left: 8px;
-  }
+.dropdown-item div small.text-muted {
+  font-size: 12px;
+  font-weight: 400;
+  color: #6c757d;
+}
+
+#selectedClient {
+  font-weight: 500;
+}
