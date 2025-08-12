@@ -621,8 +621,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage Entry -->
-  <div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- wider modal -->
     <div class="modal-content">
 
       <div class="modal-header">
@@ -632,7 +632,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      
+      <div class="modal-body">
+        <div id="assignmentsListContainer" class="mb-3">
+          <!-- Assignments list will be rendered here by JS -->
+        </div>
+        <button 
+          id="addAssignmentBtn" 
+          type="button" 
+          class="btn btn-primary"
+        >
+          Add Assignment
+        </button>
+      </div>
+
       <div class="modal-footer p-0 mt-3 border-0">
         <button
           type="button"
@@ -646,10 +658,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     </div>
   </div>
-  </div>
-
-
+</div>
 <!-- end Modal for Manage entry -->
+
 
 <!-- Modal for Managing Assignments -->
   <div class="modal fade" id="assignmentsModal" tabindex="-1">
