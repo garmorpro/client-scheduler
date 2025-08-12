@@ -1561,6 +1561,8 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
   const assignments = <?php echo json_encode($assignments); ?>;
   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
+  console.log('Assignments for user', user_id, 'week', weekStart, assignmentsForWeek);
+
   const container = document.getElementById('assignmentsListContainer');
   container.innerHTML = '';
 
