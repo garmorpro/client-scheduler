@@ -2,8 +2,11 @@
 require_once '../includes/db.php';
 session_start();
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();
 }
 
@@ -24,7 +27,7 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
     // Fetch engagement details before deletion
     $detailsStmt = $conn->prepare("SELECT client_name, notes FROM engagements WHERE engagement_id = ?");
     if (!$detailsStmt) {
-        echo 'error';
+        echo json_encode(['success' => false, 'error' => 'Failed to prepare details statement']);
         exit();
     }
     $detailsStmt->bind_param('i', $deleteEngagementId);
@@ -33,7 +36,7 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
     if (!$detailsStmt->fetch()) {
         // Engagement not found
         $detailsStmt->close();
-        echo 'error';
+        echo json_encode(['success' => false, 'error' => 'Engagement not found']);
         exit();
     }
     $detailsStmt->close();
@@ -42,20 +45,23 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
     $delAssignStmt = $conn->prepare("DELETE FROM assignments WHERE engagement_id = ?");
     if ($delAssignStmt) {
         $delAssignStmt->bind_param('i', $deleteEngagementId);
-        $delAssignStmt->execute();
+        if (!$delAssignStmt->execute()) {
+            // Log failure deleting assignments
+            $currentUserId = $_SESSION['user_id'];
+            $currentUserEmail = $_SESSION['email'] ?? '';
+            $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+
+            $title = "Failed Engagement Deletion";
+            $description = "Failed to delete assignments for $clientName engagement.";
+
+            logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+
+            echo json_encode(['success' => false, 'error' => 'Failed to delete related assignments']);
+            exit();
+        }
         $delAssignStmt->close();
     } else {
-        // Log failure deleting assignments
-        $currentUserId = $_SESSION['user_id'];
-        $currentUserEmail = $_SESSION['email'] ?? '';
-        $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-
-        $title = "Failed Engagement Deletion";
-        $description = "Failed to delete assignments for $clientName engagement.";
-
-        logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
-
-        echo 'error';
+        echo json_encode(['success' => false, 'error' => 'Failed to prepare delete assignments statement']);
         exit();
     }
 
@@ -73,7 +79,7 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
 
         logActivity($conn, "engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-        echo 'success';
+        echo json_encode(['success' => true]);
     } else {
         // Log failure deleting engagement
         $currentUserId = $_SESSION['user_id'];
@@ -85,9 +91,9 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
 
         logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-        echo 'error';
+        echo json_encode(['success' => false, 'error' => 'Failed to delete engagement']);
     }
     $stmt->close();
 } else {
-    echo 'error'; // Invalid engagement_id
+    echo json_encode(['success' => false, 'error' => 'Invalid engagement ID']);
 }
