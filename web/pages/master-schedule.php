@@ -183,28 +183,29 @@ while ($row = $result->fetch_assoc()) {
 
 
 // open addAssignmentModal
-    // JS function to open modal and set values dynamically
-function openAddassignmentModal(user_id, employeeName, weekStart) {
-    // Set hidden inputs
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;
-
-    // Update subtitle display
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-
-    // Format weekStart date to a readable format (e.g., "Aug 11, 2025")
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const weekDate = new Date(weekStart);
-    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-
-    // Reset form fields
-    document.getElementById('clientSelect').value = '';
-    document.getElementById('assignedHours').value = '';
-
-    // Show the Bootstrap modal
-    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-    assignmentModal.show();
-}
+  // JS function to open modal and set values dynamically
+  function openAddassignmentModal(user_id, employeeName, weekStart) {
+      // Set hidden inputs
+      document.getElementById('modalUserId').value = user_id;
+      document.getElementById('modalWeek').value = weekStart;
+  
+      // Update subtitle display
+      document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+  
+      // Format weekStart date to a readable format (e.g., "Aug 11, 2025")
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      const weekDate = new Date(weekStart);
+      document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+  
+      // Reset form fields
+      document.getElementById('clientSelect').value = '';
+      document.getElementById('assignedHours').value = '';
+  
+      // Show the Bootstrap modal
+      const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+      assignmentModal.show();
+  }
+// end open addAssignmentModal
 
 
 // Update openEditModal to handle dynamic elements properly
@@ -572,51 +573,51 @@ function openEmployeeModal(employeeId) {
 
 <!-- Modal for Adding assignment -->
   <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="assignmentForm" action="add_assignment.php" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="assignmentModalLabel">New Assignment</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Subtitle -->
-          <p class="mb-3 text-secondary" id="assignmentSubtitle">
-            Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
-          </p>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="assignmentForm" action="add_assignment.php" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="assignmentModalLabel">New Assignment</h5>
+            <p class="mb-3 text-secondary" id="assignmentSubtitle">
+              Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Subtitle -->
 
-          <!-- Hidden inputs -->
-          <input type="hidden" id="modalUserId" name="user_id" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
+            <!-- Hidden inputs -->
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
 
-          <!-- Client select -->
-          <div class="mb-3">
-            <label for="clientSelect" class="form-label">Client Name</label>
-            <select class="form-select" id="clientSelect" name="engagement_id" required>
-              <option value="" disabled selected>Select a client</option>
-              <?php foreach ($activeClients as $client): ?>
-                <option value="<?php echo htmlspecialchars($client['engagement_id']); ?>">
-                  <?php echo htmlspecialchars($client['client_name']); ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
+            <!-- Client select -->
+            <div class="mb-3">
+              <label for="clientSelect" class="form-label">Client Name</label>
+              <select class="form-select" id="clientSelect" name="engagement_id" required>
+                <option value="" disabled selected>Select a client</option>
+                <?php foreach ($activeClients as $client): ?>
+                  <option value="<?php echo htmlspecialchars($client['engagement_id']); ?>">
+                    <?php echo htmlspecialchars($client['client_name']); ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <!-- Assigned hours -->
+            <div class="mb-3">
+              <label for="assignedHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+            </div>
           </div>
 
-          <!-- Assigned hours -->
-          <div class="mb-3">
-            <label for="assignedHours" class="form-label">Hours</label>
-            <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add Assignment</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Add Assignment</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
