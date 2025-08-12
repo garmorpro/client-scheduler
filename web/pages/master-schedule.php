@@ -550,6 +550,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                           $cellContent = "";
 
                           if (!empty($assignmentsForWeek)) {
+                            $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
                               foreach ($assignmentsForWeek as $assignment) {
                                   $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
                                   switch ($engagementStatus) {
