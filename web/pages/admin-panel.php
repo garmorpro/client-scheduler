@@ -612,7 +612,7 @@ if ($settingResult) {
                 <!-- Right Column: Engagement Status -->
                 <div class="col-md-6">
                   <div class="settings-card d-flex flex-column h-100">
-                    <div class="settings-header mb-0">
+                    <div class="settings-header mb-2">
                       <div class="titles">
                         <p class="text-black fw-bold mb-1" style="font-size: 14px;">System Health</p>
                         <p class="fs-6" style="font-size: 14px;">Monitor system performance</p>
@@ -643,6 +643,24 @@ if ($settingResult) {
                       </div>
                       <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(253,249,200); color: rgba(135,88,30);">
                         75% Used
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-check2-circle text-success me-1"></i>Email Service
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
+                        Enabled
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-check2-circle text-success me-1"></i>Backup Service
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
+                        Active
                       </span>
                     </div>
 
