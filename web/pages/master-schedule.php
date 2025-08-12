@@ -1072,10 +1072,10 @@ function openEmployeeModal(employeeId) {
   const engagementInput = document.getElementById('engagementInput');
 
   dropdownBtn.addEventListener('click', () => {
-    const isOpen = dropdownList.style.display === 'block';
-    dropdownList.style.display = isOpen ? 'none' : 'block';
-    dropdownBtn.setAttribute('aria-expanded', !isOpen);
-  });
+  const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+  dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
+  dropdownList.style.display = expanded ? 'none' : 'block';
+});
 
   dropdownBtn.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
