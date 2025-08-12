@@ -418,7 +418,8 @@ function openEmployeeModal(employeeId) {
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
                     $weekStart = date('Y-m-d', $monday);
-                    $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
+                    $isCurrentWeek = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday)));
+                    $highlightClass = $isCurrentWeek ? 'highlight-today' : '';
                     ?>
                     <th class="<?php echo $highlightClass; ?> align-middle">
                         <?php echo date('M j', $monday); ?><br>
@@ -488,14 +489,16 @@ function openEmployeeModal(employeeId) {
                                 $assignedHours = htmlspecialchars($assignment['assigned_hours']);
 
                                 $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
-                                $tdClass = $isCurrentWeek ? 'highlight-today' : '';
                             }
                         } else {
                             $cellContent = "<span class='text-muted'>+</span>";
                         }
+
+                        // Add highlight class to <td> if current week
+                        $tdClass = $isCurrentWeek ? 'highlight-today' : '';
                         ?>
                         <?php if ($isAdmin): ?>
-                            <td class="addable" style="cursor:pointer;" onclick='openManageOrAddModal(
+                            <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
                                 "<?php echo $weekStart; ?>"
@@ -503,7 +506,7 @@ function openEmployeeModal(employeeId) {
                                 <?php echo $cellContent; ?>
                             </td>
                         <?php else: ?>
-                            <td>
+                            <td class="<?php echo $tdClass; ?>">
                                 <?php echo $cellContent; ?>
                             </td>
                         <?php endif; ?>
