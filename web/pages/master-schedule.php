@@ -1074,6 +1074,7 @@ function openEmployeeModal(employeeId) {
 
   dropdownBtn.addEventListener('click', () => {
     const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+    console.log('Dropdown clicked. Expanded:', expanded);
     dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
     dropdownList.style.display = expanded ? 'none' : 'block';
   });
