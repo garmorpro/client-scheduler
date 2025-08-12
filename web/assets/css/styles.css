@@ -384,7 +384,9 @@ input, select {
 .custom-dropdown {
   position: relative;
   /* max-width: 400px; */
-  font-size: 14px;
+  border: none !important; 
+  background-color: rgb(243,243,245) !important; 
+  font-size: 14px !important;
 }
 
 .dropdown-btn {
