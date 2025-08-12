@@ -331,7 +331,7 @@ function openEmployeeModal(employeeId) {
     <div class="header-buttons">
         <a href="#" 
            onclick="location.reload();" 
-           class="badge text-black p-2 text-decoration-none fw-medium overlay-red me-1" 
+           class="badge text-black p-2 text-decoration-none fw-medium me-1" 
            style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
           <i class="bi bi-arrow-clockwise me-3"></i>Refresh
         </a>
