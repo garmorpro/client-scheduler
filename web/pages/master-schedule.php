@@ -649,22 +649,26 @@ function openEmployeeModal(employeeId) {
                     'pending' => 'Pending',
                     'not_confirmed' => 'Not Confirmed'
                   ];
+                
+                  // Map statuses to CSS classes
+                  $statusClassMap = [
+                    'confirmed' => 'badge-confirmed',
+                    'pending' => 'badge-pending',
+                    'not_confirmed' => 'badge-not-confirmed'
+                  ];
+                
+                  $statusKey = strtolower($client['status']);
+                  $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                  $statusClass = $statusClassMap[$statusKey] ?? 'badge-default';
                 ?>
-
                 <div>
                   <?php echo htmlspecialchars($client['client_name']); ?><br>
                   <small class="text-muted">
-                    <?php 
-                      $statusKey = strtolower($client['status']);
-                      echo htmlspecialchars($statusDisplayMap[$statusKey] ?? ucfirst($statusKey));
-                    ?> 
+                    <span class="<?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
                     <i class="bi bi-dot"></i> 
                     <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
                   </small>
                 </div>
-                </div>
-              <?php endforeach; ?>
-            </div>
 
             <input type="hidden" id="engagementInput" name="engagement_id" required>
           </div>
