@@ -637,7 +637,7 @@ if ($settingResult) {
                       </span>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center" style="font-size: 14px;">
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
                       <div>
                         <i class="bi bi-exclamation-circle text-warning me-1"></i>Storage Usage
                       </div>
@@ -655,7 +655,7 @@ if ($settingResult) {
                       </span>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                    <div class="d-flex justify-content-between align-items-center" style="font-size: 14px;">
                       <div>
                         <i class="bi bi-check2-circle text-success me-1"></i>Backup Service
                       </div>
