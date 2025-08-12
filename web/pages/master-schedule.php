@@ -662,10 +662,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
         <div
           id="assignmentTabPane"
-          class="tab-pane active show"
+          class="tab-pane"
           role="tabpanel"
           aria-labelledby="assignmentTab"
-          aria-hidden="false"
+          aria-hidden="true"
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
