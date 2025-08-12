@@ -1,4 +1,12 @@
+
 <?php
+// DEBUG: Dump raw input and exit early to check PHP is running correctly
+// Remove or comment out after testing
+header('Content-Type: text/plain');
+echo "Raw POST body:\n";
+echo file_get_contents('php://input');
+exit;
+
 ob_start();  // Start output buffering to catch any unexpected output
 
 require_once '../includes/db.php'; // $conn as mysqli connection
