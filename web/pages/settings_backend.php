@@ -1,19 +1,19 @@
 <?php
-ob_start(); // Start output buffering to prevent accidental output
+ob_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
-ini_set('display_errors', 0);  // Disable error display (hide warnings/notices)
-ini_set('log_errors', 1);      // Enable error logging
-error_reporting(E_ALL);        // Report all errors for logging
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
 
-require_once '../includes/db.php'; // your mysqli connection $conn
+require_once '../includes/db.php';
 session_start();
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['setting_master_key'], $data['settings']) || !is_array($data['settings'])) {
-    ob_clean(); // Clear any output before JSON
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Invalid input']);
     exit;
 }
@@ -68,7 +68,6 @@ try {
     exit;
 }
 
-// Close statements (won't be reached if exit runs above, but good practice)
 mysqli_stmt_close($stmtCheck);
 mysqli_stmt_close($stmtUpdate);
 mysqli_stmt_close($stmtInsert);

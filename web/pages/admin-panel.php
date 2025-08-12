@@ -595,6 +595,7 @@ if ($settingResult) {
                       </a>
                     </div>
 
+
                     <!-- Security Policies -->
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
@@ -1326,160 +1327,164 @@ if ($settingResult) {
 <!-- end Email Notification Modal -->
 
 <!-- Backup Configuration Modal -->
-    <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
-      <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <form id="backupConfigForm" action="settings_backend.php" method="POST">
-            <div class="modal-header">
-              <h5 class="modal-title" id="backupConfigLabel">
-                <i class="bi bi-hdd-stack"></i> Backup Configuration Settings <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure automated backup schedule and storage options</span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Backup Configuration Modal -->
+<div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <form id="backupConfigForm" action="settings_backend.php" method="POST" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title" id="backupConfigLabel">
+            <i class="bi bi-hdd-stack"></i> Backup Configuration Settings <br>
+            <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">
+              Configure automated backup schedule and storage options
+            </span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- Last Backup Info Card -->
+          <div class="d-flex align-items-center p-2 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
+            <div class="me-3" style="font-size: 14px !important; color: #6c757d;">
+              <i class="bi bi-check2-circle"></i>
             </div>
+            <div style="color: #6c757d; font-size: 14px !important;">
+              Last backup: <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?> 
+              &nbsp; (<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)
+            </div>
+          </div>
 
-            <div class="modal-body">
+          <!-- Backup Schedule -->
+          <h6 class="mb-3">Backup Schedule</h6>
+          <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
+            <input class="form-check-input float-end" style="font-size: 14px !important;" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
+            <label class="form-check-label float-start" style="font-size: 14px !important;" for="enableAutomatedBackups">
+              Enable Automated Backups <br>
+              <span class="text-muted" style="font-size: 12px;">Master switch for automated backups</span>
+            </label>
+          </div>
 
-              <!-- Last Backup Info Card -->
-              <div class="d-flex align-items-center p-2 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
-                <div class="me-3" style="font-size: 14px !important; color: #6c757d;">
-                  <i class="bi bi-check2-circle"></i> <!-- Bootstrap Icons clock/history icon -->
-                </div>
-                <div style="color: #6c757d; font-size: 14px !important;">
-                  Last backup: <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?> 
-                  &nbsp; (<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)
-                </div>
-              </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="backupFrequency" class="form-label" style="font-size: 14px !important;">Backup Frequency</label>
+              <select class="form-select" id="backupFrequency" style="font-size: 14px !important;" name="backup_frequency" required>
+                <option value="hourly" <?php if (($settings['backup_frequency'] ?? '') === 'hourly') echo 'selected'; ?>>Every Hour</option>
+                <option value="daily" <?php if (($settings['backup_frequency'] ?? '') === 'daily') echo 'selected'; ?>>Daily</option>
+                <option value="weekly" <?php if (($settings['backup_frequency'] ?? '') === 'weekly') echo 'selected'; ?>>Weekly</option>
+                <option value="monthly" <?php if (($settings['backup_frequency'] ?? '') === 'monthly') echo 'selected'; ?>>Monthly</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="backupTime" class="form-label" style="font-size: 14px !important;">Backup Time</label>
+              <input type="time" class="form-control" id="backupTime" style="font-size: 14px !important;" name="backup_time" value="<?php echo htmlspecialchars($settings['backup_time'] ?? '', ENT_QUOTES); ?>" required>
+            </div>
+          </div>
 
-              <!-- Backup Schedule -->
-              <h6 class="mb-3">Backup Schedule</h6>
-              <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
-                <label class="form-check-label float-start" style="font-size: 14px !important;" for="enableAutomatedBackups">Enable Automated Backups <br>
-                  <span class="text-muted" style="font-size: 12px;">
-                    Master switch for all email notifications</label>
-                <input class="form-check-input float-end" style="font-size: 14px !important;" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
-              </div>
+          <div class="mb-4">
+            <label for="retentionPeriod" style="font-size: 14px !important;" class="form-label">Retention Period (days)</label>
+            <input type="number" min="1" class="form-control" style="font-size: 14px !important;" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
+          </div>
 
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="backupFrequency" class="form-label" style="font-size: 14px !important;">Backup Frequency</label>
-                  <select class="form-select" id="backupFrequency" style="font-size: 14px !important;" name="backup_frequency" required>
-                    <option value="hourly" <?php if (($settings['backup_frequency'] ?? '') === 'hourly') echo 'selected'; ?>>Every Hour</option>
-                    <option value="daily" <?php if (($settings['backup_frequency'] ?? '') === 'daily') echo 'selected'; ?>>Daily</option>
-                    <option value="weekly" <?php if (($settings['backup_frequency'] ?? '') === 'weekly') echo 'selected'; ?>>Weekly</option>
-                    <option value="monthly" <?php if (($settings['backup_frequency'] ?? '') === 'monthly') echo 'selected'; ?>>Monthly</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label for="backupTime" class="form-label">Backup Time</label>
-                  <input type="time" class="form-control" id="backupTime" style="font-size: 14px !important;" name="backup_time" value="<?php echo htmlspecialchars($settings['backup_time'] ?? '',     ENT_QUOTES); ?>" required>
-                </div>
-              </div>
+          <hr>
 
-              <div class="mb-4">
-                <label for="retentionPeriod" style="font-size: 14px !important;" class="form-label">Retention Period (days)</label>
-                <input type="number" min="1" class="form-control" style="font-size: 14px !important;" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings    ['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
-              </div>
-
-              <hr>
-
-              <!-- Backup Content -->
-              <h6 class="mb-3">Backup Content</h6>
-              <div class="row mb-4">
-                <?php
-                $contentKeys = ['backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'];
-                $contentLabels = ['Users', 'Engagements', 'Assignments', 'Settings'];
-                              
-                // Split array into columns of max 3 items per column
-                $chunks = array_chunk($contentKeys, 3);
-                $labelChunks = array_chunk($contentLabels, 3);
-                              
-                foreach ($chunks as $colIndex => $chunk):
+          <!-- Backup Content -->
+          <h6 class="mb-3">Backup Content</h6>
+          <div class="row mb-4">
+            <?php
+            $contentKeys = ['backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'];
+            $contentLabels = ['Users', 'Engagements', 'Assignments', 'Settings'];
+                          
+            $chunks = array_chunk($contentKeys, 3);
+            $labelChunks = array_chunk($contentLabels, 3);
+                          
+            foreach ($chunks as $colIndex => $chunk):
+            ?>
+              <div class="col-md-4">
+                <?php foreach ($chunk as $i => $key):
+                  $label = $labelChunks[$colIndex][$i];
                 ?>
-                  <div class="col-md-4">
-                    <?php foreach ($chunk as $i => $key):
-                      $label = $labelChunks[$colIndex][$i];
-                    ?>
-                      <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" style="font-size: 14px !important;" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
-                        <label class="form-check-label" style="font-size: 14px !important;" for="<?php echo $key; ?>"><?php echo $label; ?></label>
-                      </div>
-                    <?php endforeach; ?>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" style="font-size: 14px !important;" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" style="font-size: 14px !important;" for="<?php echo $key; ?>"><?php echo $label; ?></label>
                   </div>
                 <?php endforeach; ?>
               </div>
+            <?php endforeach; ?>
+          </div>
 
+          <hr>
 
-              <hr>
+          <!-- Storage Location -->
+          <h6 class="mb-3">Storage Location</h6>
+          <select class="form-select mb-3" style="font-size: 14px !important;" id="storageLocation" name="storage_location" required>
+            <?php 
+            $storageOptions = ['local' => 'Local Storage', 'cloud' => 'Cloud Storage', 'network' => 'Network Storage'];
+            foreach ($storageOptions as $val => $label) {
+              $selected = (($settings['storage_location'] ?? '') === $val) ? 'selected' : '';
+              echo "<option value=\"$val\" $selected>$label</option>";
+            }
+            ?>
+          </select>
 
-              <!-- Storage Location -->
-              <h6 class="mb-3">Storage Location</h6>
-              <select class="form-select mb-3" style="font-size: 14px !important;" id="storageLocation" name="storage_location" required>
-                <?php 
-                $storageOptions = ['local' => 'Local Storage', 'cloud' => 'Cloud Storage', 'network' => 'Network Storage'];
-                foreach ($storageOptions as $val => $label) {
-                  $selected = (($settings['storage_location'] ?? '') === $val) ? 'selected' : '';
-                  echo "<option value=\"$val\" $selected>$label</option>";
-                }
-                ?>
-              </select>
-
-              <!-- Cloud Storage Settings (conditionally shown) -->
-              <div id="cloudStorageSettings" style="display: none;">
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label for="cloudProvider" style="font-size: 14px !important;" class="form-label">Cloud Provider</label>
-                    <select class="form-select" style="font-size: 14px !important;" id="cloudProvider" name="cloud_provider">
-                      <?php
-                      $cloudProviders = ['aws' => 'Amazon S3', 'azure' => 'Azure Blob', 'gcp' => 'Google Cloud', 'dropbox' => 'Dropbox'];
-                      foreach ($cloudProviders as $val => $label) {
-                        $selected = (($settings['cloud_provider'] ?? '') === $val) ? 'selected' : '';
-                        echo "<option value=\"$val\" $selected>$label</option>";
-                      }
-                      ?>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="bucketName" style="font-size: 14px !important;" class="form-label">Bucket/Container Name</label>
-                    <input type="text" style="font-size: 14px !important;" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '',   ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label for="accessKey" style="font-size: 14px !important;" class="form-label">Access Key</label>
-                    <input type="text" style="font-size: 14px !important;" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter access key">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="secretKey" style="font-size: 14px !important;" class="form-label">Secret Key</label>
-                    <input type="password" style="font-size: 14px !important;" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter secret key">
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="region" style="font-size: 14px !important;" class="form-label">Region</label>
-                  <input type="text" style="font-size: 14px !important;" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>"  placeholder="Enter region">
-                </div>
+          <!-- Cloud Storage Settings -->
+          <div id="cloudStorageSettings" style="display: none;">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="cloudProvider" style="font-size: 14px !important;" class="form-label">Cloud Provider</label>
+                <select class="form-select" style="font-size: 14px !important;" id="cloudProvider" name="cloud_provider">
+                  <?php
+                  $cloudProviders = ['aws' => 'Amazon S3', 'azure' => 'Azure Blob', 'gcp' => 'Google Cloud', 'dropbox' => 'Dropbox'];
+                  foreach ($cloudProviders as $val => $label) {
+                    $selected = (($settings['cloud_provider'] ?? '') === $val) ? 'selected' : '';
+                    echo "<option value=\"$val\" $selected>$label</option>";
+                  }
+                  ?>
+                </select>
               </div>
-
-              <hr>
-
-              <!-- Test Configuration -->
-              <h6 class="mb-3">Test Configuration</h6>
-              <button type="button" style="font-size: 14px !important;" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
-
+              <div class="col-md-6">
+                <label for="bucketName" style="font-size: 14px !important;" class="form-label">Bucket/Container Name</label>
+                <input type="text" style="font-size: 14px !important;" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '', ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
+              </div>
             </div>
 
-            <div class="modal-footer">
-              <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"   data-bs-dismiss="modal">Cancel</a>
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
-                <i class="bi bi-save me-2"></i>Save Settings
-              </button>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="accessKey" style="font-size: 14px !important;" class="form-label">Access Key</label>
+                <input type="text" style="font-size: 14px !important;" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '', ENT_QUOTES); ?>" placeholder="Enter access key">
+              </div>
+              <div class="col-md-6">
+                <label for="secretKey" style="font-size: 14px !important;" class="form-label">Secret Key</label>
+                <input type="password" style="font-size: 14px !important;" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '', ENT_QUOTES); ?>" placeholder="Enter secret key">
+              </div>
             </div>
-          </form>
+
+            <div class="mb-3">
+              <label for="region" style="font-size: 14px !important;" class="form-label">Region</label>
+              <input type="text" style="font-size: 14px !important;" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>" placeholder="Enter region">
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Test Configuration -->
+          <h6 class="mb-3">Test Configuration</h6>
+          <button type="button" style="font-size: 14px !important;" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
+
         </div>
-      </div>
+
+        <div class="modal-footer">
+          <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-dismiss="modal">Cancel</a>
+          <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
+            <i class="bi bi-save me-2"></i>Save Settings
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+<!-- end backup configuration modal -->
+
 <!-- end backup configuration modal  -->
 
 <!-- Security Policy Modal -->
@@ -2621,76 +2626,119 @@ if ($settingResult) {
 
 <!-- backup configuration -->
     <script>
-      // Show/hide cloud storage options based on storageLocation select
-      function updateCloudStorageVisibility() {
-        const storageSelect = document.getElementById('storageLocation');
-        const cloudSettings = document.getElementById('cloudStorageSettings');
-        if (storageSelect.value === 'cloud') {
-          cloudSettings.style.display = 'block';
-        } else {
-          cloudSettings.style.display = 'none';
-        }
-      }
-  
-      // Show Backup Configuration Modal on configure button click
-        document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
-          e.preventDefault();
-          const modalEl = document.getElementById('backupConfigModal');
-          const modal = new bootstrap.Modal(modalEl);
-          modal.show();
-        });
-    
-      document.getElementById('storageLocation').addEventListener('change', updateCloudStorageVisibility);
-    
-      // Initialize visibility on page load
-      updateCloudStorageVisibility();
-    
-      // Refresh Last Backup button (example)
-      document.getElementById('refreshLastBackupBtn').addEventListener('click', () => {
-        // Implement your AJAX call or other logic to refresh last backup info here
-        alert('Refresh last backup info functionality not implemented yet.');
-      });
-  
-      // Run Test Backup button handler (example)
-      document.getElementById('runTestBackupBtn').addEventListener('click', async () => {
-        // Disable button while running test
-        const btn = document.getElementById('runTestBackupBtn');
-        btn.disabled = true;
-        btn.textContent = 'Running Test Backup...';
-    
-        try {
-          const resp = await fetch('/api/run_test_backup.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ /* pass any needed data */ })
-          });
-          const result = await resp.json();
-      
-          if (result.success) {
-            alert('Test backup ran successfully!');
-          } else {
-            alert('Test backup failed: ' + (result.error || 'Unknown error'));
-          }
-        } catch (err) {
-          alert('Network error: ' + err.message);
-        }
-    
-        btn.disabled = false;
-        btn.textContent = 'Run Test Backup';
-      });
-    </script>
-<!-- end backup configuration -->
+  // Show/hide cloud storage options based on storageLocation select
+  function updateCloudStorageVisibility() {
+    const storageSelect = document.getElementById('storageLocation');
+    const cloudSettings = document.getElementById('cloudStorageSettings');
+    if (storageSelect.value === 'cloud') {
+      cloudSettings.style.display = 'block';
+    } else {
+      cloudSettings.style.display = 'none';
+    }
+  }
 
-<!-- Security Policy Modal Script -->
-<script>
-  document.getElementById('configureSecurityBtn').addEventListener('click', function(e) {
+  // Show Backup Configuration Modal on configure button click
+  document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
     e.preventDefault();
-    const modalEl = document.getElementById('securityPolicyConfigModal');
+    const modalEl = document.getElementById('backupConfigModal');
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
   });
+
+  document.getElementById('storageLocation').addEventListener('change', updateCloudStorageVisibility);
+
+  // Initialize visibility on page load
+  updateCloudStorageVisibility();
+
+  // Run Test Backup button handler (example)
+  document.getElementById('runTestBackupBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('runTestBackupBtn');
+    btn.disabled = true;
+    btn.textContent = 'Running Test Backup...';
+
+    try {
+      const resp = await fetch('/api/run_test_backup.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        alert('Test backup ran successfully!');
+      } else {
+        alert('Test backup failed: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Run Test Backup';
+  });
+
+  // AJAX form submission for backup settings
+  document.getElementById('backupConfigForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    // Convert FormData to plain object
+    const data = {};
+    formData.forEach((value, key) => {
+      // For unchecked checkboxes, no value submitted; we want to record 'false'
+      if (data[key] === undefined) {
+        data[key] = value;
+      }
+    });
+
+    // Handle unchecked checkboxes: ensure keys exist and are 'false'
+    ['enable_automated_backups', 'backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'].forEach(key => {
+      if (!formData.has(key)) {
+        data[key] = 'false';
+      }
+    });
+
+    const payload = {
+      setting_master_key: 'backup',
+      settings: data
+    };
+
+    try {
+      const resp = await fetch('settings_backend.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        // Hide modal on success
+        const modalEl = document.getElementById('backupConfigModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
+        alert('Backup settings saved successfully!');
+      } else {
+        alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
+    }
+  });
 </script>
 
+<!-- end backup configuration -->
+
+<!-- Security Policy Script -->
+    <script>
+      document.getElementById('configureSecurityBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const modalEl = document.getElementById('securityPolicyConfigModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+      });
+    </script>
+<!-- Security Policy Script -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
