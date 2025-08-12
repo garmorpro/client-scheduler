@@ -1206,7 +1206,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             <div class="modal-body">
 
               <!-- General Settings -->
-                <h6 class="mb-4">General Settings</h6>
+                <h6 class="mb-2">General Settings</h6>
                 <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
                   <label class="form-check-label float-start m-0" for="enableEmailNotifications">
                     Enable Email Notifications (Master switch) <br>
