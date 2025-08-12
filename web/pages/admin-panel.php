@@ -1326,9 +1326,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 Cancel
               </a>
 
-              <button type="submit" 
-                      class="badge text-white p-2 text-decoration-none fw-medium" 
-                      style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
                 <i class="bi bi-person-plus me-3"></i>Save Settings
               </button>
             </div>
@@ -2326,52 +2324,59 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
 <!-- email notification db script -->
     <script>
-      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
     
-        const formData = new FormData(e.target);
+      const formData = new FormData(e.target);
     
-        const data = {};
-        const settingMasterKey = 'email';
+      const data = {};
+      const settingMasterKey = 'email';
     
-        data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+      data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
     
-        const notifTypes = formData.getAll('notification_types[]');
-        data['notification_types'] = JSON.stringify(notifTypes);
+      const notifTypes = formData.getAll('notification_types[]');
+      data['notification_types'] = JSON.stringify(notifTypes);
     
-        data['notification_frequency'] = formData.get('notification_frequency') || '';
-        data['smtp_server'] = formData.get('smtp_server') || '';
-        data['smtp_port'] = formData.get('smtp_port') || '';
-        data['smtp_username'] = formData.get('smtp_username') || '';
-        data['smtp_password'] = formData.get('smtp_password') || '';
-        data['sender_name'] = formData.get('sender_name') || '';
-        data['sender_email'] = formData.get('sender_email') || '';
+      data['notification_frequency'] = formData.get('notification_frequency') || '';
+      data['smtp_server'] = formData.get('smtp_server') || '';
+      data['smtp_port'] = formData.get('smtp_port') || '';
+      data['smtp_username'] = formData.get('smtp_username') || '';
+      data['smtp_password'] = formData.get('smtp_password') || '';
+      data['sender_name'] = formData.get('sender_name') || '';
+      data['sender_email'] = formData.get('sender_email') || '';
     
-        console.log("Sending data:", {setting_master_key: settingMasterKey, settings: data});
+      try {
+        const resp = await fetch('/api/settings_backend.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
+        });
     
+        const text = await resp.text();
+        console.log("Raw response text:", text);
+    
+        let result;
         try {
-          const resp = await fetch('/api/settings_backend.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
-          });
-      
-          const result = await resp.json();
-          console.log("Response from backend:", result);
-      
-          if (result.success) {
-            alert('Settings saved successfully!');
-            const modalEl = document.getElementById('emailNotifConfigModal');
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            modalInstance.hide();
-          } else {
-            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-          }
-        } catch (err) {
-          alert('Network error: ' + err.message);
-          console.error('Fetch error:', err);
+          result = JSON.parse(text);
+        } catch (e) {
+          throw new Error("Invalid JSON response");
         }
-      });
+    
+        console.log("Parsed JSON:", result);
+    
+        if (result.success) {
+          alert('Settings saved successfully!');
+          const modalEl = document.getElementById('emailNotifConfigModal');
+          const modalInstance = bootstrap.Modal.getInstance(modalEl);
+          modalInstance.hide();
+        } else {
+          alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+        console.error('Fetch error:', err);
+      }
+    });
     </script>
 <!-- end email notification db script -->
 
