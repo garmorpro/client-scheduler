@@ -1379,28 +1379,22 @@ function openEmployeeModal(employeeId) {
 
       const rightDiv = document.createElement('div');
 
-    editLink.onclick = (e) => {
-  e.preventDefault();
-
-  // Assuming your edit modal has this id:
-  const editModalEl = document.getElementById('editAssignmentModal');
-  const editModal = new bootstrap.Modal(editModalEl);
-
-  // Populate modal fields — replace these IDs with your actual input IDs
-  document.getElementById('editAssignmentId').value = assignment.assignment_id;
-  document.getElementById('editClientName').value = assignment.client_name || '';
-  document.getElementById('editAssignedHours').value = assignment.assigned_hours || 0;
-  // Add other fields as needed here, e.g. assignment.type, notes, dates...
-
-  // Show the modal
-  editModal.show();
-
-  // Optional: if you want to handle when modal closes (e.g., to refresh data)
-  editModalEl.addEventListener('hidden.bs.modal', () => {
-    // Code to run after modal closes, like refreshing the assignments list
-  }, { once: true });
-};
-
+      const editLink = document.createElement('a');
+      editLink.href = "#";
+      editLink.title = "Edit Assignment";
+      editLink.className = "text-primary me-3";
+      editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+      editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
+          
+      // Set data attributes for use in the modal
+      editLink.setAttribute('data-assignment-id', assignment.assignment_id);
+      editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
+          
+      // Attach the click handler
+      editLink.onclick = (e) => {
+        e.preventDefault();
+        openEditModal(e);
+      };
 
       const deleteLink = document.createElement('a');
       deleteLink.href = "#";
