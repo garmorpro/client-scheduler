@@ -24,22 +24,28 @@ if (!isset($_SESSION['user_id'])) {
 // }
 
 
-$today = date('Y-m-d');
+// Get current Monday
+$today = strtotime('today');
+$currentMonday = strtotime('monday this week', $today);
 
-if (isset($_GET['start_monday'])) {
-    $startMonday = (int) $_GET['start_monday'];
-} else {
-    $currentMonday = strtotime('monday this week');
-    $startMonday   = strtotime('-2 weeks', $currentMonday);
-}
+// Week offset from query (0 = current range)
+$weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 
+// We want the current week in position 3 (index 2 of 0-based array)
+// So we shift start date back 2 weeks from current week, then apply offset
+$startMonday = strtotime("-2 weeks", $currentMonday);
+$startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
+
+// Generate 7 Mondays
 $mondays = [];
 for ($i = 0; $i < 7; $i++) {
-    $mondays[] = strtotime("+$i week", $startMonday);
+    $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
-$firstWeekDisplay = date('n/j', $mondays[0]);
-$lastWeekDisplay  = date('n/j', $mondays[6]);
+// Display range for header
+$firstWeek = reset($mondays);
+$lastWeek = end($mondays);
+$rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
 
 
 
@@ -390,19 +396,22 @@ function openEmployeeModal(employeeId) {
                 </select>
             </div> -->
             <!-- <div class="col-md-3 d-flex align-items-center gap-3">
-                <input type="date" name="start" class="form-control" value="<?php echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-                <a href="?start=<?php echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
+                <input type="date" name="start" class="form-control" value="<?php //echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
+                <a href="?start=<?php //echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
             </div> -->
         </form>
 
 
-<div class="d-flex align-items-center justify-content-center mb-3" id="weekNav">
-    <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="prevWeek">&lt;</button>
-    <strong>
-        Week of <?php echo $firstWeekDisplay; ?> - Week of <?php echo $lastWeekDisplay; ?>
-    </strong>
-    <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="nextWeek">&gt;</button>
+<div class="d-flex justify-content-center align-items-center mb-3">
+    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" class="btn btn-outline-secondary btn-sm me-2">
+        &lt;
+    </a>
+    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" class="btn btn-outline-secondary btn-sm ms-2">
+        &gt;
+    </a>
 </div>
+
 
 
 
