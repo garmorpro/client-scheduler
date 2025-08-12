@@ -1292,7 +1292,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                      id="sendTestEmailBtn"
                      class="badge text-black p-2 text-decoration-none fw-medium disabled"
                      style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
-                    <i class="bi bi-upload me-3"></i>Send Test Email
+                    <i class="bi bi-envelope me-3"></i>Send Test Email
                   </a>
                 </div>
 
