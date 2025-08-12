@@ -1676,7 +1676,6 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- delete engagement -->
     <script>
         document.addEventListener('click', function(e) {
-          // Engagement delete button
           if (e.target.closest('.delete-engagement-btn')) {
             e.preventDefault();
             const engagementId = e.target.closest('.delete-engagement-btn').dataset.engagementId;
@@ -1686,17 +1685,19 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'engagement_id=' + encodeURIComponent(engagementId)
               })
-              .then(res => res.text())
+              .then(res => res.json())
               .then(response => {
-                if (response.trim() === 'success') {
+                if (response.success) {
                   location.reload();
                 } else {
-                  alert('Error deleting engagement');
+                  alert('Error deleting engagement: ' + (response.error || 'Unknown error'));
                 }
-              });
+              })
+              .catch(() => alert('Network or server error'));
             }
           }
         });
+
     </script>
 <!-- end delete engagement -->
 

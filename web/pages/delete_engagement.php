@@ -2,8 +2,10 @@
 require_once '../includes/db.php';
 session_start();
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['user_id'])) {
-    header("HTTP/1.1 401 Unauthorized");
+    http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();
 }
@@ -25,7 +27,7 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
     // Fetch engagement details before deletion
     $detailsStmt = $conn->prepare("SELECT client_name, notes FROM engagements WHERE engagement_id = ?");
     if (!$detailsStmt) {
-        echo json_encode(['success' => false, 'error' => 'Database error']);
+        echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
         exit();
     }
     $detailsStmt->bind_param('i', $deleteEngagementId);
@@ -40,29 +42,35 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
 
     // Delete engagement
     $stmt = $conn->prepare("DELETE FROM engagements WHERE engagement_id = ?");
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
     $stmt->bind_param('i', $deleteEngagementId);
-    
+
     $currentUserId = $_SESSION['user_id'];
     $currentUserEmail = $_SESSION['email'] ?? '';
     $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
     if ($stmt->execute()) {
+        // Log successful deletion
         $title = "Engagement Deleted";
-        $description = "Successfully deleted engagement for client: $clientName.";
+        $description = "Deleted $clientName engagement.";
 
         logActivity($conn, "engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
         echo json_encode(['success' => true]);
     } else {
+        // Log failed deletion
         $title = "Failed Engagement Deletion";
-        $description = "Failed to delete engagement for client: $clientName.";
+        $description = "Failed to delete $clientName engagement.";
 
         logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-        echo json_encode(['success' => false, 'error' => 'Failed to delete engagement']);
+        echo json_encode(['success' => false, 'error' => 'Failed to delete engagement: ' . $stmt->error]);
     }
+
     $stmt->close();
 } else {
-    echo json_encode(['success' => false, 'error' => 'Invalid engagement ID']);
-    exit();
+    echo json_encode(['success' => false, 'error' => 'Invalid engagement_id']);
 }
