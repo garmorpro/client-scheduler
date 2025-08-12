@@ -2298,7 +2298,6 @@ if ($settingResult) {
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
-    data.notification_types = formData.getAll('notification_types[]');
     data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
 
     const payload = {
