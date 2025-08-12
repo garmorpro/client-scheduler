@@ -1302,9 +1302,9 @@ function openEmployeeModal(employeeId) {
 
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
-
+  
   let currentUserId = null;
-let currentWeekStart = null;
+  let currentWeekStart = null;
 
  document.addEventListener('DOMContentLoaded', () => {
   const manageAddButtons = document.getElementById('manageAddButtons');
@@ -1314,8 +1314,7 @@ let currentWeekStart = null;
   const backToButtons = document.getElementById('backToButtons');
 
   // We'll store the current userId and weekStart here dynamically
-  let currentUserId = null;
-  let currentWeekStart = null;
+  
 
   // This function will be called externally when opening modal
   window.openManageOrAddModal = function(userId, employeeName, weekStart) {
