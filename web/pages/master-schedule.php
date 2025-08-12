@@ -633,7 +633,26 @@ function openEmployeeModal(employeeId) {
               tabindex="-1"
               aria-labelledby="selectedClient"
             >
+              <?php 
+                // Map statuses to display names
+                $statusDisplayMap = [
+                  'confirmed' => 'Confirmed',
+                  'pending' => 'Pending',
+                  'not_confirmed' => 'Not Confirmed'
+                ];
+                // Map statuses to CSS classes
+                $statusClassMap = [
+                  'confirmed' => 'text-confirmed',
+                  'pending' => 'text-pending',
+                  'not_confirmed' => 'text-not-confirmed'
+                ];
+              ?>
               <?php foreach ($clientsWithHours as $client): ?>
+                <?php
+                  $statusKey = strtolower($client['status']);
+                  $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                  $statusClass = $statusClassMap[$statusKey] ?? 'badge-default';
+                ?>
                 <div
                   class="dropdown-item"
                   data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
@@ -644,7 +663,8 @@ function openEmployeeModal(employeeId) {
                   <div>
                     <?php echo htmlspecialchars($client['client_name']); ?><br>
                     <small class="text-muted">
-                      <?php echo ucfirst(htmlspecialchars($client['status'])); ?> <i class="bi bi-dot"></i> 
+                      <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                      <i class="bi bi-dot"></i> 
                       <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
                     </small>
                   </div>
@@ -652,6 +672,7 @@ function openEmployeeModal(employeeId) {
               <?php endforeach; ?>
             </div>
 
+            <!-- Hidden input to hold selected value for form submission -->
             <input type="hidden" id="engagementInput" name="engagement_id" required>
           </div>
 
@@ -670,6 +691,7 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
+
 
 <!-- end Adding assignment -->
 
