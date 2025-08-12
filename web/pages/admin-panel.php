@@ -319,7 +319,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <?php if (mysqli_num_rows($engagementResults) > 0): ?>
                             <?php while ($E_row = mysqli_fetch_assoc($engagementResults)): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo E_$row['engagement_id']; ?>"></td>
+                                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $E_row['engagement_id']; ?>"></td>
                                     <td>
                                         <?php echo $E_row['client_name']; ?><br>
                                     </td>
