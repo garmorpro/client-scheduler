@@ -153,50 +153,36 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   const assignments = <?php echo json_encode($assignments); ?>;
 
   function openManageOrAddModal(user_id, employeeName, weekStart) {
-    console.log("Script loaded");
-    console.log("Modal triggered:", user_id, employeeName, weekStart);
+  console.log("Modal triggered for:", user_id, employeeName, weekStart);
 
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-    console.log("Assignments for week:", assignmentsForWeek);
+  const assignments = <?php echo json_encode($assignments); ?>;
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+  console.log("Assignments for week:", assignmentsForWeek);
 
-    if (hasAssignments) {
-        // Show Manage/Add modal
-        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-        manageAddModal.show();
+  // Print number of assignments in console
+  console.log(`Number of assignments for user ${user_id} in week ${weekStart}:`, assignmentsForWeek.length);
 
-        document.getElementById('manageAssignmentsButton').onclick = function() {
-            openManageAssignmentsModal(user_id, employeeName, weekStart);
-        };
-        document.getElementById('addAssignmentsButton').onclick = function() {
-            openAddAssignmentModal(user_id, employeeName, weekStart);
-        };
-    } else {
-        // Directly open Add Assignment modal
-        openAddAssignmentModal(user_id, employeeName, weekStart);
-    }
+  const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+
+  if (hasAssignments) {
+      // Show Manage/Add modal
+      const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+      manageAddModal.show();
+
+      document.getElementById('manageAssignmentsButton').onclick = function() {
+          openManageAssignmentsModal(user_id, employeeName, weekStart);
+      };
+      document.getElementById('addAssignmentsButton').onclick = function() {
+          openAddAssignmentModal(user_id, employeeName, weekStart);
+      };
+  } else {
+      // Directly open Add Assignment modal
+      openAddAssignmentModal(user_id, employeeName, weekStart);
   }
+  }
+
 // end ManageOrAddModal
-
-
-
-
-    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
-        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-        // Fetch assignments for the user and week
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-        showAssignments(assignmentsForWeek);
-
-        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-        assignmentsModal.show();
-    }
-
-
 
 // open addAssignmentModal
     function openAddAssignmentModal(user_id, employeeName, weekStart) {
@@ -236,6 +222,21 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 // end open addAssignmentModal
 
+// open manageAssignementModal
+    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+
+        // Fetch assignments for the user and week
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+        showAssignments(assignmentsForWeek);
+
+        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+        assignmentsModal.show();
+    }
+// end manageAssignementModal
 
 // Edit Modal
   function openEditModal(event) {
@@ -523,11 +524,7 @@ function openEmployeeModal(employeeId) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
-                                  "<?php echo $userId; ?>",
-                                  <?php echo json_encode($fullName); ?>,
-                                  "<?php echo $weekKey; ?>"
-                              )'>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")'>
                                   <?php echo $cellContent; ?>
                               </td>
                           <?php else: ?>
