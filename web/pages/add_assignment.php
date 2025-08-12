@@ -7,6 +7,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+function console_log($data) {
+    echo "<script>console.log(" . json_encode($data) . ");</script>";
+}
+
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
