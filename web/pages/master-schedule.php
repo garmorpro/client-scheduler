@@ -149,52 +149,52 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-function openManageEntryModal(user_id, employeeName, weekStart) {
-  console.log("Modal triggered:", user_id, employeeName, weekStart);
-  const assignments = <?php echo json_encode($assignments); ?>;
-  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  function openManageEntryModal(user_id, employeeName, weekStart) {
+    console.log("Modal triggered:", user_id, employeeName, weekStart);
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-  const manageEntryModalElement = document.getElementById('manageEntryModal');
-  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+    const manageEntryModalElement = document.getElementById('manageEntryModal');
+    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-  const manageBtn = document.getElementById('manageAssignmentsButton');
-  const addBtn = document.getElementById('addAssignmentsButton');
+    const manageBtn = document.getElementById('manageAssignmentsButton');
+    const addBtn = document.getElementById('addAssignmentsButton');
 
-  console.log('manageBtn:', manageBtn);
-  console.log('addBtn:', addBtn);
+    console.log('manageBtn:', manageBtn);
+    console.log('addBtn:', addBtn);
 
-  if (manageBtn) {
-    manageBtn.replaceWith(manageBtn.cloneNode(true));
-  }
-  if (addBtn) {
-    addBtn.replaceWith(addBtn.cloneNode(true));
-  }
+    if (manageBtn) {
+      manageBtn.replaceWith(manageBtn.cloneNode(true));
+    }
+    if (addBtn) {
+      addBtn.replaceWith(addBtn.cloneNode(true));
+    }
 
-  const newManageBtn = document.getElementById('manageAssignmentsButton');
-  const newAddBtn = document.getElementById('addAssignmentsButton');
+    const newManageBtn = document.getElementById('manageAssignmentsButton');
+    const newAddBtn = document.getElementById('addAssignmentsButton');
 
-  if (newManageBtn) {
-    newManageBtn.onclick = function() {
-      openManageAssignmentsModal(user_id, employeeName, weekStart);
-      manageEntryModal.hide();
-    };
-  }
-  if (newAddBtn) {
-    newAddBtn.onclick = function() {
+    if (newManageBtn) {
+      newManageBtn.onclick = function() {
+        openManageAssignmentsModal(user_id, employeeName, weekStart);
+        manageEntryModal.hide();
+      };
+    }
+    if (newAddBtn) {
+      newAddBtn.onclick = function() {
+        openAddEntryModal(user_id, employeeName, weekStart);
+        manageEntryModal.hide();
+      };
+    }
+
+    if (assignmentsForWeek.length > 0) {
+      // *** Render assignments list here so it's visible immediately ***
+      renderAssignmentsList(user_id, weekStart);
+
+      manageEntryModal.show();
+    } else {
       openAddEntryModal(user_id, employeeName, weekStart);
-      manageEntryModal.hide();
-    };
+    }
   }
-
-  if (assignmentsForWeek.length > 0) {
-    // *** Render assignments list here so it's visible immediately ***
-    renderAssignmentsList(user_id, weekStart);
-
-    manageEntryModal.show();
-  } else {
-    openAddEntryModal(user_id, employeeName, weekStart);
-  }
-}
 
 
 // end Open modal for Manage Assignments or Add Entry
@@ -212,7 +212,7 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
 
   const assignmentsModal = new bootstrap.Modal(document.getElementById('manageEntryModal'));
   assignmentsModal.show();
-}
+  }
 // end Manage assignments modal
 
 
@@ -651,29 +651,6 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
             <!-- Assignment items will be rendered here -->
           </div>
 
-          <!-- <button 
-            id="manageAssignmentsButton" 
-            class="btn btn-warning w-100 mb-3 text-white fw-semibold"
-            style="font-size: 1rem; padding: 0.75rem;"
-          >
-            Manage Existing Assignments
-          </button>
-
-          <button 
-            id="addAssignmentsButton" 
-            class="btn btn-success w-100 mb-3 text-white fw-semibold"
-            style="font-size: 1rem; padding: 0.75rem;"
-          >
-            Add New Assignment
-          </button>
-
-          <button 
-            id="updateTimeOffButton" 
-            class="btn btn-info w-100 text-white fw-semibold"
-            style="font-size: 1rem; padding: 0.75rem;"
-          >
-            Update Time Off
-          </button> -->
         </div>
 
 
@@ -1580,20 +1557,51 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
 
   assignmentsForWeek.forEach(assignment => {
     const item = document.createElement('li');
-    item.classList.add('list-group-item');
+    item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
 
-    item.innerHTML = `
-      <strong>${assignment.client_name || 'Unnamed Client'}</strong><br>
-      Assigned Hours: ${assignment.assigned_hours || 0}<br>
-      Notes: ${assignment.notes ? assignment.notes : '<em>No notes</em>'}
+    // Left side: client name + hours
+    const leftDiv = document.createElement('div');
+    leftDiv.innerHTML = `
+      <div class="fw-semibold">${assignment.client_name || 'Unnamed Client'}</div>
+      <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
     `;
+
+    // Right side: buttons
+    const rightDiv = document.createElement('div');
+
+    // Edit button
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'btn btn-sm btn-outline-primary me-2';
+    editBtn.title = 'Edit Assignment';
+    editBtn.innerHTML = `<i class="bi bi-pencil-square"></i>`;
+    editBtn.onclick = () => {
+      // Add your edit logic here, e.g. open edit modal with assignment data
+      console.log('Edit clicked for assignment:', assignment);
+    };
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'btn btn-sm btn-outline-danger';
+    deleteBtn.title = 'Delete Assignment';
+    deleteBtn.innerHTML = `<i class="bi bi-trash"></i>`;
+    deleteBtn.onclick = () => {
+      // Add your delete logic here, e.g. confirm and delete assignment
+      console.log('Delete clicked for assignment:', assignment);
+    };
+
+    rightDiv.appendChild(editBtn);
+    rightDiv.appendChild(deleteBtn);
+
+    item.appendChild(leftDiv);
+    item.appendChild(rightDiv);
 
     listEl.appendChild(item);
   });
 
   container.appendChild(listEl);
 }
-
 
   </script>
 <!-- end Script: Render Assignments Listing -->
