@@ -554,22 +554,18 @@ function openEmployeeModal(employeeId) {
       </div>
       <div class="modal-body">
 
-        <!-- Initial buttons -->
-        <div id="manageAddButtons">
-          <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
-          <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
-        </div>
+  <!-- Initial buttons -->
+  <div id="manageAddButtons">
+    <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+    <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+  </div>
 
-        <!-- Assignments listing - hidden initially -->
-        <div id="assignmentsListing" class="d-none">
-          <button id="backToButtons" class="btn btn-secondary mb-3">Back</button>
-          <div id="assignmentsContainer">
-            <!-- Here you'll inject or render the list of assignments -->
-            <p>Loading assignments...</p>
-          </div>
-        </div>
+  <div id="assignmentsListing" class="d-none">
+  <button id="backToButtons" class="btn btn-secondary mb-3">Back</button>
+  <div id="assignmentsListContainer"><!-- Cards will render here --></div>
+</div>
 
-      </div>
+</div>
     </div>
   </div>
 </div>
@@ -1305,49 +1301,94 @@ function openEmployeeModal(employeeId) {
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
   document.addEventListener('DOMContentLoaded', () => {
-  const manageAddModal = document.getElementById('manageAddModal');
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
-  const assignmentsContainer = document.getElementById('assignmentsContainer');
+  const assignmentsListContainer = document.getElementById('assignmentsListContainer');
   const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
   const backToButtons = document.getElementById('backToButtons');
 
+  // Example assignments data — replace with actual data loading/fetch
+  const exampleAssignments = [
+    { assignment_id: 1, type: 'Regular', client_name: 'Client A', assigned_hours: 40 },
+    { assignment_id: 2, type: 'Time Off', client_name: '', assigned_hours: 8 },
+    { assignment_id: 3, type: 'Regular', client_name: 'Client B', assigned_hours: 20 },
+  ];
+
   manageAssignmentsButton.addEventListener('click', () => {
-    // Hide buttons
+    // Hide buttons, show assignments listing
     manageAddButtons.classList.add('d-none');
-    // Show assignments listing container
     assignmentsListing.classList.remove('d-none');
 
-    // Load assignments (replace with your actual logic, e.g. fetch from server)
-    assignmentsContainer.innerHTML = '<p>Loading assignments...</p>';
-
-    // Simulate async loading with setTimeout
-    setTimeout(() => {
-      // Example: assignments data — replace with your real data
-      const assignments = [
-        { id: 1, type: 'Regular', client: 'Client A', hours: 40 },
-        { id: 2, type: 'Time Off', client: '-', hours: 8 },
-        { id: 3, type: 'Regular', client: 'Client B', hours: 20 },
-      ];
-
-      // Render assignments
-      const listHtml = assignments.map(a =>
-        `<div>
-          <strong>${a.type} Assignment</strong> - Client: ${a.client}, Hours: ${a.hours}
-        </div>`
-      ).join('');
-
-      assignmentsContainer.innerHTML = listHtml;
-    }, 500); // simulate loading delay
+    // Render the assignments with the styled function
+    renderAssignmentsList(exampleAssignments);
   });
 
   backToButtons.addEventListener('click', () => {
-    // Show buttons again
+    // Show buttons, hide assignments listing
     manageAddButtons.classList.remove('d-none');
-    // Hide assignments listing
     assignmentsListing.classList.add('d-none');
   });
- });
+
+  function renderAssignmentsList(assignmentsForWeek) {
+    assignmentsListContainer.innerHTML = '';
+
+    if (!assignmentsForWeek || assignmentsForWeek.length === 0) {
+      assignmentsListContainer.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
+      return;
+    }
+
+    assignmentsForWeek.forEach(assignment => {
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-3', 'shadow-sm');
+
+      const cardBody = document.createElement('div');
+      cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
+
+      const leftDiv = document.createElement('div');
+      leftDiv.innerHTML = `
+        <div class="fw-semibold fs-6">${assignment.client_name || (assignment.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
+        <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
+      `;
+
+      const rightDiv = document.createElement('div');
+
+      // Edit link
+      const editLink = document.createElement('a');
+      editLink.href = "#";
+      editLink.title = "Edit Assignment";
+      editLink.className = "text-primary me-3";
+      editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+      editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
+      editLink.onclick = (e) => {
+        e.preventDefault();
+        // Your edit logic here, e.g. show edit modal with assignment data
+        alert(`Edit assignment ${assignment.assignment_id}`);
+      };
+
+      // Delete link
+      const deleteLink = document.createElement('a');
+      deleteLink.href = "#";
+      deleteLink.title = "Delete Assignment";
+      deleteLink.className = "text-danger";
+      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+      deleteLink.onclick = (e) => {
+        e.preventDefault();
+        // Your delete logic here, e.g. confirm then delete
+        alert(`Delete assignment ${assignment.assignment_id}`);
+      };
+
+      rightDiv.appendChild(editLink);
+      rightDiv.appendChild(deleteLink);
+
+      cardBody.appendChild(leftDiv);
+      cardBody.appendChild(rightDiv);
+      card.appendChild(cardBody);
+      assignmentsListContainer.appendChild(card);
+    });
+  }
+});
+
  </script>
 <!-- end script: dynamic buttons on manage modal -->
 
