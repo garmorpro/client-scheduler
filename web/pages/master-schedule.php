@@ -1489,8 +1489,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- end Script: Custom Tabs -->
 
 <!-- Script: manageEntryModal Custom Tabs -->
- <script>
-  // Tab switching logic
+<script>
+  // Tab switching logic for #manageEntryModal
   document.querySelectorAll('#manageEntryModal .custom-tabs-modal button').forEach(btn => {
     btn.addEventListener('click', () => {
       const modal = document.getElementById('manageEntryModal');
@@ -1507,13 +1507,49 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       // Tab panes
       const panes = modal.querySelectorAll('.tab-content-modal > div.tab-pane');
       panes.forEach(pane => {
-        pane.classList.toggle('active', pane.id === tab);
-        pane.classList.toggle('show', pane.id === tab);
-        pane.setAttribute('aria-hidden', pane.id === tab ? 'false' : 'true');
+        const isActive = pane.id === tab;
+        pane.classList.toggle('active', isActive);
+        pane.classList.toggle('show', isActive);
+        pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
       });
     });
   });
- </script>
+
+  // Reset tabs on manageEntryModal close
+  document.getElementById('manageEntryModal').addEventListener('hidden.bs.modal', () => {
+    const modal = document.getElementById('manageEntryModal');
+    const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
+    if (tabButtons.length === 0) return;
+
+    // Reset all tab buttons
+    tabButtons.forEach(btn => {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-selected', 'false');
+      btn.setAttribute('tabindex', '-1');
+    });
+
+    // Activate the first tab button
+    tabButtons[0].classList.add('active');
+    tabButtons[0].setAttribute('aria-selected', 'true');
+    tabButtons[0].setAttribute('tabindex', '0');
+
+    // Reset all tab panes
+    const tabPanes = modal.querySelectorAll('.tab-content-modal > div.tab-pane');
+    tabPanes.forEach(pane => {
+      pane.classList.remove('active', 'show');
+      pane.setAttribute('aria-hidden', 'true');
+    });
+
+    // Show first tab pane
+    const firstTabId = tabButtons[0].getAttribute('data-tab');
+    const firstPane = modal.querySelector(`#${firstTabId}`);
+    if (firstPane) {
+      firstPane.classList.add('active', 'show');
+      firstPane.setAttribute('aria-hidden', 'false');
+    }
+  });
+</script>
+
 <!-- end Script: manageEntryModal Custom Tabs -->
 
 
