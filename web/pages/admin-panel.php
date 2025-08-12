@@ -1195,7 +1195,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
 <!-- Configure Email Notifications Modal -->
     <div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
-      <div class="modal-dialog modal-md modal-dialog-scrollable">
+      <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
             <div class="modal-header">
