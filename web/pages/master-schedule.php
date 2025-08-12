@@ -243,6 +243,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             document.getElementById('timeoffReason').value = '';
         }
 
+        console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
+const engagementInputEl = document.getElementById('engagementInput');
+console.log('engagementInput element found:', engagementInputEl);
+if (engagementInputEl) {
+  console.log('Before set, engagementInput value:', engagementInputEl.value);
+  engagementInputEl.value = engagement_id;
+  console.log('After set, engagementInput value:', engagementInputEl.value);
+}
+
         // Show the addEntryModal modal
         const addEntryModalEl = document.getElementById('addEntryModal');
         const addEntryModal = new bootstrap.Modal(addEntryModalEl);
@@ -264,7 +273,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 
-    // openEditModal remains unchanged
+// openEditModal remains unchanged
     function openEditModal(event) {
         const buttonElement = event.target;
         const assignmentId = buttonElement.getAttribute('data-assignment-id');
