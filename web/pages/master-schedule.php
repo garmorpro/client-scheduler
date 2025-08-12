@@ -606,8 +606,7 @@ function openEmployeeModal(employeeId) {
 
         <div class="modal-body">
           <!-- Hidden inputs -->
-          <input type="hidden" id="modalUserId" name="user_id" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
+          
 
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
@@ -626,6 +625,9 @@ function openEmployeeModal(employeeId) {
 
           <!-- New Assignment content: client dropdown + hours input -->
           <div id="newAssignmentContent" class="d-none">
+
+          <input type="hidden" id="modalUserId" name="user_id" value="">
+          <input type="hidden" id="modalWeek" name="week_start" value="">
             <!-- Custom Client Dropdown -->
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
