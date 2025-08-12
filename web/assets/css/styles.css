@@ -356,5 +356,6 @@ body {
 }
 
 #backupConfigModal .modal-body {
-  min-height: 400px; /* or a height bigger than your viewport */
+  max-height: 400px !important;
+  overflow-y: auto !important;
 }
