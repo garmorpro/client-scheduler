@@ -373,7 +373,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
                     $sql = "SELECT event_type, full_name, title, description, created_at 
                             FROM system_activity_log 
-                            ORDER BY created_at DESC 
+                            ORDER BY created_at ASC 
                             LIMIT 3";
                     $result = $conn->query($sql);
 
