@@ -381,27 +381,34 @@ function openEmployeeModal(employeeId) {
 </div>
 
     <div class="bg-white border rounded p-4 mb-4">
-        <form id="filterForm" method="get" class="row g-3">
-            <div class="col-md-4">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
-                <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
+        <form id="filterForm" method="get" class="row g-3 align-items-center">
+            
+            <!-- Search Bar -->
+            <div class="col-md-6">
+                <input type="text" 
+                       id="searchInput" 
+                       class="form-control" 
+                       placeholder="Search projects, clients, or employees..." 
+                       onkeyup="searchQuery()" />
+                <div id="searchResults" 
+                     class="dropdown-menu" 
+                     style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
-
-            <div class="d-flex justify-content-center align-items-center mb-3">
-                <a href="?week_offset=<?php echo $weekOffset - 1; ?>" class="btn btn-outline-secondary btn-sm me-2">
-                    &lt;
-                </a>
+    
+            <!-- Week Selector -->
+            <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
+                   class="btn btn-outline-secondary btn-sm me-2">&lt;</a>
+    
                 <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-                <a href="?week_offset=<?php echo $weekOffset + 1; ?>" class="btn btn-outline-secondary btn-sm ms-2">
-                    &gt;
-                </a>
+    
+                <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
+                   class="btn btn-outline-secondary btn-sm ms-2">&gt;</a>
             </div>
+    
         </form>
-
-
-
-
     </div>
+    
 
     <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
