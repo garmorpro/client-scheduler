@@ -661,7 +661,7 @@ function openEmployeeModal(employeeId) {
                   tabindex="0"
                 >
                   <div>
-                    <?php echo htmlspecialchars($client['client_name']); ?><br>
+                    <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
                     <small class="text-muted">
                       <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
                       <i class="bi bi-dot"></i> 
