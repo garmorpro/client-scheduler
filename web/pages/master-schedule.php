@@ -575,7 +575,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage Entry -->
-  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel" aria-hidden="true">
+  <!-- <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -610,6 +610,106 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           Update Time Off
         </button>
+      </div>
+
+      <div class="modal-footer p-0 mt-3 border-0">
+        <button
+          type="button"
+          class="btn badge text-black p-2 text-decoration-none fw-medium"
+          style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229,229);"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div> -->
+
+<div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageEntryModalLabel">
+          <i class="bi bi-pencil-square me-2"></i> Manage Entries
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="custom-tabs-modal d-flex" role="tablist" style="border-bottom: 1px solid #dee2e6;">
+        <button
+          class="active btn btn-link flex-fill text-center"
+          data-tab="manageTabPane"
+          role="tab"
+          aria-selected="true"
+          aria-controls="manageTabPane"
+          tabindex="0"
+          type="button"
+        >
+          Manage Assignments
+        </button>
+        <button
+          class="btn btn-link flex-fill text-center"
+          data-tab="timeOffTabPane"
+          role="tab"
+          aria-selected="false"
+          aria-controls="timeOffTabPane"
+          tabindex="-1"
+          type="button"
+        >
+          Time Off
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content-modal p-3">
+        <!-- Manage Assignments Tab -->
+        <div
+          id="manageTabPane"
+          class="tab-pane active show"
+          role="tabpanel"
+          aria-labelledby="manageTab"
+          aria-hidden="false"
+        >
+          <button 
+            id="manageAssignmentsButton" 
+            class="btn btn-warning w-100 mb-3 text-white fw-semibold"
+            style="font-size: 1rem; padding: 0.75rem;"
+          >
+            Manage Existing Assignments
+          </button>
+
+          <button 
+            id="addAssignmentsButton" 
+            class="btn btn-success w-100 mb-3 text-white fw-semibold"
+            style="font-size: 1rem; padding: 0.75rem;"
+          >
+            Add New Assignment
+          </button>
+
+          <button 
+            id="updateTimeOffButton" 
+            class="btn btn-info w-100 text-white fw-semibold"
+            style="font-size: 1rem; padding: 0.75rem;"
+          >
+            Update Time Off
+          </button>
+        </div>
+
+        <!-- Time Off Tab -->
+        <div
+          id="timeOffTabPane"
+          class="tab-pane"
+          role="tabpanel"
+          aria-labelledby="timeOffTab"
+          aria-hidden="true"
+        >
+          <!-- You can put any time off related content or controls here -->
+          <p class="text-muted">Manage time off requests and details here.</p>
+        </div>
       </div>
 
       <div class="modal-footer p-0 mt-3 border-0">
