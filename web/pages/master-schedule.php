@@ -411,83 +411,106 @@ function openEmployeeModal(employeeId) {
 
 
     <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center">
-            <thead class="table-light">
+    <table class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th class="text-start">Employee</th>
+                <?php foreach ($mondays as $monday): ?>
+                    <?php 
+                    $weekStart = date('Y-m-d', $monday);
+                    $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
+                    ?>
+                    <th class="<?php echo $highlightClass; ?>">
+                        <?php echo date('M j', $monday); ?><br>
+                        <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                    </th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($employees as $userId => $employee): ?>
+                <?php
+                // Extract initials for avatar
+                $fullName = htmlspecialchars($employee['full_name']);
+                $nameParts = explode(' ', trim($fullName));
+                $initials = '';
+                foreach ($nameParts as $part) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
+                $role = htmlspecialchars($employee['role']);
+                ?>
                 <tr>
-                    <th class="text-start">Employee</th>
+                    <td class="text-start">
+                        <div class="d-flex align-items-center">
+                            <!-- Avatar -->
+                            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                                 style="width: 40px; height: 40px; font-size: 14px; font-weight: 700;">
+                                <?php echo $initials; ?>
+                            </div>
+
+                            <!-- Name + Role -->
+                            <div>
+                                <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                <div class="text-muted text-capitalize" style="font-size: 12px;">
+                                    <?php echo $role; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
                     <?php foreach ($mondays as $monday): ?>
                         <?php 
                         $weekStart = date('Y-m-d', $monday);
-                        $highlightClass = ($today >= $weekStart && $today < date('Y-m-d', strtotime('+7 days', $monday))) ? 'highlight-today' : '';
-                        ?>
-                        <th class="<?php echo $highlightClass; ?>">
-                            <?php echo date('M j', $monday); ?><br>
-                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
-                        </th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($employees as $userId => $employeeName): ?>
-                    <tr>
-                        <td class="text-start fw-semibold">
-                            <?php echo htmlspecialchars($employees[$userId]['full_name']); ?>
-                            <span class="text-muted text-capitalize" style="font-size: 12px;">&nbsp;&nbsp;<?php echo $employees[$userId]['role']; ?></span>
-                        </td>
+                        $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
+                        $cellContent = "";
 
-                        <?php foreach ($mondays as $monday): ?>
-                            <?php 
-                            $weekStart = date('Y-m-d', $monday);
-                            $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
-                            $cellContent = "";
-                            
-                            if ($assignmentsForWeek) {
-                                foreach ($assignmentsForWeek as $assignment) {
-                                    $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                        if ($assignmentsForWeek) {
+                            foreach ($assignmentsForWeek as $assignment) {
+                                $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
 
-                                        switch ($engagementStatus) {
-                                            case 'confirmed':
-                                                $badgeColor = 'success';
-                                                break;
-                                            case 'pending':
-                                                $badgeColor = 'purple';
-                                                break;
-                                            case 'not_confirmed':
-                                                $badgeColor = 'primary';
-                                                break;
-                                            default:
-                                                $badgeColor = 'secondary';
-                                        }
-
-
-                                        $cellContent .= "<span class='badge bg-$badgeColor'>{$assignment['client_name']} ({$assignment['assigned_hours']})</span><br>";
-
+                                switch ($engagementStatus) {
+                                    case 'confirmed':
+                                        $badgeColor = 'success';
+                                        break;
+                                    case 'pending':
+                                        $badgeColor = 'purple';
+                                        break;
+                                    case 'not_confirmed':
+                                        $badgeColor = 'primary';
+                                        break;
+                                    default:
+                                        $badgeColor = 'secondary';
                                 }
-                            } else {
-                                $cellContent = "<span class='text-muted'>+</span>";
+
+                                $clientName = htmlspecialchars($assignment['client_name']);
+                                $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+
+                                $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
                             }
-                            ?>
-                            <?php if ($isAdmin): ?>
-                            <td class="addable" onclick='openManageOrAddModal(
+                        } else {
+                            $cellContent = "<span class='text-muted'>+</span>";
+                        }
+                        ?>
+                        <?php if ($isAdmin): ?>
+                            <td class="addable" style="cursor:pointer;" onclick='openManageOrAddModal(
                                 "<?php echo $userId; ?>",
-                                <?php echo json_encode($employees[$userId]['full_name']); ?>,
+                                <?php echo json_encode($fullName); ?>,
                                 "<?php echo $weekStart; ?>"
                             )'>
-                                    <?php echo $cellContent; ?>
-                                </td>
-                            <?php else: ?>
-    <td>
-        <?php echo $cellContent; ?>
-    </td>
-<?php endif; ?>
-                        <?php endforeach; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
+                                <?php echo $cellContent; ?>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <?php echo $cellContent; ?>
+                            </td>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
+
 
 <?php if ($isAdmin): ?>
 
