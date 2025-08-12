@@ -127,6 +127,14 @@ body {
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
 }
 
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active.show {
+  display: block;
+}
+
 
 
 /* Tab content wrapper */
