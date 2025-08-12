@@ -359,3 +359,9 @@ body {
   max-height: 700px !important;
   overflow-y: auto !important;
 }
+
+  /* Highlight style for current week */
+  .highlight-today {
+    background-color: #fff3cd !important; /* Soft yellow */
+    border: 2px solid #ffc107 !important; /* Bright yellow border */
+  }
