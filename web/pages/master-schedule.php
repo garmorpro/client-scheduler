@@ -596,9 +596,10 @@ function openEmployeeModal(employeeId) {
       <form id="assignmentForm" action="add_assignment.php" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="assignmentModalLabel">
-            <i class="bi bi-calendar-range me-2"></i>
-            <span id="modalTitle">Select Entry Type</span><br>
-            <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;" id="modalSubtitle"></span>
+            <i class="bi bi-calendar-range me-2"></i>New Entry<br>
+              <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
+                Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
+              </span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
