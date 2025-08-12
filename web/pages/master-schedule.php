@@ -170,16 +170,21 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     // Re-select cloned buttons
     const newManageBtn = document.getElementById('manageAssignmentsButton');
-    const newAddBtn = document.getElementById('addAssignmentsButton');
+const newAddBtn = document.getElementById('addAssignmentsButton');
 
-    newManageBtn.onclick = function() {
-        openManageAssignmentsModal(user_id, employeeName, weekStart);
-        manageEntryModal.hide();
-    };
-    newAddBtn.onclick = function() {
-        openAddEntryModal(user_id, employeeName, weekStart);
-        manageEntryModal.hide();
-    };
+if (newManageBtn) {
+  newManageBtn.onclick = function() {
+    openManageAssignmentsModal(user_id, employeeName, weekStart);
+    manageEntryModal.hide();
+  };
+}
+
+if (newAddBtn) {
+  newAddBtn.onclick = function() {
+    openAddEntryModal(user_id, employeeName, weekStart);
+    manageEntryModal.hide();
+  };
+}
 
     if (assignmentsForWeek.length > 0) {
         manageEntryModal.show();
