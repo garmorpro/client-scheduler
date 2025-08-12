@@ -148,50 +148,38 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
-// Open modal for Manage Assignments or Add Entry (new modal)
+    // open modal for Manage Assignments or Add Engagement
     function openManageOrAddModal(user_id, employeeName, weekStart) {
         console.log("Modal triggered:", user_id, employeeName, weekStart);
+        // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-        const manageAddModalElement = document.getElementById('manageAddModal');
-        const manageAddModal = new bootstrap.Modal(manageAddModalElement);
-
-        // Clone buttons to remove old event listeners
-        const manageBtn = document.getElementById('manageAssignmentsButton');
-        const addBtn = document.getElementById('addAssignmentsButton');
-
-        manageBtn.replaceWith(manageBtn.cloneNode(true));
-        addBtn.replaceWith(addBtn.cloneNode(true));
-
-        const newManageBtn = document.getElementById('manageAssignmentsButton');
-        const newAddBtn = document.getElementById('addAssignmentsButton');
-
-        newManageBtn.onclick = function() {
-            openManageAssignmentsModal(user_id, employeeName, weekStart);
-            manageAddModal.hide();
-        };
-        newAddBtn.onclick = function() {
-            openAddEntryModal(user_id, employeeName, weekStart);
-            manageAddModal.hide();
-        };
-
         if (assignmentsForWeek.length > 0) {
+            // Show "Manage" or "Add" modal for existing assignments
+            const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
             manageAddModal.show();
+
+            document.getElementById('manageAssignmentsButton').onclick = function() {
+                // Manage Assignments: Open the Manage Assignments modal
+                openManageAssignmentsModal(user_id, employeeName, weekStart);
+            };
+            document.getElementById('addAssignmentsButton').onclick = function() {
+                // Add Assignment: Open the Add Engagement modal
+                openAddassignmentModal(user_id, employeeName, weekStart);
+            };
         } else {
-            // No assignments — open addEntryModal directly
-            openAddEntryModal(user_id, employeeName, weekStart);
+            // If no existing assignments, directly show Add Engagement modal
+            openAddassignmentModal(user_id, employeeName, weekStart);
         }
     }
-// end Open modal for Manage Assignments or Add Entry
 
-
-// Manage assignments modal
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
+        // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
         showAssignments(assignmentsForWeek);
@@ -199,107 +187,76 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
         assignmentsModal.show();
     }
-// end Manage assignments modal
 
 
-// Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
-        // Set inputs for user and week in the forms
-        document.getElementById('modalUserId').value = user_id;
-        document.getElementById('modalWeek').value = weekStart;
-        document.getElementById('timeOFFuser_id').value = user_id;
-        document.getElementById('timeOFFweek_start').value = weekStart;
 
-        // Update display spans
-        document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-            
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const date = new Date(weekStart);
-            
-        // Calculate the difference in days to get Monday (0=Sunday, 1=Monday,...)
-        const day = date.getDay(); // 0-6 Sun-Sat
-        const diffToMonday = (day === 0) ? -6 : 1 - day; // if Sunday (0), go back 6 days; else go back (day-1)
-            
-        // Get Monday date
-        const mondayDate = new Date(date);
-        mondayDate.setDate(date.getDate() + diffToMonday);
-            
-        document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
+// open addAssignmentModal
+    function openAddassignmentModal(user_id, employeeName, weekStart) {
+    document.getElementById('modalUserId').value = user_id;
+    document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
+    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const weekDate = new Date(weekStart);
+    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+
+    // Reset custom dropdown selection and hidden input
+    document.getElementById('selectedClient').textContent = 'Select a client';
+    document.getElementById('engagementInput').value = '';
+
+    // Reset assigned hours input
+    document.getElementById('assignedHours').value = '';
+
+    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+    assignmentModal.show();
+  }
+
+// end open addAssignmentModal
 
 
-        // Reset inputs depending on the tab
-        if (tab === 'assignment') {
-            document.getElementById('selectedClient').textContent = 'Select a client';
-            document.getElementById('engagementInput').value = '';
-            document.getElementById('assignedHours').value = '';
-        } else if (tab === 'timeoff') {
-            document.getElementById('timeoffHours').value = '';
-            document.getElementById('timeoffReason').value = '';
-        }
+// Update openEditModal to handle dynamic elements properly
+function openEditModal(event) {
+    const buttonElement = event.target;
+    const assignmentId = buttonElement.getAttribute('data-assignment-id');
+    const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-        // Show the addEntryModal modal
-        const addEntryModalEl = document.getElementById('addEntryModal');
-        const addEntryModal = new bootstrap.Modal(addEntryModalEl);
-        addEntryModal.show();
+    // Set the assignment ID and assigned hours in the modal
+    document.getElementById('editAssignmentId').value = assignmentId;
+    document.getElementById('editAssignedHours').value = assignedHours;
 
-        // Use Bootstrap's Tab API to activate the correct tab button
-        const tabSelector = tab === 'assignment'
-            ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
-            : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
+    // Open the modal
+    const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
+    editModal.show();
+}
 
-        const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
 
-        if (tabTriggerEl) {
-            const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
-            tabInstance.show();
-        } else {
-            console.warn('Tab trigger element not found:', tabSelector);
-        }
+
+// Delete an assignment
+function deleteAssignment(assignmentId) {
+    if (confirm('Are you sure you want to delete this assignment?')) {
+        fetch('delete-assignment.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `assignment_id=${assignmentId}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === 'success') {
+                location.reload(); // Reload the page to reflect changes
+            } else {
+                alert('Failed to delete assignment.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the assignment.');
+        });
     }
+}
 
 
-    // openEditModal remains unchanged
-    function openEditModal(event) {
-        const buttonElement = event.target;
-        const assignmentId = buttonElement.getAttribute('data-assignment-id');
-        const assignedHours = buttonElement.getAttribute('data-assigned-hours');
 
-        document.getElementById('editAssignmentId').value = assignmentId;
-        document.getElementById('editAssignedHours').value = assignedHours;
-
-        const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
-        editModal.show();
-    }
-// end Open Add Entry modal
-
-
-// Delete assignment function
-    function deleteAssignment(assignmentId) {
-        if (confirm('Are you sure you want to delete this assignment?')) {
-            fetch('delete-assignment.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `assignment_id=${assignmentId}`
-            })
-            .then(response => response.text())
-            .then(result => {
-                if (result === 'success') {
-                    location.reload();
-                } else {
-                    alert('Failed to delete assignment.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while deleting the assignment.');
-            });
-        }
-    }
-// end Delete assignment function
-
-
-// open assignement modal
-  function openassignmentModal(engagementId) {
+function openassignmentModal(engagementId) {
     // Set the engagementId in the hidden input field before fetching the data
     document.getElementById('engagementId').value = engagementId;
 
@@ -352,12 +309,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             assignmentModal.show();
         })
         .catch(error => console.error('Error fetching engagement details:', error));
-  }
-// end open assignement modal
+}
 
 
-// open employee modal
-  function openEmployeeModal(employeeId) {
+
+function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
         .then(response => {
             if (!response.ok) throw new Error("Network error");
@@ -393,8 +349,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             console.error("Error fetching employee details:", err);
             alert("Failed to load employee details.");
         });
-  }
-// end open employee modal
+}
 
     </script>
 </head>
@@ -573,21 +528,20 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage or Add Assignment -->
-  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="manageAddModalLabel">Manage or Add Assignments</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
-        <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+  <div class="modal fade" id="manageAddModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Manage or Add Assignment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+          <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 <!-- end manage or add assignment -->
 
 <!-- Modal for Managing Assignments -->
@@ -635,13 +589,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   </div>
 <!-- end editing assignment -->
 
-<!-- Modal for Adding Entry -->
-  <div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryModalLabel" aria-hidden="true">
+<!-- Modal for Adding assignment -->
+  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title" id="addEntryModalLabel">
+        <h5 class="modal-title" id="assignmentModalLabel">
           <i class="bi bi-calendar-range me-2"></i> New Entry
           <br>
           <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
@@ -652,42 +606,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       </div>
 
       <!-- Custom Tabs -->
-      <div class="custom-tabs-modal" role="tablist">
-        <button
-          class="active"
-          data-tab="assignmentTabPane"
-          role="tab"
-          aria-selected="true"
-          aria-controls="assignmentTabPane"
-          tabindex="0"
-        >
-          Add Assignment
-        </button>
-        <button
-          data-tab="timeoffTabPane"
-          role="tab"
-          aria-selected="false"
-          aria-controls="timeoffTabPane"
-          tabindex="-1"
-        >
-          Add Time Off
-        </button>
+      <div class="custom-tabs" role="tablist">
+        <button class="active" data-tab="assignmentTabPane" role="tab" aria-selected="true" aria-controls="assignmentTabPane" tabindex="0">Add Assignment</button>
+        <button data-tab="timeoffTabPane" role="tab" aria-selected="false" aria-controls="timeoffTabPane" tabindex="-1">Add Time Off</button>
       </div>
 
       <!-- Tab Content -->
-      <div class="tab-content-modal">
+      <div class="tab-content">
         <!-- Assignment Tab Pane -->
-        <div
-          id="assignmentTabPane"
-          class="tab-pane active show"
-          role="tabpanel"
-          aria-labelledby="assignmentTab"
-          aria-hidden="false"
-        >
+        <div id="assignmentTabPane" class="tab-pane active" role="tabpanel" aria-labelledby="assignmentTab">
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="text" id="modalUserId" name="user_id" value="">
-            <input type="text" id="modalWeek" name="week_start" value="">
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -759,87 +690,45 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button
-                type="button"
-                class="btn badge text-black p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="badge text-white p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
-              >
-                Submit
-              </button>
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
+                data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
             </div>
           </form>
         </div>
 
         <!-- Time Off Tab Pane -->
-        <div
-          id="timeoffTabPane"
-          class="tab-pane"
-          role="tabpanel"
-          aria-labelledby="timeoffTab"
-          aria-hidden="true"
-        >
+        <div id="timeoffTabPane" class="tab-pane" role="tabpanel" aria-labelledby="timeoffTab">
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="text" id="timeOFFuser_id" name="user_id" value="">
-            <input type="text" id="timeOFFweek_start" name="week_start" value="">
+            <input type="hidden" name="user_id" id="timeoffUserId" value="">
+            <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
+
+            <div class="mb-3">
+              <label for="timeoffReason" class="form-label">Reason for Time Off</label>
+              <textarea class="form-control" id="timeoffReason" name="reason" rows="3" required></textarea>
+            </div>
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
-              <input
-                type="number"
-                class="form-control"
-                id="timeoffHours"
-                name="hours"
-                min="0"
-                step="0.25"
-                required
-              >
-            </div>
-
-            <div class="mb-3">
-              <label for="timeoffReason" class="form-label">Reason for Time Off (optional)</label>
-              <textarea
-                class="form-control"
-                id="timeoffReason"
-                name="reason"
-                rows="3"
-                placeholder="Optional"
-              ></textarea>
+              <input type="number" class="form-control" id="timeoffHours" name="hours" min="0" step="0.25" required>
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button
-                type="button"
-                class="btn badge text-black p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="badge text-white p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
-              >
-                Submit
-              </button>
+              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
+                data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
             </div>
           </form>
-
         </div>
       </div>
 
     </div>
   </div>
-  </div>
-
+</div>
 
 <!-- end Adding assignment -->
 
@@ -1200,112 +1089,75 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- end script: search -->
 
 <!-- dropdown menu -->
-    <script>
-      const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownList = document.getElementById('dropdownList');
-    const selectedClient = document.getElementById('selectedClient');
-    const engagementInput = document.getElementById('engagementInput');
-
-    dropdownBtn.addEventListener('click', () => {
-      const isOpen = dropdownList.style.display === 'block';
-      dropdownList.style.display = isOpen ? 'none' : 'block';
-      dropdownBtn.setAttribute('aria-expanded', !isOpen);
+  <script>
+    const dropdownBtn = document.getElementById('dropdownBtn');
+  const dropdownList = document.getElementById('dropdownList');
+  const selectedClient = document.getElementById('selectedClient');
+  const engagementInput = document.getElementById('engagementInput');
+  
+  dropdownBtn.addEventListener('click', () => {
+    const isOpen = dropdownList.style.display === 'block';
+    dropdownList.style.display = isOpen ? 'none' : 'block';
+    dropdownBtn.setAttribute('aria-expanded', !isOpen);
+  });
+  
+  dropdownBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      dropdownList.style.display = 'block';
+      dropdownBtn.setAttribute('aria-expanded', 'true');
+      dropdownList.querySelector('.dropdown-item').focus();
+    }
+  });
+  
+  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      selectClient(item);
     });
-
-    dropdownBtn.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        dropdownList.style.display = 'block';
-        dropdownBtn.setAttribute('aria-expanded', 'true');
-        dropdownList.querySelector('.dropdown-item').focus();
-      }
-    });
-
-    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-      item.addEventListener('click', () => {
         selectClient(item);
-      });
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectClient(item);
-        }
-        else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-          next.focus();
-        }
-        else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-          prev.focus();
-        }
-        else if (e.key === 'Escape') {
-          closeDropdown();
-          dropdownBtn.focus();
-        }
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-        closeDropdown();
       }
-    });
-
-    function selectClient(item) {
-      const clientName = item.getAttribute('data-client-name');
-      const engagementId = item.getAttribute('data-engagement-id');
-      selectedClient.textContent = clientName;
-      engagementInput.value = engagementId;
-      closeDropdown();
-    }
-
-    function closeDropdown() {
-      dropdownList.style.display = 'none';
-      dropdownBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    </script>
-<!-- end dropdown menu -->
-
-<!-- Script: Custom Tabs -->
- <script>
-  // Tab switching logic for custom tabs
-  document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetTab = btn.getAttribute('data-tab');
-      if (!targetTab) return;
-
-      // Remove active class on all buttons & update aria attributes
-      document.querySelectorAll('.custom-tabs-modal button').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-        b.setAttribute('tabindex', '-1');
-      });
-
-      // Add active class on clicked button
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      btn.setAttribute('tabindex', '0');
-      btn.focus();
-
-      // Hide all tab panes (remove both active and show)
-      document.querySelectorAll('.tab-pane').forEach(pane => {
-        pane.classList.remove('active', 'show');
-        pane.setAttribute('aria-hidden', 'true');
-      });
-
-      // Show target tab pane (add active and show)
-      const activePane = document.getElementById(targetTab);
-      if (activePane) {
-        activePane.classList.add('active', 'show');
-        activePane.setAttribute('aria-hidden', 'false');
+      else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+        next.focus();
+      }
+      else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+        prev.focus();
+      }
+      else if (e.key === 'Escape') {
+        closeDropdown();
+        dropdownBtn.focus();
       }
     });
   });
+  
+  document.addEventListener('click', (e) => {
+    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+  
+  function selectClient(item) {
+    const clientName = item.getAttribute('data-client-name');
+    const engagementId = item.getAttribute('data-engagement-id');
+    selectedClient.textContent = clientName;
+    engagementInput.value = engagementId;
+    closeDropdown();
+  }
+  
+  function closeDropdown() {
+    dropdownList.style.display = 'none';
+    dropdownBtn.setAttribute('aria-expanded', 'false');
+  }
+  
   </script>
-<!-- end Script: Custom Tabs -->
+
+<!-- end dropdown menu -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
