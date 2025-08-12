@@ -612,12 +612,14 @@ if ($settingResult) {
                 <!-- Right Column: Engagement Status -->
                 <div class="col-md-6">
                   <div class="settings-card d-flex flex-column h-100">
-                    <div class="settings-header mb-2">
+                    <div class="settings-header">
                       <div class="titles">
                         <p class="text-black fw-bold mb-1" style="font-size: 14px;">System Health</p>
                         <p class="fs-6" style="font-size: 14px;">Monitor system performance</p>
                       </div>
                     </div>
+
+                    <div class="mb-2"></div>
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
                       <div>
