@@ -2365,7 +2365,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         console.log("Parsed JSON:", result);
 
         if (result.success) {
-          alert('Settings saved successfully!');
+        //   alert('Settings saved successfully!');
           const modalEl = document.getElementById('emailNotifConfigModal');
           const modalInstance = bootstrap.Modal.getInstance(modalEl);
           modalInstance.hide();

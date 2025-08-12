@@ -1,5 +1,12 @@
 <?php
 // Make sure this is the very first line of the file with no whitespace before it
+header('Content-Type: application/json; charset=utf-8');
+
+// Disable error output to client; log errors instead
+// ini_set('display_errors', 0);
+// ini_set('log_errors', 1);
+// error_reporting(E_ALL);
+
 require_once '../includes/db.php';
 session_start();
 
@@ -49,13 +56,13 @@ try {
     }
     mysqli_commit($conn);
     echo json_encode(['success' => true]);
+    exit;
 } catch (Exception $e) {
     mysqli_rollback($conn);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    exit;
 }
 
 mysqli_stmt_close($stmtCheck);
 mysqli_stmt_close($stmtUpdate);
 mysqli_stmt_close($stmtInsert);
-
-// No closing PHP tag at the end of the file to avoid accidental whitespace
