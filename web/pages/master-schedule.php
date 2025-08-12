@@ -217,8 +217,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   function openAddTimeOffModal(user_id, employeeName, weekStart) {
   console.log('openAddTimeOffModal called with:', { user_id, employeeName, weekStart });
 
-  const userInput = document.getElementById('timeoffUserId');
-  const weekInput = document.getElementById('timeoffWeekStart');
+  const userInput = document.getElementById('timeOFFuser_id');
+  const weekInput = document.getElementById('timeOFFweek_start');
 
   userInput.value = user_id;
   weekInput.value = weekStart;
@@ -792,8 +792,8 @@ function openEmployeeModal(employeeId) {
           aria-hidden="true"
         >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="hidden" name="user_id" id="timeoffUserId" value="">
-            <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
+            <input type="hidden" name="user_id" id="timeOFFuser_id">
+            <input type="hidden" name="week_start" id="timeOFFweek_start">
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
