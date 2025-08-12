@@ -1202,127 +1202,275 @@ if ($settingResult) {
 
 <!-- end import engagements modal -->
 
-<!-- Configure Email Notifications Modal -->
-<div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
-  <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="emailNotifConfigLabel">
-            <i class="bi bi-envelope"></i> Email Notification Settings <br>
-            <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure email notifications and SMTP settings</span>
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Email Notifications Modal -->
+    <div class="modal fade" id="emailNotifConfigModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
+      <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
+            <div class="modal-header">
+              <h5 class="modal-title" id="emailNotifConfigLabel">
+                <i class="bi bi-envelope"></i> Email Notification Settings <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure email notifications and SMTP settings</span>
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <!-- General Settings -->
+              <h6 class="mb-2">General Settings</h6>
+              <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
+                <label class="form-check-label float-start m-0" for="enableEmailNotifications">
+                  Enable Email Notifications (Master switch) <br>
+                  <span class="text-muted" style="font-size: 12px;">
+                    Master switch for all email notifications
+                  </span>
+                </label>
+                <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" <?php if (!empty($settings    ['enable_email_notifications']) && $settings['enable_email_notifications'] === 'true') echo 'checked'; ?>>
+              </div>
+
+              <!-- Notification Types -->
+              <h6 class="mb-2">Notification Types</h6>
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[admin_alerts]" value="true" <?php if (!empty($settings    ['notification_types[admin_alerts]']) && $settings['notification_types[admin_alerts]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
+                  </div>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[project_updates]" value="true" <?php if (!empty    ($settings['notification_types[project_updates]']) && $settings['notification_types[project_updates]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="projectUpdates">Project Updates</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[user_notifications]" value="true" <?php if (!empty  ($settings['notification_types[user_notifications]']) && $settings['notification_types[user_notifications]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="userNotifications">User Notifications</label>
+                  </div>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[login_alerts]" value="true" <?php if (!empty($settings    ['notification_types[login_alerts]']) && $settings['notification_types[login_alerts]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="loginAlerts">Login Alerts</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notification Frequency -->
+              <h6 class="mb-2">Notification Frequency</h6>
+              <select class="form-select mb-4" id="notificationFrequency" name="notification_frequency" required>
+                <option value="immediately" <?php if (($settings['notification_frequency'] ?? '') === 'immediately') echo 'selected'; ?>>Immediately</option>
+                <option value="hourly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'hourly_digest') echo 'selected'; ?>>Hourly Digest</option>
+                <option value="daily_digest" <?php if (($settings['notification_frequency'] ?? '') === 'daily_digest') echo 'selected'; ?>>Daily Digest</option>
+                <option value="weekly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'weekly_digest') echo 'selected'; ?>>Weekly Digest</option>
+              </select>
+
+              <!-- SMTP Configuration -->
+              <h6 class="mb-3">SMTP Configuration</h6>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label for="smtpServer" class="form-label">SMTP Server</label>
+                  <input type="text" class="form-control" id="smtpServer" name="smtp_server" placeholder="smtp.example.com" value="<?php echo htmlspecialchars($settings    ['smtp_server'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpPort" class="form-label">SMTP Port</label>
+                  <input type="number" class="form-control" id="smtpPort" name="smtp_port" placeholder="587" value="<?php echo htmlspecialchars($settings   ['smtp_port'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpUsername" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="smtpUsername" name="smtp_username" placeholder="user@example.com" value="<?php echo htmlspecialchars  ($settings['smtp_username'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="smtpPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="smtpPassword" name="smtp_password" placeholder="••••••••" value="<?php echo htmlspecialchars($settings    ['smtp_password'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="senderName" class="form-label">Sender Name</label>
+                  <input type="text" class="form-control" id="senderName" name="sender_name" placeholder="Your Company" value="<?php echo htmlspecialchars($settings    ['sender_name'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="senderEmail" class="form-label">Sender Email</label>
+                  <input type="email" class="form-control" id="senderEmail" name="sender_email" placeholder="no-reply@example.com" value="<?php echo htmlspecialchars   ($settings['sender_email'] ?? '', ENT_QUOTES); ?>" required>
+                </div>
+              </div>
+
+              <!-- Test Configuration -->
+              <h6 class="mb-3">Test Configuration</h6>
+              <div class="mb-3">
+                <input type="email" class="form-control mb-3" id="testEmail" placeholder="test@example.com" aria-label="Test email">
+
+                <a href="#"
+                   id="sendTestEmailBtn"
+                   class="badge text-black p-2 text-decoration-none fw-medium disabled"
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
+                  <i class="bi bi-envelope me-3"></i>Send Test Email
+                </a>
+              </div>
+
+              <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
+            </div>
+
+            <div class="modal-footer">
+              <a href="#" 
+                 class="badge text-black p-2 text-decoration-none fw-medium" 
+                 style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                 data-bs-dismiss="modal">
+                Cancel
+              </a>
+
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
+                <i class="bi bi-person-plus me-3"></i>Save Settings
+              </button>
+            </div>
+          </form>
         </div>
-
-        <div class="modal-body">
-          <!-- General Settings -->
-          <h6 class="mb-2">General Settings</h6>
-          <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
-            <label class="form-check-label float-start m-0" for="enableEmailNotifications">
-              Enable Email Notifications (Master switch) <br>
-              <span class="text-muted" style="font-size: 12px;">
-                Master switch for all email notifications
-              </span>
-            </label>
-            <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" <?php if (!empty($settings['enable_email_notifications']) && $settings['enable_email_notifications'] === 'true') echo 'checked'; ?>>
-          </div>
-
-          <!-- Notification Types -->
-          <h6 class="mb-2">Notification Types</h6>
-          <div class="row mb-2">
-            <div class="col-6">
-              <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[admin_alerts]" value="true" <?php if (!empty($settings['notification_types[admin_alerts]']) && $settings['notification_types[admin_alerts]'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
-              </div>
-              <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[project_updates]" value="true" <?php if (!empty($settings['notification_types[project_updates]']) && $settings['notification_types[project_updates]'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="projectUpdates">Project Updates</label>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="userNotifications" name="notification_types[user_notifications]" value="true" <?php if (!empty($settings['notification_types[user_notifications]']) && $settings['notification_types[user_notifications]'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="userNotifications">User Notifications</label>
-              </div>
-              <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="loginAlerts" name="notification_types[login_alerts]" value="true" <?php if (!empty($settings['notification_types[login_alerts]']) && $settings['notification_types[login_alerts]'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="loginAlerts">Login Alerts</label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Notification Frequency -->
-          <h6 class="mb-2">Notification Frequency</h6>
-          <select class="form-select mb-4" id="notificationFrequency" name="notification_frequency" required>
-            <option value="immediately" <?php if (($settings['notification_frequency'] ?? '') === 'immediately') echo 'selected'; ?>>Immediately</option>
-            <option value="hourly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'hourly_digest') echo 'selected'; ?>>Hourly Digest</option>
-            <option value="daily_digest" <?php if (($settings['notification_frequency'] ?? '') === 'daily_digest') echo 'selected'; ?>>Daily Digest</option>
-            <option value="weekly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'weekly_digest') echo 'selected'; ?>>Weekly Digest</option>
-          </select>
-
-          <!-- SMTP Configuration -->
-          <h6 class="mb-3">SMTP Configuration</h6>
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <label for="smtpServer" class="form-label">SMTP Server</label>
-              <input type="text" class="form-control" id="smtpServer" name="smtp_server" placeholder="smtp.example.com" value="<?php echo htmlspecialchars($settings['smtp_server'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="smtpPort" class="form-label">SMTP Port</label>
-              <input type="number" class="form-control" id="smtpPort" name="smtp_port" placeholder="587" value="<?php echo htmlspecialchars($settings['smtp_port'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="smtpUsername" class="form-label">Username</label>
-              <input type="text" class="form-control" id="smtpUsername" name="smtp_username" placeholder="user@example.com" value="<?php echo htmlspecialchars($settings['smtp_username'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="smtpPassword" class="form-label">Password</label>
-              <input type="password" class="form-control" id="smtpPassword" name="smtp_password" placeholder="••••••••" value="<?php echo htmlspecialchars($settings['smtp_password'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="senderName" class="form-label">Sender Name</label>
-              <input type="text" class="form-control" id="senderName" name="sender_name" placeholder="Your Company" value="<?php echo htmlspecialchars($settings['sender_name'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-            <div class="col-md-6">
-              <label for="senderEmail" class="form-label">Sender Email</label>
-              <input type="email" class="form-control" id="senderEmail" name="sender_email" placeholder="no-reply@example.com" value="<?php echo htmlspecialchars($settings['sender_email'] ?? '', ENT_QUOTES); ?>" required>
-            </div>
-          </div>
-
-          <!-- Test Configuration -->
-          <h6 class="mb-3">Test Configuration</h6>
-          <div class="mb-3">
-            <input type="email" class="form-control mb-3" id="testEmail" placeholder="test@example.com" aria-label="Test email">
-
-            <a href="#"
-               id="sendTestEmailBtn"
-               class="badge text-black p-2 text-decoration-none fw-medium disabled"
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
-              <i class="bi bi-envelope me-3"></i>Send Test Email
-            </a>
-          </div>
-
-          <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
-        </div>
-
-        <div class="modal-footer">
-          <a href="#" 
-             class="badge text-black p-2 text-decoration-none fw-medium" 
-             style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-             data-bs-dismiss="modal">
-            Cancel
-          </a>
-
-          <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
-            <i class="bi bi-person-plus me-3"></i>Save Settings
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
+<!-- end Email Notification Modal -->
+
+<!-- Backup Configuration Modal -->
+    <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <form id="backupConfigForm" action="settings_backend.php" method="POST">
+            <div class="modal-header">
+              <h5 class="modal-title" id="backupConfigLabel">
+                <i class="bi bi-hdd-stack"></i> Backup Configuration Settings <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure automated backup schedule and storage options</span>
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+              <!-- Last Backup Info Card -->
+              <div class="card mb-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Last backup:</strong> 
+                    <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?>
+                    &nbsp;
+                    (<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshLastBackupBtn">Refresh</button>
+                </div>
+              </div>
+
+              <!-- Backup Schedule -->
+              <h6 class="mb-3">Backup Schedule</h6>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
+                <label class="form-check-label" for="enableAutomatedBackups">Enable Automated Backups</label>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="backupFrequency" class="form-label">Backup Frequency</label>
+                  <select class="form-select" id="backupFrequency" name="backup_frequency" required>
+                    <option value="hourly" <?php if (($settings['backup_frequency'] ?? '') === 'hourly') echo 'selected'; ?>>Every Hour</option>
+                    <option value="daily" <?php if (($settings['backup_frequency'] ?? '') === 'daily') echo 'selected'; ?>>Daily</option>
+                    <option value="weekly" <?php if (($settings['backup_frequency'] ?? '') === 'weekly') echo 'selected'; ?>>Weekly</option>
+                    <option value="monthly" <?php if (($settings['backup_frequency'] ?? '') === 'monthly') echo 'selected'; ?>>Monthly</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="backupTime" class="form-label">Backup Time</label>
+                  <input type="time" class="form-control" id="backupTime" name="backup_time" value="<?php echo htmlspecialchars($settings['backup_time'] ?? '',     ENT_QUOTES); ?>" required>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="retentionPeriod" class="form-label">Retention Period (days)</label>
+                <input type="number" min="1" class="form-control" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings    ['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
+              </div>
+
+              <hr>
+
+              <!-- Backup Content -->
+              <h6 class="mb-3">Backup Content</h6>
+              <div class="row mb-4">
+                <?php
+                $contentKeys = ['backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'];
+                $contentLabels = ['Users', 'Engagements', 'Assignments', 'Settings'];
+                foreach ($contentKeys as $i => $key):
+                ?>
+                  <div class="col-md-3">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="true" <?php if (!empty($settings   [$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
+                      <label class="form-check-label" for="<?php echo $key; ?>"><?php echo $contentLabels[$i]; ?></label>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+
+              <hr>
+
+              <!-- Storage Location -->
+              <h6 class="mb-3">Storage Location</h6>
+              <select class="form-select mb-3" id="storageLocation" name="storage_location" required>
+                <?php 
+                $storageOptions = ['local' => 'Local Storage', 'cloud' => 'Cloud Storage', 'network' => 'Network Storage'];
+                foreach ($storageOptions as $val => $label) {
+                  $selected = (($settings['storage_location'] ?? '') === $val) ? 'selected' : '';
+                  echo "<option value=\"$val\" $selected>$label</option>";
+                }
+                ?>
+              </select>
+
+              <!-- Cloud Storage Settings (conditionally shown) -->
+              <div id="cloudStorageSettings" style="display: none;">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="cloudProvider" class="form-label">Cloud Provider</label>
+                    <select class="form-select" id="cloudProvider" name="cloud_provider">
+                      <?php
+                      $cloudProviders = ['aws' => 'Amazon S3', 'azure' => 'Azure Blob', 'gcp' => 'Google Cloud', 'dropbox' => 'Dropbox'];
+                      foreach ($cloudProviders as $val => $label) {
+                        $selected = (($settings['cloud_provider'] ?? '') === $val) ? 'selected' : '';
+                        echo "<option value=\"$val\" $selected>$label</option>";
+                      }
+                      ?>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="bucketName" class="form-label">Bucket/Container Name</label>
+                    <input type="text" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '',   ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="accessKey" class="form-label">Access Key</label>
+                    <input type="text" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter access key">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="secretKey" class="form-label">Secret Key</label>
+                    <input type="password" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '',  ENT_QUOTES); ?>" placeholder="Enter secret key">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="region" class="form-label">Region</label>
+                  <input type="text" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>"  placeholder="Enter region">
+                </div>
+              </div>
+
+              <hr>
+
+              <!-- Test Configuration -->
+              <h6 class="mb-3">Test Configuration</h6>
+              <button type="button" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
+
+            </div>
+
+            <div class="modal-footer">
+              <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"   data-bs-dismiss="modal">Cancel</a>
+              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
+                <i class="bi bi-save me-2"></i>Save Settings
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<!-- end backup configuration modal  -->
 
 
 <!-- Pagination -->
@@ -2235,99 +2383,153 @@ if ($settingResult) {
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
- <script>
-  // Show modal on configure button click
-  document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    const modalEl = document.getElementById('emailNotifConfigModal');
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-  });
-
-  // Enable/disable Send Test Email button based on email input validity
-  const testEmailInput = document.getElementById('testEmail');
-  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
-
-  testEmailInput.addEventListener('input', function () {
-    if (testEmailInput.checkValidity()) {
-      sendTestEmailBtn.classList.remove('disabled');
-      sendTestEmailBtn.style.pointerEvents = 'auto';
-      sendTestEmailBtn.style.opacity = '1';
-    } else {
-      sendTestEmailBtn.classList.add('disabled');
-      sendTestEmailBtn.style.pointerEvents = 'none';
-      sendTestEmailBtn.style.opacity = '0.5';
-    }
-  });
-
-  // Send test email button handler
-  sendTestEmailBtn.addEventListener('click', async () => {
-    const testEmail = testEmailInput.value.trim();
-    const statusEl = document.getElementById('testEmailStatus');
-    statusEl.classList.add('d-none');
-    statusEl.classList.remove('text-danger', 'text-success');
-    if (!testEmail) {
-      alert('Please enter a test email address.');
-      return;
-    }
-    statusEl.textContent = 'Sending test email...';
-    statusEl.classList.remove('d-none');
-    try {
-      const resp = await fetch('/api/send_test_email.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ test_email: testEmail })
-      });
-      const result = await resp.json();
-      if (result.success) {
-        statusEl.textContent = 'Test email sent successfully!';
-        statusEl.classList.add('text-success');
-      } else {
-        statusEl.textContent = 'Failed to send test email: ' + (result.error || 'Unknown error');
-        statusEl.classList.add('text-danger');
-      }
-    } catch (err) {
-      statusEl.textContent = 'Network error: ' + err.message;
-      statusEl.classList.add('text-danger');
-    }
-  });
-
-  // Save settings handler
-  document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-    data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-
-    const payload = {
-      setting_master_key: 'email',
-      settings: data
-    };
-
-    try {
-      const resp = await fetch('settings_backend.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-      });
-      const result = await resp.json();
-      if (result.success) {
-        // Optionally alert success
-        // alert('Settings saved successfully!');
+    <script>
+      // Show modal on configure button click
+      document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
+        e.preventDefault();
         const modalEl = document.getElementById('emailNotifConfigModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        modalInstance.hide();
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+      });
+
+      // Enable/disable Send Test Email button based on email input validity
+      const testEmailInput = document.getElementById('testEmail');
+      const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+
+      testEmailInput.addEventListener('input', function () {
+        if (testEmailInput.checkValidity()) {
+          sendTestEmailBtn.classList.remove('disabled');
+          sendTestEmailBtn.style.pointerEvents = 'auto';
+          sendTestEmailBtn.style.opacity = '1';
+        } else {
+          sendTestEmailBtn.classList.add('disabled');
+          sendTestEmailBtn.style.pointerEvents = 'none';
+          sendTestEmailBtn.style.opacity = '0.5';
+        }
+      });
+
+      // Send test email button handler
+      sendTestEmailBtn.addEventListener('click', async () => {
+        const testEmail = testEmailInput.value.trim();
+        const statusEl = document.getElementById('testEmailStatus');
+        statusEl.classList.add('d-none');
+        statusEl.classList.remove('text-danger', 'text-success');
+        if (!testEmail) {
+          alert('Please enter a test email address.');
+          return;
+        }
+        statusEl.textContent = 'Sending test email...';
+        statusEl.classList.remove('d-none');
+        try {
+          const resp = await fetch('/api/send_test_email.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ test_email: testEmail })
+          });
+          const result = await resp.json();
+          if (result.success) {
+            statusEl.textContent = 'Test email sent successfully!';
+            statusEl.classList.add('text-success');
+          } else {
+            statusEl.textContent = 'Failed to send test email: ' + (result.error || 'Unknown error');
+            statusEl.classList.add('text-danger');
+          }
+        } catch (err) {
+          statusEl.textContent = 'Network error: ' + err.message;
+          statusEl.classList.add('text-danger');
+        }
+      });
+
+      // Save settings handler
+      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+
+        const payload = {
+          setting_master_key: 'email',
+          settings: data
+        };
+
+        try {
+          const resp = await fetch('settings_backend.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+          const result = await resp.json();
+          if (result.success) {
+            // Optionally alert success
+            // alert('Settings saved successfully!');
+            const modalEl = document.getElementById('emailNotifConfigModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            modalInstance.hide();
+          } else {
+            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('Network error: ' + err.message);
+        }
+      });
+    </script>
+
+<!-- end email notification script -->
+
+<!-- backup configuration -->
+<script>
+  // Show/hide cloud storage options based on storageLocation select
+  function updateCloudStorageVisibility() {
+    const storageSelect = document.getElementById('storageLocation');
+    const cloudSettings = document.getElementById('cloudStorageSettings');
+    if (storageSelect.value === 'cloud') {
+      cloudSettings.style.display = 'block';
+    } else {
+      cloudSettings.style.display = 'none';
+    }
+  }
+
+  document.getElementById('storageLocation').addEventListener('change', updateCloudStorageVisibility);
+
+  // Initialize visibility on page load
+  updateCloudStorageVisibility();
+
+  // Refresh Last Backup button (example)
+  document.getElementById('refreshLastBackupBtn').addEventListener('click', () => {
+    // Implement your AJAX call or other logic to refresh last backup info here
+    alert('Refresh last backup info functionality not implemented yet.');
+  });
+
+  // Run Test Backup button handler (example)
+  document.getElementById('runTestBackupBtn').addEventListener('click', async () => {
+    // Disable button while running test
+    const btn = document.getElementById('runTestBackupBtn');
+    btn.disabled = true;
+    btn.textContent = 'Running Test Backup...';
+
+    try {
+      const resp = await fetch('/api/run_test_backup.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ /* pass any needed data */ })
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        alert('Test backup ran successfully!');
       } else {
-        alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+        alert('Test backup failed: ' + (result.error || 'Unknown error'));
       }
     } catch (err) {
       alert('Network error: ' + err.message);
     }
+
+    btn.disabled = false;
+    btn.textContent = 'Run Test Backup';
   });
 </script>
-
-<!-- end email notification script -->
+<!-- end backup configuration -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
