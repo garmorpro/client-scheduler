@@ -187,7 +187,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     </div>
                     <div class="user-management-buttons">
                         <a href="#" 
-                           class="badge text-black p-2 text-decoration-none fw-medium overlay-red" 
+                           class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
                            data-bs-toggle="modal" 
                            data-bs-target="#importUsersModal">
