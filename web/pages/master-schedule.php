@@ -215,16 +215,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         const date = new Date(weekStart);
-
-        // Calculate the difference in days to get Monday (0=Sunday, 1=Monday,...)
-        const day = date.getDay(); // 0-6 Sun-Sat
-        const diffToMonday = (day === 0) : 1 - day; // if Sunday (0), go back 6 days; else go back (day-1)
-
-        // Get Monday date
+            
+        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+            
+        // If Sunday (0), go forward 1 day to Monday
+        // Else go back (day - 1) days to Monday
+        const diffToMonday = (day === 0) ? 1 : 1 - day;
+            
         const mondayDate = new Date(date);
         mondayDate.setDate(date.getDate() + diffToMonday);
-
+            
         document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
+
 
 
         // Reset inputs depending on the tab
