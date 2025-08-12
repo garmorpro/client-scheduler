@@ -1218,7 +1218,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 </div>
 
               <!-- Notification Types -->
-              <h6 class="mb-2 mt-5">Notification Types</h6>
+              <h6 class="mb-2 mt-4">Notification Types</h6>
               <div class="row mb-4">
                 <div class="col-6">
                   <div class="form-check form-switch mb-2">
