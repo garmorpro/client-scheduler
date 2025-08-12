@@ -1564,30 +1564,41 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- end Script: Render Assignments Listing -->
 
 <!-- Script: Render Time Off Listing -->
- <script>
+<script>
   function renderTimeOffList(user_id, weekStart) {
-  if (!timeOffData) {
-    console.warn("timeOffData not defined");
+  console.log("renderTimeOffList called with:", { user_id, weekStart });
+
+  if (typeof timeOffData === 'undefined') {
+    console.warn("timeOffData is not defined!");
     return;
   }
+  console.log("timeOffData loaded:", timeOffData);
+
   const userTimeOff = timeOffData[user_id];
   if (!userTimeOff) {
     console.log(`No time off data found for user_id ${user_id}`);
-    // Clear the container or show "No entries"
     document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
     return;
   }
+  console.log(`Time off entries for user ${user_id}:`, userTimeOff);
+
   const weekTimeOff = userTimeOff[weekStart];
-  if (!weekTimeOff || weekTimeOff.length === 0) {
-    console.log(`No time off entries for user ${user_id} in week ${weekStart}`);
+  if (!weekTimeOff) {
+    console.log(`No time off data found for weekStart ${weekStart}`);
+    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
+    return;
+  }
+  if (weekTimeOff.length === 0) {
+    console.log(`Time off array for user ${user_id} and week ${weekStart} is empty`);
     document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
     return;
   }
 
-  // Otherwise, build the HTML for entries
+  console.log(`Rendering ${weekTimeOff.length} time off entries:`, weekTimeOff);
+
   let html = '';
   weekTimeOff.forEach(entry => {
-    // Customize based on your data structure, e.g.:
+    console.log("Rendering time off entry:", entry);
     html += `<div class="timeoff-entry mb-2 p-2 border rounded">
       <strong>Reason:</strong> ${entry.reason || 'N/A'}<br>
       <strong>Hours:</strong> ${entry.hours || 'N/A'}<br>
@@ -1598,8 +1609,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   document.getElementById('timeOffListContainer').innerHTML = html;
 }
 
-
- </script>
+</script>
 <!-- end Script: Time Off Listing -->
 
 
