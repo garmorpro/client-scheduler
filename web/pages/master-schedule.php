@@ -192,24 +192,41 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // open addAssignmentModal
     function openAddassignmentModal(user_id, employeeName, weekStart) {
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const weekDate = new Date(weekStart);
-    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-
-    // Reset custom dropdown selection and hidden input
-    document.getElementById('selectedClient').textContent = 'Select a client';
-    document.getElementById('engagementInput').value = '';
-
-    // Reset assigned hours input
-    document.getElementById('assignedHours').value = '';
-
-    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-    assignmentModal.show();
+  if (!weekStart || isNaN(new Date(weekStart).getTime())) {
+    console.warn('Invalid weekStart date:', weekStart);
+    return;
   }
+
+  document.getElementById('modalUserId').value = user_id;
+  document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
+  document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const weekDate = new Date(weekStart);
+  document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+
+  // Reset UI states
+  document.getElementById('entryTypePrompt').classList.remove('d-none');
+  document.getElementById('timeOffEntryContent').classList.add('d-none');
+  document.getElementById('newAssignmentContent').classList.add('d-none');
+
+  // Clear inputs
+  document.getElementById('selectedClient').textContent = 'Select a client';
+  document.getElementById('engagementInput').value = '';
+  document.getElementById('assignedHours').value = '';
+  document.getElementById('timeOffHours').value = '';
+
+  // Reset dropdown aria
+  const dropdownBtn = document.getElementById('dropdownBtn');
+  if (dropdownBtn) {
+    dropdownBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  // Show modal
+  const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+  assignmentModal.show();
+}
+
 
 // end open addAssignmentModal
 
@@ -606,8 +623,8 @@ function openEmployeeModal(employeeId) {
 
         <div class="modal-body">
           <!-- Hidden inputs -->
-           <input type="text" id="modalUserId" name="user_id" value="">
-          <input type="text" id="modalWeek" name="week_start" value="">
+            <input type="text" id="modalUserId" name="user_id" value="">
+            <input type="text" id="modalWeek" name="week_start" value="">
           
 
           <!-- Initial prompt with two buttons -->
