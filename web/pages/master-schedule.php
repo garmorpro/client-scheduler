@@ -154,8 +154,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    if (assignmentsForWeek.length > 0) {
-        // There are existing assignments - open the Manage/Add modal
+    console.log("Assignments for week:", assignmentsForWeek);
+
+    const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+
+    if (hasAssignments) {
+        // Show Manage/Add modal
         const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
         manageAddModal.show();
 
@@ -166,10 +170,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             openAddassignmentModal(user_id, employeeName, weekStart);
         };
     } else {
-        // No assignments - open Add Engagement modal immediately
+        // Directly open Add Assignment modal
         openAddassignmentModal(user_id, employeeName, weekStart);
     }
 }
+
+
+
+
+
+
+
 
 
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
