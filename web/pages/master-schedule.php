@@ -149,66 +149,61 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
-  console.log("Modal triggered with arguments:");
-  console.log("user_id:", user_id);
-  console.log("employeeName:", employeeName);
-  console.log("weekStart:", weekStart);
-  console.log("engagement_id:", engagement_id);
+    function openManageOrAddModal(user_id, employeeName, weekStart) {
+        console.log("Modal triggered:", user_id, employeeName, weekStart);
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-  const assignments = <?php echo json_encode($assignments); ?>;
-  console.log("Assignments data loaded from PHP:", assignments);
+        const manageAddModalElement = document.getElementById('manageAddModal');
+        const manageAddModal = new bootstrap.Modal(manageAddModalElement);
 
-  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-  console.log("Assignments for user and week:", assignmentsForWeek);
+        // Clone buttons to remove old event listeners
+        const manageBtn = document.getElementById('manageAssignmentsButton');
+        const addBtn = document.getElementById('addAssignmentsButton');
 
-  const manageEntryModalElement = document.getElementById('manageEntryModal');
-  if (!manageEntryModalElement) {
-    console.warn("manageEntryModal element NOT found!");
-  } else {
-    console.log("manageEntryModal element found.");
-  }
-  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+        manageBtn.replaceWith(manageBtn.cloneNode(true));
+        addBtn.replaceWith(addBtn.cloneNode(true));
 
-  // Set hidden inputs here for Add Assignment tab form:
-  const manageUserIdInput = document.getElementById('manageModalUserId');
-  const manageWeekInput = document.getElementById('manageModalWeek');
-  const manageEngagementInput = document.getElementById('manageEngagementInput');
+        const newManageBtn = document.getElementById('manageAssignmentsButton');
+        const newAddBtn = document.getElementById('addAssignmentsButton');
 
-  if (manageUserIdInput) {
-    manageUserIdInput.value = user_id;
-    console.log("Set manageModalUserId to:", manageUserIdInput.value);
-  } else {
-    console.warn("manageModalUserId input NOT found!");
-  }
+        newManageBtn.onclick = function() {
+            openManageAssignmentsModal(user_id, employeeName, weekStart);
+            manageAddModal.hide();
+        };
+        newAddBtn.onclick = function() {
+            openAddEntryModal(user_id, employeeName, weekStart);
+            manageAddModal.hide();
+        };
 
-  if (manageWeekInput) {
-    manageWeekInput.value = weekStart;
-    console.log("Set manageModalWeek to:", manageWeekInput.value);
-  } else {
-    console.warn("manageModalWeek input NOT found!");
-  }
-
-  if (manageEngagementInput) {
-    manageEngagementInput.value = engagement_id;
-    console.log("Set manageEngagementInput to:", manageEngagementInput.value);
-  } else {
-    console.warn("manageEngagementInput input NOT found!");
-  }
-
-  if (assignmentsForWeek.length > 0) {
-    console.log("Assignments found for this user/week, rendering list and showing manage modal");
-    renderAssignmentsList(user_id, weekStart);
-    manageEntryModal.show();
-  } else {
-    console.log("No assignments found for this user/week, opening Add Entry modal");
-    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
-  }
-}
+        if (assignmentsForWeek.length > 0) {
+            manageAddModal.show();
+        } else {
+            // No assignments — open addEntryModal directly
+            openAddEntryModal(user_id, employeeName, weekStart);
+        }
+    }
 // end Open modal for Manage Assignments or Add Entry
 
+
+// Manage assignments modal
+    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+        const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+        document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+
+        const assignments = <?php echo json_encode($assignments); ?>;
+        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+        showAssignments(assignmentsForWeek);
+
+        const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+        assignmentsModal.show();
+    }
+// end Manage assignments modal
+
+
 // Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
+    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
         // Set inputs for user and week in the forms
         document.getElementById('modalUserId').value = user_id;
         document.getElementById('modalWeek').value = weekStart;
@@ -217,40 +212,29 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
         // Update display spans
         document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-
+            
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         const date = new Date(weekStart);
-
-        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-        // If Sunday (0), go forward 1 day to Monday
-        // Else go back (day - 1) days to Monday
-        const diffToMonday = (day === 0) ? 1 : 1 - day;
-
+            
+        // Calculate the difference in days to get Monday (0=Sunday, 1=Monday,...)
+        const day = date.getDay(); // 0-6 Sun-Sat
+        const diffToMonday = (day === 0) ? -6 : 1 - day; // if Sunday (0), go back 6 days; else go back (day-1)
+            
+        // Get Monday date
         const mondayDate = new Date(date);
         mondayDate.setDate(date.getDate() + diffToMonday);
-
+            
         document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
-
 
 
         // Reset inputs depending on the tab
         if (tab === 'assignment') {
             document.getElementById('selectedClient').textContent = 'Select a client';
-            document.getElementById('engagementInput').value = engagement_id;
+            document.getElementById('engagementInput').value = '';
             document.getElementById('assignedHours').value = '';
         } else if (tab === 'timeoff') {
             document.getElementById('timeoffHours').value = '';
             document.getElementById('timeoffReason').value = '';
-        }
-
-        console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
-        const engagementInputEl = document.getElementById('engagementInput');
-        console.log('engagementInput element found:', engagementInputEl);
-        if (engagementInputEl) {
-          console.log('Before set, engagementInput value:', engagementInputEl.value);
-          engagementInputEl.value = engagement_id;
-          console.log('After set, engagementInput value:', engagementInputEl.value);
         }
 
         // Show the addEntryModal modal
@@ -273,11 +257,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
     }
 
-// end Open Add Entry modal
 
-
-
-// openEditModal remains unchanged
+    // openEditModal remains unchanged
     function openEditModal(event) {
         const buttonElement = event.target;
         const assignmentId = buttonElement.getAttribute('data-assignment-id');
@@ -289,22 +270,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
         editModal.show();
     }
-// end openEditModal
-
-
-// Manage assignments modal
-    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
-  const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-  document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-  // Render assignments list in manageEntryModal manageTabPane
-  renderAssignmentsList(user_id, weekStart);
-
-  const assignmentsModal = new bootstrap.Modal(document.getElementById('manageEntryModal'));
-  assignmentsModal.show();
-  }
-// end Manage assignments modal
+// end Open Add Entry modal
 
 
 // Delete assignment function
@@ -523,94 +489,80 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           </thead>
 
           <tbody>
-  <?php foreach ($employees as $userId => $employee): ?>
-    <?php
-      $fullName = htmlspecialchars($employee['full_name']);
-      $nameParts = explode(' ', trim($fullName));
-      $initials = '';
-      foreach ($nameParts as $part) {
-          $initials .= strtoupper(substr($part, 0, 1));
-      }
-      $role = htmlspecialchars($employee['role']);
-    ?>
-    <tr>
-      <td class="text-start">
-        <div class="d-flex align-items-center">
-          <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-               style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-            <?php echo $initials; ?>
-          </div>
-          <div>
-            <div class="fw-semibold"><?php echo $fullName; ?></div>
-            <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-          </div>
-        </div>
-      </td>
-
-      <?php foreach ($mondays as $idx => $monday): ?>
-        <?php 
-          $weekStart = $monday;
-          $isCurrent = ($idx === $currentWeekIndex);
-          $weekKey = date('Y-m-d', $weekStart);
-          $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
-          $cellContent = "";
-          $engagement_id = '';
-
-          if (!empty($assignmentsForWeek)) {
-              $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
-              foreach ($assignmentsForWeek as $assignment) {
-                  $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                  switch ($engagementStatus) {
-                      case 'confirmed': $badgeColor = 'success'; break;
-                      case 'pending': $badgeColor = 'purple'; break;
-                      case 'not_confirmed': $badgeColor = 'primary'; break;
-                      default: $badgeColor = 'secondary'; break;
+              <?php foreach ($employees as $userId => $employee): ?>
+                  <?php
+                  $fullName = htmlspecialchars($employee['full_name']);
+                  $nameParts = explode(' ', trim($fullName));
+                  $initials = '';
+                  foreach ($nameParts as $part) {
+                      $initials .= strtoupper(substr($part, 0, 1));
                   }
-                  $clientName = htmlspecialchars($assignment['client_name']);
-                  $assignedHours = htmlspecialchars($assignment['assigned_hours']);
-                  $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
-              }
-          } else {
-              $cellContent = "<span class='text-muted'>+</span>";
-          }
+                  $role = htmlspecialchars($employee['role']);
+                  ?>
+                  <tr>
+                      <td class="text-start">
+                          <div class="d-flex align-items-center">
+                              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                                   style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                                  <?php echo $initials; ?>
+                              </div>
+                              <div>
+                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                              </div>
+                          </div>
+                      </td>
 
-          $tdClass = $isCurrent ? 'highlight-today' : '';
-          $hasAssignment = isset($assignments[$userId][$weekKey]);
-        ?>
+                      <?php foreach ($mondays as $idx => $monday): ?>
+                          <?php 
+                          $weekStart = $monday;
+                          $isCurrent = ($idx === $currentWeekIndex);
 
-        <?php if ($isAdmin): ?>
-          <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer"
-              onclick='
-                <?php if ($hasAssignment): ?>
-                  openManageEntryModal(
-                    "<?php echo $userId; ?>",
-                    <?php echo json_encode($fullName); ?>,
-                    "<?php echo $weekKey; ?>", 
-                    "<?php echo htmlspecialchars($engagement_id, ENT_QUOTES); ?>"
-                  )
-                <?php else: ?>
-                  openAddEntryModal(
-                    "<?php echo $userId; ?>",
-                    <?php echo json_encode($fullName); ?>,
-                    "<?php echo $weekKey; ?>", 
-                    ""
-                  )
-                <?php endif; ?>
-              '
-          >
-            <?php echo $cellContent; ?>
-          </td>
-        <?php else: ?>
-          <td class="<?php echo $tdClass; ?>">
-            <?php echo $cellContent; ?>
-          </td>
-        <?php endif; ?>
+                          // Format weekStart as Y-m-d string for key lookup
+                          $weekKey = date('Y-m-d', $weekStart);
 
-      <?php endforeach; // end mondays ?>
-    </tr>
-  <?php endforeach; // end employees ?>
-</tbody>
+                          // Get assignments for this user and week, default empty array
+                          $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
+                          $cellContent = "";
 
+                          if (!empty($assignmentsForWeek)) {
+                              foreach ($assignmentsForWeek as $assignment) {
+                                  $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                                  switch ($engagementStatus) {
+                                      case 'confirmed': $badgeColor = 'success'; break;
+                                      case 'pending': $badgeColor = 'purple'; break;
+                                      case 'not_confirmed': $badgeColor = 'primary'; break;
+                                      default: $badgeColor = 'secondary'; break;
+                                  }
+                                  $clientName = htmlspecialchars($assignment['client_name']);
+                                  $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+                                  $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
+                              }
+                          } else {
+                              $cellContent = "<span class='text-muted'>+</span>";
+                          }
+
+                          $tdClass = $isCurrent ? 'highlight-today' : '';
+                          ?>
+
+                          <?php if ($isAdmin): ?>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                                  "<?php echo $userId; ?>",
+                                  <?php echo json_encode($fullName); ?>,
+                                  "<?php echo $weekKey; ?>"
+                              )'>
+                                  <?php echo $cellContent; ?>
+                              </td>
+                          <?php else: ?>
+                              <td class="<?php echo $tdClass; ?>">
+                                  <?php echo $cellContent; ?>
+                              </td>
+                          <?php endif; ?>
+
+                      <?php endforeach; ?>
+                  </tr>
+              <?php endforeach; ?>
+          </tbody>
       </table>
   </div>
 
@@ -620,47 +572,23 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <?php if ($isAdmin): ?>
 
-<!-- Modal for Manage Entry -->
-<div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg"> <!-- wider modal -->
+<!-- Modal for Manage or Add Assignment -->
+  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel">
+  <div class="modal-dialog">
     <div class="modal-content">
-
       <div class="modal-header">
-        <h5 class="modal-title" id="manageEntryModalLabel">
-          <i class="bi bi-pencil-square me-2"></i> Manage Entries
-        </h5>
+        <h5 class="modal-title" id="manageAddModalLabel">Manage or Add Assignments</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
       <div class="modal-body">
-        <div id="assignmentsListContainer" class="mb-3">
-          <!-- Assignments list will be rendered here by JS -->
-        </div>
-        <button 
-          id="addAssignmentBtn" 
-          type="button" 
-          class="btn btn-primary"
-        >
-          Add Assignment
-        </button>
+        <button id="manageAssignmentsButton" class="btn btn-warning w-100 mb-2">Manage Existing Assignments</button>
+        <button id="addAssignmentsButton" class="btn btn-success w-100">Add New Assignment</button>
       </div>
-
-      <div class="modal-footer p-0 mt-3 border-0">
-        <button
-          type="button"
-          class="btn badge text-black p-2 text-decoration-none fw-medium"
-          style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229,229);"
-          data-bs-dismiss="modal"
-        >
-          Cancel
-        </button>
-      </div>
-
     </div>
   </div>
 </div>
-<!-- end Modal for Manage entry -->
 
+<!-- end manage or add assignment -->
 
 <!-- Modal for Managing Assignments -->
   <div class="modal fade" id="assignmentsModal" tabindex="-1">
@@ -691,7 +619,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="editAssignmentForm" action="update_assignment.php" method="POST">
+          <form id="editAssignmentForm" action="edit-assignment-process.php" method="POST">
             <input type="hidden" id="editAssignmentId" name="assignment_id">
             <div class="mb-3">
               <label for="editAssignedHours" class="form-label">Assigned Hours</label>
@@ -758,8 +686,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="hidden" id="modalUserId" name="user_id" value="">
-            <input type="hidden" id="modalWeek" name="week_start" value="">
+            <input type="text" id="modalUserId" name="user_id" value="">
+            <input type="text" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -859,8 +787,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           aria-hidden="true"
         >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="hidden" id="timeOFFuser_id" name="user_id" value="">
-            <input type="hidden" id="timeOFFweek_start" name="week_start" value="">
+            <input type="text" id="timeOFFuser_id" name="user_id" value="">
+            <input type="text" id="timeOFFweek_start" name="week_start" value="">
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
@@ -913,7 +841,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   </div>
 
 
-<!-- end Adding Entry -->
+<!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
   <div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
@@ -1342,159 +1270,42 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- end dropdown menu -->
 
 <!-- Script: Custom Tabs -->
-  <script>
-    // Generic Tab switching logic for all modals with custom tabs
-    document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const modal = btn.closest('.modal');
-        const targetTab = btn.getAttribute('data-tab');
-        if (!targetTab || !modal) return;
+ <script>
+  // Tab switching logic for custom tabs
+  document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab');
+      if (!targetTab) return;
 
-        // Tab buttons within this modal
-        const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
-        tabButtons.forEach(b => {
-          const isActive = (b === btn);
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          b.setAttribute('tabindex', isActive ? '0' : '-1');
-        });
-
-        // Tab panes within this modal
-        const tabPanes = modal.querySelectorAll('.tab-content-modal > .tab-pane');
-        tabPanes.forEach(pane => {
-          const isActive = (pane.id === targetTab);
-          pane.classList.toggle('active', isActive);
-          pane.classList.toggle('show', isActive);
-          pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-        });
+      // Remove active class on all buttons & update aria attributes
+      document.querySelectorAll('.custom-tabs-modal button').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+        b.setAttribute('tabindex', '-1');
       });
-    });
 
-    // Generic reset tabs on any modal close (for modals that have custom-tabs-modal)
-    document.querySelectorAll('.modal').forEach(modalEl => {
-      modalEl.addEventListener('hidden.bs.modal', () => {
-        const tabsContainer = modalEl.querySelector('.custom-tabs-modal');
-        if (!tabsContainer) return;
+      // Add active class on clicked button
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      btn.setAttribute('tabindex', '0');
+      btn.focus();
 
-        const tabButtons = tabsContainer.querySelectorAll('button');
-        if (tabButtons.length === 0) return;
-
-        // Reset all tab buttons
-        tabButtons.forEach(btn => {
-          btn.classList.remove('active');
-          btn.setAttribute('aria-selected', 'false');
-          btn.setAttribute('tabindex', '-1');
-        });
-
-        // Activate first tab button
-        tabButtons[0].classList.add('active');
-        tabButtons[0].setAttribute('aria-selected', 'true');
-        tabButtons[0].setAttribute('tabindex', '0');
-
-        // Reset all tab panes inside this modal
-        const tabPanes = modalEl.querySelectorAll('.tab-content-modal > .tab-pane');
-        tabPanes.forEach(pane => {
-          pane.classList.remove('active', 'show');
-          pane.setAttribute('aria-hidden', 'true');
-        });
-
-        // Show first tab pane
-        const firstTabId = tabButtons[0].getAttribute('data-tab');
-        const firstPane = modalEl.querySelector(`#${firstTabId}`);
-        if (firstPane) {
-          firstPane.classList.add('active', 'show');
-          firstPane.setAttribute('aria-hidden', 'false');
-        }
+      // Hide all tab panes (remove both active and show)
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active', 'show');
+        pane.setAttribute('aria-hidden', 'true');
       });
+
+      // Show target tab pane (add active and show)
+      const activePane = document.getElementById(targetTab);
+      if (activePane) {
+        activePane.classList.add('active', 'show');
+        activePane.setAttribute('aria-hidden', 'false');
+      }
     });
+  });
   </script>
 <!-- end Script: Custom Tabs -->
-
-<!-- Script: Render Assignments Listing -->
-  <script>
-    function renderAssignmentsList(user_id, weekStart) {
-  const assignments = <?php echo json_encode($assignments); ?>;
-  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-
-  console.log('Assignments for user', user_id, 'week', weekStart, assignmentsForWeek);
-
-  const container = document.getElementById('assignmentsListContainer');
-  container.innerHTML = '';
-
-  if (assignmentsForWeek.length === 0) {
-    container.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
-    return;
-  }
-
-  assignmentsForWeek.forEach(assignment => {
-    const card = document.createElement('div');
-    card.classList.add('card', 'mb-3', 'shadow-sm');
-
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
-
-    const leftDiv = document.createElement('div');
-    leftDiv.innerHTML = `
-      <div class="fw-semibold fs-6">${assignment.client_name || 'Unnamed Client'}</div>
-      <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
-    `;
-
-    const rightDiv = document.createElement('div');
-
-    // Edit link
-    const editLink = document.createElement('a');
-    editLink.href = "#";
-    editLink.title = "Edit Assignment";
-    editLink.className = "text-primary me-3";
-    editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-    editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
-    editLink.onclick = (e) => {
-      e.preventDefault();
-      const parentModalEl = document.getElementById('manageEntryModal');
-      const editModalEl = document.getElementById('editAssignmentModal');
-
-      // Hide parent modal
-      const parentModal = bootstrap.Modal.getInstance(parentModalEl) || new bootstrap.Modal(parentModalEl);
-      parentModal.hide();
-
-      // Show edit modal
-      const editModal = new bootstrap.Modal(editModalEl);
-      document.getElementById('editAssignmentId').value = assignment.assignment_id || assignment.id || '';
-      document.getElementById('editAssignedHours').value = assignment.assigned_hours || 0;
-      editModal.show();
-
-      // When edit modal closes, re-show parent modal
-      editModalEl.addEventListener('hidden.bs.modal', () => {
-        parentModal.show();
-      }, { once: true });
-    };
-
-    // Delete link
-    const deleteLink = document.createElement('a');
-    deleteLink.href = "#";
-    deleteLink.title = "Delete Assignment";
-    deleteLink.className = "text-danger";
-    deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-    deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-    deleteLink.onclick = (e) => {
-      e.preventDefault();
-      console.log('Delete clicked for assignment:', assignment);
-      // Your delete logic here (confirm and delete)
-    };
-
-    rightDiv.appendChild(editLink);
-    rightDiv.appendChild(deleteLink);
-
-    cardBody.appendChild(leftDiv);
-    cardBody.appendChild(rightDiv);
-    card.appendChild(cardBody);
-    container.appendChild(card);
-  });
-  }
-
-  </script>
-<!-- end Script: Render Assignments Listing -->
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
