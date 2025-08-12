@@ -623,8 +623,8 @@ function openEmployeeModal(employeeId) {
 
         <div class="modal-body">
           <!-- Hidden inputs -->
-            <input type="text" id="modalUserId" name="user_id" value="">
-            <input type="text" id="modalWeek" name="week_start" value="">
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
           
 
           <!-- Initial prompt with two buttons -->
