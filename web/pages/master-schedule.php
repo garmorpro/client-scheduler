@@ -925,7 +925,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   <div class="mb-3 custom-dropdown">
     <label for="engagementInput-2" class="form-label">Client Name</label>
     <div
-      class="dropdown-btn"
+      class="dropdown-btn-2"
       id="dropdownBtn-2"
       tabindex="0"
       aria-haspopup="listbox"
