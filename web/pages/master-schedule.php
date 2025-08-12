@@ -1190,12 +1190,18 @@ function openEmployeeModal(employeeId) {
      const form = document.getElementById('assignmentForm');
      const footer = document.getElementById('modal-footer');
 
+     // Reset footer when modal is hidden
+  // assignmentModal.addEventListener('hide.bs.modal', function () {
+  //   footer.classList.add('d-none');
+  // });
+
      // Reset modal to prompt state every time it opens
      const assignmentModal = document.getElementById('assignmentModal');
      assignmentModal.addEventListener('show.bs.modal', function (event) {
        entryTypePrompt.classList.remove('d-none');
        timeOffEntryContent.classList.add('d-none');
        newAssignmentContent.classList.add('d-none');
+       footer.classList.add('d-none');
 
       //  modalTitle.textContent = 'Select Entry Type';
       //  modalSubtitle.textContent = '';
