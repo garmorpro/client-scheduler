@@ -414,7 +414,7 @@ function openEmployeeModal(employeeId) {
     <table class="table table-bordered align-middle text-center">
         <thead class="table-light">
             <tr>
-                <th class="text-start">Employee</th>
+                <th class="text-start"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
                     $weekStart = date('Y-m-d', $monday);
