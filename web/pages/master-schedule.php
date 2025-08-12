@@ -190,69 +190,72 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
 
-// open addAssignmentModal
-    function openAddassignmentModal(user_id, employeeName, weekStart) {
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-    document.getElementById('timeOFFuser_id').value = user_id;
-    document.getElementById('timeOFFweek_start').value = weekStart;
-
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const weekDate = new Date(weekStart);
-    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-
-    // Reset custom dropdown selection and hidden input
-    document.getElementById('selectedClient').textContent = 'Select a client';
-    document.getElementById('engagementInput').value = '';
-
-    // Reset assigned hours input
-    document.getElementById('assignedHours').value = '';
-
-    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-    assignmentModal.show();
-  }
-
-// end open addAssignmentModal
-
-// open addTimeOffModal
-  function openAddTimeOffModal(user_id, employeeName, weekStart) {
-  console.log('openAddTimeOffModal called with:', { user_id, employeeName, weekStart });
-
-    document.getElementById('timeOFFuser_id').value = user_id;
-    document.getElementById('timeOFFweek_start').value = weekStart;  // must be "YYYY-MM-DD"
 
 
+    
+
+function openModal(user_id, employeeName, weekStart, tab = 'assignment') {
+  // Set user and week inputs for both forms (assignment and time off)
+  document.getElementById('modalUserId').value = user_id;
+  document.getElementById('modalWeek').value = weekStart;
+  document.getElementById('timeOFFuser_id').value = user_id;
+  document.getElementById('timeOFFweek_start').value = weekStart;
+
+  // Update display spans
   document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   const weekDate = new Date(weekStart);
   document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
-  document.getElementById('timeoffHours').value = '';
-  document.getElementById('timeoffReason').value = '';
-
-  // Activate time off tab, deactivate assignment tab
-  const assignmentTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="assignmentTabPane"]');
-  const timeoffTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="timeoffTabPane"]');
-  assignmentTabBtn.classList.remove('active');
-  assignmentTabBtn.setAttribute('aria-selected', 'false');
-  assignmentTabBtn.setAttribute('tabindex', '-1');
-  timeoffTabBtn.classList.add('active');
-  timeoffTabBtn.setAttribute('aria-selected', 'true');
-  timeoffTabBtn.setAttribute('tabindex', '0');
-  timeoffTabBtn.focus();
-
-  document.getElementById('assignmentTabPane').classList.remove('active', 'show');
-  document.getElementById('assignmentTabPane').setAttribute('aria-hidden', 'true');
-  document.getElementById('timeoffTabPane').classList.add('active', 'show');
-  document.getElementById('timeoffTabPane').setAttribute('aria-hidden', 'false');
-
+  // Prepare modal instance
   const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+
+  if (tab === 'assignment') {
+    // Reset assignment form dropdown and inputs
+    document.getElementById('selectedClient').textContent = 'Select a client';
+    document.getElementById('engagementInput').value = '';
+    document.getElementById('assignedHours').value = '';
+
+    // Activate assignment tab, deactivate time off tab
+    const assignmentTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="assignmentTabPane"]');
+    const timeoffTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="timeoffTabPane"]');
+    assignmentTabBtn.classList.add('active');
+    assignmentTabBtn.setAttribute('aria-selected', 'true');
+    assignmentTabBtn.setAttribute('tabindex', '0');
+    timeoffTabBtn.classList.remove('active');
+    timeoffTabBtn.setAttribute('aria-selected', 'false');
+    timeoffTabBtn.setAttribute('tabindex', '-1');
+
+    document.getElementById('assignmentTabPane').classList.add('active', 'show');
+    document.getElementById('assignmentTabPane').setAttribute('aria-hidden', 'false');
+    document.getElementById('timeoffTabPane').classList.remove('active', 'show');
+    document.getElementById('timeoffTabPane').setAttribute('aria-hidden', 'true');
+  } 
+  else if (tab === 'timeoff') {
+    // Reset time off form inputs
+    document.getElementById('timeoffHours').value = '';
+    document.getElementById('timeoffReason').value = '';
+
+    // Activate time off tab, deactivate assignment tab
+    const assignmentTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="assignmentTabPane"]');
+    const timeoffTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="timeoffTabPane"]');
+    assignmentTabBtn.classList.remove('active');
+    assignmentTabBtn.setAttribute('aria-selected', 'false');
+    assignmentTabBtn.setAttribute('tabindex', '-1');
+    timeoffTabBtn.classList.add('active');
+    timeoffTabBtn.setAttribute('aria-selected', 'true');
+    timeoffTabBtn.setAttribute('tabindex', '0');
+    timeoffTabBtn.focus();
+
+    document.getElementById('assignmentTabPane').classList.remove('active', 'show');
+    document.getElementById('assignmentTabPane').setAttribute('aria-hidden', 'true');
+    document.getElementById('timeoffTabPane').classList.add('active', 'show');
+    document.getElementById('timeoffTabPane').setAttribute('aria-hidden', 'false');
+  }
+
+  // Show modal
   assignmentModal.show();
 }
-
-// end open addTimeOffModal
 
 
 
