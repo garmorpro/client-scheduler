@@ -708,7 +708,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           aria-hidden="true"
         >
           <!-- You can put any time off related content or controls here -->
-          <p class="text-muted">Manage time off requests and details here.</p>
+          <div id="timeOffListContainer" class="p-2"></div> <!-- Add this! -->
         </div>
       </div>
 
