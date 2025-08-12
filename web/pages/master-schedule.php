@@ -606,7 +606,7 @@ function openEmployeeModal(employeeId) {
       </div>
 
       <!-- Custom Tabs -->
-      <div class="custom-tabs" role="tablist">
+      <div class="custom-tabs-modal" role="tablist">
         <button class="active" data-tab="assignmentTabPane" role="tab" aria-selected="true" aria-controls="assignmentTabPane" tabindex="0">Add Assignment</button>
         <button data-tab="timeoffTabPane" role="tab" aria-selected="false" aria-controls="timeoffTabPane" tabindex="-1">Add Time Off</button>
       </div>
@@ -1187,7 +1187,7 @@ function openEmployeeModal(employeeId) {
       if (activePane) activePane.classList.add('active');
     });
   });
-</script>
+  </script>
 <!-- end Script: Custom Tabs -->
 
 
