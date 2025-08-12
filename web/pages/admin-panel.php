@@ -104,7 +104,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
 
 $settings = [];
-$settingSQL = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
+$settingSQL = "SELECT setting_key, setting_value FROM settings";
 $settingResult = $conn->query($settingSQL);
 
 if ($settingResult) {
