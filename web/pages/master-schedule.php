@@ -895,109 +895,66 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         </button>
       </div>
 
-      <!-- Tab Content -->
-      <div class="tab-content-modal">
-        <!-- Assignment Tab Pane -->
-        <div
-          id="assignmentTabPane"
-          class="tab-pane active show"
-          role="tabpanel"
-          aria-labelledby="assignmentTab"
-          aria-hidden="false"
-        >
-          <form id="assignmentForm" action="add_assignment.php" method="POST">
-            <!-- Hidden inputs -->
-            <input type="text" id="modalUserId" name="user_id" value="">
-            <input type="text" id="modalWeek" name="week_start" value="">
+      <!-- Second Form (example) -->
+<form id="assignmentForm-2" action="add_assignment.php" method="POST">
+  <!-- Hidden inputs -->
+  <input type="text" id="modalUserId-2" name="user_id" value="">
+  <input type="text" id="modalWeek-2" name="week_start" value="">
 
-            <!-- Client Dropdown -->
-            <div class="mb-3 custom-dropdown">
-              <label for="engagementInput" class="form-label">Client Name</label>
-              <div
-                class="dropdown-btn"
-                id="dropdownBtn"
-                tabindex="0"
-                aria-haspopup="listbox"
-                aria-expanded="false"
-                role="combobox"
-                aria-labelledby="selectedClient"
-              >
-                <span id="selectedClient" class="text-muted">Select a client</span>
-                <span>&#9662;</span>
-              </div>
+  <!-- Client Dropdown -->
+  <div class="mb-3 custom-dropdown">
+    <label for="engagementInput-2" class="form-label">Client Name</label>
+    <div
+      class="dropdown-btn"
+      id="dropdownBtn-2"
+      tabindex="0"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      role="combobox"
+      aria-labelledby="selectedClient-2"
+    >
+      <span id="selectedClient-2" class="text-muted">Select a client</span>
+      <span>&#9662;</span>
+    </div>
 
-              <div
-                class="dropdown-list"
-                id="dropdownList"
-                role="listbox"
-                tabindex="-1"
-                aria-labelledby="selectedClient"
-              >
-                <?php
-                  $statusDisplayMap = [
-                    'confirmed' => 'Confirmed',
-                    'pending' => 'Pending',
-                    'not_confirmed' => 'Not Confirmed'
-                  ];
-                  $statusClassMap = [
-                    'confirmed' => 'text-confirmed',
-                    'pending' => 'text-pending',
-                    'not_confirmed' => 'text-not-confirmed'
-                  ];
-                ?>
-                <?php foreach ($clientsWithHours as $client): ?>
-                  <?php
-                    $statusKey = strtolower($client['status']);
-                    $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
-                    $statusClass = $statusClassMap[$statusKey] ?? '';
-                  ?>
-                  <div
-                    class="dropdown-item"
-                    data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
-                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                    role="option"
-                    tabindex="0"
-                  >
-                    <div>
-                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
-                      <small class="text-muted">
-                        <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
-                        <i class="bi bi-dot"></i> 
-                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
-                      </small>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
+    <div
+      class="dropdown-list"
+      id="dropdownList-2"
+      role="listbox"
+      tabindex="-1"
+      aria-labelledby="selectedClient-2"
+    >
+      <!-- your PHP generated dropdown items here -->
+    </div>
 
-              <input type="text" id="engagementInput" name="engagement_id" required>
-            </div>
+    <input type="text" id="engagementInput-2" name="engagement_id" required>
+  </div>
 
-            <!-- Assigned hours -->
-            <div class="mb-3">
-              <label for="assignedHours" class="form-label">Hours</label>
-              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
-            </div>
+  <!-- Assigned hours -->
+  <div class="mb-3">
+    <label for="assignedHours-2" class="form-label">Hours</label>
+    <input type="number" class="form-control" id="assignedHours-2" name="assigned_hours" min="0" step="0.25" required>
+  </div>
 
-            <div class="modal-footer p-0 pt-3 border-0">
-              <button
-                type="button"
-                class="btn badge text-black p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="badge text-white p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
+  <div class="modal-footer p-0 pt-3 border-0">
+    <button
+      type="button"
+      class="btn badge text-black p-2 text-decoration-none fw-medium"
+      style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
+      data-bs-dismiss="modal"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="badge text-white p-2 text-decoration-none fw-medium"
+      style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+
 
         <!-- Time Off Tab Pane -->
         <div
@@ -1422,10 +1379,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <!-- dropdown menu -->
     <script>
-  const dropdownBtn = document.getElementById('dropdownBtn');
-  const dropdownList = document.getElementById('dropdownList');
-  const selectedClient = document.getElementById('selectedClient');
-  const engagementInput = document.getElementById('engagementInput');
+  function setupDropdown(suffix = '') {
+  const dropdownBtn = document.getElementById(`dropdownBtn${suffix}`);
+  const dropdownList = document.getElementById(`dropdownList${suffix}`);
+  const selectedClient = document.getElementById(`selectedClient${suffix}`);
+  const engagementInput = document.getElementById(`engagementInput${suffix}`);
+
+  if (!dropdownBtn || !dropdownList || !selectedClient || !engagementInput) {
+    console.warn('Dropdown elements not found for suffix:', suffix);
+    return;
+  }
 
   dropdownBtn.addEventListener('click', () => {
     const isOpen = dropdownList.style.display === 'block';
@@ -1486,28 +1449,36 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     dropdownBtn.setAttribute('aria-expanded', 'false');
   }
 
-  // Call this with the engagement_id string to pre-select the client on modal open
-  function preselectClientByEngagementId(engagementId) {
-    if (!engagementId) {
+  // Expose a preselect function if needed:
+  return {
+    preselectClientByEngagementId(engagementId) {
+      if (!engagementId) {
+        selectedClient.textContent = 'Select a client';
+        selectedClient.classList.add('text-muted');
+        engagementInput.value = '';
+        return;
+      }
+      const items = dropdownList.querySelectorAll('.dropdown-item');
+      for (const item of items) {
+        if (item.getAttribute('data-engagement-id') === engagementId) {
+          selectedClient.textContent = item.getAttribute('data-client-name');
+          selectedClient.classList.remove('text-muted');
+          engagementInput.value = engagementId;
+          return;
+        }
+      }
+      // Not found
       selectedClient.textContent = 'Select a client';
       selectedClient.classList.add('text-muted');
       engagementInput.value = '';
-      return;
     }
-    const items = dropdownList.querySelectorAll('.dropdown-item');
-    for (const item of items) {
-      if (item.getAttribute('data-engagement-id') === engagementId) {
-        selectedClient.textContent = item.getAttribute('data-client-name');
-        selectedClient.classList.remove('text-muted');
-        engagementInput.value = engagementId;
-        return;
-      }
-    }
-    // If not found
-    selectedClient.textContent = 'Select a client';
-    selectedClient.classList.add('text-muted');
-    engagementInput.value = '';
-  }
+  };
+}
+
+// Initialize both dropdowns:
+const dropdown1 = setupDropdown('');
+const dropdown2 = setupDropdown('-2');
+
 </script>
 
 <!-- end dropdown menu -->
