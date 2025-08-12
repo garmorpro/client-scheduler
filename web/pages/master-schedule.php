@@ -1324,7 +1324,7 @@ function openEmployeeModal(employeeId) {
     assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
 
     // Fetch real assignments from server API endpoint (you'll need to create this endpoint)
-    fetch(`get_assignments.php?user_id=${encodeURIComponent(userId)}&week_start=${encodeURIComponent(weekStart)}`)
+    fetch(`get_assignments.php?user_id=${currentUserId}&week_start=${currentWeekStart}`)
       .then(response => {
         if (!response.ok) throw new Error('Network response was not OK');
         return response.json();
