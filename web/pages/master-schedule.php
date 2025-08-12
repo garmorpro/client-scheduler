@@ -182,37 +182,30 @@ while ($row = $result->fetch_assoc()) {
 
 
 
+// open addAssignmentModal
+    // JS function to open modal and set values dynamically
+function openAddassignmentModal(user_id, employeeName, weekStart) {
+    // Set hidden inputs
+    document.getElementById('modalUserId').value = user_id;
+    document.getElementById('modalWeek').value = weekStart;
 
-    function openAddassignmentModal(user_id, employeeName, weekStart) {
-        // Prepare modal data for engagement
-        document.getElementById('modalEmployee').value = user_id;
-        document.getElementById('modalEmployeeName').value = employeeName;
-        document.getElementById('modalWeek').value = weekStart;
+    // Update subtitle display
+    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
-        const assignmentModalElement = new bootstrap.Modal(document.getElementById('assignmentModal'));
-        assignmentModalElement.show();
-    }
+    // Format weekStart date to a readable format (e.g., "Aug 11, 2025")
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const weekDate = new Date(weekStart);
+    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
-    function showAssignments(assignmentsForWeek) {
-    let assignmentsList = '';
+    // Reset form fields
+    document.getElementById('clientSelect').value = '';
+    document.getElementById('assignedHours').value = '';
 
-    assignmentsForWeek.forEach((assignment) => {
-        assignmentsList += `
-            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                <div>
-                    <strong>${assignment.client_name}</strong><br>
-                    <small>${assignment.assigned_hours} hrs</small>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-warning me-1" data-assignment-id="${assignment.assignment_id}" data-assigned-hours="${assignment.assigned_hours}" onclick="openEditModal(event)">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${assignment.assignment_id})">Delete</button>
-                </div>
-            </div>
-        `;
-    });
-
-    document.getElementById('existingAssignments').innerHTML = assignmentsList;
+    // Show the Bootstrap modal
+    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+    assignmentModal.show();
 }
+
 
 // Update openEditModal to handle dynamic elements properly
 function openEditModal(event) {
@@ -624,7 +617,6 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
-
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
