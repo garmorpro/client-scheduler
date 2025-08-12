@@ -709,6 +709,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <!-- You can put any time off related content or controls here -->
           <div id="timeOffListContainer" class="p-2"></div> <!-- Add this! -->
+
+          <?php
+var_dump($timeOff);
+?>
         </div>
       </div>
 
