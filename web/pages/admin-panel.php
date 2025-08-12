@@ -1287,7 +1287,14 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <h6 class="mb-3">Test Configuration</h6>
               <div class="input-group mb-3">
                 <input type="email" class="form-control" id="testEmail" placeholder="test@example.com" aria-label="Test email">
-                <button class="btn btn-outline-primary" type="button" id="sendTestEmailBtn">Send Test Email</button>
+                
+                <a href="#" 
+                   class="badge text-black p-2 text-decoration-none fw-medium" 
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                   
+                   >
+                    <i class="bi bi-upload me-3"></i>Send Test Email
+                </a>
               </div>
 
               <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
