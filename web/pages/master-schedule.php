@@ -58,7 +58,9 @@ while ($clientRow = $clientResult->fetch_assoc()) {
     $activeClients[] = $clientRow;
 }
 
-// Query assignments for the date range with engagement status
+$startDate = date('Y-m-d', $startMonday);
+$endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
+
 $query = "
     SELECT 
         a.assignment_id,
@@ -67,7 +69,7 @@ $query = "
         e.client_name,
         a.week_start,
         a.assigned_hours,
-        e.status AS engagement_status -- 👈 Add this line to get engagement's status
+        e.status AS engagement_status
     FROM 
         assignments a
     JOIN 
@@ -77,6 +79,10 @@ $query = "
 ";
 
 $stmt = $conn->prepare($query);
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
+
 $stmt->bind_param('ss', $startDate, $endDate);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -88,9 +94,12 @@ while ($row = $result->fetch_assoc()) {
         'client_name' => $row['client_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
-        'engagement_status' => $row['engagement_status'], // ✅ Now available
+        'engagement_status' => $row['engagement_status'],
     ];
 }
+
+$stmt->close();
+
 ?>
 
 <!DOCTYPE html>
