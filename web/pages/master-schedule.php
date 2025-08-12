@@ -150,11 +150,24 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // Open modal for Manage Assignments or Add Entry (new modal)
   function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
-  console.log("Modal triggered:", user_id, employeeName, weekStart);
+  console.log("Modal triggered with arguments:");
+  console.log("user_id:", user_id);
+  console.log("employeeName:", employeeName);
+  console.log("weekStart:", weekStart);
+  console.log("engagement_id:", engagement_id);
+
   const assignments = <?php echo json_encode($assignments); ?>;
+  console.log("Assignments data loaded from PHP:", assignments);
+
   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  console.log("Assignments for user and week:", assignmentsForWeek);
 
   const manageEntryModalElement = document.getElementById('manageEntryModal');
+  if (!manageEntryModalElement) {
+    console.warn("manageEntryModal element NOT found!");
+  } else {
+    console.log("manageEntryModal element found.");
+  }
   const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
   // Set hidden inputs here for Add Assignment tab form:
@@ -162,49 +175,37 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   const manageWeekInput = document.getElementById('manageModalWeek');
   const manageEngagementInput = document.getElementById('manageEngagementInput');
 
-  if (manageUserIdInput) manageUserIdInput.value = user_id;
-  if (manageWeekInput) manageWeekInput.value = weekStart;
-  if (manageEngagementInput) manageEngagementInput.value = engagement_id;
-
-  // Remove or comment out this entire button handling block:
-  /*
-  const manageBtn = document.getElementById('manageAssignmentsButton');
-  const addBtn = document.getElementById('addAssignmentsButton');
-
-  console.log('manageBtn:', manageBtn);
-  console.log('addBtn:', addBtn);
-
-  if (manageBtn) {
-    manageBtn.replaceWith(manageBtn.cloneNode(true));
-  }
-  if (addBtn) {
-    addBtn.replaceWith(addBtn.cloneNode(true));
+  if (manageUserIdInput) {
+    manageUserIdInput.value = user_id;
+    console.log("Set manageModalUserId to:", manageUserIdInput.value);
+  } else {
+    console.warn("manageModalUserId input NOT found!");
   }
 
-  const newManageBtn = document.getElementById('manageAssignmentsButton');
-  const newAddBtn = document.getElementById('addAssignmentsButton');
+  if (manageWeekInput) {
+    manageWeekInput.value = weekStart;
+    console.log("Set manageModalWeek to:", manageWeekInput.value);
+  } else {
+    console.warn("manageModalWeek input NOT found!");
+  }
 
-  if (newManageBtn) {
-    newManageBtn.onclick = function() {
-      openManageAssignmentsModal(user_id, employeeName, weekStart, engagement_id);
-      manageEntryModal.hide();
-    };
+  if (manageEngagementInput) {
+    manageEngagementInput.value = engagement_id;
+    console.log("Set manageEngagementInput to:", manageEngagementInput.value);
+  } else {
+    console.warn("manageEngagementInput input NOT found!");
   }
-  if (newAddBtn) {
-    newAddBtn.onclick = function() {
-      openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
-      manageEntryModal.hide();
-    };
-  }
-  */
 
   if (assignmentsForWeek.length > 0) {
+    console.log("Assignments found for this user/week, rendering list and showing manage modal");
     renderAssignmentsList(user_id, weekStart);
     manageEntryModal.show();
   } else {
+    console.log("No assignments found for this user/week, opening Add Entry modal");
     openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
   }
 }
+
 
 
 
