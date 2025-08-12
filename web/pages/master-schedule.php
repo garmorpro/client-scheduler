@@ -207,7 +207,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // end Open modal for Manage Assignments or Add Entry
 
 // Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment', engagement_id = '') {
+    function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
         // Set inputs for user and week in the forms
         document.getElementById('modalUserId').value = user_id;
         document.getElementById('modalWeek').value = weekStart;
