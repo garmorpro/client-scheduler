@@ -150,12 +150,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // Open modal for Manage Assignments or Add Entry (new modal)
   function openManageEntryModal(user_id, employeeName, weekStart) {
-    console.log("Modal triggered:", user_id, employeeName, weekStart);
-    const assignments = <?php echo json_encode($assignments); ?>;
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  console.log("Modal triggered:", user_id, employeeName, weekStart);
+  const assignments = <?php echo json_encode($assignments); ?>;
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    const manageEntryModalElement = document.getElementById('manageEntryModal');
-    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+  const manageEntryModalElement = document.getElementById('manageEntryModal');
+  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+
+  // Set hidden inputs here for Add Assignment tab form:
+  const manageUserIdInput = document.getElementById('manageModalUserId');
+  const manageWeekInput = document.getElementById('manageModalWeek');
+
+  if (manageUserIdInput) manageUserIdInput.value = user_id;
+  if (manageWeekInput) manageWeekInput.value = weekStart;
 
     const manageBtn = document.getElementById('manageAssignmentsButton');
     const addBtn = document.getElementById('addAssignmentsButton');
@@ -187,34 +194,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
     if (assignmentsForWeek.length > 0) {
-      // *** Render assignments list here so it's visible immediately ***
-      renderAssignmentsList(user_id, weekStart);
-
-      manageEntryModal.show();
-    } else {
-      openAddEntryModal(user_id, employeeName, weekStart);
-    }
+    renderAssignmentsList(user_id, weekStart);
+    manageEntryModal.show();
+  } else {
+    openAddEntryModal(user_id, employeeName, weekStart);
   }
+}
 
 
 // end Open modal for Manage Assignments or Add Entry
-
-
-
-// Manage assignments modal
-    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
-  const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-  document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-  // Render assignments list in manageEntryModal manageTabPane
-  renderAssignmentsList(user_id, weekStart);
-
-  const assignmentsModal = new bootstrap.Modal(document.getElementById('manageEntryModal'));
-  assignmentsModal.show();
-  }
-// end Manage assignments modal
-
 
 // Open Add Entry modal
     function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
@@ -290,6 +278,21 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         editModal.show();
     }
 // end Open Add Entry modal
+
+
+// Manage assignments modal
+    function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+  const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+  document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+
+  // Render assignments list in manageEntryModal manageTabPane
+  renderAssignmentsList(user_id, weekStart);
+
+  const assignmentsModal = new bootstrap.Modal(document.getElementById('manageEntryModal'));
+  assignmentsModal.show();
+  }
+// end Manage assignments modal
 
 
 // Delete assignment function
