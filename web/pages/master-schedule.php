@@ -143,60 +143,105 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     </style>
+
+    <script>
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const addEntryModal = document.getElementById('addEntryModal');
+  //   if (!addEntryModal) {
+  //     console.warn('addEntryModal not found');
+  //     return;
+  //   }
+
+  //   addEntryModal.addEventListener('show.bs.modal', event => {
+  //     const button = event.relatedTarget; // Button that triggered the modal
+  //     if (!button) return;
+
+  //     const userId = button.getAttribute('data-user-id') || '';
+  //     const weekStart = button.getAttribute('data-week-start') || '';
+  //     const employeeName = button.getAttribute('data-employee-name') || '';
+
+  //     openAddEntryModal(userId, employeeName, weekStart);
+  //   });
+  // });
+</script>
+
+
+
     <script>
     function autoSubmitDateFilter() {
         document.getElementById("filterForm").submit();
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-  const assignments = <?php echo json_encode($assignments); ?>;
-  const timeOffData = <?php echo json_encode($timeOff ?? []); ?>;
-
-  
-
   function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
-    console.log("Modal triggered with arguments:");
-    console.log("user_id:", user_id);
-    console.log("employeeName:", employeeName);
-    console.log("weekStart:", weekStart);
-    console.log("engagement_id:", engagement_id);
+  console.log("Modal triggered with arguments:");
+  console.log("user_id:", user_id);
+  console.log("employeeName:", employeeName);
+  console.log("weekStart:", weekStart);
+  console.log("engagement_id:", engagement_id);
 
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-    console.log("Assignments for user and week:", assignmentsForWeek);
+  const assignments = <?php echo json_encode($assignments); ?>;
+  console.log("Assignments data loaded from PHP:", assignments);
 
-    const manageEntryModalElement = document.getElementById('manageEntryModal');
-    if (!manageEntryModalElement) {
-      console.warn("manageEntryModal element NOT found!");
-      return;
-    }
-    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  console.log("Assignments for user and week:", assignmentsForWeek);
 
-    // Update the "Add New Entry" button inside Manage modal with correct data attributes
-    const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
-    if (addNewEntryBtn) {
-      addNewEntryBtn.setAttribute('data-user-id', user_id);
-      addNewEntryBtn.setAttribute('data-week-start', weekStart);
-      addNewEntryBtn.setAttribute('data-employee-name', employeeName);
-      console.log('Set Add New Entry button data attributes:', {
-        user_id,
-        weekStart,
-        employeeName
-      });
-    } else {
-      console.warn('Add New Entry button inside manageEntryModal NOT found!');
-    }
+  const manageEntryModalElement = document.getElementById('manageEntryModal');
+  if (!manageEntryModalElement) {
+    console.warn("manageEntryModal element NOT found!");
+    return;
+  }
+  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-    // Call render functions with valid data present
-    renderTimeOffList(user_id, weekStart);
+  // Set hidden inputs here for Manage modal form:
+  const manageUserIdInput = document.getElementById('manageModalUserId');
+  const manageWeekInput = document.getElementById('manageModalWeek');
+  const manageEngagementInput = document.getElementById('manageEngagementInput');
 
-    if (assignmentsForWeek.length > 0) {
-      console.log("Assignments found for this user/week, rendering list and showing manage modal");
-      renderAssignmentsList(user_id, weekStart);
-      manageEntryModal.show();
-    } else {
-      console.log("No assignments found for this user/week, opening Add Entry modal");
-      openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
-    }
+  if (manageUserIdInput) {
+    manageUserIdInput.value = user_id;
+    console.log("Set manageModalUserId to:", manageUserIdInput.value);
+  } else {
+    console.warn("manageModalUserId input NOT found!");
+  }
+
+  if (manageWeekInput) {
+    manageWeekInput.value = weekStart;
+    console.log("Set manageModalWeek to:", manageWeekInput.value);
+  } else {
+    console.warn("manageModalWeek input NOT found!");
+  }
+
+  if (manageEngagementInput) {
+    manageEngagementInput.value = engagement_id;
+    console.log("Set manageEngagementInput to:", manageEngagementInput.value);
+  } else {
+    console.warn("manageEngagementInput input NOT found!");
+  }
+
+  // Update the "Add New Entry" button inside Manage modal with correct data attributes
+  const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
+  if (addNewEntryBtn) {
+    addNewEntryBtn.setAttribute('data-user-id', user_id);
+    addNewEntryBtn.setAttribute('data-week-start', weekStart);
+    addNewEntryBtn.setAttribute('data-employee-name', employeeName);
+    console.log('Set Add New Entry button data attributes:', {
+      user_id,
+      weekStart,
+      employeeName
+    });
+  } else {
+    console.warn('Add New Entry button inside manageEntryModal NOT found!');
+  }
+
+  if (assignmentsForWeek.length > 0) {
+    console.log("Assignments found for this user/week, rendering list and showing manage modal");
+    renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
+    manageEntryModal.show();
+  } else {
+    console.log("No assignments found for this user/week, opening Add Entry modal");
+    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
+  }
   }
 
 // end Open modal for Manage Assignments or Add Entry
@@ -342,6 +387,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 // end Delete assignment function
 
+
 // open assignement modal
   function openassignmentModal(engagementId) {
     // Set the engagementId in the hidden input field before fetching the data
@@ -399,6 +445,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   }
 // end open assignement modal
 
+
 // open employee modal
   function openEmployeeModal(employeeId) {
     fetch(`employee-details.php?id=${employeeId}`)
@@ -439,16 +486,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   }
 // end open employee modal
 
-</script>
-
+    </script>
 </head>
 <body class="d-flex">
-
 <?php include_once '../templates/sidebar.php'; ?>
-
 <div class="flex-grow-1 p-4">
-
-<!-- header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h3 class="mb-0">Master Schedule</h3>
@@ -462,9 +504,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           <i class="bi bi-arrow-clockwise me-3"></i>Refresh
         </a>
 
-      </div>
-  </div>
-<!-- end header -->
+    </div>
+</div>
 
 <!-- upper search and week range selector -->
   <div class="bg-white border rounded p-4 mb-4">
@@ -635,15 +676,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <?php if ($isAdmin): ?>
 
-
-  <?php
-
-  echo '<pre>TimeOff Data: ';
-print_r($timeOff);
-echo '</pre>';
-
-?>
-
 <!-- Modal for Manage Entry -->
   <div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -719,7 +751,7 @@ echo '</pre>';
           aria-hidden="true"
         >
           <!-- You can put any time off related content or controls here -->
-          <div id="timeOffListContainer" class="p-2"></div> <!-- Add this! -->
+          <p class="text-muted">Manage time off requests and details here.</p>
         </div>
       </div>
 
@@ -1573,55 +1605,6 @@ echo '</pre>';
 
   </script>
 <!-- end Script: Render Assignments Listing -->
-
-<!-- Script: Render Time Off Listing -->
-<script>
-  function renderTimeOffList(user_id, weekStart) {
-  console.log("renderTimeOffList called with:", { user_id, weekStart });
-
-  if (typeof timeOffData === 'undefined') {
-    console.warn("timeOffData is not defined!");
-    return;
-  }
-  console.log("timeOffData loaded:", timeOffData);
-
-  const userTimeOff = timeOffData[user_id];
-  if (!userTimeOff) {
-    console.log(`No time off data found for user_id ${user_id}`);
-    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
-    return;
-  }
-  console.log(`Time off entries for user ${user_id}:`, userTimeOff);
-
-  const weekTimeOff = userTimeOff[weekStart];
-  if (!weekTimeOff) {
-    console.log(`No time off data found for weekStart ${weekStart}`);
-    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
-    return;
-  }
-  if (weekTimeOff.length === 0) {
-    console.log(`Time off array for user ${user_id} and week ${weekStart} is empty`);
-    document.getElementById('timeOffListContainer').innerHTML = '<p class="text-muted">No time off entries for this week.</p>';
-    return;
-  }
-
-  console.log(`Rendering ${weekTimeOff.length} time off entries:`, weekTimeOff);
-
-  let html = '';
-  weekTimeOff.forEach(entry => {
-    console.log("Rendering time off entry:", entry);
-    html += `<div class="timeoff-entry mb-2 p-2 border rounded">
-      <strong>Reason:</strong> ${entry.reason || 'N/A'}<br>
-      <strong>Hours:</strong> ${entry.hours || 'N/A'}<br>
-      <strong>Date:</strong> ${entry.date || 'N/A'}
-    </div>`;
-  });
-
-  document.getElementById('timeOffListContainer').innerHTML = html;
-}
-
-</script>
-<!-- end Script: Time Off Listing -->
 
 
 
