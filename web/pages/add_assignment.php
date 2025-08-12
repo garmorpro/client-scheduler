@@ -34,6 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'week_start' => $weekStart,
     ]);
 
+    console_log([
+    'POST' => $_POST,
+    'employeeId' => $employeeId,
+    'clientId' => $clientId,
+    'weekStart' => $weekStart,
+    'assignedHours' => $assignedHours,
+    'timeOffHours' => $timeOffHours,
+    'hours' => $hours
+]);
+
     // Validate format YYYY-MM-DD
     if (!$weekStart || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $weekStart)) {
         console_log("Invalid or missing week_start date: " . $weekStart);
