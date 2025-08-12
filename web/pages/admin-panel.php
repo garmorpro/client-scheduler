@@ -374,7 +374,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     // Fetch all activities, newest first
                     $sql = "SELECT event_type, full_name, title, description, created_at 
                             FROM system_activity_log 
-                            ORDER BY created_at DESC";
+                            ORDER BY created_at DESC LIMIT 3";
                     $result = $conn->query($sql);
 
                     if ($result && $result->num_rows > 0) {
