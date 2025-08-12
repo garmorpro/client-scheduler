@@ -545,12 +545,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                           // Format weekStart as Y-m-d string for key lookup
                           $weekKey = date('Y-m-d', $weekStart);
 
-                          // Get assignments for this user and week, default empty array
+                      
                           $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
                           $cellContent = "";
+                          $engagement_id = ''; // define early so it's always set
 
                           if (!empty($assignmentsForWeek)) {
-                            $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
+                              $engagement_id = $assignmentsForWeek[0]['engagement_id'] ?? '';
                               foreach ($assignmentsForWeek as $assignment) {
                                   $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
                                   switch ($engagementStatus) {
@@ -567,16 +568,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                               $cellContent = "<span class='text-muted'>+</span>";
                           }
 
+
                           $tdClass = $isCurrent ? 'highlight-today' : '';
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageEntryModal(
-                                  "<?php echo $userId; ?>",
-                                  <?php echo json_encode($fullName); ?>,
-                                  "<?php echo $weekKey; ?>", 
-                                  "<?php echo $engagement_id; ?>"
-                              )'>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                                  onclick="openManageEntryModal(
+                                      '<?php echo addslashes($userId); ?>',
+                                      <?php echo json_encode($fullName); ?>,
+                                      '<?php echo $weekKey; ?>',
+                                      '<?php echo addslashes($engagement_id); ?>'
+                                  )">
                                   <?php echo $cellContent; ?>
                               </td>
                           <?php else: ?>
