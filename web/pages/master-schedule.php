@@ -215,16 +215,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         const date = new Date(weekStart);
-            
+
         const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-            
+
         // If Sunday (0), go forward 1 day to Monday
         // Else go back (day - 1) days to Monday
         const diffToMonday = (day === 0) ? 1 : 1 - day;
-            
+
         const mondayDate = new Date(date);
         mondayDate.setDate(date.getDate() + diffToMonday);
-            
+
         document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
 
 
@@ -688,8 +688,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="text" id="modalUserId" name="user_id" value="">
-            <input type="text" id="modalWeek" name="week_start" value="">
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -789,8 +789,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           aria-hidden="true"
         >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="text" id="timeOFFuser_id" name="user_id" value="">
-            <input type="text" id="timeOFFweek_start" name="week_start" value="">
+            <input type="hidden" id="timeOFFuser_id" name="user_id" value="">
+            <input type="hidden" id="timeOFFweek_start" name="week_start" value="">
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
@@ -843,7 +843,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   </div>
 
 
-<!-- end Adding assignment -->
+<!-- end Adding Entry -->
 
 <!-- Modal for Adding Engagement -->
   <div class="modal fade" id="engagementModal" tabindex="-1" aria-labelledby="engagementModalLabel" aria-hidden="true">
