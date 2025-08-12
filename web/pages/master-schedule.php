@@ -153,7 +153,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         console.log("Modal triggered:", user_id, employeeName, weekStart);
 
         // Then use these variables to fetch assignments:
-        fetch(`get_assignments.php?user_id=${userId}&week_start=${weekStart}`)
+        fetch(`get_assignments.php?user_id=${user_id}&week_start=${weekStart}`)
           .then(res => {
             if (!res.ok) throw new Error("Network response was not OK");
             return res.json();
