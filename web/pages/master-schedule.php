@@ -907,8 +907,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
-            <input type="hidden" id="modalUserId" name="user_id" value="">
-            <input type="hidden" id="modalWeek" name="week_start" value="">
+            <input type="text" id="modalUserId" name="user_id" value="">
+            <input type="text" id="modalWeek" name="week_start" value="">
 
             <!-- Client Dropdown -->
             <div class="mb-3 custom-dropdown">
@@ -1422,72 +1422,94 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <!-- dropdown menu -->
     <script>
-      const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownList = document.getElementById('dropdownList');
-    const selectedClient = document.getElementById('selectedClient');
-    const engagementInput = document.getElementById('engagementInput');
+  const dropdownBtn = document.getElementById('dropdownBtn');
+  const dropdownList = document.getElementById('dropdownList');
+  const selectedClient = document.getElementById('selectedClient');
+  const engagementInput = document.getElementById('engagementInput');
 
-    dropdownBtn.addEventListener('click', () => {
-      const isOpen = dropdownList.style.display === 'block';
-      dropdownList.style.display = isOpen ? 'none' : 'block';
-      dropdownBtn.setAttribute('aria-expanded', !isOpen);
+  dropdownBtn.addEventListener('click', () => {
+    const isOpen = dropdownList.style.display === 'block';
+    dropdownList.style.display = isOpen ? 'none' : 'block';
+    dropdownBtn.setAttribute('aria-expanded', (!isOpen).toString());
+  });
+
+  dropdownBtn.addEventListener('keydown', (e) => {
+    if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
+      e.preventDefault();
+      dropdownList.style.display = 'block';
+      dropdownBtn.setAttribute('aria-expanded', 'true');
+      dropdownList.querySelector('.dropdown-item').focus();
+    }
+  });
+
+  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      selectClient(item);
     });
-
-    dropdownBtn.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+    item.addEventListener('keydown', (e) => {
+      if (['Enter', ' '].includes(e.key)) {
         e.preventDefault();
-        dropdownList.style.display = 'block';
-        dropdownBtn.setAttribute('aria-expanded', 'true');
-        dropdownList.querySelector('.dropdown-item').focus();
-      }
-    });
-
-    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-      item.addEventListener('click', () => {
         selectClient(item);
-      });
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectClient(item);
-        }
-        else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-          next.focus();
-        }
-        else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-          prev.focus();
-        }
-        else if (e.key === 'Escape') {
-          closeDropdown();
-          dropdownBtn.focus();
-        }
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+        next.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+        prev.focus();
+      } else if (e.key === 'Escape') {
         closeDropdown();
+        dropdownBtn.focus();
       }
     });
+  });
 
-    function selectClient(item) {
-      const clientName = item.getAttribute('data-client-name');
-      const engagementId = item.getAttribute('data-engagement-id');
-      selectedClient.textContent = clientName;
-      engagementInput.value = engagementId;
+  document.addEventListener('click', (e) => {
+    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
       closeDropdown();
     }
+  });
 
-    function closeDropdown() {
-      dropdownList.style.display = 'none';
-      dropdownBtn.setAttribute('aria-expanded', 'false');
+  function selectClient(item) {
+    const clientName = item.getAttribute('data-client-name');
+    const engagementId = item.getAttribute('data-engagement-id');
+    selectedClient.textContent = clientName;
+    selectedClient.classList.remove('text-muted');
+    engagementInput.value = engagementId;
+    closeDropdown();
+    console.log('Client selected:', clientName, 'engagement_id:', engagementId);
+  }
+
+  function closeDropdown() {
+    dropdownList.style.display = 'none';
+    dropdownBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  // Call this with the engagement_id string to pre-select the client on modal open
+  function preselectClientByEngagementId(engagementId) {
+    if (!engagementId) {
+      selectedClient.textContent = 'Select a client';
+      selectedClient.classList.add('text-muted');
+      engagementInput.value = '';
+      return;
     }
+    const items = dropdownList.querySelectorAll('.dropdown-item');
+    for (const item of items) {
+      if (item.getAttribute('data-engagement-id') === engagementId) {
+        selectedClient.textContent = item.getAttribute('data-client-name');
+        selectedClient.classList.remove('text-muted');
+        engagementInput.value = engagementId;
+        return;
+      }
+    }
+    // If not found
+    selectedClient.textContent = 'Select a client';
+    selectedClient.classList.add('text-muted');
+    engagementInput.value = '';
+  }
+</script>
 
-    </script>
 <!-- end dropdown menu -->
 
 <!-- Script: Custom Tabs -->
