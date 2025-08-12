@@ -149,41 +149,43 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-    function openManageOrAddModal(user_id, employeeName, weekStart) {
-        console.log("Modal triggered:", user_id, employeeName, weekStart);
-        const assignments = <?php echo json_encode($assignments); ?>;
-        const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+ function openManageEntryModal(user_id, employeeName, weekStart) {
+    console.log("Modal triggered:", user_id, employeeName, weekStart);
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-        const manageAddModalElement = document.getElementById('manageAddModal');
-        const manageAddModal = new bootstrap.Modal(manageAddModalElement);
+    const manageEntryModalElement = document.getElementById('manageEntryModal');
+    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-        // Clone buttons to remove old event listeners
-        const manageBtn = document.getElementById('manageAssignmentsButton');
-        const addBtn = document.getElementById('addAssignmentsButton');
+    // Clone buttons to remove old event listeners
+    const manageBtn = document.getElementById('manageAssignmentsButton');
+    const addBtn = document.getElementById('addAssignmentsButton');
 
-        manageBtn.replaceWith(manageBtn.cloneNode(true));
-        addBtn.replaceWith(addBtn.cloneNode(true));
+    manageBtn.replaceWith(manageBtn.cloneNode(true));
+    addBtn.replaceWith(addBtn.cloneNode(true));
 
-        const newManageBtn = document.getElementById('manageAssignmentsButton');
-        const newAddBtn = document.getElementById('addAssignmentsButton');
+    // Re-select cloned buttons
+    const newManageBtn = document.getElementById('manageAssignmentsButton');
+    const newAddBtn = document.getElementById('addAssignmentsButton');
 
-        newManageBtn.onclick = function() {
-            openManageAssignmentsModal(user_id, employeeName, weekStart);
-            manageAddModal.hide();
-        };
-        newAddBtn.onclick = function() {
-            openAddEntryModal(user_id, employeeName, weekStart);
-            manageAddModal.hide();
-        };
+    newManageBtn.onclick = function() {
+        openManageAssignmentsModal(user_id, employeeName, weekStart);
+        manageEntryModal.hide();
+    };
+    newAddBtn.onclick = function() {
+        openAddEntryModal(user_id, employeeName, weekStart);
+        manageEntryModal.hide();
+    };
 
-        if (assignmentsForWeek.length > 0) {
-            manageAddModal.show();
-        } else {
-            // No assignments — open addEntryModal directly
-            openAddEntryModal(user_id, employeeName, weekStart);
-        }
+    if (assignmentsForWeek.length > 0) {
+        manageEntryModal.show();
+    } else {
+        // No assignments — open addEntryModal directly
+        openAddEntryModal(user_id, employeeName, weekStart);
     }
+  }
 // end Open modal for Manage Assignments or Add Entry
+
 
 
 // Manage assignments modal
@@ -548,7 +550,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageEntryModal(
                                   "<?php echo $userId; ?>",
                                   <?php echo json_encode($fullName); ?>,
                                   "<?php echo $weekKey; ?>"
@@ -574,7 +576,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <?php if ($isAdmin): ?>
 
-<!-- Modal for Manage Entry -->
+<!-- WORKING ON -> Modal for Manage Entry -->
   <!-- <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -625,9 +627,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     </div>
   </div>
-</div> -->
+  </div> -->
 
-<div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
+  <div class="modal fade" id="manageEntryModal" tabindex="-1" aria-labelledby="manageEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -725,10 +727,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     </div>
   </div>
-</div>
+  </div>
 
 
-<!-- end manage or add assignment -->
+<!-- end Modal for Manage entry -->
 
 <!-- Modal for Managing Assignments -->
   <div class="modal fade" id="assignmentsModal" tabindex="-1">
@@ -1446,6 +1448,34 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   });
   </script>
 <!-- end Script: Custom Tabs -->
+
+<!-- Script: manageEntryModal Custom Tabs -->
+ <script>
+  // Tab switching logic
+  document.querySelectorAll('#manageEntryModal .custom-tabs-modal button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById('manageEntryModal');
+      const tab = btn.getAttribute('data-tab');
+
+      // Tab buttons
+      const buttons = modal.querySelectorAll('.custom-tabs-modal button');
+      buttons.forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        b.setAttribute('tabindex', b === btn ? '0' : '-1');
+      });
+
+      // Tab panes
+      const panes = modal.querySelectorAll('.tab-content-modal > div.tab-pane');
+      panes.forEach(pane => {
+        pane.classList.toggle('active', pane.id === tab);
+        pane.classList.toggle('show', pane.id === tab);
+        pane.setAttribute('aria-hidden', pane.id === tab ? 'false' : 'true');
+      });
+    });
+  });
+ </script>
+<!-- end Script: manageEntryModal Custom Tabs -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
