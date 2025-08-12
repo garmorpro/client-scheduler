@@ -1502,21 +1502,21 @@ if ($settingResult) {
           <h6 class="mb-3">Password Policy</h6>
 
           <div class="mb-3">
-            <label for="minPasswordLength" class="form-label">Minimum Password Length</label>
-            <input type="number" class="form-control" id="minPasswordLength" name="min_password_length" min="1" max="128" value="<?php echo htmlspecialchars($settings['min_password_length'] ?? 8); ?>" required>
+            <label for="minPasswordLength" style="font-size: 14px;" class="form-label">Minimum Password Length</label>
+            <input type="number" style="font-size: 14px;" class="form-control" id="minPasswordLength" name="min_password_length" min="1" max="128" value="<?php echo htmlspecialchars($settings['min_password_length'] ?? 8); ?>" required>
           </div>
 
           <div class="row mb-3">
             <div class="col-6">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="requireNumbers" name="require_numbers" <?php if (!empty($settings['require_numbers']) && $settings['require_numbers'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="requireNumbers">Require Numbers</label>
+                <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="requireNumbers" name="require_numbers" <?php if (!empty($settings['require_numbers']) && $settings['require_numbers'] === 'true') echo 'checked'; ?>>
+                <label class="form-check-label" style="font-size: 14px;" for="requireNumbers">Require Numbers</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="requireSymbols" name="require_symbols" <?php if (!empty($settings['require_symbols']) && $settings['require_symbols'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="requireSymbols">Require Symbols</label>
+                <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="requireSymbols" name="require_symbols" <?php if (!empty($settings['require_symbols']) && $settings['require_symbols'] === 'true') echo 'checked'; ?>>
+                <label class="form-check-label" style="font-size: 14px;" for="requireSymbols">Require Symbols</label>
               </div>
             </div>
           </div>
@@ -1524,21 +1524,21 @@ if ($settingResult) {
           <div class="row mb-3">
             <div class="col-6">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="requireUppercase" name="require_uppercase" <?php if (!empty($settings['require_uppercase']) && $settings['require_uppercase'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="requireUppercase">Require Uppercase</label>
+                <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="requireUppercase" name="require_uppercase" <?php if (!empty($settings['require_uppercase']) && $settings['require_uppercase'] === 'true') echo 'checked'; ?>>
+                <label class="form-check-label" style="font-size: 14px;" for="requireUppercase">Require Uppercase</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="requireLowercase" name="require_lowercase" <?php if (!empty($settings['require_lowercase']) && $settings['require_lowercase'] === 'true') echo 'checked'; ?>>
-                <label class="form-check-label" for="requireLowercase">Require Lowercase</label>
+                <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="requireLowercase" name="require_lowercase" <?php if (!empty($settings['require_lowercase']) && $settings['require_lowercase'] === 'true') echo 'checked'; ?>>
+                <label class="form-check-label" style="font-size: 14px;" for="requireLowercase">Require Lowercase</label>
               </div>
             </div>
           </div>
 
           <div class="mb-4">
-            <label for="passwordExpiration" class="form-label">Password Expiration (days)</label>
-            <input type="number" class="form-control" id="passwordExpiration" name="password_expiration_days" min="0" value="<?php echo htmlspecialchars($settings['password_expiration_days'] ?? 0); ?>" required>
+            <label for="passwordExpiration" style="font-size: 14px;" class="form-label">Password Expiration (days)</label>
+            <input type="number" style="font-size: 14px;" class="form-control" id="passwordExpiration" name="password_expiration_days" min="0" value="<?php echo htmlspecialchars($settings['password_expiration_days'] ?? 0); ?>" required>
             <small class="text-muted">Set to 0 to disable password expiration</small>
           </div>
 
@@ -1549,19 +1549,19 @@ if ($settingResult) {
 
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="maxLoginAttempts" class="form-label">Max Login Attempts</label>
-              <input type="number" class="form-control" id="maxLoginAttempts" name="max_login_attempts" min="1" value="<?php echo htmlspecialchars($settings['max_login_attempts'] ?? 5); ?>" required>
+              <label for="maxLoginAttempts" style="font-size: 14px;" class="form-label">Max Login Attempts</label>
+              <input type="number" style="font-size: 14px;" class="form-control" id="maxLoginAttempts" name="max_login_attempts" min="1" value="<?php echo htmlspecialchars($settings['max_login_attempts'] ?? 5); ?>" required>
             </div>
             <div class="col-md-6">
-              <label for="lockoutDuration" class="form-label">Lockout Duration (minutes)</label>
-              <input type="number" class="form-control" id="lockoutDuration" name="lockout_duration_minutes" min="1" value="<?php echo htmlspecialchars($settings['lockout_duration_minutes'] ?? 30); ?>" required>
+              <label for="lockoutDuration" style="font-size: 14px;" class="form-label">Lockout Duration (minutes)</label>
+              <input type="number" style="font-size: 14px;" class="form-control" id="lockoutDuration" name="lockout_duration_minutes" min="1" value="<?php echo htmlspecialchars($settings['lockout_duration_minutes'] ?? 30); ?>" required>
             </div>
           </div>
 
           <div class="row mb-4">
             <div class="col-md-6">
-              <label for="sessionTimeout" class="form-label">Session Timeout (minutes)</label>
-              <input type="number" class="form-control" id="sessionTimeout" name="session_timeout_minutes" min="1" value="<?php echo htmlspecialchars($settings['session_timeout_minutes'] ?? 60); ?>" required>
+              <label for="sessionTimeout" style="font-size: 14px;" class="form-label">Session Timeout (minutes)</label>
+              <input type="number" style="font-size: 14px;" class="form-control" id="sessionTimeout" name="session_timeout_minutes" min="1" value="<?php echo htmlspecialchars($settings['session_timeout_minutes'] ?? 60); ?>" required>
             </div>
             <div class="col-md-6">
               <label for="apiRateLimit" class="form-label">API Rate Limit (per minute)</label>
@@ -1575,20 +1575,20 @@ if ($settingResult) {
           <h6 class="mb-3">Two-Factor Authentication (2FA)</h6>
 
           <div class="form-check form-switch mb-3">
-            <input class="form-check-input" type="checkbox" id="require2FAAllUsers" name="require_2fa_all_users" <?php if (!empty($settings['require_2fa_all_users']) && $settings['require_2fa_all_users'] === 'true') echo 'checked'; ?>>
-            <label class="form-check-label" for="require2FAAllUsers">
+            <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="require2FAAllUsers" name="require_2fa_all_users" <?php if (!empty($settings['require_2fa_all_users']) && $settings['require_2fa_all_users'] === 'true') echo 'checked'; ?>>
+            <label class="form-check-label" style="font-size: 14px;" for="require2FAAllUsers">
               Require 2FA for all users
               <br>
-              <small class="text-muted">Force all users to enable two-factor authentication</small>
+              <small style="font-size: 12px;" class="text-muted">Force all users to enable two-factor authentication</small>
             </label>
           </div>
 
           <div class="form-check form-switch mb-3">
-            <input class="form-check-input" type="checkbox" id="require2FAAdmins" name="require_2fa_admins" <?php if (!empty($settings['require_2fa_admins']) && $settings['require_2fa_admins'] === 'true') echo 'checked'; ?>>
-            <label class="form-check-label" for="require2FAAdmins">
+            <input class="form-check-input" style="font-size: 14px;" type="checkbox" id="require2FAAdmins" name="require_2fa_admins" <?php if (!empty($settings['require_2fa_admins']) && $settings['require_2fa_admins'] === 'true') echo 'checked'; ?>>
+            <label class="form-check-label" style="font-size: 14px;" for="require2FAAdmins">
               Require 2FA for admins
               <br>
-              <small class="text-muted">Force admin users to enable two-factor authentication</small>
+              <small style="font-size: 12px;" class="text-muted">Force admin users to enable two-factor authentication</small>
             </label>
           </div>
         </div>
