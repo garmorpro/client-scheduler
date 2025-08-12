@@ -378,6 +378,73 @@ function openEmployeeModal(employeeId) {
         });
 }
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // Your existing functions here (openManageOrAddModal, openManageAssignmentsModal, etc.)
+  function openManageOrAddModal(user_id, employeeName, weekStart) {
+    console.log("Script loaded");
+    console.log("Modal triggered:", user_id, employeeName, weekStart);
+    alert(`Modal triggered for user ${user_id} week ${weekStart}`);
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+
+    console.log("Assignments for week:", assignmentsForWeek);
+
+    const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+
+    if (hasAssignments) {
+        // Show Manage/Add modal
+        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+        manageAddModal.show();
+
+        document.getElementById('manageAssignmentsButton').onclick = function() {
+            openManageAssignmentsModal(user_id, employeeName, weekStart);
+        };
+        document.getElementById('addAssignmentsButton').onclick = function() {
+            openAddassignmentModal(user_id, employeeName, weekStart);
+        };
+    } else {
+        // Directly open Add Assignment modal
+        openAddassignmentModal(user_id, employeeName, weekStart);
+    }
+  }
+
+  function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+    const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+    document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+
+    // Fetch assignments for the user and week
+    const assignments = <?php echo json_encode($assignments); ?>;
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    showAssignments(assignmentsForWeek);
+
+    const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+    assignmentsModal.show();
+  }
+
+  // Add event delegation on the table for clicks on "addable" cells
+  const scheduleTable = document.querySelector('table');
+  if (scheduleTable) {
+    scheduleTable.addEventListener('click', (event) => {
+      const td = event.target.closest('td.addable');
+      if (!td) return;
+
+      // Read data attributes
+      const userId = td.getAttribute('data-user-id');
+      const employeeName = td.getAttribute('data-employee-name');
+      const weekStart = td.getAttribute('data-week-start');
+
+      if (userId && employeeName && weekStart) {
+        openManageOrAddModal(userId, employeeName, weekStart);
+      }
+    });
+  }
+
+  // ...rest of your functions like openAddassignmentModal, openEditModal, etc. here...
+
+});
     </script>
 </head>
 <body class="d-flex">
