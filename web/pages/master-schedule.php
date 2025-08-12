@@ -416,23 +416,23 @@ function openEmployeeModal(employeeId) {
 
 
         <script>
-document.addEventListener('DOMContentLoaded', () => {
-    let startMondayTs = <?php echo $startMonday; ?>; // timestamp of first week
+// document.addEventListener('DOMContentLoaded', () => {
+//     let startMondayTs = <?php// echo $startMonday; ?>; // timestamp of first week
 
-    function loadWeeks() {
-        window.location.href = `master_schedule.php?start_monday=${startMondayTs}`;
-    }
+//     function loadWeeks() {
+//         window.location.href = `master_schedule.php?start_monday=${startMondayTs}`;
+//     }
 
-    document.getElementById('prevWeek').addEventListener('click', () => {
-        startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
-        loadWeeks();
-    });
+//     document.getElementById('prevWeek').addEventListener('click', () => {
+//         startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
+//         loadWeeks();
+//     });
 
-    document.getElementById('nextWeek').addEventListener('click', () => {
-        startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
-        loadWeeks();
-    });
-});
+//     document.getElementById('nextWeek').addEventListener('click', () => {
+//         startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
+//         loadWeeks();
+//     });
+// });
 
           </script>
 
