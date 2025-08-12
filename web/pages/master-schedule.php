@@ -382,7 +382,7 @@ function openEmployeeModal(employeeId) {
 
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3">
-            <div class="col-md-9">
+            <div class="col-md-4">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search projects, clients, or employees..." onkeyup="searchQuery()" />
                 <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
