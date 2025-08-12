@@ -188,7 +188,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     </div>
                     <div class="user-management-buttons">
                         <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
-                          <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedCount">0</span>)
+                          <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
 
                         <a href="#" 
