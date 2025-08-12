@@ -571,7 +571,7 @@ function openEmployeeModal(employeeId) {
 <?php if ($isAdmin): ?>
 
 <!-- Modal for Manage or Add Assignment -->
-  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-hidden="true" aria-labelledby="manageAddModalLabel">
+  <div class="modal fade" id="manageAddModal" tabindex="-1" aria-labelledby="manageAddModalLabel">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
