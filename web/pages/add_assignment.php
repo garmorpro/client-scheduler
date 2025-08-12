@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require_once '../includes/db.php';
 session_start();
 
@@ -140,7 +141,9 @@ $stmt->bind_param($types, $employeeId, $clientIdParam, $weekStart, $hours, $isTi
         logActivity($conn, $isTimeOff ? "timeoff_created" : "assignment_created", $user_id, $email, $full_name, $title, $description);
 
         header("Location: master-schedule.php?status=success");
-        exit();
+exit();
+
+ob_end_flush();
     } else {
         die('Error adding entry: ' . $stmt->error);
     }
