@@ -408,37 +408,40 @@ function openEmployeeModal(employeeId) {
     </div>
 
 
-  <div class="table-responsive">
+<?php
+// Assume $today, $mondays, $employees, $assignments, $isAdmin already defined as you said
+
+// Find current week column index for highlighting entire column
+$currentWeekIndex = null;
+foreach ($mondays as $idx => $monday) {
+    $weekStart = $monday;
+    $weekEnd = strtotime('+7 days', $weekStart);
+    if ($today >= $weekStart && $today < $weekEnd) {
+        $currentWeekIndex = $idx;
+        break;
+    }
+}
+?>
+
+<div class="table-responsive">
     <table class="table table-bordered align-middle text-center">
-
-        <colgroup>
-            <col> <!-- Employee column, no highlight -->
-
-            <?php foreach ($mondays as $monday): 
-                $weekStart = $monday;
-                $weekEnd = strtotime('+7 days', $weekStart);
-                $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
-                $colClass = $isCurrentWeek ? 'highlight-today' : '';
-            ?>
-                <col class="<?php echo $colClass; ?>">
-            <?php endforeach; ?>
-        </colgroup>
-
         <thead class="table-light">
             <tr>
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-                <?php foreach ($mondays as $monday): ?>
+
+                <?php foreach ($mondays as $idx => $monday): ?>
                     <?php 
                     $weekStart = $monday;
+                    $isCurrent = ($idx === $currentWeekIndex);
                     ?>
-                    <th class="align-middle">
+                    <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
                         <?php echo date('M j', $weekStart); ?><br>
                         <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
         </thead>
-        
+
         <tbody>
             <?php foreach ($employees as $userId => $employee): ?>
                 <?php
@@ -464,11 +467,10 @@ function openEmployeeModal(employeeId) {
                         </div>
                     </td>
 
-                    <?php foreach ($mondays as $monday): ?>
+                    <?php foreach ($mondays as $idx => $monday): ?>
                         <?php 
                         $weekStart = $monday;
-                        $weekEnd = strtotime('+7 days', $weekStart);
-                        $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
+                        $isCurrent = ($idx === $currentWeekIndex);
 
                         $assignmentsForWeek = $assignments[$userId][date('Y-m-d', $weekStart)] ?? [];
                         $cellContent = "";
@@ -480,7 +482,7 @@ function openEmployeeModal(employeeId) {
                                     case 'confirmed': $badgeColor = 'success'; break;
                                     case 'pending': $badgeColor = 'purple'; break;
                                     case 'not_confirmed': $badgeColor = 'primary'; break;
-                                    default: $badgeColor = 'secondary';
+                                    default: $badgeColor = 'secondary'; break;
                                 }
                                 $clientName = htmlspecialchars($assignment['client_name']);
                                 $assignedHours = htmlspecialchars($assignment['assigned_hours']);
@@ -490,7 +492,7 @@ function openEmployeeModal(employeeId) {
                             $cellContent = "<span class='text-muted'>+</span>";
                         }
 
-                        $tdClass = $isCurrentWeek ? 'highlight-today' : '';
+                        $tdClass = $isCurrent ? 'highlight-today' : '';
                         ?>
                         <?php if ($isAdmin): ?>
                             <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
