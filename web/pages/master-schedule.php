@@ -607,14 +607,37 @@ function openEmployeeModal(employeeId) {
 
       <!-- Custom Tabs -->
       <div class="custom-tabs-modal" role="tablist">
-        <button class="active" data-tab="assignmentTabPane" role="tab" aria-selected="true" aria-controls="assignmentTabPane" tabindex="0">Add Assignment</button>
-        <button data-tab="timeoffTabPane" role="tab" aria-selected="false" aria-controls="timeoffTabPane" tabindex="-1">Add Time Off</button>
+        <button
+          class="active"
+          data-tab="assignmentTabPane"
+          role="tab"
+          aria-selected="true"
+          aria-controls="assignmentTabPane"
+          tabindex="0"
+        >
+          Add Assignment
+        </button>
+        <button
+          data-tab="timeoffTabPane"
+          role="tab"
+          aria-selected="false"
+          aria-controls="timeoffTabPane"
+          tabindex="-1"
+        >
+          Add Time Off
+        </button>
       </div>
 
       <!-- Tab Content -->
       <div class="tab-content-modal">
         <!-- Assignment Tab Pane -->
-        <div id="assignmentTabPane" class="tab-pane active show" role="tabpanel" aria-labelledby="assignmentTab" aria-hidden="false">
+        <div
+          id="assignmentTabPane"
+          class="tab-pane active show"
+          role="tabpanel"
+          aria-labelledby="assignmentTab"
+          aria-hidden="false"
+        >
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
             <input type="hidden" id="modalUserId" name="user_id" value="">
@@ -690,17 +713,33 @@ function openEmployeeModal(employeeId) {
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
-                data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+              <button
+                type="button"
+                class="btn badge text-black p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="badge text-white p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
+              >
+                Submit
+              </button>
             </div>
           </form>
         </div>
 
         <!-- Time Off Tab Pane -->
-        <div id="timeoffTabPane" class="tab-pane" role="tabpanel" aria-labelledby="timeoffTab" aria-hidden="true">
+        <div
+          id="timeoffTabPane"
+          class="tab-pane"
+          role="tabpanel"
+          aria-labelledby="timeoffTab"
+          aria-hidden="true"
+        >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
             <input type="hidden" name="user_id" id="timeoffUserId" value="">
             <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
@@ -716,11 +755,21 @@ function openEmployeeModal(employeeId) {
             </div>
 
             <div class="modal-footer p-0 pt-3 border-0">
-              <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" 
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);" 
-                data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" 
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+              <button
+                type="button"
+                class="btn badge text-black p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="badge text-white p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
+              >
+                Submit
+              </button>
             </div>
           </form>
         </div>
@@ -1193,6 +1242,7 @@ function openEmployeeModal(employeeId) {
       }
     });
   });
+  </script>
 <!-- end Script: Custom Tabs -->
 
 
