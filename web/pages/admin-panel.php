@@ -283,6 +283,19 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p>Manage all engagements and assignments</p>
                     </div>
                     <div class="user-management-buttons">
+                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
+                          <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
+                        </a>
+
+                        <a href="#" 
+                           class="badge text-black p-2 text-decoration-none fw-medium" 
+                           style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                           data-bs-toggle="modal" 
+                           data-bs-target="#importEngagementsModal">
+                            <i class="bi bi-upload me-3"></i>Import Engagements
+                        </a>
+
+
                         <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
                             <i class="bi bi-person-plus me-3"></i>Add Engagement
                         </a>
@@ -1112,6 +1125,52 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     </div>
 <!-- end import users modal -->
 
+<!-- import engagements modal -->
+
+    <div class="modal fade" id="importEngagementsModal" tabindex="-1" aria-labelledby="importEngagementsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="importEngagementsForm" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="importEngagementsModalLabel">Import Engagements from CSV</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                    
+            <div class="modal-body">
+              <p>
+                Please use the <a href="../assets/templates/bulk_engagement_template.csv" download>CSV template</a> to ensure correct format.
+              </p>
+                    
+              <div class="mb-3">
+                <label for="engagements_csv_file" class="form-label">Select CSV File</label>
+                <input type="file" class="form-control" id="engagements_csv_file" name="csv_file" accept=".csv" required>
+              </div>
+                    
+              <div class="alert alert-info small">
+                Only CSV files are supported. Required columns: 
+                <strong>client_name, total_available_hours, status</strong><br>
+                Allowed status values: <em>confirmed, pending, not_confirmed</em>
+              </div>
+                    
+              <!-- Import Summary Container -->
+              <div id="engagementsImportSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
+                <!-- Filled dynamically by JS -->
+              </div>
+            </div>
+                    
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="importEngagementsSubmitBtn">Import</button>
+              <button type="button" class="btn btn-success d-none" id="importEngagementsCloseBtn">OK</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+<!-- end import engagements modal -->
+
 
 
 <!-- Pagination -->
@@ -1778,6 +1837,80 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
     </script>
 <!-- end import users csv -->
+
+<!-- import engagements csv -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const importForm = document.getElementById('importEngagementsForm');
+          const fileInput = document.getElementById('engagements_csv_file');
+          const importSummary = document.getElementById('engagementsImportSummary');
+          const importSubmitBtn = document.getElementById('importEngagementsSubmitBtn');
+          const importCloseBtn = document.getElementById('importEngagementsCloseBtn');
+          const importModal = new bootstrap.Modal(document.getElementById('importEngagementsModal'));
+
+          importForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+        
+            importSummary.style.display = 'none';
+            importSummary.innerHTML = '';
+            importCloseBtn.classList.add('d-none');
+            importSubmitBtn.classList.remove('d-none');
+        
+            const file = fileInput.files[0];
+            if (!file) {
+              alert('Please select a CSV file to upload.');
+              return;
+            }
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+              alert('Only CSV files are allowed.');
+              return;
+            }
+        
+            const formData = new FormData();
+            formData.append('csv_file', file);
+        
+            try {
+              const response = await fetch('import_engagements.php', {
+                method: 'POST',
+                body: formData
+              });
+              const result = await response.json();
+          
+              importSummary.style.display = 'block';
+          
+              let html = `<p><strong>Import Results:</strong></p>`;
+              html += `<p>Successfully imported: ${result.successCount}</p>`;
+          
+              if (result.errors.length > 0) {
+                html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
+                result.errors.forEach(err => {
+                  html += `<li>Row ${err.row}: ${err.message}</li>`;
+                });
+                html += `</ul>`;
+              } else {
+                html += `<p class="text-success">No errors found.</p>`;
+              }
+          
+              importSummary.innerHTML = html;
+          
+              importCloseBtn.classList.remove('d-none');
+              importSubmitBtn.classList.add('d-none');
+          
+              fileInput.value = '';
+          
+            } catch (error) {
+              alert('Error processing import: ' + error.message);
+            }
+          });
+      
+          importCloseBtn.addEventListener('click', () => {
+            importModal.hide();
+            location.reload(); // reload page to show new engagements
+          });
+        });
+
+    </script>
+<!-- end import engagements csv -->
 
 <!-- bulk delete users -->
     <script>
