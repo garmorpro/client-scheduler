@@ -1286,7 +1286,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <!-- Test Configuration -->
                 <h6 class="mb-3">Test Configuration</h6>
                 <div class="mb-3">
-                  <input type="email" class="form-control mb-2" id="testEmail" placeholder="test@example.com" aria-label="Test email">
+                  <input type="email" class="form-control mb-3" id="testEmail" placeholder="test@example.com" aria-label="Test email">
 
                   <a href="#"
                      id="sendTestEmailBtn"
@@ -1299,7 +1299,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 <script>
                   const testEmailInput = document.getElementById('testEmail');
                   const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
-                                
+
                   testEmailInput.addEventListener('input', function () {
                     if (testEmailInput.checkValidity()) {
                       sendTestEmailBtn.classList.remove('disabled');
