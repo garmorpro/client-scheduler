@@ -1285,7 +1285,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
               <!-- Test Configuration -->
               <h6 class="mb-3">Test Configuration</h6>
-              <div class="input-group mb-3">
+              <div class=" mb-3">
                 <input type="email" class="form-control" id="testEmail" placeholder="test@example.com" aria-label="Test email">
                 
                 <a href="#" 
