@@ -621,12 +621,12 @@ function openEmployeeModal(employeeId) {
 <!-- end editing assignment -->
 
 <!-- Modal for Adding assignment -->
-  <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+  <div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title" id="assignmentModalLabel">
+        <h5 class="modal-title" id="addEntryModalLabel">
           <i class="bi bi-calendar-range me-2"></i> New Entry
           <br>
           <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
@@ -824,6 +824,7 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
+
 
 <!-- end Adding assignment -->
 
