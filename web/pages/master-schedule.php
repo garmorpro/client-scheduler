@@ -152,6 +152,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     function openManageOrAddModal(user_id, employeeName, weekStart) {
       console.log("Script loaded");
     console.log("Modal triggered:", user_id, employeeName, weekStart);
+    alert(`Modal triggered for user ${user_id} week ${weekStart}`);
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
