@@ -148,35 +148,46 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         document.getElementById("filterForm").submit();
     }
 
-    // open modal for Manage Assignments or Add Engagement
-function openManageOrAddModal(user_id, employeeName, weekStart) {
+    function openManageOrAddModal(user_id, employeeName, weekStart) {
     console.log("Modal triggered:", user_id, employeeName, weekStart);
-    console.log("manageAddModal element:", document.getElementById('manageAddModal'));
-console.log("manageAssignmentsButton element:", document.getElementById('manageAssignmentsButton'));
-console.log("addAssignmentsButton element:", document.getElementById('addAssignmentsButton'));
-
-    // Fetch assignments for the user and week
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    if (assignmentsForWeek.length > 0) {
-        // Show "Manage" or "Add" modal for existing assignments
-        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-        manageAddModal.show();
+    const manageAddModalElement = document.getElementById('manageAddModal');
+    const manageAddModal = new bootstrap.Modal(manageAddModalElement);
 
-        document.getElementById('manageAssignmentsButton').onclick = function() {
-            // Manage Assignments: Open the Manage Assignments modal
-            openManageAssignmentsModal(user_id, employeeName, weekStart);
-        };
-        document.getElementById('addAssignmentsButton').onclick = function() {
-            // Add Assignment: Open the Add Engagement modal via openModal()
-            openModal(user_id, employeeName, weekStart, 'assignment');
-        };
+    // Attach click handlers once, outside modal show (or check if already attached)
+    const manageBtn = document.getElementById('manageAssignmentsButton');
+    const addBtn = document.getElementById('addAssignmentsButton');
+
+    // Remove old listeners to prevent multiple calls (optional safety)
+    manageBtn.replaceWith(manageBtn.cloneNode(true));
+    addBtn.replaceWith(addBtn.cloneNode(true));
+
+    // Re-select new buttons after clone
+    const newManageBtn = document.getElementById('manageAssignmentsButton');
+    const newAddBtn = document.getElementById('addAssignmentsButton');
+
+    newManageBtn.onclick = function() {
+        openManageAssignmentsModal(user_id, employeeName, weekStart);
+        manageAddModal.hide();
+    };
+    newAddBtn.onclick = function() {
+        openModal(user_id, employeeName, weekStart, 'assignment');
+        manageAddModal.hide();
+    };
+
+    if (assignmentsForWeek.length > 0) {
+        manageAddModal.show();
     } else {
-        // If no existing assignments, directly show Add Engagement modal via openModal()
+        // No assignments, directly open add modal
         openModal(user_id, employeeName, weekStart, 'assignment');
     }
 }
+
+
+
+
 
 
     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
