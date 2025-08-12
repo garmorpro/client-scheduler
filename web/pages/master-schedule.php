@@ -24,25 +24,21 @@ if (!isset($_SESSION['user_id'])) {
 // }
 
 
-// Get current Monday
+// $today is midnight timestamp for today
 $today = strtotime('today');
+
+// Calculate Mondays as timestamps (you already do this correctly)
 $currentMonday = strtotime('monday this week', $today);
-
-// Week offset from query (0 = current range)
 $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
-
-// We want the current week in position 3 (index 2 of 0-based array)
-// So we shift start date back 2 weeks from current week, then apply offset
 $startMonday = strtotime("-2 weeks", $currentMonday);
 $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
-// Generate 7 Mondays
 $mondays = [];
 for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
-// Display range for header
+// Range label for header
 $firstWeek = reset($mondays);
 $lastWeek = end($mondays);
 $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
@@ -415,27 +411,22 @@ function openEmployeeModal(employeeId) {
     </div>
 
 
-    <div class="table-responsive">
+  <div class="table-responsive">
     <table class="table table-bordered align-middle text-center">
         <thead class="table-light">
             <tr>
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $monday): ?>
                     <?php 
-                    // If $monday is timestamp:
-                    $weekStart = date('Y-m-d', $monday);
-
-                    // If $monday is already Y-m-d string, use this instead:
-                    // $weekStart = $monday;
-
-                    $weekEnd = date('Y-m-d', strtotime($weekStart . ' +7 days'));
-
+                    // $monday is timestamp
+                    $weekStart = $monday;
+                    $weekEnd = strtotime('+7 days', $weekStart);
                     $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
                     $highlightClass = $isCurrentWeek ? 'highlight-today' : '';
                     ?>
                     <th class="<?php echo $highlightClass; ?> align-middle">
-                        <?php echo date('M j', strtotime($weekStart)); ?><br>
-                        <small class="text-muted">Week of <?php echo date('n/j', strtotime($weekStart)); ?></small>
+                        <?php echo date('M j', $weekStart); ?><br>
+                        <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                     </th>
                 <?php endforeach; ?>
             </tr>
@@ -468,12 +459,11 @@ function openEmployeeModal(employeeId) {
 
                     <?php foreach ($mondays as $monday): ?>
                         <?php 
-                        // Same logic for week start and end
-                        $weekStart = date('Y-m-d', $monday);
-                        $weekEnd = date('Y-m-d', strtotime($weekStart . ' +7 days'));
+                        $weekStart = $monday;
+                        $weekEnd = strtotime('+7 days', $weekStart);
                         $isCurrentWeek = ($today >= $weekStart && $today < $weekEnd);
 
-                        $assignmentsForWeek = $assignments[$userId][$weekStart] ?? [];
+                        $assignmentsForWeek = $assignments[$userId][date('Y-m-d', $weekStart)] ?? [];
                         $cellContent = "";
 
                         if ($assignmentsForWeek) {
@@ -499,7 +489,7 @@ function openEmployeeModal(employeeId) {
                             <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
-                                "<?php echo $weekStart; ?>"
+                                "<?php echo date('Y-m-d', $weekStart); ?>"
                             )'>
                                 <?php echo $cellContent; ?>
                             </td>
@@ -514,6 +504,7 @@ function openEmployeeModal(employeeId) {
         </tbody>
     </table>
 </div>
+
 
 
 <?php if ($isAdmin): ?>
