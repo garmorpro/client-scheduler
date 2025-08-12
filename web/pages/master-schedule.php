@@ -178,6 +178,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+        document.getElementById('manage_user_id').textContent = user_id;
+        document.getElementById('manage_week_start').textContent = week_start;
 
         // Fetch assignments for the user and week
         const assignments = <?php echo json_encode($assignments); ?>;
