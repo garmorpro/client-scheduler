@@ -1219,7 +1219,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
               <!-- Notification Types -->
               <h6 class="mb-2">Notification Types</h6>
-              <div class="row mb-3">
+              <div class="row mb-2">
                 <div class="col-6">
                   <div class="form-check form-switch mb-2">
                     <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[]" value="admin_alerts" checked>
@@ -1243,7 +1243,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
 
               <!-- Notification Frequency -->
-              <h6 class="mb-3">Notification Frequency</h6>
+              <h6 class="mb-2">Notification Frequency</h6>
               <select class="form-select mb-4" id="notificationFrequency" name="notification_frequency" required>
                 <option value="immediately" selected>Immediately</option>
                 <option value="hourly_digest">Hourly Digest</option>
