@@ -378,24 +378,6 @@ function openEmployeeModal(employeeId) {
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Event delegation for clicks on the schedule table cells
-  document.querySelector('table').addEventListener('click', (event) => {
-    const td = event.target.closest('td.addable');
-    if (!td) return; // Ignore clicks outside cells that matter
-
-    const userId = td.dataset.userId;
-    const employeeName = td.datasetEmployeeName || td.getAttribute('data-employee-name'); // fallback for attribute naming
-    const weekStart = td.datasetWeekStart || td.getAttribute('data-week-start');
-
-    if (userId && employeeName && weekStart) {
-      openManageOrAddModal(userId, employeeName, weekStart);
-    }
-  });
-
-  // Your modal functions can be here, or outside but accessible
-});
-
     </script>
 </head>
 <body class="d-flex">
@@ -546,12 +528,11 @@ document.addEventListener('DOMContentLoaded', () => {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                  data-user-id="<?php echo htmlspecialchars($userId); ?>"
-                                  data-employee-name="<?php echo htmlspecialchars($fullName); ?>"
-                                  data-week-start="<?php echo htmlspecialchars($weekKey); ?>">
-                                  <?php echo $cellContent; ?>
-                              </td>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                                  "<?php echo $userId; ?>",
+                                  <?php echo json_encode($fullName); ?>,
+                                  "<?php echo $weekKey; ?>"
+                              )'>
                                   <?php echo $cellContent; ?>
                               </td>
                           <?php else: ?>
