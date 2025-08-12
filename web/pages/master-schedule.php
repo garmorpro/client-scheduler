@@ -215,9 +215,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment', suffix = '') {
   const suffixStr = suffix ? `-${suffix}` : '';
 
-  // inputs
+  // Inputs for user and week
   const modalUserId = document.getElementById(`modalUserId${suffixStr}`);
   const modalWeek = document.getElementById(`modalWeek${suffixStr}`);
+
+  // Optional time off inputs (may not exist)
   const timeOFFuserId = document.getElementById(`timeOFFuser_id${suffixStr}`);
   const timeOFFweekStart = document.getElementById(`timeOFFweek_start${suffixStr}`);
 
@@ -226,26 +228,24 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   if (timeOFFuserId) timeOFFuserId.value = user_id;
   if (timeOFFweekStart) timeOFFweekStart.value = weekStart;
 
+  // Employee name display span
   const modalEmployeeNameDisplay = document.getElementById(`modalEmployeeNameDisplay${suffixStr}`);
   if (modalEmployeeNameDisplay) modalEmployeeNameDisplay.textContent = employeeName;
 
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const date = new Date(weekStart);
+  // Calculate Monday date from weekStart
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const date = new Date(weekStart);
+  const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const diffToMonday = (day === 0) ? 1 : 1 - day;
+  const mondayDate = new Date(date);
+  mondayDate.setDate(date.getDate() + diffToMonday);
 
-    const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-    // If Sunday (0), go forward 1 day to Monday
-    // Else go back (day - 1) days to Monday
-    const diffToMonday = (day === 0) ? 1 : 1 - day;
-
-    const mondayDate = new Date(date);
-    mondayDate.setDate(date.getDate() + diffToMonday);
-
-    // Then update modalWeekDisplay
+  // Update modalWeekDisplay span
   const modalWeekDisplay = document.getElementById(`modalWeekDisplay${suffixStr}`);
-  if (modalWeekDisplay) modalWeekDisplay.textContent = mondayDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  if (modalWeekDisplay) modalWeekDisplay.textContent = mondayDate.toLocaleDateString(undefined, options);
 
   if (tab === 'assignment') {
+    // Reset and set dropdown and assigned hours inputs for assignment tab
     const selectedClient = document.getElementById(`selectedClient${suffixStr}`);
     const engagementInputEl = document.getElementById(`engagementInput${suffixStr}`);
     const assignedHours = document.getElementById(`assignedHours${suffixStr}`);
@@ -265,6 +265,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     if (assignedHours) assignedHours.value = '';
   } else if (tab === 'timeoff') {
+    // Reset inputs for timeoff tab
     const timeoffHours = document.getElementById(`timeoffHours${suffixStr}`);
     const timeoffReason = document.getElementById(`timeoffReason${suffixStr}`);
 
@@ -272,7 +273,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     if (timeoffReason) timeoffReason.value = '';
   }
 
-  // Show modal by suffix as well
+  // Show the modal with suffix
   const addEntryModalEl = document.getElementById(`addEntryModal${suffixStr}`);
   if (!addEntryModalEl) {
     console.warn(`Modal element addEntryModal${suffixStr} not found`);
@@ -281,7 +282,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   const addEntryModal = new bootstrap.Modal(addEntryModalEl);
   addEntryModal.show();
 
-  // Activate tab
+  // Activate the correct tab inside the modal
   const tabSelector = tab === 'assignment'
     ? `.custom-tabs-modal button[data-tab="assignmentTabPane${suffixStr}"]`
     : `.custom-tabs-modal button[data-tab="timeoffTabPane${suffixStr}"]`;
@@ -925,7 +926,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   <div class="mb-3 custom-dropdown">
     <label for="engagementInput-2" class="form-label">Client Name</label>
     <div
-      class="dropdown-btn-2"
+      class="dropdown-btn"
       id="dropdownBtn-2"
       tabindex="0"
       aria-haspopup="listbox"
@@ -944,7 +945,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       tabindex="-1"
       aria-labelledby="selectedClient-2"
     >
-      <!-- your PHP generated dropdown items here -->
+      <!-- PHP-generated dropdown items with data-engagement-id and data-client-name -->
+      <!-- Example dropdown item: -->
+      <!--
+      <div class="dropdown-item" data-engagement-id="123" data-client-name="Client A" role="option" tabindex="0">
+        <div>
+          <span class="fw-semibold">Client A</span><br>
+          <small class="text-muted">Confirmed <i class="bi bi-dot"></i> 10.00 / 20.00 hrs</small>
+        </div>
+      </div>
+      -->
     </div>
 
     <input type="text" id="engagementInput-2" name="engagement_id" required>
@@ -974,6 +984,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     </button>
   </div>
 </form>
+
 
 
         <!-- Time Off Tab Pane -->
@@ -1400,106 +1411,106 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- dropdown menu -->
     <script>
   function setupDropdown(suffix = '') {
-  const dropdownBtn = document.getElementById(`dropdownBtn${suffix}`);
-  const dropdownList = document.getElementById(`dropdownList${suffix}`);
-  const selectedClient = document.getElementById(`selectedClient${suffix}`);
-  const engagementInput = document.getElementById(`engagementInput${suffix}`);
+    const dropdownBtn = document.getElementById(`dropdownBtn${suffix}`);
+    const dropdownList = document.getElementById(`dropdownList${suffix}`);
+    const selectedClient = document.getElementById(`selectedClient${suffix}`);
+    const engagementInput = document.getElementById(`engagementInput${suffix}`);
 
-  if (!dropdownBtn || !dropdownList || !selectedClient || !engagementInput) {
-    console.warn('Dropdown elements not found for suffix:', suffix);
-    return;
-  }
-
-  dropdownBtn.addEventListener('click', () => {
-    const isOpen = dropdownList.style.display === 'block';
-    dropdownList.style.display = isOpen ? 'none' : 'block';
-    dropdownBtn.setAttribute('aria-expanded', (!isOpen).toString());
-  });
-
-  dropdownBtn.addEventListener('keydown', (e) => {
-    if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
-      e.preventDefault();
-      dropdownList.style.display = 'block';
-      dropdownBtn.setAttribute('aria-expanded', 'true');
-      dropdownList.querySelector('.dropdown-item').focus();
+    if (!dropdownBtn || !dropdownList || !selectedClient || !engagementInput) {
+      console.warn('Dropdown elements not found for suffix:', suffix);
+      return;
     }
-  });
 
-  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-    item.addEventListener('click', () => {
-      selectClient(item);
+    dropdownBtn.addEventListener('click', () => {
+      const isOpen = dropdownList.style.display === 'block';
+      dropdownList.style.display = isOpen ? 'none' : 'block';
+      dropdownBtn.setAttribute('aria-expanded', (!isOpen).toString());
     });
-    item.addEventListener('keydown', (e) => {
-      if (['Enter', ' '].includes(e.key)) {
+
+    dropdownBtn.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
         e.preventDefault();
-        selectClient(item);
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-        next.focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-        prev.focus();
-      } else if (e.key === 'Escape') {
-        closeDropdown();
-        dropdownBtn.focus();
+        dropdownList.style.display = 'block';
+        dropdownBtn.setAttribute('aria-expanded', 'true');
+        dropdownList.querySelector('.dropdown-item').focus();
       }
     });
-  });
 
-  document.addEventListener('click', (e) => {
-    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        selectClient(item);
+      });
+      item.addEventListener('keydown', (e) => {
+        if (['Enter', ' '].includes(e.key)) {
+          e.preventDefault();
+          selectClient(item);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+          next.focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+          prev.focus();
+        } else if (e.key === 'Escape') {
+          closeDropdown();
+          dropdownBtn.focus();
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    function selectClient(item) {
+      const clientName = item.getAttribute('data-client-name');
+      const engagementId = item.getAttribute('data-engagement-id');
+      selectedClient.textContent = clientName;
+      selectedClient.classList.remove('text-muted');
+      engagementInput.value = engagementId;
       closeDropdown();
+      console.log('Client selected:', clientName, 'engagement_id:', engagementId);
     }
-  });
 
-  function selectClient(item) {
-    const clientName = item.getAttribute('data-client-name');
-    const engagementId = item.getAttribute('data-engagement-id');
-    selectedClient.textContent = clientName;
-    selectedClient.classList.remove('text-muted');
-    engagementInput.value = engagementId;
-    closeDropdown();
-    console.log('Client selected:', clientName, 'engagement_id:', engagementId);
-  }
+    function closeDropdown() {
+      dropdownList.style.display = 'none';
+      dropdownBtn.setAttribute('aria-expanded', 'false');
+    }
 
-  function closeDropdown() {
-    dropdownList.style.display = 'none';
-    dropdownBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  // Expose a preselect function if needed:
-  return {
-    preselectClientByEngagementId(engagementId) {
-      if (!engagementId) {
+    // Expose a preselect function if needed:
+    return {
+      preselectClientByEngagementId(engagementId) {
+        if (!engagementId) {
+          selectedClient.textContent = 'Select a client';
+          selectedClient.classList.add('text-muted');
+          engagementInput.value = '';
+          return;
+        }
+        const items = dropdownList.querySelectorAll('.dropdown-item');
+        for (const item of items) {
+          if (item.getAttribute('data-engagement-id') === engagementId) {
+            selectedClient.textContent = item.getAttribute('data-client-name');
+            selectedClient.classList.remove('text-muted');
+            engagementInput.value = engagementId;
+            return;
+          }
+        }
+        // Not found
         selectedClient.textContent = 'Select a client';
         selectedClient.classList.add('text-muted');
         engagementInput.value = '';
-        return;
       }
-      const items = dropdownList.querySelectorAll('.dropdown-item');
-      for (const item of items) {
-        if (item.getAttribute('data-engagement-id') === engagementId) {
-          selectedClient.textContent = item.getAttribute('data-client-name');
-          selectedClient.classList.remove('text-muted');
-          engagementInput.value = engagementId;
-          return;
-        }
-      }
-      // Not found
-      selectedClient.textContent = 'Select a client';
-      selectedClient.classList.add('text-muted');
-      engagementInput.value = '';
-    }
-  };
-}
+    };
+  }
 
-// Initialize both dropdowns:
-const dropdown1 = setupDropdown('');
-const dropdown2 = setupDropdown('-2');
-
+  // Initialize both dropdowns:
+  const dropdown1 = setupDropdown('');
+  const dropdown2 = setupDropdown('-2');
 </script>
+
 
 <!-- end dropdown menu -->
 
