@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Get current assignment info for logging and to know if it is time off or not
     $infoSql = "
-        SELECT a.user_id, a.engagement_id, a.week_start, u.first_name, u.last_name, e.client_name, a.is_time_off
+        SELECT a.user_id, a.engagement_id, a.week_start, u.first_name, u.last_name, e.client_name, a.is_timeoff
         FROM assignments a
         LEFT JOIN users u ON a.user_id = u.user_id
         LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
