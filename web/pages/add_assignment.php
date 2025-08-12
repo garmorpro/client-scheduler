@@ -22,6 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $clientId = $_POST['engagement_id'] ?? null; // might be null for time off
     $weekStart = $_POST['week_start'] ?? null;
 
+    // Validate format YYYY-MM-DD
+    if (!$weekStart || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $weekStart)) {
+        die('Invalid or missing week_start date.');
+    }
+
     // For time off, hours might come as 'time_off_hours', for assignments 'assigned_hours'
     // So check both and prioritize assigned_hours if exists
     $assignedHours = $_POST['assigned_hours'] ?? null;
