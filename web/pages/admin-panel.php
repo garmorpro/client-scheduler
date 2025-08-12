@@ -476,6 +476,11 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
 
+                                case 'bulk_engagement_import_failed':
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
+                                    break;
+
                                 case 'failed_engagement_deleted':
                                     $icon = 'bi-exclamation-triangle';
                                     $color = 'rgb(243,132,48)'; // green
