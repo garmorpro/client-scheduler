@@ -184,13 +184,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     if (newManageBtn) {
       newManageBtn.onclick = function() {
-        openManageAssignmentsModal(user_id, employeeName, weekStart);
+        openManageAssignmentsModal(user_id, employeeName, weekStart, engagement_id);
         manageEntryModal.hide();
       };
     }
     if (newAddBtn) {
       newAddBtn.onclick = function() {
-        openAddEntryModal(user_id, employeeName, weekStart);
+        openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
         manageEntryModal.hide();
       };
     }
@@ -199,7 +199,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     renderAssignmentsList(user_id, weekStart);
     manageEntryModal.show();
   } else {
-    openAddEntryModal(user_id, employeeName, weekStart);
+    openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
   }
 }
 
@@ -207,14 +207,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // end Open modal for Manage Assignments or Add Entry
 
 // Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment') {
+    function openAddEntryModal(user_id, employeeName, weekStart, tab = 'assignment', engagement_id) {
         // Set inputs for user and week in the forms
         document.getElementById('modalUserId').value = user_id;
         document.getElementById('modalWeek').value = weekStart;
         document.getElementById('timeOFFuser_id').value = user_id;
         document.getElementById('timeOFFweek_start').value = weekStart;
-        document.getElementById('manageModalUserId').value = user_id;
-        document.getElementById('manageModalWeek').value = weekStart;
 
         // Update display spans
         document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
