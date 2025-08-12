@@ -186,6 +186,9 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p>Manage user accounts, roles, and permissions</p>
                     </div>
                     <div class="user-management-buttons">
+                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
+                          <i class="bi bi-trash me-2"></i>Delete Selected
+                        </a>
                         <a href="#" 
                            class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
@@ -205,6 +208,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                     <table id="user-table" class="table table-hover mb-0">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="selectAllUsers"></th>
                                 <th>User</th>
                                 <th>Role</th>
                                 <th>Status</th>
@@ -216,6 +220,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <?php if (mysqli_num_rows($result) > 0): ?>
                             <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                 <tr>
+                                    <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $row['user_id']; ?>"></td>
                                     <td>
                                         <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?><br>
                                         <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
