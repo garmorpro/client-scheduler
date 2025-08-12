@@ -70,22 +70,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $clientId = null; // or 0, if your DB uses zero
     }
 
-    // Prepare the insert statement, adding is_timeoff column
-    $stmt = $conn->prepare("
-        INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
-        VALUES (?, ?, ?, ?, ?)
-    ");
-    if (!$stmt) {
-        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-    }
+    /// If $clientId is null, bind as null via 's' type and pass NULL
+if ($isTimeOff) {
+    $clientIdParam = null;
+    $clientIdType = 's';
+} else {
+    $clientIdParam = $clientId;
+    $clientIdType = 'i';
+}
 
-    // Bind params, assuming engagement_id can be null, use 'i' for integer or 's' if string type
-    // Note: For null, use `bind_param` with 'i' but pass NULL, it works with mysqli
-    // week_start assumed string or date, so 's'
-    // hours is float 'd'
-    // is_timeoff is int 'i'
+// Prepare statement with types accordingly:
+$stmt = $conn->prepare("
+    INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
+    VALUES (?, ?, ?, ?, ?)
+");
 
-    $stmt->bind_param('isddi', $employeeId, $clientId, $weekStart, $hours, $isTimeOff);
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
+
+// Bind parameters with dynamic type for engagement_id
+// 'i' for user_id, then $clientIdType for engagement_id, 's' for week_start, 'd' for hours, 'i' for is_timeoff
+
+// Build types string dynamically:
+$types = 'i' . $clientIdType . 'sdi';
+
+// Note: if $clientIdParam is null, pass null; otherwise pass int
+
+$stmt->bind_param($types, $employeeId, $clientIdParam, $weekStart, $hours, $isTimeOff);
+
 
     if ($stmt->execute()) {
         // Log activity (adjust description for time off vs assignment)
