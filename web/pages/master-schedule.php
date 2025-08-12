@@ -647,7 +647,7 @@ function openEmployeeModal(employeeId) {
               <div
                 class="dropdown-list"
                 id="dropdownList"
-                aria-expanded="false"
+                aria-expanded="true"
                 role="listbox"
                 tabindex="-1"
                 aria-labelledby="selectedClient"
