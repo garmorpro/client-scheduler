@@ -92,7 +92,7 @@ body {
     padding: 5px;
     justify-content: center;
     width: 75% !important;
-    max-width: 600px;  /* optional max width */
+    max-width: 400px;  /* optional max width */
 }
 
 .custom-tabs-modal button {
