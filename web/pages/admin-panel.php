@@ -479,7 +479,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     break;
 
                                 case 'bulk_engagement_delete':
-                                    $icon = 'bi-people';
+                                    $icon = 'bi-clipboard2-dash';
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
 
