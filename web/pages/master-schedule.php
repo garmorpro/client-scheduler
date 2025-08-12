@@ -187,11 +187,15 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
   }
 
   if (assignmentsForWeek.length > 0) {
+    // *** Render assignments list here so it's visible immediately ***
+    renderAssignmentsList(user_id, weekStart);
+
     manageEntryModal.show();
   } else {
     openAddEntryModal(user_id, employeeName, weekStart);
   }
 }
+
 
 // end Open modal for Manage Assignments or Add Entry
 
