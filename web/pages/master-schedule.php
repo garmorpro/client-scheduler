@@ -91,7 +91,6 @@ $query = "
         e.client_name,
         a.week_start,
         a.assigned_hours,
-        a.status,
         e.status AS engagement_status -- 👈 Add this line to get engagement's status
     FROM 
         assignments a
@@ -113,7 +112,6 @@ while ($row = $result->fetch_assoc()) {
         'client_name' => $row['client_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
-        'status' => $row['status'],
         'engagement_status' => $row['engagement_status'], // ✅ Now available
     ];
 }
@@ -259,24 +257,57 @@ function deleteAssignment(assignmentId) {
 
 
 function openassignmentModal(engagementId) {
-    function openAssignmentModal(userId, userName, weekStart) {
-  // Set hidden inputs
-  document.getElementById('modalUserId').value = userId;
-  document.getElementById('modalWeek').value = weekStart;
+    // Set the engagementId in the hidden input field before fetching the data
+    document.getElementById('engagementId').value = engagementId;
 
-  // Set subtitle spans
-  document.getElementById('modalEmployeeNameDisplay').textContent = userName;
-  document.getElementById('modalWeekDisplay').textContent = weekStart;
+    // Fetch the engagement details using the engagement ID
+    fetch(`engagement-details.php?id=${engagementId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Set engagement (client) name
+            document.getElementById('clientName').innerText = data.client_name;
 
-  // Reset the form inputs
-  document.getElementById('clientSelect').value = '';
-  document.getElementById('assignedHours').value = '';
+            // Set total assigned hours
+            let totalAssignedHours = parseFloat(data.total_hours) || 0;
+            let totalAvailableHours = parseFloat(data.max_hours) || 0;
 
-  // Show modal using Bootstrap 5's modal API
-  const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-  assignmentModal.show();
-}
+            // Set total assigned hours text
+            document.getElementById('totalAssignedHours').innerText = totalAssignedHours;
+            document.getElementById('totalHours').innerText = `/ ${totalAvailableHours} hrs`;
 
+            let utilizationPercent = totalAvailableHours > 0
+                ? (totalAssignedHours / totalAvailableHours) * 100
+                : 0;
+
+            const bar = document.getElementById('utilizationBar');
+
+            // Set bar width and ARIA attributes
+            bar.style.width = utilizationPercent + "%";
+            bar.setAttribute('aria-valuenow', totalAssignedHours);
+            bar.setAttribute('aria-valuemax', totalAvailableHours);
+
+            // Remove any existing color classes
+            bar.classList.remove('bg-success', 'bg-danger');
+
+            // Add the appropriate color
+            if (totalAssignedHours > totalAvailableHours) {
+                bar.classList.add('bg-danger');
+            } else {
+                bar.classList.add('bg-success');
+            }
+
+            // Set assigned employees
+            let assignedEmployees = data.assigned_employees;
+            document.getElementById('assignedEmployees').innerHTML = assignedEmployees;
+
+            // Set client notes
+            const notes = data.notes?.trim();
+            document.getElementById('clientNotes').innerText = notes ? notes : "No notes available.";
+
+            // Show the modal after the engagement details are set
+            const assignmentModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            assignmentModal.show();
+        })
         .catch(error => console.error('Error fetching engagement details:', error));
 }
 
