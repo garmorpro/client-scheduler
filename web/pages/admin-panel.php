@@ -371,10 +371,10 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 <div id="activity-list">
                     <?php
 
+                    // Fetch all activities, newest first
                     $sql = "SELECT event_type, full_name, title, description, created_at 
                             FROM system_activity_log 
-                            ORDER BY created_at ASC 
-                            LIMIT 3";
+                            ORDER BY created_at DESC";
                     $result = $conn->query($sql);
 
                     if ($result && $result->num_rows > 0) {
@@ -1426,35 +1426,45 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                 }
                 }
           
-              // Render recent activities as cards with description ellipsis + relative time
               const activityList = document.getElementById('view_recent_activity');
-              if (activityList) {
-                activityList.innerHTML = ''; // clear previous
-                if (user.recent_activities && user.recent_activities.length > 0) {
-                  user.recent_activities.forEach(act => {
-                    const card = document.createElement('div');
-                        card.className = 'activity-card';
+                if (activityList) {
+                  activityList.innerHTML = ''; // clear previous
                 
-                    const desc = document.createElement('div');
-                    desc.className = 'activity-description';
-                    desc.title = act.description;
-                        desc.textContent = act.description;
-                
-                    const time = document.createElement('div');
-                    time.className = 'activity-time';
-                        time.textContent = timeSince(act.created_at);
-                
-                    card.appendChild(desc);
-                    card.appendChild(time);
-                    activityList.appendChild(card);
-                  });
+                  if (user.recent_activities && user.recent_activities.length > 0) {
+                    user.recent_activities.forEach(act => {
+                      const card = document.createElement('div');
+                      card.className = 'activity-card';
+                    
+                      const desc = document.createElement('div');
+                      desc.className = 'activity-description';
+                      desc.title = act.description || '';
+                      desc.textContent = act.description || '(no description)';
+                    
+                      const time = document.createElement('div');
+                      time.className = 'activity-time';
+                    
+                      // Defensive parse of created_at
+                      let createdAt = new Date(act.created_at);
+                      if (isNaN(createdAt.getTime())) {
+                        time.textContent = 'Invalid date';
+                      } else {
+                        time.textContent = timeSince(createdAt);
+                      }
+                  
+                      card.appendChild(desc);
+                      card.appendChild(time);
+                      activityList.appendChild(card);
+                    });
+                  } else {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-muted px-3';
+                    empty.textContent = 'No recent activity found.';
+                    activityList.appendChild(empty);
+                  }
                 } else {
-                  const empty = document.createElement('div');
-                  empty.className = 'text-muted px-3';
-                  empty.textContent = 'No recent activity found.';
-                  activityList.appendChild(empty);
+                  console.warn("Element with id 'view_recent_activity' not found in DOM.");
                 }
-                }
+
           
               // Update badge class for status
               const statusEl = document.getElementById('view_status');
