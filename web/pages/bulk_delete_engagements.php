@@ -15,7 +15,7 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
-// Simple authentication check
+// Authentication check
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -36,40 +36,51 @@ if (empty($engagementIds)) {
     exit();
 }
 
-// Prepare placeholders for prepared statement
 $placeholders = implode(',', array_fill(0, count($engagementIds), '?'));
-$sql = "DELETE FROM engagements WHERE engagement_id IN ($placeholders)";
-$stmt = $conn->prepare($sql);
-
-if (!$stmt) {
-    echo json_encode(['success' => false, 'error' => 'Database prepare error: ' . $conn->error]);
-    exit();
-}
-
-// Bind parameters dynamically
 $types = str_repeat('i', count($engagementIds));
-$stmt->bind_param($types, ...$engagementIds);
 
-$currentUserId = $_SESSION['user_id'];
-$currentUserEmail = $_SESSION['email'] ?? '';
-$currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+$conn->begin_transaction();
 
-if ($stmt->execute()) {
-    $deletedCount = $stmt->affected_rows;
+try {
+    // Step 1: Delete related assignments first
+    $sqlAssignments = "DELETE FROM assignments WHERE engagement_id IN ($placeholders)";
+    $stmtAssignments = $conn->prepare($sqlAssignments);
+    if (!$stmtAssignments) throw new Exception("Prepare failed for assignments delete: " . $conn->error);
+    $stmtAssignments->bind_param($types, ...$engagementIds);
+    if (!$stmtAssignments->execute()) throw new Exception("Execute failed for assignments delete: " . $stmtAssignments->error);
+    $stmtAssignments->close();
 
-    // Log success activity
+    // Step 2: Delete engagements
+    $sqlEngagements = "DELETE FROM engagements WHERE engagement_id IN ($placeholders)";
+    $stmtEngagements = $conn->prepare($sqlEngagements);
+    if (!$stmtEngagements) throw new Exception("Prepare failed for engagements delete: " . $conn->error);
+    $stmtEngagements->bind_param($types, ...$engagementIds);
+    if (!$stmtEngagements->execute()) throw new Exception("Execute failed for engagements delete: " . $stmtEngagements->error);
+    $deletedCount = $stmtEngagements->affected_rows;
+    $stmtEngagements->close();
+
+    $conn->commit();
+
+    // Log success
+    $currentUserId = $_SESSION['user_id'];
+    $currentUserEmail = $_SESSION['email'] ?? '';
+    $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
     $title = "Bulk Engagement Delete";
-    $description = "Deleted $deletedCount engagement(s).";
+    $description = "Deleted $deletedCount engagement(s) and their assignments.";
     logActivity($conn, "bulk_engagement_delete", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode(['success' => true, 'deletedCount' => $deletedCount]);
-} else {
-    // Log failure activity
+} catch (Exception $e) {
+    $conn->rollback();
+
+    // Log failure
+    $currentUserId = $_SESSION['user_id'];
+    $currentUserEmail = $_SESSION['email'] ?? '';
+    $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
     $title = "Failed Bulk Engagement Delete";
     $description = "Failed to bulk delete engagements.";
     logActivity($conn, "bulk_engagement_delete_failed", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-    echo json_encode(['success' => false, 'error' => 'Database execute error: ' . $stmt->error]);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
-
-$stmt->close();
+?>
