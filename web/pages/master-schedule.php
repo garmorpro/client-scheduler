@@ -195,6 +195,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     document.getElementById('modalUserId').value = user_id;
     document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
     document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+    document.getElementById('timeOFFuser_id').value = user_id;
+    document.getElementById('timeOFFweek_start').value = weekStart;
 
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const weekDate = new Date(weekStart);
