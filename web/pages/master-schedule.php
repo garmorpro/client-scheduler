@@ -1411,43 +1411,35 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     </script>
 <!-- end dropdown menu -->
 
-<!-- Script: Custom Tabs -->
 <script>
-  // Tab switching logic for custom tabs
+  // Generic Tab switching logic for all modals with custom tabs
   document.querySelectorAll('.custom-tabs-modal button').forEach(btn => {
     btn.addEventListener('click', () => {
+      const modal = btn.closest('.modal');
       const targetTab = btn.getAttribute('data-tab');
-      if (!targetTab) return;
+      if (!targetTab || !modal) return;
 
-      // Remove active class on all buttons & update aria attributes
-      document.querySelectorAll('.custom-tabs-modal button').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-        b.setAttribute('tabindex', '-1');
+      // Tab buttons within this modal
+      const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
+      tabButtons.forEach(b => {
+        const isActive = (b === btn);
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        b.setAttribute('tabindex', isActive ? '0' : '-1');
       });
 
-      // Add active class on clicked button
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      btn.setAttribute('tabindex', '0');
-      btn.focus();
-
-      // Hide all tab panes (remove both active and show)
-      document.querySelectorAll('.tab-pane').forEach(pane => {
-        pane.classList.remove('active', 'show');
-        pane.setAttribute('aria-hidden', 'true');
+      // Tab panes within this modal
+      const tabPanes = modal.querySelectorAll('.tab-content-modal > .tab-pane');
+      tabPanes.forEach(pane => {
+        const isActive = (pane.id === targetTab);
+        pane.classList.toggle('active', isActive);
+        pane.classList.toggle('show', isActive);
+        pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
       });
-
-      // Show target tab pane (add active and show)
-      const activePane = document.getElementById(targetTab);
-      if (activePane) {
-        activePane.classList.add('active', 'show');
-        activePane.setAttribute('aria-hidden', 'false');
-      }
     });
   });
 
-  // Reset tabs on modal close - Replace '#yourModalId' with your modal ID
+  // Generic reset tabs on any modal close (for modals that have custom-tabs-modal)
   document.querySelectorAll('.modal').forEach(modalEl => {
     modalEl.addEventListener('hidden.bs.modal', () => {
       const tabsContainer = modalEl.querySelector('.custom-tabs-modal');
@@ -1456,7 +1448,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       const tabButtons = tabsContainer.querySelectorAll('button');
       if (tabButtons.length === 0) return;
 
-      // Reset all buttons
+      // Reset all tab buttons
       tabButtons.forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-selected', 'false');
@@ -1469,7 +1461,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       tabButtons[0].setAttribute('tabindex', '0');
 
       // Reset all tab panes inside this modal
-      const tabPanes = modalEl.querySelectorAll('.tab-pane');
+      const tabPanes = modalEl.querySelectorAll('.tab-content-modal > .tab-pane');
       tabPanes.forEach(pane => {
         pane.classList.remove('active', 'show');
         pane.setAttribute('aria-hidden', 'true');
@@ -1486,71 +1478,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   });
 </script>
 
-<!-- end Script: Custom Tabs -->
-
-<!-- Script: manageEntryModal Custom Tabs -->
-<script>
-  // Tab switching logic for #manageEntryModal
-  document.querySelectorAll('#manageEntryModal .custom-tabs-modal button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modal = document.getElementById('manageEntryModal');
-      const tab = btn.getAttribute('data-tab');
-
-      // Tab buttons
-      const buttons = modal.querySelectorAll('.custom-tabs-modal button');
-      buttons.forEach(b => {
-        b.classList.toggle('active', b === btn);
-        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
-        b.setAttribute('tabindex', b === btn ? '0' : '-1');
-      });
-
-      // Tab panes
-      const panes = modal.querySelectorAll('.tab-content-modal > div.tab-pane');
-      panes.forEach(pane => {
-        const isActive = pane.id === tab;
-        pane.classList.toggle('active', isActive);
-        pane.classList.toggle('show', isActive);
-        pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-      });
-    });
-  });
-
-  // Reset tabs on manageEntryModal close
-  document.getElementById('manageEntryModal').addEventListener('hidden.bs.modal', () => {
-    const modal = document.getElementById('manageEntryModal');
-    const tabButtons = modal.querySelectorAll('.custom-tabs-modal button');
-    if (tabButtons.length === 0) return;
-
-    // Reset all tab buttons
-    tabButtons.forEach(btn => {
-      btn.classList.remove('active');
-      btn.setAttribute('aria-selected', 'false');
-      btn.setAttribute('tabindex', '-1');
-    });
-
-    // Activate the first tab button
-    tabButtons[0].classList.add('active');
-    tabButtons[0].setAttribute('aria-selected', 'true');
-    tabButtons[0].setAttribute('tabindex', '0');
-
-    // Reset all tab panes
-    const tabPanes = modal.querySelectorAll('.tab-content-modal > div.tab-pane');
-    tabPanes.forEach(pane => {
-      pane.classList.remove('active', 'show');
-      pane.setAttribute('aria-hidden', 'true');
-    });
-
-    // Show first tab pane
-    const firstTabId = tabButtons[0].getAttribute('data-tab');
-    const firstPane = modal.querySelector(`#${firstTabId}`);
-    if (firstPane) {
-      firstPane.classList.add('active', 'show');
-      firstPane.setAttribute('aria-hidden', 'false');
-    }
-  });
-</script>
-
-<!-- end Script: manageEntryModal Custom Tabs -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
