@@ -169,31 +169,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   }
   const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-  // Set hidden inputs here for Manage modal form:
-  const manageUserIdInput = document.getElementById('manageModalUserId');
-  const manageWeekInput = document.getElementById('manageModalWeek');
-  const manageEngagementInput = document.getElementById('manageEngagementInput');
-
-  if (manageUserIdInput) {
-    manageUserIdInput.value = user_id;
-    console.log("Set manageModalUserId to:", manageUserIdInput.value);
-  } else {
-    console.warn("manageModalUserId input NOT found!");
-  }
-
-  if (manageWeekInput) {
-    manageWeekInput.value = weekStart;
-    console.log("Set manageModalWeek to:", manageWeekInput.value);
-  } else {
-    console.warn("manageModalWeek input NOT found!");
-  }
-
-  if (manageEngagementInput) {
-    manageEngagementInput.value = engagement_id;
-    console.log("Set manageEngagementInput to:", manageEngagementInput.value);
-  } else {
-    console.warn("manageEngagementInput input NOT found!");
-  }
 
   // Update the "Add New Entry" button inside Manage modal with correct data attributes
   const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
