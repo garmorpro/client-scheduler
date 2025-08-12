@@ -1549,39 +1549,36 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <!-- Script: Render Assignments Listing -->
   <script>
     function renderAssignmentsList(user_id, weekStart) {
-    // Assuming you have your assignments data structure available, e.g. from PHP JSON:
-    const assignments = <?php echo json_encode($assignments); ?>;
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  const assignments = <?php echo json_encode($assignments); ?>;
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    const container = document.getElementById('assignmentsListContainer');
-    container.innerHTML = ''; // clear previous content
+  const container = document.getElementById('assignmentsListContainer');
+  container.innerHTML = '';
 
-    if (assignmentsForWeek.length === 0) {
-      container.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
-      return;
-    }
-
-    // Create a list or cards for assignments
-    const listEl = document.createElement('ul');
-    listEl.classList.add('list-group');
-
-    assignmentsForWeek.forEach(assignment => {
-      // Customize how you display each assignment, example fields:
-      const item = document.createElement('li');
-      item.classList.add('list-group-item');
-
-      // Example content: client name, hours, notes (adjust based on your data)
-      item.innerHTML = `
-        <strong>${assignment.client_name || 'Unnamed Client'}</strong><br>
-        Assigned Hours: ${assignment.assigned_hours || 0}<br>
-        Notes: ${assignment.notes ? assignment.notes : '<em>No notes</em>'}
-      `;
-
-      listEl.appendChild(item);
-    });
-
-    container.appendChild(listEl);
+  if (assignmentsForWeek.length === 0) {
+    container.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
+    return;
   }
+
+  const listEl = document.createElement('ul');
+  listEl.classList.add('list-group');
+
+  assignmentsForWeek.forEach(assignment => {
+    const item = document.createElement('li');
+    item.classList.add('list-group-item');
+
+    item.innerHTML = `
+      <strong>${assignment.client_name || 'Unnamed Client'}</strong><br>
+      Assigned Hours: ${assignment.assigned_hours || 0}<br>
+      Notes: ${assignment.notes ? assignment.notes : '<em>No notes</em>'}
+    `;
+
+    listEl.appendChild(item);
+  });
+
+  container.appendChild(listEl);
+}
+
 
   </script>
 <!-- end Script: Render Assignments Listing -->
