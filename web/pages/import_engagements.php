@@ -21,6 +21,25 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
+// UNIQUE IDNO GENERATOR for engagements
+function generateUniqueIdno($conn) {
+    do {
+        $idno = random_int(100000, 999999); // 6-digit number
+
+        $checkStmt = $conn->prepare("SELECT COUNT(*) FROM engagements WHERE idno = ?");
+        if (!$checkStmt) {
+            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+        }
+        $checkStmt->bind_param("i", $idno);
+        $checkStmt->execute();
+        $checkStmt->bind_result($count);
+        $checkStmt->fetch();
+        $checkStmt->close();
+    } while ($count > 0);
+
+    return $idno;
+}
+
 if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
     http_response_code(400);
     echo json_encode(['error' => 'No file uploaded or upload error']);
@@ -91,7 +110,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             continue;
         }
 
-        // Check for duplicate client_name (optional - you can skip if you want duplicates)
+        // Check for duplicate client_name (optional)
         $dupCheck = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ?");
         if (!$dupCheck) {
             $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
@@ -107,13 +126,16 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
         $dupCheck->close();
 
-        // Insert engagement
-        $stmt = $conn->prepare("INSERT INTO engagements (client_name, total_available_hours, status) VALUES (?, ?, ?)");
+        // Generate unique idno
+        $idno = generateUniqueIdno($conn);
+
+        // Insert engagement with idno
+        $stmt = $conn->prepare("INSERT INTO engagements (idno, client_name, total_available_hours, status) VALUES (?, ?, ?, ?)");
         if (!$stmt) {
             $errors[] = ['row' => $rowNum, 'message' => 'Prepare statement failed: ' . $conn->error];
             continue;
         }
-        $stmt->bind_param("sds", $rowAssoc['client_name'], $rowAssoc['total_available_hours'], $rowAssoc['status']);
+        $stmt->bind_param("isds", $idno, $rowAssoc['client_name'], $rowAssoc['total_available_hours'], $rowAssoc['status']);
 
         if ($stmt->execute()) {
             $successCount++;

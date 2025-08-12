@@ -466,6 +466,11 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(40,167,69)'; // green
                                     break;
                                 
+                                case 'bulk_engagement_import':
+                                    $icon = 'bi-clipboard2-check';
+                                    $color = 'rgb(40,167,69)'; // green
+                                    break;
+                                
                                 case 'bulk_user_delete':
                                     $icon = 'bi-people';
                                     $color = 'rgb(220,53,69)'; // green
@@ -1135,29 +1140,29 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <h5 class="modal-title" id="importEngagementsModalLabel">Import Engagements from CSV</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-                    
+
             <div class="modal-body">
               <p>
                 Please use the <a href="../assets/templates/bulk_engagement_template.csv" download>CSV template</a> to ensure correct format.
               </p>
-                    
+
               <div class="mb-3">
                 <label for="engagements_csv_file" class="form-label">Select CSV File</label>
                 <input type="file" class="form-control" id="engagements_csv_file" name="csv_file" accept=".csv" required>
               </div>
-                    
+
               <div class="alert alert-info small">
                 Only CSV files are supported. Required columns: 
                 <strong>client_name, total_available_hours, status</strong><br>
                 Allowed status values: <em>confirmed, pending, not_confirmed</em>
               </div>
-                    
+
               <!-- Import Summary Container -->
               <div id="engagementsImportSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
                 <!-- Filled dynamically by JS -->
               </div>
             </div>
-                    
+
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button type="submit" class="btn btn-primary" id="importEngagementsSubmitBtn">Import</button>
