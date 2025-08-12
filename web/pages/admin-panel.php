@@ -1199,26 +1199,26 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         <div class="modal-content">
           <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
             <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="bi bi-envelope"></i> Email Notification Settings <br>
-              <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure email notifications and SMTP settings</span>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
+              <h5 class="modal-title">
+                <i class="bi bi-envelope"></i> Email Notification Settings <br>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure email notifications and SMTP settings</span>
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
             <div class="modal-body">
 
               <!-- General Settings -->
-                <h6 class="mb-2">General Settings</h6>
-                <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
-                  <label class="form-check-label float-start m-0" for="enableEmailNotifications">
-                    Enable Email Notifications (Master switch) <br>
-                    <span class="text-muted" style="font-size: 12px;">
-                      Master switch for all email notifications
-                    </span>
-                  </label>
-                  <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
-                </div>
+              <h6 class="mb-2">General Settings</h6>
+              <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
+                <label class="form-check-label float-start m-0" for="enableEmailNotifications">
+                  Enable Email Notifications (Master switch) <br>
+                  <span class="text-muted" style="font-size: 12px;">
+                    Master switch for all email notifications
+                  </span>
+                </label>
+                <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
+              </div>
 
               <!-- Notification Types -->
               <h6 class="mb-2">Notification Types</h6>
@@ -1284,34 +1284,34 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
 
               <!-- Test Configuration -->
-                <h6 class="mb-3">Test Configuration</h6>
-                <div class="mb-3">
-                  <input type="email" class="form-control mb-3" id="testEmail" placeholder="test@example.com" aria-label="Test email">
+              <h6 class="mb-3">Test Configuration</h6>
+              <div class="mb-3">
+                <input type="email" class="form-control mb-3" id="testEmail" placeholder="test@example.com" aria-label="Test email">
 
-                  <a href="#"
-                     id="sendTestEmailBtn"
-                     class="badge text-black p-2 text-decoration-none fw-medium disabled"
-                     style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
-                    <i class="bi bi-envelope me-3"></i>Send Test Email
-                  </a>
-                </div>
+                <a href="#"
+                   id="sendTestEmailBtn"
+                   class="badge text-black p-2 text-decoration-none fw-medium disabled"
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229); pointer-events: none; opacity: 0.5;">
+                  <i class="bi bi-envelope me-3"></i>Send Test Email
+                </a>
+              </div>
 
-                <script>
-                  const testEmailInput = document.getElementById('testEmail');
-                  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+              <script>
+                const testEmailInput = document.getElementById('testEmail');
+                const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
 
-                  testEmailInput.addEventListener('input', function () {
-                    if (testEmailInput.checkValidity()) {
-                      sendTestEmailBtn.classList.remove('disabled');
-                      sendTestEmailBtn.style.pointerEvents = 'auto';
-                      sendTestEmailBtn.style.opacity = '1';
-                    } else {
-                      sendTestEmailBtn.classList.add('disabled');
-                      sendTestEmailBtn.style.pointerEvents = 'none';
-                      sendTestEmailBtn.style.opacity = '0.5';
-                    }
-                  });
-                </script>
+                testEmailInput.addEventListener('input', function () {
+                  if (testEmailInput.checkValidity()) {
+                    sendTestEmailBtn.classList.remove('disabled');
+                    sendTestEmailBtn.style.pointerEvents = 'auto';
+                    sendTestEmailBtn.style.opacity = '1';
+                  } else {
+                    sendTestEmailBtn.classList.add('disabled');
+                    sendTestEmailBtn.style.pointerEvents = 'none';
+                    sendTestEmailBtn.style.opacity = '0.5';
+                  }
+                });
+              </script>
 
               <div id="testEmailStatus" class="small text-success d-none mb-3"></div>
 
@@ -1319,17 +1319,18 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 
             <div class="modal-footer">
 
-                <a href="#" 
-                    class="badge text-black p-2 text-decoration-none fw-medium" 
-                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-                    data-bs-dismiss="modal">
-                    Cancel
-                </a>
+              <a href="#" 
+                 class="badge text-black p-2 text-decoration-none fw-medium" 
+                 style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                 data-bs-dismiss="modal">
+                Cancel
+              </a>
 
-
-                <a href="#" type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">
-                    <i class="bi bi-person-plus me-3"></i>Save Settings
-                </a>
+              <button type="submit" 
+                      class="badge text-white p-2 text-decoration-none fw-medium" 
+                      style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
+                <i class="bi bi-person-plus me-3"></i>Save Settings
+              </button>
             </div>
           </form>
         </div>
@@ -2324,55 +2325,54 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end email notification script -->
 
 <!-- email notification db script -->
-<script>
-    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-
-  // Build data object mapping setting_key => setting_value
-  const data = {};
-  
-  // Master key for this form
-  const settingMasterKey = 'email';
-
-  // Single checkbox (enable_email_notifications)
-  data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-
-  // notification_types[] is an array — store as JSON string
-  const notifTypes = formData.getAll('notification_types[]');
-  data['notification_types'] = JSON.stringify(notifTypes);
-
-  // Other fields
-  data['notification_frequency'] = formData.get('notification_frequency') || '';
-  data['smtp_server'] = formData.get('smtp_server') || '';
-  data['smtp_port'] = formData.get('smtp_port') || '';
-  data['smtp_username'] = formData.get('smtp_username') || '';
-  data['smtp_password'] = formData.get('smtp_password') || '';
-  data['sender_name'] = formData.get('sender_name') || '';
-  data['sender_email'] = formData.get('sender_email') || '';
-
-  try {
-    const resp = await fetch('/api/settings_backend.php', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
-    });
-    const result = await resp.json();
-    if (result.success) {
-      alert('Settings saved successfully!');
-      const modalEl = document.getElementById('emailNotifConfigModal');
-      const modalInstance = bootstrap.Modal.getInstance(modalEl);
-      modalInstance.hide();
-    } else {
-      alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-    }
-  } catch (err) {
-    alert('Network error: ' + err.message);
-  }
-});
-
-</script>
+    <script>
+      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+    
+        const formData = new FormData(e.target);
+    
+        const data = {};
+        const settingMasterKey = 'email';
+    
+        data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+    
+        const notifTypes = formData.getAll('notification_types[]');
+        data['notification_types'] = JSON.stringify(notifTypes);
+    
+        data['notification_frequency'] = formData.get('notification_frequency') || '';
+        data['smtp_server'] = formData.get('smtp_server') || '';
+        data['smtp_port'] = formData.get('smtp_port') || '';
+        data['smtp_username'] = formData.get('smtp_username') || '';
+        data['smtp_password'] = formData.get('smtp_password') || '';
+        data['sender_name'] = formData.get('sender_name') || '';
+        data['sender_email'] = formData.get('sender_email') || '';
+    
+        console.log("Sending data:", {setting_master_key: settingMasterKey, settings: data});
+    
+        try {
+          const resp = await fetch('/api/settings_backend.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
+          });
+      
+          const result = await resp.json();
+          console.log("Response from backend:", result);
+      
+          if (result.success) {
+            alert('Settings saved successfully!');
+            const modalEl = document.getElementById('emailNotifConfigModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            modalInstance.hide();
+          } else {
+            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('Network error: ' + err.message);
+          console.error('Fetch error:', err);
+        }
+      });
+    </script>
 <!-- end email notification db script -->
 
 
