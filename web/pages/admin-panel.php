@@ -2247,83 +2247,45 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
-     <!-- <script>
-      // Show modal on configure button click
-      document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
-          e.preventDefault();
-          const modalEl = document.getElementById('emailNotifConfigModal');
-          const modal = new bootstrap.Modal(modalEl);
-          modal.show();
-        });
+     <script>
+        document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-      // Send test email button handler
-      document.getElementById('sendTestEmailBtn').addEventListener('click', async () => {
-        const testEmail = document.getElementById('testEmail').value.trim();
-        const statusEl = document.getElementById('testEmailStatus');
-        statusEl.classList.add('d-none');
-        statusEl.classList.remove('text-danger', 'text-success');
-        if (!testEmail) {
-          alert('Please enter a test email address.');
-          return;
-        }
-        statusEl.textContent = 'Sending test email...';
-        statusEl.classList.remove('d-none');
-        try {
-          const resp = await fetch('/api/send_test_email.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ test_email: testEmail })
-          });
-          const result = await resp.json();
-          if (result.success) {
-            statusEl.textContent = 'Test email sent successfully!';
-            statusEl.classList.add('text-success');
-          } else {
-            statusEl.textContent = 'Failed to send test email: ' + (result.error || 'Unknown error');
-            statusEl.classList.add('text-danger');
-          }
-        } catch (err) {
-          statusEl.textContent = 'Network error: ' + err.message;
-          statusEl.classList.add('text-danger');
-        }
-      });   
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  data.notification_types = formData.getAll('notification_types[]');
+  data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false'; // string for DB
 
-      // Save settings handler
-      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-        e.preventDefault(); 
+  const payload = {
+    setting_master_key: 'email',
+    settings: data
+  };
 
-        const formData = new FormData(e.target);
-        // Convert FormData to JSON object
-        const data = Object.fromEntries(formData.entries());
-        // Because notification_types[] is multi-value, gather all checked ones:
-        data.notification_types = formData.getAll('notification_types[]');
-        // Checkbox sends 'on' if checked, undefined if not
-        data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? true : false;   
+  try {
+    const resp = await fetch('/api/save_email_settings.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const result = await resp.json();
+    if (result.success) {
+      alert('Settings saved successfully!');
+      const modalEl = document.getElementById('emailNotifConfigModal');
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      modalInstance.hide();
+    } else {
+      alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+    }
+  } catch (err) {
+    alert('Network error: ' + err.message);
+  }
+});
 
-        try {
-          const resp = await fetch('/api/save_email_settings.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-          });
-          const result = await resp.json();
-          if (result.success) {
-            alert('Settings saved successfully!');
-            const modalEl = document.getElementById('emailNotifConfigModal');
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            modalInstance.hide();
-          } else {
-            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-          }
-        } catch (err) {
-          alert('Network error: ' + err.message);
-        }
-      });
-    </script> -->
+     </script>
 <!-- end email notification script -->
 
 <!-- email notification db script -->
-    <script>
+    <!-- <script>
     document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -2377,7 +2339,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         console.error('Fetch error:', err);
       }
     });
-    </script>
+    </script> -->
 <!-- end email notification db script -->
 
 
