@@ -151,6 +151,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     // open modal for Manage Assignments or Add Engagement
 function openManageOrAddModal(user_id, employeeName, weekStart) {
     console.log("Modal triggered:", user_id, employeeName, weekStart);
+    console.log("manageAddModal element:", document.getElementById('manageAddModal'));
+console.log("manageAssignmentsButton element:", document.getElementById('manageAssignmentsButton'));
+console.log("addAssignmentsButton element:", document.getElementById('addAssignmentsButton'));
+
     // Fetch assignments for the user and week
     const assignments = <?php echo json_encode($assignments); ?>;
     const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
