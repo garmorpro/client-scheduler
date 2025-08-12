@@ -2373,7 +2373,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           alert('Failed to save settings: ' + (result.error || 'Unknown error'));
         }
       } catch (err) {
-        alert('Network error: ' + err.message);
+        // alert('Network error: ' + err.message);
         console.error('Fetch error:', err);
       }
     });
