@@ -86,42 +86,48 @@ body {
 
 .custom-tabs-modal {
     display: flex;
-    margin-top: 2rem;
-    margin-bottom: 20px;
+    margin: 2rem auto 20px auto;  /* vertical margin and auto horizontal margin centers the container */
     background-color: rgb(235,235,239);
     border-radius: 15px;
     padding: 5px;
     justify-content: center;
     width: 75% !important;
+    max-width: 600px;  /* optional max width */
 }
+
 .custom-tabs-modal button {
     background: none;
     border: none;
-    padding: 4px 12px;
+    padding: 6px 16px;  /* slightly bigger clickable area */
     border-radius: 15px;
     font-size: 12px;
     font-weight: 400;
     color: #6b7280;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-    flex: 1;
+    /* REMOVE flex: 1; so buttons only take needed space */
     text-align: center;
-    margin: 0 4px;
+    margin: 0 8px;  /* space between buttons */
+    min-width: 100px; /* optional for consistent button size */
 }
+
 .custom-tabs-modal button:hover {
     background: #ffffff95;
     color: black;
 }
+
 .custom-tabs-modal button.active {
     background: #ffffff;
     color: black;
 }
+
 .tab-content-modal {
     background: white;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
 }
+
 
 
 /* Tab content wrapper */
