@@ -387,54 +387,17 @@ function openEmployeeModal(employeeId) {
                 <div id="searchResults" class="dropdown-menu" style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
 
-            <!-- <div class="col-md-2">
-                <select name="status" class="form-select">
-                    <option value="">Select a Statuses</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                    <option value="not_confirmed">Not Confirmed</option>
-                </select>
-            </div> -->
-            <!-- <div class="col-md-3 d-flex align-items-center gap-3">
-                <input type="date" name="start" class="form-control" value="<?php //echo htmlspecialchars($startDate); ?>" onchange="autoSubmitDateFilter()">
-                <a href="?start=<?php //echo date('Y-m-d', strtotime('sunday -2 weeks')); ?>" class="btn btn-outline-secondary">Today</a>
-            </div> -->
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <a href="?week_offset=<?php echo $weekOffset - 1; ?>" class="btn btn-outline-secondary btn-sm me-2">
+                    &lt;
+                </a>
+                <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+                <a href="?week_offset=<?php echo $weekOffset + 1; ?>" class="btn btn-outline-secondary btn-sm ms-2">
+                    &gt;
+                </a>
+            </div>
         </form>
 
-
-<div class="d-flex justify-content-center align-items-center mb-3">
-    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" class="btn btn-outline-secondary btn-sm me-2">
-        &lt;
-    </a>
-    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" class="btn btn-outline-secondary btn-sm ms-2">
-        &gt;
-    </a>
-</div>
-
-
-
-
-        <script>
-// document.addEventListener('DOMContentLoaded', () => {
-//     let startMondayTs = <?php// echo $startMonday; ?>; // timestamp of first week
-
-//     function loadWeeks() {
-//         window.location.href = `master_schedule.php?start_monday=${startMondayTs}`;
-//     }
-
-//     document.getElementById('prevWeek').addEventListener('click', () => {
-//         startMondayTs -= 7 * 24 * 60 * 60; // move 1 week earlier
-//         loadWeeks();
-//     });
-
-//     document.getElementById('nextWeek').addEventListener('click', () => {
-//         startMondayTs += 7 * 24 * 60 * 60; // move 1 week later
-//         loadWeeks();
-//     });
-// });
-
-          </script>
 
 
 
