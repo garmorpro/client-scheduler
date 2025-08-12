@@ -1552,55 +1552,53 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     return;
   }
 
-  const listEl = document.createElement('ul');
-  listEl.classList.add('list-group');
-
   assignmentsForWeek.forEach(assignment => {
-    const item = document.createElement('li');
-    item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+    // Create card container
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-3', 'shadow-sm');
 
-    // Left side: client name + hours
+    // Inner card body with flex layout
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
+
+    // Left side: client name and hours
     const leftDiv = document.createElement('div');
     leftDiv.innerHTML = `
-      <div class="fw-semibold">${assignment.client_name || 'Unnamed Client'}</div>
+      <div class="fw-semibold fs-5">${assignment.client_name || 'Unnamed Client'}</div>
       <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
     `;
 
-    // Right side: buttons
+    // Right side: action buttons
     const rightDiv = document.createElement('div');
 
-    // Edit button
     const editBtn = document.createElement('button');
     editBtn.type = 'button';
     editBtn.className = 'btn btn-sm btn-outline-primary me-2';
     editBtn.title = 'Edit Assignment';
     editBtn.innerHTML = `<i class="bi bi-pencil-square"></i>`;
     editBtn.onclick = () => {
-      // Add your edit logic here, e.g. open edit modal with assignment data
       console.log('Edit clicked for assignment:', assignment);
+      // Your edit logic here
     };
 
-    // Delete button
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
     deleteBtn.className = 'btn btn-sm btn-outline-danger';
     deleteBtn.title = 'Delete Assignment';
     deleteBtn.innerHTML = `<i class="bi bi-trash"></i>`;
     deleteBtn.onclick = () => {
-      // Add your delete logic here, e.g. confirm and delete assignment
       console.log('Delete clicked for assignment:', assignment);
+      // Your delete logic here
     };
 
     rightDiv.appendChild(editBtn);
     rightDiv.appendChild(deleteBtn);
 
-    item.appendChild(leftDiv);
-    item.appendChild(rightDiv);
-
-    listEl.appendChild(item);
+    cardBody.appendChild(leftDiv);
+    cardBody.appendChild(rightDiv);
+    card.appendChild(cardBody);
+    container.appendChild(card);
   });
-
-  container.appendChild(listEl);
 }
 
   </script>
