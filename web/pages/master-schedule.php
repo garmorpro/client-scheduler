@@ -641,13 +641,27 @@ function openEmployeeModal(employeeId) {
                   role="option"
                   tabindex="0"
                 >
-                  <div>
-                    <?php echo htmlspecialchars($client['client_name']); ?><br>
-                    <small class="text-muted">
-                      <?php echo ucfirst(htmlspecialchars($client['status'])); ?> <i class="bi bi-dot"></i> 
-                      <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
-                    </small>
-                  </div>
+                
+                <?php
+                  // Map statuses to display names
+                  $statusDisplayMap = [
+                    'confirmed' => 'Confirmed',
+                    'pending' => 'Pending',
+                    'not_confirmed' => 'Not Confirmed'
+                  ];
+                ?>
+
+                <div>
+                  <?php echo htmlspecialchars($client['client_name']); ?><br>
+                  <small class="text-muted">
+                    <?php 
+                      $statusKey = strtolower($client['status']);
+                      echo htmlspecialchars($statusDisplayMap[$statusKey] ?? ucfirst($statusKey));
+                    ?> 
+                    <i class="bi bi-dot"></i> 
+                    <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                  </small>
+                </div>
                 </div>
               <?php endforeach; ?>
             </div>
