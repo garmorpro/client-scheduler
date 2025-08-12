@@ -368,3 +368,6 @@ body {
     border-left: 3px solid #ffc107 !important;
     border-right: 3px solid #ffc107 !important;
 }
+.highlight-today:hover {
+    background-color: blue;
+}
