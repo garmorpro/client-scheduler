@@ -614,7 +614,7 @@ function openEmployeeModal(employeeId) {
       <!-- Tab Content -->
       <div class="tab-content-modal">
         <!-- Assignment Tab Pane -->
-        <div id="assignmentTabPane" class="tab-pane active" role="tabpanel" aria-labelledby="assignmentTab">
+        <div id="assignmentTabPane" class="tab-pane active show" role="tabpanel" aria-labelledby="assignmentTab" aria-hidden="false">
           <form id="assignmentForm" action="add_assignment.php" method="POST">
             <!-- Hidden inputs -->
             <input type="hidden" id="modalUserId" name="user_id" value="">
@@ -700,7 +700,7 @@ function openEmployeeModal(employeeId) {
         </div>
 
         <!-- Time Off Tab Pane -->
-        <div id="timeoffTabPane" class="tab-pane" role="tabpanel" aria-labelledby="timeoffTab">
+        <div id="timeoffTabPane" class="tab-pane" role="tabpanel" aria-labelledby="timeoffTab" aria-hidden="true">
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
             <input type="hidden" name="user_id" id="timeoffUserId" value="">
             <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
@@ -1166,7 +1166,7 @@ function openEmployeeModal(employeeId) {
       const targetTab = btn.getAttribute('data-tab');
       if (!targetTab) return;
 
-      // Remove active class on all buttons
+      // Remove active class on all buttons & update aria attributes
       document.querySelectorAll('.custom-tabs-modal button').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
@@ -1179,15 +1179,20 @@ function openEmployeeModal(employeeId) {
       btn.setAttribute('tabindex', '0');
       btn.focus();
 
-      // Hide all tab panes
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      // Hide all tab panes (remove both active and show)
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active', 'show');
+        pane.setAttribute('aria-hidden', 'true');
+      });
 
-      // Show target tab pane
+      // Show target tab pane (add active and show)
       const activePane = document.getElementById(targetTab);
-      if (activePane) activePane.classList.add('active');
+      if (activePane) {
+        activePane.classList.add('active', 'show');
+        activePane.setAttribute('aria-hidden', 'false');
+      }
     });
   });
-  </script>
 <!-- end Script: Custom Tabs -->
 
 
