@@ -1398,7 +1398,7 @@ if ($settingResult) {
                               
                 foreach ($chunks as $colIndex => $chunk):
                 ?>
-                  <div class="col-md-3">
+                  <div class="col-md-4">
                     <?php foreach ($chunk as $i => $key):
                       $label = $labelChunks[$colIndex][$i];
                     ?>
