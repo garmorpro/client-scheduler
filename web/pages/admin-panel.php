@@ -1356,16 +1356,16 @@ if ($settingResult) {
               <!-- Backup Schedule -->
               <h6 class="mb-3">Backup Schedule</h6>
               <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
-                <label class="form-check-label float-start" for="enableAutomatedBackups">Enable Automated Backups <br>
+                <label class="form-check-label float-start" style="font-size: 14px !important;" for="enableAutomatedBackups">Enable Automated Backups <br>
                   <span class="text-muted" style="font-size: 12px;">
                     Master switch for all email notifications</label>
-                <input class="form-check-input float-end" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
+                <input class="form-check-input float-end" style="font-size: 14px !important;" type="checkbox" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings ['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
               </div>
 
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label for="backupFrequency" class="form-label">Backup Frequency</label>
-                  <select class="form-select" id="backupFrequency" name="backup_frequency" required>
+                  <label for="backupFrequency" class="form-label" style="font-size: 14px !important;">Backup Frequency</label>
+                  <select class="form-select" id="backupFrequency" style="font-size: 14px !important;" name="backup_frequency" required>
                     <option value="hourly" <?php if (($settings['backup_frequency'] ?? '') === 'hourly') echo 'selected'; ?>>Every Hour</option>
                     <option value="daily" <?php if (($settings['backup_frequency'] ?? '') === 'daily') echo 'selected'; ?>>Daily</option>
                     <option value="weekly" <?php if (($settings['backup_frequency'] ?? '') === 'weekly') echo 'selected'; ?>>Weekly</option>
