@@ -1094,10 +1094,11 @@ function openEmployeeModal(employeeId) {
     document.addEventListener('click', outsideClickHandler);
 
     function toggleDropdown() {
-      const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-      dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
-      dropdownList.style.display = expanded ? 'none' : 'block';
-    }
+  const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+  dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
+  dropdownList.style.display = expanded ? 'none' : 'block';
+}
+
 
     function dropdownBtnKeyHandler(e) {
       if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
