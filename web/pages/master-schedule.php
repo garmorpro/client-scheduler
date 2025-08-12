@@ -638,7 +638,7 @@ function openEmployeeModal(employeeId) {
           <div id="timeOffEntryContent" class="d-none">
             <div class="mb-3">
               <label for="timeOffHours" class="form-label">Hours</label>
-              <input type="number" class="form-control" id="timeOffHours" name="assigned_hours" min="0" step="0.25" required>
+              <input type="number" class="form-control" id="timeOffHours" name="time_off_hours" min="0" step="0.25" required>
             </div>
           </div>
 
