@@ -1206,11 +1206,16 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
             <div class="modal-body">
 
               <!-- General Settings -->
-              <h6 class="mb-3">General Settings</h6>
-              <div class="form-check form-switch mb-4 ms-0">
-                <label class="form-check-label float-start" for="enableEmailNotifications">Enable Email Notifications (Master switch) <br><span class="text-muted" style="font-size: 12px;">Master switch for all email notifications</span></label>
-                <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
-              </div>
+                <h6 class="mb-3">General Settings</h6>
+                <div class="form-check form-switch mb-4" style="padding-left: 0; margin-left: 0;">
+                  <label class="form-check-label float-start m-0" for="enableEmailNotifications">
+                    Enable Email Notifications (Master switch) <br>
+                    <span class="text-muted" style="font-size: 12px;">
+                      Master switch for all email notifications
+                    </span>
+                  </label>
+                  <input class="form-check-input float-end" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
+                </div>
 
               <!-- Notification Types -->
               <h6 class="mb-3">Notification Types</h6>
