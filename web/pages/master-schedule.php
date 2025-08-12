@@ -660,6 +660,107 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           </button>
         </div>
 
+        <div
+          id="assignmentTabPane"
+          class="tab-pane active show"
+          role="tabpanel"
+          aria-labelledby="assignmentTab"
+          aria-hidden="false"
+        >
+          <form id="assignmentForm" action="add_assignment.php" method="POST">
+            <!-- Hidden inputs -->
+            <input type="hidden" id="modalUserId" name="user_id" value="">
+            <input type="hidden" id="modalWeek" name="week_start" value="">
+
+            <!-- Client Dropdown -->
+            <div class="mb-3 custom-dropdown">
+              <label for="engagementInput" class="form-label">Client Name</label>
+              <div
+                class="dropdown-btn"
+                id="dropdownBtn"
+                tabindex="0"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                role="combobox"
+                aria-labelledby="selectedClient"
+              >
+                <span id="selectedClient" class="text-muted">Select a client</span>
+                <span>&#9662;</span>
+              </div>
+
+              <div
+                class="dropdown-list"
+                id="dropdownList"
+                role="listbox"
+                tabindex="-1"
+                aria-labelledby="selectedClient"
+              >
+                <?php
+                  $statusDisplayMap = [
+                    'confirmed' => 'Confirmed',
+                    'pending' => 'Pending',
+                    'not_confirmed' => 'Not Confirmed'
+                  ];
+                  $statusClassMap = [
+                    'confirmed' => 'text-confirmed',
+                    'pending' => 'text-pending',
+                    'not_confirmed' => 'text-not-confirmed'
+                  ];
+                ?>
+                <?php foreach ($clientsWithHours as $client): ?>
+                  <?php
+                    $statusKey = strtolower($client['status']);
+                    $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                    $statusClass = $statusClassMap[$statusKey] ?? '';
+                  ?>
+                  <div
+                    class="dropdown-item"
+                    data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
+                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    role="option"
+                    tabindex="0"
+                  >
+                    <div>
+                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
+                      <small class="text-muted">
+                        <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                        <i class="bi bi-dot"></i> 
+                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                      </small>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+
+              <input type="hidden" id="engagementInput" name="engagement_id" required>
+            </div>
+
+            <!-- Assigned hours -->
+            <div class="mb-3">
+              <label for="assignedHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+            </div>
+
+            <div class="modal-footer p-0 pt-3 border-0">
+              <button
+                type="button"
+                class="btn badge text-black p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="badge text-white p-2 text-decoration-none fw-medium"
+                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+
         <!-- Time Off Tab -->
         <div
           id="timeOffTabPane"
