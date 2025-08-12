@@ -381,14 +381,12 @@ input, select {
 }
 
 
- /* Container */
-  .custom-dropdown {
+.custom-dropdown {
     position: relative;
     max-width: 400px;
     font-size: 14px;
   }
 
-  /* Dropdown button */
   .dropdown-btn {
     width: 100%;
     padding: 8px 12px;
@@ -398,9 +396,9 @@ input, select {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    user-select: none;
   }
 
-  /* Dropdown list */
   .dropdown-list {
     position: absolute;
     top: 100%;
@@ -410,11 +408,11 @@ input, select {
     overflow-y: auto;
     border: 1px solid #ccc;
     background: white;
-    z-index: 1000;
+    z-index: 1050;
     display: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
 
-  /* Dropdown list item */
   .dropdown-item {
     padding: 8px 12px;
     border-bottom: 1px solid #eee;
@@ -427,13 +425,13 @@ input, select {
     background: #f0f0f0;
   }
 
-  /* Status badge */
   .status-badge {
     font-weight: 600;
     text-transform: capitalize;
+    margin-left: 8px;
+    color: #555;
   }
 
-  /* Assigned hours */
   .hours-info {
     color: #666;
     font-size: 12px;

@@ -619,16 +619,18 @@ function openEmployeeModal(employeeId) {
 
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
-              <div class="dropdown-btn" id="dropdownBtn">
+              <div class="dropdown-btn" id="dropdownBtn" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox">
                 <span id="selectedClient">Select a client</span>
-                <span>&#9662;</span> <!-- down arrow -->
+                <span>&#9662;</span> <!-- Down arrow -->
               </div>
-              <div class="dropdown-list" id="dropdownList">
+
+              <div class="dropdown-list" id="dropdownList" role="listbox" tabindex="-1" aria-labelledby="selectedClient">
                 <?php foreach ($clientsWithHours as $client): ?>
                   <div
                     class="dropdown-item"
                     data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
                     data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    role="option"
                   >
                     <div>
                       <?php echo htmlspecialchars($client['client_name']); ?>
@@ -640,6 +642,9 @@ function openEmployeeModal(employeeId) {
                   </div>
                 <?php endforeach; ?>
               </div>
+                
+              <input type="hidden" id="engagementInput" name="engagement_id" required>
+            </div>
                 
 
 
@@ -1022,33 +1027,52 @@ function openEmployeeModal(employeeId) {
 
 <!-- dropdown menu -->
 <script>
-  const dropdownBtn = document.getElementById('dropdownBtn');
-  const dropdownList = document.getElementById('dropdownList');
-  const selectedClient = document.getElementById('selectedClient');
-  const engagementInput = document.getElementById('engagementInput');
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropdownBtn = document.getElementById('dropdownBtn');
+    const dropdownList = document.getElementById('dropdownList');
+    const selectedClient = document.getElementById('selectedClient');
+    const engagementInput = document.getElementById('engagementInput');
 
-  dropdownBtn.addEventListener('click', () => {
-    dropdownList.style.display = dropdownList.style.display === 'block' ? 'none' : 'block';
-  });
+    // Toggle dropdown visibility
+    dropdownBtn.addEventListener('click', () => {
+      const isVisible = dropdownList.style.display === 'block';
+      dropdownList.style.display = isVisible ? 'none' : 'block';
+      dropdownBtn.setAttribute('aria-expanded', !isVisible);
+    });
 
-  // Close dropdown if clicked outside
-  document.addEventListener('click', (e) => {
-    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-      dropdownList.style.display = 'none';
-    }
-  });
+    // Close dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+        dropdownList.style.display = 'none';
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
 
-  // When selecting an item
-  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-    item.addEventListener('click', () => {
+    // Use event delegation to catch clicks on dropdown items
+    dropdownList.addEventListener('click', (e) => {
+      const item = e.target.closest('.dropdown-item');
+      if (!item) return;
+
       const clientName = item.getAttribute('data-client-name');
       const engagementId = item.getAttribute('data-engagement-id');
+
       selectedClient.textContent = clientName;
       engagementInput.value = engagementId;
+
       dropdownList.style.display = 'none';
+      dropdownBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    // Optional: Keyboard accessibility (open/close on Enter or Space)
+    dropdownBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        dropdownBtn.click();
+      }
     });
   });
 </script>
+
 <!-- end dropdown menu -->
 
 
