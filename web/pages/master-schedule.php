@@ -596,10 +596,9 @@ function openEmployeeModal(employeeId) {
       <form id="assignmentForm" action="add_assignment.php" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="assignmentModalLabel">
-            <i class="bi bi-calendar-range me-2"></i>New Assignment<br>
-            <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
-              Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
-            </span>
+            <i class="bi bi-calendar-range me-2"></i>
+            <span id="modalTitle">Select Entry Type</span><br>
+            <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;" id="modalSubtitle"></span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -609,89 +608,103 @@ function openEmployeeModal(employeeId) {
           <input type="hidden" id="modalUserId" name="user_id" value="">
           <input type="hidden" id="modalWeek" name="week_start" value="">
 
-          <!-- Custom Client Dropdown -->
-          <div class="mb-3 custom-dropdown">
-            <label for="engagementInput" class="form-label">Client Name</label>
-            <div
-              class="dropdown-btn"
-              id="dropdownBtn"
-              tabindex="0"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              role="combobox"
-              aria-labelledby="selectedClient"
-            >
-              <span id="selectedClient" class="text-muted">Select a client</span>
-              <span>&#9662;</span> <!-- Down arrow -->
-            </div>
-
-            <div
-              class="dropdown-list"
-              id="dropdownList"
-              role="listbox"
-              tabindex="-1"
-              aria-labelledby="selectedClient"
-            >
-              <?php 
-                // Map statuses to display names
-                $statusDisplayMap = [
-                  'confirmed' => 'Confirmed',
-                  'pending' => 'Pending',
-                  'not_confirmed' => 'Not Confirmed'
-                ];
-                // Map statuses to CSS classes
-                $statusClassMap = [
-                  'confirmed' => 'text-confirmed',
-                  'pending' => 'text-pending',
-                  'not_confirmed' => 'text-not-confirmed'
-                ];
-              ?>
-              <?php foreach ($clientsWithHours as $client): ?>
-                <?php
-                  $statusKey = strtolower($client['status']);
-                  $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
-                  $statusClass = $statusClassMap[$statusKey] ?? 'badge-default';
-                ?>
-                <div
-                  class="dropdown-item"
-                  data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
-                  data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                  role="option"
-                  tabindex="0"
-                >
-                  <div>
-                    <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
-                    <small class="text-muted">
-                      <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
-                      <i class="bi bi-dot"></i> 
-                      <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
-                    </small>
-                  </div>
-                </div>
-              <?php endforeach; ?>
-            </div>
-
-            <!-- Hidden input to hold selected value for form submission -->
-            <input type="hidden" id="engagementInput" name="engagement_id" required>
+          <!-- Initial prompt with two buttons -->
+          <div id="entryTypePrompt" class="text-center">
+            <p>Please choose the type of entry:</p>
+            <button type="button" class="btn btn-outline-primary me-2" id="btnTimeOffEntry">Time Off Entry</button>
+            <button type="button" class="btn btn-primary" id="btnNewAssignment">New Assignment</button>
           </div>
 
-          <!-- Assigned hours -->
-          <div class="mb-3">
-            <label for="assignedHours" class="form-label">Hours</label>
-            <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+          <!-- Time Off Entry content: only hours input -->
+          <div id="timeOffEntryContent" class="d-none">
+            <div class="mb-3">
+              <label for="timeOffHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="timeOffHours" name="time_off_hours" min="0" step="0.25" required>
+            </div>
+          </div>
+
+          <!-- New Assignment content: client dropdown + hours input -->
+          <div id="newAssignmentContent" class="d-none">
+            <!-- Custom Client Dropdown -->
+            <div class="mb-3 custom-dropdown">
+              <label for="engagementInput" class="form-label">Client Name</label>
+              <div
+                class="dropdown-btn"
+                id="dropdownBtn"
+                tabindex="0"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                role="combobox"
+                aria-labelledby="selectedClient"
+              >
+                <span id="selectedClient" class="text-muted">Select a client</span>
+                <span>&#9662;</span> <!-- Down arrow -->
+              </div>
+
+              <div
+                class="dropdown-list"
+                id="dropdownList"
+                role="listbox"
+                tabindex="-1"
+                aria-labelledby="selectedClient"
+              >
+                <?php 
+                  $statusDisplayMap = [
+                    'confirmed' => 'Confirmed',
+                    'pending' => 'Pending',
+                    'not_confirmed' => 'Not Confirmed'
+                  ];
+                  $statusClassMap = [
+                    'confirmed' => 'text-confirmed',
+                    'pending' => 'text-pending',
+                    'not_confirmed' => 'text-not-confirmed'
+                  ];
+                ?>
+                <?php foreach ($clientsWithHours as $client): ?>
+                  <?php
+                    $statusKey = strtolower($client['status']);
+                    $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
+                    $statusClass = $statusClassMap[$statusKey] ?? 'badge-default';
+                  ?>
+                  <div
+                    class="dropdown-item"
+                    data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>"
+                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    role="option"
+                    tabindex="0"
+                  >
+                    <div>
+                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
+                      <small class="text-muted">
+                        <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span>
+                        <i class="bi bi-dot"></i> 
+                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                      </small>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              
+              <!-- Hidden input to hold selected value for form submission -->
+              <input type="hidden" id="engagementInput" name="engagement_id" required>
+            </div>
+              
+            <!-- Assigned hours -->
+            <div class="mb-3">
+              <label for="assignedHours" class="form-label">Hours</label>
+              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
+            </div>
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
+          <button type="submit" class="btn badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;">Submit</button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
-
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
@@ -1051,75 +1064,185 @@ function openEmployeeModal(employeeId) {
 <!-- end script: search -->
 
 <!-- dropdown menu -->
-<script>
+  <script>
   const dropdownBtn = document.getElementById('dropdownBtn');
-const dropdownList = document.getElementById('dropdownList');
-const selectedClient = document.getElementById('selectedClient');
-const engagementInput = document.getElementById('engagementInput');
+  const dropdownList = document.getElementById('dropdownList');
+  const selectedClient = document.getElementById('selectedClient');
+  const engagementInput = document.getElementById('engagementInput');
 
-dropdownBtn.addEventListener('click', () => {
-  const isOpen = dropdownList.style.display === 'block';
-  dropdownList.style.display = isOpen ? 'none' : 'block';
-  dropdownBtn.setAttribute('aria-expanded', !isOpen);
-});
-
-dropdownBtn.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    dropdownList.style.display = 'block';
-    dropdownBtn.setAttribute('aria-expanded', 'true');
-    dropdownList.querySelector('.dropdown-item').focus();
-  }
-});
-
-dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-  item.addEventListener('click', () => {
-    selectClient(item);
+  dropdownBtn.addEventListener('click', () => {
+    const isOpen = dropdownList.style.display === 'block';
+    dropdownList.style.display = isOpen ? 'none' : 'block';
+    dropdownBtn.setAttribute('aria-expanded', !isOpen);
   });
-  item.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+
+  dropdownBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
+      dropdownList.style.display = 'block';
+      dropdownBtn.setAttribute('aria-expanded', 'true');
+      dropdownList.querySelector('.dropdown-item').focus();
+    }
+  });
+
+  dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
       selectClient(item);
-    }
-    else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-      next.focus();
-    }
-    else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-      prev.focus();
-    }
-    else if (e.key === 'Escape') {
+    });
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectClient(item);
+      }
+      else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
+        next.focus();
+      }
+      else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
+        prev.focus();
+      }
+      else if (e.key === 'Escape') {
+        closeDropdown();
+        dropdownBtn.focus();
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
       closeDropdown();
-      dropdownBtn.focus();
     }
   });
-});
 
-document.addEventListener('click', (e) => {
-  if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+  function selectClient(item) {
+    const clientName = item.getAttribute('data-client-name');
+    const engagementId = item.getAttribute('data-engagement-id');
+    selectedClient.textContent = clientName;
+    engagementInput.value = engagementId;
     closeDropdown();
   }
-});
 
-function selectClient(item) {
-  const clientName = item.getAttribute('data-client-name');
-  const engagementId = item.getAttribute('data-engagement-id');
-  selectedClient.textContent = clientName;
-  engagementInput.value = engagementId;
-  closeDropdown();
-}
+  function closeDropdown() {
+    dropdownList.style.display = 'none';
+    dropdownBtn.setAttribute('aria-expanded', 'false');
+  }
 
-function closeDropdown() {
-  dropdownList.style.display = 'none';
-  dropdownBtn.setAttribute('aria-expanded', 'false');
-}
-
-</script>
+  </script>
 
 <!-- end dropdown menu -->
+
+<!-- Script: Dynamic Buttons on Add Modal -->
+  <script>
+   document.addEventListener('DOMContentLoaded', function () {
+     const entryTypePrompt = document.getElementById('entryTypePrompt');
+     const timeOffEntryContent = document.getElementById('timeOffEntryContent');
+     const newAssignmentContent = document.getElementById('newAssignmentContent');
+     const modalTitle = document.getElementById('modalTitle');
+     const modalSubtitle = document.getElementById('modalSubtitle');
+     const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
+     const btnNewAssignment = document.getElementById('btnNewAssignment');
+     const engagementInput = document.getElementById('engagementInput');
+     const selectedClient = document.getElementById('selectedClient');
+     const assignedHours = document.getElementById('assignedHours');
+     const timeOffHours = document.getElementById('timeOffHours');
+     const form = document.getElementById('assignmentForm');
+
+     // Reset modal to prompt state every time it opens
+     const assignmentModal = document.getElementById('assignmentModal');
+     assignmentModal.addEventListener('show.bs.modal', function (event) {
+       entryTypePrompt.classList.remove('d-none');
+       timeOffEntryContent.classList.add('d-none');
+       newAssignmentContent.classList.add('d-none');
+
+       modalTitle.textContent = 'Select Entry Type';
+       modalSubtitle.textContent = '';
+
+       // Reset form fields and requirements
+       engagementInput.value = '';
+       assignedHours.value = '';
+       assignedHours.required = false;
+       timeOffHours.value = '';
+       timeOffHours.required = false;
+
+       // Reset client dropdown display text
+       selectedClient.textContent = 'Select a client';
+
+       // Also reset submit button state if you want (optional)
+     });
+
+     btnTimeOffEntry.addEventListener('click', function () {
+       entryTypePrompt.classList.add('d-none');
+       timeOffEntryContent.classList.remove('d-none');
+       newAssignmentContent.classList.add('d-none');
+
+       modalTitle.textContent = 'Time Off Entry';
+       modalSubtitle.textContent = 'Enter hours for time off';
+
+       // Set required fields accordingly
+       timeOffHours.required = true;
+       assignedHours.required = false;
+       engagementInput.required = false;
+
+       // Clear unrelated inputs
+       engagementInput.value = '';
+       assignedHours.value = '';
+     });
+
+     btnNewAssignment.addEventListener('click', function () {
+       entryTypePrompt.classList.add('d-none');
+       timeOffEntryContent.classList.add('d-none');
+       newAssignmentContent.classList.remove('d-none');
+
+       modalTitle.textContent = 'New Assignment';
+       modalSubtitle.textContent = 'Assign work for <strong><span id="modalEmployeeNameDisplayInModal"></span></strong> during week of <strong><span id="modalWeekDisplayInModal"></span></strong>';
+
+       // Make engagement and hours required
+       engagementInput.required = true;
+       assignedHours.required = true;
+       timeOffHours.required = false;
+
+       // Clear time off input
+       timeOffHours.value = '';
+     });
+
+     // --- Client dropdown logic ---
+
+     const dropdownBtn = document.getElementById('dropdownBtn');
+     const dropdownList = document.getElementById('dropdownList');
+
+     dropdownBtn.addEventListener('click', () => {
+       const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+       dropdownBtn.setAttribute('aria-expanded', !expanded);
+       dropdownList.style.display = expanded ? 'none' : 'block';
+     });
+
+     // Close dropdown if clicked outside
+     document.addEventListener('click', (e) => {
+       if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
+         dropdownBtn.setAttribute('aria-expanded', 'false');
+         dropdownList.style.display = 'none';
+       }
+     });
+
+     // Handle selecting a client
+     dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+       item.addEventListener('click', () => {
+         const clientId = item.getAttribute('data-engagement-id');
+         const clientName = item.getAttribute('data-client-name');
+
+         engagementInput.value = clientId;
+         selectedClient.textContent = clientName;
+
+         dropdownBtn.setAttribute('aria-expanded', 'false');
+         dropdownList.style.display = 'none';
+       });
+     });
+   });
+  </script>
+<!-- end Script: dynamic buttons on add modal -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
