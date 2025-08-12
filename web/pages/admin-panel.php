@@ -2490,6 +2490,14 @@ if ($settingResult) {
     }
   }
 
+  // Show Backup Configuration Modal on configure button click
+    document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const modalEl = document.getElementById('backupConfigModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    });
+
   document.getElementById('storageLocation').addEventListener('change', updateCloudStorageVisibility);
 
   // Initialize visibility on page load
