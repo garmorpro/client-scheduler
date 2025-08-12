@@ -570,7 +570,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Email Notifications</p>
                         <p class="mb-0" style="font-size: 14px;">Send system notifications via email</p>
                       </div>
-                      <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
+                      <a href="#" id="configureEmailBtn" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
@@ -2210,11 +2210,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- email notifications script -->
      <script>
       // Show modal on configure button click
-      document.querySelector('a.badge.text-black').addEventListener('click', e => {
-        e.preventDefault();
-        const modal = new bootstrap.Modal(document.getElementById('emailNotifConfigModal'));
-        modal.show();
-      });   
+      document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
+          e.preventDefault();
+          const modalEl = document.getElementById('emailNotifConfigModal');
+          const modal = new bootstrap.Modal(modalEl);
+          modal.show();
+        });
 
       // Send test email button handler
       document.getElementById('sendTestEmailBtn').addEventListener('click', async () => {
