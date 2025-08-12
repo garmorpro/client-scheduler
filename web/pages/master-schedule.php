@@ -161,8 +161,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     const manageBtn = document.getElementById('manageAssignmentsButton');
     const addBtn = document.getElementById('addAssignmentsButton');
 
-    manageBtn.replaceWith(manageBtn.cloneNode(true));
-    addBtn.replaceWith(addBtn.cloneNode(true));
+    if (manageBtn) {
+      manageBtn.replaceWith(manageBtn.cloneNode(true));
+    }
+    if (addBtn) {
+      addBtn.replaceWith(addBtn.cloneNode(true));
+    }
 
     // Re-select cloned buttons
     const newManageBtn = document.getElementById('manageAssignmentsButton');
