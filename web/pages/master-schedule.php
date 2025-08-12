@@ -149,50 +149,50 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
- function openManageEntryModal(user_id, employeeName, weekStart) {
-    console.log("Modal triggered:", user_id, employeeName, weekStart);
-    const assignments = <?php echo json_encode($assignments); ?>;
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+function openManageEntryModal(user_id, employeeName, weekStart) {
+  console.log("Modal triggered:", user_id, employeeName, weekStart);
+  const assignments = <?php echo json_encode($assignments); ?>;
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
 
-    const manageEntryModalElement = document.getElementById('manageEntryModal');
-    const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
+  const manageEntryModalElement = document.getElementById('manageEntryModal');
+  const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-    // Clone buttons to remove old event listeners
-    const manageBtn = document.getElementById('manageAssignmentsButton');
-    const addBtn = document.getElementById('addAssignmentsButton');
+  const manageBtn = document.getElementById('manageAssignmentsButton');
+  const addBtn = document.getElementById('addAssignmentsButton');
 
-    if (manageBtn) {
-      manageBtn.replaceWith(manageBtn.cloneNode(true));
-    }
-    if (addBtn) {
-      addBtn.replaceWith(addBtn.cloneNode(true));
-    }
+  console.log('manageBtn:', manageBtn);
+  console.log('addBtn:', addBtn);
 
-    // Re-select cloned buttons
-    const newManageBtn = document.getElementById('manageAssignmentsButton');
-const newAddBtn = document.getElementById('addAssignmentsButton');
-
-if (newManageBtn) {
-  newManageBtn.onclick = function() {
-    openManageAssignmentsModal(user_id, employeeName, weekStart);
-    manageEntryModal.hide();
-  };
-}
-
-if (newAddBtn) {
-  newAddBtn.onclick = function() {
-    openAddEntryModal(user_id, employeeName, weekStart);
-    manageEntryModal.hide();
-  };
-}
-
-    if (assignmentsForWeek.length > 0) {
-        manageEntryModal.show();
-    } else {
-        // No assignments — open addEntryModal directly
-        openAddEntryModal(user_id, employeeName, weekStart);
-    }
+  if (manageBtn) {
+    manageBtn.replaceWith(manageBtn.cloneNode(true));
   }
+  if (addBtn) {
+    addBtn.replaceWith(addBtn.cloneNode(true));
+  }
+
+  const newManageBtn = document.getElementById('manageAssignmentsButton');
+  const newAddBtn = document.getElementById('addAssignmentsButton');
+
+  if (newManageBtn) {
+    newManageBtn.onclick = function() {
+      openManageAssignmentsModal(user_id, employeeName, weekStart);
+      manageEntryModal.hide();
+    };
+  }
+  if (newAddBtn) {
+    newAddBtn.onclick = function() {
+      openAddEntryModal(user_id, employeeName, weekStart);
+      manageEntryModal.hide();
+    };
+  }
+
+  if (assignmentsForWeek.length > 0) {
+    manageEntryModal.show();
+  } else {
+    openAddEntryModal(user_id, employeeName, weekStart);
+  }
+}
+
 // end Open modal for Manage Assignments or Add Entry
 
 
