@@ -1066,23 +1066,25 @@ function openEmployeeModal(employeeId) {
 
 <!-- dropdown menu -->
   <script>
+document.addEventListener('DOMContentLoaded', () => {
   const dropdownBtn = document.getElementById('dropdownBtn');
   const dropdownList = document.getElementById('dropdownList');
   const selectedClient = document.getElementById('selectedClient');
   const engagementInput = document.getElementById('engagementInput');
 
   dropdownBtn.addEventListener('click', () => {
-  const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-  dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
-  dropdownList.style.display = expanded ? 'none' : 'block';
-});
+    const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+    dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
+    dropdownList.style.display = expanded ? 'none' : 'block';
+  });
 
   dropdownBtn.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       dropdownList.style.display = 'block';
       dropdownBtn.setAttribute('aria-expanded', 'true');
-      dropdownList.querySelector('.dropdown-item').focus();
+      const firstItem = dropdownList.querySelector('.dropdown-item');
+      if (firstItem) firstItem.focus();
     }
   });
 
@@ -1094,18 +1096,15 @@ function openEmployeeModal(employeeId) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         selectClient(item);
-      }
-      else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-        next.focus();
-      }
-      else if (e.key === 'ArrowUp') {
+        if (next) next.focus();
+      } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-        prev.focus();
-      }
-      else if (e.key === 'Escape') {
+        if (prev) prev.focus();
+      } else if (e.key === 'Escape') {
         closeDropdown();
         dropdownBtn.focus();
       }
@@ -1130,8 +1129,9 @@ function openEmployeeModal(employeeId) {
     dropdownList.style.display = 'none';
     dropdownBtn.setAttribute('aria-expanded', 'false');
   }
+});
+</script>
 
-  </script>
 
 <!-- end dropdown menu -->
 
