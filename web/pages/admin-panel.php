@@ -1341,7 +1341,7 @@ if ($settingResult) {
             <div class="modal-body">
 
               <!-- Last Backup Info Card -->
-              <div class="d-flex align-items-center p-3 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
+              <div class="d-flex align-items-center p-2 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
                 <div class="me-3" style="font-size: 1.25rem; color: #6c757d;">
                   <i class="bi bi-clock-history"></i> <!-- Bootstrap Icons clock/history icon -->
                 </div>
