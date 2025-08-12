@@ -1577,7 +1577,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     editLink.title = "Edit Assignment";
     editLink.className = "text-primary me-3";
     editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-    editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 14px;"></i>`;
+    editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
     editLink.onclick = (e) => {
       e.preventDefault();
       console.log('Edit clicked for assignment:', assignment);
@@ -1590,7 +1590,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     deleteLink.title = "Delete Assignment";
     deleteLink.className = "text-danger";
     deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-    deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 14px;"></i>`;
+    deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
     deleteLink.onclick = (e) => {
       e.preventDefault();
       console.log('Delete clicked for assignment:', assignment);
