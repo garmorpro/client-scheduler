@@ -9,50 +9,26 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// $today = date('Y-m-d');
-// $startDate = isset($_GET['start']) ? date('Y-m-d', strtotime('previous monday', strtotime($_GET['start']))) : date('Y-m-d', strtotime('monday -2 weeks'));
-// $endDate = date('Y-m-d', strtotime('+5 weeks', strtotime($startDate)));
+// getting week range, current monday, and start monday
+  // $today is midnight timestamp for today
+  $today = strtotime('today');
 
-// // Initialize mondays array
-// $mondays = [];
-// $current = strtotime($startDate);
-// while ($current <= strtotime($endDate)) {
-//     if (date('N', $current) == 1) {
-//         $mondays[] = $current;
-//     }
-//     $current = strtotime('+1 week', $current);
-// }
+  // Calculate Mondays as timestamps (you already do this correctly)
+  $currentMonday = strtotime('monday this week', $today);
+  $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
+  $startMonday = strtotime("-2 weeks", $currentMonday);
+  $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
+  $mondays = [];
+  for ($i = 0; $i < 7; $i++) {
+      $mondays[] = strtotime("+{$i} weeks", $startMonday);
+  }
 
-// $today is midnight timestamp for today
-$today = strtotime('today');
-
-// Calculate Mondays as timestamps (you already do this correctly)
-$currentMonday = strtotime('monday this week', $today);
-$weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
-$startMonday = strtotime("-2 weeks", $currentMonday);
-$startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
-
-$mondays = [];
-for ($i = 0; $i < 7; $i++) {
-    $mondays[] = strtotime("+{$i} weeks", $startMonday);
-}
-
-// Range label for header
-$firstWeek = reset($mondays);
-$lastWeek = end($mondays);
-$rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
-
-
-
-
-
-
-
-
-
-
-
+  // Range label for header
+  $firstWeek = reset($mondays);
+  $lastWeek = end($mondays);
+  $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
+// end getting week range, current monday, and start monday
 
 
 
@@ -82,7 +58,7 @@ while ($clientRow = $clientResult->fetch_assoc()) {
     $activeClients[] = $clientRow;
 }
 
-// ✅ Updated: Query assignments for the date range with engagement status
+// Query assignments for the date range with engagement status
 $query = "
     SELECT 
         a.assignment_id,
@@ -392,110 +368,90 @@ function openEmployeeModal(employeeId) {
 
 <!-- Master Schedule table -->
   <?php
-  // Assume $today, $mondays, $employees, $assignments, $isAdmin already defined as you said
+// $today should be midnight timestamp
+$today = strtotime('today');
 
-  // Find current week column index for highlighting entire column
-  $currentWeekIndex = null;
-  foreach ($mondays as $idx => $monday) {
-      $weekStart = $monday;
-      $weekEnd = strtotime('+7 days', $weekStart);
-      if ($today >= $weekStart && $today < $weekEnd) {
-          $currentWeekIndex = $idx;
-          break;
-      }
-  }
-  ?>
+// $mondays is an array of timestamps for Mondays (already prepared)
+$currentWeekIndex = null;
+foreach ($mondays as $idx => $monday) {
+    $weekStart = $monday;
+    $weekEnd = strtotime('+7 days', $weekStart);
+    if ($today >= $weekStart && $today < $weekEnd) {
+        $currentWeekIndex = $idx;
+        break;
+    }
+}
+?>
 
-  <div class="table-responsive">
-      <table class="table table-bordered align-middle text-center">
-          <thead class="table-light">
-              <tr>
-                  <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+<div class="table-responsive">
+    <table class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                <?php foreach ($mondays as $idx => $monday): ?>
+                    <?php $isCurrent = ($idx === $currentWeekIndex); ?>
+                    <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                        <?= date('M j', $monday); ?><br>
+                        <small class="text-muted">Week of <?= date('n/j', $monday); ?></small>
+                    </th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($employees as $userId => $employee): ?>
+                <?php
+                $fullName = htmlspecialchars($employee['full_name']);
+                $initials = implode('', array_map(fn($p) => strtoupper($p[0]), explode(' ', trim($fullName))));
+                $role = htmlspecialchars($employee['role']);
+                ?>
+                <tr>
+                    <td class="text-start">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                                 style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                                <?= $initials ?>
+                            </div>
+                            <div>
+                                <div class="fw-semibold"><?= $fullName ?></div>
+                                <div class="text-muted text-capitalize" style="font-size: 12px;"><?= $role ?></div>
+                            </div>
+                        </div>
+                    </td>
 
-                  <?php foreach ($mondays as $idx => $monday): ?>
-                      <?php 
-                      $weekStart = $monday;
-                      $isCurrent = ($idx === $currentWeekIndex);
-                      ?>
-                      <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                          <?php echo date('M j', $weekStart); ?><br>
-                          <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-                      </th>
-                  <?php endforeach; ?>
-              </tr>
-          </thead>
+                    <?php foreach ($mondays as $idx => $monday): ?>
+                        <?php
+                        $isCurrent = ($idx === $currentWeekIndex);
+                        $weekKey = date('Y-m-d', $monday);
+                        $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
+                        $cellContent = '';
 
-          <tbody>
-              <?php foreach ($employees as $userId => $employee): ?>
-                  <?php
-                  $fullName = htmlspecialchars($employee['full_name']);
-                  $nameParts = explode(' ', trim($fullName));
-                  $initials = '';
-                  foreach ($nameParts as $part) {
-                      $initials .= strtoupper(substr($part, 0, 1));
-                  }
-                  $role = htmlspecialchars($employee['role']);
-                  ?>
-                  <tr>
-                      <td class="text-start">
-                          <div class="d-flex align-items-center">
-                              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                                   style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                                  <?php echo $initials; ?>
-                              </div>
-                              <div>
-                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                              </div>
-                          </div>
-                      </td>
+                        if ($assignmentsForWeek) {
+                            foreach ($assignmentsForWeek as $assignment) {
+                                $status = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                                $badgeColor = match($status) {
+                                    'confirmed' => 'success',
+                                    'pending' => 'purple',
+                                    'not_confirmed' => 'primary',
+                                    default => 'secondary',
+                                };
+                                $clientName = htmlspecialchars($assignment['client_name']);
+                                $hours = htmlspecialchars($assignment['assigned_hours']);
+                                $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$hours})</span><br>";
+                            }
+                        } else {
+                            $cellContent = "<span class='text-muted'>+</span>";
+                        }
+                        ?>
+                        <td class="<?= $isCurrent ? 'highlight-today' : '' ?>">
+                            <?= $cellContent ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-                      <?php foreach ($mondays as $idx => $monday): ?>
-                          <?php 
-                          $weekStart = $monday;
-                          $isCurrent = ($idx === $currentWeekIndex);
-
-                          $assignmentsForWeek = $assignments[$userId][date('Y-m-d', $weekStart)] ?? [];
-                          $cellContent = "";
-
-                          if ($assignmentsForWeek) {
-                              foreach ($assignmentsForWeek as $assignment) {
-                                  $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
-                                  switch ($engagementStatus) {
-                                      case 'confirmed': $badgeColor = 'success'; break;
-                                      case 'pending': $badgeColor = 'purple'; break;
-                                      case 'not_confirmed': $badgeColor = 'primary'; break;
-                                      default: $badgeColor = 'secondary'; break;
-                                  }
-                                  $clientName = htmlspecialchars($assignment['client_name']);
-                                  $assignedHours = htmlspecialchars($assignment['assigned_hours']);
-                                  $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
-                              }
-                          } else {
-                              $cellContent = "<span class='text-muted'>+</span>";
-                          }
-
-                          $tdClass = $isCurrent ? 'highlight-today' : '';
-                          ?>
-                          <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
-                                  "<?php echo $userId; ?>",
-                                  <?php echo json_encode($fullName); ?>,
-                                  "<?php echo date('Y-m-d', $weekStart); ?>"
-                              )'>
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php else: ?>
-                              <td class="<?php echo $tdClass; ?>">
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php endif; ?>
-                      <?php endforeach; ?>
-                  </tr>
-              <?php endforeach; ?>
-          </tbody>
-      </table>
-  </div>
 <!-- end master schedule table -->
 
 
