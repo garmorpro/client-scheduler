@@ -1010,7 +1010,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               </div>
               <div class="col-md-6">
                 <h6 class="mb-3">
-                  <i class="bi bi-file-earmark-text"></i> Engagement Details
+                  <i class="bi bi-clipboard2"></i> Engagement Details
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
