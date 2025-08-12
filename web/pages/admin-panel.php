@@ -2247,7 +2247,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
-     <script>
+     <!-- <script>
       // Show modal on configure button click
       document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
           e.preventDefault();
@@ -2319,7 +2319,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           alert('Network error: ' + err.message);
         }
       });
-    </script>
+    </script> -->
 <!-- end email notification script -->
 
 <!-- email notification db script -->
@@ -2373,7 +2373,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
           alert('Failed to save settings: ' + (result.error || 'Unknown error'));
         }
       } catch (err) {
-        // alert('Network error: ' + err.message);
+        alert('Network error: ' + err.message);
         console.error('Fetch error:', err);
       }
     });
