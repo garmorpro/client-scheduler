@@ -183,25 +183,18 @@ while ($row = $result->fetch_assoc()) {
 
 
 // open addAssignmentModal
-  // JS function to open modal and set values dynamically
-  function openAddassignmentModal(user_id, employeeName, weekStart) {
-      // Set hidden inputs
+    function openAddassignmentModal(user_id, employeeName, weekStart) {
       document.getElementById('modalUserId').value = user_id;
-      document.getElementById('modalWeek').value = weekStart;
-  
-      // Update subtitle display
+      document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
       document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-  
-      // Format weekStart date to a readable format (e.g., "Aug 11, 2025")
+
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       const weekDate = new Date(weekStart);
       document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-  
-      // Reset form fields
+
       document.getElementById('clientSelect').value = '';
       document.getElementById('assignedHours').value = '';
-  
-      // Show the Bootstrap modal
+
       const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
       assignmentModal.show();
   }

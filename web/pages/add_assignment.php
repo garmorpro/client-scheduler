@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db.php'; // Include database connection
+require_once '../includes/db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
@@ -19,55 +18,33 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $employeeId = $_POST['employee'];
-    $clientId = $_POST['client_name'];
-    $weeks = $_POST['weeks']; // Array of week start dates
-    $assignedHours = $_POST['assigned_hours']; // Array of assigned hours
-    $statuses = $_POST['statuses']; // Array of statuses
+    $employeeId = $_POST['user_id'] ?? null;
+    $clientId = $_POST['engagement_id'] ?? null;
+    $weekStart = $_POST['week_start'] ?? null;
+    $assignedHours = $_POST['assigned_hours'] ?? null;
 
-    if (!is_array($weeks) || !is_array($assignedHours) || !is_array($statuses)) {
+    // Basic validation
+    if (!$employeeId || !$clientId || !$weekStart || !$assignedHours) {
         die('Invalid input data.');
     }
 
-    if (count($weeks) !== count($assignedHours) || count($weeks) !== count($statuses)) {
-        die('The number of weeks, assigned hours, and statuses do not match.');
-    }
-
     $stmt = $conn->prepare("
-        INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, status)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours)
+        VALUES (?, ?, ?, ?)
     ");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
 
-    $successCount = 0;
-    $totalAssignedHours = 0;
+    $stmt->bind_param('iisd', $employeeId, $clientId, $weekStart, $assignedHours);
 
-    for ($i = 0; $i < count($weeks); $i++) {
-        $weekStart = $weeks[$i];
-        $hours = (float)$assignedHours[$i];
-        $status = $statuses[$i];
-
-        // Bind params with correct types:
-        // i = int, i = int, s = string (date), d = double, s = string
-        $stmt->bind_param('iisds', $employeeId, $clientId, $weekStart, $hours, $status);
-
-        if ($stmt->execute()) {
-            $successCount++;
-            $totalAssignedHours += $hours;
-        }
-    }
-
-    $stmt->close();
-
-    if ($successCount > 0) {
-        // Prepare log info
+    if ($stmt->execute()) {
+        // Log activity
         $user_id = $_SESSION['user_id'];
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-        // Get employee full name for the log message
+        // Get employee full name
         $empFirstName = '';
         $empLastName = '';
         $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
@@ -80,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $employeeFullName = trim("$empFirstName $empLastName");
 
-        // Fetch client name from engagements table
+        // Get client name
         $clientName = '';
         $stmtClient = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
         if ($stmtClient) {
@@ -91,20 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmtClient->close();
         }
 
-        $title = "Assignments Added";
-
-        if ($successCount <= 1) {
-            $description = "$successCount week ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
-        } else {
-            $description = "$successCount weeks ($totalAssignedHours hrs) added for $employeeFullName on $clientName engagement.";
-        }
+        $title = "Assignment Added";
+        $description = "1 week ({$assignedHours} hrs) added for {$employeeFullName} on {$clientName} engagement.";
 
         logActivity($conn, "assignment_created", $user_id, $email, $full_name, $title, $description);
 
         header("Location: master-schedule.php?status=success");
         exit();
     } else {
-        die('Error adding assignments.');
+        die('Error adding assignment: ' . $stmt->error);
     }
 } else {
     die('Invalid request.');
