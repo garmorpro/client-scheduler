@@ -20,23 +20,26 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $employeeId = $_POST['user_id'] ?? null;
     $weekStart = $_POST['week_start'] ?? null;
-    $hoursOff = $_POST['hours'] ?? null;
     $reason = $_POST['reason'] ?? '';
 
-    // Basic validation
-    if (!$employeeId || !$weekStart || !$hoursOff) {
-        die('Invalid input data.');
+    if (!$employeeId || !$weekStart) {
+        die('Invalid input data: missing user or week.');
     }
 
-    // Normalize reason: trim and convert empty string to null
+    if (!isset($_POST['hours']) || !is_numeric($_POST['hours']) || floatval($_POST['hours']) <= 0) {
+        die('Invalid input data: hours must be a positive number.');
+    }
+    $hoursOff = floatval($_POST['hours']);
+
+    // Trim and convert empty reason to null
     $reason = trim($reason);
     if ($reason === '') {
         $reason = null;
     }
 
     $stmt = $conn->prepare("
-        INSERT INTO time_off (employee_id, week_start, hours_off, reason, created, updated)
-        VALUES (?, ?, ?, ?, NOW(), NOW())
+        INSERT INTO time_off (employee_id, week_start, hours_off, reason)
+        VALUES (?, ?, ?, ?)
     ");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);

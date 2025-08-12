@@ -213,6 +213,46 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 // end open addAssignmentModal
 
+// open addTimeOffModal
+  // open addTimeOffModal - reuse the same modal, just switch tab and set fields
+  function openAddTimeOffModal(user_id, employeeName, weekStart) {
+    // Set hidden inputs for user_id and week_start
+    document.getElementById('timeoffUserId').value = user_id;
+    document.getElementById('timeoffWeekStart').value = weekStart; // format: "YYYY-MM-DD"
+
+    // Update the modal title info (reuse the same display spans)
+    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const weekDate = new Date(weekStart);
+    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+
+    // Reset time off form inputs
+    document.getElementById('timeoffHours').value = '';
+    document.getElementById('timeoffReason').value = '';
+
+    // Switch tabs programmatically: activate timeoff tab and deactivate assignment tab
+    const assignmentTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="assignmentTabPane"]');
+    const timeoffTabBtn = document.querySelector('.custom-tabs-modal button[data-tab="timeoffTabPane"]');
+    assignmentTabBtn.classList.remove('active');
+    assignmentTabBtn.setAttribute('aria-selected', 'false');
+    assignmentTabBtn.setAttribute('tabindex', '-1');
+    timeoffTabBtn.classList.add('active');
+    timeoffTabBtn.setAttribute('aria-selected', 'true');
+    timeoffTabBtn.setAttribute('tabindex', '0');
+    timeoffTabBtn.focus();
+
+    // Show/hide tab content panes accordingly
+    document.getElementById('assignmentTabPane').classList.remove('active', 'show');
+    document.getElementById('assignmentTabPane').setAttribute('aria-hidden', 'true');
+    document.getElementById('timeoffTabPane').classList.add('active', 'show');
+    document.getElementById('timeoffTabPane').setAttribute('aria-hidden', 'false');
+
+    // Show the modal
+    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+    assignmentModal.show();
+  }
+// end open addTimeOffModal
 
 // Update openEditModal to handle dynamic elements properly
 function openEditModal(event) {
@@ -743,7 +783,7 @@ function openEmployeeModal(employeeId) {
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
             <input type="hidden" name="user_id" id="timeoffUserId" value="">
             <input type="hidden" name="week_start" id="timeoffWeekStart" value="">
-                          
+
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
               <input
@@ -756,7 +796,7 @@ function openEmployeeModal(employeeId) {
                 required
               >
             </div>
-                          
+
             <div class="mb-3">
               <label for="timeoffReason" class="form-label">Reason for Time Off (optional)</label>
               <textarea
@@ -767,7 +807,7 @@ function openEmployeeModal(employeeId) {
                 placeholder="Optional"
               ></textarea>
             </div>
-                          
+
             <div class="modal-footer p-0 pt-3 border-0">
               <button
                 type="button"
