@@ -2299,7 +2299,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     };
 
     try {
-      const resp = await fetch('/api/save_email_settings.php', {
+      const resp = await fetch('settings_backend.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
