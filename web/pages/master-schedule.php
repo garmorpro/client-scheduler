@@ -149,7 +149,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
 
 // Open modal for Manage Assignments or Add Entry (new modal)
-  function openManageEntryModal(user_id, employeeName, weekStart) {
+  function openManageEntryModal(user_id, employeeName, weekStart, engagement_id = '') {
   console.log("Modal triggered:", user_id, employeeName, weekStart);
   const assignments = <?php echo json_encode($assignments); ?>;
   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
@@ -573,7 +573,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                               <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageEntryModal(
                                   "<?php echo $userId; ?>",
                                   <?php echo json_encode($fullName); ?>,
-                                  "<?php echo $weekKey; ?>"
+                                  "<?php echo $weekKey; ?>", 
+                                  "<?php echo $engagement_id; ?>"
                               )'>
                                   <?php echo $cellContent; ?>
                               </td>
