@@ -50,7 +50,7 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
         $title = "Engagement Deleted";
         $description = "Successfully deleted engagement for client: $clientName.";
 
-        logActivity($conn, "successful_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+        logActivity($conn, "engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
         echo json_encode(['success' => true]);
     } else {

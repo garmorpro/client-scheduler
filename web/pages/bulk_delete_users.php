@@ -58,9 +58,9 @@ if ($stmt->execute()) {
     $deletedCount = $stmt->affected_rows;
 
     // Log success activity
-    $title = "Successful Bulk User Delete";
-    $description = "Successfully deleted $deletedCount user(s).";
-    logActivity($conn, "bulk_user_delete_success", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
+    $title = "Bulk User Delete";
+    $description = "Deleted $deletedCount user(s).";
+    logActivity($conn, "bulk_user_delete", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode(['success' => true, 'deletedCount' => $deletedCount]);
 } else {

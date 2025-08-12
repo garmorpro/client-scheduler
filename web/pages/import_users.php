@@ -153,8 +153,8 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         $eventType = "bulk_user_import_failed";
         $title = "Failed Bulk User Import";
     } else {
-        $eventType = "bulk_user_import_success";
-        $title = "Successful Bulk User Import";
+        $eventType = "bulk_user_import";
+        $title = "Bulk User Import";
     }
 
     logActivity($conn, $eventType, $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);

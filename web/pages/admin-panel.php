@@ -448,25 +448,35 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
                                     $color = 'rgb(161,77,253)'; // purple
                                     break;
 
-                                case 'bulk_user_import_success':
+                                case 'bulk_user_import':
                                     $icon = 'bi-clipboard2-check';
                                     $color = 'rgb(40,167,69)'; // green
                                     break;
                                 
-                                case 'bulk_user_import_failed':
-                                    $icon = 'bi-clipboard2-x';
+                                case 'bulk_user_delete':
+                                    $icon = 'bi-people';
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
-                                
-                                case 'bulk_user_delete_success':
-                                    $icon = 'bi-people';
-                                    $color = 'rgb(40,167,69)'; // green
+
+                                case 'failed_engagement_deleted':
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
+                                    break;
+
+                                case 'bulk_user_import_failed':
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
                                     break;
                                 
                                 case 'bulk_user_delete_failed':
-                                    $icon = 'bi-people';
-                                    $color = 'rgb(220,53,69)'; // green
-                                    break;    
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
+                                    break; 
+                                
+                                case 'failed_user_deleted':
+                                    $icon = 'bi-exclamation-triangle';
+                                    $color = 'rgb(243,132,48)'; // green
+                                    break;
 
                                 case 'backup':
                                     $icon = 'bi-database';
