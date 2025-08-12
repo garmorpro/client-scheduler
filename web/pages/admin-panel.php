@@ -2326,17 +2326,17 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
     <script>
     document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-    
+
       const formData = new FormData(e.target);
-    
+
       const data = {};
       const settingMasterKey = 'email';
-    
+
       data['enable_email_notifications'] = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-    
+
       const notifTypes = formData.getAll('notification_types[]');
       data['notification_types'] = JSON.stringify(notifTypes);
-    
+
       data['notification_frequency'] = formData.get('notification_frequency') || '';
       data['smtp_server'] = formData.get('smtp_server') || '';
       data['smtp_port'] = formData.get('smtp_port') || '';
@@ -2344,26 +2344,26 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
       data['smtp_password'] = formData.get('smtp_password') || '';
       data['sender_name'] = formData.get('sender_name') || '';
       data['sender_email'] = formData.get('sender_email') || '';
-    
+
       try {
-        const resp = await fetch('/api/settings_backend.php', {
+        const resp = await fetch('settings_backend.php', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({setting_master_key: settingMasterKey, settings: data})
         });
-    
+
         const text = await resp.text();
         console.log("Raw response text:", text);
-    
+
         let result;
         try {
           result = JSON.parse(text);
         } catch (e) {
           throw new Error("Invalid JSON response");
         }
-    
+
         console.log("Parsed JSON:", result);
-    
+
         if (result.success) {
           alert('Settings saved successfully!');
           const modalEl = document.getElementById('emailNotifConfigModal');
