@@ -1199,9 +1199,12 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
         <div class="modal-content">
           <form id="emailNotifConfigForm">
             <div class="modal-header">
-              <h5 class="modal-title" id="emailNotifConfigLabel">Email Notification Settings</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <h5 class="modal-title">
+              <i class="bi bi-envelope"></i> Email Notification Settings <br>
+              <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">Configure email notifications and SMTP settings</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
 
             <div class="modal-body">
 
