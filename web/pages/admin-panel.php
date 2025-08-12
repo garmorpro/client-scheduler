@@ -1209,7 +1209,7 @@ $engagementResults = mysqli_query($conn, $engagementSQL);
               <h6 class="mb-3">General Settings</h6>
               <div class="form-check form-switch mb-4">
                 <input class="form-check-input" type="checkbox" id="enableEmailNotifications" name="enable_email_notifications" checked>
-                <label class="form-check-label" for="enableEmailNotifications">Enable Email Notifications (Master switch) <br><span>Master switch for all email notifications</span></label>
+                <label class="form-check-label" for="enableEmailNotifications">Enable Email Notifications (Master switch) <br><span class="text-muted" style="font-size: 12px;">Master switch for all email notifications</span></label>
 
               </div>
 
