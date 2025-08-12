@@ -69,6 +69,7 @@ body {
     border-radius: 15px;
     padding: 5px;
     justify-content: center;
+    width: 75% !important;
 }
 .custom-tabs-modal button {
     background: none;
