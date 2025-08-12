@@ -25,7 +25,8 @@ if (!isset($_SESSION['user_id'])) {
 
 
 // Get current Monday
-$today = strtotime('today');
+$today = date('Y-m-d');
+// $today = strtotime('today');
 $currentMonday = strtotime('monday this week', $today);
 
 // Week offset from query (0 = current range)
