@@ -218,7 +218,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   function openAddTimeOffModal(user_id, employeeName, weekStart) {
     // Set hidden inputs for user_id and week_start
     document.getElementById('timeoffUserId').value = user_id;
-    document.getElementById('timeoffWeekStart').value = weekStart; // format: "YYYY-MM-DD"
+    document.getElementById('timeoffWeekStart').value = weekStart;
 
     // Update the modal title info (reuse the same display spans)
     document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
