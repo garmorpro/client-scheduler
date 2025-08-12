@@ -143,6 +143,30 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     </style>
+
+    <script>
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const addEntryModal = document.getElementById('addEntryModal');
+  //   if (!addEntryModal) {
+  //     console.warn('addEntryModal not found');
+  //     return;
+  //   }
+
+  //   addEntryModal.addEventListener('show.bs.modal', event => {
+  //     const button = event.relatedTarget; // Button that triggered the modal
+  //     if (!button) return;
+
+  //     const userId = button.getAttribute('data-user-id') || '';
+  //     const weekStart = button.getAttribute('data-week-start') || '';
+  //     const employeeName = button.getAttribute('data-employee-name') || '';
+
+  //     openAddEntryModal(userId, employeeName, weekStart);
+  //   });
+  // });
+</script>
+
+
+
     <script>
     function autoSubmitDateFilter() {
         document.getElementById("filterForm").submit();
@@ -165,12 +189,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   const manageEntryModalElement = document.getElementById('manageEntryModal');
   if (!manageEntryModalElement) {
     console.warn("manageEntryModal element NOT found!");
-  } else {
-    console.log("manageEntryModal element found.");
+    return;
   }
   const manageEntryModal = new bootstrap.Modal(manageEntryModalElement);
 
-  // Set hidden inputs here for Add Assignment tab form:
+  // Set hidden inputs here for Manage modal form:
   const manageUserIdInput = document.getElementById('manageModalUserId');
   const manageWeekInput = document.getElementById('manageModalWeek');
   const manageEngagementInput = document.getElementById('manageEngagementInput');
@@ -196,82 +219,120 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     console.warn("manageEngagementInput input NOT found!");
   }
 
+  // Update the "Add New Entry" button inside Manage modal with correct data attributes
+  const addNewEntryBtn = manageEntryModalElement.querySelector('button[data-bs-target="#addEntryModal"]');
+  if (addNewEntryBtn) {
+    addNewEntryBtn.setAttribute('data-user-id', user_id);
+    addNewEntryBtn.setAttribute('data-week-start', weekStart);
+    addNewEntryBtn.setAttribute('data-employee-name', employeeName);
+    console.log('Set Add New Entry button data attributes:', {
+      user_id,
+      weekStart,
+      employeeName
+    });
+  } else {
+    console.warn('Add New Entry button inside manageEntryModal NOT found!');
+  }
+
   if (assignmentsForWeek.length > 0) {
     console.log("Assignments found for this user/week, rendering list and showing manage modal");
-    renderAssignmentsList(user_id, weekStart);
+    renderAssignmentsList(user_id, weekStart);  // your existing function to update UI
     manageEntryModal.show();
   } else {
     console.log("No assignments found for this user/week, opening Add Entry modal");
     openAddEntryModal(user_id, employeeName, weekStart, engagement_id);
   }
 }
+
 // end Open modal for Manage Assignments or Add Entry
 
 // Open Add Entry modal
-    function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
-        // Set inputs for user and week in the forms
-        document.getElementById('modalUserId').value = user_id;
-        document.getElementById('modalWeek').value = weekStart;
-        document.getElementById('timeOFFuser_id').value = user_id;
-        document.getElementById('timeOFFweek_start').value = weekStart;
+    // Open Add Entry modal function
+function openAddEntryModal(user_id, employeeName, weekStart, engagement_id = '', tab = 'assignment') {
+    // Set inputs for user and week in the forms
+    document.getElementById('modalUserId').value = user_id;
+    document.getElementById('modalWeek').value = weekStart;
+    document.getElementById('timeOFFuser_id').value = user_id;
+    document.getElementById('timeOFFweek_start').value = weekStart;
 
-        // Update display spans
-        document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+    // Update display spans
+    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const date = new Date(weekStart);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const date = new Date(weekStart);
 
-        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-        // If Sunday (0), go forward 1 day to Monday
-        // Else go back (day - 1) days to Monday
-        const diffToMonday = (day === 0) ? 1 : 1 - day;
+    // If Sunday (0), go forward 1 day to Monday
+    // Else go back (day - 1) days to Monday
+    const diffToMonday = (day === 0) ? 1 : 1 - day;
 
-        const mondayDate = new Date(date);
-        mondayDate.setDate(date.getDate() + diffToMonday);
+    const mondayDate = new Date(date);
+    mondayDate.setDate(date.getDate() + diffToMonday);
 
-        document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
+    document.getElementById('modalWeekDisplay').textContent = mondayDate.toLocaleDateString(undefined, options);
 
-
-
-        // Reset inputs depending on the tab
-        if (tab === 'assignment') {
-            document.getElementById('selectedClient').textContent = 'Select a client';
-            document.getElementById('engagementInput').value = engagement_id;
-            document.getElementById('assignedHours').value = '';
-        } else if (tab === 'timeoff') {
-            document.getElementById('timeoffHours').value = '';
-            document.getElementById('timeoffReason').value = '';
-        }
-
-        console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
-        const engagementInputEl = document.getElementById('engagementInput');
-        console.log('engagementInput element found:', engagementInputEl);
-        if (engagementInputEl) {
-          console.log('Before set, engagementInput value:', engagementInputEl.value);
-          engagementInputEl.value = engagement_id;
-          console.log('After set, engagementInput value:', engagementInputEl.value);
-        }
-
-        // Show the addEntryModal modal
-        const addEntryModalEl = document.getElementById('addEntryModal');
-        const addEntryModal = new bootstrap.Modal(addEntryModalEl);
-        addEntryModal.show();
-
-        // Use Bootstrap's Tab API to activate the correct tab button
-        const tabSelector = tab === 'assignment'
-            ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
-            : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
-
-        const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
-
-        if (tabTriggerEl) {
-            const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
-            tabInstance.show();
-        } else {
-            console.warn('Tab trigger element not found:', tabSelector);
-        }
+    // Reset inputs depending on the tab
+    if (tab === 'assignment') {
+        document.getElementById('selectedClient').textContent = 'Select a client';
+        document.getElementById('engagementInput').value = engagement_id;
+        document.getElementById('assignedHours').value = '';
+    } else if (tab === 'timeoff') {
+        document.getElementById('timeoffHours').value = '';
+        document.getElementById('timeoffReason').value = '';
     }
+
+    console.log('Engagement ID passed to openAddEntryModal:', engagement_id);
+    const engagementInputEl = document.getElementById('engagementInput');
+    console.log('engagementInput element found:', engagementInputEl);
+    if (engagementInputEl) {
+      console.log('Before set, engagementInput value:', engagementInputEl.value);
+      engagementInputEl.value = engagement_id;
+      console.log('After set, engagementInput value:', engagementInputEl.value);
+    }
+
+    // Show the addEntryModal modal
+    const addEntryModalEl = document.getElementById('addEntryModal');
+    const addEntryModal = new bootstrap.Modal(addEntryModalEl);
+    addEntryModal.show();
+
+    // Use Bootstrap's Tab API to activate the correct tab button
+    const tabSelector = tab === 'assignment'
+        ? '.custom-tabs-modal button[data-tab="assignmentTabPane"]'
+        : '.custom-tabs-modal button[data-tab="timeoffTabPane"]';
+
+    const tabTriggerEl = addEntryModalEl.querySelector(tabSelector);
+
+    if (tabTriggerEl) {
+        const tabInstance = bootstrap.Tab.getOrCreateInstance(tabTriggerEl);
+        tabInstance.show();
+    } else {
+        console.warn('Tab trigger element not found:', tabSelector);
+    }
+}
+
+// Add event listener on DOM load to catch modal open triggered by buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const addEntryModal = document.getElementById('addEntryModal');
+  if (!addEntryModal) {
+    console.warn('addEntryModal not found');
+    return;
+  }
+
+  addEntryModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget; // Button that triggered the modal
+    if (!button) return;
+
+    // Grab data attributes from the triggering button
+    const userId = button.getAttribute('data-user-id') || '';
+    const weekStart = button.getAttribute('data-week-start') || '';
+    const employeeName = button.getAttribute('data-employee-name') || '';
+
+    // Call your modal opening function with actual data
+    openAddEntryModal(userId, employeeName, weekStart);
+  });
+});
+
 
 // end Open Add Entry modal
 
@@ -656,6 +717,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         >
           Add New Entry
         </button>
+
         <button
           class="btn btn-link flex-fill text-center text-decoration-none"
           data-tab="timeOffTabPane"
@@ -684,112 +746,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           </div>
 
         </div>
-
-
-        <!-- Add Assignement Tab -->
-
-        <!-- <div
-          id="assignmentTabPane"
-          class="tab-pane"
-          role="tabpanel"
-          aria-labelledby="assignmentTab"
-          aria-hidden="true"
-        >
-          <form id="assignmentForm" action="add_assignment.php" method="POST">
-         
-            <input type="text" id="manageModalUserId" name="user_id" value="">
-            <input type="text" id="manageModalWeek" name="week_start" value="">
-
-   
-            <div class="mb-3 custom-dropdown">
-              <label for="engagementInput" class="form-label">Client Name</label>
-              <div
-                class="dropdown-btn"
-                id="dropdownBtn"
-                tabindex="0"
-                aria-haspopup="listbox"
-                aria-expanded="false"
-                role="combobox"
-                aria-labelledby="selectedClient"
-              >
-                <span id="selectedClient" class="text-muted">Select a client</span>
-                <span>&#9662;</span>
-              </div>
-
-              <div
-                class="dropdown-list"
-                id="dropdownList"
-                role="listbox"
-                tabindex="-1"
-                aria-labelledby="selectedClient"
-              >
-                <?php
-                  // $statusDisplayMap = [
-                  //   'confirmed' => 'Confirmed',
-                  //   'pending' => 'Pending',
-                  //   'not_confirmed' => 'Not Confirmed'
-                  // ];
-                  // $statusClassMap = [
-                  //   'confirmed' => 'text-confirmed',
-                  //   'pending' => 'text-pending',
-                  //   'not_confirmed' => 'text-not-confirmed'
-                  // ];
-                ?>
-                <?php //foreach ($clientsWithHours as $client): ?>
-                  <?php
-                    // $statusKey = strtolower($client['status']);
-                    // $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey);
-                    // $statusClass = $statusClassMap[$statusKey] ?? '';
-                  ?>
-                  <div
-                    class="dropdown-item"
-                    data-engagement-id="<?php //echo htmlspecialchars($client['engagement_id']); ?>"
-                    data-client-name="<?php //echo htmlspecialchars($client['client_name']); ?>"
-                    role="option"
-                    tabindex="0"
-                  >
-                    <div>
-                      <span class="fw-semibold"><?php //echo htmlspecialchars($client['client_name']); ?></span><br>
-                      <small class="text-muted">
-                        <span class="text-status <?php //echo $statusClass; ?>"><?php //echo htmlspecialchars($statusText); ?></span>
-                        <i class="bi bi-dot"></i> 
-                        <?php //echo number_format($client['assigned_hours'], 2); ?> / <?php //echo number_format($client['total_available_hours'], 2); ?> hrs
-                      </small>
-                    </div>
-                  </div>
-                <?php //endforeach; ?>
-              </div>
-
-              <input type="text" id="manageEngagementInput" name="engagement_id" required>
-            </div>
-
-       
-            <div class="mb-3">
-              <label for="assignedHours" class="form-label">Hours</label>
-              <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
-            </div>
-
-            <div class="modal-footer p-0 pt-3 border-0">
-              <button
-                type="button"
-                class="btn badge text-black p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; box-shadow: inset 0 0 0 1px rgb(229,229, 229);"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="badge text-white p-2 text-decoration-none fw-medium"
-                style="font-size: .875rem; background-color: rgb(3,2,18); border:none !important;"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div> -->
-
-
 
         <!-- Time Off Tab -->
         <div
