@@ -2717,7 +2717,7 @@ if ($settingResult) {
         const modalEl = document.getElementById('backupConfigModal');
         const modalInstance = bootstrap.Modal.getInstance(modalEl);
         modalInstance.hide();
-        alert('Backup settings saved successfully!');
+        // alert('Backup settings saved successfully!');
       } else {
         alert('Failed to save settings: ' + (result.error || 'Unknown error'));
       }
@@ -2725,7 +2725,7 @@ if ($settingResult) {
       alert('Network error: ' + err.message);
     }
   });
-</script>
+    </script>
 
 <!-- end backup configuration -->
 
