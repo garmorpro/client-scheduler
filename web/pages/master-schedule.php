@@ -382,7 +382,7 @@ function openEmployeeModal(employeeId) {
 
     <div class="bg-white border rounded p-4 mb-4">
         <form id="filterForm" method="get" class="row g-3 align-items-center">
-            
+
             <!-- Search Bar -->
             <div class="col-md-6">
                 <input type="text" 
@@ -394,21 +394,21 @@ function openEmployeeModal(employeeId) {
                      class="dropdown-menu" 
                      style="max-height: 200px; overflow-y: auto; display:none;"></div>
             </div>
-    
+
             <!-- Week Selector -->
-            <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
                 <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
                    class="btn btn-outline-secondary btn-sm me-2">&lt;</a>
-    
+
                 <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-    
+
                 <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
                    class="btn btn-outline-secondary btn-sm ms-2">&gt;</a>
             </div>
-    
+
         </form>
     </div>
-    
+
 
     <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
