@@ -553,6 +553,8 @@ function openEmployeeModal(employeeId) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <span id="manage_user_id"></span>
+        <span id="manage_week_start"></span>
 
   <!-- Initial buttons -->
   <div id="manageAddButtons">
