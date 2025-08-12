@@ -605,8 +605,11 @@ function openEmployeeModal(employeeId) {
         </div>
 
         <div class="modal-body">
+
           <!-- Hidden inputs -->
-          
+          <input type="hidden" id="modalUserId" name="user_id" value="">
+          <input type="hidden" id="modalWeek" name="week_start" value="">
+          <input type="hidden" id="isTimeOff" name="is_timeoff" value="1"> <!-- Default: Time Off -->
 
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
@@ -616,7 +619,7 @@ function openEmployeeModal(employeeId) {
           </div>
 
           <!-- Time Off Entry content: only hours input -->
-          <div id="timeOffEntryContent" class="d-none">
+          <div id="timeOffEntryContent" class="">
             <div class="mb-3">
               <label for="timeOffHours" class="form-label">Hours</label>
               <input type="number" class="form-control" id="timeOffHours" name="time_off_hours" min="0" step="0.25" required>
@@ -626,8 +629,6 @@ function openEmployeeModal(employeeId) {
           <!-- New Assignment content: client dropdown + hours input -->
           <div id="newAssignmentContent" class="d-none">
 
-          <input type="hidden" id="modalUserId" name="user_id" value="">
-          <input type="hidden" id="modalWeek" name="week_start" value="">
             <!-- Custom Client Dropdown -->
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
@@ -647,11 +648,11 @@ function openEmployeeModal(employeeId) {
               <div
                 class="dropdown-list"
                 id="dropdownList"
-                aria-expanded="true"
+                aria-expanded="false"
                 role="listbox"
                 tabindex="-1"
                 aria-labelledby="selectedClient"
-                style="display: block !important;"
+                style="display: none;"
               >
                 <?php 
                   $statusDisplayMap = [
@@ -691,7 +692,7 @@ function openEmployeeModal(employeeId) {
               </div>
               
               <!-- Hidden input to hold selected value for form submission -->
-              <input type="hidden" id="engagementInput" name="engagement_id" required>
+              <input type="hidden" id="engagementInput" name="engagement_id">
             </div>
               
             <!-- Assigned hours -->
@@ -710,6 +711,7 @@ function openEmployeeModal(employeeId) {
     </div>
   </div>
 </div>
+
 <!-- end Adding assignment -->
 
 <!-- Modal for Adding Engagement -->
