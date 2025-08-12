@@ -1341,15 +1341,13 @@ if ($settingResult) {
             <div class="modal-body">
 
               <!-- Last Backup Info Card -->
-              <div class="card mb-4">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>Last backup:</strong> 
-                    <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?>
-                    &nbsp;
-                    (<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)
-                  </div>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshLastBackupBtn">Refresh</button>
+              <div class="d-flex align-items-center p-3 mb-4 rounded-3" style="background-color: #f7f7f7; border: 1px solid #ddd;">
+                <div class="me-3" style="font-size: 1.25rem; color: #6c757d;">
+                  <i class="bi bi-clock-history"></i> <!-- Bootstrap Icons clock/history icon -->
+                </div>
+                <div style="color: #6c757d; font-size: 0.95rem;">
+                  Last backup: <?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?> 
+                  &nbsp; (<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)
                 </div>
               </div>
 
