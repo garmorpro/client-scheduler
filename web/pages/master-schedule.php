@@ -794,8 +794,8 @@ function openEmployeeModal(employeeId) {
           aria-hidden="true"
         >
           <form id="timeoffForm" action="add_timeoff.php" method="POST">
-            <input type="text" name="user_id" id="timeOFFuser_id">
-            <input type="text" name="week_start" id="timeOFFweek_start">
+            <input type="text" id="timeOFFuser_id" name="user_id" value="">
+            <input type="text" id="timeOFFweek_start" name="week_start" value="">
 
             <div class="mb-3">
               <label for="timeoffHours" class="form-label">Hours</label>
