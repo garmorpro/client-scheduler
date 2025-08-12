@@ -1233,7 +1233,7 @@ if ($settingResult) {
           <div class="row mb-2">
             <div class="col-6">
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[admin_alerts]" value="true" <?php if (!empty($settings['admin_alerts']) && $settings['admin_alerts'] === 'true') echo 'checked'; ?>>
+                <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[admin_alerts]" value="true" <?php if (!empty($settings['admin_alerts']) && $settings['notification_types[admin_alerts]'] === 'true') echo 'checked'; ?>>
                 <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
               </div>
               <div class="form-check form-switch mb-2">
