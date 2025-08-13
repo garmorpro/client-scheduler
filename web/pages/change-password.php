@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
         $user_id = $_SESSION['force_user_id'];
 
-        $stmt = $conn->prepare("UPDATE users SET password = ?, must_change_password = 0 WHERE user_id = ?");
+        $stmt = $conn->prepare("UPDATE users SET password = ?, change_password = 0 WHERE user_id = ?");
         $stmt->bind_param("si", $hashed, $user_id);
         if ($stmt->execute()) {
             // Complete login
