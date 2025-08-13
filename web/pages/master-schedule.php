@@ -134,6 +134,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/delete_entry.js"></script>
     <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
+    <script src="../assets/js/filter_employees.js"></script>
 
 
 </head>
@@ -162,14 +163,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
             <!-- Search Bar -->
             <div class="col-md-6">
-                <input type="text" 
-                       id="searchInput" 
-                       class="form-control" 
-                       placeholder="Search projects, clients, or employees..." 
-                       onkeyup="searchQuery()" />
-                <div id="searchResults" 
-                     class="dropdown-menu" 
-                     style="max-height: 200px; overflow-y: auto; display:none;"></div>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
             </div>
 
             <!-- Week Selector -->
@@ -233,18 +227,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         $role = htmlspecialchars($employee['role']);
         ?>
         <tr>
-            <td class="text-start">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                         style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                        <?php echo $initials; ?>
-                    </div>
-                    <div>
-                        <div class="fw-semibold"><?php echo $fullName; ?></div>
-                        <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                    </div>
-                </div>
-            </td>
+            <td class="text-start employee-name">
+  <div class="d-flex align-items-center">
+    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+         style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+      <?php echo $initials; ?>
+    </div>
+    <div>
+      <div class="fw-semibold"><?php echo $fullName; ?></div>
+      <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+    </div>
+  </div>
+</td>
 
             <?php foreach ($mondays as $idx => $monday): ?>
                 <?php 
