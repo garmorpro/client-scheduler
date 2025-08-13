@@ -65,6 +65,7 @@ while ($row = $result->fetch_assoc()) {
     if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
         $timeOffHours[$week] += floatval($row['assigned_hours']);
     } else {
+        // ONLY count regular assignments
         $totalAssignedHours[$week] += floatval($row['assigned_hours']);
     }
 }
@@ -101,12 +102,13 @@ while ($row = $weekResult->fetch_assoc()) {
         $timeOffTotal += floatval($row['assigned_hours']);
     } else {
         $engagements[] = $row;
+        // ONLY sum regular assignments
         $totalHours += floatval($row['assigned_hours']);
     }
 }
 $stmt->close();
 
-$netHours = max(0, $totalHours - $timeOffTotal);
+$netHours = $totalHours; // now time off is NOT subtracted
 
 // ------------------------------------------------------
 // FETCH TEAM MEMBERS FOR EACH ENGAGEMENT (EXCLUDE CURRENT USER)
@@ -131,6 +133,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     return $members;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
