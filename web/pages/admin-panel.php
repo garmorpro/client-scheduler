@@ -8,10 +8,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SESSION['user_role'] !== 'admin' || $_SESSION['user_role'] !== 'manager') {
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
     header("Location: my-schedule.php");
     exit();
 }
+
 
 
 // Get total users
