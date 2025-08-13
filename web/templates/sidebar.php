@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 ?>
-<div class="container" style="">
 
 <div class="d-flex flex-column justify-content-between bg-light border-end fixed-top"
      style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">
@@ -73,7 +72,4 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
             <i class="bi bi-box-arrow-right"></i>
         </a>
     </div>
-</div>
-
-
 </div>
