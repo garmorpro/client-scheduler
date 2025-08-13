@@ -208,21 +208,25 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 
   <!-- Detailed Week Entries as Cards -->
   <div class="d-flex flex-column mb-3">
-    <?php foreach ($engagements as $eng): 
-      $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
-    ?>
-    <div class="card p-3 shadow-sm mb-3">
-      <div class="d-flex justify-content-between align-items-start mb-2">
-      <!-- Left side: Client name and team members -->
-        <div>
-          <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+    <?php if (empty($engagements) && empty($timeOffs)): ?>
+      <div class="card p-4 shadow-sm mb-3 d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 200px;">
+        <i class="bi bi-calendar2-check fs-1 text-success mb-3"></i>
+        <div class="fw-semibold fs-5">No engagements this week</div>
+        <small class="text-muted">You have a clear schedule for this week.</small>
+      </div>
+    <?php else: ?>
+      <?php foreach ($engagements as $eng): 
+        $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
+      ?>
+      <div class="card p-3 shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
             <small class="text-muted">
               <strong>Team member(s):</strong>
-                <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
+              <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
             </small>
           </div>
-        
-          <!-- Right side: Hours and status -->
           <div class="text-end">
             <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
             <?php
@@ -234,28 +238,28 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
                 default: $status_class = 'text-danger'; $status_format = 'Error'; break;
               }
             ?>
-          <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
-        </div>
-      </div>
-    </div>
-    <?php endforeach; ?>
-
-
-
-    <?php foreach ($timeOffs as $off): ?>
-      <div class="card p-3 shadow-sm timeoff-card">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
-            <small class="text-muted">Approved time off</small>
-          </div>
-          <div class="text-end text-danger fw-semibold fs-5">
-            <?php echo $off['assigned_hours']; ?>hrs
+            <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
           </div>
         </div>
       </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+
+      <?php foreach ($timeOffs as $off): ?>
+        <div class="card p-3 shadow-sm timeoff-card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
+              <small class="text-muted">Approved time off</small>
+            </div>
+            <div class="text-end text-danger fw-semibold fs-5">
+              <?php echo $off['assigned_hours']; ?>hrs
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
   </div>
+
 
   <!-- Week Summary -->
 <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
