@@ -71,15 +71,15 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // ------------------------------------------------------
-// SELECTED WEEK DETAILS
+// SELECTED WEEK DETAILS (INCLUDE TIME OFF)
 $sqlWeekDetails = "
     SELECT 
         e.assigned_hours,
         e.is_timeoff,
-        eng.client_name,
+        COALESCE(eng.client_name, 'Time Off') AS client_name,
         eng.status
     FROM entries e
-    JOIN engagements eng ON e.engagement_id = eng.engagement_id
+    LEFT JOIN engagements eng ON e.engagement_id = eng.engagement_id
     WHERE e.user_id = ?
       AND e.week_start = ?
 ";
