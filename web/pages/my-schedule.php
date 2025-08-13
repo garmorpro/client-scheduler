@@ -194,8 +194,8 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
         <i class="bi bi-chevron-left me-2"></i>Previous Week
     </a>
-    <div class="text-center">
-        <div class="badge bg-success text-white" style="margin-top: -20px !important; visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current</div>
+    <div class="text-center" style="margin-top: -15px;">
+        <div class="badge bg-success text-white" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current</div>
         <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
         <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
     </div>
