@@ -1,21 +1,21 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
   const assignmentsListContainer = document.getElementById('assignmentsListContainer');
   const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
   const backToButtons = document.getElementById('backToButtons');
 
-  // Store clicked context here - must be set externally before opening modal
+  // Context variables (to be set before showing modal)
   let currentUserId = null;
   let currentWeekStart = null;
 
-  // Function to set current context before opening modal
-  window.setManageEntryContext = function(userId, weekStart) {
+  // Expose a global setter to initialize context externally
+  window.setManageEntryContext = function (userId, weekStart) {
     currentUserId = userId;
     currentWeekStart = weekStart;
   };
 
-  manageAssignmentsButton.addEventListener('click', () => {
+  manageAssignmentsButton.addEventListener('click', function () {
     if (!currentUserId || !currentWeekStart) {
       assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
       return;
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  backToButtons.addEventListener('click', () => {
+  backToButtons.addEventListener('click', function () {
     manageAddButtons.classList.remove('d-none');
     assignmentsListing.classList.add('d-none');
   });
@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
       editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
       editLink.setAttribute('data-assignment-id', assignment.assignment_id);
       editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
-      editLink.onclick = (e) => {
+      editLink.onclick = function (e) {
         e.preventDefault();
-        openEditModal(e); // make sure this function is defined elsewhere!
+        openEditModal(e); // make sure you have this function implemented
       };
 
       const deleteLink = document.createElement('a');
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteLink.className = "text-danger";
       deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
       deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
+      deleteLink.onclick = function (e) {
         e.preventDefault();
         alert(`Delete assignment ${assignment.assignment_id}`);
       };
