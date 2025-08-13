@@ -600,6 +600,8 @@ function openEmployeeModal(employeeId) {
                     <?php if (!empty($assignmentsForWeek)): ?>
                         <!-- Has assignments → open ManageAssignments modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                            data-user-id="<?php echo $userId; ?>" 
+                            data-week-start="<?php echo $weekKey; ?>"
                             onclick='openManageAssignmentsModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
@@ -610,6 +612,8 @@ function openEmployeeModal(employeeId) {
                     <?php else: ?>
                         <!-- No assignments → open AddAssignment modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                            data-user-id="<?php echo $userId; ?>" 
+                            data-week-start="<?php echo $weekKey; ?>"
                             onclick='openAddAssignmentModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
@@ -633,6 +637,11 @@ function openEmployeeModal(employeeId) {
   </div>
 
 <!-- end master schedule table -->
+
+<?php echo '<!-- ';
+var_dump($assignmentsForWeek);
+echo ' -->';
+?>
 
 
 
