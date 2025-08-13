@@ -260,7 +260,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         }
                         $clientName = htmlspecialchars($entry['client_name']);
                         $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                        $cellContent .= "<span class='badge  $entry_class'>{$clientName} ({$assignedHours})</span><br>";
+                        $cellContent .= "<span class='badge badge-status $entry_class'>{$clientName} ({$assignedHours})</span><br>";
                     }
                 } else {
                     $cellContent = "<span class='text-muted'>+</span>";
