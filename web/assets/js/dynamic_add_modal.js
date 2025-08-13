@@ -53,37 +53,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     timeOffHours.value = '';
   });
-
-     // --- Client dropdown logic ---
-
-     const dropdownBtn = document.getElementById('dropdownBtn');
-     const dropdownList = document.getElementById('dropdownList');
-
-     dropdownBtn.addEventListener('click', () => {
-       const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-       dropdownBtn.setAttribute('aria-expanded', !expanded);
-       dropdownList.style.display = expanded ? 'none' : 'block';
-     });
-
-     // Close dropdown if clicked outside
-     document.addEventListener('click', (e) => {
-       if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-         dropdownBtn.setAttribute('aria-expanded', 'false');
-         dropdownList.style.display = 'none';
-       }
-     });
-
-     // Handle selecting a client
-     dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-       item.addEventListener('click', () => {
-         const clientId = item.getAttribute('data-engagement-id');
-         const clientName = item.getAttribute('data-client-name');
-
-         engagementInput.value = clientId;
-         selectedClient.textContent = clientName;
-
-         dropdownBtn.setAttribute('aria-expanded', 'false');
-         dropdownList.style.display = 'none';
-       });
-     });
-   });
+});

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const assignmentModal = document.getElementById('assignmentModal');
+  const entryModal = document.getElementById('addEntryModal');
 
-  assignmentModal.addEventListener('show.bs.modal', () => {
+  entryModal.addEventListener('show.bs.modal', () => {
     const dropdownBtn = document.getElementById('dropdownBtn');
     const dropdownList = document.getElementById('dropdownList');
     const selectedClient = document.getElementById('selectedClient');
