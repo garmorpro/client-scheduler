@@ -98,7 +98,7 @@ $stmt->close();
     </div>
   </div>
 
-  <div class="d-flex justify-content-between flex-wrap gap-2">
+  <div class="d-flex justify-content-between flex-wrap gap-2 ms-2 me-2">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
