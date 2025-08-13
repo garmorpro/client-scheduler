@@ -61,6 +61,7 @@ $sqlEntries = "
         engagement_id,
         week_start,
         assigned_hours,
+        engagement_status,
         is_timeoff
     FROM entries
     WHERE user_id = ?
@@ -80,7 +81,7 @@ $timeOff = [];  // [week_start] = total time off hours
 
 while ($row = $result->fetch_assoc()) {
     $week = $row['week_start'];
-    if ($row['type'] === 'Time Off') {
+    if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
         if (!isset($timeOff[$week])) $timeOff[$week] = 0;
         $timeOff[$week] += floatval($row['assigned_hours']);
     } else {
@@ -121,8 +122,8 @@ foreach ($totalAssignedHours as $week => $hours) {
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>My Schedule</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
 .highlight-today {
     background-color: #d3f9d8;
