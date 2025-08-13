@@ -1,16 +1,15 @@
 <?php
 require_once 'db.php';
-
 session_start();  // START SESSION AT TOP!
 
 // LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
+    $stmt = $conn->prepare($sql);
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
+        $stmt->bind_param("sissss", $eventType, $user_id, $email, $full_name, $title, $description);
+        $stmt->execute();
+        $stmt->close();
     }
 }
 
@@ -27,24 +26,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $stmt->store_result();
+    $result = $stmt->get_result();
 
-    if ($stmt->num_rows === 1) {
-        $stmt->bind_result($user_id, $hashed_password, $first_name, $last_name, $role);
-        $stmt->fetch();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        $user_id = $user['user_id'];
+        $hashed_password = $user['password'];
+        $first_name = $user['first_name'];
+        $last_name = $user['last_name'];
+        $role = trim(strtolower($user['role']));
 
         if (password_verify($password, $hashed_password)) {
-            // Regenerate session ID
             session_regenerate_id(true);
 
-            // Set session variables
             $_SESSION['user_id'] = $user_id;
             $_SESSION['first_name'] = $first_name;
             $_SESSION['last_name'] = $last_name;
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
 
-            // Update last_active to current datetime
+            // Update last_active
             $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
             if ($updateStmt) {
                 $updateStmt->bind_param("i", $user_id);
@@ -56,29 +57,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
-            // Ensure no output before header
-            ob_clean();
-
-            // Role-based redirect
-            switch (strtolower($role)) {
-                case 'admin':
-                case 'manager':
-                    header("Location: admin-panel.php");
-                    break;
-                default:
-                    header("Location: my-schedule.php");
+            // Redirect safely
+            if ($role === 'admin' || $role === 'manager') {
+                header("Location: admin-panel.php");
+            } else {
+                header("Location: my-schedule.php");
             }
             exit;
-
         } else {
-            // Log failed login (incorrect password)
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
-
     } else {
-        // Log failed login (email not found)
         logActivity($conn, "failed_login", null, $email, "", "Failed Login", "Email not found");
         $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
     }
