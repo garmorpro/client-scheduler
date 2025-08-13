@@ -14,7 +14,7 @@ if (isset($_GET['id'])) {
 
     // Get assigned employees and their hours
     $employeeQuery = "SELECT u.first_name, u.last_name, SUM(a.assigned_hours) AS total_hours
-                      FROM assignments a
+                      FROM entries a
                       JOIN users u ON a.user_id = u.user_id
                       WHERE a.engagement_id = ?
                       GROUP BY a.user_id";
@@ -30,7 +30,7 @@ if (isset($_GET['id'])) {
     }
 
     // Total assigned hours
-    $totalHoursQuery = "SELECT SUM(COALESCE(assigned_hours, 0)) AS total_hours FROM assignments WHERE engagement_id = ?";
+    $totalHoursQuery = "SELECT SUM(COALESCE(assigned_hours, 0)) AS total_hours FROM entries WHERE engagement_id = ?";
     $stmt = $conn->prepare($totalHoursQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();

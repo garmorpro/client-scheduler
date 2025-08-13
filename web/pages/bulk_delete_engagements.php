@@ -42,13 +42,13 @@ $types = str_repeat('i', count($engagementIds));
 $conn->begin_transaction();
 
 try {
-    // Step 1: Delete related assignments first
-    $sqlAssignments = "DELETE FROM assignments WHERE engagement_id IN ($placeholders)";
-    $stmtAssignments = $conn->prepare($sqlAssignments);
-    if (!$stmtAssignments) throw new Exception("Prepare failed for assignments delete: " . $conn->error);
-    $stmtAssignments->bind_param($types, ...$engagementIds);
-    if (!$stmtAssignments->execute()) throw new Exception("Execute failed for assignments delete: " . $stmtAssignments->error);
-    $stmtAssignments->close();
+    // Step 1: Delete related entries first
+    $sqlEntries = "DELETE FROM entries WHERE engagement_id IN ($placeholders)";
+    $stmtEntries = $conn->prepare($sqlEntries);
+    if (!$stmtEntries) throw new Exception("Prepare failed for entries delete: " . $conn->error);
+    $stmtEntries->bind_param($types, ...$engagementIds);
+    if (!$stmtEntries->execute()) throw new Exception("Execute failed for entries delete: " . $stmtEntries->error);
+    $stmtEntries->close();
 
     // Step 2: Delete engagements
     $sqlEngagements = "DELETE FROM engagements WHERE engagement_id IN ($placeholders)";
@@ -66,7 +66,7 @@ try {
     $currentUserEmail = $_SESSION['email'] ?? '';
     $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
     $title = "Bulk Engagement Delete";
-    $description = "Deleted $deletedCount engagement(s) and their assignments.";
+    $description = "Deleted $deletedCount engagement(s) and their entries.";
     logActivity($conn, "bulk_engagement_delete", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode(['success' => true, 'deletedCount' => $deletedCount]);

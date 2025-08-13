@@ -41,27 +41,27 @@ if (isset($_POST['engagement_id']) && is_numeric($_POST['engagement_id'])) {
     }
     $detailsStmt->close();
 
-    // Delete related assignments first
-    $delAssignStmt = $conn->prepare("DELETE FROM assignments WHERE engagement_id = ?");
+    // Delete related entries first
+    $delAssignStmt = $conn->prepare("DELETE FROM entries WHERE engagement_id = ?");
     if ($delAssignStmt) {
         $delAssignStmt->bind_param('i', $deleteEngagementId);
         if (!$delAssignStmt->execute()) {
-            // Log failure deleting assignments
+            // Log failure deleting entries
             $currentUserId = $_SESSION['user_id'];
             $currentUserEmail = $_SESSION['email'] ?? '';
             $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
             $title = "Failed Engagement Deletion";
-            $description = "Failed to delete assignments for $clientName engagement.";
+            $description = "Failed to delete entries for $clientName engagement.";
 
             logActivity($conn, "failed_engagement_deleted", $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
-            echo json_encode(['success' => false, 'error' => 'Failed to delete related assignments']);
+            echo json_encode(['success' => false, 'error' => 'Failed to delete related entries']);
             exit();
         }
         $delAssignStmt->close();
     } else {
-        echo json_encode(['success' => false, 'error' => 'Failed to prepare delete assignments statement']);
+        echo json_encode(['success' => false, 'error' => 'Failed to prepare delete entries statement']);
         exit();
     }
 

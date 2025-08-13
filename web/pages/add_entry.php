@@ -81,7 +81,7 @@ if ($assignedHoursVal !== null) {
     }
 
 
-    // Determine if time off or assignment
+    // Determine if time off or entries
     $isTimeOff = (empty($clientId)) ? 1 : 0;
 
     // If no clientId (time off), set clientId to NULL or 0 depending on your DB design
@@ -100,7 +100,7 @@ if ($isTimeOff) {
 
 // Prepare statement with types accordingly:
 $stmt = $conn->prepare("
-    INSERT INTO assignments (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
+    INSERT INTO entries (user_id, engagement_id, week_start, assigned_hours, is_timeoff)
     VALUES (?, ?, ?, ?, ?)
 ");
 
@@ -120,7 +120,7 @@ $stmt->bind_param($types, $employeeId, $clientIdParam, $weekStart, $hours, $isTi
 
 
     if ($stmt->execute()) {
-        // Log activity (adjust description for time off vs assignment)
+        // Log activity (adjust description for time off vs entry)
         $user_id = $_SESSION['user_id'];
         $email = $_SESSION['email'] ?? '';
         $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
@@ -152,11 +152,11 @@ $stmt->bind_param($types, $employeeId, $clientIdParam, $weekStart, $hours, $isTi
                 $stmtClient->fetch();
                 $stmtClient->close();
             }
-            $title = "Assignment Added";
+            $title = "Entry Added";
             $description = "1 week ({$hours} hrs) added for {$employeeFullName} on {$clientName} engagement.";
         }
 
-        logActivity($conn, $isTimeOff ? "timeoff_created" : "assignment_created", $user_id, $email, $full_name, $title, $description);
+        logActivity($conn, $isTimeOff ? "timeoff_created" : "entry_created", $user_id, $email, $full_name, $title, $description);
 
         header("Location: master-schedule.php?status=success");
 exit();

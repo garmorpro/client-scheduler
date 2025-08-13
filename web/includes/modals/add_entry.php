@@ -23,7 +23,7 @@
           <div id="entryTypePrompt" class="text-center">
             <p>Please choose the type of entry:</p>
             <button type="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" id="btnTimeOffEntry">Time Off Entry</button>
-            <button type="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" id="btnNewAssignment">New Assignment</button>
+            <button type="button" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" id="btnNewEntry">New Entry</button>
           </div>
 
           <!-- Time Off Entry content: only hours input -->
@@ -34,8 +34,8 @@
             </div>
           </div>
 
-          <!-- New Assignment content: client dropdown + hours input -->
-          <div id="newAssignmentContent" class="d-none">
+          <!-- New Entry content: client dropdown + hours input -->
+          <div id="newEntryContent" class="d-none">
 
           
             <!-- Custom Client Dropdown -->

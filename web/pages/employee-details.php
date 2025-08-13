@@ -29,53 +29,53 @@ $user = $userResult->fetch_assoc();
 $fullName = $user['first_name'] . ' ' . $user['last_name'];
 $role = $user['role'] ?? 'N/A';
 
-// Fetch upcoming assignments (week_start >= today)
+// Fetch upcoming entries (week_start >= today)
 $mondayThisWeek = date('Y-m-d', strtotime('monday this week'));
-$assignmentsQuery = "
+$entriesQuery = "
     SELECT 
         e.client_name,
         a.week_start,
         a.assigned_hours
-    FROM assignments a
+    FROM entries a
     JOIN engagements e ON a.engagement_id = e.engagement_id
     WHERE a.user_id = ? AND a.week_start >= ?
     ORDER BY a.week_start ASC
 ";
 
-$stmt = $conn->prepare($assignmentsQuery);
+$stmt = $conn->prepare($entriesQuery);
 $stmt->bind_param('is', $employeeId, $mondayThisWeek);
 $stmt->execute();
-$assignmentsResult = $stmt->get_result();
+$entriesResult = $stmt->get_result();
 
 $totalAssignedHours = 0;
-$assignmentsByClient = [];
+$entriesByClient = [];
 
-while ($row = $assignmentsResult->fetch_assoc()) {
+while ($row = $entriesResult->fetch_assoc()) {
     $client = htmlspecialchars($row['client_name']);
     $weekStartRaw = $row['week_start'];
     $weekStartFormatted = date('n/d', strtotime($weekStartRaw));
     $hours = (int)$row['assigned_hours'];
     $totalAssignedHours += $hours;
 
-    if (!isset($assignmentsByClient[$client])) {
-        $assignmentsByClient[$client] = [
+    if (!isset($entriesByClient[$client])) {
+        $entriesByClient[$client] = [
             'total_hours' => 0,
             'weeks' => []
         ];
     }
 
-    $assignmentsByClient[$client]['total_hours'] += $hours;
-    $assignmentsByClient[$client]['weeks'][] = "{$weekStartFormatted} ({$hours})";
+    $entriesByClient[$client]['total_hours'] += $hours;
+    $entriesByClient[$client]['weeks'][] = "{$weekStartFormatted} ({$hours})";
 }
 
 // Build final HTML
-$assignmentItemsHTML = '';
+$entryItemsHTML = '';
 
-foreach ($assignmentsByClient as $client => $data) {
+foreach ($entriesByClient as $client => $data) {
     $weeksList = implode(', ', $data['weeks']);
     $hours = $data['total_hours'];
 
-    $assignmentItemsHTML .= "
+    $entryItemsHTML .= "
         <div class='list-group-item d-flex justify-content-between align-items-center'>
             <div>
                 <strong>{$client}</strong><br />
@@ -94,5 +94,5 @@ echo json_encode([
     'role' => $role,
     'total_assigned_hours' => $totalAssignedHours,
     'total_available_hours' => $totalAvailableHours,
-    'assignment_items' => $assignmentItemsHTML
+    'entry_items' => $entryItemsHTML
 ]);

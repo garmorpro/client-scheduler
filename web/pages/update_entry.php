@@ -19,23 +19,23 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $assignmentId = $_POST['assignment_id'];
+    $entryId = $_POST['entry_id'];
     $assignedHours = $_POST['assigned_hours'];
     $status = $_POST['status'] ?? null;
 
-    // Get current assignment info for logging and to know if it is time off or not
+    // Get current entry info for logging and to know if it is time off or not
     $infoSql = "
         SELECT a.user_id, a.engagement_id, a.week_start, u.first_name, u.last_name, e.client_name, a.is_timeoff
-        FROM assignments a
+        FROM entries a
         LEFT JOIN users u ON a.user_id = u.user_id
         LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
-        WHERE a.assignment_id = ?
+        WHERE a.entry_id = ?
     ";
     $infoStmt = $conn->prepare($infoSql);
     if (!$infoStmt) {
-        die("Prepare failed for assignment info: (" . $conn->errno . ") " . $conn->error);
+        die("Prepare failed for entry info: (" . $conn->errno . ") " . $conn->error);
     }
-    $infoStmt->bind_param('i', $assignmentId);
+    $infoStmt->bind_param('i', $entryId);
     $infoStmt->execute();
     $infoStmt->bind_result($userId, $engagementId, $weekStart, $empFirstName, $empLastName, $clientName, $isTimeOff);
     $infoStmt->fetch();
@@ -45,12 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $isTimeOff = $isTimeOff ? true : false;
 
     // Prepare update statement based on type
-    $updateSql = "UPDATE assignments SET assigned_hours = ? WHERE assignment_id = ?";
+    $updateSql = "UPDATE entries SET assigned_hours = ? WHERE entry_id = ?";
     $updateStmt = $conn->prepare($updateSql);
     if (!$updateStmt) {
         die("Prepare failed for update: (" . $conn->errno . ") " . $conn->error);
     }
-    $updateStmt->bind_param('ii', $assignedHours, $assignmentId);
+    $updateStmt->bind_param('ii', $assignedHours, $entryId);
     $updateStmt->execute();
 
     if ($updateStmt->affected_rows > 0) {
@@ -61,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $employeeFullName = trim("$empFirstName $empLastName");
         $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
-        $title = "Assignment Updated";
+        $title = "Entry Updated";
 
         $descClientName = $isTimeOff ? 'Time Off' : $clientName;
-        $description = "Updated assignment for $employeeFullName on $descClientName, week of $formattedWeekStart ({$assignedHours} hrs).";
+        $description = "Updated entry for $employeeFullName on $descClientName, week of $formattedWeekStart ({$assignedHours} hrs).";
 
-        logActivity($conn, "assignment_updated", $currentUserId, $email, $full_name, $title, $description);
+        logActivity($conn, "entry_updated", $currentUserId, $email, $full_name, $title, $description);
 
         header("Location: master-schedule.php?update=success");
     } else {

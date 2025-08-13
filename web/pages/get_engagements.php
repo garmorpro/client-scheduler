@@ -28,7 +28,7 @@ $sql = "
         COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours,
         COALESCE(COUNT(DISTINCT a.user_id), 0) AS assigned_user_count
     FROM engagements e
-    LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
+    LEFT JOIN entries a ON e.engagement_id = a.engagement_id
     WHERE e.engagement_id = ?
     GROUP BY 
         e.engagement_id, 

@@ -132,7 +132,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/show_entries.js"></script>
     <script src="../assets/js/edit_modal.js"></script>
     <script src="../assets/js/delete_entry.js"></script>
-    <script src="../assets/js/view_assignment_modal.js"></script>
+    <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
 
 
@@ -332,8 +332,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <?php if ($isAdmin): ?>
 
 <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
-<?php include_once '../includes/modals/manage_assignments.php'; ?>
-<?php include_once '../includes/modals/edit_assignment.php'; ?>
+<?php include_once '../includes/modals/manage_entries.php'; ?>
+<?php include_once '../includes/modals/edit_entry.php'; ?>
 <?php include_once '../includes/modals/add_entry.php'; ?>
 <?php include_once '../includes/modals/add_engagement.php'; ?>
 

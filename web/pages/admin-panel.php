@@ -61,7 +61,7 @@ $totalEngagements = $totalRow['total'];
 $assignedEngagementsQuery = "
     SELECT COUNT(DISTINCT e.engagement_id) AS total_assigned
     FROM engagements e
-    JOIN assignments a ON e.engagement_id = a.engagement_id
+    JOIN entries a ON e.engagement_id = a.engagement_id
 ";
 
 $assignedResult = mysqli_query($conn, $assignedEngagementsQuery);
@@ -72,7 +72,7 @@ $totalAssigned = $assignedRow['total_assigned'];
 $notAssignedEngagementsQuery = "
     SELECT COUNT(*) AS total_not_assigned
     FROM engagements e
-    LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
+    LEFT JOIN entries a ON e.engagement_id = a.engagement_id
     WHERE a.engagement_id IS NULL
 ";
 
@@ -95,7 +95,7 @@ $engagementSQL = "
     e.notes,
     COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours
   FROM engagements e
-  LEFT JOIN assignments a ON e.engagement_id = a.engagement_id
+  LEFT JOIN entries a ON e.engagement_id = a.engagement_id
   GROUP BY e.engagement_id, e.client_name, e.total_available_hours, e.status, e.notes
   ORDER BY e.client_name ASC
 ";
@@ -289,7 +289,7 @@ if ($settingResult) {
                 <div class="user-management-header">
                     <div class="titles">
                         <p class="text-black"><strong>Engagement Management</strong></p>
-                        <p>Manage all engagements and assignments</p>
+                        <p>Manage all engagements and entries</p>
                     </div>
                     <div class="user-management-buttons">
                         <a href="#" id="bulkDeleteEngagementBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
@@ -427,17 +427,17 @@ if ($settingResult) {
                                     $color = 'rgb(40,167,69)'; // green
                                     break;
                                 
-                                case 'assignment_created':
+                                case 'entry_created':
                                     $icon = 'bi-file-earmark-plus';
                                     $color = 'rgb(40,167,69)'; // green
                                     break;
                                 
-                                case 'assignment_deleted':
+                                case 'entry_deleted':
                                     $icon = 'bi-file-earmark-minus';
                                     $color = 'rgb(220,53,69)'; // green
                                     break;
                                 
-                                case 'assignment_updated':
+                                case 'entry_updated':
                                     $icon = 'bi-file-earmark-check';
                                     $color = 'rgb(161,77,253)'; // green
                                     break;
@@ -1400,8 +1400,8 @@ if ($settingResult) {
               <h6 class="mb-3">Backup Content</h6>
               <div class="row mb-4">
                 <?php
-                $contentKeys = ['backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'];
-                $contentLabels = ['Users', 'Engagements', 'Assignments', 'Settings'];
+                $contentKeys = ['backup_users', 'backup_engagements', 'backup_entries', 'backup_settings'];
+                $contentLabels = ['Users', 'Engagements', 'Entries', 'Settings'];
 
                 $chunks = array_chunk($contentKeys, 3);
                 $labelChunks = array_chunk($contentLabels, 3);
@@ -2699,7 +2699,7 @@ if ($settingResult) {
     });
 
     // Handle unchecked checkboxes: ensure keys exist and are 'false'
-    ['enable_automated_backups', 'backup_users', 'backup_engagements', 'backup_assignments', 'backup_settings'].forEach(key => {
+    ['enable_automated_backups', 'backup_users', 'backup_engagements', 'backup_entries', 'backup_settings'].forEach(key => {
       if (!formData.has(key)) {
         data[key] = 'false';
       }

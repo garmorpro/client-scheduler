@@ -11,7 +11,7 @@
           <h4 id="employeeName" class="text-center mb-3 fw-bold"></h4>
           <p id="employeeRole" class="text-muted mb-3"></p>
 
-          <!-- Assigned Hours and Assignments -->
+          <!-- Assigned Hours and Entries -->
           <div class="mb-4">
             <h6>Total Assigned Hours:</h6>
             <div class="d-flex justify-content-between">
@@ -23,13 +23,13 @@
             </div>
           </div>
 
-          <!-- Assigned Assignments Section -->
+          <!-- Assigned Entries Section -->
           <div class="card mb-4 shadow-sm">
             <div class="card-header bg-light">
-              <h6 class="mb-0">Upcoming Assignments</h6>
+              <h6 class="mb-0">Upcoming Entries</h6>
             </div>
             <div class="card-body">
-              <div id="assignedAssignments" class="list-group"></div>
+              <div id="assignedEntries" class="list-group"></div>
             </div>
           </div>
 
