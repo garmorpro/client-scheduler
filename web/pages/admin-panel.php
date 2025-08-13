@@ -8,6 +8,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+if ($_SESSION['user_role'] !== 'admin') {
+    header("Location: my-schedule.php");
+    exit();
+}
+
 
 // Get total users
 $totalUsersQuery = "SELECT COUNT(*) AS total FROM users";
