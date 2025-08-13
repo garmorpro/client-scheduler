@@ -206,7 +206,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
                   default: $status_format = 'Error'; break;
               }
             ?>
-            <small class="text-status <?php echo $status_class; ?>"><?php echo htmlspecialchars($status_format); ?></small>
+            <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
           </div>
         </div>
       </div>
