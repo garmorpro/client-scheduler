@@ -1,4 +1,4 @@
-function openassignmentModal(engagementId) {
+function openEntryModal(engagementId) {
     // Set the engagementId in the hidden input field before fetching the data
     document.getElementById('engagementId').value = engagementId;
 
@@ -47,8 +47,8 @@ function openassignmentModal(engagementId) {
             document.getElementById('clientNotes').innerText = notes ? notes : "No notes available.";
 
             // Show the modal after the engagement details are set
-            const assignmentModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
-            assignmentModal.show();
+            const entryModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
+            entryModal.show();
         })
         .catch(error => console.error('Error fetching engagement details:', error));
 }

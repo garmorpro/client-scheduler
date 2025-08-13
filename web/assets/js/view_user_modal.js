@@ -23,8 +23,8 @@ function openEmployeeModal(employeeId) {
             bar.setAttribute('aria-valuenow', data.total_assigned_hours);
             bar.setAttribute('aria-valuemax', data.total_available_hours);
 
-            // Set assignments
-            document.getElementById('assignedAssignments').innerHTML = data.assignment_items;
+            // Set entries
+            document.getElementById('assignedEntries').innerHTML = data.entry_items;
 
             // Show modal
             const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));

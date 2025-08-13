@@ -29,6 +29,6 @@ function searchQuery() {
       if (type === 'employee') {
           openEmployeeModal(id); // Ensure you have this modal function defined
       } else if (type === 'client') {
-          openassignmentModal(id); // Ensure you have this modal function defined
+          openEntryModal(id); // Ensure you have this modal function defined
       }
   }

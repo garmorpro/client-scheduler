@@ -15,7 +15,7 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
     document.getElementById('timeOffEntryContent').classList.add('d-none');
-    document.getElementById('newAssignmentContent').classList.add('d-none');
+    document.getElementById('newEntryContent').classList.add('d-none');
 
     // Clear inputs
     document.getElementById('selectedClient').textContent = 'Select a client';
