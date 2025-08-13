@@ -82,22 +82,21 @@ $stmt->close();
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 
-<<div class="flex-grow-1 p-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="flex-grow-1 p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h3 class="mb-0">My Schedule</h3>
-        <p class="text-muted mb-0">Your personal schedule and time allocation</p>
+      <h3 class="mb-0">My Schedule</h3>
+      <p class="text-muted mb-0">Your personal schedule and time allocation</p>
     </div>
     <div class="header-buttons">
-        <a href="#" 
-           onclick="location.reload();" 
-           class="badge text-black p-2 text-decoration-none fw-medium me-1" 
-           style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-          <i class="bi bi-arrow-clockwise me-3"></i>Refresh
-        </a>
-
+      <a href="#" 
+        onclick="location.reload();" 
+        class="badge text-black p-2 text-decoration-none fw-medium me-1" 
+        style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+        <i class="bi bi-arrow-clockwise me-3"></i>Refresh
+      </a>
     </div>
-</div>
+  </div>
 
   <div class="d-flex flex-wrap gap-2">
     <?php foreach ($mondays as $monday): 
