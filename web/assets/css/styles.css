@@ -5,6 +5,8 @@ body {
     color: #1a1a1a;
     font-size: 14px !important;
 }
+  .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
+  td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
 /* Stat cards */
 .stat-card {
     position: relative;
@@ -534,6 +536,7 @@ input, select {
 .modal-body {
   overflow: visible !important;
 }
+
 
 
 
