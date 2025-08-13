@@ -205,6 +205,10 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     <div class="card p-3 shadow-sm mb-3">
         <div class="d-flex justify-content-between align-items-start mb-2">
             <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+            <small class="text-muted">
+                <strong>Team member(s):</strong>
+                <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
+            </small>
             <div class="text-end">
                 <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
                 <?php
@@ -220,10 +224,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
             </div>
         </div>
         <div>
-            <small class="text-muted">
-                <strong>Team member(s):</strong>
-                <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
-            </small>
+            
         </div>
     </div>
 <?php endforeach; ?>
