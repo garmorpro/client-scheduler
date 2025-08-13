@@ -2547,7 +2547,60 @@ if ($settingResult) {
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
+
   <script>
+
+    sendTestEmailBtn.addEventListener('click', async () => {
+    const testEmail = testEmailInput.value.trim();
+    const statusEl = document.getElementById('testEmailStatus');
+
+    // Reset classes and show the status element
+    statusEl.classList.remove('d-none', 'text-success', 'text-danger');
+    statusEl.classList.add('text-info');
+
+    if (!testEmail) {
+        alert('Please enter a test email address.');
+        return;
+    }
+
+    // Debug: immediately show that the click worked
+    statusEl.textContent = 'Button clicked! Sending request...';
+    console.log('Send Test Email button clicked, email:', testEmail);
+
+    try {
+        const resp = await fetch('../includes/send_test_email.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ test_email: testEmail })
+        });
+
+        console.log('Fetch response received:', resp);
+
+        // Attempt to parse JSON
+        const result = await resp.json();
+        console.log('Parsed JSON:', result);
+
+        if (result.success) {
+            statusEl.textContent = 'Test email sent successfully!';
+            statusEl.classList.remove('text-info');
+            statusEl.classList.add('text-success');
+        } else {
+            statusEl.textContent = 'Failed to send test email: ' + (result.message || 'Unknown error');
+            statusEl.classList.remove('text-info');
+            statusEl.classList.add('text-danger');
+        }
+    } catch (err) {
+        // Network or parse error
+        statusEl.textContent = 'Error: ' + err.message;
+        statusEl.classList.remove('text-info');
+        statusEl.classList.add('text-danger');
+        console.error(err);
+    }
+});
+
+
+
+
     // Show modal on configure button click
     document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
       e.preventDefault();
