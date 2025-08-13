@@ -40,7 +40,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
                     </a>
                 </li>
             <?php endif; ?>
-            <li class="nav-item mb-2 <?php if ($isAdmin) echo 'd-none'; ?>">
+            <li class="nav-item mb-2 <?php if ($isAdmin || $isManager) echo 'd-none'; ?>">
                 <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
                     <i class="bi bi-person me-2"></i>
                     My Schedule
