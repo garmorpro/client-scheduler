@@ -190,7 +190,7 @@ if ($settingResult) {
 
         <!-- Tabs -->
             <div class="custom-tabs">
-                <button class="active" data-tab="users">User Management</button>
+                <button class="active <?php if ($isAdmin || $isManager) echo 'd-none'; ?>" data-tab="users">User Management</button>
                 <button data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
                 <button data-tab="settings">Settings</button>
