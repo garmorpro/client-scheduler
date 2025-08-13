@@ -32,7 +32,9 @@ $sqlEngagements = "
     JOIN engagements AS e ON en.engagement_id = e.engagement_id
     WHERE en.user_id = ?
     ORDER BY e.client_name
+    LIMIT 25
 ";
+
 $stmt = $conn->prepare($sqlEngagements);
 $stmt->bind_param('i', $userId);
 $stmt->execute();
