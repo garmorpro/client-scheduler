@@ -59,7 +59,7 @@ $endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
 
 $query = "
     SELECT 
-        a.assignment_id,
+        a.entry_id,
         a.user_id,
         a.engagement_id,
         e.client_name,
@@ -67,7 +67,7 @@ $query = "
         a.assigned_hours,
         e.status AS engagement_status
     FROM 
-        assignments a
+        entries a
     JOIN 
         engagements e ON a.engagement_id = e.engagement_id
     WHERE 
@@ -83,10 +83,10 @@ $stmt->bind_param('ss', $startDate, $endDate);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$assignments = [];
+$entries = [];
 while ($row = $result->fetch_assoc()) {
-    $assignments[$row['user_id']][$row['week_start']][] = [
-        'assignment_id' => $row['assignment_id'],
+    $entries[$row['user_id']][$row['week_start']][] = [
+        'entry_id' => $row['entry_id'],
         'client_name' => $row['client_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
@@ -104,7 +104,7 @@ $dropdownquery = "
     e.total_available_hours,
     IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
   FROM engagements e
-  LEFT JOIN assignments a ON a.engagement_id = e.engagement_id
+  LEFT JOIN entries a ON a.engagement_id = e.engagement_id
   GROUP BY e.engagement_id
   ORDER BY e.client_name
 ";
@@ -126,7 +126,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <script src="../assets/js/add_entry_modal.js"></script>
     <script>
-      const assignments = <?php echo json_encode($assignments); ?>;
+      const entries = <?php echo json_encode($entries); ?>;
     </script>
     <script src="../assets/js/manage_entry_modal.js"></script>
     <script src="../assets/js/show_entries.js"></script>
@@ -252,20 +252,20 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 $isCurrent = ($idx === $currentWeekIndex);
 
                 $weekKey = date('Y-m-d', $weekStart);
-                $assignmentsForWeek = $assignments[$userId][$weekKey] ?? [];
+                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
                 $cellContent = "";
 
-                if (!empty($assignmentsForWeek)) {
-                    foreach ($assignmentsForWeek as $assignment) {
-                        $engagementStatus = strtolower($assignment['engagement_status'] ?? 'confirmed');
+                if (!empty($entriesForWeek)) {
+                    foreach ($entriesForWeek as $entry) {
+                        $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                         switch ($engagementStatus) {
                             case 'confirmed': $badgeColor = 'success'; break;
                             case 'pending': $badgeColor = 'purple'; break;
                             case 'not_confirmed': $badgeColor = 'primary'; break;
                             default: $badgeColor = 'secondary'; break;
                         }
-                        $clientName = htmlspecialchars($assignment['client_name']);
-                        $assignedHours = htmlspecialchars($assignment['assigned_hours']);
+                        $clientName = htmlspecialchars($entry['client_name']);
+                        $assignedHours = htmlspecialchars($entry['assigned_hours']);
                         $cellContent .= "<span class='badge bg-$badgeColor'>{$clientName} ({$assignedHours})</span><br>";
                     }
                 } else {
@@ -276,15 +276,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 ?>
 
                 <?php if ($isAdmin): ?>
-                    <?php if (!empty($assignmentsForWeek)): ?>
-                        <!-- Has assignments → open ManageAssignments modal -->
+                    <?php if (!empty($entriesForWeek)): ?>
+                        <!-- Has entries → open ManageEntries modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
                             data-user-id="<?php echo $userId; ?>" 
                             data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                             data-week-start="<?php echo $weekKey; ?>"
                             onclick='
                                 event.stopPropagation();
-                                console.log("Assignments empty?", false);
+                                console.log("Entries empty?", false);
                                 openManageEntryModal(
                                     "<?php echo $userId; ?>",
                                     <?php echo json_encode($fullName); ?>,
@@ -294,14 +294,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             <?php echo $cellContent; ?>
                         </td>
                     <?php else: ?>
-                        <!-- No assignments → open AddEntry modal -->
+                        <!-- No Entries → open AddEntry modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
                             data-user-id="<?php echo $userId; ?>" 
                             data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                             data-week-start="<?php echo $weekKey; ?>"
                             onclick='
                                 event.stopPropagation();
-                                console.log("Assignments empty?", true);
+                                console.log("Entries empty?", true);
                                 openAddEntryModal(
                                     "<?php echo $userId; ?>",
                                     <?php echo json_encode($fullName); ?>,
