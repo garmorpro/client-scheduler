@@ -19,17 +19,17 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
-if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
-    $assignmentId = (int)$_POST['assignment_id'];
+if (isset($_POST['entry_id']) && is_numeric($_POST['entry_id'])) {
+    $entryId = (int)$_POST['entry_id'];
 
-    // Fetch assignment details for logging
-    if ($detailsStmt = $conn->prepare("SELECT user_id, engagement_id, assigned_hours, week_start FROM assignments WHERE assignment_id = ?")) {
-        $detailsStmt->bind_param('i', $assignmentId);
+    // Fetch entry details for logging
+    if ($detailsStmt = $conn->prepare("SELECT user_id, engagement_id, assigned_hours, week_start FROM entries WHERE entry_id = ?")) {
+        $detailsStmt->bind_param('i', $entryId);
         $detailsStmt->execute();
         $detailsStmt->bind_result($assignedUserId, $engagementId, $assignedHours, $weekStart);
         
         if (!$detailsStmt->fetch()) {
-            // Assignment not found
+            // entry not found
             $detailsStmt->close();
             echo 'error';
             exit();
@@ -62,20 +62,20 @@ if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
         $clientStmt->close();
     }
 
-    // Delete the assignment
-    if ($stmt = $conn->prepare("DELETE FROM assignments WHERE assignment_id = ?")) {
-        $stmt->bind_param('i', $assignmentId);
+    // Delete the entry
+    if ($stmt = $conn->prepare("DELETE FROM entries WHERE entry_id = ?")) {
+        $stmt->bind_param('i', $entryId);
         if ($stmt->execute()) {
             // Log deletion
             $user_id = $_SESSION['user_id'];
             $email = $_SESSION['email'] ?? '';
             $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-            $title = "Assignment Deleted";
+            $title = "Entry Deleted";
             $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
-            $description = "Deleted assignment for $employeeFullName on $clientName, $formattedWeekStart ($assignedHours hrs).";
+            $description = "Deleted entry for $employeeFullName on $clientName, $formattedWeekStart ($assignedHours hrs).";
 
-            logActivity($conn, "assignment_deleted", $user_id, $email, $full_name, $title, $description);
+            logActivity($conn, "entry_deleted", $user_id, $email, $full_name, $title, $description);
 
             echo 'success';
         } else {
@@ -87,5 +87,5 @@ if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
     }
 
 } else {
-    echo 'error';  // Invalid assignment_id
+    echo 'error';  // Invalid entry_id
 }
