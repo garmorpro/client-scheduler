@@ -5,8 +5,13 @@ body {
     color: #1a1a1a;
     font-size: 14px !important;
 }
-  .form-select, .form-control { background-color: #f9fafb; border-radius: 8px; }
-  td.addable:hover { background-color: #e0f7fa; cursor: pointer; }
+.form-select, .form-control { 
+    background-color: #f9fafb; border-radius: 8px; 
+}
+td.addable:hover { 
+    background-color: #e0f7fa; 
+    cursor: pointer; 
+}
 /* Stat cards */
 .stat-card {
     position: relative;
@@ -454,9 +459,9 @@ body {
 .highlight-today {
     /* border: 2px solid rgb(209,226,159);
     background: rgb(246, 249, 236); */
-    background-color: rgb(246, 249, 236) !important;  /* soft yellow */
+    /* background-color: rgb(246, 249, 236) !important;
     border-left: 3px solid rgb(209,226,159) !important;
-    border-right: 3px solid rgb(209,226,159) !important;
+    border-right: 3px solid rgb(209,226,159) !important; */
 }
 /* .highlight-today:hover {
     background-color: #e0faea !important; 
