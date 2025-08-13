@@ -2611,7 +2611,7 @@ sendTestEmailBtn.addEventListener('click', async () => {
     }
 
     try {
-        const resp = await fetch('includes/send_test_email.php', {
+        const resp = await fetch('../includes/send_test_email.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ test_email: testEmail })
