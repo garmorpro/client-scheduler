@@ -280,6 +280,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         <!-- Has assignments → open ManageAssignments modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
                             data-user-id="<?php echo $userId; ?>" 
+                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                             data-week-start="<?php echo $weekKey; ?>"
                             onclick='
                                 event.stopPropagation();
@@ -296,6 +297,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         <!-- No assignments → open AddEntry modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
                             data-user-id="<?php echo $userId; ?>" 
+                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                             data-week-start="<?php echo $weekKey; ?>"
                             onclick='
                                 event.stopPropagation();
