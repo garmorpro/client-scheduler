@@ -1345,6 +1345,32 @@ if ($settingResult) {
     </div>
 <!-- end Email Notification Modal -->
 
+<script>
+  document.getElementById('sendTestEmailBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    const email = document.getElementById('testEmail').value.trim();
+    if(!email) return alert("Enter a valid email");
+
+    fetch('send_test_email.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'test_email=' + encodeURIComponent(email)
+    })
+    .then(res => res.json())
+    .then(data => {
+        const statusEl = document.getElementById('testEmailStatus');
+        statusEl.classList.remove('d-none', 'text-success', 'text-danger');
+        if(data.success){
+            statusEl.classList.add('text-success');
+        } else {
+            statusEl.classList.add('text-danger');
+        }
+        statusEl.textContent = data.message;
+    });
+});
+
+</script>
+
 <!-- Backup Configuration Modal -->
     <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
       <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
