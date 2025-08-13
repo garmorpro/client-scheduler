@@ -8,7 +8,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+
+if (!$isAdmin && !$isManager) {
     header("Location: my-schedule.php");
     exit();
 }

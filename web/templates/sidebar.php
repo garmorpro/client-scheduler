@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 ?>
 
 <div class="d-flex flex-column justify-content-between bg-light border-end fixed-top"
@@ -31,7 +32,7 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
                     Dashboard
                 </a>
             </li> -->
-            <?php if ($isAdmin): ?>
+            <?php if ($isAdmin) && ($isManager): ?>
                 <li class="nav-item">
                     <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
                         <i class="bi bi-shield me-2"></i>
