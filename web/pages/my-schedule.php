@@ -190,7 +190,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   </div>
 
   <!-- Selected Week View -->
-  <div class="d-flex justify-content-between align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+  <div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
     <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
       <i class="bi bi-chevron-left me-2"></i>Previous Week
     </a>
