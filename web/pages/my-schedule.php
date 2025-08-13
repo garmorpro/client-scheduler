@@ -105,7 +105,7 @@ $stmt->close();
         $timeOff = $timeOffHours[$weekKey] ?? 0;
         $netHours = max(0, $assigned - $timeOff);
     ?>
-        <div class="card text-center p-2 <?php echo ($monday == $currentMonday) ? 'highlight-week' : ''; ?>">
+        <div class="card text-center p-2 <?php echo ($monday == $currentMonday) ? 'highlight-weeks' : ''; ?>" style="width: 150px;">
             <div class="fw-bold">
                 Week of <?php echo date('n/j', $monday); ?>
             </div>
