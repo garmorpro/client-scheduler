@@ -34,14 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->fetch();
 
         if (password_verify($password, $hashed_password)) {
+            // Regenerate session ID
             session_regenerate_id(true);
-                
+
+            // Set session variables
             $_SESSION['user_id'] = $user_id;
             $_SESSION['first_name'] = $first_name;
             $_SESSION['last_name'] = $last_name;
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
-                
+
             // Update last_active to current datetime
             $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
             if ($updateStmt) {
@@ -49,25 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $updateStmt->execute();
                 $updateStmt->close();
             }
-        
-            // Log successful login with actual user info
+
+            // Log successful login
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
-        
-            if ($_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] === 'manager') {
-                header("Location: admin-panel.php");
-            } else {
-                header("Location: my-schedule.php");
+
+            // Ensure no output before header
+            ob_clean();
+
+            // Role-based redirect
+            switch (strtolower($role)) {
+                case 'admin':
+                case 'manager':
+                    header("Location: admin-panel.php");
+                    break;
+                default:
+                    header("Location: my-schedule.php");
             }
             exit;
+
         } else {
-            // Log failed login with known user info (password incorrect)
+            // Log failed login (incorrect password)
             $full_name = trim($first_name . ' ' . $last_name);
-            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect login attempt");
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
             $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
         }
+
     } else {
-        // Log failed login due to email not found
+        // Log failed login (email not found)
         logActivity($conn, "failed_login", null, $email, "", "Failed Login", "Email not found");
         $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
     }
