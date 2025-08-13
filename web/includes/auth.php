@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
-            header("Location: dashboard.php");
+            if ($role === 'Admin') {
+                header("Location: admin-panel.php");
+            } else {
+                header("Location: my-schedule.php");
+            }
             exit;
         } else {
             // Log failed login with known user info (password incorrect)
