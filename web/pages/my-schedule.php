@@ -103,29 +103,67 @@ $stmt->close();
       8-Week Overview
     </h6>
   </div>
-  <div class="d-flex justify-content-between flex-wrap gap-2 ms-5 me-5">
+  <style>
+.week-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+    min-width: 140px;
+    height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.week-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+.week-card.current {
+    border: 2px solid #0d6efd;
+    background: #eaf2ff;
+}
+.week-title {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+.week-hours {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+.week-timeoff {
+    font-size: 0.75rem;
+    color: #dc3545;
+    font-style: italic;
+}
+</style>
+
+<div class="d-flex justify-content-center flex-wrap gap-3">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
         $timeOff = $timeOffHours[$weekKey] ?? 0;
         $netHours = max(0, $assigned - $timeOff);
+        $isCurrent = ($monday == $currentMonday);
     ?>
-        <div class="card text-center p-2 <?php echo ($monday == $currentMonday) ? 'highlight-weeks' : ''; ?>" style="width: 150px; height: 100px; border-color: rgb(229,229,229) !important;">
-            <div class="fw-bold">
+        <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
+            <div class="week-title">
                 Week of <?php echo date('n/j', $monday); ?>
             </div>
-            <div class="fs-4">
-                <?php echo $netHours; ?> hrs
+            <div class="week-hours">
+                <i class="bi bi-clock"></i> <?php echo $netHours; ?> hrs
             </div>
             <?php if ($timeOff > 0): ?>
-                <div class="text-danger small">
-                    (-<?php echo $timeOff; ?> hrs time off)
+                <div class="week-timeoff">
+                    <i class="bi bi-calendar-x"></i> -<?php echo $timeOff; ?> hrs time off
                 </div>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
-  </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
