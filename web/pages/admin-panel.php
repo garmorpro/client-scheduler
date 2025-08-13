@@ -126,7 +126,7 @@ if ($settingResult) {
 
 <?php include_once '../templates/sidebar.php'; ?>
 
-<div class="flex-grow-1 p-4">
+<div class="flex-grow-1 p-4" style="margin-left: 250px;">
     <h3 class="mb-0">Administrative Dashboard</h3>
     <p class="text-muted mb-4">System overview and user management for Admin User</p>
 
