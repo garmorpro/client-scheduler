@@ -153,7 +153,7 @@ $stmt->close();
                 Week of <?php echo date('n/j', $monday); ?>
             </div>
             <div class="week-hours">
-                <i class="bi bi-clock"></i> <?php echo $netHours; ?> hrs
+                <?php echo $netHours; ?> hrs
             </div>
             <?php if ($timeOff > 0): ?>
                 <div class="week-timeoff">
