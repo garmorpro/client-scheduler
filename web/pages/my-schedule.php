@@ -116,7 +116,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
-.card { min-width: 120px; }
+.card { min-width: 120px; margin-bottom: 15px; }
 
 .timeoff-card {
     border: 1px dashed #ff9800;
@@ -176,34 +176,39 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     </a>
   </div>
 
-  <div class="list-group mb-3">
+  <!-- Detailed Week Entries as Cards -->
+  <div class="d-flex flex-column mb-3">
     <?php foreach ($engagements as $eng): ?>
-      <div class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-        </div>
-        <div class="text-end">
-          <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
-          <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
+      <div class="card p-3 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+          </div>
+          <div class="text-end">
+            <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
+            <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
+          </div>
         </div>
       </div>
     <?php endforeach; ?>
 
     <?php foreach ($timeOffs as $off): ?>
-      <div class="list-group-item d-flex justify-content-between align-items-center timeoff-card">
-        <div>
-          <div class="fw-bold"><?php echo htmlspecialchars($off['client_name']); ?></div>
-          <small class="text-muted">Approved time off</small>
-        </div>
-        <div class="text-end text-danger fw-bold">
-          -<?php echo $off['assigned_hours']; ?>h
+      <div class="card p-3 shadow-sm timeoff-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-bold"><?php echo htmlspecialchars($off['client_name']); ?></div>
+            <small class="text-muted">Approved time off</small>
+          </div>
+          <div class="text-end text-danger fw-bold">
+            -<?php echo $off['assigned_hours']; ?>h
+          </div>
         </div>
       </div>
     <?php endforeach; ?>
   </div>
 
   <!-- Week Summary -->
-  <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+  <div class="card p-3 bg-light d-flex justify-content-between align-items-center">
     <div>
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
