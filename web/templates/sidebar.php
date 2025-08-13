@@ -33,7 +33,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
                 </a>
             </li> -->
             <?php if ($isAdmin || $isManager): ?>
-                <li class="nav-item">
+                <li class="nav-item mb-2">
                     <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
                         <i class="bi bi-shield me-2"></i>
                         Admin Panel
