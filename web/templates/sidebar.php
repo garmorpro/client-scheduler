@@ -8,7 +8,7 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 ?>
 
 <div class="d-flex flex-column justify-content-between bg-light border-end fixed-top"
-     style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">
+     style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto; margin-right: 250px;">
 
     <!-- Branding -->
     <div>
