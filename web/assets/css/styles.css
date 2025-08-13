@@ -460,8 +460,8 @@ td.addable:hover {
     /* border: 2px solid rgb(209,226,159);
     background: rgb(246, 249, 236); */
     background-color: rgb(246, 249, 236) !important;
-    border-left: 3px solid rgb(209,226,159) !important;
-    border-right: 3px solid rgb(209,226,159) !important;
+    border: 3px solid rgb(209,226,159) !important;
+    /* border-right: 3px solid rgb(209,226,159) !important; */
 }
 /* .highlight-today:hover {
     background-color: #e0faea !important; 
