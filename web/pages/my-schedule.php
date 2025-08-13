@@ -120,8 +120,8 @@ $stmt->close();
     transform: translateY(-2px);
 }
 .week-card.current {
-    border: 2px solid #739ad4ff;
-    background: #f1f6fdff;
+    border: 2px solid #a1c7ffff;
+    background: #eaf2ff;
 }
 .week-title {
     font-size: 0.85rem;
