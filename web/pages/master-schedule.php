@@ -153,35 +153,30 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   const assignments = <?php echo json_encode($assignments); ?>;
 
   function openManageOrAddModal(user_id, employeeName, weekStart) {
-  console.log("Modal triggered for:", user_id, employeeName, weekStart);
+    console.log("Script loaded");
+    console.log("Modal triggered:", user_id, employeeName, weekStart);
 
-  const assignments = <?php echo json_encode($assignments); ?>;
-  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+    console.log("Assignments for week:", assignmentsForWeek);
 
-  console.log("Assignments for week:", assignmentsForWeek);
+    const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
 
-  // Print number of assignments in console
-  console.log(`Number of assignments for user ${user_id} in week ${weekStart}:`, assignmentsForWeek.length);
+    if (hasAssignments) {
+        // Show Manage/Add modal
+        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+        manageAddModal.show();
 
-  const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
-
-  if (hasAssignments) {
-      // Show Manage/Add modal
-      const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-      manageAddModal.show();
-
-      document.getElementById('manageAssignmentsButton').onclick = function() {
-          openManageAssignmentsModal(user_id, employeeName, weekStart);
-      };
-      document.getElementById('addAssignmentsButton').onclick = function() {
-          openAddAssignmentModal(user_id, employeeName, weekStart);
-      };
-  } else {
-      // Directly open Add Assignment modal
-      openAddAssignmentModal(user_id, employeeName, weekStart);
+        document.getElementById('manageAssignmentsButton').onclick = function() {
+            openManageAssignmentsModal(user_id, employeeName, weekStart);
+        };
+        document.getElementById('addAssignmentsButton').onclick = function() {
+            openAddAssignmentModal(user_id, employeeName, weekStart);
+        };
+    } else {
+        // Directly open Add Assignment modal
+        openAddAssignmentModal(user_id, employeeName, weekStart);
+    }
   }
-  }
-
 // end ManageOrAddModal
 
 // open addAssignmentModal
@@ -524,12 +519,8 @@ function openEmployeeModal(employeeId) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                  data-user-id="<?php echo $userId; ?>"
-                                  data-week-start="<?php echo $weekKey; ?>"
-                                  onclick='openManageOrAddModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")'>
-                                  <?php echo $cellContent; ?>
-                              </td>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")'
+>
                                   <?php echo $cellContent; ?>
                               </td>
                           <?php else: ?>
@@ -546,24 +537,6 @@ function openEmployeeModal(employeeId) {
   </div>
 
 <!-- end master schedule table -->
-
-<script>
-//   document.addEventListener('DOMContentLoaded', () => {
-//   document.querySelectorAll('td.addable').forEach(td => {
-//     td.addEventListener('click', function () {
-//       const userId = this.dataset.userId;        // same as getAttribute('data-user-id')
-//       const weekStart = this.dataset.weekStart;  // same as getAttribute('data-week-start')
-
-//       console.log('Clicked cell userId:', userId);
-//       console.log('Clicked cell weekStart:', weekStart);
-
-//       // Now call your modal logic here:
-//       openManageOrAddModal(userId, 'Employee Name Placeholder', weekStart);
-//     });
-//   });
-// });
-
-</script>
 
 
 
@@ -1325,7 +1298,6 @@ function openEmployeeModal(employeeId) {
 
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
-  
  document.addEventListener('DOMContentLoaded', () => {
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
