@@ -555,7 +555,7 @@ input, select {
     justify-content: center;
 }
 .week-card:hover {
-    background: #f0f0f0;
+    background: rgb(233,235,239);
     transform: translateY(-2px);
 }
 .week-card.current {
