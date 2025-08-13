@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentWeekStart = null;
 
   // Cache modals
-  const manageAddModalEl = document.getElementById('manageAddModal');
+  const manageAddModalEl = document.getElementById('manageEntryPromptModal');
   const manageAddModal = new bootstrap.Modal(manageAddModalEl);
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
