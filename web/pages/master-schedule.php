@@ -215,7 +215,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
               </tr>
           </thead>
 
-          <tbody>
+          <tbody id="employeesTableBody">
     <?php foreach ($employees as $userId => $employee): ?>
         <?php
         $fullName = htmlspecialchars($employee['full_name']);
