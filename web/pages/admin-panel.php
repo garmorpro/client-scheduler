@@ -198,7 +198,7 @@ if ($settingResult) {
         <!-- end Tabs -->
 
         <!-- user management -->
-            <div id="tab-users" class="tab-content">
+            <div id="tab-users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
                 <div class="user-management-header">
                     <div class="titles">
                         <p class="text-black"><strong>User Management</strong></p>
