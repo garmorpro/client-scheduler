@@ -12,7 +12,7 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 
 // ------------------------------------------------------
 // WEEK NAVIGATION LOGIC
-$today = strtotime('today + 7');
+$today = strtotime('today + 7 days');
 $currentMonday = strtotime('monday this week', $today);
 
 if (isset($_GET['week_start'])) {
