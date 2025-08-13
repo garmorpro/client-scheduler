@@ -294,7 +294,7 @@ if ($settingResult) {
 
         <!-- engagement management -->
 
-            <div id="tab-engagements" class="tab-content d-none">
+            <div id="tab-engagements" class="tab-content <?php if ($isAdmin) echo 'd-none'; ?>">
                 <div class="user-management-header">
                     <div class="titles">
                         <p class="text-black"><strong>Engagement Management</strong></p>
