@@ -519,7 +519,8 @@ function openEmployeeModal(employeeId) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal(
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" data-user-id="<?php echo $userId; ?>"
+                                  data-week-start="<?php echo $weekKey; ?>" onclick='openManageOrAddModal(
                                   "<?php echo $userId; ?>",
                                   <?php echo json_encode($fullName); ?>,
                                   "<?php echo $weekKey; ?>"
