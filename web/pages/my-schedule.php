@@ -195,7 +195,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
       <i class="bi bi-chevron-left me-2"></i>Previous Week
     </a>
     <div class="text-center">
-      <h5 class="mb-0">Week of <?php echo date('n/j', $selectedMonday); ?></h5>
+      <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
       <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
     </div>
     <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
