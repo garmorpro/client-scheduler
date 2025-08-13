@@ -206,7 +206,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
           <div class="fw-semibold fs-5">
-            <?php echo $eng['assigned_hours']; ?>hrs
+            <?php echo $eng['assigned_hours']; ?>hrs <br>
             <?php
             $statusDisplayMap = [
               'confirmed' => 'Confirmed',
