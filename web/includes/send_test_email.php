@@ -4,13 +4,12 @@ session_start();
 // Force JSON output
 header('Content-Type: application/json');
 
-// Log all errors instead of outputting them
+// Log all errors instead of outputting
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/php-error.log');
 error_reporting(E_ALL);
 
-// Include DB and PHPMailer
 require_once 'db.php';
 require 'vendor/autoload.php';
 
@@ -18,7 +17,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 try {
-    // Verify user role
+    // Check user role
     $role = strtolower($_SESSION['user_role'] ?? '');
     if (!in_array($role, ['admin','manager'])) {
         http_response_code(403);
@@ -39,10 +38,11 @@ try {
     $settings = [];
     $sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
     $result = $conn->query($sql);
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $settings[$row['setting_key']] = $row['setting_value'];
-        }
+    if (!$result) {
+        throw new Exception('Failed to fetch email settings from database.');
+    }
+    while ($row = $result->fetch_assoc()) {
+        $settings[$row['setting_key']] = $row['setting_value'];
     }
 
     if (empty($settings['enable_email_notifications']) || $settings['enable_email_notifications'] !== 'true') {
@@ -50,7 +50,7 @@ try {
         exit();
     }
 
-    // PHPMailer
+    // PHPMailer setup
     $mail = new PHPMailer(true);
     $mail->isSMTP();
     $mail->Host       = $settings['smtp_server'] ?? '';
@@ -73,8 +73,7 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Internal Server Error: ' . $e->getMessage()]);
     error_log("send_test_email.php error: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Internal Server Error: ' . $e->getMessage()]);
 }
 exit();
-
