@@ -140,7 +140,7 @@ $stmt->close();
 }
 </style>
 
-<div class="d-flex justify-content-center flex-wrap gap-3">
+<div class="d-flex flex-wrap gap-3">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
