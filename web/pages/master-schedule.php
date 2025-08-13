@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $today = strtotime('today');
 
-// Calculate Mondays as timestamps
+// Calculate Mondays as timestamps (keep same)
 $currentMonday = strtotime('monday this week', $today);
 $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 $startMonday = strtotime("-2 weeks", $currentMonday);
@@ -22,12 +22,12 @@ for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
-// Range label for header
+// Range label for header (keep same)
 $firstWeek = reset($mondays);
 $lastWeek = end($mondays);
 $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
 
-// Get employees from users table
+// Get employees (keep same)
 $employees = [];
 $userQuery = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role FROM users WHERE status = 'active' AND role IN ('staff', 'senior')";
 $userResult = $conn->query($userQuery);
@@ -40,9 +40,10 @@ if ($userResult) {
     }
 }
 
-// Fetch active clients from engagements table
+// Fetch clients (keep same)
 $clientQuery = "SELECT engagement_id, client_name FROM engagements";
 $clientResult = $conn->query($clientQuery);
+
 if ($clientResult === false) {
     die('MySQL query failed: ' . $conn->error);
 }
@@ -55,7 +56,11 @@ while ($clientRow = $clientResult->fetch_assoc()) {
 $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
 
-// Fetch all entries including time_off
+/**
+ * FETCH ENTRIES
+ * - Include time off rows as well (LEFT JOIN so entries without engagement_id are not dropped)
+ * - Use is_timeoff (0/1) instead of a "type" column
+ */
 $query = "
     SELECT 
         a.entry_id,
@@ -65,9 +70,10 @@ $query = "
         a.week_start,
         a.assigned_hours,
         e.status AS engagement_status,
+        a.is_timeoff
     FROM 
         entries a
-    JOIN 
+    LEFT JOIN 
         engagements e ON a.engagement_id = e.engagement_id
     WHERE 
         a.week_start BETWEEN ? AND ?
@@ -90,13 +96,13 @@ while ($row = $result->fetch_assoc()) {
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
         'engagement_status' => $row['engagement_status'],
-        'type' => $row['type'] // new field for time_off
+        'is_timeoff' => (int)$row['is_timeoff'],
     ];
 }
 
 $stmt->close();
 
-// Dropdown query unchanged
+// Dropdown query (unchanged)
 $dropdownquery = "
   SELECT 
     e.engagement_id,
@@ -109,7 +115,6 @@ $dropdownquery = "
   GROUP BY e.engagement_id
   ORDER BY e.client_name
 ";
-
 $dropdownresult = $conn->query($dropdownquery);
 
 $clientsWithHours = [];
@@ -136,6 +141,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
     <script src="../assets/js/filter_employees.js"></script>
+
+    <style>
+      /* light highlight for time off cells */
+      .timeoff-cell { background-color: #fff8f0 !important; }
+      .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .75rem; }
+    </style>
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -176,6 +187,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- Master Schedule table -->
     <?php
+    // Find current week index for highlight (keep same)
     $currentWeekIndex = null;
     foreach ($mondays as $idx => $monday) {
         $weekStart = $monday;
@@ -192,11 +204,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             <thead class="table-light">
                 <tr>
                     <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+
                     <?php foreach ($mondays as $idx => $monday): ?>
-                        <?php $isCurrent = ($idx === $currentWeekIndex); ?>
+                        <?php 
+                        $weekStart = $monday;
+                        $isCurrent = ($idx === $currentWeekIndex);
+                        ?>
                         <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                            <?php echo date('M j', $monday); ?><br>
-                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                            <?php echo date('M j', $weekStart); ?><br>
+                            <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                         </th>
                     <?php endforeach; ?>
                 </tr>
@@ -229,32 +245,29 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
                     <?php foreach ($mondays as $idx => $monday): ?>
                         <?php 
-                        $weekKey = date('Y-m-d', $monday);
+                        $weekStart = $monday;
+                        $isCurrent = ($idx === $currentWeekIndex);
+
+                        $weekKey = date('Y-m-d', $weekStart);
                         $entriesForWeek = $entries[$userId][$weekKey] ?? [];
                         $cellContent = "";
-                        $tdClass = ($idx === $currentWeekIndex) ? 'highlight-today' : '';
 
-                        // Check for time_off
+                        // Build cell content and capture time off
                         $hasTimeOff = false;
                         $timeOffHours = 0;
 
                         if (!empty($entriesForWeek)) {
+                            // First pass: collect time off hours
                             foreach ($entriesForWeek as $entry) {
-                                if (($entry['type'] ?? '') === 'time_off') {
+                                if (!empty($entry['is_timeoff']) && intval($entry['is_timeoff']) === 1) {
                                     $hasTimeOff = true;
                                     $timeOffHours += floatval($entry['assigned_hours']);
                                 }
                             }
 
-                            if ($hasTimeOff) {
-                                // Highlight cell and show hours in top right
-                                $tdClass .= ' bg-warning position-relative';
-                                $cellContent .= "<span class='position-absolute top-0 end-0 text-danger px-1 pt-1' style='font-size: 0.75rem;'>{$timeOffHours}</span>";
-                            }
-
-                            // Render other entries
+                            // Second pass: render ONLY regular entries as badges
                             foreach ($entriesForWeek as $entry) {
-                                if (($entry['type'] ?? '') !== 'time_off') {
+                                if (empty($entry['is_timeoff']) || intval($entry['is_timeoff']) !== 1) {
                                     $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                                     switch ($engagementStatus) {
                                         case 'confirmed': $entry_class = 'badge-confirmed'; break;
@@ -270,26 +283,69 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         } else {
                             $cellContent = "<span class='text-muted'>+</span>";
                         }
+
+                        // Build td class list
+                        $tdClass = ($isCurrent ? 'highlight-today ' : '');
+                        if ($hasTimeOff) {
+                            $tdClass .= 'position-relative timeoff-cell ';
+                        }
                         ?>
 
                         <?php if ($isAdmin): ?>
-                            <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                data-user-id="<?php echo $userId; ?>" 
-                                data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                                data-week-start="<?php echo $weekKey; ?>"
-                                onclick='
-                                    event.stopPropagation();
-                                    open<?php echo !empty($entriesForWeek) ? "Manage" : "Add"; ?>EntryModal(
-                                        "<?php echo $userId; ?>",
-                                        <?php echo json_encode($fullName); ?>,
-                                        "<?php echo $weekKey; ?>"
-                                    )
-                                '>
-                                <?php echo $cellContent; ?>
-                            </td>
+                            <?php if (!empty($entriesForWeek)): ?>
+                                <!-- Has entries → open ManageEntries modal -->
+                                <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                                    data-user-id="<?php echo $userId; ?>" 
+                                    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                                    data-week-start="<?php echo $weekKey; ?>"
+                                    onclick='
+                                        event.stopPropagation();
+                                        console.log("Entries empty?", false);
+                                        openManageEntryModal(
+                                            "<?php echo $userId; ?>",
+                                            <?php echo json_encode($fullName); ?>,
+                                            "<?php echo $weekKey; ?>"
+                                        )
+                                    '>
+                                    <?php 
+                                      // render time off corner if present
+                                      if ($hasTimeOff) {
+                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                      }
+                                      echo $cellContent; 
+                                    ?>
+                                </td>
+                            <?php else: ?>
+                                <!-- No Entries → open AddEntry modal -->
+                                <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                                    data-user-id="<?php echo $userId; ?>" 
+                                    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                                    data-week-start="<?php echo $weekKey; ?>"
+                                    onclick='
+                                        event.stopPropagation();
+                                        console.log("Entries empty?", true);
+                                        openAddEntryModal(
+                                            "<?php echo $userId; ?>",
+                                            <?php echo json_encode($fullName); ?>,
+                                            "<?php echo $weekKey; ?>"
+                                        )
+                                    '>
+                                    <?php 
+                                      if ($hasTimeOff) {
+                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                      }
+                                      echo $cellContent; 
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         <?php else: ?>
                             <td class="<?php echo $tdClass; ?>">
-                                <?php echo $cellContent; ?>
+                                <?php 
+                                  if ($hasTimeOff) {
+                                      echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                  }
+                                  echo $cellContent; 
+                                ?>
                             </td>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -299,24 +355,26 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         </table>
     </div>
 
-<?php if ($isAdmin): ?>
-<?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
-<?php include_once '../includes/modals/manage_entries.php'; ?>
-<?php include_once '../includes/modals/edit_entry.php'; ?>
-<?php include_once '../includes/modals/add_entry.php'; ?>
-<?php include_once '../includes/modals/add_engagement.php'; ?>
-<?php endif; ?>
+    <!-- end master schedule table -->
 
-<?php include_once '../includes/modals/engagement_details.php'; ?>
-<?php include_once '../includes/modals/user_details.php'; ?>
+    <?php if ($isAdmin): ?>
+        <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
+        <?php include_once '../includes/modals/manage_entries.php'; ?>
+        <?php include_once '../includes/modals/edit_entry.php'; ?>
+        <?php include_once '../includes/modals/add_entry.php'; ?>
+        <?php include_once '../includes/modals/add_engagement.php'; ?>
+    <?php endif; ?>
 
-<script src="../assets/js/view_engagement_details.js"></script>
-<script src="../assets/js/number_of_weeks.js"></script>
-<script src="../assets/js/search.js"></script>
-<script src="../assets/js/client_dropdown.js"></script>
-<script src="../assets/js/dynamic_add_modal.js"></script>
-<script src="../assets/js/dynamic_manage_modal.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <?php include_once '../includes/modals/engagement_details.php'; ?>
+    <?php include_once '../includes/modals/user_details.php'; ?>
 
+    <script src="../assets/js/view_engagement_details.js"></script>
+    <script src="../assets/js/number_of_weeks.js"></script>
+    <script src="../assets/js/search.js"></script>
+    <script src="../assets/js/client_dropdown.js"></script>
+    <script src="../assets/js/dynamic_add_modal.js"></script>
+    <script src="../assets/js/dynamic_manage_modal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
 </html>
