@@ -334,7 +334,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
 <?php include_once '../includes/modals/manage_assignments.php'; ?>
 <?php include_once '../includes/modals/edit_assignment.php'; ?>
-<?php include_once '../includes/modals/add_assignment.php'; ?>
+<?php include_once '../includes/modals/add_entry.php'; ?>
 <?php include_once '../includes/modals/add_engagement.php'; ?>
 
 <?php endif; ?>

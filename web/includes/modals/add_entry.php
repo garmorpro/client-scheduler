@@ -1,12 +1,12 @@
-<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+<div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="assignmentForm" action="add_assignment.php" method="POST">
+      <form id="addEntryForm" action="add_entry.php" method="POST">
         <div class="modal-header">
-          <h5 class="modal-title" id="assignmentModalLabel">
+          <h5 class="modal-title" id="addEntryModalLabel">
             <i class="bi bi-calendar-range me-2"></i>New Entry<br>
               <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
-                Assign work for <strong><span id="modalEmployeeNameDisplay"></span></strong> during week of <strong><span id="modalWeekDisplay"></span></strong>
+                Assign work for <strong><span id="addEntryEmployeeNameDisplay"></span></strong> during week of <strong><span id="addEntryWeekDisplay"></span></strong>
               </span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -14,8 +14,9 @@
 
         <div class="modal-body">
           <!-- Hidden inputs -->
-            <input type="hidden" id="modalUserId" name="user_id" value="">
-            <input type="hidden" id="modalWeek" name="week_start" value="">
+            <input type="hidden" id="addEntryUserId" name="user_id" value="">
+            <input type="hidden" id="addEntryWeek" name="week_start" value="">
+
           
 
           <!-- Initial prompt with two buttons -->

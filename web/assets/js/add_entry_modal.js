@@ -4,13 +4,13 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
         return;
     }
 
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+    document.getElementById('addEntryUserId').value = user_id;
+    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
+    document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const weekDate = new Date(weekStart);
-    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+    document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
@@ -30,6 +30,6 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     }
 
     // Show modal
-    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-    assignmentModal.show();
-  }
+    const addEntryModal = new bootstrap.Modal(document.getElementById('addEntryModal'));
+    addEntryModal.show();
+}
