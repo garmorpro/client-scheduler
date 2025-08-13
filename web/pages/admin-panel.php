@@ -1253,12 +1253,12 @@ if ($settingResult) {
               <div class="row mb-2">
                 <div class="col-6">
                   <div class="form-check form-switch mb-2">
-                    <input class="form-check-input" type="checkbox" id="adminAlerts" name="notification_types[admin_alerts]" value="true" <?php if (!empty($settings    ['notification_types[admin_alerts]']) && $settings['notification_types[admin_alerts]'] === 'true') echo 'checked'; ?>>
-                    <label class="form-check-label" for="adminAlerts">Admin Alerts</label>
+                    <input class="form-check-input" type="checkbox" id="entryUpdates" name="notification_types[entry_updates]" value="true" <?php if (!empty($settings    ['notification_types[entry_updates]']) && $settings['notification_types[entry_updates]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="entryUpdates">Entry Notifications</label>
                   </div>
                   <div class="form-check form-switch mb-2">
-                    <input class="form-check-input" type="checkbox" id="projectUpdates" name="notification_types[project_updates]" value="true" <?php if (!empty    ($settings['notification_types[project_updates]']) && $settings['notification_types[project_updates]'] === 'true') echo 'checked'; ?>>
-                    <label class="form-check-label" for="projectUpdates">Project Updates</label>
+                    <input class="form-check-input" type="checkbox" id="timeoffNotifications" name="notification_types[timeoff_notifications]" value="true" <?php if (!empty    ($settings['notification_types[timeoff_notifications]']) && $settings['notification_types[timeoff_notifications]'] === 'true') echo 'checked'; ?>>
+                    <label class="form-check-label" for="timeoffNotifications">Timeoff Notifications</label>
                   </div>
                 </div>
                 <div class="col-6">
