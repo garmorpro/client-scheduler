@@ -122,15 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const deleteLink = document.createElement('a');
-      deleteLink.href = "#";
-      deleteLink.title = "Delete Assignment";
-      deleteLink.className = "text-danger";
-      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
-        e.preventDefault();
-        alert(`Delete assignment ${assignment.assignment_id}`);
-      };
+deleteLink.href = "#";
+deleteLink.title = "Delete Assignment";
+deleteLink.className = "text-danger";
+deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+deleteLink.onclick = (e) => {
+  e.preventDefault();
+  deleteEntry(assignment.assignment_id);  // Call your deleteEntry function here
+};
 
       rightDiv.appendChild(editLink);
       rightDiv.appendChild(deleteLink);

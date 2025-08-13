@@ -7,54 +7,54 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// LOG ACTIVITY FUNCTION
+/**
+ * Log an activity event to the system_activity_log table
+ */
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
+    if ($stmt = mysqli_prepare($conn, $sql)) {
         mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
     }
 }
 
-// Check if assignment_id is set and valid
 if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
     $assignmentId = (int)$_POST['assignment_id'];
 
-    // First, fetch assignment details for logging
-    $detailsStmt = $conn->prepare("SELECT user_id, engagement_id, assigned_hours, week_start FROM assignments WHERE assignment_id = ?");
-    if (!$detailsStmt) {
-        echo 'error';
-        exit();
-    }
-    $detailsStmt->bind_param('i', $assignmentId);
-    $detailsStmt->execute();
-    $detailsStmt->bind_result($assignedUserId, $engagementId, $assignedHours, $weekStart);
-    if (!$detailsStmt->fetch()) {
-        // Assignment not found
+    // Fetch assignment details for logging
+    if ($detailsStmt = $conn->prepare("SELECT user_id, engagement_id, assigned_hours, week_start FROM assignments WHERE assignment_id = ?")) {
+        $detailsStmt->bind_param('i', $assignmentId);
+        $detailsStmt->execute();
+        $detailsStmt->bind_result($assignedUserId, $engagementId, $assignedHours, $weekStart);
+        
+        if (!$detailsStmt->fetch()) {
+            // Assignment not found
+            $detailsStmt->close();
+            echo 'error';
+            exit();
+        }
         $detailsStmt->close();
+    } else {
         echo 'error';
         exit();
     }
-    $detailsStmt->close();
 
-    // Get employee name
-    $empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
-    $empFirstName = $empLastName = '';
-    if ($empStmt) {
+    // Get employee full name
+    $employeeFullName = '';
+    if ($empStmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?")) {
         $empStmt->bind_param("i", $assignedUserId);
         $empStmt->execute();
         $empStmt->bind_result($empFirstName, $empLastName);
-        $empStmt->fetch();
+        if ($empStmt->fetch()) {
+            $employeeFullName = trim("$empFirstName $empLastName");
+        }
         $empStmt->close();
     }
-    $employeeFullName = trim("$empFirstName $empLastName");
 
     // Get client name
     $clientName = '';
-    $clientStmt = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?");
-    if ($clientStmt) {
+    if ($clientStmt = $conn->prepare("SELECT client_name FROM engagements WHERE engagement_id = ?")) {
         $clientStmt->bind_param("i", $engagementId);
         $clientStmt->execute();
         $clientStmt->bind_result($clientName);
@@ -63,26 +63,29 @@ if (isset($_POST['assignment_id']) && is_numeric($_POST['assignment_id'])) {
     }
 
     // Delete the assignment
-    $stmt = $conn->prepare("DELETE FROM assignments WHERE assignment_id = ?");
-    $stmt->bind_param('i', $assignmentId);
-    if ($stmt->execute()) {
-        // Log deletion
-        $user_id = $_SESSION['user_id'];
-        $email = $_SESSION['email'] ?? '';
-        $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+    if ($stmt = $conn->prepare("DELETE FROM assignments WHERE assignment_id = ?")) {
+        $stmt->bind_param('i', $assignmentId);
+        if ($stmt->execute()) {
+            // Log deletion
+            $user_id = $_SESSION['user_id'];
+            $email = $_SESSION['email'] ?? '';
+            $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
 
-        $title = "Assignment Deleted";
-        $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
-        $description = "Deleted assignment for $employeeFullName on $clientName, $formattedWeekStart($assignedHours hrs).";
+            $title = "Assignment Deleted";
+            $formattedWeekStart = date("m/d/Y", strtotime($weekStart));
+            $description = "Deleted assignment for $employeeFullName on $clientName, $formattedWeekStart ($assignedHours hrs).";
 
+            logActivity($conn, "assignment_deleted", $user_id, $email, $full_name, $title, $description);
 
-        logActivity($conn, "assignment_deleted", $user_id, $email, $full_name, $title, $description);
-
-        echo 'success';
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+        $stmt->close();
     } else {
         echo 'error';
     }
-    $stmt->close();
+
 } else {
     echo 'error';  // Invalid assignment_id
 }
