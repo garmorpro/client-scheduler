@@ -168,9 +168,12 @@ if ($settingResult) {
                     </div>
                 </div>
                 <?php
-
-                // Avoid division by zero
-                $percentageAssigned = ($totalUsers > 0) ? round(($totalAssigned / $totalEngagements) * 100) : 0;
+                // Ensure totalEngagements is not zero to avoid division by zero
+                if ($totalEngagements > 0) {
+                    $percentageAssigned = round(($totalAssigned / $totalEngagements) * 100);
+                } else {
+                    $percentageAssigned = 0;
+                }
                 ?>
                 <div class="col-md-3">
                     <div class="stat-card">
