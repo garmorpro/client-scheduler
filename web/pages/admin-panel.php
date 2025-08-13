@@ -390,7 +390,7 @@ if ($settingResult) {
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" class="text-center">No users found</td></tr>
+                            <tr><td colspan="5" class="text-center">No engagements found</td></tr>
                         <?php endif; ?>
                         </tbody>
                     </table>
