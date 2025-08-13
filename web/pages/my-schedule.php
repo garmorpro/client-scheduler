@@ -127,9 +127,10 @@ foreach ($totalAssignedHours as $week => $hours) {
 }
 </style>
 </head>
-<body>
+<body class="d-flex">
+<?php include_once '../templates/sidebar.php'; ?>
 
-<div class="container mt-4">
+<div class="flex-grow-1 p-4">
   <h2>My Schedule</h2>
   <p><?php echo htmlspecialchars($rangeLabel); ?></p>
 
