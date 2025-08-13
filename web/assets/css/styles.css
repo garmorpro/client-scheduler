@@ -565,6 +565,7 @@ input, select {
 .current_week {
     border: 2px solid rgb(209,226,159);
     background: rgb(246, 249, 236);
+    color: rgb(209,226,159);
 }
 .week-title {
     font-size: 0.85rem;
