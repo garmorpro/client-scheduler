@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once 'db.php';
+if (!file_exists('db.php')) {
+    echo json_encode(['success'=>false,'message'=>'DB file not found']);
+    exit();
+}
 require 'vendor/autoload.php';
 
 // Always return JSON
