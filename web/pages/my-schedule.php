@@ -183,7 +183,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
             <div class="fw-semibold" style="font-size: 14px;">Week of <?php echo date('n/j', $monday); ?></div>
             <div class="fw-bold fs-4"><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
-                <small class="text-danger" style="font-size: 10px;"><?php echo $timeOff; ?>hrs time off</small>
+                <small class="text-danger fw-semibold" style="font-size: 10px;"><?php echo $timeOff; ?>hrs time off</small>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
@@ -247,7 +247,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
             <small class="text-muted">Approved time off</small>
           </div>
           <div class="text-end text-danger fw-semibold fs-5">
-            -<?php echo $off['assigned_hours']; ?>hrs
+            <?php echo $off['assigned_hours']; ?>hrs
           </div>
         </div>
       </div>
