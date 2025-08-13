@@ -189,13 +189,13 @@ $netHours = max(0, $totalHours - $timeOffTotal);
             <?php
               $status = strtolower($eng['status'] ?? 'confirmed');
               switch ($status) {
-                  case 'confirmed': $badgeColor = 'success'; break;
-                  case 'pending': $badgeColor = 'purple'; break;
-                  case 'not_confirmed': $badgeColor = 'primary'; break;
-                  default: $badgeColor = 'secondary'; break;
+                  case 'confirmed': $status_class = 'text-confirmed'; break;
+                  case 'pending': $status_class = 'text-pending'; break;
+                  case 'not_confirmed': $status_class = 'text-not-confirmed'; break;
+                  default: $status_class = 'secondary'; break;
               }
             ?>
-            <small class="badge bg-<?php echo $badgeColor;?>"><?php echo htmlspecialchars($eng['status']); ?></small>
+            <small class="text-status <?php echo $status_class; ?>"><?php echo htmlspecialchars($eng['status']); ?></small>
           </div>
         </div>
       </div>
