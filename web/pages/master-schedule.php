@@ -197,127 +197,120 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   ?>
 
   <div class="table-responsive">
-      <table class="table table-bordered align-middle text-center">
-          <thead class="table-light">
-              <tr>
-                  <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+  <table class="table table-bordered align-middle text-center">
+      <thead class="table-light">
+          <tr>
+              <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
 
-                  <?php foreach ($mondays as $idx => $monday): ?>
-                      <?php 
-                      $weekStart = $monday;
-                      $isCurrent = ($idx === $currentWeekIndex);
-                      ?>
-                      <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                          <?php echo date('M j', $weekStart); ?><br>
-                          <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-                      </th>
-                  <?php endforeach; ?>
-              </tr>
-          </thead>
+              <?php foreach ($mondays as $idx => $monday): ?>
+                  <?php 
+                  $weekStart = $monday;
+                  $isCurrent = ($idx === $currentWeekIndex);
+                  $thClass = $isCurrent ? 'highlight-today' : ''; // apply only to header
+                  ?>
+                  <th class="align-middle <?php echo $thClass; ?>">
+                      <?php echo date('M j', $weekStart); ?><br>
+                      <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+                  </th>
+              <?php endforeach; ?>
+          </tr>
+      </thead>
 
-          <tbody id="employeesTableBody">
-    <?php foreach ($employees as $userId => $employee): ?>
-        <?php
-        $fullName = htmlspecialchars($employee['full_name']);
-        $nameParts = explode(' ', trim($fullName));
-        $initials = '';
-        foreach ($nameParts as $part) {
-            $initials .= strtoupper(substr($part, 0, 1));
-        }
-        $role = htmlspecialchars($employee['role']);
-        ?>
-        <tr>
-            <td class="text-start employee-name">
-  <div class="d-flex align-items-center">
-    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-         style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-      <?php echo $initials; ?>
-    </div>
-    <div>
-      <div class="fw-semibold"><?php echo $fullName; ?></div>
-      <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-    </div>
-  </div>
-</td>
+      <tbody id="employeesTableBody">
+  <?php foreach ($employees as $userId => $employee): ?>
+      <?php
+      $fullName = htmlspecialchars($employee['full_name']);
+      $nameParts = explode(' ', trim($fullName));
+      $initials = '';
+      foreach ($nameParts as $part) {
+          $initials .= strtoupper(substr($part, 0, 1));
+      }
+      $role = htmlspecialchars($employee['role']);
+      ?>
+      <tr>
+          <td class="text-start employee-name">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                   style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                <?php echo $initials; ?>
+              </div>
+              <div>
+                <div class="fw-semibold"><?php echo $fullName; ?></div>
+                <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+              </div>
+            </div>
+          </td>
 
-            <?php foreach ($mondays as $idx => $monday): ?>
-                <?php 
-                $weekStart = $monday;
-                $isCurrent = ($idx === $currentWeekIndex);
+          <?php foreach ($mondays as $idx => $monday): ?>
+              <?php 
+              $weekStart = $monday;
+              $weekKey = date('Y-m-d', $weekStart);
+              $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+              $cellContent = "";
 
-                $weekKey = date('Y-m-d', $weekStart);
-                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                $cellContent = "";
+              if (!empty($entriesForWeek)) {
+                  foreach ($entriesForWeek as $entry) {
+                      $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
+                      switch ($engagementStatus) {
+                          case 'confirmed': $badgeColor = 'badge-confirmed'; break;
+                          case 'pending': $badgeColor = 'badge-pending'; break;
+                          case 'not_confirmed': $badgeColor = 'badge-not-confirmed'; break;
+                          default: $badgeColor = 'secondary'; break;
+                      }
+                      $clientName = htmlspecialchars($entry['client_name']);
+                      $assignedHours = htmlspecialchars($entry['assigned_hours']);
+                      $cellContent .= "<span class='badge-status $badgeColor mt-1'>{$clientName} ({$assignedHours})</span><br>";
+                  }
+              } else {
+                  $cellContent = "<span class='text-muted'>+</span>";
+              }
+              ?>
 
-                if (!empty($entriesForWeek)) {
-                    foreach ($entriesForWeek as $entry) {
-                        $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
-                        switch ($engagementStatus) {
-                            case 'confirmed': $badgeColor = 'badge-confirmed'; break;
-                            case 'pending': $badgeColor = 'badge-pending'; break;
-                            case 'not_confirmed': $badgeColor = 'badge-not-confirmed'; break;
-                            default: $badgeColor = 'secondary'; break;
-                        }
-                        $clientName = htmlspecialchars($entry['client_name']);
-                        $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                        $cellContent .= "<span class='badge-status $badgeColor mt-1'>{$clientName} ({$assignedHours})</span><br>";
-                    }
-                } else {
-                    $cellContent = "<span class='text-muted'>+</span>";
-                }
+              <?php if ($isAdmin): ?>
+                  <?php if (!empty($entriesForWeek)): ?>
+                      <td class="addable" style="cursor:pointer;"
+                          data-user-id="<?php echo $userId; ?>" 
+                          data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                          data-week-start="<?php echo $weekKey; ?>"
+                          onclick='
+                              event.stopPropagation();
+                              openManageEntryModal(
+                                  "<?php echo $userId; ?>",
+                                  <?php echo json_encode($fullName); ?>,
+                                  "<?php echo $weekKey; ?>"
+                              )
+                          '>
+                          <?php echo $cellContent; ?>
+                      </td>
+                  <?php else: ?>
+                      <td class="addable" style="cursor:pointer;"
+                          data-user-id="<?php echo $userId; ?>" 
+                          data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                          data-week-start="<?php echo $weekKey; ?>"
+                          onclick='
+                              event.stopPropagation();
+                              openAddEntryModal(
+                                  "<?php echo $userId; ?>",
+                                  <?php echo json_encode($fullName); ?>,
+                                  "<?php echo $weekKey; ?>"
+                              )
+                          '>
+                          <?php echo $cellContent; ?>
+                      </td>
+                  <?php endif; ?>
+              <?php else: ?>
+                  <td>
+                      <?php echo $cellContent; ?>
+                  </td>
+              <?php endif; ?>
+          <?php endforeach; ?>
+      </tr>
+  <?php endforeach; ?>
+   </tbody>
 
-                $tdClass = $isCurrent ? 'highlight-today' : '';
-                ?>
+  </table>
+</div>
 
-                <?php if ($isAdmin): ?>
-                    <?php if (!empty($entriesForWeek)): ?>
-                        <!-- Has entries → open ManageEntries modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='
-                                event.stopPropagation();
-                                console.log("Entries empty?", false);
-                                openManageEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>"
-                                )
-                            '>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php else: ?>
-                        <!-- No Entries → open AddEntry modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='
-                                event.stopPropagation();
-                                console.log("Entries empty?", true);
-                                openAddEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>"
-                                )
-                            '>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <td class="<?php echo $tdClass; ?>">
-                        <?php echo $cellContent; ?>
-                    </td>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </tr>
-    <?php endforeach; ?>
- </tbody>
-
-
-      </table>
-  </div>
 
 <!-- end master schedule table -->
 
