@@ -252,7 +252,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
     <!-- Left side: summary info -->
     <div>
-        <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div><br>
+        <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div>
         <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
     </div>
 
