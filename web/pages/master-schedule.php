@@ -125,9 +125,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <script>
-      function autoSubmitDateFilter() {
-        document.getElementById("filterForm").submit();
-      }
+      // function autoSubmitDateFilter() {
+      //   document.getElementById("filterForm").submit();
+      // }
       const assignments = <?php echo json_encode($assignments); ?>;
     </script>
 
