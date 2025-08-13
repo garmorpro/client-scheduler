@@ -173,7 +173,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
         $timeOff = $timeOffHours[$weekKey] ?? 0;
-        $net = max(0, $assigned - $timeOff);
+        $net = $assigned; // now only regular assignments, ignore time off
         $isCurrent = ($monday == $currentMonday);
     ?>
         <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
