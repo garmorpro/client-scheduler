@@ -255,7 +255,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 const assignments = <?php echo json_encode($assignments); ?>;
 
 // Open Add Assignment Modal
-function openAddAssignmentModal(user_id, employeeName, weekStart) {
+  function openAddAssignmentModal(user_id, employeeName, weekStart) {
     if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);
         return;
@@ -289,10 +289,11 @@ function openAddAssignmentModal(user_id, employeeName, weekStart) {
     // Show modal
     const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
     assignmentModal.show();
-}
+  }
+// end add assignment modal
 
 // Open Manage Assignments Modal
-function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+  function openManageAssignmentsModal(user_id, employeeName, weekStart) {
     const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
     document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
@@ -303,7 +304,8 @@ function openManageAssignmentsModal(user_id, employeeName, weekStart) {
 
     const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
     assignmentsModal.show();
-}
+  }
+// end manage assignments modal
 
 
 
@@ -598,8 +600,6 @@ function openEmployeeModal(employeeId) {
                     <?php if (!empty($assignmentsForWeek)): ?>
                         <!-- Has assignments → open ManageAssignments modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-week-start="<?php echo $weekKey; ?>"
                             onclick='openManageAssignmentsModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
@@ -610,8 +610,6 @@ function openEmployeeModal(employeeId) {
                     <?php else: ?>
                         <!-- No assignments → open AddAssignment modal -->
                         <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-week-start="<?php echo $weekKey; ?>"
                             onclick='openAddAssignmentModal(
                                 "<?php echo $userId; ?>",
                                 <?php echo json_encode($fullName); ?>,
