@@ -1,6 +1,5 @@
 <?php
 ob_start();
-
 header('Content-Type: application/json; charset=utf-8');
 
 ini_set('display_errors', 0);
@@ -10,6 +9,7 @@ error_reporting(E_ALL);
 require_once '../includes/db.php';
 session_start();
 
+// Decode JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['setting_master_key'], $data['settings']) || !is_array($data['settings'])) {
@@ -21,6 +21,13 @@ if (!isset($data['setting_master_key'], $data['settings']) || !is_array($data['s
 $masterKey = $data['setting_master_key'];
 $settings = $data['settings'];
 
+// Ensure all checkbox-like values are stored as 'true'/'false'
+foreach ($settings as $k => $v) {
+    if ($v === true) $settings[$k] = 'true';
+    if ($v === false) $settings[$k] = 'false';
+}
+
+// Prepare statements
 $stmtCheck = mysqli_prepare($conn, "SELECT id FROM settings WHERE setting_master_key = ? AND setting_key = ?");
 $stmtUpdate = mysqli_prepare($conn, "UPDATE settings SET setting_value = ? WHERE id = ?");
 $stmtInsert = mysqli_prepare($conn, "INSERT INTO settings (setting_master_key, setting_key, setting_value) VALUES (?, ?, ?)");
@@ -54,15 +61,14 @@ try {
         }
         mysqli_stmt_free_result($stmtCheck);
     }
-    mysqli_commit($conn);
 
+    mysqli_commit($conn);
     ob_clean();
     echo json_encode(['success' => true]);
     exit;
 
 } catch (Exception $e) {
     mysqli_rollback($conn);
-
     ob_clean();
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     exit;
