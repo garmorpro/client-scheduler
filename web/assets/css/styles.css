@@ -452,9 +452,11 @@ body {
 
 /* Highlight entire current week column */
 .highlight-today {
-    background-color: #fff3cd !important;  /* soft yellow */
-    border-left: 3px solid #ffc107 !important;
-    border-right: 3px solid #ffc107 !important;
+    /* border: 2px solid rgb(209,226,159);
+    background: rgb(246, 249, 236); */
+    background-color: rgb(246, 249, 236) !important;  /* soft yellow */
+    border-left: 3px solid rgb(209,226,159) !important;
+    border-right: 3px solid rgb(209,226,159) !important;
 }
 .highlight-today:hover {
     background-color: #e0f7fa !important; 
