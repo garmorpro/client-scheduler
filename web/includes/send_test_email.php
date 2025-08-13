@@ -1,16 +1,19 @@
 <?php
+// START OUTPUT BUFFERING
+ob_start(); 
+
 session_start();
 require_once 'db.php';       // Adjust path if needed
-require 'vendor/autoload.php';
+require 'vendor/autoload.php';  // PHPMailer
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Ensure PHP errors don't break JSON output
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// SUPPRESS ERRORS TO PREVENT HTML OUTPUT
+error_reporting(0);
+ini_set('display_errors', 0);
 
-// Always return JSON
+// ALWAYS RETURN JSON
 header('Content-Type: application/json');
 
 // Only allow admin/manager
@@ -52,7 +55,7 @@ if (empty($settings['enable_email_notifications']) || $settings['enable_email_no
     exit();
 }
 
-// Send test email using PHPMailer
+// SEND TEST EMAIL USING PHPMailer
 $mail = new PHPMailer(true);
 
 try {
@@ -62,9 +65,12 @@ try {
     $mail->Username   = $settings['smtp_username'] ?? '';
     $mail->Password   = $settings['smtp_password'] ?? '';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = (int)($settings['smtp_port'] ?? 587);
+    $mail->Port       = intval($settings['smtp_port'] ?? 587);
 
-    $mail->setFrom($settings['sender_email'] ?? 'no-reply@example.com', $settings['sender_name'] ?? 'My Company');
+    $mail->setFrom(
+        $settings['sender_email'] ?? 'no-reply@example.com', 
+        $settings['sender_name'] ?? 'My Company'
+    );
     $mail->addAddress($testEmail);
 
     $mail->isHTML(true);
@@ -74,12 +80,13 @@ try {
     $mail->send();
 
     echo json_encode(['success' => true, 'message' => "Test email sent to {$testEmail}"]);
-    exit(); // <--- important to stop any further output
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => "Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}"
     ]);
-    exit(); // <--- important
 }
+
+// FLUSH OUTPUT BUFFER
+ob_end_flush();

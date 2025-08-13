@@ -2547,10 +2547,11 @@ if ($settingResult) {
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
-
-  <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Show modal on configure button click
+  // ----------------------------
+  // Modal show/hide logic
+  // ----------------------------
   const configureBtn = document.getElementById('configureEmailBtn');
   const modalEl = document.getElementById('emailNotifConfigModal');
   const modal = new bootstrap.Modal(modalEl);
@@ -2560,54 +2561,84 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.show();
   });
 
- const testEmailInput = document.getElementById('testEmail');
-const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
-const testEmailStatus = document.getElementById('testEmailStatus');
+  // ----------------------------
+  // Elements for test email
+  // ----------------------------
+  const testEmailInput = document.getElementById('testEmail');
+  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+  const testEmailStatus = document.getElementById('testEmailStatus');
 
-sendTestEmailBtn.addEventListener('click', async () => {
-    const testEmail = testEmailInput.value.trim();
+  // Enable/disable Send Test Email button
+  testEmailInput.addEventListener('input', () => {
+    const email = testEmailInput.value.trim();
+    if (email.length > 0) {
+      sendTestEmailBtn.classList.remove('disabled');
+      sendTestEmailBtn.style.pointerEvents = 'auto';
+      sendTestEmailBtn.style.opacity = '1';
+    } else {
+      sendTestEmailBtn.classList.add('disabled');
+      sendTestEmailBtn.style.pointerEvents = 'none';
+      sendTestEmailBtn.style.opacity = '0.5';
+    }
+    testEmailStatus.classList.add('d-none');
+    testEmailStatus.textContent = '';
+  });
 
-    if (!testEmail) return;
+  // ----------------------------
+  // Send Test Email click
+  // ----------------------------
+  sendTestEmailBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = testEmailInput.value.trim();
+    if (!email) return;
 
+    // Show immediate feedback
+    testEmailStatus.textContent = 'Sending test email...';
     testEmailStatus.classList.remove('d-none', 'text-success', 'text-danger');
     testEmailStatus.classList.add('text-info');
-    testEmailStatus.textContent = 'Sending test email...';
 
     try {
-        const resp = await fetch('send_test_email.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ test_email: testEmail })
-        });
+      const resp = await fetch('../includes/send_test_email.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ test_email: email })
+      });
 
-        let result;
-        try { result = await resp.json(); } 
-        catch(err) { 
-            testEmailStatus.textContent = 'Server returned invalid JSON';
-            testEmailStatus.classList.remove('text-info');
-            testEmailStatus.classList.add('text-danger');
-            console.error(await resp.text());
-            return;
-        }
+      const text = await resp.text();
+      let result;
 
-        if (result.success) {
-            testEmailStatus.textContent = result.message;
-            testEmailStatus.classList.remove('text-info');
-            testEmailStatus.classList.add('text-success');
-        } else {
-            testEmailStatus.textContent = result.message || 'Failed to send test email';
-            testEmailStatus.classList.remove('text-info');
-            testEmailStatus.classList.add('text-danger');
-        }
-    } catch(err) {
-        testEmailStatus.textContent = 'Network error: ' + err.message;
+      // Safely parse JSON
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        testEmailStatus.textContent = 'Server returned invalid response';
         testEmailStatus.classList.remove('text-info');
         testEmailStatus.classList.add('text-danger');
-        console.error(err);
-    }
-});
+        console.error('JSON parse error:', err, text);
+        return;
+      }
 
-  // Save settings handler
+      if (result.success) {
+        testEmailStatus.textContent = result.message || 'Test email sent successfully!';
+        testEmailStatus.classList.remove('text-info', 'text-danger');
+        testEmailStatus.classList.add('text-success');
+      } else {
+        testEmailStatus.textContent = result.message || 'Failed to send test email';
+        testEmailStatus.classList.remove('text-info', 'text-success');
+        testEmailStatus.classList.add('text-danger');
+      }
+
+    } catch (err) {
+      testEmailStatus.textContent = 'Network error: ' + err.message;
+      testEmailStatus.classList.remove('text-info', 'text-success');
+      testEmailStatus.classList.add('text-danger');
+      console.error(err);
+    }
+  });
+
+  // ----------------------------
+  // Save Settings form submit
+  // ----------------------------
   const emailForm = document.getElementById('emailNotifConfigForm');
   emailForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -2630,8 +2661,16 @@ sendTestEmailBtn.addEventListener('click', async () => {
         body: JSON.stringify(payload)
       });
 
-      const result = await resp.json();
-      console.log('Parsed JSON result:', result);
+      const text = await resp.text();
+      let result;
+
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        alert('Server returned invalid response while saving settings');
+        console.error('JSON parse error:', err, text);
+        return;
+      }
 
       if (result.success) {
         modal.hide();
@@ -2646,9 +2685,8 @@ sendTestEmailBtn.addEventListener('click', async () => {
   });
 });
 </script>
-
-
 <!-- end email notification script -->
+
 
 
 <!-- backup configuration -->
