@@ -207,8 +207,9 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     <?php endforeach; ?>
   </div>
 
+
   <!-- Week Summary -->
-  <div class="card p-3 bg-light d-flex justify-content-between align-items-center">
+  <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
     <div>
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
