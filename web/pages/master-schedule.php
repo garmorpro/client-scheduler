@@ -143,311 +143,125 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     </style>
+
+
     <script>
-    function autoSubmitDateFilter() {
+      function autoSubmitDateFilter() {
         document.getElementById("filterForm").submit();
-    }
+      }
 
+      // // open ManageorAddModal
+      //   const assignments = <?php echo json_encode($assignments); ?>;
 
-// // open ManageorAddModal
-//   const assignments = <?php echo json_encode($assignments); ?>;
+      //   document.addEventListener('DOMContentLoaded', () => {
+      //   document.querySelectorAll('td.addable').forEach(td => {
+      //     td.addEventListener('click', function () {
+      //       const userId = this.dataset.userId;
+      //       const weekStart = this.dataset.weekStart;
+      //       const employeeName = this.dataset.employeeName || 'Employee'; // Optional
 
-//   document.addEventListener('DOMContentLoaded', () => {
-//   document.querySelectorAll('td.addable').forEach(td => {
-//     td.addEventListener('click', function () {
-//       const userId = this.dataset.userId;
-//       const weekStart = this.dataset.weekStart;
-//       const employeeName = this.dataset.employeeName || 'Employee'; // Optional
+      //       console.log('Clicked cell userId:', userId);
+      //       console.log('Clicked cell weekStart:', weekStart);
 
-//       console.log('Clicked cell userId:', userId);
-//       console.log('Clicked cell weekStart:', weekStart);
+      //       // This function now decides which modal to open
+      //       openManageOrAddModal(userId, employeeName, weekStart);
+      //     });
+      //   });
+      //   });
 
-//       // This function now decides which modal to open
-//       openManageOrAddModal(userId, employeeName, weekStart);
-//     });
-//   });
-//   });
+      //     function openManageOrAddModal(user_id, employeeName, weekStart) {
+      //   console.log("Modal triggered:", user_id, employeeName, weekStart);
 
-//     function openManageOrAddModal(user_id, employeeName, weekStart) {
-//   console.log("Modal triggered:", user_id, employeeName, weekStart);
+      //   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] 
+      //     ? assignments[user_id][weekStart] 
+      //     : [];
+      //   console.log("Assignments for week:", assignmentsForWeek);
 
-//   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] 
-//     ? assignments[user_id][weekStart] 
-//     : [];
-//   console.log("Assignments for week:", assignmentsForWeek);
+      //   const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
 
-//   const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+      //   if (hasAssignments) {
+      //     // Show Manage/Add modal
+      //     const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+      //     manageAddModal.show();
 
-//   if (hasAssignments) {
-//     // Show Manage/Add modal
-//     const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-//     manageAddModal.show();
+      //     document.getElementById('manageAssignmentsButton').onclick = function() {
+      //       openManageAssignmentsModal(user_id, employeeName, weekStart);
+      //     };
+      //     document.getElementById('addAssignmentsButton').onclick = function() {
+      //       openAddAssignmentModal(user_id, employeeName, weekStart);
+      //     };
+      //   } else {
+      //     // Directly open Add Assignment modal
+      //     openAddAssignmentModal(user_id, employeeName, weekStart);
+      //   }
+      //   }
+      // // end ManageOrAddModal
 
-//     document.getElementById('manageAssignmentsButton').onclick = function() {
-//       openManageAssignmentsModal(user_id, employeeName, weekStart);
-//     };
-//     document.getElementById('addAssignmentsButton').onclick = function() {
-//       openAddAssignmentModal(user_id, employeeName, weekStart);
-//     };
-//   } else {
-//     // Directly open Add Assignment modal
-//     openAddAssignmentModal(user_id, employeeName, weekStart);
-//   }
-//   }
-// // end ManageOrAddModal
+      // // open addAssignmentModal
+      //     function openAddAssignmentModal(user_id, employeeName, weekStart) {
+      //       if (!weekStart || isNaN(new Date(weekStart).getTime())) {
+      //         console.warn('Invalid weekStart date:', weekStart);
+      //         return;
+      //       }
 
-// // open addAssignmentModal
-//     function openAddAssignmentModal(user_id, employeeName, weekStart) {
-//       if (!weekStart || isNaN(new Date(weekStart).getTime())) {
-//         console.warn('Invalid weekStart date:', weekStart);
-//         return;
-//       }
-    
-//       document.getElementById('modalUserId').value = user_id;
-//       document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-//       document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
-    
-//       const options = { year: 'numeric', month: 'short', day: 'numeric' };
-//       const weekDate = new Date(weekStart);
-//       document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-    
-//       // Reset UI states
-//       document.getElementById('entryTypePrompt').classList.remove('d-none');
-//       document.getElementById('timeOffEntryContent').classList.add('d-none');
-//       document.getElementById('newAssignmentContent').classList.add('d-none');
-    
-//       // Clear inputs
-//       document.getElementById('selectedClient').textContent = 'Select a client';
-//       document.getElementById('engagementInput').value = '';
-//       document.getElementById('assignedHours').value = '';
-//       document.getElementById('timeOffHours').value = '';
-    
-//       // Reset dropdown aria
-//       const dropdownBtn = document.getElementById('dropdownBtn');
-//       if (dropdownBtn) {
-//         dropdownBtn.setAttribute('aria-expanded', 'false');
-//       }
-    
-//       // Show modal
-//       const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-//       assignmentModal.show();
-//     }
-// // end open addAssignmentModal
+      //       document.getElementById('modalUserId').value = user_id;
+      //       document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
+      //       document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
 
-// // open manageAssignementModal
-//     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
-//         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-//         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-//         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
+      //       const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      //       const weekDate = new Date(weekStart);
+      //       document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
-//         // Fetch assignments for the user and week
-//         const assignments = <?php echo json_encode($assignments); ?>;
-//         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-//         showAssignments(assignmentsForWeek);
+      //       // Reset UI states
+      //       document.getElementById('entryTypePrompt').classList.remove('d-none');
+      //       document.getElementById('timeOffEntryContent').classList.add('d-none');
+      //       document.getElementById('newAssignmentContent').classList.add('d-none');
 
-//         const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-//         assignmentsModal.show();
-//     }
-// // end manageAssignementModal
+      //       // Clear inputs
+      //       document.getElementById('selectedClient').textContent = 'Select a client';
+      //       document.getElementById('engagementInput').value = '';
+      //       document.getElementById('assignedHours').value = '';
+      //       document.getElementById('timeOffHours').value = '';
 
+      //       // Reset dropdown aria
+      //       const dropdownBtn = document.getElementById('dropdownBtn');
+      //       if (dropdownBtn) {
+      //         dropdownBtn.setAttribute('aria-expanded', 'false');
+      //       }
 
+      //       // Show modal
+      //       const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
+      //       assignmentModal.show();
+      //     }
+      // // end open addAssignmentModal
 
-const assignments = <?php echo json_encode($assignments); ?>;
+      // // open manageAssignementModal
+      //     function openManageAssignmentsModal(user_id, employeeName, weekStart) {
+      //         const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      //         document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
+      //         document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
-// Open Add Assignment Modal
-  function openAddAssignmentModal(user_id, employeeName, weekStart) {
-    if (!weekStart || isNaN(new Date(weekStart).getTime())) {
-        console.warn('Invalid weekStart date:', weekStart);
-        return;
-    }
+      //         // Fetch assignments for the user and week
+      //         const assignments = <?php echo json_encode($assignments); ?>;
+      //         const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+      //         showAssignments(assignmentsForWeek);
 
-    document.getElementById('modalUserId').value = user_id;
-    document.getElementById('modalWeek').value = weekStart;  // must be "YYYY-MM-DD"
-    document.getElementById('modalEmployeeNameDisplay').textContent = employeeName;
+      //         const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
+      //         assignmentsModal.show();
+      //     }
+      // // end manageAssignementModal
 
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const weekDate = new Date(weekStart);
-    document.getElementById('modalWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
-
-    // Reset UI states
-    document.getElementById('entryTypePrompt').classList.remove('d-none');
-    document.getElementById('timeOffEntryContent').classList.add('d-none');
-    document.getElementById('newAssignmentContent').classList.add('d-none');
-
-    // Clear inputs
-    document.getElementById('selectedClient').textContent = 'Select a client';
-    document.getElementById('engagementInput').value = '';
-    document.getElementById('assignedHours').value = '';
-    document.getElementById('timeOffHours').value = '';
-
-    // Reset dropdown aria
-    const dropdownBtn = document.getElementById('dropdownBtn');
-    if (dropdownBtn) {
-        dropdownBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    // Show modal
-    const assignmentModal = new bootstrap.Modal(document.getElementById('assignmentModal'));
-    assignmentModal.show();
-  }
-// end add assignment modal
-
-// Open Manage Assignments Modal
-  function openManageAssignmentsModal(user_id, employeeName, weekStart) {
-    const formattedDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
-    document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
-
-    // Fetch assignments for the user and week
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-    showAssignments(assignmentsForWeek);
-
-    const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-    assignmentsModal.show();
-  }
-// end manage assignments modal
-
-
-
-
-
-// Edit Modal
-  function openEditModal(event) {
-    const buttonElement = event.currentTarget; // safer than event.target in case of icon click
-    const assignmentId = buttonElement.getAttribute('data-assignment-id');
-    const assignedHours = buttonElement.getAttribute('data-assigned-hours');
-
-    document.getElementById('editAssignmentId').value = assignmentId;
-    document.getElementById('editAssignedHours').value = assignedHours;
-
-    const editModal = new bootstrap.Modal(document.getElementById('editAssignmentModal'));
-    editModal.show();
-  }
-// end Edit Modal
-
-
-
-// Delete an assignment
-function deleteAssignment(assignmentId) {
-    if (confirm('Are you sure you want to delete this assignment?')) {
-        fetch('delete-assignment.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: `assignment_id=${assignmentId}`
-        })
-        .then(response => response.text())
-        .then(result => {
-            if (result === 'success') {
-                location.reload(); // Reload the page to reflect changes
-            } else {
-                alert('Failed to delete assignment.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while deleting the assignment.');
-        });
-    }
-}
-
-
-
-function openassignmentModal(engagementId) {
-    // Set the engagementId in the hidden input field before fetching the data
-    document.getElementById('engagementId').value = engagementId;
-
-    // Fetch the engagement details using the engagement ID
-    fetch(`engagement-details.php?id=${engagementId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Set engagement (client) name
-            document.getElementById('clientName').innerText = data.client_name;
-
-            // Set total assigned hours
-            let totalAssignedHours = parseFloat(data.total_hours) || 0;
-            let totalAvailableHours = parseFloat(data.max_hours) || 0;
-
-            // Set total assigned hours text
-            document.getElementById('totalAssignedHours').innerText = totalAssignedHours;
-            document.getElementById('totalHours').innerText = `/ ${totalAvailableHours} hrs`;
-
-            let utilizationPercent = totalAvailableHours > 0
-                ? (totalAssignedHours / totalAvailableHours) * 100
-                : 0;
-
-            const bar = document.getElementById('utilizationBar');
-
-            // Set bar width and ARIA attributes
-            bar.style.width = utilizationPercent + "%";
-            bar.setAttribute('aria-valuenow', totalAssignedHours);
-            bar.setAttribute('aria-valuemax', totalAvailableHours);
-
-            // Remove any existing color classes
-            bar.classList.remove('bg-success', 'bg-danger');
-
-            // Add the appropriate color
-            if (totalAssignedHours > totalAvailableHours) {
-                bar.classList.add('bg-danger');
-            } else {
-                bar.classList.add('bg-success');
-            }
-
-            // Set assigned employees
-            let assignedEmployees = data.assigned_employees;
-            document.getElementById('assignedEmployees').innerHTML = assignedEmployees;
-
-            // Set client notes
-            const notes = data.notes?.trim();
-            document.getElementById('clientNotes').innerText = notes ? notes : "No notes available.";
-
-            // Show the modal after the engagement details are set
-            const assignmentModal = new bootstrap.Modal(document.getElementById('clientDetailsModal'));
-            assignmentModal.show();
-        })
-        .catch(error => console.error('Error fetching engagement details:', error));
-}
-
-
-
-function openEmployeeModal(employeeId) {
-    fetch(`employee-details.php?id=${employeeId}`)
-        .then(response => {
-            if (!response.ok) throw new Error("Network error");
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-
-            document.getElementById('employeeName').innerText = data.full_name;
-            document.getElementById('employeeRole').innerText = data.role;
-
-            document.getElementById('totalAssignedHoursEmployee').innerText = data.total_assigned_hours;
-            document.getElementById('totalAvailableHoursEmployeeVal').innerText = data.total_available_hours;
-
-            // Set progress bar
-            const percent = (data.total_assigned_hours / data.total_available_hours) * 100;
-            const bar = document.getElementById('utilizationBarEmployee');
-            bar.style.width = percent + "%";
-            bar.setAttribute('aria-valuenow', data.total_assigned_hours);
-            bar.setAttribute('aria-valuemax', data.total_available_hours);
-
-            // Set assignments
-            document.getElementById('assignedAssignments').innerHTML = data.assignment_items;
-
-            // Show modal
-            const employeeModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
-            employeeModal.show();
-        })
-        .catch(err => {
-            console.error("Error fetching employee details:", err);
-            alert("Failed to load employee details.");
-        });
-}
-
+      const assignments = <?php echo json_encode($assignments); ?>;
     </script>
+
+    <script src="../assets/js/add_entry_modal.js"></script>
+    <script src="../assets/js/manage_entry_modal.js"></script>
+    <script src="../assets/js/edit_modal.js"></script>
+    <script src="../assets/js/delete_entry.js"></script>
+    <script src="../assets/js/view_assignment_modal.js"></script>
+    <script src="../assets/js/view_user_modal.js"></script>
+
+
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -959,111 +773,6 @@ function openEmployeeModal(employeeId) {
   </div>
 <!-- end engagement details -->
 
-
-<!-- Script: view engagement details -->
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-      const statusDisplay = document.getElementById('engagement-status-display');
-      const statusSelect = document.getElementById('engagement-status-select');
-      const engagementIdInput = document.getElementById('engagementId');
-      const modal = document.getElementById('clientDetailsModal');
-
-      // Listen for clicks on buttons with engagement ID (Opening modal)
-      const engagementButtons = document.querySelectorAll('.btn[data-engagement-id]');
-      engagementButtons.forEach(button => {
-          button.addEventListener('click', function () {
-              const engagementId = this.getAttribute('data-engagement-id');
-              engagementIdInput.value = engagementId; // Set engagement ID in the hidden input field
-              console.log('Set Engagement ID:', engagementId);  // Debugging
-          });
-      });
-
-      // Fetch engagement details when the modal is opened
-      modal.addEventListener('shown.bs.modal', function () {
-          const engagementId = engagementIdInput.value;
-
-          console.log('Engagement ID on modal open:', engagementId); // Debugging
-
-          if (!engagementId) {
-              console.error('Engagement ID is not set.');
-              return;
-          }
-
-          // Fetch engagement details
-          fetch(`get-engagement-details.php?id=${engagementId}`)
-      .then(response => response.text()) // Use text() to get the raw response for debugging
-      .then(data => {
-          console.log('Response:', data); // Check the raw response in the console
-          try {
-              const jsonData = JSON.parse(data); // Try to parse it manually
-              console.log('Parsed JSON:', jsonData);
-          } catch (error) {
-              console.error('Error parsing JSON:', error);
-          }
-      })
-      .catch(error => {
-          console.error('Error fetching engagement details:', error);
-          alert("Failed to fetch engagement details.");
-      });
-      });
-
-      // Handle status change and update via AJAX
-      statusSelect.addEventListener('change', function () {
-          const newStatus = this.value;
-          const engagementId = engagementIdInput.value;
-
-          console.log('Updating Engagement ID:', engagementId, 'New Status:', newStatus); // Debugging
-
-          // Send the status update to the server via AJAX
-          fetch('update-engagement-status.php', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  engagement_id: engagementId,
-                  status: newStatus,
-              })
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  // Update the status display with the new value
-                  statusDisplay.textContent = capitalize(newStatus.replace('-', ' '));
-                  statusDisplay.className = `badge ${getStatusClass(newStatus)}`;
-
-                  // Optionally, hide the dropdown and show the status badge again
-                  statusSelect.classList.add('d-none');
-                  statusDisplay.classList.remove('d-none');
-              } else {
-                  alert('Failed to update status.');
-              }
-          })
-          .catch(error => {
-              console.error('Error updating status:', error);
-              alert('Failed to update status.');
-          });
-      });
-
-      // Helpers
-      function capitalize(str) {
-          return str.charAt(0).toUpperCase() + str.slice(1);
-      }
-
-      function getStatusClass(status) {
-          switch (status) {
-              case 'confirmed': return 'bg-success';
-              case 'pending': return 'bg-warning text-dark';
-              case 'not_confirmed': return 'bg-danger';
-              default: return 'bg-secondary';
-          }
-      }
-  });
-
-  </script>
-<!-- end Script: view engagement details -->
-
-
 <!-- Modal for Employee Details -->
   <div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -1116,422 +825,12 @@ function openEmployeeModal(employeeId) {
 <!-- end employee details modal -->
 
 
-<!-- Script: number of weeks -->
-  <script>
-  function generateWeekInputs() {
-      const numberOfWeeks = parseInt(document.getElementById('numberOfWeeks').value);
-      const selectedStartDate = document.getElementById('modalWeek').value; // Assume you have a date input with id="startDate"
-      const weeksContainer = document.getElementById('weeksContainer');
-      weeksContainer.innerHTML = ''; // Clear previous input fields
-
-      if (!selectedStartDate) {
-          alert("Please select a start date.");
-          return;
-      }
-
-      const startDate = new Date(selectedStartDate);
-
-      for (let i = 0; i < numberOfWeeks; i++) {
-          const weekDate = new Date(startDate);
-          weekDate.setDate(startDate.getDate() + (i * 7)); // Add 7 days per week
-
-          // Format the date to YYYY-MM-DD for input[type="date"]
-          const formattedDate = weekDate.toISOString().split('T')[0];
-
-          const weekInput = document.createElement('div');
-          weekInput.classList.add('mb-3');
-          weekInput.innerHTML = `
-              <label for="week_${i+1}" class="form-label">Week ${i + 1}</label>
-              <div class="d-flex gap-2 flex-wrap">
-                  <input type="date" class="form-control" id="week_${i+1}" name="weeks[]" value="${formattedDate}" required>
-                  <input type="number" class="form-control" id="assigned_hours_${i+1}" name="assigned_hours[]" min="0" placeholder="Assigned Hours" required>
-                  <select class="form-select" name="statuses[]" required>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="pending">Pending</option>
-                      <option value="not_confirmed">Not Confirmed</option>
-                  </select>
-              </div>
-              <div class='mt-3'></div>
-              <hr>
-              <div class='mt-3'></div>
-          `;
-          weeksContainer.appendChild(weekInput);
-      }
-  }
-  </script>
-<!-- end script: number of weeks -->
-
-<!-- Script: search -->
-  <script>
-  function searchQuery() {
-      var query = document.getElementById('searchInput').value;
-      console.log(query); // Debug log to check the query value
-      if (query.length >= 3) {
-          fetchSearchResults(query);
-      } else {
-          document.getElementById('searchResults').style.display = 'none';
-      }
-  }
-
-  function fetchSearchResults(query) {
-      fetch('search.php?query=' + query)
-          .then(response => response.json())
-          .then(data => {
-              let resultsHTML = '';
-              data.forEach(result => {
-                  resultsHTML += `<a href="#" class="dropdown-item" onclick="openModal(${result.id}, '${result.type}')">${result.name}</a>`;
-              });
-              if (resultsHTML === '') {
-                  resultsHTML = `<a href="#" class="dropdown-item">No results found</a>`;
-              }
-              document.getElementById('searchResults').innerHTML = resultsHTML;
-              document.getElementById('searchResults').style.display = 'block';
-          })
-          .catch(error => console.error('Error fetching search results:', error));
-  }
-
-  function openModal(id, type) {
-      if (type === 'employee') {
-          openEmployeeModal(id); // Ensure you have this modal function defined
-      } else if (type === 'client') {
-          openassignmentModal(id); // Ensure you have this modal function defined
-      }
-  }
-  </script>
-<!-- end script: search -->
-
-<!-- dropdown menu -->
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-  const assignmentModal = document.getElementById('assignmentModal');
-
-  assignmentModal.addEventListener('show.bs.modal', () => {
-    const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownList = document.getElementById('dropdownList');
-    const selectedClient = document.getElementById('selectedClient');
-    const engagementInput = document.getElementById('engagementInput');
-
-    // Reset dropdown on modal open
-    closeDropdown();
-
-    dropdownBtn.addEventListener('click', toggleDropdown);
-    dropdownBtn.addEventListener('keydown', dropdownBtnKeyHandler);
-
-    dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-      item.addEventListener('click', () => selectClient(item));
-      item.addEventListener('keydown', dropdownItemKeyHandler);
-    });
-
-    // Close dropdown if clicking outside
-    document.addEventListener('click', outsideClickHandler);
-
-    function toggleDropdown() {
-  const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-  dropdownBtn.setAttribute('aria-expanded', (!expanded).toString());
-  dropdownList.style.setProperty('display', expanded ? 'block' : 'none', 'important');
-
-  }
-
-
-    function dropdownBtnKeyHandler(e) {
-      if (['ArrowDown', 'Enter', ' '].includes(e.key)) {
-        e.preventDefault();
-        dropdownList.style.display = 'block';
-        dropdownBtn.setAttribute('aria-expanded', 'true');
-        const firstItem = dropdownList.querySelector('.dropdown-item');
-        if (firstItem) firstItem.focus();
-      }
-    }
-
-    function dropdownItemKeyHandler(e) {
-      const item = e.target;
-      if (['Enter', ' '].includes(e.key)) {
-        e.preventDefault();
-        selectClient(item);
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const next = item.nextElementSibling || dropdownList.querySelector('.dropdown-item');
-        if (next) next.focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = item.previousElementSibling || dropdownList.querySelector('.dropdown-item:last-child');
-        if (prev) prev.focus();
-      } else if (e.key === 'Escape') {
-        closeDropdown();
-        dropdownBtn.focus();
-      }
-    }
-
-    function outsideClickHandler(e) {
-      if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-        closeDropdown();
-      }
-    }
-
-    function selectClient(item) {
-      const clientName = item.getAttribute('data-client-name');
-      const engagementId = item.getAttribute('data-engagement-id');
-      selectedClient.textContent = clientName;
-      engagementInput.value = engagementId;
-      closeDropdown();
-    }
-
-    function closeDropdown() {
-      dropdownList.style.display = 'none';
-      dropdownBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-  });
-  </script>
-
-
-<!-- end dropdown menu -->
-
-<!-- Script: Dynamic Buttons on Add Modal -->
-  <script>
-   document.addEventListener('DOMContentLoaded', function () {
-     const entryTypePrompt = document.getElementById('entryTypePrompt');
-     const timeOffEntryContent = document.getElementById('timeOffEntryContent');
-     const newAssignmentContent = document.getElementById('newAssignmentContent');
-    //  const modalTitle = document.getElementById('modalTitle');
-    //  const modalSubtitle = document.getElementById('modalSubtitle');
-    //  const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
-    //  const btnNewAssignment = document.getElementById('btnNewAssignment');
-     const engagementInput = document.getElementById('engagementInput');
-     const selectedClient = document.getElementById('selectedClient');
-     const assignedHours = document.getElementById('assignedHours');
-     const timeOffHours = document.getElementById('timeOffHours');
-     const form = document.getElementById('assignmentForm');
-     const footer = document.getElementById('modal-footer');
-
-     // Reset modal to prompt state every time it opens
-     const assignmentModal = document.getElementById('assignmentModal');
-     assignmentModal.addEventListener('show.bs.modal', function (event) {
-       entryTypePrompt.classList.remove('d-none');
-       timeOffEntryContent.classList.add('d-none');
-       newAssignmentContent.classList.add('d-none');
-       footer.classList.add('d-none');
-
-      //  modalTitle.textContent = 'Select Entry Type';
-      //  modalSubtitle.textContent = '';
-
-       // Reset form fields and requirements
-       engagementInput.value = '';
-       assignedHours.value = '';
-       assignedHours.required = false;
-       timeOffHours.value = '';
-       timeOffHours.required = false;
-
-       // Reset client dropdown display text
-       selectedClient.textContent = 'Select a client';
-
-       // Also reset submit button state if you want (optional)
-     });
-
-     btnTimeOffEntry.addEventListener('click', function () {
-       entryTypePrompt.classList.add('d-none');
-       timeOffEntryContent.classList.remove('d-none');
-       newAssignmentContent.classList.add('d-none');
-       footer.classList.remove('d-none');
-
-      //  modalTitle.textContent = 'Time Off Entry';
-      //  modalSubtitle.textContent = 'Enter hours for time off';
-
-       // Set required fields accordingly
-       timeOffHours.required = true;
-       assignedHours.required = false;
-       engagementInput.required = false;
-
-       // Clear unrelated inputs
-       engagementInput.value = '';
-       assignedHours.value = '';
-     });
-
-     btnNewAssignment.addEventListener('click', function () {
-       entryTypePrompt.classList.add('d-none');
-       timeOffEntryContent.classList.add('d-none');
-       newAssignmentContent.classList.remove('d-none');
-       footer.classList.remove('d-none');
-
-      //  modalTitle.textContent = 'New Assignment';
-      //  modalSubtitle.textContent = 'Assign work for <strong><span id="modalEmployeeNameDisplayInModal"></span></strong> during week of <strong><span id="modalWeekDisplayInModal"></span></strong>';
-
-       // Make engagement and hours required
-       engagementInput.required = true;
-       assignedHours.required = true;
-       timeOffHours.required = false;
-
-       // Clear time off input
-       timeOffHours.value = '';
-     });
-
-     // --- Client dropdown logic ---
-
-     const dropdownBtn = document.getElementById('dropdownBtn');
-     const dropdownList = document.getElementById('dropdownList');
-
-     dropdownBtn.addEventListener('click', () => {
-       const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
-       dropdownBtn.setAttribute('aria-expanded', !expanded);
-       dropdownList.style.display = expanded ? 'none' : 'block';
-     });
-
-     // Close dropdown if clicked outside
-     document.addEventListener('click', (e) => {
-       if (!dropdownBtn.contains(e.target) && !dropdownList.contains(e.target)) {
-         dropdownBtn.setAttribute('aria-expanded', 'false');
-         dropdownList.style.display = 'none';
-       }
-     });
-
-     // Handle selecting a client
-     dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
-       item.addEventListener('click', () => {
-         const clientId = item.getAttribute('data-engagement-id');
-         const clientName = item.getAttribute('data-client-name');
-
-         engagementInput.value = clientId;
-         selectedClient.textContent = clientName;
-
-         dropdownBtn.setAttribute('aria-expanded', 'false');
-         dropdownList.style.display = 'none';
-       });
-     });
-   });
-  </script>
-<!-- end Script: dynamic buttons on add modal -->
-
-<!-- Script: Dynamic buttons on Manage Modal -->
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const manageAddButtons = document.getElementById('manageAddButtons');
-    const assignmentsListing = document.getElementById('assignmentsListing');
-    const assignmentsListContainer = document.getElementById('assignmentsListContainer');
-    const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
-    const backToButtons = document.getElementById('backToButtons');
-
-    // Store clicked context here
-    let currentUserId = null;
-    let currentWeekStart = null;
-
-    // ==== REMOVED .addable click listeners ====
-    // document.querySelectorAll('td.addable').forEach(td => {
-    //   td.addEventListener('click', function () {
-    //     const userId = this.dataset.userId;
-    //     const weekStart = this.dataset.weekStart;
-
-    //     console.log('Clicked cell userId:', userId);
-    //     console.log('Clicked cell weekStart:', weekStart);
-
-    //     // Store for later use
-    //     currentUserId = userId;
-    //     currentWeekStart = weekStart;
-
-    //     // Show the modal
-    //     const modalEl = document.getElementById('manageAddModal');
-    //     const modal = new bootstrap.Modal(modalEl);
-    //     modal.show();
-
-    //     // Default to showing the button view
-    //     manageAddButtons.classList.remove('d-none');
-    //     assignmentsListing.classList.add('d-none');
-    //   });
-    // });
-
-    // 2️⃣ Manage Assignments button click
-    manageAssignmentsButton.addEventListener('click', () => {
-      if (!currentUserId || !currentWeekStart) {
-        assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
-        return;
-      }
-
-      manageAddButtons.classList.add('d-none');
-      assignmentsListing.classList.remove('d-none');
-      assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
-
-      fetch(`get_assignments.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-        .then(response => {
-          if (!response.ok) throw new Error('Network response was not OK');
-          return response.json();
-        })
-        .then(assignments => {
-          renderAssignmentsList(assignments);
-        })
-        .catch(error => {
-          console.error('Error fetching assignments:', error);
-          assignmentsListContainer.innerHTML = `<p class="text-danger">Error loading assignments.</p>`;
-        });
-    });
-
-    // 3️⃣ Back button
-    backToButtons.addEventListener('click', () => {
-      manageAddButtons.classList.remove('d-none');
-      assignmentsListing.classList.add('d-none');
-    });
-
-    // 4️⃣ Render list
-    function renderAssignmentsList(assignmentsForWeek) {
-      assignmentsListContainer.innerHTML = '';
-
-      if (!assignmentsForWeek || assignmentsForWeek.length === 0) {
-        assignmentsListContainer.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
-        return;
-      }
-
-      assignmentsForWeek.forEach(assignment => {
-        const card = document.createElement('div');
-        card.classList.add('card', 'mb-3', 'shadow-sm');
-
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
-
-        const leftDiv = document.createElement('div');
-        leftDiv.innerHTML = `
-          <div class="fw-semibold fs-6">${assignment.client_name || (assignment.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
-          <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
-        `;
-
-        const rightDiv = document.createElement('div');
-
-        const editLink = document.createElement('a');
-        editLink.href = "#";
-        editLink.title = "Edit Assignment";
-        editLink.className = "text-primary me-3";
-        editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-        editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
-        editLink.setAttribute('data-assignment-id', assignment.assignment_id);
-        editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
-        editLink.onclick = (e) => {
-          e.preventDefault();
-          openEditModal(e);
-        };
-
-        const deleteLink = document.createElement('a');
-        deleteLink.href = "#";
-        deleteLink.title = "Delete Assignment";
-        deleteLink.className = "text-danger";
-        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-        deleteLink.onclick = (e) => {
-          e.preventDefault();
-          alert(`Delete assignment ${assignment.assignment_id}`);
-        };
-
-        rightDiv.appendChild(editLink);
-        rightDiv.appendChild(deleteLink);
-
-        cardBody.appendChild(leftDiv);
-        cardBody.appendChild(rightDiv);
-        card.appendChild(cardBody);
-        assignmentsListContainer.appendChild(card);
-      });
-    }
-  });
-</script>
-
-
-
-<!-- end script: dynamic buttons on manage modal -->
+<script src="../assets/js/view_engagement_details.js"></script>
+<script src="../assets/js/number_of_weeks.js"></script>
+<script src="../assets/js/search.js"></script>
+<script src="../assets/js/client_dropdown.js"></script>
+<script src="../assets/js/dynamic_add_modal.js"></script>
+<script src="../assets/js/dynamic_manage_modal.js"></script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
