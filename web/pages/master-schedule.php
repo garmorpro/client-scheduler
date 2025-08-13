@@ -536,18 +536,40 @@ function openEmployeeModal(employeeId) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" data-user-id="<?php echo $userId; ?>" data-week-start="<?php echo $weekKey; ?>" onclick='openManageOrAddModal(
-                                  "<?php echo $userId; ?>",
-                                  <?php echo json_encode($fullName); ?>,
-                                  "<?php echo $weekKey; ?>"
-                              )'>
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php else: ?>
-                              <td class="<?php echo $tdClass; ?>">
-                                  <?php echo $cellContent; ?>
-                              </td>
-                          <?php endif; ?>
+    <?php if (!empty($assignmentsForWeek)): ?>
+        <!-- Cell with assignments: open Manage/Add modal -->
+        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" 
+            data-user-id="<?php echo $userId; ?>" 
+            data-week-start="<?php echo $weekKey; ?>" 
+            onclick='
+                openManageAssignmentsModal(
+                    "<?php echo $userId; ?>",
+                    <?php echo json_encode($fullName); ?>,
+                    "<?php echo $weekKey; ?>"
+                )
+            '>
+            <?php echo $cellContent; ?>
+        </td>
+    <?php else: ?>
+        <!-- Empty cell: open Add Assignment modal -->
+        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" 
+            data-user-id="<?php echo $userId; ?>" 
+            data-week-start="<?php echo $weekKey; ?>" 
+            onclick='
+                openAddAssignmentModal(
+                    "<?php echo $userId; ?>",
+                    <?php echo json_encode($fullName); ?>,
+                    "<?php echo $weekKey; ?>"
+                )
+            '>
+            <?php echo $cellContent; ?>
+        </td>
+    <?php endif; ?>
+<?php else: ?>
+    <td class="<?php echo $tdClass; ?>">
+        <?php echo $cellContent; ?>
+    </td>
+<?php endif; ?>
 
                       <?php endforeach; ?>
                   </tr>
