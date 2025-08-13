@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt2->execute();
             $result = $stmt2->get_result();
             $user = $result->fetch_assoc();
-            $stmt2->close();
+            $stmt2->close();    
 
             if ($user['mfa_enabled'] == 1) {
                 // Generate MFA code
