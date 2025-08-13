@@ -7,10 +7,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$role = isset($_SESSION['user_role']) ? strtolower(trim($_SESSION['user_role'])) : '';
-$isAdmin = $role === 'admin';
-$isManager = $role === 'manager';
-if ($isAdmin && $isManager) {
+$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+
+if ($isAdmin || $isManager) {
     header("Location: admin-panel.php");
     exit();
 }
