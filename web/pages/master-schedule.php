@@ -185,12 +185,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <!-- Master Schedule table -->
   <?php
-  // Make sure these are set and valid:
-  // $today = strtotime('today');
-  // $mondays = array of Monday timestamps (7 weeks shown)
-  // $employees = array of employees keyed by userId, each with 'full_name' and 'role'
-  // $assignments = nested array as explained above
-  // $isAdmin = bool if current user is admin
 
   // Find current week index for highlight
   $currentWeekIndex = null;
@@ -296,20 +290,20 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         </td>
                     <?php else: ?>
                         <!-- No assignments → open AddAssignment modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='
-                                event.stopPropagation();
-                                console.log("Assignments empty?", true);
-                                openAddAssignmentModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>"
-                                )
-                            '>
-                            <?php echo $cellContent; ?>
-                        </td>
+<td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+    data-user-id="<?php echo $userId; ?>" 
+    data-week-start="<?php echo $weekKey; ?>"
+    onclick='
+        event.stopPropagation();
+        console.log("Assignments empty?", true);
+        openAddAssignmentModal(
+            "<?php echo $userId; ?>",
+            <?php echo json_encode($fullName); ?>,
+            "<?php echo $weekKey; ?>"
+        )
+    '>
+    <?php echo $cellContent; ?>
+</td>
                     <?php endif; ?>
                 <?php else: ?>
                     <td class="<?php echo $tdClass; ?>">
