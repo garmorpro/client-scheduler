@@ -125,6 +125,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <script src="../assets/js/add_entry_modal.js"></script>
+    <script>
+      const assignments = <?php echo json_encode($assignments); ?>;
+    </script>
     <script src="../assets/js/manage_entry_modal.js"></script>
     <script src="../assets/js/edit_modal.js"></script>
     <script src="../assets/js/delete_entry.js"></script>
