@@ -2555,20 +2555,20 @@ if ($settingResult) {
       const modal = new bootstrap.Modal(modalEl);
       modal.show();
     });
-  
+
     // Save settings handler
     document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-    
+
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
       data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-    
+
       const payload = {
         setting_master_key: 'email',
         settings: data
       };
-    
+
       try {
         const resp = await fetch('settings_backend.php', {
           method: 'POST',
@@ -2576,7 +2576,7 @@ if ($settingResult) {
           body: JSON.stringify(payload)
         });
         const result = await resp.json();
-      
+
         if (result.success) {
           // Hide the modal after successful save
           const modalEl = document.getElementById('emailNotifConfigModal');
@@ -2589,6 +2589,13 @@ if ($settingResult) {
         alert('Network error: ' + err.message);
       }
     });
+
+    document.getElementById('testEmail').addEventListener('input', function(){
+    const btn = document.getElementById('sendTestEmailBtn');
+    btn.classList.remove('disabled');
+    btn.style.pointerEvents = 'auto';
+    btn.style.opacity = '1';
+});
   </script>
 <!-- end email notification script -->
 
