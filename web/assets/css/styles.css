@@ -560,7 +560,7 @@ input, select {
 }
 .week-card.current {
     border: 2px solid #a0b9deff;
-    background: #ecf3ffff;
+    background: rgb(239,242,229);
 }
 .week-title {
     font-size: 0.85rem;
