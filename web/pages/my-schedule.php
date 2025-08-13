@@ -185,8 +185,17 @@ $netHours = max(0, $totalHours - $timeOffTotal);
             <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
           </div>
           <div class="text-end">
-            <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
-            <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
+            <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
+            <?php
+              $status = strtolower($eng['status'] ?? 'confirmed');
+              switch ($status) {
+                  case 'confirmed': $badgeColor = 'success'; break;
+                  case 'pending': $badgeColor = 'purple'; break;
+                  case 'not_confirmed': $badgeColor = 'primary'; break;
+                  default: $badgeColor = 'secondary'; break;
+              }
+            ?>
+            <small class="badge bg-<?php echo $badgeColor;?>"><?php echo htmlspecialchars($eng['status']); ?></small>
           </div>
         </div>
       </div>
