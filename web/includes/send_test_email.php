@@ -6,12 +6,12 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Ensure PHP errors don't break JSON output
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Always return JSON
 header('Content-Type: application/json');
-
-// Hide all PHP errors from output
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', 0);
 
 // Only allow admin/manager
 $role = strtolower($_SESSION['user_role'] ?? '');
@@ -62,7 +62,7 @@ try {
     $mail->Username   = $settings['smtp_username'] ?? '';
     $mail->Password   = $settings['smtp_password'] ?? '';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = $settings['smtp_port'] ?? 587;
+    $mail->Port       = (int)($settings['smtp_port'] ?? 587);
 
     $mail->setFrom($settings['sender_email'] ?? 'no-reply@example.com', $settings['sender_name'] ?? 'My Company');
     $mail->addAddress($testEmail);
@@ -74,10 +74,12 @@ try {
     $mail->send();
 
     echo json_encode(['success' => true, 'message' => "Test email sent to {$testEmail}"]);
+    exit(); // <--- important to stop any further output
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => "Email could not be sent. PHPMailer Error: {$mail->ErrorInfo}"
     ]);
+    exit(); // <--- important
 }
