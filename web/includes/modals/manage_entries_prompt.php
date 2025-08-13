@@ -8,9 +8,10 @@
       <div class="modal-body">
 
   <!-- Initial buttons -->
-  <div id="manageAddButtons">
-    <button id="manageEntriesButton" class="btn btn-warning w-100 mb-2">Manage Existing Entries</button>
-    <button id="addEntriesButton" class="btn btn-success w-100">Add New Entry</button>
+  <div id="manageAddButtons" class="text-center">
+    <p>Please choose the type of entry:</p>
+    <button id="manageEntriesButton" class="badge text-bg-info text-white p-2 text-decoration-none fw-medium me-2" style="font-size: .875rem; background-color: rgb(3,2,18);border: none !important;">Manage Existing Entries</button>
+    <button id="addEntriesButton" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;">Add New Entry</button>
   </div>
 
   <div id="entriesListing" class="d-none">
