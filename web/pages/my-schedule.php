@@ -169,7 +169,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 
   <!-- 8-Week Overview -->
   <div class="week_overview_header mb-3">
-    <h6>8-Week Overview</h6>
+    <div class="fw-semibold fs-5">8-Week Overview</div>
   </div>
   <div class="d-flex flex-wrap gap-3 mb-5">
     <?php foreach ($mondays as $monday): 
@@ -189,20 +189,20 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     <?php endforeach; ?>
   </div>
 
-<!-- Selected Week View -->
-<div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
-    <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
-        <i class="bi bi-chevron-left me-2"></i>Previous Week
-    </a>
-    <div class="text-center" style="margin-top: -15px;">
-        <div class="badge current_week" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current Week</div>
-        <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
-        <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
-    </div>
-    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
-        Next Week<i class="bi bi-chevron-right ms-2"></i>
-    </a>
-</div>
+  <!-- Selected Week View -->
+  <div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+      <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+          <i class="bi bi-chevron-left me-2"></i>Previous Week
+      </a>
+      <div class="text-center" style="margin-top: -15px;">
+          <div class="badge current_week" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current Week</div>
+          <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
+          <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
+      </div>
+      <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+          Next Week<i class="bi bi-chevron-right ms-2"></i>
+      </a>
+  </div>
 
 
 
