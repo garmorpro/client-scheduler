@@ -4,7 +4,7 @@ ob_start();
 
 session_start();
 require_once 'db.php';       // Adjust path if needed
-require 'vendor/autoload.php';  // PHPMailer
+require '../vendor/autoload.php';  // PHPMailer
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
