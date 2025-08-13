@@ -220,11 +220,11 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
       <div class="card p-3 shadow-sm timeoff-card">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <div class="fw-bold"><?php echo htmlspecialchars($off['client_name']); ?></div>
+            <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
             <small class="text-muted">Approved time off</small>
           </div>
-          <div class="text-end text-danger fw-bold">
-            -<?php echo $off['assigned_hours']; ?>h
+          <div class="text-end text-danger fw-semibold fs-5">
+            -<?php echo $off['assigned_hours']; ?>hrs
           </div>
         </div>
       </div>
