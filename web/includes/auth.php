@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
-            if ($_SESSION['user_role'] === 'admin') {
+            if ($_SESSION['user_role'] === 'admin' && $_SESSION['user_role'] === 'manager') {
                 header("Location: admin-panel.php");
             } else {
                 header("Location: my-schedule.php");

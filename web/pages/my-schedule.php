@@ -7,8 +7,15 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$userId = $_SESSION['user_id'];
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+
+if ($isAdmin && $isManager) {
+    header("Location: admin-panel.php");
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
 
 // ------------------------------------------------------
 // WEEK NAVIGATION LOGIC
