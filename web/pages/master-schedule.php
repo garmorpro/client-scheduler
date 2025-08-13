@@ -144,8 +144,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <style>
       /* light highlight for time off cells */
-      .timeoff-cell { background-color: #fff8f0 !important; }
-      .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .75rem; }
+      .timeoff-cell { background-color: #9f9f9fff !important; }
+      .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
     </style>
 </head>
 <body class="d-flex">
@@ -310,7 +310,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     <?php 
                                       // render time off corner if present
                                       if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                          echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
                                       }
                                       echo $cellContent; 
                                     ?>
