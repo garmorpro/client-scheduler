@@ -28,7 +28,7 @@ $prevWeekMonday = date('Y-m-d', strtotime('-1 week', $selectedMonday));
 $nextWeekMonday = date('Y-m-d', strtotime('+1 week', $selectedMonday));
 
 $weekStartDate = date('Y-m-d', $selectedMonday);
-$weekEndDate   = date('Y-m-d', strtotime('+6 days', $selectedMonday));
+$weekEndDate   = date('Y-m-d', strtotime('+4 days', $selectedMonday));
 
 // ------------------------------------------------------
 // 8-WEEK OVERVIEW
