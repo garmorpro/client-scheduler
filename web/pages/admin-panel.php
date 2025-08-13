@@ -1345,31 +1345,6 @@ if ($settingResult) {
     </div>
 <!-- end Email Notification Modal -->
 
-<script>
-  document.getElementById('sendTestEmailBtn').addEventListener('click', function(e){
-    e.preventDefault();
-    const email = document.getElementById('testEmail').value.trim();
-    if(!email) return alert("Enter a valid email");
-
-    fetch('../includes/send_test_email.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'test_email=' + encodeURIComponent(email)
-    })
-    .then(res => res.json())
-    .then(data => {
-        const statusEl = document.getElementById('testEmailStatus');
-        statusEl.classList.remove('d-none', 'text-success', 'text-danger');
-        if(data.success){
-            statusEl.classList.add('text-success');
-        } else {
-            statusEl.classList.add('text-danger');
-        }
-        statusEl.textContent = data.message;
-    });
-});
-
-</script>
 
 <!-- Backup Configuration Modal -->
     <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
@@ -2572,76 +2547,51 @@ if ($settingResult) {
 <!-- end bulk delete engagements -->
 
 <!-- email notifications script -->
-    <script>
-      // Show modal
-document.getElementById('configureEmailBtn').addEventListener('click', e => {
-    e.preventDefault();
-    const modalEl = document.getElementById('emailNotifConfigModal');
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-});
-
-// Enable/disable Send Test Email button
-const testEmailInput = document.getElementById('testEmail');
-const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
-const statusEl = document.getElementById('testEmailStatus');
-
-testEmailInput.addEventListener('input', () => {
-    if (testEmailInput.checkValidity()) {
-        sendTestEmailBtn.classList.remove('disabled');
-        sendTestEmailBtn.style.pointerEvents = 'auto';
-        sendTestEmailBtn.style.opacity = '1';
-    } else {
-        sendTestEmailBtn.classList.add('disabled');
-        sendTestEmailBtn.style.pointerEvents = 'none';
-        sendTestEmailBtn.style.opacity = '0.5';
-    }
-});
-
-// Send test email
-sendTestEmailBtn.addEventListener('click', async () => {
-    const testEmail = testEmailInput.value.trim();
-    statusEl.classList.remove('text-danger', 'text-success');
-    statusEl.classList.remove('d-none');
-    statusEl.textContent = 'Sending test email...';
-
-    if (!testEmail) {
-        alert('Please enter a test email address.');
-        return;
-    }
-
-    try {
-        const resp = await fetch('../includes/send_test_email.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ test_email: testEmail })
+  <script>
+    // Show modal on configure button click
+    document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const modalEl = document.getElementById('emailNotifConfigModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    });
+  
+    // Save settings handler
+    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+    
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+    
+      const payload = {
+        setting_master_key: 'email',
+        settings: data
+      };
+    
+      try {
+        const resp = await fetch('settings_backend.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
         });
-
-        // Check for HTTP errors
-        if (!resp.ok) {
-            const text = await resp.text();
-            statusEl.textContent = 'Error: ' + text;
-            statusEl.classList.add('text-danger');
-            return;
-        }
-
-        const result = await resp.json(); // safely parse JSON
+        const result = await resp.json();
+      
         if (result.success) {
-            statusEl.textContent = result.message;
-            statusEl.classList.add('text-success');
+          // Hide the modal after successful save
+          const modalEl = document.getElementById('emailNotifConfigModal');
+          const modalInstance = bootstrap.Modal.getInstance(modalEl);
+          modalInstance.hide();
         } else {
-            statusEl.textContent = 'Failed: ' + (result.message || 'Unknown error');
-            statusEl.classList.add('text-danger');
+          alert('Failed to save settings: ' + (result.error || 'Unknown error'));
         }
-    } catch (err) {
-        statusEl.textContent = 'Network error: ' + err.message;
-        statusEl.classList.add('text-danger');
-    }
-});
-
-    </script>
-
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    });
+  </script>
 <!-- end email notification script -->
+
 
 <!-- backup configuration -->
     <script>
