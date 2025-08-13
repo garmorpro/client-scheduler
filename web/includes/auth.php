@@ -1,6 +1,6 @@
 <?php
 require_once 'db.php';
-session_start();  // START SESSION AT TOP!
+session_start();
 
 // LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
@@ -38,11 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Force password change on first login
             if ($change_password === 1) {
+                // Enable MFA automatically
+                $updateMFA = $conn->prepare("UPDATE users SET mfa_enabled = 1 WHERE user_id = ?");
+                $updateMFA->bind_param("i", $user_id);
+                $updateMFA->execute();
+                $updateMFA->close();
+
+                // Store temporary session for password change
                 $_SESSION['force_user_id'] = $user_id;
                 $_SESSION['force_email'] = $email;
                 $_SESSION['force_first_name'] = $first_name;
                 $_SESSION['force_last_name'] = $last_name;
                 $_SESSION['force_role'] = $role;
+
                 header("Location: change-password.php");
                 exit;
             }
@@ -95,3 +103,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 }
+?>
