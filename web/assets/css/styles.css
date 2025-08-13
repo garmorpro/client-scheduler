@@ -579,7 +579,7 @@ input, select {
 }
 
 .week-btn:hover {
-    background-color: transparent !important; /* remove background on hover */
-    color: inherit !important; /* keep same text color */
-    border-color: inherit !important; /* keep same border */
+    background-color: #ffffff !important; /* remove background on hover */
+    color: rgb(41,41,41) !important; /* keep same text color */
+    border-color: rgb(229,229,229) !important; /* keep same border */
 }
