@@ -555,11 +555,11 @@ input, select {
     justify-content: center;
 }
 .week-card:hover {
-    background: rgb(233,235,239);
+    background: #f0f0f0;
     transform: translateY(-2px);
 }
 .week-card.current {
-    border: 2px solid rgb(209,226, 159);
+    border: 2px solid rgb(209,226,159);
     background: rgb(246, 249, 236);
 }
 .week-title {
@@ -583,7 +583,7 @@ input, select {
     border-color: rgb(229,229,229) !important; /* keep same border */
 }
 .week-btn:hover {
-    background-color: #ffffff !important; /* remove background on hover */
+    background-color: rgb(233,235,239) !important; /* remove background on hover */
     color: rgb(41,41,41) !important; /* keep same text color */
     border-color: rgb(229,229,229) !important; /* keep same border */
 }
