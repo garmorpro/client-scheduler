@@ -597,40 +597,43 @@ function openEmployeeModal(employeeId) {
                 ?>
 
                 <?php if ($isAdmin): ?>
-                    <?php if (!empty($assignmentsForWeek)): ?>
-                        <!-- Has assignments → open ManageAssignments modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='console.log("AssignmentsForWeek:", <?php echo json_encode($assignmentsForWeek); ?>);'
+    <?php if (!empty($assignmentsForWeek)): ?>
+        <!-- Has assignments → open ManageAssignments modal -->
+        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+            data-user-id="<?php echo $userId; ?>" 
+            data-week-start="<?php echo $weekKey; ?>"
+            onclick='
+                console.log("Assignments empty?", false);
+                openManageAssignmentsModal(
+                    "<?php echo $userId; ?>",
+                    <?php echo json_encode($fullName); ?>,
+                    "<?php echo $weekKey; ?>"
+                )
+            '>
+            <?php echo $cellContent; ?>
+        </td>
+    <?php else: ?>
+        <!-- No assignments → open AddAssignment modal -->
+        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+            data-user-id="<?php echo $userId; ?>" 
+            data-week-start="<?php echo $weekKey; ?>"
+            onclick='
+                console.log("Assignments empty?", true);
+                openAddAssignmentModal(
+                    "<?php echo $userId; ?>",
+                    <?php echo json_encode($fullName); ?>,
+                    "<?php echo $weekKey; ?>"
+                )
+            '>
+            <?php echo $cellContent; ?>
+        </td>
+    <?php endif; ?>
+<?php else: ?>
+    <td class="<?php echo $tdClass; ?>">
+        <?php echo $cellContent; ?>
+    </td>
+<?php endif; ?>
 
-                            onclick='openManageAssignmentsModal(
-                                "<?php echo $userId; ?>",
-                                <?php echo json_encode($fullName); ?>,
-                                "<?php echo $weekKey; ?>"
-                            )'>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php else: ?>
-                        <!-- No assignments → open AddAssignment modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='console.log("AssignmentsForWeek:", <?php echo json_encode($assignmentsForWeek); ?>);'
-
-                            onclick='openAddAssignmentModal(
-                                "<?php echo $userId; ?>",
-                                <?php echo json_encode($fullName); ?>,
-                                "<?php echo $weekKey; ?>"
-                            )'>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <td class="<?php echo $tdClass; ?>">
-                        <?php echo $cellContent; ?>
-                    </td>
-                <?php endif; ?>
 
             <?php endforeach; ?>
         </tr>
