@@ -548,20 +548,20 @@ function openEmployeeModal(employeeId) {
 <!-- end master schedule table -->
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('td.addable').forEach(td => {
-    td.addEventListener('click', function () {
-      const userId = this.dataset.userId;        // same as getAttribute('data-user-id')
-      const weekStart = this.dataset.weekStart;  // same as getAttribute('data-week-start')
+//   document.addEventListener('DOMContentLoaded', () => {
+//   document.querySelectorAll('td.addable').forEach(td => {
+//     td.addEventListener('click', function () {
+//       const userId = this.dataset.userId;        // same as getAttribute('data-user-id')
+//       const weekStart = this.dataset.weekStart;  // same as getAttribute('data-week-start')
 
-      console.log('Clicked cell userId:', userId);
-      console.log('Clicked cell weekStart:', weekStart);
+//       console.log('Clicked cell userId:', userId);
+//       console.log('Clicked cell weekStart:', weekStart);
 
-      // Now call your modal logic here:
-      openManageOrAddModal(userId, 'Employee Name Placeholder', weekStart);
-    });
-  });
-});
+//       // Now call your modal logic here:
+//       openManageOrAddModal(userId, 'Employee Name Placeholder', weekStart);
+//     });
+//   });
+// });
 
 </script>
 
