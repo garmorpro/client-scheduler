@@ -154,7 +154,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 
-<div class="flex-grow-1 p-4">
+<div class="flex-grow-1 p-4" style="margin-left: 250px;">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <h3 class="mb-0">My Schedule</h3>
