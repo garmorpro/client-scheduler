@@ -2560,60 +2560,52 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.show();
   });
 
-  // Enable/disable Send Test Email button
-  const testEmailInput = document.getElementById('testEmail');
-  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
-  const testEmailStatus = document.getElementById('testEmailStatus');
+ const testEmailInput = document.getElementById('testEmail');
+const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+const testEmailStatus = document.getElementById('testEmailStatus');
 
-  testEmailInput.addEventListener('input', () => {
-    const email = testEmailInput.value.trim();
-    if (email.length > 0) {
-      sendTestEmailBtn.classList.remove('disabled');
-      sendTestEmailBtn.style.pointerEvents = 'auto';
-      sendTestEmailBtn.style.opacity = '1';
-    } else {
-      sendTestEmailBtn.classList.add('disabled');
-      sendTestEmailBtn.style.pointerEvents = 'none';
-      sendTestEmailBtn.style.opacity = '0.5';
-    }
-  });
+sendTestEmailBtn.addEventListener('click', async () => {
+    const testEmail = testEmailInput.value.trim();
 
-  // Handle Send Test Email click
-  sendTestEmailBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const email = testEmailInput.value.trim();
-    if (!email) return;
+    if (!testEmail) return;
 
-    // Show feedback immediately
-    testEmailStatus.textContent = 'Sending test email...';
     testEmailStatus.classList.remove('d-none', 'text-success', 'text-danger');
     testEmailStatus.classList.add('text-info');
+    testEmailStatus.textContent = 'Sending test email...';
 
     try {
-      const resp = await fetch('../includes/send_test_email.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ test_email: email })
-      });
+        const resp = await fetch('send_test_email.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ test_email: testEmail })
+        });
 
-      const result = await resp.json();
+        let result;
+        try { result = await resp.json(); } 
+        catch(err) { 
+            testEmailStatus.textContent = 'Server returned invalid JSON';
+            testEmailStatus.classList.remove('text-info');
+            testEmailStatus.classList.add('text-danger');
+            console.error(await resp.text());
+            return;
+        }
 
-      if (result.success) {
-        testEmailStatus.textContent = result.message || 'Test email sent successfully!';
-        testEmailStatus.classList.remove('text-info', 'text-danger');
-        testEmailStatus.classList.add('text-success');
-      } else {
-        testEmailStatus.textContent = result.message || 'Failed to send test email';
-        testEmailStatus.classList.remove('text-info', 'text-success');
+        if (result.success) {
+            testEmailStatus.textContent = result.message;
+            testEmailStatus.classList.remove('text-info');
+            testEmailStatus.classList.add('text-success');
+        } else {
+            testEmailStatus.textContent = result.message || 'Failed to send test email';
+            testEmailStatus.classList.remove('text-info');
+            testEmailStatus.classList.add('text-danger');
+        }
+    } catch(err) {
+        testEmailStatus.textContent = 'Network error: ' + err.message;
+        testEmailStatus.classList.remove('text-info');
         testEmailStatus.classList.add('text-danger');
-      }
-    } catch (err) {
-      testEmailStatus.textContent = 'Network error: ' + err.message;
-      testEmailStatus.classList.remove('text-info', 'text-success');
-      testEmailStatus.classList.add('text-danger');
-      console.error(err);
+        console.error(err);
     }
-  });
+});
 
   // Save settings handler
   const emailForm = document.getElementById('emailNotifConfigForm');
