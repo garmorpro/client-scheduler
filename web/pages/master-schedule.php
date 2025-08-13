@@ -618,13 +618,14 @@ function openEmployeeModal(employeeId) {
             data-user-id="<?php echo $userId; ?>" 
             data-week-start="<?php echo $weekKey; ?>"
             onclick='
-                console.log("Assignments empty?", true);
-                openAddAssignmentModal(
-                    "<?php echo $userId; ?>",
-                    <?php echo json_encode($fullName); ?>,
-                    "<?php echo $weekKey; ?>"
-                )
-            '>
+    event.stopPropagation();
+    console.log("Assignments empty?", true);
+    openAddAssignmentModal(
+        "<?php echo $userId; ?>",
+        <?php echo json_encode($fullName); ?>,
+        "<?php echo $weekKey; ?>"
+    )
+'>
             <?php echo $cellContent; ?>
         </td>
     <?php endif; ?>
