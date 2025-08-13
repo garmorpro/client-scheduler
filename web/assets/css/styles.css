@@ -459,7 +459,7 @@ body {
     border-right: 3px solid rgb(209,226,159) !important;
 }
 .highlight-today:hover {
-    background-color: #e0f7fa !important; 
+    background-color: #e0faea !important; 
     cursor: pointer !important;
 }
 
