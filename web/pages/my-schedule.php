@@ -204,7 +204,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     ?>
       <div class="card p-3 shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+          <div class="fw-bold fs-4"><?php echo htmlspecialchars($eng['client_name']); ?></div>
           <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
         </div>
         <small class="text-muted">
