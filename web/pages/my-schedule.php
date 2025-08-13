@@ -169,7 +169,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 
   <!-- 8-Week Overview -->
   <div class="week_overview_header mb-3">
-    <div class="fw-semibold fs-5">8-Week Overview</div>
+    <div class="fw-semibold fs-6">8-Week Overview</div>
   </div>
   <div class="d-flex flex-wrap gap-3 mb-5">
     <?php foreach ($mondays as $monday): 
