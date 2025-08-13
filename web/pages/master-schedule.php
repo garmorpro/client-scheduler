@@ -9,25 +9,26 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$today = strtotime('today');
+  $today = strtotime('today');
 
-// Calculate Mondays as timestamps
-$currentMonday = strtotime('monday this week', $today);
-$weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
-$startMonday = strtotime("-2 weeks", $currentMonday);
-$startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
+  // Calculate Mondays as timestamps (you already do this correctly)
+  $currentMonday = strtotime('monday this week', $today);
+  $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
+  $startMonday = strtotime("-2 weeks", $currentMonday);
+  $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
-$mondays = [];
-for ($i = 0; $i < 7; $i++) {
-    $mondays[] = strtotime("+{$i} weeks", $startMonday);
-}
+  $mondays = [];
+  for ($i = 0; $i < 7; $i++) {
+      $mondays[] = strtotime("+{$i} weeks", $startMonday);
+  }
 
-// Range label
-$firstWeek = reset($mondays);
-$lastWeek = end($mondays);
-$rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
+  // Range label for header
+  $firstWeek = reset($mondays);
+  $lastWeek = end($mondays);
+  $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
+// end getting week range, current monday, and start monday
 
-// Get employees
+// Get employees from users table
 $employees = [];
 $userQuery = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role FROM users WHERE status = 'active' AND role IN ('staff', 'senior')";
 $userResult = $conn->query($userQuery);
@@ -40,10 +41,13 @@ if ($userResult) {
     }
 }
 
-// Fetch engagements
+// Query to fetch active clients from the engagements table
 $clientQuery = "SELECT engagement_id, client_name FROM engagements";
 $clientResult = $conn->query($clientQuery);
-if ($clientResult === false) die('MySQL query failed: ' . $conn->error);
+
+if ($clientResult === false) {
+    die('MySQL query failed: ' . $conn->error);
+}
 
 $activeClients = [];
 while ($clientRow = $clientResult->fetch_assoc()) {
@@ -71,7 +75,9 @@ $query = "
 ";
 
 $stmt = $conn->prepare($query);
-if (!$stmt) die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
 
 $stmt->bind_param('ss', $startDate, $endDate);
 $stmt->execute();
@@ -90,7 +96,6 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
-// Dropdown for engagements
 $dropdownquery = "
   SELECT 
     e.engagement_id,
@@ -105,6 +110,7 @@ $dropdownquery = "
 ";
 
 $dropdownresult = $conn->query($dropdownquery);
+
 $clientsWithHours = [];
 while ($D_row = $dropdownresult->fetch_assoc()) {
   $clientsWithHours[] = $D_row;
@@ -117,8 +123,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+
     <script src="../assets/js/add_entry_modal.js"></script>
-    <script>const entries = <?php echo json_encode($entries); ?>;</script>
+    <script>
+      const entries = <?php echo json_encode($entries); ?>;
+    </script>
     <script src="../assets/js/manage_entry_modal.js"></script>
     <script src="../assets/js/show_entries.js"></script>
     <script src="../assets/js/edit_modal.js"></script>
@@ -126,158 +135,217 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
     <script src="../assets/js/filter_employees.js"></script>
+
+
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="flex-grow-1 p-4">
-<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h3 class="mb-0">Master Schedule</h3>
         <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
     </div>
     <div class="header-buttons">
-        <a href="#" onclick="location.reload();" class="badge text-black p-2 text-decoration-none fw-medium me-1" 
+        <a href="#" 
+           onclick="location.reload();" 
+           class="badge text-black p-2 text-decoration-none fw-medium me-1" 
            style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
           <i class="bi bi-arrow-clockwise me-3"></i>Refresh
         </a>
+
     </div>
 </div>
 
 <!-- upper search and week range selector -->
-<div class="bg-white border rounded p-4 mb-4">
-    <form id="filterForm" method="get" class="row g-3 align-items-center">
-        <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
-        </div>
-        <div class="col-md-6 d-flex justify-content-end align-items-center">
-            <a href="?week_offset=<?php echo $weekOffset - 1; ?>" class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);">
-                <i class="bi bi-chevron-left"></i>
-            </a>
-            <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-            <a href="?week_offset=<?php echo $weekOffset + 1; ?>" class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);">
-                <i class="bi bi-chevron-right"></i>
-            </a>
-        </div>
-    </form>
-</div>
+  <div class="bg-white border rounded p-4 mb-4">
+        <form id="filterForm" method="get" class="row g-3 align-items-center">
+
+            <!-- Search Bar -->
+            <div class="col-md-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
+            </div>
+
+            <!-- Week Selector -->
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
+                   class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
+
+                <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+
+                <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
+                   class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
+            </div>
+
+        </form>
+    </div>
+<!-- end upper search and week range selector -->
 
 <!-- Master Schedule table -->
-<?php
-$currentWeekIndex = null;
-foreach ($mondays as $idx => $monday) {
-    $weekStart = $monday;
-    $weekEnd = strtotime('+7 days', $weekStart);
-    if ($today >= $weekStart && $today < $weekEnd) {
-        $currentWeekIndex = $idx;
-        break;
-    }
-}
-?>
+  <?php
 
-<div class="table-responsive">
-  <table class="table table-bordered align-middle text-center">
-      <thead class="table-light">
-          <tr>
-              <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-              <?php foreach ($mondays as $idx => $monday): 
-                  $weekStart = $monday;
-                  $isCurrent = ($idx === $currentWeekIndex);
-              ?>
-                  <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                      <?php echo date('M j', $weekStart); ?><br>
-                      <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-                  </th>
-              <?php endforeach; ?>
-          </tr>
-      </thead>
+  // Find current week index for highlight
+  $currentWeekIndex = null;
+  foreach ($mondays as $idx => $monday) {
+      $weekStart = $monday;
+      $weekEnd = strtotime('+7 days', $weekStart);
+      if ($today >= $weekStart && $today < $weekEnd) {
+          $currentWeekIndex = $idx;
+          break;
+      }
+  }
+  ?>
 
-      <tbody id="employeesTableBody">
-      <?php foreach ($employees as $userId => $employee): ?>
-          <?php
-          $fullName = htmlspecialchars($employee['full_name']);
-          $nameParts = explode(' ', trim($fullName));
-          $initials = '';
-          foreach ($nameParts as $part) $initials .= strtoupper(substr($part, 0, 1));
-          $role = htmlspecialchars($employee['role']);
-          ?>
-          <tr>
-              <td class="text-start employee-name">
-                  <div class="d-flex align-items-center">
-                      <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                           style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                        <?php echo $initials; ?>
-                      </div>
-                      <div>
-                        <div class="fw-semibold"><?php echo $fullName; ?></div>
-                        <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                      </div>
-                  </div>
-              </td>
+  <div class="table-responsive">
+      <table class="table table-bordered align-middle text-center">
+          <thead class="table-light">
+              <tr>
+                  <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
 
-              <?php foreach ($mondays as $idx => $monday): 
-                  $weekStart = $monday;
-                  $weekKey = date('Y-m-d', $weekStart);
-                  $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                  $cellContent = "";
-                  $timeOffHours = 0;
-                  $cellClass = ''; // default class
-                  
-                  if (!empty($entriesForWeek)) {
-                      foreach ($entriesForWeek as $entry) {
-                          $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
-                          $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                          if ($engagementStatus === 'time_off') {
-                              $timeOffHours += $assignedHours;
-                              $cellClass = 'bg-warning'; // highlight for time off
-                          } else {
-                              switch ($engagementStatus) {
-                                  case 'confirmed': $entry_class = 'badge-confirmed'; break;
-                                  case 'pending': $entry_class = 'badge-pending'; break;
-                                  case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
-                                  default: $entry_class = 'badge-confirmed'; break;
-                              }
-                              $clientName = htmlspecialchars($entry['client_name']);
-                              $cellContent .= "<span class='badge badge-status $entry_class'>{$clientName} ({$assignedHours})</span><br>";
-                          }
-                      }
-                  } else {
-                      $cellContent = "<span class='text-muted'>+</span>";
-                  }
+                  <?php foreach ($mondays as $idx => $monday): ?>
+                      <?php 
+                      $weekStart = $monday;
+                      $isCurrent = ($idx === $currentWeekIndex);
+                      ?>
+                      <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                          <?php echo date('M j', $weekStart); ?><br>
+                          <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+                      </th>
+                  <?php endforeach; ?>
+              </tr>
+          </thead>
 
-                  $isCurrent = ($idx === $currentWeekIndex);
-                  $tdClass = $isCurrent ? 'highlight-today' : '';
-                  $combinedClass = trim("$tdClass $cellClass");
-              ?>
+          <tbody id="employeesTableBody">
+    <?php foreach ($employees as $userId => $employee): ?>
+        <?php
+        $fullName = htmlspecialchars($employee['full_name']);
+        $nameParts = explode(' ', trim($fullName));
+        $initials = '';
+        foreach ($nameParts as $part) {
+            $initials .= strtoupper(substr($part, 0, 1));
+        }
+        $role = htmlspecialchars($employee['role']);
+        ?>
+        <tr>
+            <td class="text-start employee-name">
+  <div class="d-flex align-items-center">
+    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+         style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+      <?php echo $initials; ?>
+    </div>
+    <div>
+      <div class="fw-semibold"><?php echo $fullName; ?></div>
+      <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+    </div>
+  </div>
+</td>
 
-              <?php if ($isAdmin): ?>
-                  <td class="addable <?php echo $combinedClass; ?>" style="position: relative; cursor:pointer;"
-                      data-user-id="<?php echo $userId; ?>" 
-                      data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                      data-week-start="<?php echo $weekKey; ?>"
-                      onclick='
-                          event.stopPropagation();
-                          <?php if (!empty($entriesForWeek)): ?>
-                              openManageEntryModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")
-                          <?php else: ?>
-                              openAddEntryModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")
-                          <?php endif; ?>
-                      '>
-                      <?php if ($timeOffHours > 0): ?>
-                          <div class="position-absolute top-0 end-0 m-1 text-danger fw-semibold" style="font-size: .75rem;"><?php echo $timeOffHours; ?>h</div>
-                      <?php endif; ?>
-                      <?php echo $cellContent; ?>
-                  </td>
-              <?php else: ?>
-                  <td class="<?php echo $combinedClass; ?>">
-                      <?php if ($timeOffHours > 0): ?>
-                          <div class="position-absolute top-0 end-0 m-1 text-danger fw-semibold" style="font-size: .75rem;"><?php echo $timeOffHours; ?>h</div>
-                      <?php endif; ?>
-                      <?php echo $cellContent; ?>
-                  </td>
-              <?php endif; ?>
-              <?php endforeach; ?>
-          </tr>
-      <?php endforeach; ?>
-      </tbody>
-  </table>
-</div>
+            <?php foreach ($mondays as $idx => $monday): ?>
+                <?php 
+                $weekStart = $monday;
+                $isCurrent = ($idx === $currentWeekIndex);
+
+                $weekKey = date('Y-m-d', $weekStart);
+                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+                $cellContent = "";
+
+                if (!empty($entriesForWeek)) {
+                    foreach ($entriesForWeek as $entry) {
+                        $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
+                        switch ($engagementStatus) {
+                            case 'confirmed': $entry_class = 'badge-confirmed'; break;
+                            case 'pending': $entry_class = 'badge-pending'; break;
+                            case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
+                            default: $entry_class = 'badge-confirmed'; break;
+                        }
+                        $clientName = htmlspecialchars($entry['client_name']);
+                        $assignedHours = htmlspecialchars($entry['assigned_hours']);
+                        $cellContent .= "<span class='badge badge-status $entry_class'>{$clientName} ({$assignedHours})</span><br>";
+                    }
+                } else {
+                    $cellContent = "<span class='text-muted'>+</span>";
+                }
+
+                $tdClass = $isCurrent ? 'highlight-today' : '';
+                ?>
+
+                <?php if ($isAdmin): ?>
+                    <?php if (!empty($entriesForWeek)): ?>
+                        <!-- Has entries → open ManageEntries modal -->
+                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                            data-user-id="<?php echo $userId; ?>" 
+                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                            data-week-start="<?php echo $weekKey; ?>"
+                            onclick='
+                                event.stopPropagation();
+                                console.log("Entries empty?", false);
+                                openManageEntryModal(
+                                    "<?php echo $userId; ?>",
+                                    <?php echo json_encode($fullName); ?>,
+                                    "<?php echo $weekKey; ?>"
+                                )
+                            '>
+                            <?php echo $cellContent; ?>
+                        </td>
+                    <?php else: ?>
+                        <!-- No Entries → open AddEntry modal -->
+                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                            data-user-id="<?php echo $userId; ?>" 
+                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                            data-week-start="<?php echo $weekKey; ?>"
+                            onclick='
+                                event.stopPropagation();
+                                console.log("Entries empty?", true);
+                                openAddEntryModal(
+                                    "<?php echo $userId; ?>",
+                                    <?php echo json_encode($fullName); ?>,
+                                    "<?php echo $weekKey; ?>"
+                                )
+                            '>
+                            <?php echo $cellContent; ?>
+                        </td>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <td class="<?php echo $tdClass; ?>">
+                        <?php echo $cellContent; ?>
+                    </td>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </tr>
+    <?php endforeach; ?>
+ </tbody>
+
+
+      </table>
+  </div>
+
+<!-- end master schedule table -->
+
+
+
+<?php if ($isAdmin): ?>
+
+<?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
+<?php include_once '../includes/modals/manage_entries.php'; ?>
+<?php include_once '../includes/modals/edit_entry.php'; ?>
+<?php include_once '../includes/modals/add_entry.php'; ?>
+<?php include_once '../includes/modals/add_engagement.php'; ?>
+
+<?php endif; ?>
+
+<?php include_once '../includes/modals/engagement_details.php'; ?>
+<?php include_once '../includes/modals/user_details.php'; ?>
+
+
+<script src="../assets/js/view_engagement_details.js"></script>
+<script src="../assets/js/number_of_weeks.js"></script>
+<script src="../assets/js/search.js"></script>
+<script src="../assets/js/client_dropdown.js"></script>
+<script src="../assets/js/dynamic_add_modal.js"></script>
+<script src="../assets/js/dynamic_manage_modal.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
