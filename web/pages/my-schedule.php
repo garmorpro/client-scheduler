@@ -209,7 +209,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 
 
   <!-- Week Summary -->
-  <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+  <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-5">
     <div>
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
