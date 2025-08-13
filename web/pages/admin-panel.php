@@ -2552,11 +2552,67 @@ if ($settingResult) {
 document.addEventListener('DOMContentLoaded', () => {
   // Show modal on configure button click
   const configureBtn = document.getElementById('configureEmailBtn');
+  const modalEl = document.getElementById('emailNotifConfigModal');
+  const modal = new bootstrap.Modal(modalEl);
+
   configureBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const modalEl = document.getElementById('emailNotifConfigModal');
-    const modal = new bootstrap.Modal(modalEl);
     modal.show();
+  });
+
+  // Enable/disable Send Test Email button
+  const testEmailInput = document.getElementById('testEmail');
+  const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+  const testEmailStatus = document.getElementById('testEmailStatus');
+
+  testEmailInput.addEventListener('input', () => {
+    const email = testEmailInput.value.trim();
+    if (email.length > 0) {
+      sendTestEmailBtn.classList.remove('disabled');
+      sendTestEmailBtn.style.pointerEvents = 'auto';
+      sendTestEmailBtn.style.opacity = '1';
+    } else {
+      sendTestEmailBtn.classList.add('disabled');
+      sendTestEmailBtn.style.pointerEvents = 'none';
+      sendTestEmailBtn.style.opacity = '0.5';
+    }
+  });
+
+  // Handle Send Test Email click
+  sendTestEmailBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = testEmailInput.value.trim();
+    if (!email) return;
+
+    // Show feedback immediately
+    testEmailStatus.textContent = 'Sending test email...';
+    testEmailStatus.classList.remove('d-none', 'text-success', 'text-danger');
+    testEmailStatus.classList.add('text-info');
+
+    try {
+      const resp = await fetch('../includes/send_test_email.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ test_email: email })
+      });
+
+      const result = await resp.json();
+
+      if (result.success) {
+        testEmailStatus.textContent = result.message || 'Test email sent successfully!';
+        testEmailStatus.classList.remove('text-info', 'text-danger');
+        testEmailStatus.classList.add('text-success');
+      } else {
+        testEmailStatus.textContent = result.message || 'Failed to send test email';
+        testEmailStatus.classList.remove('text-info', 'text-success');
+        testEmailStatus.classList.add('text-danger');
+      }
+    } catch (err) {
+      testEmailStatus.textContent = 'Network error: ' + err.message;
+      testEmailStatus.classList.remove('text-info', 'text-success');
+      testEmailStatus.classList.add('text-danger');
+      console.error(err);
+    }
   });
 
   // Save settings handler
@@ -2566,8 +2622,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
-
-    // Convert master switch to 'true'/'false'
     data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
 
     const payload = {
@@ -2575,27 +2629,20 @@ document.addEventListener('DOMContentLoaded', () => {
       settings: data
     };
 
-    // Debug: show payload in console
     console.log('Submitting email settings:', payload);
 
     try {
       const resp = await fetch('settings_backend.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      // Debug: show raw response
-      console.log('Fetch response:', resp);
 
       const result = await resp.json();
       console.log('Parsed JSON result:', result);
 
       if (result.success) {
-        // Hide the modal after successful save
-        const modalEl = document.getElementById('emailNotifConfigModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        modalInstance.hide();
+        modal.hide();
         console.log('Email settings saved successfully.');
       } else {
         alert('Failed to save settings: ' + (result.error || 'Unknown error'));
@@ -2607,6 +2654,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
 
 <!-- end email notification script -->
 
