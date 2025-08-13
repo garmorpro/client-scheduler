@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
         <div class="mt-4"></div>
         <h5 class="text-center mb-2">Change Your Password</h5>
-        <p class="text-center text-muted">For security, please update your password before proceeding.</p>
+        <p class="text-center text-danger mt-2">For security, please update your password before proceeding.</p>
 
         <!-- Show error alert only if error is not empty -->
         <?php if (!empty($error)): ?>
