@@ -61,6 +61,7 @@ $sqlEntries = "
         engagement_id,
         week_start,
         assigned_hours,
+        engagement_status,
         is_timeoff
     FROM entries
     WHERE user_id = ?
@@ -189,7 +190,15 @@ foreach ($totalAssignedHours as $week => $hours) {
             $weekKey = date('Y-m-d', $monday);
             $timeOffHours = $timeOff[$weekKey] ?? 0;
           ?>
-          <td><?php echo $timeOffHours > 0 ? $timeOffHours . " hrs" : "-"; ?></td>
+          <td>
+            <?php 
+              if ($timeOffHours > 0) {
+                echo "<span class='text-danger'>-" . $timeOffHours . " hrs</span>";
+              } else {
+                echo "-";
+              }
+            ?>
+          </td>
           <?php endforeach; ?>
         </tr>
 
