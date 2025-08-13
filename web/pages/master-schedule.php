@@ -1402,7 +1402,7 @@ function openEmployeeModal(employeeId) {
 <!-- end Script: dynamic buttons on add modal -->
 
 <!-- Script: Dynamic buttons on Manage Modal -->
-  <script>
+  <!-- <script>
   document.addEventListener('DOMContentLoaded', () => {
     const manageAddButtons = document.getElementById('manageAddButtons');
     const assignmentsListing = document.getElementById('assignmentsListing');
@@ -1527,7 +1527,7 @@ function openEmployeeModal(employeeId) {
       });
     }
   });
-  </script>
+  </script> -->
 
 
 <!-- end script: dynamic buttons on manage modal -->
