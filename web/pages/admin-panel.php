@@ -865,6 +865,7 @@ if ($settingResult) {
                 <option value="" disabled>Select role</option>
                 <option value="admin">Admin</option>
                 <option value="manager">Manager</option>
+                <option value="senior">Senior</option>
                 <option value="staff">Staff</option>
                 <!-- Add more roles as needed -->
               </select>
