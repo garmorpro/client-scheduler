@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const timeOffEntryContent = document.getElementById('timeOffEntryContent');
   const newEntryContent = document.getElementById('newEntryContent');
   const btnTimeOffEntry = document.getElementById('btnTimeOffEntry');
-  const btnNewEntry = document.getElementById('btnNewAEntry');
+  const btnNewEntry = document.getElementById('btnNewEntry');
   const engagementInput = document.getElementById('engagementInput');
   const selectedClient = document.getElementById('selectedClient');
   const assignedHours = document.getElementById('assignedHours');
