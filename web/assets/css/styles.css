@@ -541,4 +541,39 @@ input, select {
 
 
 
+/* my schedule */
 
+.week-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+    min-width: 140px;
+    height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.week-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+.week-card.current {
+    border: 2px solid #a0b9deff;
+    background: #ecf3ffff;
+}
+.week-title {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+.week-hours {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+.week-timeoff {
+    font-size: 0.75rem;
+    color: #dc3545;
+    font-style: italic;
+}

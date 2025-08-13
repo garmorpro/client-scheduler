@@ -10,22 +10,37 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 
-// ----------------------------------------------
-// 1. Calculate starting Monday (1 week before current week)
+// ------------------------------------------------------
+// WEEK NAVIGATION LOGIC
 $today = strtotime('today');
 $currentMonday = strtotime('monday this week', $today);
-$startMonday = strtotime('-1 week', $currentMonday);
 
-// Build 8 Mondays
+// If week_start provided, use that, else current week
+if (isset($_GET['week_start'])) {
+    $selectedMonday = strtotime($_GET['week_start']);
+    if ($selectedMonday === false) {
+        $selectedMonday = $currentMonday;
+    }
+} else {
+    $selectedMonday = $currentMonday;
+}
+
+$prevWeekMonday = date('Y-m-d', strtotime('-1 week', $selectedMonday));
+$nextWeekMonday = date('Y-m-d', strtotime('+1 week', $selectedMonday));
+
+$weekStartDate = date('Y-m-d', $selectedMonday);
+$weekEndDate   = date('Y-m-d', strtotime('+6 days', $selectedMonday));
+
+// ------------------------------------------------------
+// 8-WEEK OVERVIEW
+$startMonday = strtotime('-1 week', $currentMonday);
 $mondays = [];
 for ($i = 0; $i < 8; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
-// ----------------------------------------------
-// 2. Get all entries for current user for the date range
-$startDate = date('Y-m-d', $startMonday);
-$endDate = date('Y-m-d', strtotime('+7 weeks', $startMonday));
+$startDateRange = date('Y-m-d', $startMonday);
+$endDateRange = date('Y-m-d', strtotime('+7 weeks', $startMonday));
 
 $sqlEntries = "
     SELECT 
@@ -37,19 +52,14 @@ $sqlEntries = "
       AND week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($sqlEntries);
-if (!$stmt) {
-    die("Prepare failed (entries): (" . $conn->errno . ") " . $conn->error);
-}
-$stmt->bind_param('iss', $userId, $startDate, $endDate);
+$stmt->bind_param('iss', $userId, $startDateRange, $endDateRange);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$totalAssignedHours = []; // total working hours (excluding time off)
-$timeOffHours = [];       // time off only
-
+$totalAssignedHours = [];
+$timeOffHours = [];
 while ($row = $result->fetch_assoc()) {
     $week = $row['week_start'];
-
     if (!isset($totalAssignedHours[$week])) $totalAssignedHours[$week] = 0;
     if (!isset($timeOffHours[$week])) $timeOffHours[$week] = 0;
 
@@ -60,6 +70,42 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 $stmt->close();
+
+// ------------------------------------------------------
+// SELECTED WEEK DETAILS
+$sqlWeekDetails = "
+    SELECT 
+        engagement_name,
+        client_name,
+        assigned_hours,
+        is_timeoff,
+        status
+    FROM entries
+    WHERE user_id = ?
+      AND week_start = ?
+";
+$stmt = $conn->prepare($sqlWeekDetails);
+$stmt->bind_param('is', $userId, $weekStartDate);
+$stmt->execute();
+$weekResult = $stmt->get_result();
+
+$engagements = [];
+$timeOffs = [];
+$totalHours = 0;
+$timeOffTotal = 0;
+
+while ($row = $weekResult->fetch_assoc()) {
+    if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
+        $timeOffs[] = $row;
+        $timeOffTotal += floatval($row['assigned_hours']);
+    } else {
+        $engagements[] = $row;
+        $totalHours += floatval($row['assigned_hours']);
+    }
+}
+$stmt->close();
+
+$netHours = max(0, $totalHours - $timeOffTotal);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,11 +117,19 @@ $stmt->close();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
-.card {
-    min-width: 120px;
+.card { min-width: 120px; }
+.week-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem;
+    width: 140px;
 }
-.highlight-week {
+.week-card.current {
     background-color: #d3f9d8;
+}
+.timeoff-card {
+    border: 1px dashed #ff9800;
+    background: #fff8f0;
 }
 </style>
 </head>
@@ -98,72 +152,79 @@ $stmt->close();
     </div>
   </div>
 
-  <div class="week_overview_header">
-    <h6>
-      8-Week Overview
-    </h6>
+  <!-- 8-Week Overview -->
+  <div class="week_overview_header mb-3">
+    <h6>8-Week Overview</h6>
   </div>
-  <style>
-.week-card {
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    background: #fafafa;
-    transition: all 0.2s ease;
-    min-width: 140px;
-    height: 110px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.week-card:hover {
-    background: #f0f0f0;
-    transform: translateY(-2px);
-}
-.week-card.current {
-    border: 2px solid #a0b9deff;
-    background: #ecf3ffff;
-}
-.week-title {
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 4px;
-}
-.week-hours {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-}
-.week-timeoff {
-    font-size: 0.75rem;
-    color: #dc3545;
-    font-style: italic;
-}
-</style>
-
-<div class="d-flex flex-wrap gap-3">
+  <div class="d-flex flex-wrap gap-3 mb-5">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
         $timeOff = $timeOffHours[$weekKey] ?? 0;
-        $netHours = max(0, $assigned - $timeOff);
+        $net = max(0, $assigned - $timeOff);
         $isCurrent = ($monday == $currentMonday);
     ?>
         <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
-            <div class="week-title">
-                Week of <?php echo date('n/j', $monday); ?>
-            </div>
-            <div class="week-hours">
-                <?php echo $netHours; ?> hrs
-            </div>
+            <div class="fw-bold">Week of <?php echo date('n/j', $monday); ?></div>
+            <div><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
-                <div class="week-timeoff">
-                    <i class="bi bi-calendar-x"></i> -<?php echo $timeOff; ?> hrs time off
-                </div>
+                <small class="text-muted"><i class="bi bi-calendar-x"></i> -<?php echo $timeOff; ?> hrs</small>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
-</div>
+  </div>
 
+  <!-- Selected Week View -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
+      &lt; Previous Week
+    </a>
+    <div class="text-center">
+      <h5 class="mb-0">Week of <?php echo date('n/j', $selectedMonday); ?></h5>
+      <small><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
+    </div>
+    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
+      Next Week &gt;
+    </a>
+  </div>
+
+  <div class="list-group mb-3">
+    <?php foreach ($engagements as $eng): ?>
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-bold"><?php echo htmlspecialchars($eng['engagement_name']); ?></div>
+          <small class="text-muted"><?php echo htmlspecialchars($eng['client_name']); ?></small>
+        </div>
+        <div class="text-end">
+          <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
+          <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
+        </div>
+      </div>
+    <?php endforeach; ?>
+
+    <?php foreach ($timeOffs as $off): ?>
+      <div class="list-group-item d-flex justify-content-between align-items-center timeoff-card">
+        <div>
+          <div class="fw-bold"><?php echo htmlspecialchars($off['engagement_name']); ?></div>
+          <small class="text-muted">Approved time off</small>
+        </div>
+        <div class="text-end text-danger fw-bold">
+          -<?php echo $off['assigned_hours']; ?>h
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <!-- Week Summary -->
+  <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+    <div>
+      <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
+      <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
+    </div>
+    <div class="fw-bold"><?php echo $netHours; ?>h Net Hours</div>
+  </div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
