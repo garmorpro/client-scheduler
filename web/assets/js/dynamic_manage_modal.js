@@ -1,21 +1,48 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+  let currentUserId = null;
+  let currentUserName = null;
+  let currentWeekStart = null;
+
+  // Cache modals
+  const manageAddModalEl = document.getElementById('manageAddModal');
+  const manageAddModal = new bootstrap.Modal(manageAddModalEl);
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
   const assignmentsListContainer = document.getElementById('assignmentsListContainer');
   const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
+  const addAssignmentsButton = document.getElementById('addAssignmentsButton');
   const backToButtons = document.getElementById('backToButtons');
 
-  // Context variables (to be set before showing modal)
-  let currentUserId = null;
-  let currentWeekStart = null;
+  // Assume you have addEntryModal from your dynamic_add_modal.js
+  const addEntryModalEl = document.getElementById('addEntryModal');
+  const addEntryModal = new bootstrap.Modal(addEntryModalEl);
 
-  // Expose a global setter to initialize context externally
-  window.setManageEntryContext = function (userId, weekStart) {
-    currentUserId = userId;
-    currentWeekStart = weekStart;
-  };
+  // 1) Attach click listeners to all cells with class "addable"
+  document.querySelectorAll('.addable').forEach(cell => {
+    cell.addEventListener('click', (e) => {
+      e.stopPropagation();
 
-  manageAssignmentsButton.addEventListener('click', function () {
+      currentUserId = cell.getAttribute('data-user-id');
+      currentUserName = cell.getAttribute('data-user-name') || null; // Optional, if you add this attribute in PHP
+      currentWeekStart = cell.getAttribute('data-week-start');
+
+      const hasAssignments = cell.querySelectorAll('.badge').length > 0;
+
+      if (hasAssignments) {
+        // Show manage entries prompt modal
+        manageAddButtons.classList.remove('d-none');
+        assignmentsListing.classList.add('d-none');
+        assignmentsListContainer.innerHTML = '';
+        manageAddModal.show();
+      } else {
+        // Directly open add entry modal
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+      }
+    });
+  });
+
+  // 2) When clicking "Manage Existing Assignments"
+  manageAssignmentsButton.addEventListener('click', () => {
     if (!currentUserId || !currentWeekStart) {
       assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
       return;
@@ -39,11 +66,19 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 
-  backToButtons.addEventListener('click', function () {
+  // 3) Clicking "Add New Assignment" button in manageAddModal:
+  addAssignmentsButton.addEventListener('click', () => {
+    manageAddModal.hide();
+    openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+  });
+
+  // 4) Back button inside manageAddModal
+  backToButtons.addEventListener('click', () => {
     manageAddButtons.classList.remove('d-none');
     assignmentsListing.classList.add('d-none');
   });
 
+  // 5) Render assignments list function (reuse or update your existing one)
   function renderAssignmentsList(assignmentsForWeek) {
     assignmentsListContainer.innerHTML = '';
 
@@ -75,9 +110,9 @@ document.addEventListener('DOMContentLoaded', function () {
       editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
       editLink.setAttribute('data-assignment-id', assignment.assignment_id);
       editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
-      editLink.onclick = function (e) {
+      editLink.onclick = (e) => {
         e.preventDefault();
-        openEditModal(e); // make sure you have this function implemented
+        openEditModal(e);
       };
 
       const deleteLink = document.createElement('a');
@@ -86,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
       deleteLink.className = "text-danger";
       deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
       deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = function (e) {
+      deleteLink.onclick = (e) => {
         e.preventDefault();
         alert(`Delete assignment ${assignment.assignment_id}`);
       };
@@ -100,4 +135,5 @@ document.addEventListener('DOMContentLoaded', function () {
       assignmentsListContainer.appendChild(card);
     });
   }
+
 });
