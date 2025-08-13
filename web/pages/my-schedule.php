@@ -208,7 +208,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
           <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
         </div>
         <small class="text-muted">
-            Team member(s): 
+            <strong>Team member(s):</strong>
             <?php 
                 echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; 
             ?>
