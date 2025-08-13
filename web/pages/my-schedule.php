@@ -83,7 +83,11 @@ $stmt->close();
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4">
-  <h2>My Schedule</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">My Schedule</h3>
+    <p class="text-muted mb-0">Your personal schedule and time allocation</p>
+  </div>
+
   <div class="d-flex flex-wrap gap-2">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
