@@ -2601,47 +2601,66 @@ if ($settingResult) {
 
 
 
-    // Show modal on configure button click
-    document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
-      e.preventDefault();
-      const modalEl = document.getElementById('emailNotifConfigModal');
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    });
 
-    // Save settings handler
-    document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
 
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
+    document.addEventListener('DOMContentLoaded', () => {
+  // Show modal on configure button click
+  const configureBtn = document.getElementById('configureEmailBtn');
+  configureBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const modalEl = document.getElementById('emailNotifConfigModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  });
 
-      const payload = {
-        setting_master_key: 'email',
-        settings: data
-      };
+  // Save settings handler
+  const emailForm = document.getElementById('emailNotifConfigForm');
+  emailForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      try {
-        const resp = await fetch('settings_backend.php', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        const result = await resp.json();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
 
-        if (result.success) {
-          // Hide the modal after successful save
-          const modalEl = document.getElementById('emailNotifConfigModal');
-          const modalInstance = bootstrap.Modal.getInstance(modalEl);
-          modalInstance.hide();
-        } else {
-          alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
+    const payload = {
+      setting_master_key: 'email',
+      settings: data
+    };
+
+    // Debug: show payload in console
+    console.log('Submitting email settings:', payload);
+
+    try {
+      const resp = await fetch('settings_backend.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      // Debug: show raw response
+      console.log('Fetch response:', resp);
+
+      const result = await resp.json();
+      console.log('Parsed JSON result:', result);
+
+      if (result.success) {
+        // Hide the modal after successful save
+        const modalEl = document.getElementById('emailNotifConfigModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
+        console.log('Email settings saved successfully.');
+      } else {
+        alert('Failed to save settings: ' + (result.error || 'Unknown error'));
       }
-    });
+    } catch (err) {
+      alert('Network error: ' + err.message);
+      console.error(err);
+    }
+  });
+});
+
+
+
 
     document.getElementById('testEmail').addEventListener('input', function(){
     const btn = document.getElementById('sendTestEmailBtn');
