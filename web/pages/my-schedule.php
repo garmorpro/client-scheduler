@@ -117,15 +117,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
 .card { min-width: 120px; }
-.week-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0.75rem;
-    width: 140px;
-}
-.week-card.current {
-    background-color: #d3f9d8;
-}
+
 .timeoff-card {
     border: 1px dashed #ff9800;
     background: #fff8f0;
@@ -179,7 +171,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
       <h5 class="mb-0">Week of <?php echo date('n/j', $selectedMonday); ?></h5>
       <small><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
     </div>
-    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn ps-2">
+    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
       Next Week<i class="bi bi-chevron-right ms-2"></i>
     </a>
   </div>
