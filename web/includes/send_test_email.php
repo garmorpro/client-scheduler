@@ -1,76 +1,61 @@
 <?php
+// Always start session
 session_start();
-require_once 'db.php';
-if (!file_exists('db.php')) {
-    echo json_encode(['success'=>false,'message'=>'DB file not found']);
-    exit();
-}
-require 'vendor/autoload.php';
 
-// Always return JSON
+// Force JSON output
 header('Content-Type: application/json');
 
-// Suppress notices, warnings will be handled
+// Suppress HTML warnings/notices (important for JSON parsing)
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 0);
 
-// --------------------------
-// Check user role
-// --------------------------
-$role = strtolower(trim($_SESSION['user_role'] ?? ''));
+// Include DB and PHPMailer
+require_once 'db.php';
+require 'vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Make sure user role is set and allowed
+$role = strtolower($_SESSION['user_role'] ?? '');
 if (!in_array($role, ['admin','manager'])) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit();
 }
 
-// --------------------------
-// Parse JSON input
-// --------------------------
+// Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 $testEmail = filter_var($input['test_email'] ?? '', FILTER_VALIDATE_EMAIL);
-
 if (!$testEmail) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid email address']);
     exit();
 }
 
-// --------------------------
 // Fetch email settings from DB
-// --------------------------
 function getEmailSettings($conn) {
     $settings = [];
-    if ($conn) {
-        $sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
-        $result = $conn->query($sql);
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $settings[$row['setting_key']] = $row['setting_value'];
-            }
-        }
+    $sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
+    $result = $conn->query($sql);
+    if (!$result) return $settings; // prevent fatal error if query fails
+
+    while ($row = $result->fetch_assoc()) {
+        $settings[$row['setting_key']] = $row['setting_value'];
     }
     return $settings;
 }
 
 $settings = getEmailSettings($conn);
 
-// --------------------------
-// Check if email notifications are enabled
-// --------------------------
+// Check if notifications are enabled
 if (empty($settings['enable_email_notifications']) || $settings['enable_email_notifications'] !== 'true') {
     echo json_encode(['success' => false, 'message' => 'Email notifications are disabled']);
     exit();
 }
 
-// --------------------------
-// Send test email with PHPMailer
-// --------------------------
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
+// Send test email
 $mail = new PHPMailer(true);
-
 try {
     $mail->isSMTP();
     $mail->Host       = $settings['smtp_server'] ?? '';
@@ -78,12 +63,9 @@ try {
     $mail->Username   = $settings['smtp_username'] ?? '';
     $mail->Password   = $settings['smtp_password'] ?? '';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = !empty($settings['smtp_port']) ? (int)$settings['smtp_port'] : 587;
+    $mail->Port       = $settings['smtp_port'] ?? 587;
 
-    $mail->setFrom(
-        $settings['sender_email'] ?? 'no-reply@example.com',
-        $settings['sender_name'] ?? 'AARC-360'
-    );
+    $mail->setFrom($settings['sender_email'] ?? 'no-reply@example.com', $settings['sender_name'] ?? 'AARC-360');
     $mail->addAddress($testEmail);
 
     $mail->isHTML(true);
@@ -94,10 +76,6 @@ try {
 
     echo json_encode(['success' => true, 'message' => "Test email sent to {$testEmail}"]);
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => "Email could not be sent. Error: {$mail->ErrorInfo}"
-    ]);
-    exit();
+    echo json_encode(['success' => false, 'message' => "Email could not be sent. Error: {$mail->ErrorInfo}"]);
 }
+exit();

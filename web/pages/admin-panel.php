@@ -2573,95 +2573,72 @@ if ($settingResult) {
 
 <!-- email notifications script -->
     <script>
-      // Show modal on configure button click
-      document.getElementById('configureEmailBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const modalEl = document.getElementById('emailNotifConfigModal');
-        const modal = new bootstrap.Modal(modalEl);
-        modal.show();
-      });
+      // Show modal
+document.getElementById('configureEmailBtn').addEventListener('click', e => {
+    e.preventDefault();
+    const modalEl = document.getElementById('emailNotifConfigModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+});
 
-      // Enable/disable Send Test Email button based on email input validity
-      const testEmailInput = document.getElementById('testEmail');
-      const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+// Enable/disable Send Test Email button
+const testEmailInput = document.getElementById('testEmail');
+const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
+const statusEl = document.getElementById('testEmailStatus');
 
-      testEmailInput.addEventListener('input', function () {
-        if (testEmailInput.checkValidity()) {
-          sendTestEmailBtn.classList.remove('disabled');
-          sendTestEmailBtn.style.pointerEvents = 'auto';
-          sendTestEmailBtn.style.opacity = '1';
-        } else {
-          sendTestEmailBtn.classList.add('disabled');
-          sendTestEmailBtn.style.pointerEvents = 'none';
-          sendTestEmailBtn.style.opacity = '0.5';
-        }
-      });
+testEmailInput.addEventListener('input', () => {
+    if (testEmailInput.checkValidity()) {
+        sendTestEmailBtn.classList.remove('disabled');
+        sendTestEmailBtn.style.pointerEvents = 'auto';
+        sendTestEmailBtn.style.opacity = '1';
+    } else {
+        sendTestEmailBtn.classList.add('disabled');
+        sendTestEmailBtn.style.pointerEvents = 'none';
+        sendTestEmailBtn.style.opacity = '0.5';
+    }
+});
 
-      // Send test email button handler
-      sendTestEmailBtn.addEventListener('click', async () => {
-        const testEmail = testEmailInput.value.trim();
-        const statusEl = document.getElementById('testEmailStatus');
-        statusEl.classList.add('d-none');
-        statusEl.classList.remove('text-danger', 'text-success');
-        if (!testEmail) {
-          alert('Please enter a test email address.');
-          return;
-        }
-        statusEl.textContent = 'Sending test email...';
-        statusEl.classList.remove('d-none');
-        try {
-          const resp = await fetch('../includes/send_test_email.php', {
+// Send test email
+sendTestEmailBtn.addEventListener('click', async () => {
+    const testEmail = testEmailInput.value.trim();
+    statusEl.classList.remove('text-danger', 'text-success');
+    statusEl.classList.remove('d-none');
+    statusEl.textContent = 'Sending test email...';
+
+    if (!testEmail) {
+        alert('Please enter a test email address.');
+        return;
+    }
+
+    try {
+        const resp = await fetch('includes/send_test_email.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ test_email: testEmail })
-          });
-          const result = await resp.json();
-          if (result.success) {
-            statusEl.textContent = 'Test email sent successfully!';
-            statusEl.classList.add('text-success');
-          } else {
-            statusEl.textContent = 'Failed to send test email: ' + (result.error || 'Unknown error');
+        });
+
+        // Check for HTTP errors
+        if (!resp.ok) {
+            const text = await resp.text();
+            statusEl.textContent = 'Error: ' + text;
             statusEl.classList.add('text-danger');
-          }
-        } catch (err) {
-          statusEl.textContent = 'Network error: ' + err.message;
-          statusEl.classList.add('text-danger');
+            return;
         }
-      });
 
-      // Save settings handler
-      document.getElementById('emailNotifConfigForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-        data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-
-        const payload = {
-          setting_master_key: 'email',
-          settings: data
-        };
-
-        try {
-          const resp = await fetch('settings_backend.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-          });
-          const result = await resp.json();
-          if (result.success) {
-            // Optionally alert success
-            // alert('Settings saved successfully!');
-            const modalEl = document.getElementById('emailNotifConfigModal');
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            modalInstance.hide();
-          } else {
-            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
-          }
-        } catch (err) {
-          alert('Network error: ' + err.message);
+        const result = await resp.json(); // safely parse JSON
+        if (result.success) {
+            statusEl.textContent = result.message;
+            statusEl.classList.add('text-success');
+        } else {
+            statusEl.textContent = 'Failed: ' + (result.message || 'Unknown error');
+            statusEl.classList.add('text-danger');
         }
-      });
+    } catch (err) {
+        statusEl.textContent = 'Network error: ' + err.message;
+        statusEl.classList.add('text-danger');
+    }
+});
+
     </script>
 
 <!-- end email notification script -->
