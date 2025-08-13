@@ -25,24 +25,12 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 
         <!-- Nav Links -->
         <ul class="nav flex-column">
-            <li class="nav-item mb-2">
+            <!-- <li class="nav-item mb-2">
                 <a href="dashboard.php" class="nav-link d-flex align-items-center px-0 text-dark">
                     <i class="bi bi-layout-wtf me-2"></i>
                     Dashboard
                 </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                    <i class="bi bi-calendar-range me-2"></i>
-                    Master Schedule
-                </a>
-            </li>
-            <li class="nav-item mb-2 <?php if ($isAdmin) echo 'd-none'; ?>">
-                <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                    <i class="bi bi-person me-2"></i>
-                    My Schedule
-                </a>
-            </li>
+            </li> -->
             <?php if ($isAdmin): ?>
                 <li class="nav-item">
                     <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
@@ -51,6 +39,18 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
                     </a>
                 </li>
             <?php endif; ?>
+            <li class="nav-item mb-2 <?php if ($isAdmin) echo 'd-none'; ?>">
+                <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                    <i class="bi bi-person me-2"></i>
+                    My Schedule
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                    <i class="bi bi-calendar-range me-2"></i>
+                    Master Schedule
+                </a>
+            </li>
         </ul>
     </div>
 
