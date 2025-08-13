@@ -253,10 +253,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     foreach ($entriesForWeek as $entry) {
                         $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                         switch ($engagementStatus) {
-                            case 'confirmed': $badgeColor = 'success'; $entry_class = 'badge-confirmed'; break;
-                            case 'pending': $badgeColor = 'purple'; $entry_class = 'badge-pending'; break;
-                            case 'not_confirmed': $badgeColor = 'primary'; $entry_class = 'badge-not-confirmed'; break;
-                            default: $badgeColor = 'secondary'; $entry_class = 'badge-confirmed'; break;
+                            case 'confirmed': $entry_class = 'badge-confirmed'; break;
+                            case 'pending': $entry_class = 'badge-pending'; break;
+                            case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
+                            default: $entry_class = 'badge-confirmed'; break;
                         }
                         $clientName = htmlspecialchars($entry['client_name']);
                         $assignedHours = htmlspecialchars($entry['assigned_hours']);
