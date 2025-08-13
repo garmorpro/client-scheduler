@@ -262,7 +262,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 
 
   <!-- Week Summary -->
-<div class="list-group-item d-flex justify-content-between shadow-sm align-items-center bg-light p-4" style="background-color: rgb(242, 242, 243); border-radius: 15px;">
+<div class="list-group-item d-flex justify-content-between shadow-sm align-items-center bg-light p-4" style="background-color: rgb(242, 242, 243) !important; border-radius: 15px;">
     <!-- Left side: summary info -->
     <div>
         <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div>
