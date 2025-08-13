@@ -3,10 +3,9 @@ session_start();
 require_once 'db.php';
 require 'vendor/autoload.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+header('Content-Type: application/json');
 
-// Only allow admin/manager to test
+// Only allow admin/manager
 $role = strtolower($_SESSION['user_role'] ?? '');
 if (!in_array($role, ['admin','manager'])) {
     http_response_code(403);
@@ -14,15 +13,17 @@ if (!in_array($role, ['admin','manager'])) {
     exit();
 }
 
-// Get test email from POST
-$testEmail = filter_input(INPUT_POST, 'test_email', FILTER_VALIDATE_EMAIL);
+// Parse JSON input
+$input = json_decode(file_get_contents('php://input'), true);
+$testEmail = filter_var($input['test_email'] ?? '', FILTER_VALIDATE_EMAIL);
+
 if (!$testEmail) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid email address']);
     exit();
 }
 
-// Fetch email settings from DB
+// Fetch email settings
 function getEmailSettings($conn) {
     $sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
     $result = $conn->query($sql);
@@ -35,13 +36,15 @@ function getEmailSettings($conn) {
 
 $settings = getEmailSettings($conn);
 
-// Check if email notifications are enabled
 if (empty($settings['enable_email_notifications']) || $settings['enable_email_notifications'] !== 'true') {
     echo json_encode(['success' => false, 'message' => 'Email notifications are disabled']);
     exit();
 }
 
-// Send test email using PHPMailer
+// PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 $mail = new PHPMailer(true);
 
 try {
