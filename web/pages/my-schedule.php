@@ -156,7 +156,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
             <div class="fw-bold">Week of <?php echo date('n/j', $monday); ?></div>
             <div><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
-                <small class="text-muted"><i class="bi bi-calendar-x"></i> -<?php echo $timeOff; ?> hrs</small>
+                <small class="text-danger">-<?php echo $timeOff; ?> hrs</small>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
