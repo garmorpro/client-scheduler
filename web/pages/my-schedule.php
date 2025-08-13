@@ -171,7 +171,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   <div class="week_overview_header mb-3">
     <div class="fw-semibold fs-6">8-Week Overview</div>
   </div>
-  <div class="d-flex flex-wrap gap-3 mb-3">
+  <div class="d-flex flex-wrap gap-3 mb-4">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
         $assigned = $totalAssignedHours[$weekKey] ?? 0;
