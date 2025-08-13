@@ -65,7 +65,6 @@ $query = "
         a.week_start,
         a.assigned_hours,
         e.status AS engagement_status,
-        a.type
     FROM 
         entries a
     JOIN 
