@@ -577,7 +577,11 @@ input, select {
     color: #dc3545;
     font-style: italic;
 }
-
+.week-btn {
+    background-color: #ffffff !important; /* remove background on hover */
+    color: rgb(41,41,41) !important; /* keep same text color */
+    border-color: rgb(229,229,229) !important; /* keep same border */
+}
 .week-btn:hover {
     background-color: #ffffff !important; /* remove background on hover */
     color: rgb(41,41,41) !important; /* keep same text color */

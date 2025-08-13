@@ -172,15 +172,15 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 
   <!-- Selected Week View -->
   <div class="d-flex justify-content-between align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
-    <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn" style="border-color: rgb(229,229,229); background-color: #ffffff;">
-      &lt; Previous Week
+    <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+      <i class="bi bi-chevron-left"></i> Previous Week
     </a>
     <div class="text-center">
       <h5 class="mb-0">Week of <?php echo date('n/j', $selectedMonday); ?></h5>
       <small><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
     </div>
-    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
-      Next Week &gt;
+    <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+      Next Week <i class="bi bi-chevron-right"></i>
     </a>
   </div>
 
