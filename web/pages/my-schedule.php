@@ -208,7 +208,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     <?php foreach ($engagements as $eng): 
       $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
     ?>
-    <div class="card p-3 shadow-sm mb-3">
+    <div class="card p-3 mb-3">
       <div class="d-flex justify-content-between align-items-start mb-2">
       <!-- Left side: Client name and team members -->
         <div>
