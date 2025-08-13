@@ -98,6 +98,11 @@ $stmt->close();
     </div>
   </div>
 
+  <div class="week_overview_header">
+    <h6>
+      8-Week Overview
+    </h6>
+  </div>
   <div class="d-flex justify-content-between flex-wrap gap-2 ms-5 me-5">
     <?php foreach ($mondays as $monday): 
         $weekKey = date('Y-m-d', $monday);
