@@ -10,8 +10,8 @@
   <!-- Initial buttons -->
   <div id="entryTypePrompt" class="text-center">
     <p>Please choose the type of entry:</p>
-    <button id="manageEntriesButton" class="badge text-bg-warning text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Manage Existing Entries</button>
-    <button id="addEntriesButton" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Add New Entry</button>
+    <button id="manageEntriesButton" class="badge text-bg-warning text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);border: none !important;">Manage Existing Entries</button>
+    <button id="addEntriesButton" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;">Add New Entry</button>
   </div>
 
   <div id="entriesListing" class="d-none">
