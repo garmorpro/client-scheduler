@@ -253,7 +253,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     <!-- Left side: summary info -->
     <div>
         <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div>
-        <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
+        <small class="text-muted"><?php echo count($engagements); ?> active engagement(s) <i class="bi bi-dot"></i> <?php echo $timeOffTotal; ?>hrs time off</small>
     </div>
 
     <!-- Right side: Net hours -->
