@@ -199,16 +199,21 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 
   <!-- Detailed Week Entries as Cards -->
   <div class="d-flex flex-column mb-3">
-    <?php foreach ($engagements as $eng): 
+   <?php foreach ($engagements as $eng): 
     $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
 ?>
     <div class="card p-3 shadow-sm mb-3">
         <div class="d-flex justify-content-between align-items-start mb-2">
-            <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-            <small class="text-muted">
-                <strong>Team member(s):</strong>
-                <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
-            </small>
+            <!-- Left side: Client name and team members -->
+            <div>
+                <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+                <small class="text-muted">
+                    <strong>Team member(s):</strong>
+                    <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
+                </small>
+            </div>
+
+            <!-- Right side: Hours and status -->
             <div class="text-end">
                 <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
                 <?php
@@ -223,11 +228,9 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
                 <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
             </div>
         </div>
-        <div>
-            
-        </div>
     </div>
 <?php endforeach; ?>
+
 
 
     <?php foreach ($timeOffs as $off): ?>
