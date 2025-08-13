@@ -61,7 +61,6 @@ $sqlEntries = "
         engagement_id,
         week_start,
         assigned_hours,
-        engagement_status,
         is_timeoff
     FROM entries
     WHERE user_id = ?
