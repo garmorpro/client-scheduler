@@ -25,6 +25,7 @@ $firstWeek = reset($mondays);
 $lastWeek = end($mondays);
 $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
 
+// ----------------------------------------------
 // 1. Get engagements assigned to current user
 $sqlEngagements = "
     SELECT DISTINCT e.engagement_id, e.client_name
@@ -36,6 +37,9 @@ $sqlEngagements = "
 ";
 
 $stmt = $conn->prepare($sqlEngagements);
+if (!$stmt) {
+    die("Prepare failed (engagements): (" . $conn->errno . ") " . $conn->error);
+}
 $stmt->bind_param('i', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -46,6 +50,7 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
+// ----------------------------------------------
 // 2. Fetch all entries for current user for these weeks and engagements
 $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
@@ -64,6 +69,9 @@ $sqlEntries = "
 ";
 
 $stmt = $conn->prepare($sqlEntries);
+if (!$stmt) {
+    die("Prepare failed (entries): (" . $conn->errno . ") " . $conn->error);
+}
 $stmt->bind_param('iss', $userId, $startDate, $endDate);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -85,6 +93,7 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
+// ----------------------------------------------
 // 3. Calculate total assigned hours (sum assigned hours for all engagements per week)
 $totalAssignedHours = [];
 foreach ($mondays as $monday) {
@@ -106,29 +115,46 @@ foreach ($totalAssignedHours as $week => $hours) {
 }
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Schedule</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+.highlight-today {
+    background-color: #d3f9d8;
+}
+</style>
+</head>
+<body>
 
-<!-- HTML -->
-<div class="table-responsive">
-  <table class="table table-bordered align-middle text-center">
-    <thead class="table-light">
-      <tr>
-        <th class="text-start align-middle">Engagement</th>
-        <?php foreach ($mondays as $idx => $monday): 
+<div class="container mt-4">
+  <h2>My Schedule</h2>
+  <p><?php echo htmlspecialchars($rangeLabel); ?></p>
+
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle text-center">
+      <thead class="table-light">
+        <tr>
+          <th class="text-start align-middle">Engagement</th>
+          <?php foreach ($mondays as $idx => $monday): 
             $weekStart = $monday;
-            $isCurrent = ($idx === $currentWeekIndex);
-        ?>
-        <th class="<?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-          <?php echo date('M j', $weekStart); ?><br>
-          <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-        </th>
-        <?php endforeach; ?>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($engagements as $engId => $clientName): ?>
-      <tr>
-        <td class="text-start"><?php echo htmlspecialchars($clientName); ?></td>
-        <?php foreach ($mondays as $monday): 
+            $isCurrent = ($idx === array_search($currentMonday, $mondays));
+          ?>
+          <th class="<?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+            <?php echo date('M j', $weekStart); ?><br />
+            <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+          </th>
+          <?php endforeach; ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($engagements as $engId => $clientName): ?>
+        <tr>
+          <td class="text-start"><?php echo htmlspecialchars($clientName); ?></td>
+          <?php foreach ($mondays as $monday): 
             $weekKey = date('Y-m-d', $monday);
             $cellEntries = $entries[$engId][$weekKey] ?? [];
             $cellContent = '';
@@ -148,33 +174,38 @@ foreach ($totalAssignedHours as $week => $hours) {
             } else {
                 $cellContent = "<span class='text-muted'>-</span>";
             }
-        ?>
-        <td><?php echo $cellContent; ?></td>
+          ?>
+          <td><?php echo $cellContent; ?></td>
+          <?php endforeach; ?>
+        </tr>
         <?php endforeach; ?>
-      </tr>
-      <?php endforeach; ?>
 
-      <!-- Time Off Row -->
-      <tr class="table-secondary fw-semibold">
-        <td>Time Off</td>
-        <?php foreach ($mondays as $monday): 
+        <!-- Time Off Row -->
+        <tr class="table-secondary fw-semibold">
+          <td>Time Off</td>
+          <?php foreach ($mondays as $monday): 
             $weekKey = date('Y-m-d', $monday);
             $timeOffHours = $timeOff[$weekKey] ?? 0;
-        ?>
-        <td><?php echo $timeOffHours > 0 ? $timeOffHours . " hrs" : "-"; ?></td>
-        <?php endforeach; ?>
-      </tr>
+          ?>
+          <td><?php echo $timeOffHours > 0 ? $timeOffHours . " hrs" : "-"; ?></td>
+          <?php endforeach; ?>
+        </tr>
 
-      <!-- Total Hours Row -->
-      <tr class="table-info fw-semibold">
-        <td>Total Hours</td>
-        <?php foreach ($mondays as $monday): 
+        <!-- Total Hours Row -->
+        <tr class="table-info fw-semibold">
+          <td>Total Hours</td>
+          <?php foreach ($mondays as $monday): 
             $weekKey = date('Y-m-d', $monday);
             $totalHours = $totalAssignedHours[$weekKey] ?? 0;
-        ?>
-        <td><?php echo $totalHours > 0 ? $totalHours . " hrs" : "-"; ?></td>
-        <?php endforeach; ?>
-      </tr>
-    </tbody>
-  </table>
+          ?>
+          <td><?php echo $totalHours > 0 ? $totalHours . " hrs" : "-"; ?></td>
+          <?php endforeach; ?>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
