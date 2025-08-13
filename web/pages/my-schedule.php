@@ -187,15 +187,26 @@ $netHours = max(0, $totalHours - $timeOffTotal);
           <div class="text-end">
             <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
             <?php
+              $statusDisplayMap = [
+                'confirmed' => 'Confirmed',
+                'pending' => 'Pending',
+                'not_confirmed' => 'Not Confirmed'
+              ];
               $status = strtolower($eng['status'] ?? 'confirmed');
               switch ($status) {
                   case 'confirmed': $status_class = 'text-confirmed'; break;
                   case 'pending': $status_class = 'text-pending'; break;
                   case 'not_confirmed': $status_class = 'text-not-confirmed'; break;
-                  default: $status_class = 'secondary'; break;
+                  default: $status_class = 'text-danger'; break;
+              }
+              switch ($status) {
+                  case 'confirmed': $status_format = 'Confirmed'; break;
+                  case 'pending': $status_format = 'Pending'; break;
+                  case 'not_confirmed': $status_format = 'Not Confirmed'; break;
+                  default: $status_format = 'Error'; break;
               }
             ?>
-            <small class="text-status <?php echo $status_class; ?>"><?php echo htmlspecialchars($eng['status']); ?></small>
+            <small class="text-status <?php echo $status_class; ?>"><?php echo htmlspecialchars($status_form); ?></small>
           </div>
         </div>
       </div>
