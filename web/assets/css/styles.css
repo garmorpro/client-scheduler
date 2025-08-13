@@ -200,7 +200,7 @@ body {
     min-width: 60px;
     text-align: center;
 }
-/* Status badge */
+/* - badge */
 .badge-status {
     padding: 4px 10px;
     border-radius: 10px;
@@ -235,7 +235,7 @@ body {
 
 .text-status {
     padding: 2px 5px;
-    border-radius: 10px;
+    border-radius: 5px;
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
