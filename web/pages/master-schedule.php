@@ -253,14 +253,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     foreach ($entriesForWeek as $entry) {
                         $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                         switch ($engagementStatus) {
-                            case 'confirmed': $badgeColor = 'badge-confirmed'; break;
-                            case 'pending': $badgeColor = 'badge-pending'; break;
-                            case 'not_confirmed': $badgeColor = 'badge-not-confirmed'; break;
-                            default: $badgeColor = 'secondary'; break;
+                            case 'confirmed': $badgeColor = 'success'; $entry_class = 'badge-confirmed'; break;
+                            case 'pending': $badgeColor = 'purple'; $entry_class = 'badge-confirmed'; break;
+                            case 'not_confirmed': $badgeColor = 'primary'; $entry_class = 'badge-confirmed'; break;
+                            default: $badgeColor = 'secondary'; $entry_class = 'badge-confirmed'; break;
                         }
                         $clientName = htmlspecialchars($entry['client_name']);
                         $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                        $cellContent .= "<span class='badge-status $badgeColor mt-1'>{$clientName} ({$assignedHours})</span><br>";
+                        $cellContent .= "<span class='badge bg-$badgeColor $entry_class'>{$clientName} ({$assignedHours})</span><br>";
                     }
                 } else {
                     $cellContent = "<span class='text-muted'>+</span>";
