@@ -333,7 +333,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     '>
                                     <?php 
                                       if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours} PTO</span>";
                                       }
                                       echo $cellContent; 
                                     ?>
@@ -343,7 +343,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             <td class="<?php echo $tdClass; ?>">
                                 <?php 
                                   if ($hasTimeOff) {
-                                      echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
+                                      echo "<span class='timeoff-corner text-danger'>{$timeOffHours} PTO</span>";
                                   }
                                   echo $cellContent; 
                                 ?>
