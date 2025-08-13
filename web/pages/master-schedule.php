@@ -286,7 +286,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         }
 
                         // Build td class list
-                        $tdClass = ($isCurrent ? 'highlight-today ' : '');
+                        // $tdClass = ($isCurrent ? 'highlight-today ' : '');
                         if ($hasTimeOff) {
                             $tdClass .= 'position-relative timeoff-cell ';
                         }
