@@ -117,13 +117,11 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
 .card { min-width: 120px; }
+
 .timeoff-card {
     border: 1px dashed #ff9800;
     background: #fff8f0;
 }
-.week-card { padding: 1rem; border-radius: 0.5rem; background: #f5f5f5; }
-.entry-card { margin-bottom: 1rem; border-radius: 0.75rem; }
-.timeoff-text { color: #d9534f; font-weight: bold; }
 </style>
 </head>
 <body class="d-flex">
@@ -178,34 +176,34 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     </a>
   </div>
 
-  <div class="row mb-3">
+  <div class="list-group mb-3">
     <?php foreach ($engagements as $eng): ?>
-      <div class="col-md-6 col-lg-4">
-        <div class="card entry-card p-3 shadow-sm">
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
           <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-          <div class="d-flex justify-content-between mt-2">
-            <span class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</span>
-            <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
-          </div>
+        </div>
+        <div class="text-end">
+          <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
+          <small class="badge bg-light text-dark"><?php echo htmlspecialchars($eng['status']); ?></small>
         </div>
       </div>
     <?php endforeach; ?>
 
     <?php foreach ($timeOffs as $off): ?>
-      <div class="col-md-6 col-lg-4">
-        <div class="card entry-card p-3 timeoff-card shadow-sm">
+      <div class="list-group-item d-flex justify-content-between align-items-center timeoff-card">
+        <div>
           <div class="fw-bold"><?php echo htmlspecialchars($off['client_name']); ?></div>
           <small class="text-muted">Approved time off</small>
-          <div class="d-flex justify-content-end mt-2 timeoff-text">
-            -<?php echo $off['assigned_hours']; ?>h
-          </div>
+        </div>
+        <div class="text-end text-danger fw-bold">
+          -<?php echo $off['assigned_hours']; ?>h
         </div>
       </div>
     <?php endforeach; ?>
   </div>
 
   <!-- Week Summary -->
-  <div class="card p-3 bg-light d-flex justify-content-between align-items-center">
+  <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
     <div>
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
