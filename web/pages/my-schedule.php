@@ -15,7 +15,6 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 $today = strtotime('today');
 $currentMonday = strtotime('monday this week', $today);
 
-// If week_start provided, use that, else current week
 if (isset($_GET['week_start'])) {
     $selectedMonday = strtotime($_GET['week_start']);
     if ($selectedMonday === false) {
@@ -75,13 +74,14 @@ $stmt->close();
 // SELECTED WEEK DETAILS
 $sqlWeekDetails = "
     SELECT 
-        engagement_name,
-        client_name,
-        assigned_hours,
-        is_timeoff
-    FROM entries
-    WHERE user_id = ?
-      AND week_start = ?
+        e.assigned_hours,
+        e.is_timeoff,
+        eng.client_name,
+        eng.status
+    FROM entries e
+    JOIN engagements eng ON e.engagement_id = eng.engagement_id
+    WHERE e.user_id = ?
+      AND e.week_start = ?
 ";
 $stmt = $conn->prepare($sqlWeekDetails);
 $stmt->bind_param('is', $userId, $weekStartDate);
@@ -142,10 +142,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
       <p class="text-muted mb-0">Your personal schedule and time allocation</p>
     </div>
     <div class="header-buttons">
-      <a href="#" 
-        onclick="location.reload();" 
-        class="badge text-black p-2 text-decoration-none fw-medium me-1" 
-        style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+      <a href="#" onclick="location.reload();" class="badge text-black p-2 text-decoration-none fw-medium me-1" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
         <i class="bi bi-arrow-clockwise me-3"></i>Refresh
       </a>
     </div>
@@ -191,8 +188,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     <?php foreach ($engagements as $eng): ?>
       <div class="list-group-item d-flex justify-content-between align-items-center">
         <div>
-          <div class="fw-bold"><?php echo htmlspecialchars($eng['engagement_name']); ?></div>
-          <small class="text-muted"><?php echo htmlspecialchars($eng['client_name']); ?></small>
+          <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
         </div>
         <div class="text-end">
           <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>h</div>
@@ -204,7 +200,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     <?php foreach ($timeOffs as $off): ?>
       <div class="list-group-item d-flex justify-content-between align-items-center timeoff-card">
         <div>
-          <div class="fw-bold"><?php echo htmlspecialchars($off['engagement_name']); ?></div>
+          <div class="fw-bold"><?php echo htmlspecialchars($off['client_name']); ?></div>
           <small class="text-muted">Approved time off</small>
         </div>
         <div class="text-end text-danger fw-bold">
