@@ -13,4 +13,19 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 
+
+function getEmailSettings($conn) {
+    $sql = "SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'email'";
+    $result = $conn->query($sql);
+    $settings = [];
+    while ($row = $result->fetch_assoc()) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+    return $settings;
+}
+
+$emailSettings = getEmailSettings($conn);
+
+
+
 ?>
