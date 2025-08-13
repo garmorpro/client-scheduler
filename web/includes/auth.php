@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT user_id, password, first_name, last_name, role, mfa_enabled FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT user_id, password, first_name, last_name, role, mfa_enabled, change_password FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -32,30 +32,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $last_name = $user['last_name'];
         $role = trim(strtolower($user['role']));
         $mfa_enabled = (int)$user['mfa_enabled'];
+        $change_password = (int)$user['change_password'];
 
         if (password_verify($password, $hashed_password)) {
 
-            if ($mfa_enabled === 1) {
-                // Generate 6-digit random code
-                $mfa_code = random_int(100000, 999999);
+            // Force password change on first login
+            if ($change_password === 1) {
+                $_SESSION['force_user_id'] = $user_id;
+                $_SESSION['force_email'] = $email;
+                $_SESSION['force_first_name'] = $first_name;
+                $_SESSION['force_last_name'] = $last_name;
+                $_SESSION['force_role'] = $role;
+                header("Location: change-password.php");
+                exit;
+            }
 
-                // Store it in the database
+            // MFA logic
+            if ($mfa_enabled === 1) {
+                $mfa_code = random_int(100000, 999999);
                 $updateStmt = $conn->prepare("UPDATE users SET mfa_code = ? WHERE user_id = ?");
                 $updateStmt->bind_param("ii", $mfa_code, $user_id);
                 $updateStmt->execute();
                 $updateStmt->close();
 
-                // Store temporary session for MFA
                 $_SESSION['mfa_user_id'] = $user_id;
-
-                // Optionally: send code via email
-                // mail($email, "Your MFA Code", "Your verification code is: $mfa_code");
-
                 header("Location: mfa.php");
                 exit;
             }
 
-            // Normal login (no MFA)
+            // Normal login
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user_id;
             $_SESSION['first_name'] = $first_name;
@@ -63,17 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
 
-            // Update last_active
             $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
             $updateStmt->bind_param("i", $user_id);
             $updateStmt->execute();
             $updateStmt->close();
 
-            // Log successful login
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
 
-            // Redirect based on role
             if ($role === 'admin' || $role === 'manager') {
                 header("Location: admin-panel.php");
             } else {
@@ -93,4 +95,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 }
-?>
