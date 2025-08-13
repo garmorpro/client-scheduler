@@ -249,13 +249,20 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   </div>
 
   <!-- Week Summary -->
-  <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+<div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+    <!-- Left side: summary info -->
     <div>
-      <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
-      <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
+        <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
+        <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
     </div>
-    <div class="fw-bold fs-4"><?php echo $netHours; ?>h <br><div class="text-muted fw-normal" style="font-size: 14px; padding-top: -25px !important;">Net Hours</div></div>
-  </div>
+
+    <!-- Right side: Net hours -->
+    <div class="text-end">
+        <div class="fw-bold fs-4"><?php echo $netHours; ?>h</div>
+        <div class="text-muted fw-normal" style="font-size: 14px;">Net Hours</div>
+    </div>
+</div>
+
 
 </div>
 
