@@ -190,19 +190,22 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   </div>
 
   <!-- Selected Week View -->
-  <div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+<div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
     <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
-      <i class="bi bi-chevron-left me-2"></i>Previous Week
+        <i class="bi bi-chevron-left me-2"></i>Previous Week
     </a>
     <div class="text-center">
-      <div class="text-status text-confirmed">Current</div>
-      <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
-      <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
+        <?php if ($selectedMonday == $currentMonday): ?>
+            <div class="badge bg-success text-white mb-1">Current</div>
+        <?php endif; ?>
+        <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
+        <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
     </div>
     <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
-      Next Week<i class="bi bi-chevron-right ms-2"></i>
+        Next Week<i class="bi bi-chevron-right ms-2"></i>
     </a>
-  </div>
+</div>
+
 
   <!-- Detailed Week Entries as Cards -->
   <div class="d-flex flex-column mb-3">
