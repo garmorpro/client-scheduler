@@ -214,7 +214,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
     </div>
-    <div class="fw-bold fs-4"><?php echo $netHours; ?>h br<span class="text-muted fw-normal">Net Hours</span></div>
+    <div class="fw-bold fs-4"><?php echo $netHours; ?>h <br><span class="text-muted fw-normal" style="font-size: 14px;">Net Hours</span></div>
   </div>
 
 </div>
