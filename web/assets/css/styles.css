@@ -559,7 +559,7 @@ input, select {
     transform: translateY(-2px);
 }
 .week-card.current {
-    border: 2px solid #a0b9deff;
+    border: 2px solid rgb(209,226, 159);
     background: rgb(246, 249, 236);
 }
 .week-title {
