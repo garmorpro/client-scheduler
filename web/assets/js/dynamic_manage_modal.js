@@ -13,15 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const addEntriesButton = document.getElementById('addEntriesButton');
   const backToButtons = document.getElementById('backToButtons');
 
-  // Assume you have addEntryModal from your dynamic_add_modal.js
+  // Add Entry Modal
   const addEntryModalEl = document.getElementById('addEntryModal');
   const addEntryModal = new bootstrap.Modal(addEntryModalEl);
-
-  // Cleanup backdrop and body class after modal is hidden (fix gray overlay)
-  manageAddModalEl.addEventListener('hidden.bs.modal', () => {
-    document.body.classList.remove('modal-open');
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-  });
 
   // 1) Attach click listeners to all cells with class "addable"
   document.querySelectorAll('.addable').forEach(cell => {
@@ -29,19 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
 
       currentUserId = cell.getAttribute('data-user-id');
-      currentUserName = cell.getAttribute('data-user-name') || null; // Optional, if you add this attribute in PHP
+      currentUserName = cell.getAttribute('data-user-name') || null;
       currentWeekStart = cell.getAttribute('data-week-start');
 
       const hasEntries = cell.querySelectorAll('.badge').length > 0;
 
       if (hasEntries) {
-        // Show manage entries prompt modal
         manageAddButtons.classList.remove('d-none');
         entriesListing.classList.add('d-none');
         entriesListContainer.innerHTML = '';
         manageAddModal.show();
       } else {
-        // Directly open add entry modal
         openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
       }
     });
@@ -67,15 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEntriesList(entries);
       })
       .catch(error => {
-        console.error('Error fetching Entries:', error);
+        console.error('Error fetching entries:', error);
         entriesListContainer.innerHTML = `<p class="text-danger">Error loading entries.</p>`;
       });
   });
 
   // 3) Clicking "Add New Entry" button in manageAddModal:
   addEntriesButton.addEventListener('click', () => {
+    // Wait for manageAddModal to fully hide, then open addEntryModal
+    manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
+      openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+      manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
+    });
     manageAddModal.hide();
-    openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
   });
 
   // 4) Back button inside manageAddModal
@@ -84,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     entriesListing.classList.add('d-none');
   });
 
-  // 5) Render entries list function (reuse or update your existing one)
+  // 5) Render entries list function
   function renderEntriesList(entriesForWeek) {
     entriesListContainer.innerHTML = '';
 
@@ -122,15 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const deleteLink = document.createElement('a');
-deleteLink.href = "#";
-deleteLink.title = "Delete Entry";
-deleteLink.className = "text-danger";
-deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-deleteLink.onclick = (e) => {
-  e.preventDefault();
-  deleteEntry(entry.entry_id);  // Call your deleteEntry function here
-};
+      deleteLink.href = "#";
+      deleteLink.title = "Delete Entry";
+      deleteLink.className = "text-danger";
+      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+      deleteLink.onclick = (e) => {
+        e.preventDefault();
+        deleteEntry(entry.entry_id);
+      };
 
       rightDiv.appendChild(editLink);
       rightDiv.appendChild(deleteLink);
@@ -141,5 +137,4 @@ deleteLink.onclick = (e) => {
       entriesListContainer.appendChild(card);
     });
   }
-
 });
