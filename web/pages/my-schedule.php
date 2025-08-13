@@ -109,17 +109,18 @@ $stmt->close();
 $netHours = max(0, $totalHours - $timeOffTotal);
 
 // ------------------------------------------------------
-// FETCH TEAM MEMBERS FOR EACH ENGAGEMENT
-function getTeamMembers($conn, $engagement_id, $weekStart) {
+// FETCH TEAM MEMBERS FOR EACH ENGAGEMENT (EXCLUDE CURRENT USER)
+function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $sql = "
         SELECT u.first_name, u.last_name, e.assigned_hours
         FROM entries e
         JOIN users u ON e.user_id = u.user_id
         WHERE e.engagement_id = ?
           AND e.week_start = ?
+          AND e.user_id != ?
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('is', $engagement_id, $weekStart);
+    $stmt->bind_param('isi', $engagement_id, $weekStart, $currentUserId);
     $stmt->execute();
     $res = $stmt->get_result();
     $members = [];
@@ -199,16 +200,19 @@ function getTeamMembers($conn, $engagement_id, $weekStart) {
   <!-- Detailed Week Entries as Cards -->
   <div class="d-flex flex-column mb-3">
     <?php foreach ($engagements as $eng): 
-        $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate);
+        $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
     ?>
       <div class="card p-3 shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
           <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
         </div>
-        <?php if (!empty($teamMembers)): ?>
-            <small class="text-muted">Team member(s): <?php echo implode(', ', $teamMembers); ?></small>
-        <?php endif; ?>
+        <small class="text-muted">
+            Team member(s): 
+            <?php 
+                echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; 
+            ?>
+        </small>
       </div>
     <?php endforeach; ?>
 
@@ -226,7 +230,6 @@ function getTeamMembers($conn, $engagement_id, $weekStart) {
       </div>
     <?php endforeach; ?>
   </div>
-
 
   <!-- Week Summary -->
   <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
