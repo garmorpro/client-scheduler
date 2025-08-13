@@ -1402,7 +1402,7 @@ function openEmployeeModal(employeeId) {
 <!-- end Script: dynamic buttons on add modal -->
 
 <!-- Script: Dynamic buttons on Manage Modal -->
-  <!-- <script>
+  <script>
   document.addEventListener('DOMContentLoaded', () => {
     const manageAddButtons = document.getElementById('manageAddButtons');
     const assignmentsListing = document.getElementById('assignmentsListing');
@@ -1414,29 +1414,29 @@ function openEmployeeModal(employeeId) {
     let currentUserId = null;
     let currentWeekStart = null;
 
-    // 1️⃣ Attach click handlers to table cells
-    document.querySelectorAll('td.addable').forEach(td => {
-      td.addEventListener('click', function () {
-        const userId = this.dataset.userId;
-        const weekStart = this.dataset.weekStart;
+    // ==== REMOVED .addable click listeners ====
+    // document.querySelectorAll('td.addable').forEach(td => {
+    //   td.addEventListener('click', function () {
+    //     const userId = this.dataset.userId;
+    //     const weekStart = this.dataset.weekStart;
 
-        console.log('Clicked cell userId:', userId);
-        console.log('Clicked cell weekStart:', weekStart);
+    //     console.log('Clicked cell userId:', userId);
+    //     console.log('Clicked cell weekStart:', weekStart);
 
-        // Store for later use
-        currentUserId = userId;
-        currentWeekStart = weekStart;
+    //     // Store for later use
+    //     currentUserId = userId;
+    //     currentWeekStart = weekStart;
 
-        // Show the modal
-        const modalEl = document.getElementById('manageAddModal');
-        const modal = new bootstrap.Modal(modalEl);
-        modal.show();
+    //     // Show the modal
+    //     const modalEl = document.getElementById('manageAddModal');
+    //     const modal = new bootstrap.Modal(modalEl);
+    //     modal.show();
 
-        // Default to showing the button view
-        manageAddButtons.classList.remove('d-none');
-        assignmentsListing.classList.add('d-none');
-      });
-    });
+    //     // Default to showing the button view
+    //     manageAddButtons.classList.remove('d-none');
+    //     assignmentsListing.classList.add('d-none');
+    //   });
+    // });
 
     // 2️⃣ Manage Assignments button click
     manageAssignmentsButton.addEventListener('click', () => {
@@ -1527,7 +1527,8 @@ function openEmployeeModal(employeeId) {
       });
     }
   });
-  </script> -->
+</script>
+
 
 
 <!-- end script: dynamic buttons on manage modal -->
