@@ -74,8 +74,10 @@ $stmt->close();
 // SELECTED WEEK DETAILS (INCLUDE TIME OFF)
 $sqlWeekDetails = "
     SELECT 
+        e.entry_id,
         e.assigned_hours,
         e.is_timeoff,
+        e.engagement_id,
         COALESCE(eng.client_name, 'Time Off') AS client_name,
         eng.status
     FROM entries e
@@ -105,6 +107,28 @@ while ($row = $weekResult->fetch_assoc()) {
 $stmt->close();
 
 $netHours = max(0, $totalHours - $timeOffTotal);
+
+// ------------------------------------------------------
+// FETCH TEAM MEMBERS FOR EACH ENGAGEMENT
+function getTeamMembers($conn, $engagement_id, $weekStart) {
+    $sql = "
+        SELECT u.first_name, u.last_name, e.assigned_hours
+        FROM entries e
+        JOIN users u ON e.user_id = u.user_id
+        WHERE e.engagement_id = ?
+          AND e.week_start = ?
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('is', $engagement_id, $weekStart);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $members = [];
+    while ($row = $res->fetch_assoc()) {
+        $members[] = $row['first_name'] . ' ' . $row['last_name'] . ' (' . $row['assigned_hours'] . ')';
+    }
+    $stmt->close();
+    return $members;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,11 +141,7 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
 .card { min-width: 120px; margin-bottom: 15px; }
-
-.timeoff-card {
-    border: 1px dashed #ff9800;
-    background: #fff8f0;
-}
+.timeoff-card { border: 1px dashed #ff9800; background: #fff8f0; }
 </style>
 </head>
 <body class="d-flex">
@@ -178,37 +198,17 @@ $netHours = max(0, $totalHours - $timeOffTotal);
 
   <!-- Detailed Week Entries as Cards -->
   <div class="d-flex flex-column mb-3">
-    <?php foreach ($engagements as $eng): ?>
+    <?php foreach ($engagements as $eng): 
+        $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate);
+    ?>
       <div class="card p-3 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-          </div>
-          <div class="text-end">
-            <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
-            <?php
-              $statusDisplayMap = [
-                'confirmed' => 'Confirmed',
-                'pending' => 'Pending',
-                'not_confirmed' => 'Not Confirmed'
-              ];
-              $status = strtolower($eng['status'] ?? 'confirmed');
-              switch ($status) {
-                  case 'confirmed': $status_class = 'text-confirmed'; break;
-                  case 'pending': $status_class = 'text-pending'; break;
-                  case 'not_confirmed': $status_class = 'text-not-confirmed'; break;
-                  default: $status_class = 'text-danger'; break;
-              }
-              switch ($status) {
-                  case 'confirmed': $status_format = 'Confirmed'; break;
-                  case 'pending': $status_format = 'Pending'; break;
-                  case 'not_confirmed': $status_format = 'Not Confirmed'; break;
-                  default: $status_format = 'Error'; break;
-              }
-            ?>
-            <small class="text-status <?php echo $status_class; ?> mt-2"><?php echo $status_format; ?></small>
-          </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="fw-bold"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+          <div class="fw-bold"><?php echo $eng['assigned_hours']; ?>hrs</div>
         </div>
+        <?php if (!empty($teamMembers)): ?>
+            <small class="text-muted">Team member(s): <?php echo implode(', ', $teamMembers); ?></small>
+        <?php endif; ?>
       </div>
     <?php endforeach; ?>
 
@@ -227,14 +227,13 @@ $netHours = max(0, $totalHours - $timeOffTotal);
     <?php endforeach; ?>
   </div>
 
-
   <!-- Week Summary -->
-  <div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+  <div class="card p-3 bg-light d-flex justify-content-between align-items-center">
     <div>
       <strong>Week of <?php echo date('n/j', $selectedMonday); ?> Summary</strong><br>
       <small><?php echo count($engagements); ?> active engagement(s) &bull; <?php echo $timeOffTotal; ?>h time off</small>
     </div>
-    <div class="fw-bold fs-4"><?php echo $netHours; ?>h <br><div class="text-muted fw-normal" style="font-size: 14px; padding-top: -25px !important;">Net Hours</div></div>
+    <div class="fw-bold"><?php echo $netHours; ?>h Net Hours</div>
   </div>
 
 </div>
