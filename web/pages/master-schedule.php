@@ -152,31 +152,48 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // open ManageorAddModal
   const assignments = <?php echo json_encode($assignments); ?>;
 
-  function openManageOrAddModal(user_id, employeeName, weekStart) {
-    console.log("Script loaded");
-    console.log("Modal triggered:", user_id, employeeName, weekStart);
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('td.addable').forEach(td => {
+    td.addEventListener('click', function () {
+      const userId = this.dataset.userId;
+      const weekStart = this.dataset.weekStart;
+      const employeeName = this.dataset.employeeName || 'Employee'; // Optional
 
-    const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
-    console.log("Assignments for week:", assignmentsForWeek);
+      console.log('Clicked cell userId:', userId);
+      console.log('Clicked cell weekStart:', weekStart);
 
-    const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+      // This function now decides which modal to open
+      openManageOrAddModal(userId, employeeName, weekStart);
+    });
+  });
+});
 
-    if (hasAssignments) {
-        // Show Manage/Add modal
-        const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
-        manageAddModal.show();
+function openManageOrAddModal(user_id, employeeName, weekStart) {
+  console.log("Modal triggered:", user_id, employeeName, weekStart);
 
-        document.getElementById('manageAssignmentsButton').onclick = function() {
-            openManageAssignmentsModal(user_id, employeeName, weekStart);
-        };
-        document.getElementById('addAssignmentsButton').onclick = function() {
-            openAddAssignmentModal(user_id, employeeName, weekStart);
-        };
-    } else {
-        // Directly open Add Assignment modal
-        openAddAssignmentModal(user_id, employeeName, weekStart);
-    }
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] 
+    ? assignments[user_id][weekStart] 
+    : [];
+  console.log("Assignments for week:", assignmentsForWeek);
+
+  const hasAssignments = Array.isArray(assignmentsForWeek) && assignmentsForWeek.length > 0;
+
+  if (hasAssignments) {
+    // Show Manage/Add modal
+    const manageAddModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+    manageAddModal.show();
+
+    document.getElementById('manageAssignmentsButton').onclick = function() {
+      openManageAssignmentsModal(user_id, employeeName, weekStart);
+    };
+    document.getElementById('addAssignmentsButton').onclick = function() {
+      openAddAssignmentModal(user_id, employeeName, weekStart);
+    };
+  } else {
+    // Directly open Add Assignment modal
+    openAddAssignmentModal(user_id, employeeName, weekStart);
   }
+}
 // end ManageOrAddModal
 
 // open addAssignmentModal
@@ -1300,132 +1317,132 @@ function openEmployeeModal(employeeId) {
 <!-- end Script: dynamic buttons on add modal -->
 
 <!-- Script: Dynamic buttons on Manage Modal -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const manageAddButtons = document.getElementById('manageAddButtons');
-  const assignmentsListing = document.getElementById('assignmentsListing');
-  const assignmentsListContainer = document.getElementById('assignmentsListContainer');
-  const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
-  const backToButtons = document.getElementById('backToButtons');
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const manageAddButtons = document.getElementById('manageAddButtons');
+    const assignmentsListing = document.getElementById('assignmentsListing');
+    const assignmentsListContainer = document.getElementById('assignmentsListContainer');
+    const manageAssignmentsButton = document.getElementById('manageAssignmentsButton');
+    const backToButtons = document.getElementById('backToButtons');
 
-  // Store clicked context here
-  let currentUserId = null;
-  let currentWeekStart = null;
+    // Store clicked context here
+    let currentUserId = null;
+    let currentWeekStart = null;
 
-  // 1️⃣ Attach click handlers to table cells
-  document.querySelectorAll('td.addable').forEach(td => {
-    td.addEventListener('click', function () {
-      const userId = this.dataset.userId;
-      const weekStart = this.dataset.weekStart;
+    // 1️⃣ Attach click handlers to table cells
+    document.querySelectorAll('td.addable').forEach(td => {
+      td.addEventListener('click', function () {
+        const userId = this.dataset.userId;
+        const weekStart = this.dataset.weekStart;
 
-      console.log('Clicked cell userId:', userId);
-      console.log('Clicked cell weekStart:', weekStart);
+        console.log('Clicked cell userId:', userId);
+        console.log('Clicked cell weekStart:', weekStart);
 
-      // Store for later use
-      currentUserId = userId;
-      currentWeekStart = weekStart;
+        // Store for later use
+        currentUserId = userId;
+        currentWeekStart = weekStart;
 
-      // Show the modal
-      const modalEl = document.getElementById('manageAddModal');
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
+        // Show the modal
+        const modalEl = document.getElementById('manageAddModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
 
-      // Default to showing the button view
+        // Default to showing the button view
+        manageAddButtons.classList.remove('d-none');
+        assignmentsListing.classList.add('d-none');
+      });
+    });
+
+    // 2️⃣ Manage Assignments button click
+    manageAssignmentsButton.addEventListener('click', () => {
+      if (!currentUserId || !currentWeekStart) {
+        assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
+        return;
+      }
+
+      manageAddButtons.classList.add('d-none');
+      assignmentsListing.classList.remove('d-none');
+      assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
+
+      fetch(`get_assignments.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not OK');
+          return response.json();
+        })
+        .then(assignments => {
+          renderAssignmentsList(assignments);
+        })
+        .catch(error => {
+          console.error('Error fetching assignments:', error);
+          assignmentsListContainer.innerHTML = `<p class="text-danger">Error loading assignments.</p>`;
+        });
+    });
+
+    // 3️⃣ Back button
+    backToButtons.addEventListener('click', () => {
       manageAddButtons.classList.remove('d-none');
       assignmentsListing.classList.add('d-none');
     });
-  });
 
-  // 2️⃣ Manage Assignments button click
-  manageAssignmentsButton.addEventListener('click', () => {
-    if (!currentUserId || !currentWeekStart) {
-      assignmentsListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
-      return;
-    }
+    // 4️⃣ Render list
+    function renderAssignmentsList(assignmentsForWeek) {
+      assignmentsListContainer.innerHTML = '';
 
-    manageAddButtons.classList.add('d-none');
-    assignmentsListing.classList.remove('d-none');
-    assignmentsListContainer.innerHTML = '<p>Loading assignments...</p>';
+      if (!assignmentsForWeek || assignmentsForWeek.length === 0) {
+        assignmentsListContainer.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
+        return;
+      }
 
-    fetch(`get_assignments.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not OK');
-        return response.json();
-      })
-      .then(assignments => {
-        renderAssignmentsList(assignments);
-      })
-      .catch(error => {
-        console.error('Error fetching assignments:', error);
-        assignmentsListContainer.innerHTML = `<p class="text-danger">Error loading assignments.</p>`;
+      assignmentsForWeek.forEach(assignment => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'mb-3', 'shadow-sm');
+
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
+
+        const leftDiv = document.createElement('div');
+        leftDiv.innerHTML = `
+          <div class="fw-semibold fs-6">${assignment.client_name || (assignment.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
+          <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
+        `;
+
+        const rightDiv = document.createElement('div');
+
+        const editLink = document.createElement('a');
+        editLink.href = "#";
+        editLink.title = "Edit Assignment";
+        editLink.className = "text-primary me-3";
+        editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+        editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
+        editLink.setAttribute('data-assignment-id', assignment.assignment_id);
+        editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
+        editLink.onclick = (e) => {
+          e.preventDefault();
+          openEditModal(e);
+        };
+
+        const deleteLink = document.createElement('a');
+        deleteLink.href = "#";
+        deleteLink.title = "Delete Assignment";
+        deleteLink.className = "text-danger";
+        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+        deleteLink.onclick = (e) => {
+          e.preventDefault();
+          alert(`Delete assignment ${assignment.assignment_id}`);
+        };
+
+        rightDiv.appendChild(editLink);
+        rightDiv.appendChild(deleteLink);
+
+        cardBody.appendChild(leftDiv);
+        cardBody.appendChild(rightDiv);
+        card.appendChild(cardBody);
+        assignmentsListContainer.appendChild(card);
       });
-  });
-
-  // 3️⃣ Back button
-  backToButtons.addEventListener('click', () => {
-    manageAddButtons.classList.remove('d-none');
-    assignmentsListing.classList.add('d-none');
-  });
-
-  // 4️⃣ Render list
-  function renderAssignmentsList(assignmentsForWeek) {
-    assignmentsListContainer.innerHTML = '';
-
-    if (!assignmentsForWeek || assignmentsForWeek.length === 0) {
-      assignmentsListContainer.innerHTML = '<p class="text-muted">No assignments for this week.</p>';
-      return;
     }
-
-    assignmentsForWeek.forEach(assignment => {
-      const card = document.createElement('div');
-      card.classList.add('card', 'mb-3', 'shadow-sm');
-
-      const cardBody = document.createElement('div');
-      cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
-
-      const leftDiv = document.createElement('div');
-      leftDiv.innerHTML = `
-        <div class="fw-semibold fs-6">${assignment.client_name || (assignment.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
-        <small class="text-muted">Assigned Hours: ${assignment.assigned_hours || 0}</small>
-      `;
-
-      const rightDiv = document.createElement('div');
-
-      const editLink = document.createElement('a');
-      editLink.href = "#";
-      editLink.title = "Edit Assignment";
-      editLink.className = "text-primary me-3";
-      editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
-      editLink.setAttribute('data-assignment-id', assignment.assignment_id);
-      editLink.setAttribute('data-assigned-hours', assignment.assigned_hours || 0);
-      editLink.onclick = (e) => {
-        e.preventDefault();
-        openEditModal(e);
-      };
-
-      const deleteLink = document.createElement('a');
-      deleteLink.href = "#";
-      deleteLink.title = "Delete Assignment";
-      deleteLink.className = "text-danger";
-      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
-        e.preventDefault();
-        alert(`Delete assignment ${assignment.assignment_id}`);
-      };
-
-      rightDiv.appendChild(editLink);
-      rightDiv.appendChild(deleteLink);
-
-      cardBody.appendChild(leftDiv);
-      cardBody.appendChild(rightDiv);
-      card.appendChild(cardBody);
-      assignmentsListContainer.appendChild(card);
-    });
-  }
-});
-</script>
+  });
+  </script>
 
 
 <!-- end script: dynamic buttons on manage modal -->
