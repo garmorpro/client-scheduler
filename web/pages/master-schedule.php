@@ -524,7 +524,12 @@ function openEmployeeModal(employeeId) {
                           ?>
 
                           <?php if ($isAdmin): ?>
-                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;" onclick='openManageOrAddModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")'>
+                              <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
+                                  data-user-id="<?php echo $userId; ?>"
+                                  data-week-start="<?php echo $weekKey; ?>"
+                                  onclick='openManageOrAddModal("<?php echo $userId; ?>", <?php echo json_encode($fullName); ?>, "<?php echo $weekKey; ?>")'>
+                                  <?php echo $cellContent; ?>
+                              </td>
                                   <?php echo $cellContent; ?>
                               </td>
                           <?php else: ?>
@@ -541,6 +546,24 @@ function openEmployeeModal(employeeId) {
   </div>
 
 <!-- end master schedule table -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('td.addable').forEach(td => {
+    td.addEventListener('click', function () {
+      const userId = this.dataset.userId;        // same as getAttribute('data-user-id')
+      const weekStart = this.dataset.weekStart;  // same as getAttribute('data-week-start')
+
+      console.log('Clicked cell userId:', userId);
+      console.log('Clicked cell weekStart:', weekStart);
+
+      // Now call your modal logic here:
+      openManageOrAddModal(userId, 'Employee Name Placeholder', weekStart);
+    });
+  });
+});
+
+</script>
 
 
 
@@ -1303,9 +1326,6 @@ function openEmployeeModal(employeeId) {
 <!-- Script: Dynamic buttons on Manage Modal -->
  <script>
   
-  let currentUserId = null;
-  let currentWeekStart = null;
-
  document.addEventListener('DOMContentLoaded', () => {
   const manageAddButtons = document.getElementById('manageAddButtons');
   const assignmentsListing = document.getElementById('assignmentsListing');
@@ -1314,7 +1334,8 @@ function openEmployeeModal(employeeId) {
   const backToButtons = document.getElementById('backToButtons');
 
   // We'll store the current userId and weekStart here dynamically
-  
+  let currentUserId = null;
+  let currentWeekStart = null;
 
   // This function will be called externally when opening modal
   window.openManageOrAddModal = function(userId, employeeName, weekStart) {
