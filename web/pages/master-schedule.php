@@ -241,76 +241,67 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 </td>
 
             <?php foreach ($mondays as $idx => $monday): ?>
-                <?php 
-                $weekStart = $monday;
-                $isCurrent = ($idx === $currentWeekIndex);
+    <?php 
+    $weekStart = $monday;
+    $isCurrent = ($idx === $currentWeekIndex);
 
-                $weekKey = date('Y-m-d', $weekStart);
-                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                $cellContent = "";
+    $weekKey = date('Y-m-d', $weekStart);
+    $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+    $cellContent = "";
+    $tdStyles = ""; // custom inline styles
+    $topRightHours = ""; // for time off hours
 
-                if (!empty($entriesForWeek)) {
-                    foreach ($entriesForWeek as $entry) {
-                        $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
-                        switch ($engagementStatus) {
-                            case 'confirmed': $entry_class = 'badge-confirmed'; break;
-                            case 'pending': $entry_class = 'badge-pending'; break;
-                            case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
-                            default: $entry_class = 'badge-confirmed'; break;
-                        }
-                        $clientName = htmlspecialchars($entry['client_name']);
-                        $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                        $cellContent .= "<span class='badge badge-status $entry_class'>{$clientName} ({$assignedHours})</span><br>";
-                    }
-                } else {
-                    $cellContent = "<span class='text-muted'>+</span>";
+    if (!empty($entriesForWeek)) {
+        foreach ($entriesForWeek as $entry) {
+            $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
+
+            if ($engagementStatus === 'time_off') {
+                // Highlight cell for time off
+                $tdStyles .= "background-color: rgba(255, 0, 0, 0.1); position: relative;";
+                // Top right corner text-danger assigned hours
+                $topRightHours = "<div style='position:absolute; top:4px; right:4px;' class='text-danger fw-bold'>{$entry['assigned_hours']}</div>";
+            } else {
+                switch ($engagementStatus) {
+                    case 'confirmed': $entry_class = 'badge-confirmed'; break;
+                    case 'pending': $entry_class = 'badge-pending'; break;
+                    case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
+                    default: $entry_class = 'badge-confirmed'; break;
                 }
+                $clientName = htmlspecialchars($entry['client_name']);
+                $assignedHours = htmlspecialchars($entry['assigned_hours']);
+                $cellContent .= "<span class='badge badge-status $entry_class'>{$clientName} ({$assignedHours})</span><br>";
+            }
+        }
+    } else {
+        $cellContent = "<span class='text-muted'>+</span>";
+    }
 
-                $tdClass = $isCurrent ? 'highlight-today' : '';
-                ?>
+    $tdClass = $isCurrent ? 'highlight-today' : '';
+    ?>
 
-                <?php if ($isAdmin): ?>
-                    <?php if (!empty($entriesForWeek)): ?>
-                        <!-- Has entries → open ManageEntries modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='
-                                event.stopPropagation();
-                                console.log("Entries empty?", false);
-                                openManageEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>"
-                                )
-                            '>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php else: ?>
-                        <!-- No Entries → open AddEntry modal -->
-                        <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                            data-user-id="<?php echo $userId; ?>" 
-                            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                            data-week-start="<?php echo $weekKey; ?>"
-                            onclick='
-                                event.stopPropagation();
-                                console.log("Entries empty?", true);
-                                openAddEntryModal(
-                                    "<?php echo $userId; ?>",
-                                    <?php echo json_encode($fullName); ?>,
-                                    "<?php echo $weekKey; ?>"
-                                )
-                            '>
-                            <?php echo $cellContent; ?>
-                        </td>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <td class="<?php echo $tdClass; ?>">
-                        <?php echo $cellContent; ?>
-                    </td>
-                <?php endif; ?>
-            <?php endforeach; ?>
+    <?php if ($isAdmin): ?>
+        <td class="addable <?php echo $tdClass; ?>" 
+            style="cursor:pointer; <?php echo $tdStyles; ?>"
+            data-user-id="<?php echo $userId; ?>" 
+            data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+            data-week-start="<?php echo $weekKey; ?>"
+            onclick='
+                event.stopPropagation();
+                <?php echo empty($entriesForWeek) ? "openAddEntryModal(" : "openManageEntryModal("; ?>
+                    "<?php echo $userId; ?>",
+                    <?php echo json_encode($fullName); ?>,
+                    "<?php echo $weekKey; ?>"
+                )
+            '>
+            <?php echo $topRightHours . $cellContent; ?>
+        </td>
+    <?php else: ?>
+        <td class="<?php echo $tdClass; ?>" style="<?php echo $tdStyles; ?>">
+            <?php echo $topRightHours . $cellContent; ?>
+        </td>
+    <?php endif; ?>
+<?php endforeach; ?>
+
         </tr>
     <?php endforeach; ?>
  </tbody>
