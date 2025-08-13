@@ -129,6 +129,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       const assignments = <?php echo json_encode($assignments); ?>;
     </script>
     <script src="../assets/js/manage_entry_modal.js"></script>
+    <script src="../assets/js/show_entries.js"></script>
     <script src="../assets/js/edit_modal.js"></script>
     <script src="../assets/js/delete_entry.js"></script>
     <script src="../assets/js/view_assignment_modal.js"></script>
