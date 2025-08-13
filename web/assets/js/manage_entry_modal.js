@@ -3,10 +3,9 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
   document.getElementById('assignmentsModalTitle').innerText = `Manage Assignments for Week of ${formattedDate}`;
   document.getElementById('assignmentsModalSubheading').innerText = `Consultant: ${employeeName}`;
 
-  const assignmentsForWeek = (assignments[user_id] && assignments[user_id][weekStart]) ? assignments[user_id][weekStart] : [];
+  const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
+  showEntries(assignmentsForWeek);
 
-  showAssignments(assignmentsForWeek);
-
-  const assignmentsModal = new bootstrap.Modal(document.getElementById('manageAddModal'));
+  const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
   assignmentsModal.show();
 }
