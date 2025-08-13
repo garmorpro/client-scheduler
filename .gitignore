@@ -1,1 +1,16 @@
 .env
+
+# Composer dependencies
+/vendor/
+
+# Composer lock file (optional: you usually keep it)
+/composer.lock
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.log
+
+# PHPStorm / VSCode
+.idea/
+.vscode/
