@@ -35,17 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (password_verify($password, $hashed_password)) {
             session_regenerate_id(true);
-
+                
             $_SESSION['user_id'] = $user_id;
             $_SESSION['first_name'] = $first_name;
             $_SESSION['last_name'] = $last_name;
             $_SESSION['user_role'] = $role;
             $_SESSION['email'] = $email;
-
+                
+            // Update last_active to current datetime
+            $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
+            if ($updateStmt) {
+                $updateStmt->bind_param("i", $user_id);
+                $updateStmt->execute();
+                $updateStmt->close();
+            }
+        
             // Log successful login with actual user info
             $full_name = trim($first_name . ' ' . $last_name);
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
-
+        
             if ($_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] === 'manager') {
                 header("Location: admin-panel.php");
             } else {
