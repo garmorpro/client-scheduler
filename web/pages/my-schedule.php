@@ -180,7 +180,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
             <div class="fw-semibold" style="font-size: 14px;">Week of <?php echo date('n/j', $monday); ?></div>
             <div class="fw-bold fs-4"><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
-                <small class="text-danger" style="font-size: 10px;"><?php echo $timeOff; ?>hrs time off</small>
+                <small class="text-muted" style="font-size: 10px; color: #ff9800 !important;"><?php echo $timeOff; ?>hrs time off</small>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
