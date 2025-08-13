@@ -78,8 +78,7 @@ $sqlWeekDetails = "
         engagement_name,
         client_name,
         assigned_hours,
-        is_timeoff,
-        status
+        is_timeoff
     FROM entries
     WHERE user_id = ?
       AND week_start = ?
