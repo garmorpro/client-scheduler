@@ -168,7 +168,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   </div>
 
   <!-- 8-Week Overview -->
-  <div class="week_overview_header mb-3">
+  <div class="week_overview_header mb-2">
     <div class="fw-semibold fs-6">8-Week Overview</div>
   </div>
   <div class="d-flex flex-wrap gap-3 mb-5">
