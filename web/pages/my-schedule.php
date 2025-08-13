@@ -180,6 +180,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
         $isCurrent = ($monday == $currentMonday);
     ?>
         <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
+            <div class="text-status text-confirmed">Current</div>
             <div class="fw-semibold" style="font-size: 14px;">Week of <?php echo date('n/j', $monday); ?></div>
             <div class="fw-bold fs-4"><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
