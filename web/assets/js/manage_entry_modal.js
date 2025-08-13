@@ -6,6 +6,6 @@ function openManageEntryModal(user_id, employeeName, weekStart) {
   const assignmentsForWeek = assignments[user_id] && assignments[user_id][weekStart] ? assignments[user_id][weekStart] : [];
   showEntries(assignmentsForWeek);
 
-  const assignmentsModal = new bootstrap.Modal(document.getElementById('assignmentsModal'));
-  assignmentsModal.show();
+  const manageModal = new bootstrap.Modal(document.getElementById('manageEntryPromptModal'));
+  manageModal.show();
 }

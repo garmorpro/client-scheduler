@@ -1,4 +1,4 @@
-<div class="modal fade" id="manageAddModal" tabindex="-1">
+<div class="modal fade" id="manageEntryPromptModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
