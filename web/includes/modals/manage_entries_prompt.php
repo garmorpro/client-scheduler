@@ -9,8 +9,8 @@
 
   <!-- Initial buttons -->
   <div id="manageAddButtons">
-    <button id="manageEntriesButton" class="btn btn-warning w-100 mb-2">Manage Existing Entries</button>
-    <button id="addEntriesButton" class="btn btn-success w-100">Add New Entry</button>
+    <button id="manageEntriesButton" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Manage Existing Entries</button>
+    <button id="addEntriesButton" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Add New Entry</button>
   </div>
 
   <div id="entriesListing" class="d-none">
