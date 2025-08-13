@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
         $user_id = $_SESSION['force_user_id'];
 
-        $stmt = $conn->prepare("UPDATE users SET password = ?, change_password = 0 WHERE user_id = ?");
+        $stmt = $conn->prepare("UPDATE users SET password = ?, must_change_password = 0 WHERE user_id = ?");
         $stmt->bind_param("si", $hashed, $user_id);
         if ($stmt->execute()) {
             // Complete login
@@ -49,16 +49,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<form method="POST">
-    <h3>Change Your Password</h3>
-    <?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
-    <div>
-        <label>New Password</label>
-        <input type="password" name="new_password" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Password - Client Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body style="background-color: rgba(216, 216, 216, 1);">
+<div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
+        <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
+        <div class="mt-4"></div>
+        <h5 class="text-center mb-2">Change Your Password</h5>
+        <p class="text-center text-muted">For security, please update your password before proceeding.</p>
+
+        <!-- Show error alert only if error is not empty -->
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <form class="p-4" method="POST" action="">
+            <div class="mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" class="form-control" name="new_password" placeholder="Enter new password" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">Update Password</button>
+            </div>
+        </form>
+
+        <p class="text-center text-muted mt-3">Contact your administrator if you experience any issues.</p>
+        <p class="text-center text-muted" style="font-size: 10px;">This is a demo application.</p>
     </div>
-    <div>
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" required>
-    </div>
-    <button type="submit">Update Password</button>
-</form>
+</div>
+</body>
+</html>
