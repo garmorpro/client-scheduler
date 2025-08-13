@@ -553,7 +553,6 @@ input, select {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: none !important;
 }
 .week-card:hover {
     background: #f0f0f0;
