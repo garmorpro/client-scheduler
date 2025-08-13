@@ -193,7 +193,7 @@ if ($settingResult) {
                 <button class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</button>
                 <button class="<?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
-                <button data-tab="settings">Settings</button>
+                <button class="<?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</button>
             </div>
         <!-- end Tabs -->
 
