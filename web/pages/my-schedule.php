@@ -65,13 +65,14 @@ while ($row = $result->fetch_assoc()) {
     if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
         $timeOffHours[$week] += floatval($row['assigned_hours']);
     } else {
+        // ONLY count regular assignments
         $totalAssignedHours[$week] += floatval($row['assigned_hours']);
     }
 }
 $stmt->close();
 
 // ------------------------------------------------------
-// SELECTED WEEK DETAILS
+// SELECTED WEEK DETAILS (INCLUDE TIME OFF)
 $sqlWeekDetails = "
     SELECT 
         e.entry_id,
@@ -101,15 +102,16 @@ while ($row = $weekResult->fetch_assoc()) {
         $timeOffTotal += floatval($row['assigned_hours']);
     } else {
         $engagements[] = $row;
+        // ONLY sum regular assignments
         $totalHours += floatval($row['assigned_hours']);
     }
 }
 $stmt->close();
 
-$netHours = $totalHours;
+$netHours = $totalHours; // now time off is NOT subtracted
 
 // ------------------------------------------------------
-// FETCH TEAM MEMBERS
+// FETCH TEAM MEMBERS FOR EACH ENGAGEMENT (EXCLUDE CURRENT USER)
 function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $sql = "
         SELECT u.first_name, u.last_name, e.assigned_hours
@@ -131,6 +133,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     return $members;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -139,153 +142,143 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 <title>My Schedule</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
-body { background-color: #f5f7fa; font-family: 'Inter', sans-serif; }
-.section-title { font-weight: 600; font-size: 1.1rem; color: #495057; margin-bottom: 0.75rem; }
-.week-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 14px;
-    min-width: 120px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-    transition: all 0.2s ease;
+.card { min-width: 120px; margin-bottom: 15px; }
+.timeoff-card { 
+    border: 2px dashed rgb(209,226, 159);
+    background: rgb(246, 249, 236);
 }
-.week-card.current {
-    border: 2px solid #198754;
-    background-color: #ecfdf5;
-}
-.week-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-.current_week {
-    background: #198754;
-    color: white;
-    font-size: 0.75rem;
-    padding: 3px 8px;
-    border-radius: 12px;
-}
-.card {
-    border: none;
-    border-radius: 12px;
-}
-.timeoff-card {
-    background: #fef9f5;
-    border: 1px dashed #f59e0b;
-}
-.text-status { font-size: 0.85rem; font-weight: 500; }
-.text-confirmed { color: #198754; }
-.text-pending { color: #f59e0b; }
-.text-not-confirmed { color: #dc3545; }
 </style>
 </head>
-<body>
+<body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 
-<div class="container-fluid p-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">My Schedule</h2>
-            <p class="text-muted mb-0">Track your weekly engagements and time off</p>
-        </div>
-        <a href="#" onclick="location.reload();" class="btn btn-light border">
-            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-        </a>
+<div class="flex-grow-1 p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">My Schedule</h3>
+      <p class="text-muted mb-0">Your personal schedule and time allocation</p>
     </div>
+    <div class="header-buttons">
+      <a href="#" onclick="location.reload();" class="badge text-black p-2 text-decoration-none fw-medium me-1" style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+        <i class="bi bi-arrow-clockwise me-3"></i>Refresh
+      </a>
+    </div>
+  </div>
 
-    <!-- 8 Week Overview -->
-    <div class="section-title">8-Week Overview</div>
-    <div class="d-flex flex-wrap gap-3 mb-5">
-        <?php foreach ($mondays as $monday): 
-            $weekKey = date('Y-m-d', $monday);
-            $assigned = $totalAssignedHours[$weekKey] ?? 0;
-            $timeOff = $timeOffHours[$weekKey] ?? 0;
-            $isCurrent = ($monday == $currentMonday);
-        ?>
+  <!-- 8-Week Overview -->
+  <div class="week_overview_header mb-3">
+    <div class="fw-semibold fs-6">8-Week Overview</div>
+  </div>
+  <div class="d-flex flex-wrap gap-3 mb-4">
+    <?php foreach ($mondays as $monday): 
+        $weekKey = date('Y-m-d', $monday);
+        $assigned = $totalAssignedHours[$weekKey] ?? 0;
+        $timeOff = $timeOffHours[$weekKey] ?? 0;
+        $net = $assigned; // now only regular assignments, ignore time off
+        $isCurrent = ($monday == $currentMonday);
+    ?>
         <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
-            <div class="fw-semibold" style="font-size: 0.85rem;">Week of <?php echo date('n/j', $monday); ?></div>
-            <div class="fw-bold fs-4"><?php echo $assigned; ?> hrs</div>
+            <div class="fw-semibold" style="font-size: 14px;">Week of <?php echo date('n/j', $monday); ?></div>
+            <div class="fw-bold fs-4"><?php echo $net; ?> hrs</div>
             <?php if ($timeOff > 0): ?>
-                <small class="text-danger fw-semibold"><?php echo $timeOff; ?> hrs off</small>
+                <small class="text-danger fw-semibold" style="font-size: 10px;"><?php echo $timeOff; ?>hrs time off</small>
             <?php endif; ?>
         </div>
-        <?php endforeach; ?>
-    </div>
+    <?php endforeach; ?>
+  </div>
 
-    <!-- Selected Week -->
-    <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-3 shadow-sm mb-4">
-        <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-chevron-left me-1"></i>Prev
-        </a>
-        <div class="text-center" style="min-height: 46px;">
-            <div class="current_week mb-1" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current</div>
-            <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
-            <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
-        </div>
-        <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
-            Next<i class="bi bi-chevron-right ms-1"></i>
-        </a>
-    </div>
+  <!-- Selected Week View -->
+  <div class="d-flex justify-content-between shadow-sm align-items-center mb-3 p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+      <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+          <i class="bi bi-chevron-left me-2"></i>Previous Week
+      </a>
+      <div class="text-center" style="margin-top: -15px;">
+          <div class="badge current_week" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">Current Week</div>
+          <div class="mb-0 fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
+          <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
+      </div>
+      <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm week-btn">
+          Next Week<i class="bi bi-chevron-right ms-2"></i>
+      </a>
+  </div>
 
-    <!-- Week Details -->
-    <div class="mb-4">
-        <?php if (empty($engagements) && empty($timeOffs)): ?>
-            <div class="card p-5 shadow-sm text-center">
-                <i class="bi bi-calendar-check fs-1 text-success mb-3"></i>
-                <div class="fw-semibold fs-5">No engagements this week</div>
-                <small class="text-muted">Enjoy the free time!</small>
-            </div>
-        <?php else: ?>
-            <?php foreach ($engagements as $eng): 
-                $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
-                $status = strtolower($eng['status'] ?? 'confirmed');
-                switch ($status) {
-                    case 'confirmed': $status_class = 'text-confirmed'; $status_format = 'Confirmed'; break;
-                    case 'pending': $status_class = 'text-pending'; $status_format = 'Pending'; break;
-                    case 'not_confirmed': $status_class = 'text-not-confirmed'; $status_format = 'Not Confirmed'; break;
-                    default: $status_class = 'text-danger'; $status_format = 'Error'; break;
-                }
+
+
+  <!-- Detailed Week Entries as Cards -->
+  <div class="d-flex flex-column mb-3">
+    <?php if (empty($engagements) && empty($timeOffs)): ?>
+      <div class="card p-4 shadow-sm mb-3 d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 200px;">
+        <i class="bi bi-calendar2-check fs-1 text-success mb-3"></i>
+        <div class="fw-semibold fs-5">No engagements this week</div>
+        <small class="text-muted">You have a clear schedule for this week.</small>
+      </div>
+    <?php else: ?>
+      <?php foreach ($engagements as $eng): 
+        $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
+      ?>
+      <div class="card p-3 shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
+            <small class="text-muted">
+              <strong>Team member(s):</strong>
+              <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'no other team members assigned'; ?>
+            </small>
+          </div>
+          <div class="text-end">
+            <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
+            <?php
+              $status = strtolower($eng['status'] ?? 'confirmed');
+              switch ($status) {
+                case 'confirmed': $status_class = 'text-confirmed'; $status_format = 'Confirmed'; break;
+                case 'pending': $status_class = 'text-pending'; $status_format = 'Pending'; break;
+                case 'not_confirmed': $status_class = 'text-not-confirmed'; $status_format = 'Not Confirmed'; break;
+                default: $status_class = 'text-danger'; $status_format = 'Error'; break;
+              }
             ?>
-            <div class="card p-3 shadow-sm mb-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-                        <small class="text-muted">Team: <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'Only you assigned'; ?></small>
-                    </div>
-                    <div class="text-end">
-                        <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
-                        <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
+            <small class="text-status <?php echo $status_class; ?>"><?php echo $status_format; ?></small>
+          </div>
+        </div>
+      </div>
+      <?php endforeach; ?>
 
-            <?php foreach ($timeOffs as $off): ?>
-            <div class="card p-3 shadow-sm timeoff-card mb-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
-                        <small class="text-muted">Approved Time Off</small>
-                    </div>
-                    <div class="text-end text-danger fw-semibold fs-5"><?php echo $off['assigned_hours']; ?> hrs</div>
-                </div>
+      <?php foreach ($timeOffs as $off): ?>
+        <div class="card p-3 shadow-sm timeoff-card">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
+              <small class="text-muted">Approved time off</small>
             </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <div class="text-end text-danger fw-semibold fs-5">
+              <?php echo $off['assigned_hours']; ?>hrs
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+
+
+  <!-- Week Summary -->
+<div class="list-group-item d-flex justify-content-between align-items-center bg-light p-4" style="background-color: rgb(249,249,250); border-radius: 15px;">
+    <!-- Left side: summary info -->
+    <div>
+        <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div>
+        <small class="text-muted"><?php echo count($engagements); ?> active engagement(s) <i class="bi bi-dot"></i> <?php echo $timeOffTotal; ?>hrs time off</small>
     </div>
 
-    <!-- Summary -->
-    <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-3 shadow-sm">
-        <div>
-            <div class="fw-semibold fs-5">Summary</div>
-            <small class="text-muted"><?php echo count($engagements); ?> engagements · <?php echo $timeOffTotal; ?> hrs off</small>
-        </div>
-        <div class="text-end">
-            <div class="fw-bold fs-5"><?php echo $netHours; ?> hrs</div>
-            <div class="text-muted" style="font-size: 0.85rem;">Net Hours</div>
-        </div>
+    <!-- Right side: Net hours -->
+    <div class="text-end">
+        <div class="fw-semibold fs-5"><?php echo $netHours; ?>hrs</div>
+        <div class="text-muted fw-normal" style="font-size: 14px;">Net Hours</div>
     </div>
 </div>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
