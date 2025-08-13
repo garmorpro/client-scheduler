@@ -23,24 +23,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $conn->prepare("UPDATE users SET password = ?, change_password = 0 WHERE user_id = ?");
         $stmt->bind_param("si", $hashed, $user_id);
+
         if ($stmt->execute()) {
-            // Complete login
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['first_name'] = $_SESSION['force_first_name'];
-            $_SESSION['last_name'] = $_SESSION['force_last_name'];
-            $_SESSION['user_role'] = $_SESSION['force_role'];
-            $_SESSION['email'] = $_SESSION['force_email'];
+            // Check if MFA is enabled
+            $stmt2 = $conn->prepare("SELECT mfa_enabled FROM users WHERE user_id = ?");
+            $stmt2->bind_param("i", $user_id);
+            $stmt2->execute();
+            $result = $stmt2->get_result();
+            $user = $result->fetch_assoc();
+            $stmt2->close();
 
-            // Remove temporary force-login session
-            unset($_SESSION['force_user_id'], $_SESSION['force_first_name'], $_SESSION['force_last_name'], $_SESSION['force_role'], $_SESSION['force_email']);
+            if ($user['mfa_enabled'] == 1) {
+                // Generate MFA code
+                $mfa_code = random_int(100000, 999999);
+                $updateStmt = $conn->prepare("UPDATE users SET mfa_code = ? WHERE user_id = ?");
+                $updateStmt->bind_param("ii", $mfa_code, $user_id);
+                $updateStmt->execute();
+                $updateStmt->close();
 
-            // Redirect based on role
-            if ($_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] === 'manager') {
-                header("Location: admin-panel.php");
+                // Set MFA session
+                $_SESSION['mfa_user_id'] = $user_id;
+
+                // Remove temporary force-login session
+                unset($_SESSION['force_user_id'], $_SESSION['force_first_name'], $_SESSION['force_last_name'], $_SESSION['force_role'], $_SESSION['force_email']);
+
+                header("Location: mfa.php");
+                exit;
             } else {
-                header("Location: my-schedule.php");
+                // No MFA, complete login
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['first_name'] = $_SESSION['force_first_name'];
+                $_SESSION['last_name'] = $_SESSION['force_last_name'];
+                $_SESSION['user_role'] = $_SESSION['force_role'];
+                $_SESSION['email'] = $_SESSION['force_email'];
+
+                unset($_SESSION['force_user_id'], $_SESSION['force_first_name'], $_SESSION['force_last_name'], $_SESSION['force_role'], $_SESSION['force_email']);
+
+                if ($_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] === 'manager') {
+                    header("Location: admin-panel.php");
+                } else {
+                    header("Location: my-schedule.php");
+                }
+                exit;
             }
-            exit;
+
         } else {
             $error = "Error updating password. Try again.";
         }
@@ -65,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h5 class="text-center mb-2">Change Your Password</h5>
         <p class="text-center text-danger mt-2">For security, please update your password before proceeding.</p>
 
-        <!-- Show error alert only if error is not empty -->
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>

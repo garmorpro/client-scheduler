@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_role'] = strtolower($user['role']);
         $_SESSION['email'] = $user['email'];
 
-        // Clear MFA code in DB
+        // Clear MFA code in DB and update last_active
         $updateStmt = $conn->prepare("UPDATE users SET mfa_code = NULL, last_active = NOW() WHERE user_id = ?");
         $updateStmt->bind_param("i", $user_id);
         $updateStmt->execute();
@@ -62,10 +62,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<form method="POST">
-    <h3>Multi-Factor Authentication</h3>
-    <p>Enter the 6-digit code sent to you:</p>
-    <input type="text" name="mfa_code" required maxlength="6">
-    <button type="submit">Verify</button>
-    <?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MFA Verification - Client Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body style="background-color: rgba(216, 216, 216, 1);">
+<div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
+        <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;">
+        <div class="mt-4"></div>
+        <h5 class="text-center mb-2">Multi-Factor Authentication</h5>
+        <p class="text-center text-muted">Enter the 6-digit code sent to you to complete login.</p>
+
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <form class="p-4" method="POST" action="">
+            <div class="mb-3">
+                <label for="mfa_code" class="form-label">6-Digit Code</label>
+                <input type="text" class="form-control" name="mfa_code" placeholder="Enter code" maxlength="6" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">Verify</button>
+            </div>
+        </form>
+
+        <p class="text-center text-muted mt-3">Contact your administrator if you have issues receiving your code.</p>
+        <p class="text-center text-muted" style="font-size: 10px;">This is a demo application.</p>
+    </div>
+</div>
+</body>
+</html>
