@@ -15,7 +15,7 @@
   </div>
 
   <div id="entriesListing" class="d-none">
-  <button id="backToButtons" class="btn btn-secondary mb-3">Back</button>
+  <button id="backToButtons" class="badge text-bg-secondary text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;">Back</button>
   <div id="entriesListContainer"><!-- Cards will render here --></div>
   </div>
 

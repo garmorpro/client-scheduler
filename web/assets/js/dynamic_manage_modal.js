@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cleanup backdrop and body class after modal is hidden (fix gray overlay)
   manageAddModalEl.addEventListener('hidden.bs.modal', () => {
     document.body.classList.remove('modal-open');
-    // document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
   });
 
   // 1) Attach click listeners to all cells with class "addable"
