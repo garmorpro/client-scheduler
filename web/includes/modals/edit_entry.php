@@ -13,7 +13,7 @@
               <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" min="0" required>
             </div>
             <div class="mb-3 text-end">
-              <button type="submit" id="editSubmitBtn" class="btn btn-primary">Save Changes</button>
+              <button type="submit" id="editSubmitBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;">Save Changes</button>
             </div>
           </form>
         </div>
