@@ -144,7 +144,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <style>
       /* light highlight for time off cells */
-      .timeoff-cell { background-color: #d5d5d5ff !important; }
+      .timeoff-cell { background-color: #ebebebff !important; }
       .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
     </style>
 </head>
