@@ -197,7 +197,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   ?>
 
   <div class="table-responsive">
-      <table class="table table-bordered align-middle text-center" style="border-radius: 15px;">
+      <table class="table table-bordered align-middle text-center" style="border-radius: 15px !important;">
           <thead class="table-light">
               <tr>
                   <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
