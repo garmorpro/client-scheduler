@@ -145,7 +145,10 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
 <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 <style>
 .card { min-width: 120px; margin-bottom: 15px; }
-.timeoff-card { border: 1px dashed rgb(229,229,229); box-shadow:none !important; }
+.timeoff-card { 
+    border: 2px dashed rgb(209,226, 159);
+    background: rgb(246, 249, 236);
+}
 </style>
 </head>
 <body class="d-flex">
