@@ -1351,7 +1351,7 @@ if ($settingResult) {
     const email = document.getElementById('testEmail').value.trim();
     if(!email) return alert("Enter a valid email");
 
-    fetch('send_test_email.php', {
+    fetch('../includes/send_test_email.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'test_email=' + encodeURIComponent(email)
