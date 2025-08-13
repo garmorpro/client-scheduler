@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 
-if ($isAdmin || $isManager) {
+if ($isAdmin && $isManager) {
     header("Location: admin-panel.php");
     exit();
 }
