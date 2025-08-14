@@ -89,12 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
   entriesForWeek.forEach(entry => {
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
     if (isTimeOff) {
-      // Ensure time-off entry has proper structure
       entry.client_name = 'Time Off';
-      entry.team_members = []; // no team members for time-off
+      entry.team_members = [];
       timeOffEntries.push(entry);
     } else {
-      // Populate team_members if missing
       if (!entry.team_members) entry.team_members = [];
       clientEntries.push(entry);
     }
@@ -105,12 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sortedEntries.forEach(entry => {
     const card = document.createElement('div');
-    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3'); // padding
+    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
     card.style.cursor = 'pointer';
 
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-
-    // Apply special styling for time-off entries
     if (isTimeOff) card.classList.add('timeoff-card');
 
     card.addEventListener('click', () => {
@@ -132,15 +128,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column: Client Name + Team Members (skip for time-off)
+    // Left column: Client Name + Team Members
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
+
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
+
     if (!isTimeOff) {
+      // filter out current user and format each member with hours
+      const otherMembers = entry.team_members
+        .filter(m => m.name !== currentUserName)
+        .map(m => `${m.name} (${m.assigned_hours || 0})`);
+
       leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> ${entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}
+                        <strong>Team member(s):</strong> ${otherMembers.length ? otherMembers.join(', ') : 'no other team members assigned'}
                       </small>`;
     }
+
     leftDiv.innerHTML = leftContent;
 
     // Middle column: Assigned Hours
@@ -173,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     entriesListContainer.appendChild(card);
   });
 }
+
 
 
 
