@@ -22,9 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
+      function getWeekMonday(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+        const diffToMonday = (day === 0 ? -6 : 1 - day); // if Sunday, go back 6 days
+        date.setDate(date.getDate() + diffToMonday);
+        return date;
+      }
+
       // Format week start
       const formattedWeekStart = currentWeekStart
-        ? new Date(currentWeekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        ? getWeekMonday(currentWeekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '—';
 
       // Fill user info section
