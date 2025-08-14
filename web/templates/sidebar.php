@@ -57,7 +57,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
-        <div id="sidebarUserInitials" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+        <div data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
              style="width: 36px; height: 36px;">
             <?php
             $firstInitial = isset($_SESSION['first_name'][0]) ? $_SESSION['first_name'][0] : '';
@@ -79,23 +79,23 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
     
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const initialsCircle = document.getElementById('sidebarUserInitials');
-    if (!initialsCircle) return;
+// document.addEventListener('DOMContentLoaded', () => {
+//     const initialsCircle = document.getElementById('sidebarUserInitials');
+//     if (!initialsCircle) return;
 
-    initialsCircle.addEventListener('click', () => {
-        // Populate modal fields
-        document.getElementById('view_first_name').textContent = '<?php echo $_SESSION['first_name']; ?>';
-        document.getElementById('view_user_fullname').textContent = '<?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?>';
-        document.getElementById('view_email').textContent = '<?php echo $_SESSION['email']; ?>';
-        document.getElementById('view_user_role').textContent = '<?php echo $_SESSION['user_role']; ?>';
-        document.getElementById('view_user_initials').textContent = '<?php echo strtoupper($firstInitial . $lastInitial); ?>';
+//     initialsCircle.addEventListener('click', () => {
+//         // Populate modal fields
+//         document.getElementById('view_first_name').textContent = '<?php echo $_SESSION['first_name']; ?>';
+//         document.getElementById('view_user_fullname').textContent = '<?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?>';
+//         document.getElementById('view_email').textContent = '<?php echo $_SESSION['email']; ?>';
+//         document.getElementById('view_user_role').textContent = '<?php echo $_SESSION['user_role']; ?>';
+//         document.getElementById('view_user_initials').textContent = '<?php echo strtoupper($firstInitial . $lastInitial); ?>';
 
-        // Open modal
-        const userModal = new bootstrap.Modal(document.getElementById('viewUserModal'));
-        userModal.show();
-    });
-});
+//         // Open modal
+//         const userModal = new bootstrap.Modal(document.getElementById('viewUserModal'));
+//         userModal.show();
+//     });
+// });
 </script>
 
 
