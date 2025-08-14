@@ -652,22 +652,24 @@ if ($settingResult) {
                     </div>
 
                     <?php
-                      $path = '/'; // Root filesystem for container/VM
-
-                      $totalSpace = disk_total_space($path);
-                      $freeSpace = disk_free_space($path);
-                      $usedSpace = $totalSpace - $freeSpace;
-                      $percentUsed = ($usedSpace / $totalSpace) * 100;
-
-                      function formatSize($bytes) {
-                          $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-                          $i = 0;
-                          while ($bytes >= 1024 && $i < count($sizes) - 1) {
-                              $bytes /= 1024;
-                              $i++;
-                          }
-                          return round($bytes, 2) . ' ' . $sizes[$i];
-                      }
+                    $path = '/'; // Root filesystem for container/VM
+                                      
+                    $totalSpace = disk_total_space($path);
+                    $freeSpace = disk_free_space($path);
+                    $usedSpace = $totalSpace - $freeSpace;
+                                      
+                    // Make percent used a whole number
+                    $percentUsed = round(($usedSpace / $totalSpace) * 100);
+                                      
+                    function formatSize($bytes) {
+                        $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                        $i = 0;
+                        while ($bytes >= 1024 && $i < count($sizes) - 1) {
+                            $bytes /= 1024;
+                            $i++;
+                        }
+                        return round($bytes, 2) . ' ' . $sizes[$i];
+                    }
                     ?>
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
