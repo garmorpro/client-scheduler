@@ -15,7 +15,7 @@
         <div class="modal-body">
           <!-- Hidden inputs -->
             <input type="hidden" id="addEntryUserId" name="user_id" value="">
-            <input type="hidden" id="addEntryWeekDisplay" name="week_start" value="">
+            <input type="text" id="addEntryWeekDisplay" name="week_start" value="">
 
           
 
