@@ -310,7 +310,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     $role = htmlspecialchars($employee['role']);
                     ?>
                     <tr>
-                        <td class="text-start employee-name position-fixed">
+                        <td class="text-start employee-name position-sticky">
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
