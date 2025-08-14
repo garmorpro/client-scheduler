@@ -47,6 +47,8 @@ try {
 
     // Return JSON
     echo json_encode($teammates);
+    echo "<script>console.log('PHP Teammates:', ".json_encode($teammates).");</script>";
+
 
 } catch (Exception $e) {
     echo json_encode(['error' => $e->getMessage()]);
