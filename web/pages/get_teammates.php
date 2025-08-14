@@ -1,10 +1,13 @@
 <?php
 // get_teammates.php
-require_once '../includes/db.php';
-
 header('Content-Type: application/json');
 
-// Get query parameters
+// Disable direct HTML error output
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+require_once '../includes/db.php'; // ensure $pdo is defined
+
 $clientName = $_GET['client_name'] ?? '';
 $weekStart = $_GET['week_start'] ?? '';
 $currentUserId = $_GET['current_user_id'] ?? null;
@@ -15,7 +18,6 @@ if (!$clientName || !$weekStart) {
 }
 
 try {
-    // Adjust table/column names as needed
     $sql = "SELECT u.id AS user_id, u.user_name, u.first_name, u.last_name, e.assigned_hours
             FROM entries e
             JOIN users u ON e.user_id = u.id
@@ -38,6 +40,8 @@ try {
 
     echo json_encode($teamMembers);
 } catch (Exception $e) {
+    // Log the error somewhere safe
+    error_log($e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Server error', 'message' => $e->getMessage()]);
+    echo json_encode(['error' => 'Server error']);
 }
