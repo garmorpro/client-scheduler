@@ -87,9 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientEntries = [];
 
   entriesForWeek.forEach(entry => {
-    if (entry.client_name === 'Time Off' || entry.type === 'Time Off') {
+    const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+    if (isTimeOff) {
+      // Ensure time-off entry has proper structure
+      entry.client_name = 'Time Off';
+      entry.team_members = []; // no team members for time-off
       timeOffEntries.push(entry);
     } else {
+      // Populate team_members if missing
+      if (!entry.team_members) entry.team_members = [];
       clientEntries.push(entry);
     }
   });
@@ -99,15 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sortedEntries.forEach(entry => {
     const card = document.createElement('div');
-    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3'); // add top/bottom padding
+    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3'); // padding
     card.style.cursor = 'pointer';
 
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
 
     // Apply special styling for time-off entries
-    if (isTimeOff) {
-      card.classList.add('timeoff-card');
-    }
+    if (isTimeOff) card.classList.add('timeoff-card');
 
     card.addEventListener('click', () => {
       const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
@@ -124,28 +128,28 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
 
-    // Use flexbox for 3 columns
+    // Flexbox 3-column layout
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column - Client Name (+ Team Members only if not time-off)
+    // Left column: Client Name + Team Members (skip for time-off)
     const leftDiv = document.createElement('div');
-    leftDiv.style.flex = '1'; // largest column
-    let leftContent = `<div class="fw-semibold fs-6">${entry.client_name || 'Unnamed Client'}</div>`;
+    leftDiv.style.flex = '1';
+    let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
     if (!isTimeOff) {
       leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> ${entry.team_members && entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}
+                        <strong>Team member(s):</strong> ${entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}
                       </small>`;
     }
     leftDiv.innerHTML = leftContent;
 
-    // Middle column - Assigned Hours (text-danger for time-off)
+    // Middle column: Assigned Hours
     const middleDiv = document.createElement('div');
     middleDiv.style.marginRight = '1rem';
     middleDiv.style.textAlign = 'right';
     middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
 
-    // Right column - Delete button
+    // Right column: Delete button
     const rightDiv = document.createElement('div');
     if (entry.entry_id) {
       const deleteLink = document.createElement('a');
