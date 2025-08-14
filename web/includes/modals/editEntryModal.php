@@ -18,7 +18,7 @@
           <div class="row g-2">
             <div class="col-md-4">
               <small class="text-muted">Client</small>
-              <div class="fw-semibold" id="editClientName">—</div>
+              <div class="fw-semibold" id="editClientName">Timeoff Entry</div>
             </div>
             <div class="col-md-4">
               <small class="text-muted">Employee Name</small>
