@@ -90,15 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
     if (isTimeOff) {
       entry.client_name = 'Time Off';
-      entry.team_members = [];
       timeOffEntries.push(entry);
     } else {
-      if (!entry.team_members) entry.team_members = [];
       clientEntries.push(entry);
     }
   });
 
-  // Combine: client entries first, time-off entries last
   const sortedEntries = [...clientEntries, ...timeOffEntries];
 
   sortedEntries.forEach(entry => {
@@ -124,24 +121,22 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
 
-    // Flexbox 3-column layout
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column: Client Name + Team Members
+    // Left column
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
-
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
-    if (!isTimeOff) {
-      // filter out current user and format each member with hours
-      const otherMembers = entry.team_members
-        .filter(m => m.name !== currentUserName)
-        .map(m => `${m.name} (${m.assigned_hours || 0})`);
+    if (!isTimeOff && entry.engagement_id) {
+      // find all entries with the same engagement_id
+      const teammates = entriesForWeek
+        .filter(e => e.engagement_id === entry.engagement_id && e.user_name !== currentUserName)
+        .map(e => `${e.user_name} (${e.assigned_hours || 0})`);
 
       leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> ${otherMembers.length ? otherMembers.join(', ') : 'no other team members assigned'}
+                        <strong>Team member(s):</strong> ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
                       </small>`;
     }
 
@@ -177,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     entriesListContainer.appendChild(card);
   });
 }
+
 
 
 
