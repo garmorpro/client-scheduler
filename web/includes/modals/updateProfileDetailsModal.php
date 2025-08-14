@@ -11,7 +11,7 @@
           
           <div class="modal-body">
 
-            <input type="text" id="update_user_id" name="user_id">
+            <input type="hidden" id="update_user_id" name="user_id">
 
             <div class="mb-3">
               <label for="update_first_name" class="form-label">First Name</label>
@@ -27,26 +27,6 @@
               <label for="update_email" class="form-label">Email</label>
               <input type="email" class="form-control" id="update_email" name="email" >
             </div>
-
-            <!-- <div class="mb-3">
-              <label for="update_role" class="form-label">Role</label>
-              <select class="form-select" id="update_role" name="role" required>
-                <option value="" disabled>Select role</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="senior">Senior</option>
-                <option value="staff">Staff</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="update_status" class="form-label">Status</label>
-              <select class="form-select" id="update_status" name="status" required>
-                <option value="" disabled>Select status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div> -->
 
           </div>
           <div class="modal-footer">
