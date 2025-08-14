@@ -123,36 +123,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // LEFT column: Client Name + Team Members
+    // LEFT column
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
-
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
     if (!isTimeOff) {
-      // Find other team members with the same client_name
-      const otherMembers = entriesForWeek
-        .filter(e => e.client_name === entry.client_name && e.user_name !== currentUserName)
-        .map(e => `${e.user_name} (${e.assigned_hours || 0})`);
+      // mimic PHP getTeamMembers() logic but in JS
+      const teammateMap = {};
 
-      // Remove duplicates
-      const uniqueMembers = [...new Set(otherMembers)];
+      entriesForWeek
+        .filter(e =>
+          e.client_name === entry.client_name &&
+          e.user_name !== currentUserName
+        )
+        .forEach(e => {
+          const name = e.user_name;
+          if (!teammateMap[name]) teammateMap[name] = 0;
+          teammateMap[name] += Number(e.assigned_hours) || 0;
+        });
+
+      const teammates = Object.entries(teammateMap).map(
+        ([name, hours]) => `${name} (${hours})`
+      );
 
       leftContent += `<small class="text-muted">
                         <strong>Team member(s):</strong> 
-                        ${uniqueMembers.length ? uniqueMembers.join(', ') : 'no other team members assigned'}
+                        ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
                       </small>`;
     }
 
     leftDiv.innerHTML = leftContent;
 
-    // MIDDLE column: Assigned Hours
+    // MIDDLE column
     const middleDiv = document.createElement('div');
     middleDiv.style.marginRight = '1rem';
     middleDiv.style.textAlign = 'right';
     middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
 
-    // RIGHT column: Delete button
+    // RIGHT column
     const rightDiv = document.createElement('div');
     if (entry.entry_id) {
       const deleteLink = document.createElement('a');
