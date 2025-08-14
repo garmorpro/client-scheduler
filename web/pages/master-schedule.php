@@ -193,21 +193,21 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 .table-responsive {
-    overflow-x: auto;
-    white-space: nowrap;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
 }
 
 .table th:first-child,
 .table td:first-child {
-    position: sticky;
-    left: 0;
-    background: #fff; /* matches table background */
-    z-index: 2;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+    position: sticky !important;
+    left: 0 !important;
+    background: #fff !important; /* matches table background */
+    z-index: 2 !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important;
 }
 
 .table thead th:first-child {
-    z-index: 3; /* so header stays on top of body cells */
+    z-index: 3 !important; /* so header stays on top of body cells */
 }
 
 /* .table-responsive {
