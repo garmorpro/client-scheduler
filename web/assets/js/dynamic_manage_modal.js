@@ -21,15 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserId = cell.getAttribute('data-user-id');
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
-          
+
       // Convert week start string to Date object
       let formattedWeekStart = currentWeekStart ? new Date(currentWeekStart) : null;
       let displayWeekStart = formattedWeekStart 
           ? formattedWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
           : '—';
-          
+
       // Fill user info section
-      document.getElementById('entryUserId').textContent = currentUserId;
+      // document.getElementById('entryUserId').textContent = currentUserId;
       document.getElementById('entryUserName').textContent = currentUserName || '—';
       document.getElementById('entryWeekStart').textContent = displayWeekStart;
 
