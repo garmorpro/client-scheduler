@@ -6,7 +6,7 @@
           <h5 class="modal-title" id="addEntryModalLabel">
             <i class="bi bi-calendar-range me-2"></i>New Entry<br>
               <span class="text-muted" style="font-size: 12px; font-weight: 400; padding-top: 0;">
-                Assign work for <strong><span id="addEntryEmployeeNameDisplay"></span></strong> during week of <strong><span id="addEntryWeekDisplay"></span></strong>
+                Assign work for <strong><span id="addEntryEmployeeNameDisplay"></span></strong> during week of <strong><span id="addEntryWeek"></span></strong>
               </span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,7 +15,7 @@
         <div class="modal-body">
           <!-- Hidden inputs -->
             <input type="hidden" id="addEntryUserId" name="user_id" value="">
-            <input type="hidden" id="addEntryWeek" name="week_start" value="">
+            <input type="hidden" id="addEntryWeekDisplay" name="week_start" value="">
 
           
 
