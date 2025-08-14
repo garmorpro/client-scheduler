@@ -16,11 +16,11 @@
         <!-- User & Client Details -->
         <div class="p-3 bg-light rounded border mb-4">
           <div class="row g-2">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <small class="text-muted">Client</small>
               <div class="fw-semibold" id="editClientName">—</div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <small class="text-muted">Employee Name</small>
               <div class="fw-semibold" id="editUserName">—</div>
             </div>
@@ -28,7 +28,7 @@
               <small class="text-muted">User ID</small>
               <div class="fw-semibold" id="editUserId">—</div>
             </div> -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <small class="text-muted">Week Start</small>
               <div class="fw-semibold" id="editWeekStart">—</div>
             </div>
