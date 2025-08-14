@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sortedEntries.forEach(entry => {
       const card = document.createElement('div');
-      card.classList.add('card', 'mb-2', 'shadow-sm', 'border-0');
+      card.classList.add('card', 'mb-2', 'shadow-sm');
       card.style.cursor = 'pointer';
 
       // Apply special styling for time-off entries
