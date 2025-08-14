@@ -4,9 +4,9 @@ function openEditModal(entryId, assignedHours, clientName, userName, weekStart) 
     document.getElementById('editAssignedHours').value = assignedHours;
 
     // Populate additional details section in the modal
-    document.getElementById('editClientName').textContent = clientName || 'Timeoff Entry';
-    // document.getElementById('editUserId').textContent = userId || '—';
+    document.getElementById('editClientName').textContent = clientName ? clientName : 'Timeoff Entry';
     document.getElementById('editUserName').textContent = userName || '—';
+
     const formattedWeekStart = weekStart
         ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '—';
