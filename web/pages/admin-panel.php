@@ -131,8 +131,8 @@ if ($settingResult) {
 
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
-    <script src="../assets/js/viewProfileModal.js"></script>
-    <script src="../assets/js/openUpdateProfileDetailsModal.js"></script>
+    <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 </head>
 <body class="d-flex">
 
@@ -2025,7 +2025,7 @@ if ($settingResult) {
     </script>
 <!-- end update modal ajax -->
 
-<script src="../assets/js/viewUserModal.js"></script>
+<script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 
 <!-- update engagement modal ajax -->
     <script>
