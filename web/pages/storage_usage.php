@@ -31,7 +31,7 @@
 
 
 <?php
-$dbFile = __DIR__ . '/../includes/db.php'; // adjust relative path
+$dbFile = __DIR__ . '../includes/db.php'; // adjust relative path
 
 // Try to include DB file
 if (file_exists($dbFile)) {
