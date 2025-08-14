@@ -82,20 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Separate time-off entries and client assignments
   const timeOffEntries = [];
   const clientEntries = [];
 
   entriesForWeek.forEach(entry => {
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
     if (isTimeOff) {
+      entry.client_name = 'Time Off';
       timeOffEntries.push(entry);
     } else {
       clientEntries.push(entry);
     }
   });
 
-  // Combine: client entries first, time-off entries last
   const sortedEntries = [...clientEntries, ...timeOffEntries];
 
   sortedEntries.forEach(entry => {
@@ -121,40 +120,39 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
 
-    // Flexbox 3-column layout
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column: Client Name + Team Members
+    // LEFT column: Client Name + Team Members
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
 
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
-    if (!isTimeOff && entry.engagement_id) {
-      // Simulate PHP getTeamMembers() using JS
-      const teammates = entriesForWeek
-        .filter(e =>
-          e.engagement_id === entry.engagement_id &&
-          e.week_start === entry.week_start &&
-          e.user_name !== currentUserName
-        )
+    if (!isTimeOff) {
+      // Find other team members with the same client_name
+      const otherMembers = entriesForWeek
+        .filter(e => e.client_name === entry.client_name && e.user_name !== currentUserName)
         .map(e => `${e.user_name} (${e.assigned_hours || 0})`);
 
+      // Remove duplicates
+      const uniqueMembers = [...new Set(otherMembers)];
+
       leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                        <strong>Team member(s):</strong> 
+                        ${uniqueMembers.length ? uniqueMembers.join(', ') : 'no other team members assigned'}
                       </small>`;
     }
 
     leftDiv.innerHTML = leftContent;
 
-    // Middle column: Assigned Hours
+    // MIDDLE column: Assigned Hours
     const middleDiv = document.createElement('div');
     middleDiv.style.marginRight = '1rem';
     middleDiv.style.textAlign = 'right';
     middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
 
-    // Right column: Delete button
+    // RIGHT column: Delete button
     const rightDiv = document.createElement('div');
     if (entry.entry_id) {
       const deleteLink = document.createElement('a');
