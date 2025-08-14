@@ -5,7 +5,7 @@ date_default_timezone_set('America/Chicago');
 $host = getenv('DB_HOST');
 $db   = getenv('DB_NAME');
 $user = getenv('DB_USER');
-$pass = getenv('DB_PASSWORD');
+$pass = fil;
 
 // Turn off mysqli warnings (optional)
 mysqli_report(MYSQLI_REPORT_OFF);
