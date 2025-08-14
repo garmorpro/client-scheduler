@@ -648,7 +648,7 @@ if ($settingResult) {
                       </div>
                       <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
                         <?php
-                        if ($conn->ping()) {
+                        if ($connn->ping()) {
     echo "Database server is alive";
 } else {
     echo "Database server is down!";
