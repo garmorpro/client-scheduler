@@ -34,8 +34,8 @@
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
             <p>Please choose the type of entry:</p>
-            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn btn-dark" id="btnTimeOffEntry">Time Off Entry</button>
-            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn btn-dark" id="btnNewEntry">New Entry</button>
+            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" id="btnTimeOffEntry">Time Off Entry</button>
+            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" id="btnNewEntry">New Entry</button>
           </div>
 
           <!-- Time Off Entry content -->
