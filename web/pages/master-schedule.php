@@ -150,17 +150,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script>
       const entries = <?php echo json_encode($entries); ?>;
     </script>
-    <script src="../assets/js/manage_entry_modal.js"></script>
-    <script src="../assets/js/show_entries.js"></script>
-    <script src="../assets/js/edit_modal.js"></script>
-    <script src="../assets/js/delete_entry.js"></script>
-    <script src="../assets/js/view_entry_modal.js"></script>
-    <script src="../assets/js/view_user_modal.js"></script>
-    <script src="../assets/js/filter_employees.js"></script>
-    <script src="../assets/js/add_entry_modal.js"></script>
-    <script src="../assets/js/open_modal.js"></script>
-    <script src="../assets/js/viewProfileModal.js"></script>
-    <script src="../assets/js/openUpdateProfileDetailsModal.js"></script>
+    <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/view_user_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 
     <style>
       /* light highlight for time off cells */
@@ -360,11 +360,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
-    <script src="../assets/js/view_engagement_details.js"></script>
-    <script src="../assets/js/number_of_weeks.js"></script>
-    <script src="../assets/js/search.js"></script>
-    <script src="../assets/js/client_dropdown.js"></script>
-    <script src="../assets/js/dynamic_add_modal.js"></script>
+    <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
