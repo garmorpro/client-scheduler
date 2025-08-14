@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 <div class="user-table">
-                    <table id="user-table" class="table table-hover mb-0">
+                    <table id="engagement-table" class="table table-hover mb-0">
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="selectAllEngagements"></th>
