@@ -150,15 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
       let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
       if (!isTimeOff) {
-        const teammatesData = await fetchTeammates(entry.client_name);
-        const teammates = teammatesData.map(t => `${t.name} (${entry.assigned_hours || 0})`);
-        console.log(`👥 Client "${entry.client_name}" teammates:`, teammates);
+  const teammatesData = await fetchTeammates(entry.client_name);
+  // use each teammate's own hours
+  const teammates = teammatesData.map(t => `${t.name} (${t.hours})`);
+  console.log(`👥 Client "${entry.client_name}" teammates:`, teammates);
 
-        leftContent += `<small class="text-muted">
-                          <strong>Team member(s):</strong> 
-                          ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
-                        </small>`;
-      }
+  leftContent += `<small class="text-muted">
+                    <strong>Team member(s):</strong> 
+                    ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                  </small>`;
+}
 
       leftDiv.innerHTML = leftContent;
 

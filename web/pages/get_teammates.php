@@ -16,8 +16,7 @@ try {
     $weekStart     = $_GET['week_start'] ?? '';
     $clientName    = $_GET['client_name'] ?? '';
 
-    // Base query
-$sql = "SELECT 
+    $sql = "SELECT 
             u.user_id,
             u.first_name,
             u.last_name,
@@ -27,34 +26,29 @@ $sql = "SELECT
         JOIN engagements g ON g.engagement_id = e.engagement_id
         WHERE g.client_name = ?";
 
-    $types = "s"; // string for client_name
-    $params = [$clientName];
+$types = "s";
+$params = [$clientName];
 
-    if ($currentUserId) {
-        $sql .= " AND u.user_id != ?";
-        $types .= "i"; // integer
-        $params[] = $currentUserId;
-    }
+if ($currentUserId) {
+    $sql .= " AND u.user_id != ?";
+    $types .= "i";
+    $params[] = $currentUserId;
+}
 
-    if (!empty($weekStart)) {
-        $sql .= " AND e.week_start = ?";
-        $types .= "s";
-        $params[] = $weekStart;
-    }
+if (!empty($weekStart)) {
+    $sql .= " AND e.week_start = ?";
+    $types .= "s";
+    $params[] = $weekStart;
+}
 
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new Exception("Prepare failed: " . $conn->error);
-    }
+$stmt = $conn->prepare($sql);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+$teammates = $result->fetch_all(MYSQLI_ASSOC);
 
-    // Bind parameters dynamically
-    $stmt->bind_param($types, ...$params);
+echo json_encode($teammates);
 
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $teammates = $result->fetch_all(MYSQLI_ASSOC);
-
-    echo json_encode($teammates);
 
 } catch (Exception $e) {
     http_response_code(500);
