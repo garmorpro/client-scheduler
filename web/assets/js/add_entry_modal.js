@@ -1,4 +1,6 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
+    console.log('Original weekStart:', weekStart);
+
     // Validate weekStart
     if (!weekStart || !/^\d{4}-\d{2}-\d{2}$/.test(weekStart)) {
         console.warn('Invalid weekStart date:', weekStart);
@@ -8,16 +10,21 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     // Parse YYYY-MM-DD manually to avoid timezone issues
     const [year, month, day] = weekStart.split('-').map(Number);
     let weekDate = new Date(year, month - 1, day); // month is 0-based
+    console.log('Parsed weekDate:', weekDate.toString());
 
     // Force weekDate to Monday of that week
     const dayOfWeek = weekDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    console.log('Day of week:', dayOfWeek);
     const diffToMonday = (dayOfWeek + 6) % 7; // days since Monday
+    console.log('Diff to Monday:', diffToMonday);
     weekDate.setDate(weekDate.getDate() - diffToMonday);
+    console.log('Adjusted weekDate (Monday):', weekDate.toString());
 
     // Format as "Aug 11, 2025"
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
+    console.log('Formatted date:', formattedDate);
 
     // Set hidden inputs and employee name
     document.getElementById('addEntryUserId').value = user_id;
@@ -48,4 +55,4 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
 }
 
 // --- HARD-CODED TEST ---
-openAddEntryModal(123, "John Doe", "2025-08-11");
+// openAddEntryModal(123, "John Doe", "2025-08-11");
