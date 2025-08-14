@@ -1,6 +1,6 @@
 <div class="modal fade" id="updateProfileDetailsModal" tabindex="-1" aria-labelledby="updateProfileDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <form id="updateProfileForm" action="update_user.php" method="POST" class="modal-content">
+        <form id="updateProfileForm" action="update_profile.php" method="POST" class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateProfileDetailsModalLabel">
                 <i class="bi bi-pencil-square"></i> Edit User <br>
