@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasEntries = td.querySelector('.badge-status') !== null;
     // console.log("Has Entries:", hasEntries);
 
-    if (hasEntries === true) {
+    if (hasEntries === false) {
       openManageEntryModal(userId, userName, weekStart);
     } else {
       openAddEntryModal(userId, userName, weekStart);
