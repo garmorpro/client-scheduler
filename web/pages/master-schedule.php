@@ -336,11 +336,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                 </td>
                             <?php else: ?>
                                 <!-- No Entries → open AddEntry modal -->
-                                <td class="addable <?php echo $tdClass; ?>" 
-                                    style="cursor:pointer;"
+                                <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
                                     data-user-id="<?php echo $userId; ?>" 
                                     data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                                    data-week-start="<?php echo $weekKey; ?>">
+                                    data-week-start="<?php echo $weekKey; ?>"
+                                    onclick='
+                                        event.stopPropagation();
+                                        console.log("Entries empty?", true);
+                                        openAddEntryModal(
+                                            <?php echo json_encode($userId); ?>,
+                                            <?php echo json_encode($fullName); ?>,
+                                            <?php echo json_encode($weekKey); ?>
+                                        )
+                                    '>
                                     <?php 
                                       if ($hasTimeOff) {
                                           echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
