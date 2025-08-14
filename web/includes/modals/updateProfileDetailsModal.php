@@ -11,21 +11,21 @@
           
           <div class="modal-body">
 
-            <input type="hidden" id="update_user_id" name="user_id" required>
+            <input type="text" id="update_user_id" name="user_id">
 
             <div class="mb-3">
               <label for="update_first_name" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="update_first_name" name="first_name" required>
+              <input type="text" class="form-control" id="update_first_name" name="first_name" >
             </div>
 
             <div class="mb-3">
               <label for="update_last_name" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="update_last_name" name="last_name" required>
+              <input type="text" class="form-control" id="update_last_name" name="last_name" >
             </div>
 
             <div class="mb-3">
               <label for="update_email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="update_email" name="email" required>
+              <input type="email" class="form-control" id="update_email" name="email" >
             </div>
 
             <!-- <div class="mb-3">
