@@ -12,8 +12,8 @@ try {
     $sql = "SELECT u.user_id, u.first_name, u.last_name, u.user_name
             FROM entries a
             JOIN users u ON a.user_id = u.id
-            WHERE a.client_name = :client_name
-              AND a.week_start = :week_start";
+            WHERE a.client_name = $clientName
+              AND a.week_start = $weekStart";
 
     if ($currentUserId) {
         $sql .= " AND u.id != :current_user_id";
