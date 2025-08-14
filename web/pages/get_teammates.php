@@ -2,7 +2,6 @@
 header('Content-Type: application/json');
 
 try {
-    // Database connection
     require_once '../includes/db.php';
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
@@ -16,10 +15,10 @@ try {
             FROM users u
             JOIN entries e ON e.user_id = u.user_id
             JOIN engagements g ON g.engagement_id = e.engagement_id
-            WHERE g.client_name = $clientName";
+            WHERE g.client_name = :client_name";
 
     if ($currentUserId) {
-        $sql .= " AND u.id != :current_user_id";
+        $sql .= " AND u.user_id != :current_user_id";
     }
 
     $stmt = $pdo->prepare($sql);
@@ -36,6 +35,5 @@ try {
     echo json_encode($teammates);
 
 } catch (Exception $e) {
-    // Always return JSON on error
     echo json_encode(['error' => $e->getMessage()]);
 }
