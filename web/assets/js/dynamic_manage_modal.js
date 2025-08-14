@@ -24,12 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       currentUserId = cell.getAttribute('data-user-id');
       currentUserName = cell.getAttribute('data-user-name') || null;
-
-      // --- ADD 1 DAY TO WEEK START ---
-      let weekStartDate = new Date(cell.getAttribute('data-week-start'));
-      weekStartDate.setDate(weekStartDate.getDate() + 1);
-      currentWeekStart = weekStartDate.toISOString().split('T')[0];
-      // -------------------------------
+      currentWeekStart = cell.getAttribute('data-week-start');
 
       const hasEntries = cell.querySelectorAll('.badge').length > 0;
 
@@ -69,14 +64,23 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  // 3) Clicking "Add New Entry" button in manageAddModal
+  // 3) Clicking "Add New Entry" button in manageAddModal:
+  // addEntriesButton.addEventListener('click', () => {
+  //   // Wait for manageAddModal to fully hide, then open addEntryModal
+  //   manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
+  //     openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+  //     manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
+  //   });
+  //   manageAddModal.hide();
+  // });
+
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
-    // Wait for the fade-out before showing AddEntry modal
+    // Delay to ensure modal is fully hidden before opening the next
     setTimeout(() => {
-        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-    }, 250); // Bootstrap fade ~250ms
-  });
+        openAddEntryModal(currentUserId, currentUserName, 15);
+    }, 250); // Bootstrap modal fade ~250ms
+});
 
   // 4) Back button inside manageAddModal
   backToButtons.addEventListener('click', () => {
