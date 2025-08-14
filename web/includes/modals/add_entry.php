@@ -34,8 +34,8 @@
           <!-- Initial prompt with two buttons -->
           <div id="entryTypePrompt" class="text-center">
             <p>Please choose the type of entry:</p>
-            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" id="btnTimeOffEntry">Time Off Entry</button>
-            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" id="btnNewEntry">New Assignment Entry</button>
+            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" style="font-size: 14px !important;" id="btnTimeOffEntry">Time Off Entry</button>
+            <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" style="font-size: 14px !important;" id="btnNewEntry">New Assignment Entry</button>
           </div>
 
           <!-- Time Off Entry content -->
@@ -80,8 +80,8 @@
 
         <!-- Footer -->
         <div id="modal-footer" class="modal-footer d-none">
-          <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark fw-medium">Submit</button>
+          <button type="button" class="btn btn-light fw-medium" style="font-size: 14px !important;" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-dark fw-medium" style="font-size: 14px !important;">Submit</button>
         </div>
       </form>
     </div>
