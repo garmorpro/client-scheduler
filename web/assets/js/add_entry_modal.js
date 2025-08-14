@@ -1,18 +1,25 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
-    if (!weekStart || isNaN(new Date(weekStart).getTime())) {
+    if (!weekStart) {
         console.warn('Invalid weekStart date:', weekStart);
         return;
     }
 
+    // Set user ID and employee name
     document.getElementById('addEntryUserId').value = user_id;
-    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
-// Split the date manually
-const parts = weekStart.split('-'); // ["2025", "08", "11"]
-const weekDate = new Date(parts[0], parts[1] - 1, parts[2]); // month is 0-based
-document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+    // Parse the weekStart manually
+    const [year, month, day] = weekStart.split('-').map(Number); // ["2025","08","11"] -> [2025,8,11]
+    const weekDate = new Date(year, month - 1, day); // month is 0-based
 
+    // Format date manually (avoid timezone shifts)
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
+    document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
+
+    // Also store hidden input for form submission
+    document.getElementById('addEntryWeek').value = weekStart;
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
