@@ -1,5 +1,5 @@
 <div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModal" aria-hidden="true">
-      <div class="modal-dialog" style="min-width: 600px !important;">
+      <div class="modal-dialog p-3" style="min-width: 600px !important;">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
