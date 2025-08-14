@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasEntries = td.querySelector('.badge-status') !== null;
 
     if (hasEntries) {
-      openManageEntryModal(userId, userName, weekStart);
+      openManageEntryModal(userId, userName, 15);
     } else {
-      openAddEntryModal(userId, userName, 15);
+      openAddEntryModal(userId, userName, weekStart);
     }
   });
 });

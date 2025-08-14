@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entriesListContainer.innerHTML = '';
         manageAddModal.show();
       } else {
-        openAddEntryModal(currentUserId, currentUserName, 15);
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
       }
     });
   });
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     manageAddModal.hide();
     // Delay to ensure modal is fully hidden before opening the next
     setTimeout(() => {
-        openAddEntryModal(currentUserId, currentUserName, 15);
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
     }, 250); // Bootstrap modal fade ~250ms
 });
 
