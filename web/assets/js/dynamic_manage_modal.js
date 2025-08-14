@@ -65,14 +65,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 3) Clicking "Add New Entry" button in manageAddModal:
+  // addEntriesButton.addEventListener('click', () => {
+  //   // Wait for manageAddModal to fully hide, then open addEntryModal
+  //   manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
+  //     openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+  //     manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
+  //   });
+  //   manageAddModal.hide();
+  // });
+
   addEntriesButton.addEventListener('click', () => {
-    // Wait for manageAddModal to fully hide, then open addEntryModal
-    manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
-      openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-      manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
-    });
     manageAddModal.hide();
-  });
+    // Delay to ensure modal is fully hidden before opening the next
+    setTimeout(() => {
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+    }, 250); // Bootstrap modal fade ~250ms
+});
 
   // 4) Back button inside manageAddModal
   backToButtons.addEventListener('click', () => {

@@ -313,18 +313,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
                         <?php if ($isAdmin): ?>
                             <td class="addable <?php echo $tdClass; ?>" 
-    style="cursor:pointer;"
-    data-user-id="<?php echo $userId; ?>" 
-    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-    data-week-start="<?php echo $weekKey; ?>">
-    
-    <?php 
-      if ($hasTimeOff) {
-          echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
-      }
-      echo $cellContent; 
-    ?>
-</td>
+                                style="cursor:pointer;"
+                                data-user-id="<?php echo $userId; ?>" 
+                                data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+                                data-week-start="<?php echo $weekKey; ?>">
+                                                    
+                                <?php 
+                                  if ($hasTimeOff) {
+                                      echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
+                                  }
+                                  echo $cellContent; 
+                                ?>
+                            </td>
                         <?php else: ?>
                             <td class="<?php echo $tdClass; ?>">
                                 <?php 
