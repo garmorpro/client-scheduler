@@ -1,6 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 try {
     require_once '../includes/db.php'; // make sure $mysqli is your MySQLi connection
 
