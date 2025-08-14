@@ -1,7 +1,8 @@
 <?php
 // get_teammates.php
+require_once '../includes/db.php';
+
 header('Content-Type: application/json');
-require_once '../includes/db.php'; // your DB connection
 
 // Get query parameters
 $clientName = $_GET['client_name'] ?? '';
