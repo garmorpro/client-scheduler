@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const manageAddModalEl = document.getElementById('manageEntryPromptModal');
   const manageAddModal = new bootstrap.Modal(manageAddModalEl);
   const entriesListContainer = document.getElementById('entriesListContainer');
-  const addEntriesButton2 = document.getElementById('addEntriesButton2');
+  const addEntriesButton = document.getElementById('addEntriesButton2');
 
   // Add Entry Modal
   const addEntryModalEl = document.getElementById('addEntryModal');
@@ -22,20 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      // Convert week start string to Date object
-      let formattedWeekStart = currentWeekStart ? new Date(currentWeekStart) : null;
-      let displayWeekStart = formattedWeekStart 
-          ? formattedWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-          : '—';
+      // Format week start to "Aug 11, 2025"
+      const formattedWeekStart = currentWeekStart
+        ? new Date(currentWeekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
 
       // Fill user info section
-      // document.getElementById('entryUserId').textContent = currentUserId;
       document.getElementById('entryUserName').textContent = currentUserName || '—';
-      document.getElementById('entryWeekStart').textContent = displayWeekStart;
+      document.getElementById('entryWeekStart').textContent = formattedWeekStart;
 
       entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
-      // Fetch and render entries immediately
+      // Fetch and render entries
       fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
         .then(res => {
           if (!res.ok) throw new Error('Network response was not OK');
@@ -51,9 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 2) Add Entry button
-  addEntriesButton2.addEventListener('click', () => {
+  addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
-    // Delay to ensure modal is fully hidden before opening the next
     setTimeout(() => {
       openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
     }, 250);
@@ -71,6 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
     entriesForWeek.forEach(entry => {
       const card = document.createElement('div');
       card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
+      card.style.cursor = 'pointer'; // Make card visually clickable
+
+      card.addEventListener('click', () => {
+        openEditModal(entry.entry_id, entry.assigned_hours);
+      });
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
@@ -83,19 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rightDiv = document.createElement('div');
 
-      const editLink = document.createElement('a');
-      editLink.href = "#";
-      editLink.title = "Edit Entry";
-      editLink.className = "text-primary me-3";
-      editLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      editLink.innerHTML = `<i class="bi bi-pencil-square" style="font-size: 16px;"></i>`;
-      editLink.setAttribute('data-entry-id', entry.entry_id);
-      editLink.setAttribute('data-assigned-hours', entry.assigned_hours || 0);
-      editLink.onclick = (e) => {
-        e.preventDefault();
-        openEditModal(e);
-      };
-
+      // Keep delete button only
       const deleteLink = document.createElement('a');
       deleteLink.href = "#";
       deleteLink.title = "Delete Entry";
@@ -104,10 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
       deleteLink.onclick = (e) => {
         e.preventDefault();
+        e.stopPropagation(); // Prevent triggering card click
         deleteEntry(entry.entry_id);
       };
 
-      rightDiv.appendChild(editLink);
       rightDiv.appendChild(deleteLink);
 
       cardBody.appendChild(leftDiv);
@@ -115,5 +105,18 @@ document.addEventListener('DOMContentLoaded', () => {
       card.appendChild(cardBody);
       entriesListContainer.appendChild(card);
     });
+  }
+
+  // 4) Open edit modal function
+  function openEditModal(entryId, assignedHours) {
+    document.getElementById('editEntryId').value = entryId;
+    document.getElementById('editAssignedHours').value = assignedHours;
+
+    // Hide manage modal before showing edit modal
+    const manageModalInstance = bootstrap.Modal.getInstance(manageAddModalEl);
+    if (manageModalInstance) manageModalInstance.hide();
+
+    const editModal = new bootstrap.Modal(document.getElementById('editEntryModal'));
+    editModal.show();
   }
 });
