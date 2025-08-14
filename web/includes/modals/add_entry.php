@@ -1,3 +1,4 @@
+<!-- add_entry.php -->
 <div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 rounded-3 shadow-sm">
