@@ -187,13 +187,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     background: rgb(246, 249, 236) !important;
 }
 
-.table-responsive {
+/* .table-responsive {
     overflow-x: auto;
-    white-space: nowrap; /* prevent wrapping of table cells */
+    white-space: nowrap; 
 }
 .table-responsive table {
-    min-width: max-content; /* ensures table is as wide as needed */
-}
+    min-width: max-content; 
+} */
     </style>
 </head>
 <body class="d-flex">
@@ -220,15 +220,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <div class="col-md-6">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
                 </div>
-                <div class="col-md-6 d-flex justify-content-end align-items-center">
-                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
+                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <a href="?week_offset=<?php //echo $weekOffset - 1; ?>" 
                        class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
         
-                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+                    <span class="fw-semibold"><?php //echo $rangeLabel; ?></span>
         
-                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
+                    <a href="?week_offset=<?php //echo $weekOffset + 1; ?>" 
                        class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-                </div>
+                </div> -->
             </form>
         </div>
     <!-- end upper search and week range selector -->
@@ -247,8 +247,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle text-center">
+        <div class="table-responsive" style="overflow-x:auto; white-space: nowrap;">
+            <table class="table table-bordered align-middle text-center" style="min-width: 900px;">
                 <thead class="table-light">
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
