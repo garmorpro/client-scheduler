@@ -359,7 +359,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- <script src="../assets/js/view_engagement_details.js"></script> -->
     <!-- <script src="../assets/js/number_of_weeks.js"></script> -->
     <!-- <script src="../assets/js/search.js"></script> -->
-    <!-- <script src="../assets/js/client_dropdown.js"></script> -->
+    <script src="../assets/js/client_dropdown.js"></script>
     <script src="../assets/js/dynamic_add_modal.js"></script>
     <!-- <script src="../assets/js/dynamic_manage_modal.js"></script> -->
 
