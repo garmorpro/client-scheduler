@@ -130,19 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!isTimeOff) {
   const teammateMap = {};
+  const normalizedCurrentUserName = currentUserName?.trim().toLowerCase();
 
   entriesForWeek
     .filter(e => e.client_name === entry.client_name)
     .forEach(e => {
       const name =
-        e.user_name?.trim() ||
+        (e.user_name && e.user_name.trim()) ||
         ((e.first_name && e.last_name) ? `${e.first_name} ${e.last_name}` : 'Unknown');
 
-      // Skip current user completely
-      if (name === currentUserName) return;
+      // Skip if this is the current user (case-insensitive match)
+      if (name.trim().toLowerCase() === normalizedCurrentUserName) return;
 
-      if (!teammateMap[name]) teammateMap[name] = 0;
-      teammateMap[name] += Number(e.assigned_hours) || 0;
+      teammateMap[name] = (teammateMap[name] || 0) + (Number(e.assigned_hours) || 0);
     });
 
   const teammates = Object.entries(teammateMap).map(
@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
                   </small>`;
 }
+
 
 
     leftDiv.innerHTML = leftContent;
