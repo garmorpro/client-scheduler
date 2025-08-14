@@ -18,27 +18,30 @@ if (!$clientName || !$weekStart) {
 }
 
 try {
-    $sql = "SELECT u.id AS user_id, u.user_name, u.first_name, u.last_name, e.assigned_hours
-            FROM entries e
-            JOIN users u ON e.user_id = u.id
-            WHERE e.client_name = :client_name
-              AND e.week_start = :week_start";
+    $currentUserId = $_GET['current_user_id'] ?? null;
 
-    if ($currentUserId) {
-        $sql .= " AND u.id != :current_user_id";
-    }
+$sql = "SELECT u.id, u.first_name, u.last_name, u.user_name
+        FROM assignments a
+        JOIN users u ON a.user_id = u.id
+        WHERE a.client_name = :client_name
+        AND a.week_start = :week_start";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':client_name', $clientName);
-    $stmt->bindParam(':week_start', $weekStart);
-    if ($currentUserId) {
-        $stmt->bindParam(':current_user_id', $currentUserId);
-    }
+if ($currentUserId) {
+    $sql .= " AND u.id != :current_user_id";
+}
 
-    $stmt->execute();
-    $teamMembers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare($sql);
+$stmt->bindParam(':client_name', $clientName);
+$stmt->bindParam(':week_start', $weekStart);
 
-    echo json_encode($teamMembers);
+if ($currentUserId) {
+    $stmt->bindParam(':current_user_id', $currentUserId);
+}
+
+$stmt->execute();
+$teammates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+echo json_encode($teammates);
+
 } catch (Exception $e) {
     // Log the error somewhere safe
     error_log($e->getMessage());
