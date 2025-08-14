@@ -15,8 +15,8 @@ try {
             FROM users u
             JOIN entries e ON e.user_id = u.user_id
             JOIN engagements g ON g.engagement_id = e.engagement_id
-            WHERE g.client_name = '$clientName'
-              AND u.user_id != $currentUserId;";
+            WHERE g.client_name = :client_name
+              AND e.week_start = :week_start";
 
     if ($currentUserId) {
         $sql .= " AND u.user_id != :current_user_id";
@@ -33,7 +33,13 @@ try {
     $stmt->execute();
     $teammates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($teammates);
+    // Debug print
+    echo "<pre>";
+    print_r($teammates);
+    echo "</pre>";
+
+    // Then output JSON if needed
+    // echo json_encode($teammates);
 
 } catch (Exception $e) {
     echo json_encode(['error' => $e->getMessage()]);
