@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entriesListContainer.innerHTML = '';
         manageAddModal.show();
       } else {
-        openAddEntryModal(currentUserId, currentUserName, 15);
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
       }
     });
   });

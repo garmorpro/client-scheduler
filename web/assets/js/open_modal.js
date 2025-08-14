@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasEntries) {
       openManageEntryModal(userId, userName, weekStart);
     } else {
-      openAddEntryModal(userId, userName, weekStart);
+      openAddEntryModal(userId, userName, 15);
     }
   });
 });
