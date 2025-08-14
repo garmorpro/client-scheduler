@@ -341,7 +341,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                                     data-week-start="<?php echo $weekKey; ?>"
                                     onclick='
-                                        event.stopPropagation();
+                                        // event.stopPropagation();
                                         console.log("Entries empty?", true);
                                         openAddEntryModal(
                                             "<?php echo $userId; ?>",
