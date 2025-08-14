@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', 0);
 date_default_timezone_set('America/Chicago');
 
 // Get DB credentials from environment
