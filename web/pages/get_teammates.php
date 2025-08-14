@@ -15,7 +15,8 @@ try {
             FROM users u
             JOIN entries e ON e.user_id = u.user_id
             JOIN engagements g ON g.engagement_id = e.engagement_id
-            WHERE g.client_name = :client_name";
+            WHERE g.client_name = '$clientName'
+              AND u.user_id != $currentUserId;";
 
     if ($currentUserId) {
         $sql .= " AND u.user_id != :current_user_id";
