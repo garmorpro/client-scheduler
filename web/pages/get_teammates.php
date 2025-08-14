@@ -9,7 +9,7 @@ try {
     $weekStart     = $_GET['week_start'] ?? '';
     $clientName    = $_GET['client_name'] ?? '';
 
-    $sql = "SELECT u.id, u.first_name, u.last_name, u.user_name
+    $sql = "SELECT u.user_id, u.first_name, u.last_name, u.user_name
             FROM entries a
             JOIN users u ON a.user_id = u.id
             WHERE a.client_name = :client_name
