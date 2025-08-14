@@ -23,16 +23,16 @@ $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 //     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 // }
 
-$mondays = [];
-for ($i = 0; $i < 7; $i++) {
-    $mondays[] = strtotime("+{$i} weeks", $startMonday);
-}
-
 // $mondays = [];
-// $weeksToShow = 24; // number of weeks to display horizontally
-// for ($i = 0; $i < $weeksToShow; $i++) {
+// for ($i = 0; $i < 7; $i++) {
 //     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 // }
+
+$mondays = [];
+$weeksToShow = 24; // number of weeks to display horizontally
+for ($i = 0; $i < $weeksToShow; $i++) {
+    $mondays[] = strtotime("+{$i} weeks", $startMonday);
+}
 
 // Range label for header (keep same)
 $firstWeek = reset($mondays);
