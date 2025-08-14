@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserId = cell.getAttribute('data-user-id');
       currentUserName = cell.getAttribute('data-user-name') || null;
       currentWeekStart = cell.getAttribute('data-week-start');
+      // Convert to Date object
+let weekStartDate = new Date(currentWeekStart);
+
+// Add 1 day (24 hours)
+weekStartDate.setDate(weekStartDate.getDate() + 1);
+
+// Convert back to YYYY-MM-DD string if needed
+currentWeekStart = weekStartDate.toISOString().split('T')[0];
 
       const hasEntries = cell.querySelectorAll('.badge').length > 0;
 
