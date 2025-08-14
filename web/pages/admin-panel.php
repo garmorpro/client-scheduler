@@ -211,26 +211,26 @@ if ($settingResult) {
                         <p class="text-black mb-0"><strong>User Management</strong></p>
                         <p class="mb-0">Manage user accounts, roles, and permissions</p>
                     </div>
-                              
+
                     <!-- Middle (Search) -->
                     <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
                         <input type="text" id="userSearch" class="form-control form-control-sm" 
                                placeholder="Search users..." minlength="3">
                     </div>
-                              
+
                     <!-- Right -->
                     <div class="user-management-buttons d-flex align-items-center gap-2">
                         <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; background-color: darkred; display:none;">
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
-                              
+
                         <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
                            data-bs-toggle="modal" data-bs-target="#importUsersModal">
                             <i class="bi bi-upload me-3"></i>Import Users
                         </a>
-                              
+
                         <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; background-color: rgb(3,2,18);" 
                            data-bs-toggle="modal" data-bs-target="#addUserModal">
@@ -238,6 +238,29 @@ if ($settingResult) {
                         </a>
                     </div>
                 </div>
+
+                <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('userSearch');
+    const tableRows = document.querySelectorAll('#user-table tbody tr');
+
+    searchInput.addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase().trim();
+
+        if (searchValue.length < 3 && searchValue.length !== 0) {
+            // If less than 3 characters, don't filter, show all rows
+            tableRows.forEach(row => row.style.display = '');
+            return;
+        }
+
+        tableRows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+    });
+});
+</script>
+
 
 
                 <div class="user-table">
