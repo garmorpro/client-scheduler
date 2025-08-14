@@ -1252,7 +1252,7 @@ if ($settingResult) {
               </div>
 
               <!-- Notification Types -->
-              <h6 class="mb-2">Notification Types</h6>
+              <!-- <h6 class="mb-2">Notification Types</h6>
               <div class="row mb-2">
                 <div class="col-6">
                   <div class="form-check form-switch mb-2">
@@ -1281,7 +1281,7 @@ if ($settingResult) {
                     <label class="form-check-label" for="loginAlerts">Login Alerts</label>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
 
               <!-- Notification Frequency -->
