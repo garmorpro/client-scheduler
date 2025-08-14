@@ -11,11 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const entriesListContainer = document.getElementById('entriesListContainer');
   const addEntriesButton = document.getElementById('addEntriesButton2');
 
-  // Add Entry Modal
   const addEntryModalEl = document.getElementById('addEntryModal');
   const addEntryModal = new bootstrap.Modal(addEntryModalEl);
 
-  // Utility to format YYYY-MM-DD string to "Aug 11, 2025"
   function formatWeekStart(dateStr) {
     if (!dateStr) return '—';
     const [year, month, day] = dateStr.split('-').map(Number);
@@ -26,9 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  
-
-  // Function to open manage modal with options
+  // -----------------------------
+  // Open manage modal
   window.openManageEntryModal = async function(options) {
     currentUserId = options.userId;
     currentUserName = options.userName || '';
@@ -36,19 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIsTimeOff = options.is_timeoff || 0;
     currentTimeOffHours = options.timeOffHours || 0;
 
-    const formattedWeekStart = formatWeekStart(currentWeekStart);
-
     document.getElementById('entryUserName').textContent = currentUserName || '—';
-    document.getElementById('entryWeekStart').textContent = formattedWeekStart;
+    document.getElementById('entryWeekStart').textContent = formatWeekStart(currentWeekStart);
 
     entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
     try {
-      let res = await fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`);
+      const res = await fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`);
       if (!res.ok) throw new Error('Network response was not OK');
       let entries = await res.json();
 
-      // If only time-off, create a dummy entry for display
       if (currentIsTimeOff && (!entries || entries.length === 0)) {
         entries = [{
           entry_id: null,
@@ -59,40 +53,40 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       await renderEntriesList(entries);
+
     } catch (err) {
-      console.error(err);
+      console.error('Error loading entries:', err);
       entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
     }
 
     manageAddModal.show();
   }
 
-  // Fetch teammates from server for a given client
+  // -----------------------------
+  // Fetch teammates
   async function fetchTeammates(clientName) {
-  try {
-    // Build the URL
-    const url = `get_teammates.php?current_user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`;
-    
-    // Log it to the console
-    console.log('Fetching teammates URL:', url);
+    try {
+      const url = `get_teammates.php?current_user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`;
+      console.log('Fetching teammates URL:', url);
 
-    // Perform the fetch
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Network error');
-    const data = await res.json();
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
 
-    // Return filtered array excluding current user
-    return data
-  .map(e => e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown')
-  .filter(name => name !== currentUserName)
-  .map(name => ({ name, hours: 0 }));
-  } catch (err) {
-    console.error('Error fetching teammates:', err);
-    return [];
+      console.log('Teammates raw data:', data);
+
+      return data
+        .map(e => e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown')
+        .filter(name => name !== currentUserName)
+        .map(name => ({ name, hours: 0 }));
+
+    } catch (err) {
+      console.error('Error fetching teammates:', err);
+      return [];
+    }
   }
-}
 
-
+  // -----------------------------
   // Add Entry button inside Manage modal
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
@@ -101,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   });
 
-  // Render entries list function
+  // -----------------------------
+  // Render entries
   async function renderEntriesList(entriesForWeek) {
     entriesListContainer.innerHTML = '';
 
@@ -135,13 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.addEventListener('click', () => {
         const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
-        const formattedWeekStart = formatWeekStart(currentWeekStart);
         openEditModal(
           entry.entry_id,
           entry.assigned_hours,
           entry.client_name,
           currentUserName,
-          formattedWeekStart,
+          formatWeekStart(currentWeekStart),
           entryType,
           manageAddModalEl
         );
@@ -150,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cardBody = document.createElement('div');
       cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-      // LEFT column
+      // LEFT
       const leftDiv = document.createElement('div');
       leftDiv.style.flex = '1';
       let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
@@ -158,8 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isTimeOff) {
         const teammatesData = await fetchTeammates(entry.client_name);
         const teammates = teammatesData.map(t => `${t.name} (${entry.assigned_hours || 0})`);
-
-        console.log(`👥 Client "${entry.client_name}" teammates:`, teammates); // DEBUG teammates
+        console.log(`👥 Client "${entry.client_name}" teammates:`, teammates);
 
         leftContent += `<small class="text-muted">
                           <strong>Team member(s):</strong> 
@@ -169,13 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       leftDiv.innerHTML = leftContent;
 
-      // MIDDLE column
+      // MIDDLE
       const middleDiv = document.createElement('div');
       middleDiv.style.marginRight = '1rem';
       middleDiv.style.textAlign = 'right';
       middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
 
-      // RIGHT column
+      // RIGHT
       const rightDiv = document.createElement('div');
       if (entry.entry_id) {
         const deleteLink = document.createElement('a');
