@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 
 try {
     // Database connection
-    require_once 'db.php';
+    require_once '../includes/db.php';
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
     $weekStart     = $_GET['week_start'] ?? '';
