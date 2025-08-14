@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Has Entries:", hasEntries);
 
     if (hasEntries) {
-      openManageEntryModal(userId, userName, 15);
+      openManageEntryModal(userId, userName, weekStart);
     } else {
       openAddEntryModal(userId, userName, weekStart);
     }
