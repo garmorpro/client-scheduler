@@ -132,13 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const teammateMap = {};
 
   entriesForWeek
-    .filter(e =>
-      e.client_name === entry.client_name &&
-      (e.user_name || `${e.first_name} ${e.last_name}`) !== currentUserName
-    )
+    .filter(e => e.client_name === entry.client_name)
     .forEach(e => {
-      const name = e.user_name 
-        || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown');
+      const name =
+        e.user_name?.trim() ||
+        ((e.first_name && e.last_name) ? `${e.first_name} ${e.last_name}` : 'Unknown');
+
+      // Skip current user completely
+      if (name === currentUserName) return;
+
       if (!teammateMap[name]) teammateMap[name] = 0;
       teammateMap[name] += Number(e.assigned_hours) || 0;
     });
@@ -152,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
                   </small>`;
 }
+
 
     leftDiv.innerHTML = leftContent;
 
