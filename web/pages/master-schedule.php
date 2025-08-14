@@ -150,6 +150,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script>
       const entries = <?php echo json_encode($entries); ?>;
     </script>
+    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
@@ -163,8 +165,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_user_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
+    
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 
