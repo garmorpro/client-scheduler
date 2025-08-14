@@ -33,30 +33,33 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      const formattedWeekStart = formatWeekStart(currentWeekStart);
+      // Check if the cell has any entries already
+      const hasEntries = cell.querySelector('.badge-status') !== null;
 
-      // Fill user info section
-      document.getElementById('entryUserName').textContent = currentUserName || '—';
-      document.getElementById('entryWeekStart').textContent = formattedWeekStart;
+      if (hasEntries) {
+        // Open Manage modal for cells with entries
+        entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
-      entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+        // Fetch and render entries inside Manage modal
+        fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+          .then(res => {
+            if (!res.ok) throw new Error('Network response was not OK');
+            return res.json();
+          })
+          .then(entries => renderEntriesList(entries))
+          .catch(() => {
+            entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+          });
 
-      // Fetch and render entries
-      fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Network response was not OK');
-          return res.json();
-        })
-        .then(entries => renderEntriesList(entries))
-        .catch(() => {
-          entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
-        });
-
-      manageAddModal.show();
+        manageAddModal.show();
+      } else {
+        // Open Add Entry modal for empty cells
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+      }
     });
   });
 
-  // 2) Add Entry button
+  // 2) Add Entry button inside Manage modal
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
     setTimeout(() => {
@@ -74,26 +77,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     entriesForWeek.forEach(entry => {
-    const card = document.createElement('div');
-    card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
-    card.style.cursor = 'pointer';
-      
-    card.addEventListener('click', () => {
-      const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
-      
-      // Format the week start for the modal
-      const formattedWeekStart = formatWeekStart(currentWeekStart);
-    
-      openEditModal(
-        entry.entry_id,
-        entry.assigned_hours,
-        entry.client_name,
-        currentUserName,
-        formattedWeekStart, // pass formattedWeekStart instead
-        entryType,
-        manageAddModalEl
-      );
-    });
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
+      card.style.cursor = 'pointer';
+
+      card.addEventListener('click', () => {
+        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+        const formattedWeekStart = formatWeekStart(currentWeekStart);
+
+        openEditModal(
+          entry.entry_id,
+          entry.assigned_hours,
+          entry.client_name,
+          currentUserName,
+          formattedWeekStart,
+          entryType,
+          manageAddModalEl
+        );
+      });
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
