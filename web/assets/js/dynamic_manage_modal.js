@@ -70,21 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
       card.style.cursor = 'pointer';
 
-      // Determine entry type
-      // const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
-
-card.addEventListener('click', () => {
-  const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
-  openEditModal(
-    entry.entry_id,
-    entry.assigned_hours,
-    entry.client_name,
-    currentUserName,
-    currentWeekStart,
-    entryType,
-    manageAddModalEl // pass the modal element
-  );
-});
+      card.addEventListener('click', () => {
+        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+        openEditModal(
+          entry.entry_id,
+          entry.assigned_hours,
+          entry.client_name,
+          currentUserName,
+          currentWeekStart,
+          entryType,
+          manageAddModalEl // pass the modal element
+        );
+      });
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
