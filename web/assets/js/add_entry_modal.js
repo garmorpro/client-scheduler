@@ -4,13 +4,19 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
         return;
     }
 
-    document.getElementById('addEntryUserId').value = user_id;
-    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
-    document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
-
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    // Add 1 day
     const weekDate = new Date(weekStart);
-    document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+    weekDate.setDate(weekDate.getDate() + 1); // +1 day
+
+    // Format for display
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const formattedDate = weekDate.toLocaleDateString(undefined, options);
+
+    // Update modal fields
+    document.getElementById('addEntryUserId').value = user_id;
+    document.getElementById('addEntryWeek').value = weekDate.toISOString().split('T')[0]; // "YYYY-MM-DD"
+    document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
+    document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
