@@ -24,10 +24,6 @@
               <small class="text-muted">Employee Name</small>
               <div class="fw-semibold" id="editUserName">—</div>
             </div>
-            <div class="col-md-6">
-              <small class="text-muted">Entry Type</small>
-              <div class="fw-semibold" id="editEntryType">—</div>
-            </div>
             <div class="col-md-4">
               <small class="text-muted">Week Start</small>
               <div class="fw-semibold" id="editWeekStart">—</div>
