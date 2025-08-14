@@ -9,9 +9,12 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const parts = weekStart.split('-'); // ["2025", "08", "11"]
-    const weekDate = new Date(parts[0], parts[1] - 1, parts[2]); // month is 0-based
-    document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
+const parts = weekStart.split('-'); // assuming format YYYY-MM-DD
+const weekDate = new Date(parts[0], parts[1]-1, parts[2]); // month is 0-based
+
+document.getElementById('addEntryWeekDisplay').textContent =
+    weekDate.toLocaleDateString(undefined, options);
+
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
