@@ -241,47 +241,57 @@ if ($settingResult) {
 
                 <script>
                   document.addEventListener('DOMContentLoaded', function () {
-                      const searchInput = document.getElementById('userSearch');
-                      const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
-                      const pagination = document.getElementById('pagination-users');
-                      const perPage = 5;
-                  
-                      function showPage(rows, page = 1) {
-                          const start = (page - 1) * perPage;
-                          const end = start + perPage;
-                          // Hide all rows first
-                          allRows.forEach(row => row.style.display = 'none');
-                          // Show only the current page's rows
-                          rows.forEach((row, index) => {
-                              if (index >= start && index < end) {
-                                  row.style.display = '';
-                              }
-                          });
-                          // Toggle pagination
-                          pagination.style.display = rows.length <= perPage ? 'none' : '';
-                      }
-                    
-                      function filterRows(searchValue) {
-                          return allRows.filter(row => 
-                              row.innerText.toLowerCase().includes(searchValue)
-                          );
-                      }
-                    
-                      searchInput.addEventListener('input', function () {
-                          const value = this.value.toLowerCase().trim();
-                          if (value.length >= 3) {
-                              // Filtered search results
-                              const filtered = filterRows(value);
-                              showPage(filtered, 1);
-                          } else {
-                              // Default pagination with all rows
-                              showPage(allRows, 1);
-                          }
-                      });
-                    
-                      // Initial load with default pagination
-                      showPage(allRows, 1);
-                  });
+  const searchInput = document.getElementById('userSearch');
+  const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
+  const pagination = document.getElementById('pagination-users');
+  const perPage = 5;
+
+  function showPage(rows, page = 1) {
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+
+    // Hide all rows first
+    allRows.forEach(row => row.style.display = 'none');
+
+    // Show only the current page's rows
+    rows.forEach((row, index) => {
+      if (index >= start && index < end) {
+        row.style.display = '';
+      }
+    });
+
+    // Toggle pagination visibility
+    pagination.style.display = rows.length <= perPage ? 'none' : '';
+  }
+
+  function filterRows(query) {
+    // Split query by commas, trim spaces, and filter out empty terms
+    const terms = query.split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 0);
+
+    if (terms.length === 0) return allRows;
+
+    return allRows.filter(row => {
+      const rowText = row.innerText.toLowerCase();
+      // Match if any term is found in row text
+      return terms.some(term => rowText.includes(term));
+    });
+  }
+
+  searchInput.addEventListener('input', function () {
+    const value = this.value.trim();
+    
+    if (value.length >= 3) {
+      const filtered = filterRows(value);
+      showPage(filtered, 1);
+    } else {
+      showPage(allRows, 1);
+    }
+  });
+
+  // Initial load with default pagination
+  showPage(allRows, 1);
+});
+
                 </script>
 
 
@@ -2497,19 +2507,19 @@ if ($settingResult) {
     const configureBtn = document.getElementById('configureEmailBtn');
     const modalEl = document.getElementById('emailNotifConfigModal');
     const modal = new bootstrap.Modal(modalEl);
-  
+
     configureBtn.addEventListener('click', (e) => {
       e.preventDefault();
       modal.show();
     });
-  
+
     // ----------------------------
     // Elements for test email
     // ----------------------------
     const testEmailInput = document.getElementById('testEmail');
     const sendTestEmailBtn = document.getElementById('sendTestEmailBtn');
     const testEmailStatus = document.getElementById('testEmailStatus');
-  
+
     // Enable/disable Send Test Email button
     testEmailInput.addEventListener('input', () => {
       const email = testEmailInput.value.trim();
@@ -2525,7 +2535,7 @@ if ($settingResult) {
       testEmailStatus.classList.add('d-none');
       testEmailStatus.textContent = '';
     });
-  
+
     // ----------------------------
     // Send Test Email click
     // ----------------------------
@@ -2533,22 +2543,22 @@ if ($settingResult) {
       e.preventDefault();
       const email = testEmailInput.value.trim();
       if (!email) return;
-    
+
       // Show immediate feedback
       testEmailStatus.textContent = 'Sending test email...';
       testEmailStatus.classList.remove('d-none', 'text-success', 'text-danger');
       testEmailStatus.classList.add('text-info');
-    
+
       try {
         const resp = await fetch('../includes/send_test_email.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ test_email: email })
         });
-      
+
         const text = await resp.text();
         let result;
-      
+
         // Safely parse JSON
         try {
           result = JSON.parse(text);
@@ -2559,7 +2569,7 @@ if ($settingResult) {
           console.error('JSON parse error:', err, text);
           return;
         }
-      
+
         if (result.success) {
           testEmailStatus.textContent = result.message || 'Test email sent successfully!';
           testEmailStatus.classList.remove('text-info', 'text-danger');
@@ -2569,7 +2579,7 @@ if ($settingResult) {
           testEmailStatus.classList.remove('text-info', 'text-success');
           testEmailStatus.classList.add('text-danger');
         }
-      
+
       } catch (err) {
         testEmailStatus.textContent = 'Network error: ' + err.message;
         testEmailStatus.classList.remove('text-info', 'text-success');
@@ -2577,35 +2587,35 @@ if ($settingResult) {
         console.error(err);
       }
     });
-  
+
     // ----------------------------
     // Save Settings form submit
     // ----------------------------
     const emailForm = document.getElementById('emailNotifConfigForm');
     emailForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-    
+
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
       data.enable_email_notifications = formData.get('enable_email_notifications') === 'on' ? 'true' : 'false';
-    
+
       const payload = {
         setting_master_key: 'email',
         settings: data
       };
-    
+
       console.log('Submitting email settings:', payload);
-    
+
       try {
         const resp = await fetch('settings_backend.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-      
+
         const text = await resp.text();
         let result;
-      
+
         try {
           result = JSON.parse(text);
         } catch (err) {
@@ -2613,7 +2623,7 @@ if ($settingResult) {
           console.error('JSON parse error:', err, text);
           return;
         }
-      
+
         if (result.success) {
           modal.hide();
           console.log('Email settings saved successfully.');
