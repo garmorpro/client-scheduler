@@ -1,5 +1,5 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
-    console.log("Original weekStart:", weekStart);
+    // console.log("Original weekStart:", weekStart);
 
     if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);
@@ -13,13 +13,13 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     // Add 1 day
     weekDate.setDate(weekDate.getDate());
 
-    console.log("Adjusted weekDate:", weekDate);
+    // console.log("Adjusted weekDate:", weekDate);
 
     // Format for display
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const formattedDate = weekDate.toLocaleDateString('en-US', options);
 
-    console.log("Formatted display date:", formattedDate);
+    // console.log("Formatted display date:", formattedDate);
 
     // Update modal fields
     document.getElementById('addEntryUserId').value = user_id;

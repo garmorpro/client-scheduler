@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const table = document.querySelector('#employeesTableBody');
-  console.log("Table body:", table);
+  // console.log("Table body:", table);
 
   if (!table) return; // stop if not found
 
@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const userName = td.dataset.userName;
     const weekStart = td.dataset.weekStart;
 
-    console.log("Clicked cell values:");
-    console.log("User ID:", userId);
-    console.log("User Name:", userName);
-    console.log("Week Start:", weekStart);
+    // console.log("Clicked cell values:");
+    // console.log("User ID:", userId);
+    // console.log("User Name:", userName);
+    // console.log("Week Start:", weekStart);
 
     const hasEntries = td.querySelector('.badge-status') !== null;
-    console.log("Has Entries:", hasEntries);
+    // console.log("Has Entries:", hasEntries);
 
     if (hasEntries === true) {
       openManageEntryModal(userId, userName, weekStart);
