@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
           entry.entry_id,
           entry.assigned_hours,
           entry.client_name,
-          currentUserId,
           currentUserName,
           currentWeekStart
         );
