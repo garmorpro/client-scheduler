@@ -71,9 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.cursor = 'pointer';
 
       // Determine entry type
-      const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+      // const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
 
       card.addEventListener('click', () => {
+        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
         openEditModal(
           entry.entry_id,
           entry.assigned_hours,
