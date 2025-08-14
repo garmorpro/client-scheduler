@@ -348,7 +348,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php //if ($isAdmin): ?>
         <?php //include_once '../includes/modals/manage_entries_prompt.php'; ?>
         <?php //include_once '../includes/modals/manage_entries.php'; ?>
-        <?php //include_once '../includes/modals/edit_entry.php'; ?>
+        <?php include_once '../includes/modals/edit_entry.php'; ?>
         <?php include_once '../includes/modals/add_entry.php'; ?>
         <?php //include_once '../includes/modals/add_engagement.php'; ?>
     <?php //endif; ?>
@@ -357,11 +357,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php //include_once '../includes/modals/user_details.php'; ?>
 
     <!-- <script src="../assets/js/view_engagement_details.js"></script> -->
-    <script src="../assets/js/number_of_weeks.js"></script>
+    <!-- <script src="../assets/js/number_of_weeks.js"></script> -->
     <!-- <script src="../assets/js/search.js"></script> -->
-    <script src="../assets/js/client_dropdown.js"></script>
-    <script src="../assets/js/dynamic_add_modal.js"></script>
-    <script src="../assets/js/dynamic_manage_modal.js"></script>
+    <!-- <script src="../assets/js/client_dropdown.js"></script> -->
+    <!-- <script src="../assets/js/dynamic_add_modal.js"></script> -->
+    <!-- <script src="../assets/js/dynamic_manage_modal.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
