@@ -34,7 +34,7 @@
         <!-- Entries & Add Button -->
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h6 class="fw-bold mb-0">Entries for this week</h6>
-          <button id="addEntriesButton" class="btn btn-primary btn-sm">
+          <button id="addEntriesButton2" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle me-1"></i> Add Entry
           </button>
         </div>

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const manageAddModalEl = document.getElementById('manageEntryPromptModal');
   const manageAddModal = new bootstrap.Modal(manageAddModalEl);
   const entriesListContainer = document.getElementById('entriesListContainer');
-  const addEntriesButton = document.getElementById('addEntriesButton');
+  const addEntriesButton2 = document.getElementById('addEntriesButton2');
 
   // Add Entry Modal
   const addEntryModalEl = document.getElementById('addEntryModal');
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 2) Add Entry button
-  addEntriesButton.addEventListener('click', () => {
+  addEntriesButton2.addEventListener('click', () => {
     manageAddModal.hide();
     // Delay to ensure modal is fully hidden before opening the next
     setTimeout(() => {
