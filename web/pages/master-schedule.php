@@ -192,6 +192,24 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     background: rgb(246, 249, 236) !important;
 }
 
+.table-responsive {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.table th:first-child,
+.table td:first-child {
+    position: sticky;
+    left: 0;
+    background: #fff; /* matches table background */
+    z-index: 2;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+}
+
+.table thead th:first-child {
+    z-index: 3; /* so header stays on top of body cells */
+}
+
 /* .table-responsive {
     overflow-x: auto;
     white-space: nowrap; 
