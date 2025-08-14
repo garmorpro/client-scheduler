@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Return filtered array excluding current user
     return data
-      .map(e => e.user_name || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown'))
-      .filter(name => name !== currentUserName)
-      .map(name => ({ name, hours: 0 })); // hours can be updated if needed
+  .map(e => e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown')
+  .filter(name => name !== currentUserName)
+  .map(name => ({ name, hours: 0 }));
   } catch (err) {
     console.error('Error fetching teammates:', err);
     return [];
