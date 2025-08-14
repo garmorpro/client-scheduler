@@ -176,6 +176,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .timeoff-cell:hover { background-color: #e0f7fa !important; }
       <?php endif; ?>
       .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
+      .timeoff-card { 
+    border: 2px dashed rgb(209,226, 159);
+    background: rgb(246, 249, 236);
+}
     </style>
 </head>
 <body class="d-flex">
