@@ -6,6 +6,12 @@ function openEditModal(event) {
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
+    // Hide the manage entry modal first
+    const manageModalEl = document.getElementById('manageEntryPromptModal');
+    const manageModal = bootstrap.Modal.getInstance(manageModalEl);
+    if (manageModal) manageModal.hide();
+
+    // Then show the edit modal
     const editModal = new bootstrap.Modal(document.getElementById('editEntryModal'));
     editModal.show();
-  }
+}
