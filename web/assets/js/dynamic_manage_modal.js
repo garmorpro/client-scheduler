@@ -13,6 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const addEntryModalEl = document.getElementById('addEntryModal');
   const addEntryModal = new bootstrap.Modal(addEntryModalEl);
 
+  // Utility to format YYYY-MM-DD string to "Aug 11, 2025"
+  function formatWeekStart(dateStr) {
+    if (!dateStr) return '—';
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
   // 1) Attach click listeners to all cells with class "addable"
   document.querySelectorAll('.addable').forEach(cell => {
     cell.addEventListener('click', (e) => {
@@ -22,18 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      function getWeekMonday(dateStr) {
-        const date = new Date(dateStr);
-        const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-        const diffToMonday = (day === 0 ? -6 : 1 - day); // if Sunday, go back 6 days
-        date.setDate(date.getDate() + diffToMonday);
-        return date;
-      }
-
-      // Format week start
-      const formattedWeekStart = currentWeekStart
-        ? getWeekMonday(currentWeekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-        : '—';
+      const formattedWeekStart = formatWeekStart(currentWeekStart);
 
       // Fill user info section
       document.getElementById('entryUserName').textContent = currentUserName || '—';
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
           currentUserName,
           currentWeekStart,
           entryType,
-          manageAddModalEl // pass the modal element
+          manageAddModalEl // pass the modal element if needed
         );
       });
 
@@ -123,6 +123,4 @@ document.addEventListener('DOMContentLoaded', () => {
       entriesListContainer.appendChild(card);
     });
   }
-
-
 });
