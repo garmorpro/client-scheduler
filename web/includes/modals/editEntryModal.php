@@ -1,4 +1,4 @@
-<div class="modal fade" id="editEntryModal" tabindex="-1" aria-labelledby="editEntryModalLabel" aria-hidden="true">
+<div class="modal fade" id="editEntryModal" tabindex="-1" aria-labelledby="editEntryModalLabel" aria-hidden="true" inert>
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 rounded-3 shadow-sm">
 
@@ -31,6 +31,8 @@
           </div>
         </div>
 
+        <form action="update_entry.php" method="POST">
+
         <!-- Entry Form -->
         <input type="hidden" id="editEntryId" name="entry_id">
         <div class="mb-3">
@@ -45,7 +47,7 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary">Save Changes</button>
       </div>
-
+      </form> 
     </div>
   </div>
 </div>
