@@ -35,11 +35,11 @@ if ($currentUserId) {
     $params[] = $currentUserId;
 }
 
-if (!empty($weekStart)) {
-    $sql .= " AND e.week_start = ?";
-    $types .= "s";
-    $params[] = $weekStart;
-}
+// if (!empty($weekStart)) {
+//     $sql .= " AND e.week_start = ?";
+//     $types .= "s";
+//     $params[] = $weekStart;
+// }
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
