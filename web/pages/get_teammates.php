@@ -10,7 +10,7 @@ try {
     $clientName    = $_GET['client_name'] ?? '';
 
     $sql = "SELECT u.id, u.first_name, u.last_name, u.user_name
-            FROM assignments a
+            FROM entries a
             JOIN users u ON a.user_id = u.id
             WHERE a.client_name = :client_name
               AND a.week_start = :week_start";
