@@ -99,11 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sortedEntries.forEach(entry => {
     const card = document.createElement('div');
-    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-2', 'py-2'); // add top/bottom padding
+    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3'); // add top/bottom padding
     card.style.cursor = 'pointer';
 
-    // Apply special styling for time-off entries
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+
+    // Apply special styling for time-off entries
     if (isTimeOff) {
       card.classList.add('timeoff-card');
     }
@@ -123,25 +124,28 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
 
-    // Flex container for 3 columns
+    // Use flexbox for 3 columns
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column - Client Name + Team Members (hide team members for time-off)
+    // Left column - Client Name (+ Team Members only if not time-off)
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1'; // largest column
-    leftDiv.innerHTML = `
-      <div class="fw-semibold fs-6">${entry.client_name || 'Unnamed Client'}</div>
-      ${!isTimeOff ? `<small class="text-muted"><strong>Team member(s):</strong> ${entry.team_members && entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}</small>` : ''}
-    `;
+    let leftContent = `<div class="fw-semibold fs-6">${entry.client_name || 'Unnamed Client'}</div>`;
+    if (!isTimeOff) {
+      leftContent += `<small class="text-muted">
+                        <strong>Team member(s):</strong> ${entry.team_members && entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}
+                      </small>`;
+    }
+    leftDiv.innerHTML = leftContent;
 
-    // Middle column - Assigned Hours (text-danger if time-off)
+    // Middle column - Assigned Hours (text-danger for time-off)
     const middleDiv = document.createElement('div');
     middleDiv.style.marginRight = '1rem';
     middleDiv.style.textAlign = 'right';
     middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
 
-    // Right column - Delete button (disabled for dummy time-off)
+    // Right column - Delete button
     const rightDiv = document.createElement('div');
     if (entry.entry_id) {
       const deleteLink = document.createElement('a');
