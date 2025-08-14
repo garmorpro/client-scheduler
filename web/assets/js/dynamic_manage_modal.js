@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      // Format week start to "Aug 11, 2025"
+      // Format week start
       const formattedWeekStart = currentWeekStart
         ? new Date(currentWeekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '—';
@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
       card.style.cursor = 'pointer';
 
-      // Inside renderEntriesList
+      // Determine entry type
+      const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+
       card.addEventListener('click', () => {
-        // Determine type for modal
-        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
         openEditModal(
           entry.entry_id,
           entry.assigned_hours,
@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
           entryType
         );
       });
-
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rightDiv = document.createElement('div');
 
-      // Keep delete button only
+      // Delete button
       const deleteLink = document.createElement('a');
       deleteLink.href = "#";
       deleteLink.title = "Delete Entry";
@@ -105,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
       deleteLink.onclick = (e) => {
         e.preventDefault();
-        e.stopPropagation(); // Prevent triggering card click
+        e.stopPropagation();
         deleteEntry(entry.entry_id);
       };
 
@@ -118,21 +117,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4) Open edit modal function with extra details
-  function openEditModal(entryId, assignedHours, clientName, userName, weekStart) {
+  // 4) Open edit modal function
+  function openEditModal(entryId, assignedHours, clientName, userName, weekStart, entryType) {
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
-    // Populate edit modal details section
+    // Populate details
     document.getElementById('editClientName').textContent = clientName || '—';
-    // document.getElementById('editUserId').textContent = userId || '—';
     document.getElementById('editUserName').textContent = userName || '—';
+    document.getElementById('editEntryType').textContent = entryType;
     const formattedWeekStart = weekStart
       ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       : '—';
     document.getElementById('editWeekStart').textContent = formattedWeekStart;
 
-    // Hide manage modal before showing edit modal
+    // Hide manage modal first
     const manageModalInstance = bootstrap.Modal.getInstance(manageAddModalEl);
     if (manageModalInstance) manageModalInstance.hide();
 
