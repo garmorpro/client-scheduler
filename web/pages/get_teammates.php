@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 try {
-    require_once '../includes/db.php';
+    require_once '../includes/db.php'; // make sure $mysqli is your MySQLi connection
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
     $weekStart     = $_GET['week_start'] ?? '';
@@ -16,36 +16,36 @@ try {
             FROM users u
             JOIN entries e ON e.user_id = u.user_id
             JOIN engagements g ON g.engagement_id = e.engagement_id
-            WHERE g.client_name = :client_name";
+            WHERE g.client_name = ?";
 
-    // Filter out current user if provided
+    $types = "s"; // string for client_name
+    $params = [$clientName];
+
     if ($currentUserId) {
-        $sql .= " AND u.user_id != :current_user_id";
+        $sql .= " AND u.user_id != ?";
+        $types .= "i"; // integer
+        $params[] = $currentUserId;
     }
 
-    // Filter by week_start if provided
     if (!empty($weekStart)) {
-        $sql .= " AND e.week_start = :week_start";
+        $sql .= " AND e.week_start = ?";
+        $types .= "s";
+        $params[] = $weekStart;
     }
 
-    $stmt = $pdo->prepare($sql);
+    $stmt = $mysqli->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . $mysqli->error);
+    }
 
-    // Bind parameters safely
-    $stmt->bindParam(':client_name', $clientName, PDO::PARAM_STR);
-    if ($currentUserId) {
-        $stmt->bindParam(':current_user_id', $currentUserId, PDO::PARAM_INT);
-    }
-    if (!empty($weekStart)) {
-        $stmt->bindParam(':week_start', $weekStart, PDO::PARAM_STR);
-    }
+    // Bind parameters dynamically
+    $stmt->bind_param($types, ...$params);
 
     $stmt->execute();
-    $teammates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $teammates = $result->fetch_all(MYSQLI_ASSOC);
 
-    // Optional: debug log for browser console (works if you open PHP directly)
-    // echo "<script>console.log('Teammates:', " . json_encode($teammates) . ");</script>";
-
-    // Return JSON for fetch() calls
+    // Return JSON
     echo json_encode($teammates);
 
 } catch (Exception $e) {
