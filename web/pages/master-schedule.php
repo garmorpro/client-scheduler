@@ -150,14 +150,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script>
       const entries = <?php echo json_encode($entries); ?>;
     </script>
-    <script src="../assets/js/manage_entry_modal.js"></script>
-    <script src="../assets/js/show_entries.js"></script>
-    <script src="../assets/js/edit_modal.js"></script>
-    <script src="../assets/js/delete_entry.js"></script>
-    <script src="../assets/js/view_entry_modal.js"></script>
-    <script src="../assets/js/view_user_modal.js"></script>
-    <script src="../assets/js/filter_employees.js"></script>
-    <!-- <script src="../assets/js/add_entry_modal.js"></script> -->
+    <!-- <script src="../assets/js/manage_entry_modal.js"></script> -->
+    <!-- <script src="../assets/js/show_entries.js"></script> -->
+    <!-- <script src="../assets/js/edit_modal.js"></script> -->
+    <!-- <script src="../assets/js/delete_entry.js"></script> -->
+    <!-- <script src="../assets/js/view_entry_modal.js"></script> -->
+    <!-- <script src="../assets/js/view_user_modal.js"></script> -->
+    <!-- <script src="../assets/js/filter_employees.js"></script> -->
+    <script src="../assets/js/add_entry_modal.js"></script>
     <!-- <script src="../assets/js/open_modal.js"></script> -->
 
     <style>
