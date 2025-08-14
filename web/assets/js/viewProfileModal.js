@@ -1,38 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
   const viewProfileModal = document.getElementById('viewProfileModal');
-  console.log('viewProfileModal element:', viewProfileModal);
+  // console.log('viewProfileModal element:', viewProfileModal);
 
   viewProfileModal.addEventListener('show.bs.modal', async (event) => {
-    console.log('viewProfileModal show.bs.modal triggered');
+    // console.log('viewProfileModal show.bs.modal triggered');
     
     const button = event.relatedTarget;
-    console.log('Related trigger element:', button);
+    // console.log('Related trigger element:', button);
     
     const userId = button ? button.getAttribute('data-user-id') : null;
-    console.log('userId from trigger:', userId);
+    // console.log('userId from trigger:', userId);
 
     if (!userId) {
-      console.warn('No userId provided, aborting modal population.');
+      // console.warn('No userId provided, aborting modal population.');
       return;
     }
 
     try {
       const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-      console.log('Fetch response:', response);
+      // console.log('Fetch response:', response);
 
       if (!response.ok) throw new Error('Network response was not ok');
 
       const user = await response.json();
-      console.log('Fetched user data:', user);
+      // console.log('Fetched user data:', user);
 
       function setText(id, text) {
         const el = document.getElementById(id);
         if (!el) {
-          console.warn(`Element with ID "${id}" not found.`);
+          // console.warn(`Element with ID "${id}" not found.`);
           return;
         }
         el.textContent = (text && text.toString().trim()) ? text : '-';
-        console.log(`Set #${id} textContent to:`, el.textContent);
+        // console.log(`Set #${id} textContent to:`, el.textContent);
       }
 
       function formatDate(dateString) {
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           mfaEl.classList.add('text-danger');
         }
-        console.log('MFA status updated:', statusText);
+        // console.log('MFA status updated:', statusText);
       }
 
       const activityList = document.getElementById('view_recent_activity');
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(time);
             activityList.appendChild(card);
           });
-          console.log('Recent activities populated:', user.recent_activities.length);
+          // console.log('Recent activities populated:', user.recent_activities.length);
         } else {
           const empty = document.createElement('div');
           empty.className = 'text-muted px-3';
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log('No recent activities found.');
         }
       } else {
-        console.warn("Element with id 'view_recent_activity' not found in DOM.");
+        // console.warn("Element with id 'view_recent_activity' not found in DOM.");
       }
 
       const statusEl = document.getElementById('view_status');
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           statusEl.classList.add('inactive');
         }
-        console.log('User status class updated:', statusEl.className);
+        // console.log('User status class updated:', statusEl.className);
       }
 
     } catch (error) {
