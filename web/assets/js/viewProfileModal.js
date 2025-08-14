@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const viewUserModal = document.getElementById('viewUserModal');
-  console.log('viewUserModal element:', viewUserModal);
+  const viewProfileModal = document.getElementById('viewProfileModal');
+  console.log('viewProfileModal element:', viewProfileModal);
 
-  viewUserModal.addEventListener('show.bs.modal', async (event) => {
-    console.log('viewUserModal show.bs.modal triggered');
+  viewProfileModal.addEventListener('show.bs.modal', async (event) => {
+    console.log('viewProfileModal show.bs.modal triggered');
     
     const button = event.relatedTarget;
     console.log('Related trigger element:', button);

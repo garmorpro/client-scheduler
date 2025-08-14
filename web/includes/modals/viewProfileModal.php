@@ -1,9 +1,9 @@
-<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModal" aria-hidden="true">
       <div class="modal-dialog" style="min-width: 600px !important;">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
-                <i class="bi bi-people"></i> User Details <br>
+                <i class="bi bi-people"></i> Profile Details <br>
                 <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete profile information for <span id="view_first_name"></span></span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
