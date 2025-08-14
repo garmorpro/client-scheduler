@@ -720,14 +720,43 @@ if ($settingResult) {
 
 
 
+                    <?php
+                    // Default values in case DB or query fails
+                    $emailEnabled = false;
+                                      
+                    // Only run query if $conn exists
+                    if (isset($conn) && $conn && $conn->ping()) {
+                        $sql = "SELECT setting_value FROM settings WHERE setting_key = 'enable_email_notifications' LIMIT 1";
+                        $result = $conn->query($sql);
+                        if ($result && $row = $result->fetch_assoc()) {
+                            // Assuming setting_value is stored as 'true' / 'false' strings
+                            $emailEnabled = ($row['setting_value'] === 'true');
+                        }
+                    }
+                    
+                    // Set colors and icon based on status
+                    if ($emailEnabled) {
+                        $iconClass = 'bi bi-check2-circle text-success';
+                        $bgColor = 'rgb(226,251,232)';
+                        $textColor = 'rgba(64,109,72,1)';
+                        $statusText = 'Enabled';
+                    } else {
+                        $iconClass = 'bi bi-exclamation-circle text-danger';
+                        $bgColor = 'rgb(254,228,228)';
+                        $textColor = 'rgba(136,0,0,1)';
+                        $statusText = 'Not Enabled';
+                    }
+                    ?>
+                    
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
-                      <div>
-                        <i class="bi bi-check2-circle text-success me-1"></i>Email Service
-                      </div>
-                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
-                        Enabled
-                      </span>
+                        <div>
+                            <i class="<?= $iconClass ?> me-1"></i>Email Service
+                        </div>
+                        <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: <?= $bgColor ?>; color: <?= $textColor ?>;">
+                            <?= $statusText ?>
+                        </span>
                     </div>
+
 
                     <!-- Spacer pushes button to bottom -->
                     <div class="flex-grow-1"></div>
