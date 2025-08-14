@@ -1997,7 +1997,7 @@ if ($settingResult) {
 <!-- end update modal ajax -->
 
 <!-- view user modal ajax -->
-    <script>
+
       <script>
 document.addEventListener('DOMContentLoaded', () => {
   const viewUserModal = document.getElementById('viewUserModal');
