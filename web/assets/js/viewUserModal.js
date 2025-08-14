@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
       setText('view_user_initials2', firstInitial + lastInitial);
       setText('view_user_fullname2', `${user.first_name || '-'} ${user.last_name || '-'}`);
+      setText('view_user_fullname_intro2', `${user.first_name || '-'} ${user.last_name || '-'}`);
       setText('view_email2', user.email);
       setText('view_user_role2', user.role);
 

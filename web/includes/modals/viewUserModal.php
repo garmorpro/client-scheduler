@@ -4,7 +4,7 @@
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
                 <i class="bi bi-people"></i> User Details <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete profile information for <span id="view_first_name2"></span></span>
+                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Complete profile information for <span id="view_user_fullname_intro2"></span></span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>

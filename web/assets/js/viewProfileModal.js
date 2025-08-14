@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('view_user_initials', firstInitial + lastInitial);
 
       setText('view_user_fullname', `${user.first_name || '-'} ${user.last_name || '-'}`);
+      setText('view_user_fullname_intro', `${user.first_name || '-'} ${user.last_name || '-'}`);
       setText('view_email', user.email);
       setText('view_user_role', user.role);
 
