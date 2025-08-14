@@ -18,9 +18,16 @@ function formatSize($bytes) {
 ?>
 
 <?php
-require_once 'includes/db.php'; // Make sure this points to your DB connection file
+$dbFile = __DIR__ . '/../includes/db.php'; // adjust relative path
 
-if ($conn->ping()) {
+if (file_exists($dbFile)) {
+    @require_once $dbFile; // suppress warnings if file fails
+} else {
+    $conn = null; // no connection
+}
+
+// Check if DB connection exists and is alive
+if (isset($conn) && $conn && $conn->ping()) {
     echo "Database server is alive ✅";
 } else {
     echo "Database server is down ❌";
