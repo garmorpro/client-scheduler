@@ -1,5 +1,5 @@
 <div class="modal fade" id="editEntryModal" tabindex="-1" aria-labelledby="editEntryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 rounded-3 shadow-sm">
 
       <!-- Header -->
