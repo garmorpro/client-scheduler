@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasEntries = cell.querySelectorAll('.badge').length > 0;
 
       if (hasEntries) {
-        manageAddButtons.classList.remove('d-none');
-        entriesListing.classList.add('d-none');
+        // manageAddButtons.classList.remove('d-none');
+        // entriesListing.classList.add('d-none');
         entriesListContainer.innerHTML = '';
         manageAddModal.show();
       } else {
