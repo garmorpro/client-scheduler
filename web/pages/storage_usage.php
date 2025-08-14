@@ -1,10 +1,10 @@
 <?php
-// Path to check (root folder of your app)
-$path = __DIR__; // current directory
+$path = '/'; // Root filesystem for container/VM
 
 $totalSpace = disk_total_space($path);
 $freeSpace = disk_free_space($path);
 $usedSpace = $totalSpace - $freeSpace;
+$percentUsed = ($usedSpace / $totalSpace) * 100;
 
 function formatSize($bytes) {
     $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -24,7 +24,7 @@ function formatSize($bytes) {
 <body>
     <h1>Server Storage Usage</h1>
     <p>Total Space: <?= formatSize($totalSpace) ?></p>
-    <p>Used Space: <?= formatSize($usedSpace) ?></p>
+    <p>Used Space: <?= formatSize($usedSpace) ?> (<?= round($percentUsed, 2) ?>%)</p>
     <p>Free Space: <?= formatSize($freeSpace) ?></p>
 </body>
 </html>
