@@ -240,49 +240,49 @@ if ($settingResult) {
                 </div>
 
                 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('userSearch');
-    const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
-    const pagination = document.getElementById('pagination-users');
-    const perPage = 5;
-
-    function showPage(rows, page = 1) {
-        const start = (page - 1) * perPage;
-        const end = start + perPage;
-        // Hide all rows first
-        allRows.forEach(row => row.style.display = 'none');
-        // Show only the current page's rows
-        rows.forEach((row, index) => {
-            if (index >= start && index < end) {
-                row.style.display = '';
-            }
-        });
-        // Toggle pagination
-        pagination.style.display = rows.length <= perPage ? 'none' : '';
-    }
-
-    function filterRows(searchValue) {
-        return allRows.filter(row => 
-            row.innerText.toLowerCase().includes(searchValue)
-        );
-    }
-
-    searchInput.addEventListener('input', function () {
-        const value = this.value.toLowerCase().trim();
-        if (value.length >= 3) {
-            // Filtered search results
-            const filtered = filterRows(value);
-            showPage(filtered, 1);
-        } else {
-            // Default pagination with all rows
-            showPage(allRows, 1);
-        }
-    });
-
-    // Initial load with default pagination
-    showPage(allRows, 1);
-});
-</script>
+                  document.addEventListener('DOMContentLoaded', function () {
+                      const searchInput = document.getElementById('userSearch');
+                      const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
+                      const pagination = document.getElementById('pagination-users');
+                      const perPage = 5;
+                  
+                      function showPage(rows, page = 1) {
+                          const start = (page - 1) * perPage;
+                          const end = start + perPage;
+                          // Hide all rows first
+                          allRows.forEach(row => row.style.display = 'none');
+                          // Show only the current page's rows
+                          rows.forEach((row, index) => {
+                              if (index >= start && index < end) {
+                                  row.style.display = '';
+                              }
+                          });
+                          // Toggle pagination
+                          pagination.style.display = rows.length <= perPage ? 'none' : '';
+                      }
+                    
+                      function filterRows(searchValue) {
+                          return allRows.filter(row => 
+                              row.innerText.toLowerCase().includes(searchValue)
+                          );
+                      }
+                    
+                      searchInput.addEventListener('input', function () {
+                          const value = this.value.toLowerCase().trim();
+                          if (value.length >= 3) {
+                              // Filtered search results
+                              const filtered = filterRows(value);
+                              showPage(filtered, 1);
+                          } else {
+                              // Default pagination with all rows
+                              showPage(allRows, 1);
+                          }
+                      });
+                    
+                      // Initial load with default pagination
+                      showPage(allRows, 1);
+                  });
+                </script>
 
 
 
@@ -359,30 +359,80 @@ document.addEventListener('DOMContentLoaded', function () {
         <!-- engagement management -->
 
             <div id="tab-engagements" class="tab-content <?php if ($isAdmin) echo 'd-none'; ?>">
-                <div class="user-management-header">
-                    <div class="titles">
-                        <p class="text-black"><strong>Engagement Management</strong></p>
-                        <p>Manage all engagements and entries</p>
+                <div class="user-management-header d-flex justify-content-between align-items-center">
+                        <!-- Left -->
+                        <div class="titles">
+                            <p class="text-black mb-0"><strong>Engagement Management</strong></p>
+                            <p class="mb-0">Manage all engagements and entries</p>
+                        </div>
+
+                        <!-- Middle (Search) -->
+                        <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
+                            <input type="text" id="engagementSearch" class="form-control form-control-sm" 
+                                   placeholder="Search engagements..." minlength="3">
+                        </div>
+
+                        <!-- Right -->
+                        <div class="user-management-buttons d-flex align-items-center gap-2">
+                            <a href="#" id="bulkDeleteEngagementBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; background-color: darkred; display:none;">
+                              <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
+                            </a>
+
+                            <a href="#" 
+                               class="badge text-black p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                               data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
+                                <i class="bi bi-upload me-3"></i>Import Engagements
+                            </a>
+
+                            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; background-color: rgb(3,2,18);" 
+                               data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                                <i class="bi bi-person-plus me-3"></i>Add Engagement
+                            </a>
+                        </div>
                     </div>
-                    <div class="user-management-buttons">
-                        <a href="#" id="bulkDeleteEngagementBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
-                          <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
-                        </a>
 
-                        <a href="#" 
-                           class="badge text-black p-2 text-decoration-none fw-medium" 
-                           style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-                           data-bs-toggle="modal" 
-                           data-bs-target="#importEngagementsModal">
-                            <i class="bi bi-upload me-3"></i>Import Engagements
-                        </a>
+                    <!-- Search + Pagination Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('engagementSearch');
+    const allRows = Array.from(document.querySelectorAll('#engagement-table tbody tr'));
+    const pagination = document.getElementById('pagination-engagements');
+    const perPage = 5;
 
+    function showPage(rows, page = 1) {
+        const start = (page - 1) * perPage;
+        const end = start + perPage;
+        allRows.forEach(row => row.style.display = 'none');
+        rows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            }
+        });
+        pagination.style.display = rows.length <= perPage ? 'none' : '';
+    }
 
-                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addEngagementModal">
-                            <i class="bi bi-person-plus me-3"></i>Add Engagement
-                        </a>
-                    </div>
-                </div>
+    function filterRows(searchValue) {
+        return allRows.filter(row => 
+            row.innerText.toLowerCase().includes(searchValue)
+        );
+    }
+
+    searchInput.addEventListener('input', function () {
+        const value = this.value.toLowerCase().trim();
+        if (value.length >= 3) {
+            const filtered = filterRows(value);
+            showPage(filtered, 1);
+        } else {
+            showPage(allRows, 1);
+        }
+    });
+
+    showPage(allRows, 1);
+});
+</script>
 
 
                 <div class="user-table">
