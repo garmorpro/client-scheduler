@@ -320,7 +320,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     onclick='
                                         event.stopPropagation();
                                         console.log("Entries empty?", false);
-                                        openAddEntryModal(
+                                        openManageEntryModal(
                                             "<?php echo $userId; ?>",
                                             <?php echo json_encode($fullName); ?>,
                                             "<?php echo $weekKey; ?>"
@@ -346,7 +346,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                         openAddEntryModal(
                                             "<?php echo $userId; ?>",
                                             <?php echo json_encode($fullName); ?>,
-                                            "<?php echo '$weekKey'; ?>"
+                                            "<?php echo $weekKey; ?>"
                                         )
                                     '>
                                     <?php 
