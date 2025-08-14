@@ -69,20 +69,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Fetch teammates from server for a given client
   async function fetchTeammates(clientName) {
-    try {
-      const res = await fetch(`get_teammates.php?current_user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`);
-      if (!res.ok) throw new Error('Network error');
-      const data = await res.json();
-      // Return filtered array excluding current user
-      return data
-        .map(e => e.user_name || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown'))
-        .filter(name => name !== currentUserName)
-        .map(name => ({ name, hours: 0 })); // hours can be updated if needed
-    } catch (err) {
-      console.error('Error fetching teammates:', err);
-      return [];
-    }
+  try {
+    // Build the URL
+    const url = `get_teammates.php?current_user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`;
+    
+    // Log it to the console
+    console.log('Fetching teammates URL:', url);
+
+    // Perform the fetch
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Network error');
+    const data = await res.json();
+
+    // Return filtered array excluding current user
+    return data
+      .map(e => e.user_name || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown'))
+      .filter(name => name !== currentUserName)
+      .map(name => ({ name, hours: 0 })); // hours can be updated if needed
+  } catch (err) {
+    console.error('Error fetching teammates:', err);
+    return [];
   }
+}
+
 
   // Add Entry button inside Manage modal
   addEntriesButton.addEventListener('click', () => {
