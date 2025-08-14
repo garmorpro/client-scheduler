@@ -1,11 +1,12 @@
 <?php
 header('Content-Type: application/json');
-ini_set('display_errors', 0); // suppress direct output
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/error.log');
+error_reporting(E_ALL);
 
 try {
-    require_once '../includes/db.php'; // must define $mysqli
+    require_once '../includes/db.php'; // $mysqli must exist
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
     $weekStart     = $_GET['week_start'] ?? '';
