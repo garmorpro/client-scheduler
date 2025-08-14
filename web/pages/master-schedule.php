@@ -252,8 +252,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div id="scheduler-container" class="table-responsive" style="overflow-x:auto; white-space: nowrap;">
-            <table class="table table-bordered align-middle text-center" style="min-width: 900px;">
+        <div id="scheduleContainer" class="table-responsive" style="overflow-x:auto; white-space: nowrap;">
+            <table class="table table-bordered align-middle text-center" style="min-width: max-content;">
                 <thead class="table-light">
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
