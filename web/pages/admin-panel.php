@@ -1,4 +1,3 @@
-<!-- admin-panel.php -->
 <?php
 date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
@@ -412,7 +411,7 @@ if ($settingResult) {
                           const allRows = Array.from(document.querySelectorAll('#engagement-table tbody tr'));
                           const pagination = document.getElementById('pagination-engagements');
                           const perPage = 5;
-
+                                            
                           function showPage(rows, page = 1) {
                               const start = (page - 1) * perPage;
                               const end = start + perPage;
