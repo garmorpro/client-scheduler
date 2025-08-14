@@ -1,10 +1,6 @@
 <?php
-$path = '/'; // Root filesystem for container/VM
-
-$totalSpace = disk_total_space($path);
-$freeSpace = disk_free_space($path);
-$usedSpace = $totalSpace - $freeSpace;
-$percentUsed = ($usedSpace / $totalSpace) * 100;
+$path = '/'; // root directory of container
+$bytes = trim(shell_exec("du -sb $path 2>/dev/null | cut -f1"));
 
 function formatSize($bytes) {
     $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -15,7 +11,10 @@ function formatSize($bytes) {
     }
     return round($bytes, 2) . ' ' . $sizes[$i];
 }
+
+echo "Approx. Container Data Usage: " . formatSize($bytes);
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
