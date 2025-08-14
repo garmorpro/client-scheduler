@@ -16,6 +16,16 @@ function formatSize($bytes) {
     return round($bytes, 2) . ' ' . $sizes[$i];
 }
 ?>
+
+<?php
+require_once 'includes/db.php'; // Make sure this points to your DB connection file
+
+if ($conn->ping()) {
+    echo "Database server is alive ✅";
+} else {
+    echo "Database server is down ❌";
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
