@@ -75,123 +75,119 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render entries list function
   function renderEntriesList(entriesForWeek) {
-  entriesListContainer.innerHTML = '';
+    entriesListContainer.innerHTML = '';
 
-  if (!entriesForWeek || entriesForWeek.length === 0) {
-    entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
-    return;
+    if (!entriesForWeek || entriesForWeek.length === 0) {
+      entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
+      return;
+    }
+
+    const timeOffEntries = [];
+    const clientEntries = [];
+
+    entriesForWeek.forEach(entry => {
+      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+      if (isTimeOff) {
+        entry.client_name = 'Time Off';
+        timeOffEntries.push(entry);
+      } else {
+        clientEntries.push(entry);
+      }
+    });
+
+    const sortedEntries = [...clientEntries, ...timeOffEntries];
+
+    sortedEntries.forEach(entry => {
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
+      card.style.cursor = 'pointer';
+
+      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+      if (isTimeOff) card.classList.add('timeoff-card');
+
+      card.addEventListener('click', () => {
+        const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
+        const formattedWeekStart = formatWeekStart(currentWeekStart);
+
+        openEditModal(
+          entry.entry_id,
+          entry.assigned_hours,
+          entry.client_name,
+          currentUserName,
+          formattedWeekStart,
+          entryType,
+          manageAddModalEl
+        );
+      });
+
+      const cardBody = document.createElement('div');
+      cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+
+      // LEFT column
+      const leftDiv = document.createElement('div');
+      leftDiv.style.flex = '1';
+      let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
+
+      if (!isTimeOff) {
+        const teammateMap = {};
+
+        entriesForWeek
+          .filter(e => e.client_name === entry.client_name)
+          .forEach(e => {
+            const name =
+              e.user_name?.trim() ||
+              ((e.first_name && e.last_name) ? `${e.first_name} ${e.last_name}` : 'Unknown');
+
+            // Skip current user completely
+            if (name === currentUserName) return;
+
+            if (!teammateMap[name]) teammateMap[name] = 0;
+            teammateMap[name] += Number(e.assigned_hours) || 0;
+          });
+
+        const teammates = Object.entries(teammateMap).map(
+          ([name, hours]) => `${name} (${hours})`
+        );
+
+        // DEBUG: Log teammates for each client
+        console.log(`Client: ${entry.client_name} | Teammates:`, teammates);
+
+        leftContent += `<small class="text-muted">
+                          <strong>Team member(s):</strong> 
+                          ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                        </small>`;
+      }
+
+      leftDiv.innerHTML = leftContent;
+
+      // MIDDLE column
+      const middleDiv = document.createElement('div');
+      middleDiv.style.marginRight = '1rem';
+      middleDiv.style.textAlign = 'right';
+      middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
+
+      // RIGHT column
+      const rightDiv = document.createElement('div');
+      if (entry.entry_id) {
+        const deleteLink = document.createElement('a');
+        deleteLink.href = "#";
+        deleteLink.title = "Delete Entry";
+        deleteLink.className = "text-danger";
+        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+        deleteLink.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteEntry(entry.entry_id);
+        };
+        rightDiv.appendChild(deleteLink);
+      }
+
+      cardBody.appendChild(leftDiv);
+      cardBody.appendChild(middleDiv);
+      cardBody.appendChild(rightDiv);
+      card.appendChild(cardBody);
+      entriesListContainer.appendChild(card);
+    });
   }
-
-  const timeOffEntries = [];
-  const clientEntries = [];
-
-  entriesForWeek.forEach(entry => {
-    const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-    if (isTimeOff) {
-      entry.client_name = 'Time Off';
-      timeOffEntries.push(entry);
-    } else {
-      clientEntries.push(entry);
-    }
-  });
-
-  const sortedEntries = [...clientEntries, ...timeOffEntries];
-
-  sortedEntries.forEach(entry => {
-    const card = document.createElement('div');
-    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
-    card.style.cursor = 'pointer';
-
-    const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-    if (isTimeOff) card.classList.add('timeoff-card');
-
-    card.addEventListener('click', () => {
-      const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
-      const formattedWeekStart = formatWeekStart(currentWeekStart);
-
-      openEditModal(
-        entry.entry_id,
-        entry.assigned_hours,
-        entry.client_name,
-        currentUserName,
-        formattedWeekStart,
-        entryType,
-        manageAddModalEl
-      );
-    });
-
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
-
-    // LEFT column
-    const leftDiv = document.createElement('div');
-    leftDiv.style.flex = '1';
-    let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
-
-    if (!isTimeOff) {
-  const teammateMap = {};
-  const normalizedCurrentUserName = currentUserName?.trim().toLowerCase();
-
-  entriesForWeek
-    .filter(e => e.client_name === entry.client_name)
-    .forEach(e => {
-      const name =
-        (e.user_name && e.user_name.trim()) ||
-        ((e.first_name && e.last_name) ? `${e.first_name} ${e.last_name}` : 'Unknown');
-
-      // Skip if this is the current user (case-insensitive match)
-      if (name.trim().toLowerCase() === normalizedCurrentUserName) return;
-
-      teammateMap[name] = (teammateMap[name] || 0) + (Number(e.assigned_hours) || 0);
-    });
-
-  const teammates = Object.entries(teammateMap).map(
-    ([name, hours]) => `${name} (${hours})`
-  );
-
-  leftContent += `<small class="text-muted">
-                    <strong>Team member(s):</strong> 
-                    ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
-                  </small>`;
-}
-
-
-
-    leftDiv.innerHTML = leftContent;
-
-    // MIDDLE column
-    const middleDiv = document.createElement('div');
-    middleDiv.style.marginRight = '1rem';
-    middleDiv.style.textAlign = 'right';
-    middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
-
-    // RIGHT column
-    const rightDiv = document.createElement('div');
-    if (entry.entry_id) {
-      const deleteLink = document.createElement('a');
-      deleteLink.href = "#";
-      deleteLink.title = "Delete Entry";
-      deleteLink.className = "text-danger";
-      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        deleteEntry(entry.entry_id);
-      };
-      rightDiv.appendChild(deleteLink);
-    }
-
-    cardBody.appendChild(leftDiv);
-    cardBody.appendChild(middleDiv);
-    cardBody.appendChild(rightDiv);
-    card.appendChild(cardBody);
-    entriesListContainer.appendChild(card);
-  });
-}
-
-
-
-
-
 });
