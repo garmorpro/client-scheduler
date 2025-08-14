@@ -48,4 +48,4 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
 }
 
 // --- HARD-CODED TEST ---
-// openAddEntryModal(123, "John Doe", "2025-08-11");
+openAddEntryModal(123, "John Doe", "2025-08-11");
