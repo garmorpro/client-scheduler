@@ -18,7 +18,7 @@ function formatSize($bytes) {
 ?>
 
 <?php
-$dbFile = __DIR__ . '/../includes/db.php'; // adjust relative path
+$dbFile = __DIR__ . '/includes/db.php'; // adjust relative path
 
 if (file_exists($dbFile)) {
     @require_once $dbFile; // suppress warnings if file fails
