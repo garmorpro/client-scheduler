@@ -18,19 +18,8 @@ $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 $startMonday = strtotime("-2 weeks", $currentMonday);
 $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
-// $mondays = [];
-// for ($i = 0; $i < 7; $i++) {
-//     $mondays[] = strtotime("+{$i} weeks", $startMonday);
-// }
-
-// $mondays = [];
-// for ($i = 0; $i < 7; $i++) {
-//     $mondays[] = strtotime("+{$i} weeks", $startMonday);
-// }
-
 $mondays = [];
-$weeksToShow = 24; // number of weeks to display horizontally
-for ($i = 0; $i < $weeksToShow; $i++) {
+for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
@@ -191,41 +180,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     border: 2px dashed rgb(209,226, 159) !important;
     background: rgb(246, 249, 236) !important;
 }
-
-.table-responsive {
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-}
-
-.table th:first-child,
-.table td:first-child {
-    position: sticky !important;
-    left: 0 !important;
-    background: #fff !important; /* matches table background */
-    z-index: 2 !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important;
-}
-
-.table thead th:first-child {
-    z-index: 3 !important; /* so header stays on top of body cells */
-}
-
-.table th,
-.table td {
-    min-width: 120px !important; /* adjust as needed */
-}
-
-.table-responsive {
-    scroll-behavior: smooth !important;
-}
-
-/* .table-responsive {
-    overflow-x: auto;
-    white-space: nowrap; 
-}
-.table-responsive table {
-    min-width: max-content; 
-} */
     </style>
 </head>
 <body class="d-flex">
@@ -252,15 +206,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <div class="col-md-6">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
                 </div>
-                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
-                    <a href="?week_offset=<?php //echo $weekOffset - 1; ?>" 
+                <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
                        class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
         
-                    <span class="fw-semibold"><?php //echo $rangeLabel; ?></span>
+                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
         
-                    <a href="?week_offset=<?php //echo $weekOffset + 1; ?>" 
+                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
                        class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-                </div> -->
+                </div>
             </form>
         </div>
     <!-- end upper search and week range selector -->
@@ -279,8 +233,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div id="scheduleContainer" class="table-responsive" style="overflow-x:auto; white-space: nowrap;">
-            <table class="table table-bordered align-middle text-center" style="min-width: max-content;">
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
@@ -418,44 +372,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
     
 
-    <script>
-const scheduleContainer = document.getElementById('scheduleContainer');
-let weekOffset = <?php echo $weekOffset; ?>;
-
-scheduleContainer.addEventListener('scroll', () => {
-    // If scrolled near the right end, load next week
-    if (scheduleContainer.scrollLeft + scheduleContainer.clientWidth >= scheduleContainer.scrollWidth - 50) {
-        loadMoreWeeks(weekOffset + 1); // load next batch of weeks
-        weekOffset++;
-    }
-
-    // Optional: handle scrollLeft near 0 to load previous weeks
-});
-
-function loadMoreWeeks(offset) {
-    fetch(`load_weeks.php?week_offset=${offset}`)
-        .then(res => res.text())
-        .then(html => {
-            // Append new columns to the table
-            const table = scheduleContainer.querySelector('table');
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            // Append thead columns
-            const newThs = tempDiv.querySelectorAll('thead th');
-            const theadRow = table.querySelector('thead tr');
-            newThs.forEach(th => theadRow.appendChild(th));
-
-            // Append tbody cells for each row
-            const newRows = tempDiv.querySelectorAll('tbody tr');
-            const tbodyRows = table.querySelectorAll('tbody tr');
-            newRows.forEach((newRow, i) => {
-                newRow.querySelectorAll('td').forEach(td => tbodyRows[i].appendChild(td));
-            });
-        });
-}
-</script>
-
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
