@@ -244,37 +244,46 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('userSearch');
     const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
     const pagination = document.getElementById('pagination-users');
+    const perPage = 5;
 
-    function showPage(rows, page = 1, perPage = 5) {
+    function showPage(rows, page = 1) {
         const start = (page - 1) * perPage;
         const end = start + perPage;
+        // Hide all rows first
+        allRows.forEach(row => row.style.display = 'none');
+        // Show only the current page's rows
         rows.forEach((row, index) => {
-            row.style.display = (index >= start && index < end) ? '' : 'none';
+            if (index >= start && index < end) {
+                row.style.display = '';
+            }
         });
+        // Toggle pagination
         pagination.style.display = rows.length <= perPage ? 'none' : '';
     }
 
-    function filterAndPaginate(searchValue) {
-        const filtered = allRows.filter(row => 
+    function filterRows(searchValue) {
+        return allRows.filter(row => 
             row.innerText.toLowerCase().includes(searchValue)
         );
-        showPage(filtered, 1); // always start at page 1 when searching
     }
 
     searchInput.addEventListener('input', function () {
         const value = this.value.toLowerCase().trim();
-        if (value.length === 0) {
-            filterAndPaginate('');
-        } else if (value.length >= 3) {
-            filterAndPaginate(value);
+        if (value.length >= 3) {
+            // Filtered search results
+            const filtered = filterRows(value);
+            showPage(filtered, 1);
+        } else {
+            // Default pagination with all rows
+            showPage(allRows, 1);
         }
     });
 
-    // initial load
-    filterAndPaginate('');
+    // Initial load with default pagination
+    showPage(allRows, 1);
 });
-
 </script>
+
 
 
 
