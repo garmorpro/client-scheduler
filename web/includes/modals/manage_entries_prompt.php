@@ -16,12 +16,12 @@
         <!-- User Info -->
         <div class="p-3 bg-light rounded border mb-4">
           <div class="row">
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <small class="text-muted">User ID</small>
               <div class="fw-semibold" id="entryUserId">--</div>
-            </div>
+            </div> -->
             <div class="col-md-4">
-              <small class="text-muted">User Name</small>
+              <small class="text-muted">Employee Name</small>
               <div class="fw-semibold" id="entryUserName">--</div>
             </div>
             <div class="col-md-4">
