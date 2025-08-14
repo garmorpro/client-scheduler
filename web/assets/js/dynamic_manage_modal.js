@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentIsTimeOff = 0;
   let currentTimeOffHours = 0;
 
-  // Cache modals
   const manageAddModalEl = document.getElementById('manageEntryPromptModal');
   const manageAddModal = new bootstrap.Modal(manageAddModalEl);
   const entriesListContainer = document.getElementById('entriesListContainer');
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -----------------------------
-  // Open manage modal
   window.openManageEntryModal = async function(options) {
     currentUserId = options.userId;
     currentUserName = options.userName || '';
@@ -63,16 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -----------------------------
-  // Fetch teammates
   async function fetchTeammates(clientName) {
     try {
       const url = `get_teammates.php?current_user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`;
       console.log('Fetching teammates URL:', url);
 
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Network error');
-      const data = await res.json();
 
+      // If not OK, try to read text first to see the error
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Server returned an error response:', errorText);
+        throw new Error(`Network error: ${res.status}`);
+      }
+
+      const data = await res.json();
       console.log('Teammates raw data:', data);
 
       return data
@@ -87,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -----------------------------
-  // Add Entry button inside Manage modal
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
     setTimeout(() => {
@@ -96,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // -----------------------------
-  // Render entries
   async function renderEntriesList(entriesForWeek) {
     entriesListContainer.innerHTML = '';
 
@@ -110,12 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     entriesForWeek.forEach(entry => {
       const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-      if (isTimeOff) {
-        entry.client_name = 'Time Off';
-        timeOffEntries.push(entry);
-      } else {
-        clientEntries.push(entry);
-      }
+      if (isTimeOff) timeOffEntries.push(entry);
+      else clientEntries.push(entry);
     });
 
     const sortedEntries = [...clientEntries, ...timeOffEntries];
