@@ -1,3 +1,4 @@
+// dynamic_manage_modal.js
 document.addEventListener('DOMContentLoaded', () => {
   let currentUserId = null;
   let currentUserName = null;
@@ -37,30 +38,29 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasEntries = cell.querySelector('.badge-status') !== null;
 
       if (hasEntries) {
-  const formattedWeekStart = formatWeekStart(currentWeekStart);
+        const formattedWeekStart = formatWeekStart(currentWeekStart);
 
-  // Fill user info section for the Manage modal
-  document.getElementById('entryUserName').textContent = currentUserName || '—';
-  document.getElementById('entryWeekStart').textContent = formattedWeekStart;
+        // Fill user info section for the Manage modal
+        document.getElementById('entryUserName').textContent = currentUserName || '—';
+        document.getElementById('entryWeekStart').textContent = formattedWeekStart;
 
-  // Open Manage modal for cells with entries
-  entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+        // Open Manage modal for cells with entries
+        entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
-  fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-    .then(res => {
-      if (!res.ok) throw new Error('Network response was not OK');
-      return res.json();
-    })
-    .then(entries => renderEntriesList(entries))
-    .catch(() => {
-      entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
-    });
-
-  manageAddModal.show();
-} else {
-  openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-}
-
+        fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+          .then(res => {
+            if (!res.ok) throw new Error('Network response was not OK');
+            return res.json();
+          })
+          .then(entries => renderEntriesList(entries))
+          .catch(() => {
+            entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+          });
+        
+        manageAddModal.show();
+      } else {
+        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+      }
     });
   });
 

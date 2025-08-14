@@ -1,3 +1,4 @@
+<!-- manage_entries_prompt.php -->
 <div class="modal fade" id="manageEntryPromptModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 rounded-3 shadow-sm">
