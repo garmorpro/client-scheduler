@@ -4,7 +4,8 @@ function openEditModal(entryId, assignedHours, clientName, userName, weekStart, 
   document.getElementById('editAssignedHours').value = assignedHours;
 
   // Show client name or "Timeoff Entry" for time off
-  document.getElementById('editClientName').textContent = entryType === 'Time Off' ? 'Timeoff Entry' : (clientName || '—');
+  document.getElementById('editClientName').textContent =
+    entryType === 'Time Off' ? 'Timeoff Entry' : (clientName || '—');
   document.getElementById('editUserName').textContent = userName || '—';
   
   const formattedWeekStart = weekStart
