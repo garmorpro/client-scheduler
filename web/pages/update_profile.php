@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         logActivity($conn, "user_updated", $adminUserId, $adminEmail, $adminName, $title, $description);
 
-        header("Location: " . strtok($_SERVER['REQUEST_URI'], '?') . "?status=success");
+        header("Location: admin-panel.php?status=success");
         exit();
     } else {
         die("Error updating user: " . $stmt->error);
