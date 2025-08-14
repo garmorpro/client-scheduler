@@ -1,25 +1,29 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
-    if (!weekStart) {
+    if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);
         return;
     }
 
-    // Set user ID and employee name
     document.getElementById('addEntryUserId').value = user_id;
+    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
-    // Parse the date manually to avoid timezone issues
-    const [year, month, day] = weekStart.split('-').map(Number); // ["2025","08","11"] -> [2025,8,11]
-    const weekDate = new Date(year, month - 1, day); // month is 0-based in JS
+    // Parse the weekStart string manually in local time
+    const [year, month, day] = weekStart.split('-').map(Number);
+    const weekDate = new Date(year, month - 1, day); // month is 0-based
+
+    // Make sure it’s the Monday of that week
+    const dayOfWeek = weekDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const diffToMonday = (dayOfWeek + 6) % 7; // days since Monday
+    weekDate.setDate(weekDate.getDate() - diffToMonday);
 
     // Format date as "Aug 11, 2025"
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
+    
+    // Update modal
     document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
-
-    // Hidden input for form submission
-    document.getElementById('addEntryWeek').value = weekStart;
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
