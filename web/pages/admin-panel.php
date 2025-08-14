@@ -130,6 +130,9 @@ if ($settingResult) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+
+    <script src="../assets/js/viewProfileModal.js"></script>
+    <script src="../assets/js/openUpdateProfileDetailsModal.js"></script>
 </head>
 <body class="d-flex">
 
@@ -811,6 +814,9 @@ if ($settingResult) {
 
     </div> <!-- end container -->
 </div> <!-- end flex-grow -->
+
+<?php include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 
 <!-- Modal for Adding User -->
