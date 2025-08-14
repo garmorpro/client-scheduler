@@ -18,16 +18,16 @@
           <div class="row g-2">
             <div class="col-md-4">
               <small class="text-muted">Client</small>
-              <div class="fw-semibold" id="editClientName">Timeoff Entry</div>
+              <div class="fw-semibold" id="editClientName">-</div>
             </div>
             <div class="col-md-4">
               <small class="text-muted">Employee Name</small>
               <div class="fw-semibold" id="editUserName">—</div>
             </div>
-            <!-- <div class="col-md-6">
-              <small class="text-muted">User ID</small>
-              <div class="fw-semibold" id="editUserId">—</div>
-            </div> -->
+            <div class="col-md-6">
+              <small class="text-muted">Entry Type</small>
+              <div class="fw-semibold" id="editEntryType">—</div>
+            </div>
             <div class="col-md-4">
               <small class="text-muted">Week Start</small>
               <div class="fw-semibold" id="editWeekStart">—</div>
