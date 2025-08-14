@@ -210,6 +210,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     z-index: 3 !important; /* so header stays on top of body cells */
 }
 
+.table th,
+.table td {
+    min-width: 120px !important; /* adjust as needed */
+}
+
+.table-responsive {
+    scroll-behavior: smooth !important;
+}
+
 /* .table-responsive {
     overflow-x: auto;
     white-space: nowrap; 
