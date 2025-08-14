@@ -637,13 +637,13 @@ if ($settingResult) {
                       if (isset($conn) && is_object($conn)) {
                         try {
                             if ($conn->ping()) {
-                                $dbStatus = "Database server is alive ✅";
+                                $dbStatus = "Healthy";
                             }
                         } catch (Exception $e) {
                             // Do nothing, keep $dbStatus as down
+                            $dbStatus = "Down";
                         }
                     }
-                    echo $dbStatus;
                     ?>
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
@@ -651,7 +651,7 @@ if ($settingResult) {
                         <i class="bi bi-check2-circle text-success me-1"></i>Database Status
                       </div>
                       <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
-                        Healthy
+                        <?php echo $dbStatus; ?>
                       </span>
                     </div>
 
