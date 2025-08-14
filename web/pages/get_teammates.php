@@ -17,14 +17,15 @@ try {
     $clientName    = $_GET['client_name'] ?? '';
 
     // Base query
-    $sql = "SELECT 
-                e.engagement_id,
-                u.first_name,
-                u.last_name
-            FROM users u
-            JOIN entries e ON e.user_id = u.user_id
-            JOIN engagements g ON g.engagement_id = e.engagement_id
-            WHERE g.client_name = ?";
+$sql = "SELECT 
+            u.user_id,
+            u.first_name,
+            u.last_name,
+            e.assigned_hours
+        FROM users u
+        JOIN entries e ON e.user_id = u.user_id
+        JOIN engagements g ON g.engagement_id = e.engagement_id
+        WHERE g.client_name = ?";
 
     $types = "s"; // string for client_name
     $params = [$clientName];
