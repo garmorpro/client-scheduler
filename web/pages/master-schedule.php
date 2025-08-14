@@ -157,6 +157,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
     <script src="../assets/js/filter_employees.js"></script>
+    <script src="../assets/js/open_modal.js"></script>
 
     <style>
       /* light highlight for time off cells */
@@ -311,52 +312,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         ?>
 
                         <?php if ($isAdmin): ?>
-                            <?php if (!empty($entriesForWeek)): ?>
-                                <!-- Has entries → open ManageEntries modal -->
-                                <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                    data-user-id="<?php echo $userId; ?>" 
-                                    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                                    data-week-start="<?php echo $weekKey; ?>"
-                                    onclick='
-                                        event.stopPropagation();
-                                        console.log("Entries empty?", false);
-                                        openManageEntryModal(
-                                            "<?php echo $userId; ?>",
-                                            <?php echo json_encode($fullName); ?>,
-                                            "<?php echo $weekKey; ?>"
-                                        )
-                                    '>
-                                    <?php 
-                                      // render time off corner if present
-                                      if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
-                                      }
-                                      echo $cellContent; 
-                                    ?>
-                                </td>
-                            <?php else: ?>
-                                <!-- No Entries → open AddEntry modal -->
-                                <td class="addable <?php echo $tdClass; ?>" style="cursor:pointer;"
-                                    data-user-id="<?php echo $userId; ?>" 
-                                    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                                    data-week-start="<?php echo $weekKey; ?>"
-                                    onclick='
-                                        event.stopPropagation();
-                                        console.log("Entries empty?", true);
-                                        openAddEntryModal(
-                                            <?php echo json_encode($userId); ?>,
-                                            <?php echo json_encode($fullName); ?>,
-                                            <?php echo json_encode($weekKey); ?>
-                                        )
-                                    '>
-                                    <?php 
-                                      if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
-                                      }
-                                      echo $cellContent; 
-                                    ?>
-                                </td>
-                            <?php endif; ?>
+                            <td class="addable <?php echo $tdClass; ?>" 
+    style="cursor:pointer;"
+    data-user-id="<?php echo $userId; ?>" 
+    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
+    data-week-start="<?php echo $weekKey; ?>">
+    
+    <?php 
+      if ($hasTimeOff) {
+          echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
+      }
+      echo $cellContent; 
+    ?>
+</td>
                         <?php else: ?>
                             <td class="<?php echo $tdClass; ?>">
                                 <?php 

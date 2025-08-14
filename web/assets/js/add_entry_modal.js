@@ -1,25 +1,16 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
-    console.log("openAddEntryModal called with:", user_id, employeeName, weekStart);
-
-    if (!weekStart || !/^\d{4}-\d{2}-\d{2}$/.test(weekStart)) {
+    if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);
         return;
     }
 
-    // Parse YYYY-MM-DD manually to avoid timezone issues
-    const [year, month, day] = weekStart.split('-').map(Number);
-    let weekDate = new Date(year, month - 1, day);
-    console.log("Parsed weekDate:", weekDate);
+    document.getElementById('addEntryUserId').value = user_id;
+    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
+    document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
-    // Force weekDate to Monday of that week
-    const dayOfWeek = weekDate.getDay(); // 0=Sun, 1=Mon
-    const diffToMonday = (dayOfWeek + 6) % 7;
-    weekDate.setDate(weekDate.getDate() - diffToMonday);
-    console.log("Adjusted to Monday:", weekDate);
-
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
-    console.log("Formatted date:", formattedDate);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const weekDate = new Date(weekStart);
+    document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
