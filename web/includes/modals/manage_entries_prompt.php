@@ -17,10 +17,6 @@
         <!-- User Info -->
         <div class="p-3 bg-light rounded border mb-4">
           <div class="row">
-            <!-- <div class="col-md-4">
-              <small class="text-muted">User ID</small>
-              <div class="fw-semibold" id="entryUserId">--</div>
-            </div> -->
             <div class="col-md-4">
               <small class="text-muted">Employee Name</small>
               <div class="fw-semibold" id="entryUserName">--</div>
@@ -35,7 +31,7 @@
         <!-- Entries & Add Button -->
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h6 class="fw-bold mb-0">Entries for this week</h6>
-          <button id="addEntriesButton2" class="btn btn-primary btn-sm">
+          <button id="addEntriesButton2" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark">
             <i class="bi bi-plus-circle me-1"></i> Add Entry
           </button>
         </div>
