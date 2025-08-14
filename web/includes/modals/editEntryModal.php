@@ -44,8 +44,8 @@
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-light fw-medium" style="font-size: 14px !important;" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-dark fw-medium" style="font-size: 14px !important;">Submit</button>
       </div>
       </form> 
     </div>
