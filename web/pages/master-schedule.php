@@ -18,8 +18,14 @@ $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 $startMonday = strtotime("-2 weeks", $currentMonday);
 $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
+// $mondays = [];
+// for ($i = 0; $i < 7; $i++) {
+//     $mondays[] = strtotime("+{$i} weeks", $startMonday);
+// }
+
 $mondays = [];
-for ($i = 0; $i < 7; $i++) {
+$weeksToShow = 24; // number of weeks to display horizontally
+for ($i = 0; $i < $weeksToShow; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
@@ -179,6 +185,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .timeoff-card { 
     border: 2px dashed rgb(209,226, 159) !important;
     background: rgb(246, 249, 236) !important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    white-space: nowrap; /* prevent wrapping of table cells */
+}
+.table-responsive table {
+    min-width: max-content; /* ensures table is as wide as needed */
 }
     </style>
 </head>
