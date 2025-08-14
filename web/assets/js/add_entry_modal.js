@@ -14,7 +14,7 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
 
     // Make sure it’s the Monday of that week
     const dayOfWeek = weekDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    const diffToMonday = (dayOfWeek + 6) % 7; // days since Monday
+    const diffToMonday = (dayOfWeek + 5) % 7; // days since Monday
     weekDate.setDate(weekDate.getDate() - diffToMonday);
 
     // Format date as "Aug 11, 2025"
