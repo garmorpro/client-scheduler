@@ -8,17 +8,17 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     document.getElementById('addEntryUserId').value = user_id;
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
 
-    // Parse the weekStart manually
+    // Parse the date manually to avoid timezone issues
     const [year, month, day] = weekStart.split('-').map(Number); // ["2025","08","11"] -> [2025,8,11]
-    const weekDate = new Date(year, month - 1, day); // month is 0-based
+    const weekDate = new Date(year, month - 1, day); // month is 0-based in JS
 
-    // Format date manually (avoid timezone shifts)
+    // Format date as "Aug 11, 2025"
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
     document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
 
-    // Also store hidden input for form submission
+    // Hidden input for form submission
     document.getElementById('addEntryWeek').value = weekStart;
 
     // Reset UI states
