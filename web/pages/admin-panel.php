@@ -634,16 +634,12 @@ if ($settingResult) {
                     <div class="mb-2"></div>
 
                      <?php
-                      if (isset($conn) && is_object($conn)) {
-                        try {
-                            if ($conn->ping()) {
-                                $dbStatus = "Healthy";
-                            }
-                        } catch (Exception $e) {
-                            // Do nothing, keep $dbStatus as down
-                            $dbStatus = "Down";
-                        }
-                    }
+                      // Example usage
+if (isset($conn) && $conn && $conn->ping()) {
+    $dbStatus = "Database server is alive ✅";
+} else {
+    $dbStatus = "Database server is down ❌";
+}
                     ?>
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
