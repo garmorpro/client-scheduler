@@ -1,10 +1,11 @@
 <?php
 header('Content-Type: application/json');
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0); // suppress direct output
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.log');
 
 try {
-    require_once '../includes/db.php'; // $mysqli
+    require_once '../includes/db.php'; // must define $mysqli
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
     $weekStart     = $_GET['week_start'] ?? '';
@@ -24,6 +25,7 @@ try {
         $types .= "i";
         $params[] = $currentUserId;
     }
+
     if (!empty($weekStart)) {
         $sql .= " AND e.week_start = ?";
         $types .= "s";
