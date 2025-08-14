@@ -653,14 +653,14 @@ if ($settingResult) {
 
                     <?php
                     $path = '/'; // Root filesystem for container/VM
-                                      
+
                     $totalSpace = disk_total_space($path);
                     $freeSpace = disk_free_space($path);
                     $usedSpace = $totalSpace - $freeSpace;
-                                      
+
                     // Make percent used a whole number
                     $percentUsed = round(($usedSpace / $totalSpace) * 100);
-                                      
+
                     function formatSize($bytes) {
                         $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
                         $i = 0;
@@ -670,16 +670,50 @@ if ($settingResult) {
                         }
                         return round($bytes, 2) . ' ' . $sizes[$i];
                     }
+
+                    // Determine badge colors based on usage
+                    function getStorageColors($percent) {
+                        if ($percent >= 0 && $percent <= 33) {
+                            // Green
+                            return [
+                                'bg' => 'rgb(226,251,232)',
+                                'color' => 'rgba(64,109,72,1)'
+                            ];
+                        } elseif ($percent >= 34 && $percent <= 66) {
+                            // Yellow
+                            return [
+                                'bg' => 'rgb(253,249,200)',
+                                'color' => 'rgba(135,88,30)'
+                            ];
+                        } elseif ($percent >= 67 && $percent <= 100) {
+                            // Red
+                            return [
+                                'bg' => 'rgb(254,228,228)',
+                                'color' => 'rgba(136,0,0,1)'
+                            ];
+                        } else {
+                            // Default to red
+                            return [
+                                'bg' => 'rgb(254,228,228)',
+                                'color' => 'rgba(136,0,0,1)'
+                            ];
+                        }
+                    }
+
+                    // Get colors for this percent
+                    $colors = getStorageColors($percentUsed);
                     ?>
+
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
                       <div>
                         <i class="bi bi-exclamation-circle text-warning me-1"></i>Storage Usage
                       </div>
-                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(253,249,200); color: rgba(135,88,30);">
-                        <?php echo $percentUsed ?>% Used
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: <?= $colors['bg'] ?>; color: <?= $colors['color'] ?>;">
+                        <?= $percentUsed ?>% Used
                       </span>
                     </div>
+
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
                       <div>
