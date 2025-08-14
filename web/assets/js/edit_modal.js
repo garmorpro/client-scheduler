@@ -1,10 +1,15 @@
-function openEditModal(event) {
-    const buttonElement = event.currentTarget; // safer than event.target in case of icon click
-    const entryId = buttonElement.getAttribute('data-entry-id');
-    const assignedHours = buttonElement.getAttribute('data-assigned-hours');
-
+function openEditModal(entryId, assignedHours, clientName, userId, weekStart) {
+    // Populate the form fields
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
+
+    // Populate additional details section in the modal
+    document.getElementById('editClientName').textContent = clientName || '—';
+    document.getElementById('editUserId').textContent = userId || '—';
+    const formattedWeekStart = weekStart
+        ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
+    document.getElementById('editWeekStart').textContent = formattedWeekStart;
 
     // Hide the manage entry modal first
     const manageModalEl = document.getElementById('manageEntryPromptModal');
