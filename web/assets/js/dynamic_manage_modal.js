@@ -37,25 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasEntries = cell.querySelector('.badge-status') !== null;
 
       if (hasEntries) {
-        // Open Manage modal for cells with entries
-        entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+  const formattedWeekStart = formatWeekStart(currentWeekStart);
 
-        // Fetch and render entries inside Manage modal
-        fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-          .then(res => {
-            if (!res.ok) throw new Error('Network response was not OK');
-            return res.json();
-          })
-          .then(entries => renderEntriesList(entries))
-          .catch(() => {
-            entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
-          });
+  // Fill user info section for the Manage modal
+  document.getElementById('entryUserName').textContent = currentUserName || '—';
+  document.getElementById('entryWeekStart').textContent = formattedWeekStart;
 
-        manageAddModal.show();
-      } else {
-        // Open Add Entry modal for empty cells
-        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-      }
+  // Open Manage modal for cells with entries
+  entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+
+  fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not OK');
+      return res.json();
+    })
+    .then(entries => renderEntriesList(entries))
+    .catch(() => {
+      entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+    });
+
+  manageAddModal.show();
+} else {
+  openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+}
+
     });
   });
 
