@@ -28,7 +28,7 @@
               <input type="email" class="form-control" id="update_email" name="email" required>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label for="update_role" class="form-label">Role</label>
               <select class="form-select" id="update_role" name="role" required>
                 <option value="" disabled>Select role</option>
@@ -36,7 +36,6 @@
                 <option value="manager">Manager</option>
                 <option value="senior">Senior</option>
                 <option value="staff">Staff</option>
-                <!-- Add more roles as needed -->
               </select>
             </div>
 
@@ -46,9 +45,8 @@
                 <option value="" disabled>Select status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-                <!-- Add more statuses as needed -->
               </select>
-            </div>
+            </div> -->
 
           </div>
           <div class="modal-footer">
