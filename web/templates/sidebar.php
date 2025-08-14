@@ -69,7 +69,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
             <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name']; ?></div>
             <small class="text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
         </div>
-        <a href="logout.php" class="ms-auto text-decoration-none text-muted">
+        <a href="logout.php" class="position-absolute bottom-0 end-0 m-3 text-decoration-none text-muted">
             <i class="bi bi-box-arrow-right"></i>
         </a>
     </div>
