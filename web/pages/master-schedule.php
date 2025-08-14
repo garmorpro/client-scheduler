@@ -177,8 +177,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       <?php endif; ?>
       .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
       .timeoff-card { 
-    border: 2px dashed rgb(209,226, 159);
-    background: rgb(246, 249, 236);
+    border: 2px dashed rgb(209,226, 159) !important;
+    background: rgb(246, 249, 236) !important;
 }
     </style>
 </head>
