@@ -41,11 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!res.ok) throw new Error('Network response was not OK');
       let entries = await res.json();
 
+      // Add Time Off entry if applicable
       if (currentIsTimeOff && (!entries || entries.length === 0)) {
         entries = [{
           entry_id: null,
-          client_name: 'Time Off',
-          assigned_hours: currentTimeOffHours,
+          client_name: null, // no client name for time off
+          assigned_hours: currentTimeOffHours || 0,
           type: 'Time Off'
         }];
       }
@@ -67,8 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Fetching teammates URL:', url);
 
       const res = await fetch(url);
-
-      // If not OK, try to read text first to see the error
       if (!res.ok) {
         const errorText = await res.text();
         console.error('Server returned an error response:', errorText);
@@ -79,12 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Teammates raw data:', data);
 
       return data
-  .filter(e => e.user_id !== currentUserId) // exclude current user
-  .map(e => ({ 
-      name: `${e.first_name} ${e.last_name}`, 
-      hours: e.assigned_hours || 0 
-  }));
-
+        .filter(e => e.user_id !== currentUserId) // exclude current user
+        .map(e => ({ 
+          name: `${e.first_name} ${e.last_name}`, 
+          hours: e.assigned_hours || 0 
+        }));
 
     } catch (err) {
       console.error('Error fetching teammates:', err);
@@ -121,11 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortedEntries = [...clientEntries, ...timeOffEntries];
 
     for (const entry of sortedEntries) {
+      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+      const displayName = isTimeOff ? 'Time Off' : (entry.client_name || '—');
+
       const card = document.createElement('div');
       card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
       card.style.cursor = 'pointer';
-
-      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
       if (isTimeOff) card.classList.add('timeoff-card');
 
       card.addEventListener('click', () => {
@@ -133,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         openEditModal(
           entry.entry_id,
           entry.assigned_hours,
-          entry.client_name,
+          displayName,
           currentUserName,
           formatWeekStart(currentWeekStart),
           entryType,
@@ -147,19 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
       // LEFT
       const leftDiv = document.createElement('div');
       leftDiv.style.flex = '1';
-      let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
+      let leftContent = `<div class="fw-semibold fs-6">${displayName}</div>`;
 
       if (!isTimeOff) {
-  const teammatesData = await fetchTeammates(entry.client_name);
-  // use each teammate's own hours
-  const teammates = teammatesData.map(t => `${t.name} (${t.hours})`);
-  console.log(`👥 Client "${entry.client_name}" teammates:`, teammates);
+        const teammatesData = await fetchTeammates(entry.client_name);
+        const teammates = teammatesData.map(t => `${t.name} (${t.hours})`);
+        console.log(`👥 Client "${entry.client_name}" teammates:`, teammates);
 
-  leftContent += `<small class="text-muted">
-                    <strong>Team member(s):</strong> 
-                    ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
-                  </small>`;
-}
+        leftContent += `<small class="text-muted">
+                          <strong>Team member(s):</strong> 
+                          ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                        </small>`;
+      }
 
       leftDiv.innerHTML = leftContent;
 
