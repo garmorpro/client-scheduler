@@ -118,25 +118,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4) Open edit modal function
-  // function openEditModal(entryId, assignedHours, clientName, userName, weekStart) {
-  //   document.getElementById('editEntryId').value = entryId;
-  //   document.getElementById('editAssignedHours').value = assignedHours;
 
-  //   // Populate details
-  //   document.getElementById('editClientName').textContent = clientName || '—';
-  //   document.getElementById('editUserName').textContent = userName || '—';
-  //   // document.getElementById('editEntryType').textContent = entryType;
-  //   const formattedWeekStart = weekStart
-  //     ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  //     : '—';
-  //   document.getElementById('editWeekStart').textContent = formattedWeekStart;
-
-  //   // Hide manage modal first
-  //   const manageModalInstance = bootstrap.Modal.getInstance(manageAddModalEl);
-  //   if (manageModalInstance) manageModalInstance.hide();
-
-  //   const editModal = new bootstrap.Modal(document.getElementById('editEntryModal'));
-  //   editModal.show();
-  // }
 });
