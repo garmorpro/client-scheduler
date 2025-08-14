@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       updateProfileForm.querySelector('#update_first_name').value = user.first_name ?? '';
       updateProfileForm.querySelector('#update_last_name').value = user.last_name ?? '';
       updateProfileForm.querySelector('#update_email').value = user.email ?? '';
-      updateProfileForm.querySelector('#update_role').value = user.role ?? '';
-      updateProfileForm.querySelector('#update_status').value = user.status ?? '';
+    //   updateProfileForm.querySelector('#update_role').value = user.role ?? '';
+    //   updateProfileForm.querySelector('#update_status').value = user.status ?? '';
 
     } catch (error) {
       console.error('Failed to load user data:', error);
