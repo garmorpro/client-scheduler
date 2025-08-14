@@ -1,6 +1,6 @@
 <div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModal" aria-hidden="true">
       <div class="modal-dialog p-3" style="min-width: 600px !important;">
-        <div class="modal-content">
+        <div class="modal-content p-3">
           <div class="modal-header">
             <h5 class="modal-title" id="updateUserModalLabel">
                 <i class="bi bi-people"></i> Profile Details <br>
