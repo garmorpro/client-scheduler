@@ -1,5 +1,10 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
     // console.log("Original weekStart:", weekStart);
+    const SCRIPT_NAME = 'dynamic_manage_modal.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log(`${SCRIPT_NAME} DOM ready ✅`);
+});
 
     if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);

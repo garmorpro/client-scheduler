@@ -1,3 +1,9 @@
+const SCRIPT_NAME = 'dynamic_manage_modal.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log(`${SCRIPT_NAME} DOM ready ✅`);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const table = document.querySelector('#employeesTableBody');
   // console.log("Table body:", table);
