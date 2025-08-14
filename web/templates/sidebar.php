@@ -72,7 +72,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
         <!-- <a href="logout.php" class="ms-auto text-decoration-none text-muted">
             <i class="bi bi-box-arrow-right"></i>
         </a> -->
-        <a href="logout.php" class="text-decoration-none text-muted d-flex align-items-center justify-content-end mt-2" style="padding-left: 40px;">
+        <a href="logout.php" class="text-decoration-none text-muted d-flex align-items-center justify-content-end mt-2" style="padding-left: 30px;">
             <i class="bi bi-box-arrow-right"></i>
         </a>    
     </div>
