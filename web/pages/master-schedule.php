@@ -158,7 +158,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_user_modal.js"></script>
     <script src="../assets/js/filter_employees.js"></script>
     <script src="../assets/js/add_entry_modal.js"></script>
-    <!-- <script src="../assets/js/open_modal.js"></script> -->
+    <script src="../assets/js/open_modal.js"></script>
 
     <style>
       /* light highlight for time off cells */
@@ -349,7 +349,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
         <?php include_once '../includes/modals/manage_entries.php'; ?>
         <?php include_once '../includes/modals/edit_entry.php'; ?>
-        <?php //include_once '../includes/modals/add_entry.php'; ?>
+        <?php include_once '../includes/modals/add_entry.php'; ?>
         <?php include_once '../includes/modals/add_engagement.php'; ?>
     <?php //endif; ?>
 
