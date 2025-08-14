@@ -24,15 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       currentUserId = cell.getAttribute('data-user-id');
       currentUserName = cell.getAttribute('data-user-name') || null;
-      currentWeekStart = cell.getAttribute('data-week-start');
-      // Convert to Date object
-let weekStartDate = new Date(currentWeekStart);
 
-// Add 1 day (24 hours)
-weekStartDate.setDate(weekStartDate.getDate() + 1);
-
-// Convert back to YYYY-MM-DD string if needed
-currentWeekStart = weekStartDate.toISOString().split('T')[0];
+      // --- ADD 1 DAY TO WEEK START ---
+      let weekStartDate = new Date(cell.getAttribute('data-week-start'));
+      weekStartDate.setDate(weekStartDate.getDate() + 1);
+      currentWeekStart = weekStartDate.toISOString().split('T')[0];
+      // -------------------------------
 
       const hasEntries = cell.querySelectorAll('.badge').length > 0;
 
@@ -72,23 +69,14 @@ currentWeekStart = weekStartDate.toISOString().split('T')[0];
       });
   });
 
-  // 3) Clicking "Add New Entry" button in manageAddModal:
-  // addEntriesButton.addEventListener('click', () => {
-  //   // Wait for manageAddModal to fully hide, then open addEntryModal
-  //   manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
-  //     openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-  //     manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
-  //   });
-  //   manageAddModal.hide();
-  // });
-
+  // 3) Clicking "Add New Entry" button in manageAddModal
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
-    // Delay to ensure modal is fully hidden before opening the next
+    // Wait for the fade-out before showing AddEntry modal
     setTimeout(() => {
         openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-    }, 250); // Bootstrap modal fade ~250ms
-});
+    }, 250); // Bootstrap fade ~250ms
+  });
 
   // 4) Back button inside manageAddModal
   backToButtons.addEventListener('click', () => {
