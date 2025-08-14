@@ -129,29 +129,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
     if (!isTimeOff) {
-      // mimic PHP getTeamMembers() logic but in JS
-      const teammateMap = {};
+  const teammateMap = {};
 
-      entriesForWeek
-        .filter(e =>
-          e.client_name === entry.client_name &&
-          e.user_name !== currentUserName
-        )
-        .forEach(e => {
-          const name = e.user_name;
-          if (!teammateMap[name]) teammateMap[name] = 0;
-          teammateMap[name] += Number(e.assigned_hours) || 0;
-        });
+  entriesForWeek
+    .filter(e =>
+      e.client_name === entry.client_name &&
+      (e.user_name || `${e.first_name} ${e.last_name}`) !== currentUserName
+    )
+    .forEach(e => {
+      const name = e.user_name 
+        || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown');
+      if (!teammateMap[name]) teammateMap[name] = 0;
+      teammateMap[name] += Number(e.assigned_hours) || 0;
+    });
 
-      const teammates = Object.entries(teammateMap).map(
-        ([name, hours]) => `${name} (${hours})`
-      );
+  const teammates = Object.entries(teammateMap).map(
+    ([name, hours]) => `${name} (${hours})`
+  );
 
-      leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> 
-                        ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
-                      </small>`;
-    }
+  leftContent += `<small class="text-muted">
+                    <strong>Team member(s):</strong> 
+                    ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                  </small>`;
+}
 
     leftDiv.innerHTML = leftContent;
 
