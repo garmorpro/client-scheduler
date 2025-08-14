@@ -146,7 +146,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
-    <script src="../assets/js/add_entry_modal.js"></script>
+    
     <script>
       const entries = <?php echo json_encode($entries); ?>;
     </script>
@@ -157,7 +157,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/view_entry_modal.js"></script>
     <script src="../assets/js/view_user_modal.js"></script>
     <script src="../assets/js/filter_employees.js"></script>
-    <script src="../assets/js/open_modal.js"></script>
+    <script src="../assets/js/add_entry_modal.js"></script>
+    <!-- <script src="../assets/js/open_modal.js"></script> -->
 
     <style>
       /* light highlight for time off cells */
@@ -187,22 +188,22 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     </div>
 
     <!-- upper search and week range selector -->
-    <div class="bg-white border rounded p-4 mb-4">
-        <form id="filterForm" method="get" class="row g-3 align-items-center">
-            <div class="col-md-6">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
-            </div>
-            <div class="col-md-6 d-flex justify-content-end align-items-center">
-                <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
-                   class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
-
-                <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-
-                <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
-                   class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-            </div>
-        </form>
-    </div>
+        <div class="bg-white border rounded p-4 mb-4">
+            <form id="filterForm" method="get" class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
+                </div>
+                <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
+                       class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
+        
+                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+        
+                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
+                       class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
+                </div>
+            </form>
+        </div>
     <!-- end upper search and week range selector -->
 
     <!-- Master Schedule table -->
