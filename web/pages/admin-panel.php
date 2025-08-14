@@ -242,41 +242,38 @@ if ($settingResult) {
                 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('userSearch');
-    const tableRows = document.querySelectorAll('#user-table tbody tr');
+    const allRows = Array.from(document.querySelectorAll('#user-table tbody tr'));
     const pagination = document.getElementById('pagination-users');
 
-    function updatePaginationVisibility() {
-        // Count only visible rows
-        const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none').length;
+    function showPage(rows, page = 1, perPage = 5) {
+        const start = (page - 1) * perPage;
+        const end = start + perPage;
+        rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+        pagination.style.display = rows.length <= perPage ? 'none' : '';
+    }
 
-        if (visibleRows < 5) {
-            pagination.style.display = 'none';
-        } else {
-            pagination.style.display = '';
-        }
+    function filterAndPaginate(searchValue) {
+        const filtered = allRows.filter(row => 
+            row.innerText.toLowerCase().includes(searchValue)
+        );
+        showPage(filtered, 1); // always start at page 1 when searching
     }
 
     searchInput.addEventListener('input', function () {
-        const searchValue = this.value.toLowerCase().trim();
-
-        if (searchValue.length < 3 && searchValue.length !== 0) {
-            // Reset table
-            tableRows.forEach(row => row.style.display = '');
-            updatePaginationVisibility();
-            return;
+        const value = this.value.toLowerCase().trim();
+        if (value.length === 0) {
+            filterAndPaginate('');
+        } else if (value.length >= 3) {
+            filterAndPaginate(value);
         }
-
-        tableRows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(searchValue) ? '' : 'none';
-        });
-
-        updatePaginationVisibility();
     });
 
-    // Initial check on page load
-    updatePaginationVisibility();
+    // initial load
+    filterAndPaginate('');
 });
+
 </script>
 
 
