@@ -8,15 +8,13 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     const weekDate = new Date(weekStart);
     weekDate.setDate(weekDate.getDate() + 1); // +1 day
 
-    // Format for display
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const formattedDate = weekDate.toLocaleDateString(undefined, options);
-
     // Update modal fields
     document.getElementById('addEntryUserId').value = user_id;
     document.getElementById('addEntryWeek').value = weekDate.toISOString().split('T')[0]; // "YYYY-MM-DD"
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
-    document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
+
+    // Replace the week display with random text
+    document.getElementById('addEntryWeekDisplay').textContent = "Random Text Here";
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
