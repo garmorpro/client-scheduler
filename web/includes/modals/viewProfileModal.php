@@ -27,7 +27,7 @@
             <div class="row mt-3">
               <div class="col-md-6">
                 <h6 class="mb-3">
-                  <i class="bi bi-envelope"></i> Personal Information
+                  <i class="bi bi-envelope me-2"></i> Personal Information
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">First Name:</strong>
@@ -46,7 +46,7 @@
               </div>
               <div class="col-md-6">
                 <h6 class="mb-3">
-                  <i class="bi bi-person-lock"></i> Account Details
+                  <i class="bi bi-person-lock me-2"></i> Account Details
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Created:</strong>
@@ -68,7 +68,7 @@
             <div class="row mt-2">
                 <div class="col-md-6">
                     <h6 class="mb-3">
-                        <i class="bi bi-shield"></i> Access & Permissions
+                        <i class="bi bi-shield me-2"></i> Access & Permissions
                     </h6>
                     <p class="text-muted mb-1" style="overflow: hidden;">
                         <strong style="float: left;">Role:</strong>
