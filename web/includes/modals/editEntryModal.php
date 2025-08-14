@@ -1,30 +1,55 @@
 <div class="modal fade" id="editEntryModal" tabindex="-1" aria-labelledby="editEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editEntryModalLabel">Edit Entry</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content border-0 rounded-3 shadow-sm">
+
+      <!-- Header -->
+      <div class="modal-header bg-dark text-white py-2">
+        <h5 class="modal-title fw-bold" id="editEntryModalLabel">
+          <i class="bi bi-pencil-square me-2"></i> Edit Entry
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
+      <!-- Body -->
       <div class="modal-body">
-        <div class="mb-3">
-          <strong>Client:</strong> <span id="editClientName">—</span><br>
-          <strong>User ID:</strong> <span id="editUserId">—</span><br>
-          <strong>User Name:</strong> <span id="editUserName">—</span><br>
-          <strong>Week Start:</strong> <span id="editWeekStart">—</span>
+
+        <!-- User & Client Details -->
+        <div class="p-3 bg-light rounded border mb-4">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <small class="text-muted">Client</small>
+              <div class="fw-semibold" id="editClientName">—</div>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted">Employee Name</small>
+              <div class="fw-semibold" id="editUserName">—</div>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted">User ID</small>
+              <div class="fw-semibold" id="editUserId">—</div>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted">Week Start</small>
+              <div class="fw-semibold" id="editWeekStart">—</div>
+            </div>
+          </div>
         </div>
 
+        <!-- Entry Form -->
         <input type="hidden" id="editEntryId" name="entry_id">
         <div class="mb-3">
           <label for="editAssignedHours" class="form-label">Assigned Hours</label>
           <input type="number" class="form-control" id="editAssignedHours" name="assigned_hours" required>
         </div>
+
       </div>
 
+      <!-- Footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary">Save Changes</button>
       </div>
+
     </div>
   </div>
 </div>
