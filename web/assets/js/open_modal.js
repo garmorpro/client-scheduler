@@ -9,19 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
     e.stopPropagation();
 
     const userId = td.dataset.userId;
-    const userName = td.dataset.userName || '';
+    const userName = td.dataset.userName;
     const weekStart = td.dataset.weekStart;
 
-    // Check if the cell has any entries (regular OR time-off)
+    // Determine if the cell has any regular entries
     const hasRegularEntries = td.querySelector('.badge-status') !== null;
-    const hasTimeOffEntry = td.querySelector('.timeoff-entry') !== null;
-    const hasEntries = hasRegularEntries || hasTimeOffEntry;
+    // Determine if the cell has a time off entry
+    const timeOffElement = td.querySelector('.timeoff-corner');
+    const hasTimeOff = timeOffElement !== null;
+    const timeOffHours = hasTimeOff ? parseFloat(timeOffElement.textContent) : 0;
 
-    if (hasEntries) {
-      // If only a time-off entry exists, pass is_timeoff = 1 to the Manage modal
-      const isTimeOff = !hasRegularEntries && hasTimeOffEntry ? 1 : 0;
-
-      openManageEntryModal(userId, userName, weekStart, isTimeOff);
+    if (hasRegularEntries || hasTimeOff) {
+      // If only time off exists, pass is_timeoff=1
+      const options = {
+        userId,
+        userName,
+        weekStart,
+        is_timeoff: (!hasRegularEntries && hasTimeOff) ? 1 : 0,
+        timeOffHours
+      };
+      openManageEntryModal(options);
     } else {
       openAddEntryModal(userId, userName, weekStart);
     }
