@@ -89,13 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
   entriesForWeek.forEach(entry => {
     const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
     if (isTimeOff) {
-      entry.client_name = 'Time Off';
       timeOffEntries.push(entry);
     } else {
       clientEntries.push(entry);
     }
   });
 
+  // Combine: client entries first, time-off entries last
   const sortedEntries = [...clientEntries, ...timeOffEntries];
 
   sortedEntries.forEach(entry => {
@@ -121,18 +121,24 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
 
+    // Flexbox 3-column layout
     const cardBody = document.createElement('div');
     cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    // Left column
+    // Left column: Client Name + Team Members
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
+
     let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
     if (!isTimeOff && entry.engagement_id) {
-      // find all entries with the same engagement_id
+      // Simulate PHP getTeamMembers() using JS
       const teammates = entriesForWeek
-        .filter(e => e.engagement_id === entry.engagement_id && e.user_name !== currentUserName)
+        .filter(e =>
+          e.engagement_id === entry.engagement_id &&
+          e.week_start === entry.week_start &&
+          e.user_name !== currentUserName
+        )
         .map(e => `${e.user_name} (${e.assigned_hours || 0})`);
 
       leftContent += `<small class="text-muted">
