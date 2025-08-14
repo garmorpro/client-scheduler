@@ -1,36 +1,29 @@
 <?php
 header('Content-Type: application/json');
-
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 try {
-    require_once '../includes/db.php'; // make sure $mysqli is your MySQLi connection
+    require_once '../includes/db.php'; // $mysqli
 
     $currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
     $weekStart     = $_GET['week_start'] ?? '';
     $clientName    = $_GET['client_name'] ?? '';
 
-    // Base query
-    $sql = "SELECT 
-                e.engagement_id,
-                u.first_name,
-                u.last_name
+    $sql = "SELECT e.engagement_id, u.first_name, u.last_name
             FROM users u
             JOIN entries e ON e.user_id = u.user_id
             JOIN engagements g ON g.engagement_id = e.engagement_id
             WHERE g.client_name = ?";
 
-    $types = "s"; // string for client_name
+    $types = "s";
     $params = [$clientName];
 
     if ($currentUserId) {
         $sql .= " AND u.user_id != ?";
-        $types .= "i"; // integer
+        $types .= "i";
         $params[] = $currentUserId;
     }
-
     if (!empty($weekStart)) {
         $sql .= " AND e.week_start = ?";
         $types .= "s";
@@ -38,21 +31,14 @@ try {
     }
 
     $stmt = $mysqli->prepare($sql);
-    if (!$stmt) {
-        throw new Exception("Prepare failed: " . $mysqli->error);
-    }
+    if (!$stmt) throw new Exception("Prepare failed: " . $mysqli->error);
 
-    // Bind parameters dynamically
     $stmt->bind_param($types, ...$params);
-
     $stmt->execute();
     $result = $stmt->get_result();
     $teammates = $result->fetch_all(MYSQLI_ASSOC);
 
-    // Return JSON
     echo json_encode($teammates);
-    echo "<script>console.log('PHP Teammates:', ".json_encode($teammates).");</script>";
-
 
 } catch (Exception $e) {
     echo json_encode(['error' => $e->getMessage()]);
