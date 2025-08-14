@@ -26,8 +26,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Fetch teammates from server for a given client
+  async function fetchTeammates(clientName) {
+    try {
+      const res = await fetch(`get_teammates.php?week_start=${encodeURIComponent(currentWeekStart)}&client_name=${encodeURIComponent(clientName)}`);
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+      // Return filtered array excluding current user
+      return data
+        .map(e => e.user_name || (e.first_name && e.last_name ? `${e.first_name} ${e.last_name}` : 'Unknown'))
+        .filter(name => name !== currentUserName)
+        .map(name => ({ name, hours: 0 })); // hours can be updated if needed
+    } catch (err) {
+      console.error('Error fetching teammates:', err);
+      return [];
+    }
+  }
+
   // Function to open manage modal with options
-  window.openManageEntryModal = function(options) {
+  window.openManageEntryModal = async function(options) {
     currentUserId = options.userId;
     currentUserName = options.userName || '';
     currentWeekStart = options.weekStart;
@@ -41,26 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
-    fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Network response was not OK');
-        return res.json();
-      })
-      .then(entries => {
-        // If only time-off, create a dummy entry for display
-        if (currentIsTimeOff && (!entries || entries.length === 0)) {
-          entries = [{
-            entry_id: null,
-            client_name: 'Time Off',
-            assigned_hours: currentTimeOffHours,
-            type: 'Time Off'
-          }];
-        }
-        renderEntriesList(entries);
-      })
-      .catch(() => {
-        entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
-      });
+    try {
+      let res = await fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`);
+      if (!res.ok) throw new Error('Network response was not OK');
+      let entries = await res.json();
+
+      // If only time-off, create a dummy entry for display
+      if (currentIsTimeOff && (!entries || entries.length === 0)) {
+        entries = [{
+          entry_id: null,
+          client_name: 'Time Off',
+          assigned_hours: currentTimeOffHours,
+          type: 'Time Off'
+        }];
+      }
+
+      await renderEntriesList(entries);
+    } catch (err) {
+      console.error(err);
+      entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+    }
 
     manageAddModal.show();
   }
@@ -74,123 +91,101 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Render entries list function
-  function renderEntriesList(entriesForWeek) {
-  console.log("🔍 Full entriesForWeek:", entriesForWeek); // DEBUG: log raw entries
+  async function renderEntriesList(entriesForWeek) {
+    entriesListContainer.innerHTML = '';
 
-  entriesListContainer.innerHTML = '';
-
-  if (!entriesForWeek || entriesForWeek.length === 0) {
-    entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
-    return;
-  }
-
-  const timeOffEntries = [];
-  const clientEntries = [];
-
-  entriesForWeek.forEach(entry => {
-    const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-    if (isTimeOff) {
-      entry.client_name = 'Time Off';
-      timeOffEntries.push(entry);
-    } else {
-      clientEntries.push(entry);
+    if (!entriesForWeek || entriesForWeek.length === 0) {
+      entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
+      return;
     }
-  });
 
-  const sortedEntries = [...clientEntries, ...timeOffEntries];
+    const timeOffEntries = [];
+    const clientEntries = [];
 
-  sortedEntries.forEach(entry => {
-    console.log(`➡ Processing entry: ${entry.client_name}`, entry); // DEBUG per entry
-
-    const card = document.createElement('div');
-    card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
-    card.style.cursor = 'pointer';
-
-    const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
-    if (isTimeOff) card.classList.add('timeoff-card');
-
-    card.addEventListener('click', () => {
-      const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
-      const formattedWeekStart = formatWeekStart(currentWeekStart);
-
-      openEditModal(
-        entry.entry_id,
-        entry.assigned_hours,
-        entry.client_name,
-        currentUserName,
-        formattedWeekStart,
-        entryType,
-        manageAddModalEl
-      );
+    entriesForWeek.forEach(entry => {
+      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+      if (isTimeOff) {
+        entry.client_name = 'Time Off';
+        timeOffEntries.push(entry);
+      } else {
+        clientEntries.push(entry);
+      }
     });
 
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+    const sortedEntries = [...clientEntries, ...timeOffEntries];
 
-    // LEFT column
-    const leftDiv = document.createElement('div');
-    leftDiv.style.flex = '1';
-    let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
+    for (const entry of sortedEntries) {
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-2', 'shadow-sm', 'px-3', 'py-3');
+      card.style.cursor = 'pointer';
 
-    if (!isTimeOff) {
-      const teammateMap = {};
+      const isTimeOff = entry.client_name === 'Time Off' || entry.type === 'Time Off';
+      if (isTimeOff) card.classList.add('timeoff-card');
 
-      entriesForWeek
-        .filter(e => e.client_name === entry.client_name)
-        .forEach(e => {
-          const name =
-            e.user_name?.trim() ||
-            ((e.first_name && e.last_name) ? `${e.first_name} ${e.last_name}` : 'Unknown');
+      card.addEventListener('click', () => {
+        const entryType = isTimeOff ? 'Time Off' : 'Client Assignment';
+        const formattedWeekStart = formatWeekStart(currentWeekStart);
+        openEditModal(
+          entry.entry_id,
+          entry.assigned_hours,
+          entry.client_name,
+          currentUserName,
+          formattedWeekStart,
+          entryType,
+          manageAddModalEl
+        );
+      });
 
-          if (name === currentUserName) return; // skip self
+      const cardBody = document.createElement('div');
+      cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-          if (!teammateMap[name]) teammateMap[name] = 0;
-          teammateMap[name] += Number(e.assigned_hours) || 0;
-        });
+      // LEFT column
+      const leftDiv = document.createElement('div');
+      leftDiv.style.flex = '1';
+      let leftContent = `<div class="fw-semibold fs-6">${entry.client_name}</div>`;
 
-      const teammates = Object.entries(teammateMap).map(
-        ([name, hours]) => `${name} (${hours})`
-      );
+      if (!isTimeOff) {
+        const teammatesData = await fetchTeammates(entry.client_name);
+        const teammates = teammatesData.map(t => `${t.name} (${entry.assigned_hours || 0})`);
 
-      console.log(`👥 Client "${entry.client_name}" teammates:`, teammates); // DEBUG teammates
+        console.log(`👥 Client "${entry.client_name}" teammates:`, teammates); // DEBUG teammates
 
-      leftContent += `<small class="text-muted">
-                        <strong>Team member(s):</strong> 
-                        ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
-                      </small>`;
+        leftContent += `<small class="text-muted">
+                          <strong>Team member(s):</strong> 
+                          ${teammates.length ? teammates.join(', ') : 'no other team members assigned'}
+                        </small>`;
+      }
+
+      leftDiv.innerHTML = leftContent;
+
+      // MIDDLE column
+      const middleDiv = document.createElement('div');
+      middleDiv.style.marginRight = '1rem';
+      middleDiv.style.textAlign = 'right';
+      middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
+
+      // RIGHT column
+      const rightDiv = document.createElement('div');
+      if (entry.entry_id) {
+        const deleteLink = document.createElement('a');
+        deleteLink.href = "#";
+        deleteLink.title = "Delete Entry";
+        deleteLink.className = "text-danger";
+        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+        deleteLink.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteEntry(entry.entry_id);
+        };
+        rightDiv.appendChild(deleteLink);
+      }
+
+      cardBody.appendChild(leftDiv);
+      cardBody.appendChild(middleDiv);
+      cardBody.appendChild(rightDiv);
+      card.appendChild(cardBody);
+      entriesListContainer.appendChild(card);
     }
-
-    leftDiv.innerHTML = leftContent;
-
-    // MIDDLE column
-    const middleDiv = document.createElement('div');
-    middleDiv.style.marginRight = '1rem';
-    middleDiv.style.textAlign = 'right';
-    middleDiv.innerHTML = `<div class="fw-semibold ${isTimeOff ? 'text-danger' : ''}">${entry.assigned_hours || 0} hrs</div>`;
-
-    // RIGHT column
-    const rightDiv = document.createElement('div');
-    if (entry.entry_id) {
-      const deleteLink = document.createElement('a');
-      deleteLink.href = "#";
-      deleteLink.title = "Delete Entry";
-      deleteLink.className = "text-danger";
-      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        deleteEntry(entry.entry_id);
-      };
-      rightDiv.appendChild(deleteLink);
-    }
-
-    cardBody.appendChild(leftDiv);
-    cardBody.appendChild(middleDiv);
-    cardBody.appendChild(rightDiv);
-    card.appendChild(cardBody);
-    entriesListContainer.appendChild(card);
-  });
-}
-
+  }
 });
