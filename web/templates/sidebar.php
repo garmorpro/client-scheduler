@@ -57,8 +57,8 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
-        <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-             style="width: 36px; height: 36px;">
+        <div id="userInitialsBtn" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+             style="width: 36px; height: 36px; cursor: pointer;">
             <?php
             $firstInitial = isset($_SESSION['first_name'][0]) ? $_SESSION['first_name'][0] : '';
             $lastInitial = isset($_SESSION['last_name'][0]) ? $_SESSION['last_name'][0] : '';
@@ -69,11 +69,32 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
             <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name']; ?></div>
             <small class="text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
         </div>
-        <!-- <a href="logout.php" class="ms-auto text-decoration-none text-muted">
-            <i class="bi bi-box-arrow-right"></i>
-        </a> -->
         <a href="logout.php" class="text-decoration-none text-muted d-flex align-items-center justify-content-end mt-2" style="padding-left: 40px;">
-    <i class="bi bi-box-arrow-right"></i>
-</a>
+            <i class="bi bi-box-arrow-right"></i>
+        </a>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const initialsBtn = document.getElementById('userInitialsBtn');
+    if (!initialsBtn) return;
+
+    initialsBtn.addEventListener('click', () => {
+        // Fill modal with session data
+        document.getElementById('employeeName').innerText = '<?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name']; ?>';
+        document.getElementById('employeeRole').innerText = '<?php echo $_SESSION['user_role']; ?>';
+        
+        // Optionally reset hours / entries if needed
+        document.getElementById('totalAssignedHoursEmployee').innerText = '0';
+        document.getElementById('utilizationBarEmployee').style.width = '0%';
+        document.getElementById('assignedEntries').innerHTML = '';
+
+        // Show modal
+        const userModal = new bootstrap.Modal(document.getElementById('employeeDetailsModal'));
+        userModal.show();
+    });
+});
+
+    </script>
+
 </div>
