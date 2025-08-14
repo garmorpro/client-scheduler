@@ -1,13 +1,11 @@
 <?php
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
-ini_set('display_errors', 0);
 date_default_timezone_set('America/Chicago');
 
 // Get DB credentials from environment
 $host = getenv('DB_HOST');
 $db   = getenv('DB_NAME');
 $user = getenv('DB_USER');
-$pass = fil;
+$pass = getenv('DB_PASSWORD');
 
 // Turn off mysqli warnings (optional)
 mysqli_report(MYSQLI_REPORT_OFF);

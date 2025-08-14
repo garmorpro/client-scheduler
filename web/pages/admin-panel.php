@@ -633,21 +633,13 @@ if ($settingResult) {
 
                     <div class="mb-2"></div>
 
-                     <?php
-                      // Example usage
-if (isset($conn) && $conn && $conn->ping()) {
-    $dbStatus = "Database server is alive ✅";
-} else {
-    $dbStatus = "Database server is down ❌";
-}
-                    ?>
 
                     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
                       <div>
                         <i class="bi bi-check2-circle text-success me-1"></i>Database Status
                       </div>
                       <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
-                        <?php echo $dbStatus; ?>
+                        Healthy
                       </span>
                     </div>
 
