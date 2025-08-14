@@ -97,7 +97,7 @@
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"><i class="bi bi-pencil-square me-2"></i>Edit Profile</button>
+            <button data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="" type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);"><i class="bi bi-pencil-square me-2"></i>Edit Profile</button>
             <button type="button" class="btn text-muted" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
