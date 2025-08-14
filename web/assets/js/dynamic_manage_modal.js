@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    manageAddButtons.classList.add('d-none');
-    entriesListing.classList.remove('d-none');
+    // manageAddButtons.classList.add('d-none');
+    // entriesListing.classList.remove('d-none');
     entriesListContainer.innerHTML = '<p>Loading entries...</p>';
 
     fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4) Back button inside manageAddModal
   backToButtons.addEventListener('click', () => {
-    manageAddButtons.classList.remove('d-none');
-    entriesListing.classList.add('d-none');
+    // manageAddButtons.classList.remove('d-none');
+    // entriesListing.classList.add('d-none');
   });
 
   // 5) Render entries list function
