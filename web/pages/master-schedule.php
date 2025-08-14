@@ -365,7 +365,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/search.js"></script>
     <script src="../assets/js/client_dropdown.js"></script>
     <script src="../assets/js/dynamic_add_modal.js"></script>
-    <script src="../assets/js/dynamic_manage_modal.js"></script>
+    <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
