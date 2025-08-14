@@ -1,10 +1,4 @@
 function openEditModal(entryId, assignedHours, clientName, userName, weekStart, entryType, manageModalEl) {
-
-  const SCRIPT_NAME = 'dynamic_manage_modal.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log(`${SCRIPT_NAME} DOM ready ✅`);
-});
   
   document.getElementById('editEntryId').value = entryId;
   document.getElementById('editAssignedHours').value = assignedHours;
