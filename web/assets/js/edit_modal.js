@@ -1,4 +1,4 @@
-function openEditModal(entryId, assignedHours, clientName, userName, weekStart, entryType) {
+function openEditModal(entryId, assignedHours, clientName, userName, weekStart, entryType, manageModalEl) {
   document.getElementById('editEntryId').value = entryId;
   document.getElementById('editAssignedHours').value = assignedHours;
 
@@ -11,8 +11,11 @@ function openEditModal(entryId, assignedHours, clientName, userName, weekStart, 
     : '—';
   document.getElementById('editWeekStart').textContent = formattedWeekStart;
 
-  const manageModalInstance = bootstrap.Modal.getInstance(manageAddModalEl);
-  if (manageModalInstance) manageModalInstance.hide();
+  // Hide manage entries modal if open
+  if (manageModalEl) {
+    const manageModalInstance = bootstrap.Modal.getInstance(manageModalEl);
+    if (manageModalInstance) manageModalInstance.hide();
+  }
 
   const editModal = new bootstrap.Modal(document.getElementById('editEntryModal'));
   editModal.show();

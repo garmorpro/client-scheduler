@@ -73,17 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
       // Determine entry type
       // const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
 
-      card.addEventListener('click', () => {
-        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
-        openEditModal(
-          entry.entry_id,
-          entry.assigned_hours,
-          entry.client_name,
-          currentUserName,
-          currentWeekStart,
-          entryType
-        );
-      });
+card.addEventListener('click', () => {
+  const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+  openEditModal(
+    entry.entry_id,
+    entry.assigned_hours,
+    entry.client_name,
+    currentUserName,
+    currentWeekStart,
+    entryType,
+    manageAddModalEl // pass the modal element
+  );
+});
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
