@@ -648,10 +648,14 @@ if ($settingResult) {
                       </div>
                       <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
                         <?php
-                        if ($conn->ping()) {
-    echo "Database server is alive";
-} else {
-    echo "Database server is down!";
+                        if (isset($conn) && is_object($conn)) {
+    try {
+        if ($conn->ping()) {
+            $dbStatus = "Database server is alive ✅";
+        }
+    } catch (Exception $e) {
+        // Do nothing, keep $dbStatus as down
+    }
 }
 ?>
                       </span>
