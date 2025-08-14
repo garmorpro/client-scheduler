@@ -1,36 +1,16 @@
 function openAddEntryModal(user_id, employeeName, weekStart) {
-    console.log('Original weekStart:', weekStart);
-
-    // Validate weekStart
-    if (!weekStart || !/^\d{4}-\d{2}-\d{2}$/.test(weekStart)) {
+    if (!weekStart || isNaN(new Date(weekStart).getTime())) {
         console.warn('Invalid weekStart date:', weekStart);
         return;
     }
 
-    // Parse YYYY-MM-DD manually to avoid timezone issues
-    const [year, month, day] = weekStart.split('-').map(Number);
-    let weekDate = new Date(year, month - 1, day); // month is 0-based
-    console.log('Parsed weekDate:', weekDate.toString());
-
-    // Force weekDate to Monday of that week
-    const dayOfWeek = weekDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    console.log('Day of week:', dayOfWeek);
-    const diffToMonday = (dayOfWeek + 6) % 7; // days since Monday
-    console.log('Diff to Monday:', diffToMonday);
-    weekDate.setDate(weekDate.getDate() - diffToMonday);
-    console.log('Adjusted weekDate (Monday):', weekDate.toString());
-
-    // Format as "Aug 11, 2025"
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const formattedDate = `${monthNames[weekDate.getMonth()]} ${weekDate.getDate()}, ${weekDate.getFullYear()}`;
-    console.log('Formatted date:', formattedDate);
-
-    // Set hidden inputs and employee name
     document.getElementById('addEntryUserId').value = user_id;
-    document.getElementById('addEntryWeek').value = weekStart;
+    document.getElementById('addEntryWeek').value = weekStart;  // must be "YYYY-MM-DD"
     document.getElementById('addEntryEmployeeNameDisplay').textContent = employeeName;
-    document.getElementById('addEntryWeekDisplay').textContent = formattedDate;
+
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const weekDate = new Date(weekStart);
+    document.getElementById('addEntryWeekDisplay').textContent = weekDate.toLocaleDateString(undefined, options);
 
     // Reset UI states
     document.getElementById('entryTypePrompt').classList.remove('d-none');
@@ -53,6 +33,3 @@ function openAddEntryModal(user_id, employeeName, weekStart) {
     const addEntryModal = new bootstrap.Modal(document.getElementById('addEntryModal'));
     addEntryModal.show();
 }
-
-// --- HARD-CODED TEST ---
-// openAddEntryModal(123, "John Doe", "2025-08-11");
