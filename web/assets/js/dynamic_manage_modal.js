@@ -1,3 +1,4 @@
+// dynamic_manage_modal.js
 document.addEventListener('DOMContentLoaded', () => {
   let currentUserId = null;
   let currentUserName = null;
@@ -33,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      // Check if the cell has any entries (regular or time off)
-      const hasEntries = cell.querySelector('.badge-status') !== null || cell.querySelector('.timeoff-entry') !== null;
+      // Check if the cell has any entries already
+      const hasEntries = cell.querySelector('.badge-status') !== null;
 
       if (hasEntries) {
         const formattedWeekStart = formatWeekStart(currentWeekStart);
@@ -51,19 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Network response was not OK');
             return res.json();
           })
-          .then(entries => {
-            // If only a time-off entry exists, still pass user_id and is_timeoff=1
-            if ((!entries || entries.length === 0) && cell.querySelector('.timeoff-entry')) {
-              entries = [{
-                entry_id: null,
-                type: 'Time Off',
-                assigned_hours: 0,
-                client_name: null,
-                is_timeoff: 1
-              }];
-            }
-            renderEntriesList(entries);
-          })
+          .then(entries => renderEntriesList(entries))
           .catch(() => {
             entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
           });
@@ -108,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           currentUserName,
           formattedWeekStart,
           entryType,
-          manageAddModalEl,
-          entry.is_timeoff || 0 // Pass is_timeoff flag
+          manageAddModalEl
         );
       });
 

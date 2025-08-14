@@ -1,30 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
   const table = document.querySelector('#employeesTableBody');
-  // console.log("Table body:", table);
-
   if (!table) return; // stop if not found
 
   table.addEventListener('click', (e) => {
     const td = e.target.closest('td.addable');
-    console.log("Clicked TD:", td);
     if (!td) return;
 
     e.stopPropagation();
 
     const userId = td.dataset.userId;
-    const userName = td.dataset.userName;
+    const userName = td.dataset.userName || '';
     const weekStart = td.dataset.weekStart;
 
-    // console.log("Clicked cell values:");
-    // console.log("User ID:", userId);
-    // console.log("User Name:", userName);
-    // console.log("Week Start:", weekStart);
-
-    const hasEntries = td.querySelector('.badge-status') !== null;
-    // console.log("Has Entries:", hasEntries);
+    // Check if the cell has any entries (regular OR time-off)
+    const hasRegularEntries = td.querySelector('.badge-status') !== null;
+    const hasTimeOffEntry = td.querySelector('.timeoff-entry') !== null;
+    const hasEntries = hasRegularEntries || hasTimeOffEntry;
 
     if (hasEntries) {
-      openManageEntryModal(userId, userName, weekStart);
+      // If only a time-off entry exists, pass is_timeoff = 1 to the Manage modal
+      const isTimeOff = !hasRegularEntries && hasTimeOffEntry ? 1 : 0;
+
+      openManageEntryModal(userId, userName, weekStart, isTimeOff);
     } else {
       openAddEntryModal(userId, userName, weekStart);
     }
