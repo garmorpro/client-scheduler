@@ -60,6 +60,6 @@ if (isset($conn) && is_object($conn)) {
     <title>DB Status</title>
 </head>
 <body>
-    <h1><?php $dbStatus ?></h1>
+    <h1><?php echo $dbStatus ?></h1>
 </body>
 </html>
