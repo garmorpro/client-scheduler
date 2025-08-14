@@ -57,7 +57,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
-        <div data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+        <div data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
              style="width: 36px; height: 36px;">
             <?php
             $firstInitial = isset($_SESSION['first_name'][0]) ? $_SESSION['first_name'][0] : '';
