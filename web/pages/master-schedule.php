@@ -157,8 +157,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- <script src="../assets/js/view_entry_modal.js"></script> -->
     <!-- <script src="../assets/js/view_user_modal.js"></script> -->
     <!-- <script src="../assets/js/filter_employees.js"></script> -->
-    <!-- <script src="../assets/js/add_entry_modal.js"></script> -->
-    <script src="../assets/js/open_modal.js"></script>
+    <script src="../assets/js/add_entry_modal.js"></script>
+    <!-- <script src="../assets/js/open_modal.js"></script> -->
 
     <style>
       /* light highlight for time off cells */
