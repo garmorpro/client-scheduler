@@ -205,25 +205,35 @@ if ($settingResult) {
 
         <!-- user management -->
             <div id="tab-users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
-                <div class="user-management-header">
+                <div class="user-management-header d-flex justify-content-between align-items-center">
+                    <!-- Left -->
                     <div class="titles">
-                        <p class="text-black"><strong>User Management</strong></p>
-                        <p>Manage user accounts, roles, and permissions</p>
+                        <p class="text-black mb-0"><strong>User Management</strong></p>
+                        <p class="mb-0">Manage user accounts, roles, and permissions</p>
                     </div>
-                    <div class="user-management-buttons">
-                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
+                              
+                    <!-- Middle (Search) -->
+                    <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
+                        <input type="text" id="userSearch" class="form-control form-control-sm" 
+                               placeholder="Search users..." minlength="3">
+                    </div>
+                              
+                    <!-- Right -->
+                    <div class="user-management-buttons d-flex align-items-center gap-2">
+                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                           style="font-size: .875rem; background-color: darkred; display:none;">
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
-
-                        <a href="#" 
-                           class="badge text-black p-2 text-decoration-none fw-medium" 
+                              
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-                           data-bs-toggle="modal" 
-                           data-bs-target="#importUsersModal">
+                           data-bs-toggle="modal" data-bs-target="#importUsersModal">
                             <i class="bi bi-upload me-3"></i>Import Users
                         </a>
-
-                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                              
+                        <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+                           style="font-size: .875rem; background-color: rgb(3,2,18);" 
+                           data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bi bi-person-plus me-3"></i>Add User
                         </a>
                     </div>
