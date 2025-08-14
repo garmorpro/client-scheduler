@@ -346,8 +346,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- end master schedule table -->
 
     <?php //if ($isAdmin): ?>
-        <?php //include_once '../includes/modals/manage_entries_prompt.php'; ?>
-        <?php include_once '../includes/modals/manage_entries.php'; ?>
+        <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
+        <?php //include_once '../includes/modals/manage_entries.php'; ?>
         <?php //include_once '../includes/modals/edit_entry.php'; ?>
         <?php include_once '../includes/modals/add_entry.php'; ?>
         <?php //include_once '../includes/modals/add_engagement.php'; ?>
