@@ -11,7 +11,7 @@ try {
 
     $sql = "SELECT u.user_id, u.first_name, u.last_name, u.user_name
             FROM entries a
-            JOIN users u ON a.user_id = u.id
+            JOIN users u ON a.user_id = u.user_id
             WHERE a.client_name = $clientName
               AND a.week_start = $weekStart";
 
