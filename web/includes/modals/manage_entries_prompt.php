@@ -46,7 +46,7 @@
         </div>
 
         <!-- Entries Listing -->
-        <div id="entriesListing" class="d-none">
+        <div id="entriesListing" class="">
           <button id="backToButtons" class="btn btn-outline-secondary btn-sm mb-3">
             <i class="bi bi-arrow-left me-1"></i> Back
           </button>
