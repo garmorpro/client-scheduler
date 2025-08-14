@@ -3,14 +3,15 @@
 header('Content-Type: application/json');
 
 // Disable direct HTML error output
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once '../includes/db.php'; // ensure $pdo is defined
 
-$clientName = $_GET['client_name'] ?? '';
+$currentUserId = isset($_GET['current_user_id']) ? intval($_GET['current_user_id']) : 0;
 $weekStart = $_GET['week_start'] ?? '';
-$currentUserId = $_GET['current_user_id'] ?? null;
+$clientName = $_GET['client_name'] ?? '';
 
 if (!$clientName || !$weekStart) {
     echo json_encode([]);
@@ -18,7 +19,7 @@ if (!$clientName || !$weekStart) {
 }
 
 try {
-    $currentUserId = $_GET['current_user_id'] ?? null;
+    // $currentUserId = $_GET['current_user_id'] ?? null;
 
 $sql = "SELECT u.id, u.first_name, u.last_name, u.user_name
         FROM assignments a
@@ -41,6 +42,7 @@ if ($currentUserId) {
 $stmt->execute();
 $teammates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo json_encode($teammates);
+
 
 } catch (Exception $e) {
     // Log the error somewhere safe
