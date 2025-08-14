@@ -23,9 +23,9 @@
 </head>
 <body>
     <h1>Server Storage Usage</h1>
-    <p>Total Space: <?= //formatSize($totalSpace) ?></p>
-    <p>Used Space: <?= //formatSize($usedSpace) ?></p>
-    <p>Free Space: <?= //formatSize($freeSpace) ?></p>
+    <p>Total Space://formatSize($totalSpace)</p>
+    <p>Used Space://formatSize($usedSpace)</p>
+    <p>Free Space: //formatSize($freeSpace) </p>
 </body>
 </html> -->
 
