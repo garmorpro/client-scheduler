@@ -6,12 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cache modals
   const manageAddModalEl = document.getElementById('manageEntryPromptModal');
   const manageAddModal = new bootstrap.Modal(manageAddModalEl);
-  const manageAddButtons = document.getElementById('manageAddButtons');
-  const entriesListing = document.getElementById('entriesListing');
   const entriesListContainer = document.getElementById('entriesListContainer');
-  const manageEntriesButton = document.getElementById('manageEntriesButton');
   const addEntriesButton = document.getElementById('addEntriesButton');
-  const backToButtons = document.getElementById('backToButtons');
 
   // Add Entry Modal
   const addEntryModalEl = document.getElementById('addEntryModal');
@@ -23,72 +19,41 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
 
       currentUserId = cell.getAttribute('data-user-id');
-      currentUserName = cell.getAttribute('data-user-name') || null;
+      currentUserName = cell.getAttribute('data-user-name') || '';
       currentWeekStart = cell.getAttribute('data-week-start');
 
-      const hasEntries = cell.querySelectorAll('.badge').length > 0;
+      // Fill user info section
+      document.getElementById('entryUserId').textContent = currentUserId;
+      document.getElementById('entryUserName').textContent = currentUserName || '—';
+      document.getElementById('entryWeekStart').textContent = currentWeekStart;
 
-      if (hasEntries) {
-        // manageAddButtons.classList.remove('d-none');
-        // entriesListing.classList.add('d-none');
-        entriesListContainer.innerHTML = '';
-        manageAddModal.show();
-      } else {
-        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-      }
+      entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+
+      // Fetch and render entries immediately
+      fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not OK');
+          return res.json();
+        })
+        .then(entries => renderEntriesList(entries))
+        .catch(() => {
+          entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+        });
+
+      manageAddModal.show();
     });
   });
 
-  // 2) When clicking "Manage Existing Entries"
-  manageEntriesButton.addEventListener('click', () => {
-    if (!currentUserId || !currentWeekStart) {
-      entriesListContainer.innerHTML = '<p class="text-danger">Missing user or week info.</p>';
-      return;
-    }
-
-    // manageAddButtons.classList.add('d-none');
-    // entriesListing.classList.remove('d-none');
-    entriesListContainer.innerHTML = '<p>Loading entries...</p>';
-
-    fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not OK');
-        return response.json();
-      })
-      .then(entries => {
-        renderEntriesList(entries);
-      })
-      .catch(error => {
-        console.error('Error fetching entries:', error);
-        entriesListContainer.innerHTML = `<p class="text-danger">Error loading entries.</p>`;
-      });
-  });
-
-  // 3) Clicking "Add New Entry" button in manageAddModal:
-  // addEntriesButton.addEventListener('click', () => {
-  //   // Wait for manageAddModal to fully hide, then open addEntryModal
-  //   manageAddModalEl.addEventListener('hidden.bs.modal', function onHidden() {
-  //     openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-  //     manageAddModalEl.removeEventListener('hidden.bs.modal', onHidden);
-  //   });
-  //   manageAddModal.hide();
-  // });
-
+  // 2) Add Entry button
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
     // Delay to ensure modal is fully hidden before opening the next
     setTimeout(() => {
-        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-    }, 250); // Bootstrap modal fade ~250ms
-});
-
-  // 4) Back button inside manageAddModal
-  backToButtons.addEventListener('click', () => {
-    // manageAddButtons.classList.remove('d-none');
-    // entriesListing.classList.add('d-none');
+      openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
+    }, 250);
   });
 
-  // 5) Render entries list function
+  // 3) Render entries list function
   function renderEntriesList(entriesForWeek) {
     entriesListContainer.innerHTML = '';
 
@@ -99,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     entriesForWeek.forEach(entry => {
       const card = document.createElement('div');
-      card.classList.add('card', 'mb-3', 'shadow-sm');
+      card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
 
       const cardBody = document.createElement('div');
       cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
