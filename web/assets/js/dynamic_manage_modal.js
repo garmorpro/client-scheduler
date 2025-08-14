@@ -115,13 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 4) Open edit modal function with extra details
-  function openEditModal(entryId, assignedHours, clientName, userId, userName, weekStart) {
+  function openEditModal(entryId, assignedHours, clientName, userName, weekStart) {
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
     // Populate edit modal details section
     document.getElementById('editClientName').textContent = clientName || '—';
-    document.getElementById('editUserId').textContent = userId || '—';
+    // document.getElementById('editUserId').textContent = userId || '—';
     document.getElementById('editUserName').textContent = userName || '—';
     const formattedWeekStart = weekStart
       ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
