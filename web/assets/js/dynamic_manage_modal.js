@@ -1,8 +1,9 @@
-// dynamic_manage_modal.js
 document.addEventListener('DOMContentLoaded', () => {
   let currentUserId = null;
   let currentUserName = null;
   let currentWeekStart = null;
+  let currentIsTimeOff = 0;
+  let currentTimeOffHours = 0;
 
   // Cache modals
   const manageAddModalEl = document.getElementById('manageEntryPromptModal');
@@ -25,46 +26,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 1) Attach click listeners to all cells with class "addable"
-  document.querySelectorAll('.addable').forEach(cell => {
-    cell.addEventListener('click', (e) => {
-      e.stopPropagation();
+  // Function to open manage modal with options
+  window.openManageEntryModal = function(options) {
+    currentUserId = options.userId;
+    currentUserName = options.userName || '';
+    currentWeekStart = options.weekStart;
+    currentIsTimeOff = options.is_timeoff || 0;
+    currentTimeOffHours = options.timeOffHours || 0;
 
-      currentUserId = cell.getAttribute('data-user-id');
-      currentUserName = cell.getAttribute('data-user-name') || '';
-      currentWeekStart = cell.getAttribute('data-week-start');
+    const formattedWeekStart = formatWeekStart(currentWeekStart);
 
-      // Check if the cell has any entries already
-      const hasEntries = cell.querySelector('.badge-status') !== null;
+    document.getElementById('entryUserName').textContent = currentUserName || '—';
+    document.getElementById('entryWeekStart').textContent = formattedWeekStart;
 
-      if (hasEntries) {
-        const formattedWeekStart = formatWeekStart(currentWeekStart);
+    entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
 
-        // Fill user info section for the Manage modal
-        document.getElementById('entryUserName').textContent = currentUserName || '—';
-        document.getElementById('entryWeekStart').textContent = formattedWeekStart;
+    fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not OK');
+        return res.json();
+      })
+      .then(entries => {
+        // If only time-off, create a dummy entry for display
+        if (currentIsTimeOff && (!entries || entries.length === 0)) {
+          entries = [{
+            entry_id: null,
+            client_name: 'Time Off',
+            assigned_hours: currentTimeOffHours,
+            type: 'Time Off'
+          }];
+        }
+        renderEntriesList(entries);
+      })
+      .catch(() => {
+        entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
+      });
 
-        // Open Manage modal for cells with entries
-        entriesListContainer.innerHTML = '<p class="text-muted">Loading entries...</p>';
+    manageAddModal.show();
+  }
 
-        fetch(`get_entries.php?user_id=${encodeURIComponent(currentUserId)}&week_start=${encodeURIComponent(currentWeekStart)}`)
-          .then(res => {
-            if (!res.ok) throw new Error('Network response was not OK');
-            return res.json();
-          })
-          .then(entries => renderEntriesList(entries))
-          .catch(() => {
-            entriesListContainer.innerHTML = '<p class="text-danger">Error loading entries.</p>';
-          });
-        
-        manageAddModal.show();
-      } else {
-        openAddEntryModal(currentUserId, currentUserName, currentWeekStart);
-      }
-    });
-  });
-
-  // 2) Add Entry button inside Manage modal
+  // Add Entry button inside Manage modal
   addEntriesButton.addEventListener('click', () => {
     manageAddModal.hide();
     setTimeout(() => {
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   });
 
-  // 3) Render entries list function
+  // Render entries list function
   function renderEntriesList(entriesForWeek) {
     entriesListContainer.innerHTML = '';
 
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.cursor = 'pointer';
 
       card.addEventListener('click', () => {
-        const entryType = entry.client_name ? 'Client Assignment' : 'Time Off';
+        const entryType = entry.client_name === 'Time Off' || entry.type === 'Time Off' ? 'Time Off' : 'Client Assignment';
         const formattedWeekStart = formatWeekStart(currentWeekStart);
 
         openEditModal(
@@ -112,20 +113,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rightDiv = document.createElement('div');
 
-      // Delete button
-      const deleteLink = document.createElement('a');
-      deleteLink.href = "#";
-      deleteLink.title = "Delete Entry";
-      deleteLink.className = "text-danger";
-      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-      deleteLink.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        deleteEntry(entry.entry_id);
-      };
-
-      rightDiv.appendChild(deleteLink);
+      // Delete button (disable if dummy time-off entry)
+      if (entry.entry_id) {
+        const deleteLink = document.createElement('a');
+        deleteLink.href = "#";
+        deleteLink.title = "Delete Entry";
+        deleteLink.className = "text-danger";
+        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+        deleteLink.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteEntry(entry.entry_id);
+        };
+        rightDiv.appendChild(deleteLink);
+      }
 
       cardBody.appendChild(leftDiv);
       cardBody.appendChild(rightDiv);
