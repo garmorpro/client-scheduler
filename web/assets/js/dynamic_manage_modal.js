@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.cursor = 'pointer'; // Make card visually clickable
 
       card.addEventListener('click', () => {
-        openEditModal(entry.entry_id, entry.assigned_hours);
+        openEditModal(entry.entry_id, entry.assigned_hours, entry.client_name, currentUserId, currentWeekStart);
       });
 
       const cardBody = document.createElement('div');
@@ -107,10 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4) Open edit modal function
-  function openEditModal(entryId, assignedHours) {
+  // 4) Open edit modal function with extra details
+  function openEditModal(entryId, assignedHours, clientName, userId, weekStart) {
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
+
+    // Populate edit modal details section
+    document.getElementById('editClientName').textContent = clientName || '—';
+    document.getElementById('editUserId').textContent = userId || '—';
+    const formattedWeekStart = weekStart
+      ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : '—';
+    document.getElementById('editWeekStart').textContent = formattedWeekStart;
 
     // Hide manage modal before showing edit modal
     const manageModalInstance = bootstrap.Modal.getInstance(manageAddModalEl);
