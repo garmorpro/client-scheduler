@@ -75,85 +75,97 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render entries list function
   function renderEntriesList(entriesForWeek) {
-    entriesListContainer.innerHTML = '';
+  entriesListContainer.innerHTML = '';
 
-    if (!entriesForWeek || entriesForWeek.length === 0) {
-      entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
-      return;
+  if (!entriesForWeek || entriesForWeek.length === 0) {
+    entriesListContainer.innerHTML = '<p class="text-muted">No entries for this week.</p>';
+    return;
+  }
+
+  // Separate time-off entries and client assignments
+  const timeOffEntries = [];
+  const clientEntries = [];
+
+  entriesForWeek.forEach(entry => {
+    if (entry.client_name === 'Time Off' || entry.type === 'Time Off') {
+      timeOffEntries.push(entry);
+    } else {
+      clientEntries.push(entry);
+    }
+  });
+
+  // Combine: client entries first, time-off entries last
+  const sortedEntries = [...clientEntries, ...timeOffEntries];
+
+  sortedEntries.forEach(entry => {
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-2', 'shadow-sm', 'p-2');
+    card.style.cursor = 'pointer';
+
+    // Apply special styling for time-off entries
+    if (entry.client_name === 'Time Off' || entry.type === 'Time Off') {
+      card.classList.add('timeoff-card');
     }
 
-    // Separate time-off entries and client assignments
-    const timeOffEntries = [];
-    const clientEntries = [];
+    card.addEventListener('click', () => {
+      const entryType = entry.client_name === 'Time Off' || entry.type === 'Time Off' ? 'Time Off' : 'Client Assignment';
+      const formattedWeekStart = formatWeekStart(currentWeekStart);
 
-    entriesForWeek.forEach(entry => {
-      if (entry.client_name === 'Time Off' || entry.type === 'Time Off') {
-        timeOffEntries.push(entry);
-      } else {
-        clientEntries.push(entry);
-      }
+      openEditModal(
+        entry.entry_id,
+        entry.assigned_hours,
+        entry.client_name,
+        currentUserName,
+        formattedWeekStart,
+        entryType,
+        manageAddModalEl
+      );
     });
 
-    // Combine: client entries first, time-off entries last
-    const sortedEntries = [...clientEntries, ...timeOffEntries];
+    // Use flexbox for 3 columns
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
-    sortedEntries.forEach(entry => {
-      const card = document.createElement('div');
-      card.classList.add('card', 'mb-2', 'shadow-sm');
-      card.style.cursor = 'pointer';
+    // Left column - Client Name + Team Members
+    const leftDiv = document.createElement('div');
+    leftDiv.style.flex = '1'; // largest column
+    leftDiv.innerHTML = `
+      <div class="fw-semibold fs-6">${entry.client_name || (entry.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
+      <small class="text-muted">
+        <strong>Team member(s):</strong> ${entry.team_members && entry.team_members.length ? entry.team_members.join(', ') : 'no other team members assigned'}
+      </small>
+    `;
 
-      // Apply special styling for time-off entries
-      if (entry.client_name === 'Time Off' || entry.type === 'Time Off') {
-        card.classList.add('timeoff-card');
-      }
+    // Middle column - Assigned Hours
+    const middleDiv = document.createElement('div');
+    middleDiv.style.marginRight = '1rem';
+    middleDiv.style.textAlign = 'right';
+    middleDiv.innerHTML = `<div class="fw-semibold">${entry.assigned_hours || 0} hrs</div>`;
 
-      card.addEventListener('click', () => {
-        const entryType = entry.client_name === 'Time Off' || entry.type === 'Time Off' ? 'Time Off' : 'Client Assignment';
-        const formattedWeekStart = formatWeekStart(currentWeekStart);
+    // Right column - Delete button
+    const rightDiv = document.createElement('div');
+    if (entry.entry_id) {
+      const deleteLink = document.createElement('a');
+      deleteLink.href = "#";
+      deleteLink.title = "Delete Entry";
+      deleteLink.className = "text-danger";
+      deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
+      deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
+      deleteLink.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteEntry(entry.entry_id);
+      };
+      rightDiv.appendChild(deleteLink);
+    }
 
-        openEditModal(
-          entry.entry_id,
-          entry.assigned_hours,
-          entry.client_name,
-          currentUserName,
-          formattedWeekStart,
-          entryType,
-          manageAddModalEl
-        );
-      });
+    cardBody.appendChild(leftDiv);
+    cardBody.appendChild(middleDiv);
+    cardBody.appendChild(rightDiv);
+    card.appendChild(cardBody);
+    entriesListContainer.appendChild(card);
+  });
+}
 
-      const cardBody = document.createElement('div');
-      cardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
-
-      const leftDiv = document.createElement('div');
-      leftDiv.innerHTML = `
-        <div class="fw-semibold fs-5">${entry.client_name || (entry.type === 'Time Off' ? 'Time Off' : 'Unnamed Client')}</div>
-        <small class="text-muted">Assigned Hours: ${entry.assigned_hours || 0}</small>
-      `;
-
-      const rightDiv = document.createElement('div');
-
-      // Delete button (disable for dummy time-off entries)
-      if (entry.entry_id) {
-        const deleteLink = document.createElement('a');
-        deleteLink.href = "#";
-        deleteLink.title = "Delete Entry";
-        deleteLink.className = "text-danger";
-        deleteLink.style = "font-size: 1.25rem; cursor: pointer; text-decoration: none;";
-        deleteLink.innerHTML = `<i class="bi bi-trash" style="font-size: 16px;"></i>`;
-        deleteLink.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          deleteEntry(entry.entry_id);
-        };
-        rightDiv.appendChild(deleteLink);
-      }
-
-      cardBody.appendChild(leftDiv);
-      cardBody.appendChild(rightDiv);
-      card.appendChild(cardBody);
-      entriesListContainer.appendChild(card);
-    });
-  }
 
 });
