@@ -49,26 +49,27 @@
           <!-- New Entry content -->
           <div id="newEntryContent" class="d-none">
             <!-- Custom Client Dropdown -->
-            <div class="mb-3 custom-dropdown">
+            <!-- <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
               <div class="dropdown-btn" id="dropdownBtn" tabindex="0" role="combobox" aria-expanded="false" aria-labelledby="selectedClient">
                 <span id="selectedClient" class="text-muted">Select a client</span>
                 <span>&#9662;</span>
               </div>
               <div class="dropdown-list" id="dropdownList" role="listbox" tabindex="-1" aria-labelledby="selectedClient" style="display: block !important;">
-                <?php foreach ($clientsWithHours as $client): ?>
-                  <div class="dropdown-item" data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>" data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>" role="option" tabindex="0">
+                <?php //foreach ($clientsWithHours as $client): ?>
+                  <div class="dropdown-item" data-engagement-id="<?php //echo htmlspecialchars($client['engagement_id']); ?>" data-client-name="<?php //echo htmlspecialchars($client['client_name']); ?>" role="option" tabindex="0">
                     <div>
-                      <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br>
+                      <span class="fw-semibold"><?php //echo htmlspecialchars($client['client_name']); ?></span><br>
                       <small class="text-muted">
-                        <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs
+                        <?php //echo number_format($client['assigned_hours'], 2); ?> / <?php //echo number_format($client['total_available_hours'], 2); ?> hrs
                       </small>
                     </div>
                   </div>
-                <?php endforeach; ?>
+                <?php //endforeach; ?>
               </div>
               <input type="hidden" id="engagementInput" name="engagement_id">
-            </div>
+            </div> -->
+            <!-- Custom Client Dropdown --> <div class="mb-3 custom-dropdown"> <label for="engagementInput" class="form-label">Client Name</label> <div class="dropdown-btn" id="dropdownBtn" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="combobox" aria-labelledby="selectedClient" > <span id="selectedClient" class="text-muted">Select a client</span> <span>&#9662;</span> <!-- Down arrow --> </div> <div class="dropdown-list" id="dropdownList" aria-expanded="true" role="listbox" tabindex="-1" aria-labelledby="selectedClient" style="display: block !important;" > <?php $statusDisplayMap = [ 'confirmed' => 'Confirmed', 'pending' => 'Pending', 'not_confirmed' => 'Not Confirmed' ]; $statusClassMap = [ 'confirmed' => 'text-confirmed', 'pending' => 'text-pending', 'not_confirmed' => 'text-not-confirmed' ]; ?> <?php foreach ($clientsWithHours as $client): ?> <?php $statusKey = strtolower($client['status']); $statusText = $statusDisplayMap[$statusKey] ?? ucfirst($statusKey); $statusClass = $statusClassMap[$statusKey] ?? 'badge-default'; ?> <div class="dropdown-item" data-engagement-id="<?php echo htmlspecialchars($client['engagement_id']); ?>" data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>" role="option" tabindex="0" > <div> <span class="fw-semibold"><?php echo htmlspecialchars($client['client_name']); ?></span><br> <small class="text-muted"> <span class="text-status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusText); ?></span> <i class="bi bi-dot"></i> <?php echo number_format($client['assigned_hours'], 2); ?> / <?php echo number_format($client['total_available_hours'], 2); ?> hrs </small> </div> </div> <?php endforeach; ?> </div>
 
             <!-- Assigned hours -->
             <div class="mb-3">
