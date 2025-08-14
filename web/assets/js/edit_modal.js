@@ -1,4 +1,4 @@
-function openEditModal(entryId, assignedHours, clientName, userId, weekStart) {
+function openEditModal(entryId, assignedHours, clientName, userId, userName, weekStart) {
     // Populate the form fields
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
@@ -6,6 +6,7 @@ function openEditModal(entryId, assignedHours, clientName, userId, weekStart) {
     // Populate additional details section in the modal
     document.getElementById('editClientName').textContent = clientName || '—';
     document.getElementById('editUserId').textContent = userId || '—';
+    document.getElementById('editUserName').textContent = userName || '—';
     const formattedWeekStart = weekStart
         ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '—';

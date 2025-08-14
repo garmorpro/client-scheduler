@@ -10,6 +10,7 @@
         <div class="mb-3">
           <strong>Client:</strong> <span id="editClientName">—</span><br>
           <strong>User ID:</strong> <span id="editUserId">—</span><br>
+          <strong>User Name:</strong> <span id="editUserName">—</span><br>
           <strong>Week Start:</strong> <span id="editWeekStart">—</span>
         </div>
 

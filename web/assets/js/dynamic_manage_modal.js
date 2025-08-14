@@ -68,10 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
     entriesForWeek.forEach(entry => {
       const card = document.createElement('div');
       card.classList.add('card', 'mb-3', 'shadow-sm', 'border-0');
-      card.style.cursor = 'pointer'; // Make card visually clickable
+      card.style.cursor = 'pointer';
 
       card.addEventListener('click', () => {
-        openEditModal(entry.entry_id, entry.assigned_hours, entry.client_name, currentUserId, currentWeekStart);
+        openEditModal(
+          entry.entry_id,
+          entry.assigned_hours,
+          entry.client_name,
+          currentUserId,
+          currentUserName,
+          currentWeekStart
+        );
       });
 
       const cardBody = document.createElement('div');
@@ -108,13 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 4) Open edit modal function with extra details
-  function openEditModal(entryId, assignedHours, clientName, userId, weekStart) {
+  function openEditModal(entryId, assignedHours, clientName, userId, userName, weekStart) {
     document.getElementById('editEntryId').value = entryId;
     document.getElementById('editAssignedHours').value = assignedHours;
 
     // Populate edit modal details section
     document.getElementById('editClientName').textContent = clientName || '—';
     document.getElementById('editUserId').textContent = userId || '—';
+    document.getElementById('editUserName').textContent = userName || '—';
     const formattedWeekStart = weekStart
       ? new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       : '—';
