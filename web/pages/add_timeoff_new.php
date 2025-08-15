@@ -4,6 +4,7 @@ session_start();
 
 // Only allow admins
 if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
+    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }
@@ -15,26 +16,28 @@ $week_start = $data['week_start'] ?? null;
 $assigned_hours = $data['assigned_hours'] ?? '';
 $is_timeoff = 1;
 
+header('Content-Type: application/json');
+
 if (!$user_id || !$week_start || !$assigned_hours) {
     echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
 
-try {
-    $stmt = $conn->prepare("
-        INSERT INTO entries (user_id, week_start, is_timeoff, assigned_hours)
-        VALUES (:user_id, :week_start, :is_timeoff, :assigned_hours)
-    ");
-    $stmt->execute([
-        ':user_id' => $user_id,
-        ':week_start' => $week_start,
-        ':is_timeoff' => $is_timeoff,
-        ':assigned_hours' => $assigned_hours
-    ]);
+// Escape input for MySQLi
+$user_id = mysqli_real_escape_string($conn, $user_id);
+$week_start = mysqli_real_escape_string($conn, $week_start);
+$assigned_hours = mysqli_real_escape_string($conn, $assigned_hours);
+$is_timeoff = (int)$is_timeoff;
 
-    $entry_id = $conn->lastInsertId();
+// Insert entry
+$sql = "
+    INSERT INTO entries (user_id, week_start, is_timeoff, assigned_hours)
+    VALUES ('$user_id', '$week_start', $is_timeoff, '$assigned_hours')
+";
 
+if (mysqli_query($conn, $sql)) {
+    $entry_id = mysqli_insert_id($conn);
     echo json_encode(['success' => true, 'entry_id' => $entry_id]);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+} else {
+    echo json_encode(['success' => false, 'error' => mysqli_error($conn)]);
 }
