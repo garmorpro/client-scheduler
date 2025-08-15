@@ -184,7 +184,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       td:first-child {
         min-width: 250px;
         position: sticky !important;
-        z-index: 1;
+        z-index: 9999 !important;
       }
     </style>
 
