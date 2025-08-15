@@ -217,7 +217,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     table th {
         position: sticky !important;
         top: 0px !important;
-        z-index: -995 !important;
+        z-index: -1000 !important;
     }
     /* Sticky first column cells */
 /* Sticky first column */
