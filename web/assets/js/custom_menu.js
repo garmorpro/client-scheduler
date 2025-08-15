@@ -2,6 +2,7 @@
 (function() {
     if (!IS_ADMIN) return; // only for admins
 
+    // Create context menu
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -11,7 +12,6 @@
         background:#fff;
         border:1px solid #ccc;
         border-radius:4px;
-        margin-top: 15px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
     contextMenu.innerHTML = `
@@ -23,7 +23,7 @@
 
     let selectedBadge = null;
 
-    // Right-click on badge
+    // Show context menu on right-click
     document.addEventListener('contextmenu', function(e) {
         if (e.target.classList.contains('draggable-badge')) {
             e.preventDefault();
@@ -34,46 +34,50 @@
             contextMenu.style.display = 'block';
         } else {
             contextMenu.style.display = 'none';
+            selectedBadge = null;
         }
     });
 
-    // Click elsewhere hides menu
-    document.addEventListener('click', function() {
-        contextMenu.style.display = 'none';
+    // Click anywhere hides menu
+    document.addEventListener('click', function(e) {
+        if (!contextMenu.contains(e.target)) {
+            contextMenu.style.display = 'none';
+        }
     });
 
-    // Delete action
-    document.getElementById('deleteBadge').addEventListener('click', async function() {
-        if (!selectedBadge) return;
+    // Use event delegation for the delete button
+    contextMenu.addEventListener('click', async function(e) {
+        if (e.target.id === 'deleteBadge' && selectedBadge) {
+            if (!confirm('Are you sure you want to delete this entry?')) return;
 
-        const entryId = selectedBadge.dataset.entryId;
+            const entryId = selectedBadge.dataset.entryId;
 
-        if (!confirm('Are you sure you want to delete this entry?')) return;
+            try {
+                const resp = await fetch('delete_entry_new.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ entry_id: entryId })
+                });
 
-        try {
-            const resp = await fetch('delete_entry_new.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ entry_id: entryId })
-            });
+                const data = await resp.json();
 
-            const data = await resp.json();
-
-            if (resp.ok && data.success) {
-                selectedBadge.remove();
-                selectedBadge = null;
-            } else {
-                alert('Failed to delete entry: ' + (data.error || 'Server error'));
+                if (resp.ok && data.success) {
+                    selectedBadge.remove();
+                    selectedBadge = null;
+                } else {
+                    alert('Failed to delete entry: ' + (data.error || 'Server error'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error while deleting entry.');
             }
-        } catch (err) {
-            console.error(err);
-            alert('Network error while deleting entry.');
-        }
 
-        contextMenu.style.display = 'none';
+            contextMenu.style.display = 'none';
+        }
     });
+
 })();
