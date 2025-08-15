@@ -71,7 +71,7 @@
             // Remove existing plus icons
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
 
-            // Only add icon if no badges exist in the cell
+            // Only add plus icon if no badges exist in the cell
             if (!cell.querySelector('.draggable-badge')) {
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus text-muted';
@@ -133,14 +133,19 @@
                     return;
                 }
 
-                // Move badge in DOM
+                // ✅ Remove badge from origin cell explicitly
+                if (originCell && originCell.contains(badge)) {
+                    originCell.removeChild(badge);
+                    updatePlusIcon(originCell);
+                }
+
+                // Move badge to target cell
                 targetTd.appendChild(badge);
                 badge.style.pointerEvents = '';
                 badge.classList.remove('dragging');
                 loadingDot.remove();
 
-                // Update plus icon for only affected cells
-                if (originCell) updatePlusIcon(originCell);
+                // Update plus icon for target cell
                 updatePlusIcon(targetTd);
 
             } catch (err) {
