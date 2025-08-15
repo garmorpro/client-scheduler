@@ -227,7 +227,6 @@ table td:first-child {
     left: 0;
     z-index: 2 !important;
     background: white;
-    border: 2px solid black;
 }
 
 /* Sticky header row */
@@ -339,7 +338,7 @@ table thead th:first-child {
                     $role = htmlspecialchars($employee['role']);
                     ?>
                     <tr>
-                        <td class="text-start employee-name">
+                        <td class="text-start employee-name" style="border: 2px solid black;">
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
