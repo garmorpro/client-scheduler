@@ -9,7 +9,7 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 // Fetch users
 // ------------------------------
 $users = [];
-$userResult = $db->query("SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role FROM users ORDER BY user_id");
+$userResult = $conn->query("SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role FROM users ORDER BY user_id");
 if ($userResult) {
     while ($user = $userResult->fetch_assoc()) {
         $users[$user['user_id']] = $user;
@@ -37,7 +37,7 @@ $entryQuery = "
     LEFT JOIN clients c ON e.client_id = c.client_id
     ORDER BY e.user_id, e.week_start
 ";
-$result = $db->query($entryQuery);
+$result = $conn->query($entryQuery);
 if ($result) {
     while ($entry = $result->fetch_assoc()) {
         $weekKey = date('Y-m-d', strtotime($entry['week_start']));
