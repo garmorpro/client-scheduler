@@ -241,7 +241,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div class="table-responsive" style="width: 1500px;">
+        <div class="table-responsive" style="width: 1500px; overflow-x: auto;">
             <table class="table table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
