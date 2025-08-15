@@ -209,15 +209,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         max-height: 70vh !important;
         margin-top: 40px !important;
     }
-    #scheduleContainer {
-    overflow-x: auto;
-    white-space: nowrap;
-}
+    
 
     table {
         min-width: max-content !important;
         /* border-collapse: separate !important; */
     }
+
+    .week-col {
+    min-width: 140px;
+    max-width: 140px;
+}
+
 
     table th {
         position: sticky !important;
@@ -225,26 +228,35 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         z-index: 2 !important;
     }
     /* Sticky first column cells */
+/* Sticky first column */
 table th:first-child,
 table td:first-child {
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 2 !important;
-    background: white !important;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: white;
 }
 
-/* Sticky header cells */
+/* Sticky header row */
 table thead th {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 1 !important;
-    background: white !important;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
 }
 
-/* Top-left corner cell needs the highest stacking */
+/* Top-left cell (corner) above everything */
 table thead th:first-child {
-    z-index: 3 !important;
+    z-index: 3;
 }
+
+/* Scroll container limits visible weeks */
+#scheduleContainer {
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: calc(140px * 8); /* 7 weeks + employee column */
+}
+
 
 
     </style>
