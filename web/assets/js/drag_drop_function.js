@@ -80,35 +80,15 @@
         // Update plus icon in a cell
         // ------------------------------
         function updatePlusIcon(cell) {
+            // Remove any existing plus icons
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
+
+            // Only add plus icon if no badges exist in the cell
             if (!cell.querySelector('.draggable-badge')) {
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus text-muted';
                 plusIcon.style.cursor = 'pointer';
                 cell.appendChild(plusIcon);
-            }
-        }
-
-        // ------------------------------
-        // Refresh the table (or just the tbody)
-        // ------------------------------
-        async function refreshTable() {
-            try {
-                const resp = await fetch('fetch_schedule_table.php', {
-                    method: 'GET',
-                    credentials: 'same-origin'
-                });
-                const html = await resp.text();
-
-                const tableContainer = document.querySelector('.table-responsive');
-                if (tableContainer) {
-                    tableContainer.innerHTML = html;
-                    setupBadges();
-                    setupDropTargets();
-                    document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
-                }
-            } catch (err) {
-                console.error('Error refreshing table:', err);
             }
         }
 
@@ -126,13 +106,14 @@
             const entryId = e.dataTransfer.getData('text/plain') || draggedEntryId;
             if (!entryId) return;
 
+            // same cell? do nothing
             if (originCell &&
                 originCell.dataset.userId === targetUserId &&
                 originCell.dataset.weekStart === targetWeekStart) {
                 return;
             }
 
-            const badge = document.querySelector('#badge-entry-' + entryId);
+            let badge = document.querySelector('#badge-entry-' + entryId);
             if (!badge) return;
 
             badge.style.pointerEvents = 'none';
@@ -167,8 +148,22 @@
                     return;
                 }
 
-                // Refresh the table to remove any ghost elements
-                await refreshTable();
+                // ------------------------------
+                // CLEAN origin cell: remove all dynamic elements
+                // ------------------------------
+                if (originCell) {
+                    originCell.querySelectorAll('.draggable-badge, .bi-plus, span.ms-1').forEach(el => el.remove());
+                    updatePlusIcon(originCell);
+                }
+
+                // Move badge to target cell
+                targetTd.appendChild(badge);
+                badge.style.pointerEvents = '';
+                badge.classList.remove('dragging');
+                loadingDot.remove();
+
+                // Update plus icon for target cell
+                updatePlusIcon(targetTd);
 
             } catch (err) {
                 console.error(err);
@@ -184,6 +179,25 @@
         // ------------------------------
         setupBadges();
         setupDropTargets();
+
+        // Add plus icons on page load
         document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
+
+        // Observe table for dynamically added badges
+        const table = document.querySelector('.table-responsive');
+        if (table) {
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(m => {
+                    m.addedNodes.forEach(node => {
+                        if (node.nodeType === 1 && node.classList.contains('draggable-badge')) {
+                            setupBadges();
+                            const parentCell = node.closest('td.addable');
+                            if (parentCell) updatePlusIcon(parentCell);
+                        }
+                    });
+                });
+            });
+            observer.observe(table, { childList: true, subtree: true });
+        }
     });
 })();
