@@ -204,7 +204,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     .tbl-fixed {
         overflow-x: scroll !important;
-        overflow-y: scroll !important;
+        /* overflow-y: scroll !important; */
         height: fit-content !important;
         max-height: 70vh !important;
         margin-top: 40px !important;
