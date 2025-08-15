@@ -4,7 +4,7 @@
     let activeInput = null;
 
     // Render or update the time-off badge
-    function renderTimeOff(td, timeOffValue, entryId, allowPlus = false) {
+    function renderTimeOff(td, timeOffValue, entryId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -20,14 +20,9 @@
             td.appendChild(div);
         }
 
-        // Only add plus icon if explicitly allowed AND there are no other badges at all
-        const hasOtherBadges = td.querySelector('.entry-badge');
-        if (allowPlus && !hasOtherBadges && !td.querySelector('.bi-plus')) {
-            const plus = document.createElement('i');
-            plus.className = 'bi bi-plus text-muted';
-            plus.style.cursor = 'pointer';
-            td.appendChild(plus);
-        }
+        // Remove any existing plus icon in case it exists
+        const plusIcon = td.querySelector('.bi-plus');
+        if (plusIcon) plusIcon.remove();
     }
 
     async function safeFetchJSON(url, options) {
@@ -98,7 +93,7 @@
                         body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
                     });
                     if (update.ok && update.data?.success) {
-                        renderTimeOff(td, val, entryId, false);
+                        renderTimeOff(td, val, entryId);
                     } else {
                         alert('Failed to update time off.');
                     }
@@ -117,9 +112,7 @@
                     });
 
                     if (add.ok && add.data?.success && add.data.entry_id) {
-                        // Only allow plus icon if the cell is completely empty (no badges or time-off)
-                        const hasOtherBadges = td.querySelector('.entry-badge');
-                        renderTimeOff(td, val, add.data.entry_id, !hasOtherBadges);
+                        renderTimeOff(td, val, add.data.entry_id);
                     } else {
                         alert('Failed to add time off.');
                     }
