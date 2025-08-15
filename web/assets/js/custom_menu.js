@@ -15,7 +15,7 @@
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
     contextMenu.innerHTML = `
-        <ul style="list-style:none; margin:0; padding:5px 0;">
+        <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
             <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
         </ul>
     `;
