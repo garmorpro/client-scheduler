@@ -219,21 +219,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         top: 0px !important;
         z-index: 2 !important;
     }
-    table td:first-child {
-        position: sticky !important;
-        top: 0px !important;
-        z-index: 2 !important;
-    }
-    table td {
-
-    }
-
-td:first-child {
+    table th:first-child,
+table td:first-child {
     position: sticky !important;
-    left: 0 !important;
-    /* background: #fff !important; */
-    z-index: 1 !important;
-    /* box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important; */
+    left: 0 !important;      /* stick horizontally */
+    z-index: 2 !important;   /* stay above other cells */
+    background: white;       /* so it doesn’t show table rows behind */
+}
+
+/* make the top-left header cell appear above everything */
+table thead th:first-child {
+    z-index: 3 !important;
 }
 
 
