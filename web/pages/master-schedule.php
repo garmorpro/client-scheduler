@@ -243,6 +243,7 @@ table thead th:first-child {
 }
 
 table tbody td:first-child {
+    position: sticky !important;
     border: 1px solid blue;
 }
 /* Scroll container limits visible weeks */
