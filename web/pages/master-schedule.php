@@ -214,7 +214,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <div class="col-md-6">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
                 </div>
-                <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
                     <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
                        class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
         
@@ -222,7 +222,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         
                     <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
                        class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-                </div>
+                </div> -->
             </form>
         </div>
     <!-- end upper search and week range selector -->
