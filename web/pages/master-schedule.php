@@ -324,7 +324,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     }
                                 }
                             } else {
-                                $cellContent = "<span class='text-muted'>" . ($isAdmin ? "<i class='bi bi-plus text-muted'></i>" : "") . "</span>";
+                                $cellContent = $isAdmin ? "<i class='bi bi-plus text-muted'></i>" : "";
                             }
 
                             // Build td class list
