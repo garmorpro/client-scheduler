@@ -211,7 +211,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
     table {
         min-width: max-content !important;
-        border-collapse: separate !important;
+        /* border-collapse: separate !important; */
     }
 
     table th {
