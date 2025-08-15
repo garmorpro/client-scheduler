@@ -181,7 +181,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       }
     </style>
 
-    <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
+    
 
     <script>
       // Expose server data to JS
@@ -382,6 +382,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
     
+    <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
