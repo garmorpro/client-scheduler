@@ -20,9 +20,12 @@
             td.appendChild(div);
         }
 
-        // Remove plus icon when personal time off is present
-        const plusIcon = td.querySelector('.bi-plus');
-        if (plusIcon) plusIcon.remove();
+        // Do NOT remove the plus icon; always keep it
+        if (!td.querySelector('.bi-plus')) {
+            const plusIcon = document.createElement('i');
+            plusIcon.className = 'bi bi-plus';
+            td.appendChild(plusIcon);
+        }
     }
 
     // Mark gray background for global time-off without badge
@@ -126,8 +129,8 @@
                         // Check for global time off (keep gray if present)
                         await checkGlobalTimeOff(td);
 
-                        // Restore plus icon if no personal time off
-                        if (!td.querySelector('.timeoff-corner') && !td.querySelector('.bi-plus')) {
+                        // Ensure plus icon exists
+                        if (!td.querySelector('.bi-plus')) {
                             const plusIcon = document.createElement('i');
                             plusIcon.className = 'bi bi-plus';
                             td.appendChild(plusIcon);
