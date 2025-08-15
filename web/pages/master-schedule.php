@@ -197,6 +197,32 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     white-space: nowrap !important;
 } */
 
+    .tbl-container {
+        max-width: fit-content;
+        max-height: fit-content;
+    }
+
+    .tbl-fixed {
+        overflow-x: scroll;
+        overflow-y: scroll;
+        height: fit-content;
+        max-height: 70vh;
+        margin-top: 40px;
+    }
+    table {
+        min-width: max-content;
+        border-collapse: separate;
+    }
+
+    table th {
+        position: sticky;
+        top: 0px;
+        z-index: 2;
+    }
+    table td {
+
+    }
+
 td:first-child,
 th:first-child {
     position: sticky !important;
@@ -206,26 +232,7 @@ th:first-child {
     /* box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important; */
 }
 
-/* .table thead th:first-child {
-    z-index: 3 !important; 
-}
 
-.table th,
-td {
-    min-width: 120px !important; 
-}
-
-.table-responsive {
-    scroll-behavior: smooth !important;
-} */
-
-/* .table-responsive {
-    overflow-x: auto;
-    white-space: nowrap; 
-}
-.table-responsive table {
-    min-width: max-content; 
-} */
     </style>
 </head>
 <body class="d-flex">
@@ -279,7 +286,10 @@ td {
         }
         ?>
 
-        <div id="scheduleContainer" class="table-responsive" style="overflow-x:auto; white-space: nowrap;">
+<div class="tbl-container">
+
+
+        <div id="scheduleContainer" class="table-responsive tbl-fixed" style="overflow-x:auto; white-space: nowrap;">
             <table class="table table-bordered align-middle text-center" style="min-width: max-content;">
                 <thead class="table-light">
                     <tr>
@@ -401,6 +411,8 @@ td {
                 </tbody>
             </table>
         </div>
+
+    </div> <!-- tbl-container -->
 
     <!-- end master schedule table -->
 
