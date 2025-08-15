@@ -193,7 +193,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     }
     .table-responsive {
         border-left: 2px solid rgb(223, 226, 230);
-        padding-left: 0 !important;
     }
     .week {
         min-width: 200px;
