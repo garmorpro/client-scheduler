@@ -257,6 +257,21 @@ table tbody td:first-child {
     max-width: calc(140px * 10); /* 7 weeks + employee column */
 }
 
+/* Additional custom styles for sticky table functionality */
+#schedule-container {
+    max-height: calc(100vh - 200px);
+}
+
+/* Ensure proper stacking for sticky elements */
+.sticky {
+    position: sticky;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
 
     </style>
 </head>
