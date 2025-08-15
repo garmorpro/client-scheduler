@@ -154,7 +154,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       <?php if ($isAdmin): ?>
       .timeoff-cell:hover { background-color: #e0f7fa !important; }
       <?php endif; ?>
-      .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
+      .timeoff-corner { 
+        position: absolute; 
+        top: 2px; 
+        right: 6px; 
+        font-size: .50rem; 
+        color: rgb(209,226, 159) !important;
+    }
       .timeoff-card {
         border: 2px dashed rgb(209,226, 159) !important;
         background: rgb(246, 249, 236) !important;
@@ -359,7 +365,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
                                     <?php
                                     if ($hasTimeOff) {
-                                        echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
+                                        echo "<span class='timeoff-corner fw-semibold'>{$timeOffHours}</span>";
                                     }
                                     echo $cellContent;
                                     ?>
