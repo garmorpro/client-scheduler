@@ -70,7 +70,7 @@ while ($clientRow = $clientResult->fetch_assoc()) {
 }
 
 $startDate = date('Y-m-d', $startMonday);
-$endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
+$endDate = date('Y-m-d', strtotime('+26 weeks', $startMonday));
 
 /**
  * FETCH ENTRIES
