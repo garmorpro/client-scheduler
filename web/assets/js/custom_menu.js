@@ -1,6 +1,7 @@
 (function() {
     if (!IS_ADMIN) return;
 
+    // Main context menu element
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -16,7 +17,7 @@
     document.body.appendChild(contextMenu);
 
     let selectedCell = null;
-    let selectedBadge = null; // badge div specifically
+    let selectedBadge = null;
     let menuType = null; // 'badge', 'edit', 'add'
 
     function renderCell(td, timeOffValue = null, entryId = null) {
@@ -47,7 +48,7 @@
     }
 
     // Show context menu
-    document.addEventListener('contextmenu', async e => {
+    document.addEventListener('contextmenu', e => {
         contextMenu.style.display = 'none';
         selectedCell = null;
         selectedBadge = null;
@@ -74,7 +75,6 @@
             e.preventDefault();
             selectedCell = target;
 
-            // check if timeoff exists
             const timeOff = target.querySelector('.timeoff-corner');
             menuType = timeOff ? 'edit' : 'add';
             contextMenu.innerHTML = `
@@ -89,7 +89,7 @@
         }
     });
 
-    // Close context menu
+    // Hide menu
     document.addEventListener('click', e => {
         if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
@@ -99,6 +99,7 @@
         }
     });
 
+    // Handle menu clicks
     contextMenu.addEventListener('click', async e => {
         if (!menuType) return;
 
@@ -130,11 +131,9 @@
             const userId = td.dataset.userId;
             const weekStart = td.dataset.weekStart;
 
-            // fetch existing entry ID if editing
             let timeOffDiv = td.querySelector('.timeoff-corner');
             let entryId = timeOffDiv ? timeOffDiv.dataset.entryId : null;
 
-            // input element
             td.innerHTML = '';
             const input = document.createElement('input');
             input.type = 'text';
@@ -151,7 +150,7 @@
                 if (!val) return;
 
                 try {
-                    // If editing, update
+                    // Update existing
                     if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
@@ -166,7 +165,7 @@
                             renderCell(td, input.value, entryId);
                         }
                     } 
-                    // If adding, create new
+                    // Add new
                     else {
                         const add = await safeFetchJSON('add_timeoff_new.php', {
                             method: 'POST',
