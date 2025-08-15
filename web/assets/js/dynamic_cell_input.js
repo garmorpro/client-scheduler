@@ -89,20 +89,22 @@
 
             const clickedBadge = e.target.classList.contains('draggable-badge');
             const hasBadges = td.querySelector('.draggable-badge') !== null;
+            const timeOff = td.querySelector('.timeoff-corner');
 
             if (hasBadges && !clickedBadge) {
                 showOverlay(td);
                 return;
             }
 
-            if (!hasBadges) {
-                showInlineInputs(td);
-            }
+            // If only timeoff exists, preserve it during input
+            showInlineInputs(td, timeOff);
         });
     });
 
-    function showInlineInputs(td) {
-        td.innerHTML = '';
+    function showInlineInputs(td, timeOff = null) {
+        td.innerHTML = ''; // clear current content
+
+        if (timeOff) td.appendChild(timeOff); // preserve timeoff-corner
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
