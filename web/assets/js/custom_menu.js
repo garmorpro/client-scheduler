@@ -2,7 +2,6 @@
 (function() {
     if (!IS_ADMIN) return; // only for admins
 
-    // Create context menu
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -11,12 +10,13 @@
         z-index:9999;
         background:#fff;
         border:1px solid #ccc;
-        margin-top: 15px;
         border-radius:4px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
     contextMenu.innerHTML = `
-        <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
+        <ul style="list-style:none; margin:0; padding:5px 0;">
+            <li id="manageTimeoff" style="padding:5px 15px; cursor:pointer;">Manage Timeoff</li>
+            <li id="editEntry" style="padding:5px 15px; cursor:pointer;">Edit Entry</li>
             <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
         </ul>
     `;
@@ -24,7 +24,7 @@
 
     let selectedBadge = null;
 
-    // Show context menu on right-click
+    // Show context menu
     document.addEventListener('contextmenu', function(e) {
         if (e.target.classList.contains('draggable-badge')) {
             e.preventDefault();
@@ -39,61 +39,66 @@
         }
     });
 
-    // Click anywhere hides menu
+    // Hide menu on click elsewhere
     document.addEventListener('click', function(e) {
         if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
         }
     });
 
-    // Use event delegation for the delete button
+    // Handle context menu actions
     contextMenu.addEventListener('click', async function(e) {
-        if (e.target.id === 'deleteBadge' && selectedBadge) {
-            // if (!confirm('Are you sure you want to delete this entry?')) return;
+        if (!selectedBadge) return;
 
-            const entryId = selectedBadge.dataset.entryId;
-            const parentCell = selectedBadge.parentElement;
+        const parentCell = selectedBadge.parentElement;
 
-            try {
-                const resp = await fetch('delete_entry_new.php', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ entry_id: entryId })
-                });
+        switch (e.target.id) {
+            case 'manageTimeoff':
+                alert(`Manage Timeoff for Entry ID: ${selectedBadge.dataset.entryId}`);
+                // TODO: Open your timeoff management modal or UI here
+                break;
 
-                const data = await resp.json();
+            case 'editEntry':
+                alert(`Edit Entry ID: ${selectedBadge.dataset.entryId}`);
+                // TODO: Trigger your edit modal here
+                break;
 
-                if (resp.ok && data.success) {
-                    // Remove the badge
-                    selectedBadge.remove();
-                    selectedBadge = null;
+            case 'deleteBadge':
+                try {
+                    const resp = await fetch('delete_entry_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ entry_id: selectedBadge.dataset.entryId })
+                    });
 
-                    // Check if there are any other badges left
-                    const hasOtherBadges = parentCell.querySelector('.draggable-badge');
+                    const data = await resp.json();
+                    if (resp.ok && data.success) {
+                        selectedBadge.remove();
+                        selectedBadge = null;
 
-                    // Only add plus icon if no other badges exist
-                    if (!hasOtherBadges) {
-                        // Check if a plus icon already exists
-                        if (!parentCell.querySelector('.bi-plus')) {
-                            const plusIcon = document.createElement('i');
-                            plusIcon.className = 'bi bi-plus text-muted';
-                            parentCell.appendChild(plusIcon);
+                        // If no more badges, keep timeoff-corner if it exists
+                        const hasOtherBadges = parentCell.querySelector('.draggable-badge');
+                        if (!hasOtherBadges) {
+                            const timeOff = parentCell.querySelector('.timeoff-corner');
+                            parentCell.innerHTML = '';
+                            if (timeOff) parentCell.appendChild(timeOff);
+                            parentCell.innerHTML += '<i class="bi bi-plus text-muted"></i>';
                         }
+                    } else {
+                        alert('Failed to delete entry: ' + (data.error || 'Server error'));
                     }
-                } else {
-                    alert('Failed to delete entry: ' + (data.error || 'Server error'));
+                } catch (err) {
+                    console.error(err);
+                    alert('Network error while deleting entry.');
                 }
-            } catch (err) {
-                console.error(err);
-                alert('Network error while deleting entry.');
-            }
-
-            contextMenu.style.display = 'none';
+                break;
         }
+
+        contextMenu.style.display = 'none';
     });
 
 })();
