@@ -19,7 +19,7 @@ $startMonday = strtotime("-2 weeks", $currentMonday);
 $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
 $mondays = [];
-for ($i = 0; $i < 7; $i++) {
+for ($i = 0; $i < 26; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
