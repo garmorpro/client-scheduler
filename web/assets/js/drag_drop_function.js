@@ -80,10 +80,10 @@
         // Update plus icon in a cell
         // ------------------------------
         function updatePlusIcon(cell) {
-            // Remove any existing plus icons
+            // Remove existing plus icons
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
 
-            // Only add plus icon if no badges exist in the cell
+            // Only add plus icon if no badges exist
             if (!cell.querySelector('.draggable-badge')) {
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus text-muted';
@@ -149,10 +149,19 @@
                 }
 
                 // ------------------------------
-                // CLEAN origin cell: remove all dynamic elements
+                // CLEAN origin cell: remove dragged badge and trailing <br>
                 // ------------------------------
                 if (originCell) {
-                    originCell.querySelectorAll('.draggable-badge, .bi-plus, span.ms-1').forEach(el => el.remove());
+                    const originBadges = originCell.querySelectorAll('.draggable-badge');
+                    originBadges.forEach(b => {
+                        if (b.dataset.entryId === entryId) {
+                            // remove the badge itself
+                            b.remove();
+                            // remove <br> immediately after it if exists
+                            if (b.nextSibling && b.nextSibling.nodeName === 'BR') b.nextSibling.remove();
+                        }
+                    });
+                    // ensure plus icon is added if needed
                     updatePlusIcon(originCell);
                 }
 
