@@ -15,16 +15,36 @@ if (!$data || !isset($data['entry_id'], $data['client_name'], $data['assigned_ho
     exit();
 }
 
-$entry_id = intval($data['entry_id']);
+$entry_id    = intval($data['entry_id']);
 $client_name = trim($data['client_name']);
-$hours = floatval($data['assigned_hours']);
+$hours       = floatval($data['assigned_hours']);
 
-$stmt = $conn->prepare("UPDATE entries SET client_name = ?, assigned_hours = ? WHERE entry_id = ?");
-$stmt->bind_param("sdi", $client_name, $hours, $entry_id);
+// 1. Find engagement_id from engagements table
+$stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ?");
+$stmt->bind_param("s", $client_name);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    http_response_code(404);
+    echo json_encode(['error' => 'Client not found in engagements table']);
+    exit();
+}
+
+$row = $result->fetch_assoc();
+$engagement_id = intval($row['engagement_id']);
+$stmt->close();
+
+// 2. Update entries with engagement_id and hours
+$stmt = $conn->prepare("UPDATE entries SET engagement_id = ?, assigned_hours = ? WHERE entry_id = ?");
+$stmt->bind_param("idi", $engagement_id, $hours, $entry_id);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'engagement_id' => $engagement_id]);
 } else {
     http_response_code(500);
     echo json_encode(['error' => 'Database update failed']);
 }
+
+$stmt->close();
+$conn->close();
