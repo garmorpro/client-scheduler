@@ -233,13 +233,13 @@ table td:first-child {
 table thead th {
     position: sticky;
     top: 0;
-    z-index: -998;
+    z-index: -999;
     background: white;
 }
 
 /* Top-left cell (corner) above everything */
 table thead th:first-child {
-    z-index: -999;
+    z-index: -998;
 }
 
 /* Scroll container limits visible weeks */
