@@ -1,4 +1,4 @@
-// delete_entry.js
+// custom_menu.js
 (function() {
     if (!IS_ADMIN) return; // only for admins
 
@@ -51,6 +51,7 @@
             if (!confirm('Are you sure you want to delete this entry?')) return;
 
             const entryId = selectedBadge.dataset.entryId;
+            const parentCell = selectedBadge.parentElement;
 
             try {
                 const resp = await fetch('delete_entry_new.php', {
@@ -66,8 +67,15 @@
                 const data = await resp.json();
 
                 if (resp.ok && data.success) {
+                    // Remove the badge
                     selectedBadge.remove();
                     selectedBadge = null;
+
+                    // If cell is empty, add the plus icon
+                    const hasOtherBadges = parentCell.querySelector('.draggable-badge');
+                    if (!hasOtherBadges) {
+                        parentCell.innerHTML = '<i class="bi bi-plus text-muted"></i>';
+                    }
                 } else {
                     alert('Failed to delete entry: ' + (data.error || 'Server error'));
                 }
