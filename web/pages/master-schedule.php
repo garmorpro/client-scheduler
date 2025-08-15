@@ -206,26 +206,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         overflow-x: scroll !important;
         overflow-y: scroll !important;
         height: fit-content !important;
-        /* max-height: 70vh !important; */
         margin-top: 40px !important;
     }
     
-
     table {
         min-width: max-content !important;
-        /* border-collapse: separate !important; */
     }
-
-    /* .week-col {
-    min-width: 140px;
-    max-width: 140px;
-} */
 
 
     table th {
         position: sticky !important;
         top: 0px !important;
-        z-index: 2 !important;
+        z-index: 3 !important;
     }
     /* Sticky first column cells */
 /* Sticky first column */
