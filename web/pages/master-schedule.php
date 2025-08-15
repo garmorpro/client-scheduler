@@ -191,10 +191,7 @@ td:first-child {
     /* outline-offset: 1px; */
 }
 
-/* Optional: make sticky headers above the first column */
-thead th:first-child {
-    z-index: 101; /* slightly higher than first column cells */
-}
+
     </style>
 
     
