@@ -12,24 +12,24 @@ if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'ad
 $data = json_decode(file_get_contents('php://input'), true);
 $user_id = $data['user_id'] ?? null;
 $week_start = $data['week_start'] ?? null;
-$timeoff_note = $data['timeoff_note'] ?? '';
+$assigned_hours = $data['assigned_hours'] ?? '';
 $is_timeoff = $data['is_timeoff'] ?? 1;
 
-if (!$user_id || !$week_start || !$timeoff_note) {
+if (!$user_id || !$week_start || !$assigned_hours) {
     echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
 
 try {
     $stmt = $db->prepare("
-        INSERT INTO entries (user_id, week_start, is_timeoff, timeoff_note)
-        VALUES (:user_id, :week_start, :is_timeoff, :timeoff_note)
+        INSERT INTO entries (user_id, week_start, is_timeoff, assigned_hours)
+        VALUES (:user_id, :week_start, :is_timeoff, :assigned_hours)
     ");
     $stmt->execute([
         ':user_id' => $user_id,
         ':week_start' => $week_start,
         ':is_timeoff' => $is_timeoff,
-        ':timeoff_note' => $timeoff_note
+        ':assigned_hours' => $assigned_hours
     ]);
 
     $entry_id = $db->lastInsertId();

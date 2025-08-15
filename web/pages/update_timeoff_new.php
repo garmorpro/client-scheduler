@@ -11,9 +11,9 @@ if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'ad
 // Get JSON input
 $data = json_decode(file_get_contents('php://input'), true);
 $entry_id = $data['entry_id'] ?? null;
-$timeoff_note = $data['timeoff_note'] ?? '';
+$assigned_hours = $data['assigned_hours'] ?? '';
 
-if (!$entry_id || !$timeoff_note) {
+if (!$entry_id || !$assigned_hours) {
     echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
@@ -21,11 +21,11 @@ if (!$entry_id || !$timeoff_note) {
 try {
     $stmt = $db->prepare("
         UPDATE entries
-        SET timeoff_note = :timeoff_note
+        SET assigned_hours = :assigned_hours
         WHERE entry_id = :entry_id AND is_timeoff = 1
     ");
     $stmt->execute([
-        ':timeoff_note' => $timeoff_note,
+        ':assigned_hours' => $assigned_hours,
         ':entry_id' => $entry_id
     ]);
 

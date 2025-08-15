@@ -97,7 +97,7 @@
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
+                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, assigned_hours: val })
                         });
                         const data = await resp.json();
                         if (resp.ok && data.success) timeOff.textContent = val;
@@ -107,7 +107,7 @@
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
                         });
                         const data = await resp.json();
                         if (resp.ok && data.success) {
