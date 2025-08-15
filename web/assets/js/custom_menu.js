@@ -24,12 +24,22 @@
 
     let selectedBadge = null;
     let selectedCell = null;
+    let activeInput = null;
+
+    function closeActiveInput() {
+        if (activeInput) {
+            activeInput.remove();
+            activeInput = null;
+        }
+    }
 
     // Show context menu on right-click
     document.addEventListener('contextmenu', function(e) {
         contextMenu.style.display = 'none';
         selectedBadge = null;
         selectedCell = null;
+
+        closeActiveInput();
 
         // Right-click on a badge
         if (e.target.classList.contains('draggable-badge')) {
@@ -62,6 +72,7 @@
             contextMenu.style.display = 'none';
             selectedBadge = null;
             selectedCell = null;
+            closeActiveInput();
         }
     });
 
@@ -105,71 +116,94 @@
 
         // ADD / EDIT TIME OFF
         else if (menuItem.id === 'deleteBadge' && selectedCell) {
-            let timeOff = selectedCell.querySelector('.timeoff-corner');
+            closeActiveInput();
+
             const userId = selectedCell.dataset.userId;
             const weekStart = selectedCell.dataset.weekStart;
+            let timeOff = selectedCell.querySelector('.timeoff-corner');
+            const currentVal = timeOff ? timeOff.textContent : '';
 
-            if (timeOff) {
-                // Edit existing time off
-                const currentVal = timeOff.textContent;
-                const newVal = prompt('Edit Time Off:', currentVal);
-                if (newVal !== null) {
+            // Create inline input
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentVal;
+            input.className = 'form-control form-control-sm';
+            input.style.width = '100%';
+            input.style.marginTop = '2px';
+
+            if (timeOff) timeOff.style.display = 'none';
+            selectedCell.appendChild(input);
+            input.focus();
+            activeInput = input;
+
+            input.addEventListener('keydown', async (ev) => {
+                if (ev.key === 'Enter') {
+                    const val = input.value.trim();
+                    if (!val) return;
+
                     try {
-                        const resp = await fetch('update_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                entry_id: timeOff.dataset.entryId,
-                                timeoff_note: newVal
-                            })
-                        });
-                        const data = await resp.json();
-                        if (resp.ok && data.success) {
-                            timeOff.textContent = newVal;
+                        if (timeOff) {
+                            // Update existing time off
+                            const resp = await fetch('update_timeoff_new.php', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                                body: JSON.stringify({
+                                    entry_id: timeOff.dataset.entryId,
+                                    timeoff_note: val
+                                })
+                            });
+                            const data = await resp.json();
+                            if (resp.ok && data.success) {
+                                timeOff.textContent = val;
+                                timeOff.style.display = '';
+                            } else {
+                                alert('Failed to update time off: ' + (data.error || 'Server error'));
+                            }
                         } else {
-                            alert('Failed to update time off: ' + (data.error || 'Server error'));
+                            // Add new time off
+                            const resp = await fetch('add_timeoff_new.php', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                                body: JSON.stringify({
+                                    user_id: userId,
+                                    week_start: weekStart,
+                                    timeoff_note: val,
+                                    is_timeoff: 1
+                                })
+                            });
+                            const data = await resp.json();
+                            if (resp.ok && data.success) {
+                                const div = document.createElement('div');
+                                div.className = 'timeoff-corner';
+                                div.style.fontSize = '0.8em';
+                                div.style.color = '#555';
+                                div.dataset.entryId = data.entry_id;
+                                div.textContent = val;
+                                selectedCell.appendChild(div);
+                            } else {
+                                alert('Failed to add time off: ' + (data.error || 'Server error'));
+                            }
                         }
                     } catch (err) {
                         console.error(err);
-                        alert('Network error while updating time off.');
+                        alert('Network error while saving time off.');
                     }
+
+                    closeActiveInput();
+                    selectedCell = null;
                 }
-            } else {
-                // Add new time off
-                const newVal = prompt('Add Time Off:', '');
-                if (newVal) {
-                    try {
-                        const resp = await fetch('add_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                user_id: userId,
-                                week_start: weekStart,
-                                timeoff_note: newVal,
-                                is_timeoff: 1
-                            })
-                        });
-                        const data = await resp.json();
-                        if (resp.ok && data.success) {
-                            const div = document.createElement('div');
-                            div.className = 'timeoff-corner';
-                            div.style.fontSize = '0.8em';
-                            div.style.color = '#555';
-                            div.dataset.entryId = data.entry_id;
-                            div.textContent = newVal;
-                            selectedCell.appendChild(div);
-                        } else {
-                            alert('Failed to add time off: ' + (data.error || 'Server error'));
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        alert('Network error while adding time off.');
-                    }
+            });
+
+            // Optional: close input if clicked outside
+            document.addEventListener('click', function clickOutside(e) {
+                if (activeInput && !selectedCell.contains(e.target)) {
+                    closeActiveInput();
+                    if (timeOff) timeOff.style.display = '';
+                    document.removeEventListener('click', clickOutside);
                 }
-            }
-            selectedCell = null;
+            });
         }
 
         contextMenu.style.display = 'none';
