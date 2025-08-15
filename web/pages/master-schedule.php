@@ -239,7 +239,7 @@ table thead th {
 
 /* Top-left cell (corner) above everything */
 table thead th:first-child {
-    z-index: 3;
+    z-index: 0;
 }
 
 /* Scroll container limits visible weeks */
