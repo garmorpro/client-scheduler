@@ -356,7 +356,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                     data-user-name="<?php echo $fullName; ?>" 
                                     data-week-start="<?php echo $weekKey; ?>"
                                     style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
-                                    
+
                                     <?php
                                     if ($hasTimeOff) {
                                         echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
@@ -374,6 +374,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
+    <!-- Custom context menu -->
+<div id="badgeContextMenu" style="position:absolute; display:none; z-index:9999; background:#fff; border:1px solid #ccc; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+    <ul style="list-style:none; margin:0; padding:5px 0;">
+        <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
+    </ul>
+</div>
+
     <?php if ($isAdmin): ?>
         <?php include_once '../includes/modals/manage_entries_prompt.php'; ?>
         <?php include_once '../includes/modals/manage_entries.php'; ?>
@@ -388,6 +395,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
     
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/custom_menu.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
