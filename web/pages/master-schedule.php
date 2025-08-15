@@ -119,7 +119,7 @@ $stmt2->close();
 
     <style>
       .timeoff-cell { background-color: rgb(217,217,217) !important; }
-      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgba(23, 62, 71); outline-offset: -3px;}
+      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
       <?php if ($isAdmin): ?>
       .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
       <?php endif; ?>
