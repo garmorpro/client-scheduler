@@ -6,6 +6,9 @@
         let draggedEntryId = null;
         let originCell = null;
 
+        // ------------------------------
+        // Setup draggable badges
+        // ------------------------------
         function setupBadges() {
             document.querySelectorAll('.draggable-badge').forEach(badge => {
                 badge.removeEventListener('dragstart', onDragStart);
@@ -16,6 +19,9 @@
             });
         }
 
+        // ------------------------------
+        // Setup drop targets
+        // ------------------------------
         function setupDropTargets() {
             document.querySelectorAll('td.addable').forEach(td => {
                 td.removeEventListener('dragover', onDragOver);
@@ -30,6 +36,9 @@
             });
         }
 
+        // ------------------------------
+        // Drag events
+        // ------------------------------
         function onDragStart(e) {
             draggedElem = this;
             draggedEntryId = this.dataset.entryId;
@@ -67,8 +76,11 @@
             document.querySelectorAll('td.addable.drop-target').forEach(td => td.classList.remove('drop-target'));
         }
 
+        // ------------------------------
+        // Update plus icon in a cell
+        // ------------------------------
         function updatePlusIcon(cell) {
-            // Remove existing plus icons
+            // Remove any existing plus icons
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
 
             // Only add plus icon if no badges exist in the cell
@@ -80,6 +92,9 @@
             }
         }
 
+        // ------------------------------
+        // Handle badge drop
+        // ------------------------------
         async function onDrop(e) {
             e.preventDefault();
             removeDropTargetHints();
@@ -133,9 +148,11 @@
                     return;
                 }
 
-                // ✅ Remove badge from origin cell explicitly
-                if (originCell && originCell.contains(badge)) {
-                    originCell.removeChild(badge);
+                // ------------------------------
+                // CLEAN origin cell: remove all dynamic elements
+                // ------------------------------
+                if (originCell) {
+                    originCell.querySelectorAll('.draggable-badge, .bi-plus, span.ms-1').forEach(el => el.remove());
                     updatePlusIcon(originCell);
                 }
 
@@ -157,14 +174,16 @@
             }
         }
 
-        // Initial setup
+        // ------------------------------
+        // INITIAL SETUP
+        // ------------------------------
         setupBadges();
         setupDropTargets();
 
         // Add plus icons on page load
         document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
 
-        // Only observe **direct changes to badges** inside table to avoid infinite loops
+        // Observe table for dynamically added badges
         const table = document.querySelector('.table-responsive');
         if (table) {
             const observer = new MutationObserver(mutations => {
