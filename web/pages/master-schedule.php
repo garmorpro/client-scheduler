@@ -181,13 +181,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       }
 
       th:first-child,
-      td:first-child {
-        min-width: 250px;
-        position: sticky !important;
-        z-index: 9999 !important;
-        left:0;
-        border: 1px solid gray;
-      }
+td:first-child {
+    min-width: 250px;
+    position: sticky !important;
+    left: 0;
+    background-color: #fff;      /* ensure background covers other cells */
+    z-index: 10;                  /* lower than sticky headers */
+    border-right: 2px solid gray; /* border that sticks on the right edge */
+    box-sizing: border-box;
+}
     </style>
 
     
