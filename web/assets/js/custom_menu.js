@@ -1,4 +1,3 @@
-// custom_menu.js (inline time off input with proper entry_id handling)
 (function() {
     if (!IS_ADMIN) return;
 
@@ -83,36 +82,50 @@
                 if (!val) return;
 
                 try {
-                    // UPDATE EXISTING TIME OFF
-                    if (timeOff && timeOff.dataset.entryId) {
-                        console.log('Updating time off:', {
-                            entry_id: timeOff.dataset.entryId,
-                            timeoff_note: val
+                    // If timeOff exists, get entry_id from server if missing
+                    let entryId = timeOff ? timeOff.dataset.entryId : null;
+
+                    if (!entryId) {
+                        // Ask server for existing timeoff entry
+                        const lookupResp = await fetch('get_timeoff_entry.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {'Content-Type':'application/json','Accept':'application/json'},
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart })
                         });
+                        const lookupData = await lookupResp.json();
+                        console.log('Lookup response:', lookupData);
+                        if (lookupResp.ok && lookupData.success && lookupData.entry_id) {
+                            entryId = lookupData.entry_id;
+                        }
+                    }
+
+                    if (entryId) {
+                        console.log('Updating time off:', { entry_id: entryId, timeoff_note: val });
 
                         const resp = await fetch('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
+                            body: JSON.stringify({ entry_id: entryId, timeoff_note: val })
                         });
                         const data = await resp.json();
                         console.log('Update response:', data);
 
                         if (resp.ok && data.success) {
+                            if (!timeOff) {
+                                timeOff = document.createElement('div');
+                                timeOff.className = 'timeoff-corner';
+                                td.appendChild(timeOff);
+                            }
+                            timeOff.dataset.entryId = entryId;
                             timeOff.textContent = val;
                         } else {
                             alert('Failed to update time off: ' + (data.error || 'Server error'));
                         }
-                    } 
-                    // ADD NEW TIME OFF
-                    else {
-                        console.log('Adding time off:', {
-                            user_id: userId,
-                            week_start: weekStart,
-                            timeoff_note: val,
-                            is_timeoff: 1
-                        });
+                    } else {
+                        // Add new time off
+                        console.log('Adding time off:', { user_id: userId, week_start: weekStart, timeoff_note: val });
 
                         const resp = await fetch('add_timeoff_new.php', {
                             method: 'POST',
@@ -126,7 +139,7 @@
                         if (resp.ok && data.success && data.entry_id) {
                             const div = document.createElement('div');
                             div.className = 'timeoff-corner';
-                            div.dataset.entryId = data.entry_id; // SET entry_id from PHP response
+                            div.dataset.entryId = data.entry_id;
                             div.style.fontSize = '0.8em';
                             div.style.color = '#555';
                             div.textContent = val;
@@ -135,6 +148,7 @@
                             alert('Failed to add time off: ' + (data.error || 'Server error'));
                         }
                     }
+
                 } catch (err) {
                     console.error('Network error while saving time off:', err);
                     alert('Network error while saving time off.');
