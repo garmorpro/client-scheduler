@@ -12,14 +12,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $today = strtotime('today');
 
-// Calculate Mondays for horizontal display
+// Calculate Mondays as timestamps
 $currentMonday = strtotime('monday this week', $today);
 $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
-$startMonday = strtotime("-2 weeks +{$weekOffset} weeks", $currentMonday);
+$startMonday = strtotime("-2 weeks", $currentMonday);
+$startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
-$weeksToShow = 7;
 $mondays = [];
-for ($i = 0; $i < $weeksToShow; $i++) {
+for ($i = 0; $i < 7; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
@@ -31,27 +31,57 @@ $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j',
 // Get employees
 $employees = [];
 $userQuery = "
-    SELECT user_id, CONCAT(first_name,' ',last_name) AS full_name, role 
+    SELECT 
+        user_id, 
+        CONCAT(first_name, ' ', last_name) AS full_name, 
+        role 
     FROM users 
-    WHERE status='active' AND role IN ('staff','senior')
-    ORDER BY FIELD(role,'senior','staff'), first_name
+    WHERE status = 'active' 
+      AND role IN ('staff', 'senior')
+    ORDER BY 
+        CASE 
+            WHEN role = 'senior' THEN 1
+            WHEN role = 'staff' THEN 2
+        END,
+        first_name ASC
 ";
+
 $userResult = $conn->query($userQuery);
-while ($row = $userResult->fetch_assoc()) {
-    $employees[$row['user_id']] = ['full_name'=>$row['full_name'],'role'=>$row['role']];
+if ($userResult) {
+    while ($userRow = $userResult->fetch_assoc()) {
+        $employees[$userRow['user_id']] = [
+            'full_name' => $userRow['full_name'],
+            'role' => $userRow['role']
+        ];
+    }
 }
 
-// Fetch entries
+// Fetch entries including time-off
 $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
 
 $query = "
-    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status, a.is_timeoff
-    FROM entries a
-    LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
-    WHERE a.week_start BETWEEN ? AND ?
+    SELECT 
+        a.entry_id,
+        a.user_id,
+        a.engagement_id,
+        e.client_name,
+        a.week_start,
+        a.assigned_hours,
+        e.status AS engagement_status,
+        a.is_timeoff
+    FROM 
+        entries a
+    LEFT JOIN 
+        engagements e ON a.engagement_id = e.engagement_id
+    WHERE 
+        a.week_start BETWEEN ? AND ?
 ";
+
 $stmt = $conn->prepare($query);
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
 $stmt->bind_param('ss', $startDate, $endDate);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -64,7 +94,7 @@ while ($row = $result->fetch_assoc()) {
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
         'engagement_status' => $row['engagement_status'],
-        'is_timeoff' => (int)$row['is_timeoff']
+        'is_timeoff' => (int)$row['is_timeoff'],
     ];
 }
 $stmt->close();
@@ -75,6 +105,7 @@ $stmt->close();
     <title>Master Schedule</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         /* Scrollable spreadsheet table */
         #scheduleContainer {
@@ -96,6 +127,7 @@ $stmt->close();
         .badge-not-confirmed { background-color: #f8d7da; color: #721c24; }
         .employee-name { display: flex; align-items: center; gap: 0.5rem; }
         .employee-initials { width: 40px; height: 40px; border-radius: 50%; background: #343a40; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 500; }
+        .highlight-today { background-color: #d1e7dd !important; }
     </style>
 </head>
 <body class="d-flex">
@@ -111,11 +143,12 @@ $stmt->close();
             <thead>
                 <tr>
                     <th>Employee</th>
-                    <?php foreach ($mondays as $monday):
+                    <?php foreach ($mondays as $idx => $monday):
                         $weekKey = date('Y-m-d', $monday);
-                        $isCurrent = ($today >= $monday && $today < strtotime('+7 days', $monday));
+                        $weekEnd = strtotime('+7 days', $monday);
+                        $isCurrent = ($today >= $monday && $today < $weekEnd);
                     ?>
-                        <th class="<?= $isCurrent ? 'table-primary' : '' ?>">
+                        <th class="<?= $isCurrent ? 'highlight-today' : '' ?>">
                             <?= date('M j', $monday) ?><br><small class="text-muted">Week of <?= date('n/j', $monday) ?></small>
                         </th>
                     <?php endforeach; ?>
@@ -150,9 +183,15 @@ $stmt->close();
                             } else {
                                 $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                                 switch($engagementStatus) {
-                                    case 'pending': $statusClass = 'badge-pending'; break;
-                                    case 'not_confirmed': $statusClass = 'badge-not-confirmed'; break;
-                                    default: $statusClass = 'badge-confirmed'; break;
+                                    case 'pending':
+                                        $statusClass = 'badge-pending';
+                                        break;
+                                    case 'not_confirmed':
+                                        $statusClass = 'badge-not-confirmed';
+                                        break;
+                                    default:
+                                        $statusClass = 'badge-confirmed';
+                                        break;
                                 }
                                 $cellContent .= "<span class='badge-status $statusClass'>{$entry['client_name']} ({$entry['assigned_hours']})</span>";
                             }
