@@ -47,124 +47,185 @@
 
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
-            // Don't do anything if the cell already has a badge
-            if (td.querySelector('.draggable-badge')) return;
-
-            // Don't reset if the click originated from an input inside the cell
+            // Don't reset if clicking an input inside the cell
             if (e.target.tagName === 'INPUT') return;
 
-            td.innerHTML = '';
-
-            const clientInput = document.createElement('input');
-            clientInput.type = 'text';
-            clientInput.placeholder = 'Client Name';
-            clientInput.className = 'form-control form-control-sm mb-1';
-            clientInput.style.width = '100%';
-
-            const hoursInput = document.createElement('input');
-            hoursInput.type = 'number';
-            hoursInput.min = '0';
-            hoursInput.placeholder = 'Hours';
-            hoursInput.className = 'form-control form-control-sm';
-            hoursInput.style.width = '100%';
-
-            td.appendChild(clientInput);
-            td.appendChild(hoursInput);
-            clientInput.focus();
-
-            // Stop clicks from inputs from bubbling up
-            [clientInput, hoursInput].forEach(input => {
-                input.addEventListener('click', e => e.stopPropagation());
-            });
-
-            function updateDropdownPosition() {
-                const rect = clientInput.getBoundingClientRect();
-                dropdown.style.top = rect.bottom + window.scrollY + 'px';
-                dropdown.style.left = rect.left + window.scrollX + 'px';
-                dropdown.style.width = rect.width + 'px';
+            // If cell already has badges, show overlay instead
+            if (td.querySelector('.draggable-badge')) {
+                showOverlay(td);
+                return;
             }
 
-            clientInput.addEventListener('input', () => {
-                const val = clientInput.value.trim();
-                if (val.length >= 3) {
-                    const matches = searchClients(val);
-                    dropdown.innerHTML = '';
-                    matches.forEach(client => {
-                        const div = document.createElement('div');
-                        div.textContent = client.client_name;
-                        div.style.padding = '5px 10px';
-                        div.style.cursor = 'pointer';
-                        div.addEventListener('click', (e) => {
-                            e.stopPropagation(); // Prevent td click
-                            clientInput.value = client.client_name;
-                            dropdown.style.display = 'none';
-                        });
-                        dropdown.appendChild(div);
-                    });
-                    if (matches.length > 0) {
-                        updateDropdownPosition();
-                        dropdown.style.display = 'block';
-                    } else {
-                        dropdown.style.display = 'none';
-                    }
-                } else {
-                    dropdown.style.display = 'none';
-                }
-            });
-
-            [clientInput, hoursInput].forEach(input => {
-                input.addEventListener('keydown', async (e) => {
-                    if (e.key === 'Enter') {
-                        const clientName = clientInput.value.trim();
-                        const hours = parseFloat(hoursInput.value);
-                        if (!clientName || !hours || hours <= 0) {
-                            alert('Please enter valid client and hours.');
-                            return;
-                        }
-
-                        try {
-                            const resp = await fetch('add_entry_new.php', {
-                                method: 'POST',
-                                credentials: 'same-origin',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    user_id: td.dataset.userId,
-                                    week_start: td.dataset.weekStart,
-                                    client_name: clientName,
-                                    assigned_hours: hours
-                                })
-                            });
-
-                            const data = await resp.json();
-                            if (resp.ok && data.success) {
-                                const span = document.createElement('span');
-
-                                const statusClass = getClientStatus(clientName);
-
-                                span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
-                                span.dataset.entryId = data.entry_id;
-                                span.dataset.userId = td.dataset.userId;
-                                span.dataset.weekStart = td.dataset.weekStart;
-                                span.textContent = `${clientName} (${hours})`;
-                                span.setAttribute('draggable', 'true');
-
-                                td.innerHTML = '';
-                                td.appendChild(span);
-
-                                makeBadgeDraggable(span);
-                            } else {
-                                alert('Failed to add entry: ' + (data.error || 'Server error'));
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            alert('Network error while adding entry.');
-                        }
-                    }
-                });
-            });
+            showInlineInputs(td);
         });
     });
+
+    // Function to show inputs directly in empty cell
+    function showInlineInputs(td) {
+        td.innerHTML = '';
+
+        const clientInput = document.createElement('input');
+        clientInput.type = 'text';
+        clientInput.placeholder = 'Client Name';
+        clientInput.className = 'form-control form-control-sm mb-1';
+        clientInput.style.width = '100%';
+
+        const hoursInput = document.createElement('input');
+        hoursInput.type = 'number';
+        hoursInput.min = '0';
+        hoursInput.placeholder = 'Hours';
+        hoursInput.className = 'form-control form-control-sm';
+        hoursInput.style.width = '100%';
+
+        td.appendChild(clientInput);
+        td.appendChild(hoursInput);
+        clientInput.focus();
+
+        [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
+
+        attachInputEvents(td, clientInput, hoursInput);
+        setupAutocomplete(clientInput);
+    }
+
+    // Function to show overlay for cell with existing badges
+    function showOverlay(td) {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = td.getBoundingClientRect().top + window.scrollY + 'px';
+        overlay.style.left = td.getBoundingClientRect().left + window.scrollX + 'px';
+        overlay.style.width = td.offsetWidth + 'px';
+        overlay.style.height = td.offsetHeight + 'px';
+        overlay.style.background = 'rgba(255,255,255,0.95)';
+        overlay.style.backdropFilter = 'blur(2px)';
+        overlay.style.border = '1px solid #ccc';
+        overlay.style.borderRadius = '4px';
+        overlay.style.padding = '5px';
+        overlay.style.zIndex = '10000';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.justifyContent = 'center';
+
+        const clientInput = document.createElement('input');
+        clientInput.type = 'text';
+        clientInput.placeholder = 'Client Name';
+        clientInput.className = 'form-control form-control-sm mb-1';
+        clientInput.style.width = '100%';
+
+        const hoursInput = document.createElement('input');
+        hoursInput.type = 'number';
+        hoursInput.min = '0';
+        hoursInput.placeholder = 'Hours';
+        hoursInput.className = 'form-control form-control-sm';
+        hoursInput.style.width = '100%';
+
+        overlay.appendChild(clientInput);
+        overlay.appendChild(hoursInput);
+        document.body.appendChild(overlay);
+        clientInput.focus();
+
+        [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
+
+        // Remove overlay when clicking outside
+        const removeOverlay = e => {
+            if (!overlay.contains(e.target)) {
+                overlay.remove();
+                document.removeEventListener('click', removeOverlay);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', removeOverlay), 0);
+
+        attachInputEvents(td, clientInput, hoursInput, overlay);
+        setupAutocomplete(clientInput, overlay);
+    }
+
+    // Setup autocomplete
+    function setupAutocomplete(clientInput, container = dropdown) {
+        clientInput.addEventListener('input', () => {
+            const val = clientInput.value.trim();
+            if (val.length >= 3) {
+                const matches = searchClients(val);
+                container.innerHTML = '';
+                matches.forEach(client => {
+                    const div = document.createElement('div');
+                    div.textContent = client.client_name;
+                    div.style.padding = '5px 10px';
+                    div.style.cursor = 'pointer';
+                    div.addEventListener('click', e => {
+                        e.stopPropagation();
+                        clientInput.value = client.client_name;
+                        container.style.display = 'none';
+                    });
+                    container.appendChild(div);
+                });
+                if (matches.length > 0) {
+                    const rect = clientInput.getBoundingClientRect();
+                    container.style.top = rect.bottom + window.scrollY + 'px';
+                    container.style.left = rect.left + window.scrollX + 'px';
+                    container.style.width = rect.width + 'px';
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
+            } else {
+                container.style.display = 'none';
+            }
+        });
+    }
+
+    // Attach Enter key events to inputs
+    function attachInputEvents(td, clientInput, hoursInput, overlay = null) {
+        [clientInput, hoursInput].forEach(input => {
+            input.addEventListener('keydown', async e => {
+                if (e.key === 'Enter') {
+                    const clientName = clientInput.value.trim();
+                    const hours = parseFloat(hoursInput.value);
+                    if (!clientName || !hours || hours <= 0) {
+                        alert('Please enter valid client and hours.');
+                        return;
+                    }
+
+                    try {
+                        const resp = await fetch('add_entry_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: td.dataset.userId,
+                                week_start: td.dataset.weekStart,
+                                client_name: clientName,
+                                assigned_hours: hours
+                            })
+                        });
+
+                        const data = await resp.json();
+                        if (resp.ok && data.success) {
+                            const span = document.createElement('span');
+                            const statusClass = getClientStatus(clientName);
+
+                            span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
+                            span.dataset.entryId = data.entry_id;
+                            span.dataset.userId = td.dataset.userId;
+                            span.dataset.weekStart = td.dataset.weekStart;
+                            span.textContent = `${clientName} (${hours})`;
+                            span.setAttribute('draggable', 'true');
+
+                            td.appendChild(span);
+                            makeBadgeDraggable(span);
+
+                            if (overlay) overlay.remove();
+                        } else {
+                            alert('Failed to add entry: ' + (data.error || 'Server error'));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Network error while adding entry.');
+                    }
+                }
+            });
+        });
+    }
+
 })();
