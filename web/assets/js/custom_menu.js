@@ -1,7 +1,6 @@
 (function() {
     if (!IS_ADMIN) return;
 
-    // Main context menu element
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -10,13 +9,14 @@
         z-index:9999;
         background:#fff;
         border:1px solid #ccc;
-        margin-top: 15px;
+        margin-top:15px;
         border-radius:4px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
     document.body.appendChild(contextMenu);
 
     let selectedCell = null;
+    let selectedBadge = null; // badge div specifically
     let menuType = null; // 'badge', 'edit', 'add'
 
     function renderCell(td, timeOffValue = null, entryId = null) {
@@ -39,47 +39,46 @@
         try {
             const resp = await fetch(url, options);
             const text = await resp.text();
-            try {
-                return { ok: resp.ok, data: JSON.parse(text) };
-            } catch {
-                console.error('Failed to parse JSON:', text);
-                return { ok: resp.ok, data: null, error: 'Invalid JSON response' };
-            }
+            return { ok: resp.ok, data: JSON.parse(text) };
         } catch (err) {
-            console.error('Network error:', err);
+            console.error('Fetch or parse error:', err);
             return { ok: false, data: null, error: err.message };
         }
     }
 
     // Show context menu
-    document.addEventListener('contextmenu', e => {
+    document.addEventListener('contextmenu', async e => {
         contextMenu.style.display = 'none';
         selectedCell = null;
+        selectedBadge = null;
         menuType = null;
 
         const target = e.target;
 
-        // Right-click on a badge div
+        // 1️⃣ Right-click on badge
         if (target.classList.contains('timeoff-corner')) {
             e.preventDefault();
+            selectedBadge = target;
             selectedCell = target.parentElement;
             menuType = 'badge';
             contextMenu.innerHTML = `
-                <ul style="list-style:none; margin:0; padding:5px 0; cursor:pointer;">
-                    <li id="deleteEntry" style="padding:5px 15px;">Delete Entry</li>
+                <ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
+                    <li id="deleteBadge" style="padding:5px 15px;">Delete Entry</li>
                 </ul>`;
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
         }
-        // Right-click on a cell
+        // 2️⃣ / 3️⃣ Right-click on cell
         else if (target.tagName === 'TD' && target.classList.contains('addable')) {
             e.preventDefault();
             selectedCell = target;
+
+            // check if timeoff exists
             const timeOff = target.querySelector('.timeoff-corner');
             menuType = timeOff ? 'edit' : 'add';
             contextMenu.innerHTML = `
-                <ul style="list-style:none; margin:0; padding:5px 0; cursor:pointer;">
+                <ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
                     <li id="editAddTimeOff" style="padding:5px 15px;">
                         ${timeOff ? 'Edit Time Off' : 'Add Time Off'}
                     </li>
@@ -90,29 +89,25 @@
         }
     });
 
-    // Hide menu when clicking outside
+    // Close context menu
     document.addEventListener('click', e => {
-        if (!contextMenu.contains(e.target) && selectedCell) {
-            const timeOff = selectedCell.querySelector('.timeoff-corner');
-            renderCell(selectedCell, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
+        if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
             selectedCell = null;
+            selectedBadge = null;
             menuType = null;
         }
     });
 
-    // Handle menu clicks
     contextMenu.addEventListener('click', async e => {
-        if (!selectedCell || !menuType) return;
+        if (!menuType) return;
 
-        const td = selectedCell;
-        const userId = td.dataset.userId;
-        const weekStart = td.dataset.weekStart;
-        let timeOff = td.querySelector('.timeoff-corner');
-        const entryId = timeOff ? timeOff.dataset.entryId : null;
-
-        if (menuType === 'badge' && e.target.id === 'deleteEntry') {
+        // 1️⃣ Delete badge
+        if (menuType === 'badge' && e.target.id === 'deleteBadge') {
+            if (!selectedBadge) return;
+            const entryId = selectedBadge.dataset.entryId;
             if (!entryId) return;
+
             if (!confirm('Are you sure you want to delete this entry?')) return;
 
             const del = await safeFetchJSON('delete_timeoff.php', {
@@ -122,23 +117,33 @@
                 body: JSON.stringify({ entry_id: entryId })
             });
 
-            if (del.ok && del.data && del.data.success) {
-                renderCell(td, null, null);
+            if (del.ok && del.data?.success) {
+                renderCell(selectedBadge.parentElement, null, null);
             } else {
-                alert('Failed to delete entry: ' + (del.data?.error || del.error || 'Server error'));
+                alert('Failed to delete entry.');
             }
         }
 
-        else if (menuType === 'edit' || menuType === 'add') {
-            const currentVal = timeOff ? timeOff.textContent : '';
+        // 2️⃣ Edit or 3️⃣ Add time off
+        else if ((menuType === 'edit' || menuType === 'add') && e.target.id === 'editAddTimeOff') {
+            const td = selectedCell;
+            const userId = td.dataset.userId;
+            const weekStart = td.dataset.weekStart;
+
+            // fetch existing entry ID if editing
+            let timeOffDiv = td.querySelector('.timeoff-corner');
+            let entryId = timeOffDiv ? timeOffDiv.dataset.entryId : null;
+
+            // input element
             td.innerHTML = '';
             const input = document.createElement('input');
             input.type = 'text';
-            input.value = currentVal;
+            input.value = timeOffDiv ? timeOffDiv.textContent : '';
             input.className = 'form-control form-control-sm';
             input.style.width = '100%';
             td.appendChild(input);
             input.focus();
+            contextMenu.style.display = 'none';
 
             input.addEventListener('keydown', async ev => {
                 if (ev.key !== 'Enter') return;
@@ -146,31 +151,30 @@
                 if (!val) return;
 
                 try {
-                    let finalEntryId = entryId;
-
-                    if (finalEntryId) {
-                        // Update existing
+                    // If editing, update
+                    if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json'},
-                            body: JSON.stringify({ entry_id: finalEntryId, assigned_hours: val })
+                            body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
                         });
-                        if (update.ok && update.data && update.data.success) {
-                            renderCell(td, val, finalEntryId);
+                        if (update.ok && update.data?.success) {
+                            renderCell(td, val, entryId);
                         } else {
                             alert('Failed to update time off.');
-                            renderCell(td, currentVal, finalEntryId);
+                            renderCell(td, input.value, entryId);
                         }
-                    } else {
-                        // Add new
+                    } 
+                    // If adding, create new
+                    else {
                         const add = await safeFetchJSON('add_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json'},
                             body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
                         });
-                        if (add.ok && add.data && add.data.success && add.data.entry_id) {
+                        if (add.ok && add.data?.success && add.data.entry_id) {
                             renderCell(td, val, add.data.entry_id);
                         } else {
                             alert('Failed to add time off.');
@@ -180,13 +184,13 @@
                 } catch (err) {
                     console.error('Network error:', err);
                     alert('Network error while saving time off.');
-                    renderCell(td, timeOff ? timeOff.textContent : null, entryId);
+                    renderCell(td, timeOffDiv ? timeOffDiv.textContent : null, entryId);
                 }
             });
         }
 
-        contextMenu.style.display = 'none';
         selectedCell = null;
+        selectedBadge = null;
         menuType = null;
     });
 })();
