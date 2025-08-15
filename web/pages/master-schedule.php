@@ -185,10 +185,10 @@ td:first-child {
     min-width: 250px;
     position: sticky !important;
     left: 0;
-    background-color: #fff;        /* cover other cells */
-    z-index: 100;                  /* higher than regular cells */
-    border-right: 2px solid gray;  /* border that sticks */
-    box-sizing: border-box;
+    background-color: #fff;       
+    z-index: 100;                  
+    outline: 3px solid rgb(209,226,159);
+    outline-offset: -3px;
 }
 
 /* Optional: make sticky headers above the first column */
