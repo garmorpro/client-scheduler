@@ -20,8 +20,10 @@
             td.appendChild(div);
         }
 
-        // Do NOT remove the plus icon; always keep it
-        if (!td.querySelector('.bi-plus')) {
+        // Only add plus icon if there are NO other badges except this one
+        const otherBadges = Array.from(td.querySelectorAll('.badge')).filter(b => b !== existingBadge);
+        const plusIconExists = td.querySelector('.bi-plus');
+        if (otherBadges.length === 0 && !plusIconExists) {
             const plusIcon = document.createElement('i');
             plusIcon.className = 'bi bi-plus';
             td.appendChild(plusIcon);
@@ -124,13 +126,16 @@
                     if (del.ok && del.data?.success) {
                         const badge = td.querySelector('.timeoff-corner');
                         if (badge) badge.remove();
-                        td.classList.remove('timeoff-cell');
+
+                        // Remove personal time off class if no other badges exist
+                        const otherBadges = td.querySelectorAll('.badge');
+                        if (otherBadges.length === 0) td.classList.remove('timeoff-cell');
 
                         // Check for global time off (keep gray if present)
                         await checkGlobalTimeOff(td);
 
-                        // Ensure plus icon exists
-                        if (!td.querySelector('.bi-plus')) {
+                        // Add plus icon if NO other badges
+                        if (otherBadges.length === 0 && !td.querySelector('.bi-plus')) {
                             const plusIcon = document.createElement('i');
                             plusIcon.className = 'bi bi-plus';
                             td.appendChild(plusIcon);
