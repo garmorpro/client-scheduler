@@ -3,8 +3,8 @@
 
     let activeInput = null;
 
+    // Render or update the time-off badge
     function renderTimeOff(td, timeOffValue, entryId, allowPlus = false) {
-        console.log('Rendering time off:', { td, timeOffValue, entryId, allowPlus });
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -20,7 +20,9 @@
             td.appendChild(div);
         }
 
-        if (allowPlus && !td.querySelector('.bi-plus')) {
+        // Only add plus icon if explicitly allowed AND there are no other badges at all
+        const hasOtherBadges = td.querySelector('.entry-badge');
+        if (allowPlus && !hasOtherBadges && !td.querySelector('.bi-plus')) {
             const plus = document.createElement('i');
             plus.className = 'bi bi-plus text-muted';
             plus.style.cursor = 'pointer';
@@ -88,6 +90,7 @@
 
             try {
                 if (entryId) {
+                    // Update existing time-off
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -100,18 +103,23 @@
                         alert('Failed to update time off.');
                     }
                 } else {
-                    const nonTimeOffBadges = Array.from(td.children).filter(
-                        el => el.classList.contains('entry-badge')
-                    );
-
+                    // Add new time-off
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ user_id: td.dataset.userId, week_start: td.dataset.weekStart, assigned_hours: val, is_timeoff: 1 })
+                        body: JSON.stringify({ 
+                            user_id: td.dataset.userId, 
+                            week_start: td.dataset.weekStart, 
+                            assigned_hours: val, 
+                            is_timeoff: 1 
+                        })
                     });
+
                     if (add.ok && add.data?.success && add.data.entry_id) {
-                        renderTimeOff(td, val, add.data.entry_id, nonTimeOffBadges.length === 0);
+                        // Only allow plus icon if the cell is completely empty (no badges or time-off)
+                        const hasOtherBadges = td.querySelector('.entry-badge');
+                        renderTimeOff(td, val, add.data.entry_id, !hasOtherBadges);
                     } else {
                         alert('Failed to add time off.');
                     }
