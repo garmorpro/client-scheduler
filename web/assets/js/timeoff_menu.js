@@ -4,8 +4,9 @@
     let activeInput = null;
 
     // Render or update the time-off badge
-    function renderTimeOff(td, timeOffValue, entryId) {
-        console.log('Rendering time off:', { td, timeOffValue, entryId });
+    // Only adds plus if explicitly allowed
+    function renderTimeOff(td, timeOffValue, entryId, allowPlus = false) {
+        console.log('Rendering time off:', { td, timeOffValue, entryId, allowPlus });
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -23,12 +24,8 @@
             td.appendChild(div);
         }
 
-        // Only add plus icon if there are no other badges (ignore time-off badge)
-        const nonTimeOffBadges = Array.from(td.children).filter(
-            el => !el.classList.contains('timeoff-corner') && el.classList.contains('entry-badge')
-        );
-
-        if (!td.querySelector('.bi-plus') && nonTimeOffBadges.length === 0) {
+        // Add plus icon ONLY if allowPlus is true
+        if (allowPlus && !td.querySelector('.bi-plus')) {
             console.log('Adding plus icon');
             const plus = document.createElement('i');
             plus.className = 'bi bi-plus text-muted';
@@ -74,16 +71,11 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        // Capture all non-time-off badges in the cell BEFORE editing
-        const nonTimeOffBadges = Array.from(td.children).filter(
-            el => el.classList.contains('entry-badge')
-        );
-
         const entryId = await getTimeOffEntry(td);
         const existingBadge = td.querySelector('.timeoff-corner');
         const currentVal = existingBadge ? existingBadge.textContent : '';
 
-        console.log('Handling time off input for cell:', td, { entryId, currentVal, nonTimeOffBadges });
+        console.log('Handling time off input for cell:', td, { entryId, currentVal });
 
         const input = document.createElement('input');
         input.type = 'text';
@@ -103,6 +95,7 @@
 
             try {
                 if (entryId) {
+                    // Updating existing time-off — never add plus
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -111,12 +104,17 @@
                     });
                     if (update.ok && update.data?.success) {
                         console.log('Time off updated successfully');
-                        renderTimeOff(td, val, entryId); // plus icon will only appear if no other badges
+                        renderTimeOff(td, val, entryId, false); // <- false ensures no plus icon
                     } else {
                         console.warn('Failed to update time off');
                         alert('Failed to update time off.');
                     }
                 } else {
+                    // Adding new time-off — only add plus if cell is completely empty
+                    const nonTimeOffBadges = Array.from(td.children).filter(
+                        el => el.classList.contains('entry-badge')
+                    );
+
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -125,7 +123,7 @@
                     });
                     if (add.ok && add.data?.success && add.data.entry_id) {
                         console.log('Time off added successfully');
-                        renderTimeOff(td, val, add.data.entry_id);
+                        renderTimeOff(td, val, add.data.entry_id, nonTimeOffBadges.length === 0);
                     } else {
                         console.warn('Failed to add time off');
                         alert('Failed to add time off.');
