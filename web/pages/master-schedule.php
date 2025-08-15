@@ -228,6 +228,10 @@ table td:first-child {
     z-index: 2 !important;
     background: white;
 }
+table td:first-child {
+    position: sticky !important;
+    border: 1px solid blue;
+}
 
 /* Sticky header row */
 table thead th {
