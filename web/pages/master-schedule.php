@@ -192,32 +192,32 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     background: rgb(246, 249, 236) !important;
 }
 
-.table-responsive {
+/* .table-responsive {
     overflow-x: auto !important;
     white-space: nowrap !important;
-}
+} */
 
-th:first-child,
-td:first-child {
+td:first-child,
+th:first-child {
     position: sticky !important;
     left: 0 !important;
-    background: #fff !important; /* matches table background */
+    /* background: #fff !important; */
     z-index: 1 !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important;
+    /* box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important; */
 }
 
-.table thead th:first-child {
-    z-index: 3 !important; /* so header stays on top of body cells */
+/* .table thead th:first-child {
+    z-index: 3 !important; 
 }
 
 .table th,
 td {
-    min-width: 120px !important; /* adjust as needed */
+    min-width: 120px !important; 
 }
 
 .table-responsive {
     scroll-behavior: smooth !important;
-}
+} */
 
 /* .table-responsive {
     overflow-x: auto;
