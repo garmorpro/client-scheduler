@@ -21,7 +21,7 @@ $entryQuery = "
     JOIN users u ON e.user_id = u.user_id
     ORDER BY u.user_id, e.week_start
 ";
-$result = $db->query($entryQuery);
+$result = $conn->query($entryQuery);
 if ($result) {
     while ($entry = $result->fetch_assoc()) {
         $schedule[$entry['user_id']][$entry['week_start']][] = $entry;
@@ -32,7 +32,7 @@ if ($result) {
 // Fetch all users
 // ------------------------------
 $users = [];
-$userResult = $db->query("SELECT user_id, first_name, last_name FROM users ORDER BY user_id");
+$userResult = $conn->query("SELECT user_id, first_name, last_name FROM users ORDER BY user_id");
 if ($userResult) {
     while ($user = $userResult->fetch_assoc()) {
         $users[] = $user;
