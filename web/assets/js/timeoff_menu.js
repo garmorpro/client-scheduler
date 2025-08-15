@@ -4,7 +4,7 @@
     let activeInput = null;
 
     // Render or update the time-off badge
-    function renderTimeOff(td, timeOffValue, entryId) {
+    function renderTimeOff(td, timeOffValue, entryId, isGlobal = false) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -23,6 +23,9 @@
         // Remove any existing plus icon in case it exists
         const plusIcon = td.querySelector('.bi-plus');
         if (plusIcon) plusIcon.remove();
+
+        // If global, add a special attribute for reference
+        if (isGlobal) td.dataset.globalTimeoff = '1';
     }
 
     async function safeFetchJSON(url, options) {
@@ -55,6 +58,28 @@
         }
     }
 
+    async function checkGlobalTimeOff(td) {
+        const week_start = td.dataset.weekStart;
+        const response = await safeFetchJSON('check_global_timeoff.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ week_start })
+        });
+
+        if (response.ok && response.data?.success && response.data.assigned_hours) {
+            renderTimeOff(td, response.data.assigned_hours, 'global', true);
+            return true;
+        } else {
+            // Remove gray if no global time off
+            td.classList.remove('timeoff-cell');
+            const badge = td.querySelector('.timeoff-corner');
+            if (badge && badge.dataset.entryId === 'global') badge.remove();
+            td.removeAttribute('data-global-timeoff');
+            return false;
+        }
+    }
+
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
@@ -81,7 +106,6 @@
             if (e.key !== 'Enter') return;
 
             const val = input.value.trim();
-
             if (!val) return;
 
             try {
@@ -95,10 +119,12 @@
                     });
 
                     if (del.ok && del.data?.success) {
-                        // Remove badge and class
                         const badge = td.querySelector('.timeoff-corner');
                         if (badge) badge.remove();
                         td.classList.remove('timeoff-cell');
+
+                        // Check for global time off
+                        await checkGlobalTimeOff(td);
                     } else {
                         alert('Failed to delete time off.');
                     }
