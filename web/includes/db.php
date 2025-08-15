@@ -10,5 +10,5 @@ $pass = getenv('DB_PASSWORD');
 // Turn off mysqli warnings (optional)
 mysqli_report(MYSQLI_REPORT_OFF);
 
-$db = new mysqli($host, $dbname, $user, $pass);
+$db = new mysqli($host, $user, $pass, $dbname);
 if ($db->connect_error) die("Connection failed: " . $db->connect_error);
