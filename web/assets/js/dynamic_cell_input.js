@@ -62,7 +62,6 @@
         if (activeTd) {
             // Only restore plus icon if no badges exist
             if (!activeTd.querySelector('.draggable-badge')) {
-                // Keep existing elements like timeoff-corner
                 const timeOff = activeTd.querySelector('.timeoff-corner');
                 activeTd.innerHTML = '';
                 if (timeOff) activeTd.appendChild(timeOff);
@@ -246,11 +245,16 @@
                             span.textContent = `${clientName} (${hours})`;
                             makeBadgeDraggable(span);
 
-                            // Preserve timeoff-corner or other elements
-                            const timeOff = td.querySelector('.timeoff-corner');
-                            td.innerHTML = '';
-                            if (timeOff) td.appendChild(timeOff);
+                            // Remove plus icon if present
+                            const plusIcon = td.querySelector('.bi-plus');
+                            if (plusIcon) plusIcon.remove();
+
+                            // Append the new badge without removing existing ones
                             td.appendChild(span);
+
+                            // Keep timeoff-corner on top if exists
+                            const timeOff = td.querySelector('.timeoff-corner');
+                            if (timeOff) td.appendChild(timeOff);
 
                             closeActiveInputs();
                         } else {
