@@ -203,7 +203,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
       /* First column (header + cells) pinned on the left */
       .sticky-col {
-        position: sticky;
+        position: fixed;
         left: 0;
         background: #fff;           /* match table background */
         z-index: 5;                 /* above scrolling cells */
