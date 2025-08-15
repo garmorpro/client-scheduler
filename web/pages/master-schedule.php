@@ -229,7 +229,7 @@ table td:first-child {
     background: white;
 }
 table td:first-child {
-    position: sticky !important;
+    /* position: sticky !important; */
     border: 1px solid blue;
 }
 
