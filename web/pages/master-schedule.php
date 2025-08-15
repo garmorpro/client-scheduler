@@ -222,7 +222,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     table th:first-child,
 table td:first-child {
     position: sticky !important;
-    left: 0 !important;      /* stick horizontally */
+    right: 0 !important;      /* stick horizontally */
     z-index: 2 !important;   /* stay above other cells */
     background: white;       /* so it doesn’t show table rows behind */
 }
