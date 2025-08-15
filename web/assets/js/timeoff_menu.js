@@ -3,14 +3,16 @@
 
     let activeInput = null;
 
-    // Render cell with gray background and top-right assigned_hours
-    function renderCell(td, timeOffValue = null, entryId = null) {
-        td.innerHTML = '';
-        td.classList.remove('timeoff-cell');
+    // Render or update the time-off badge
+    function renderTimeOff(td, timeOffValue, entryId) {
         td.style.position = 'relative';
+        td.classList.add('timeoff-cell');
 
-        if (timeOffValue) {
-            td.classList.add('timeoff-cell'); // gray highlight
+        let existingBadge = td.querySelector('.timeoff-corner');
+        if (existingBadge) {
+            existingBadge.textContent = timeOffValue;
+            existingBadge.dataset.entryId = entryId;
+        } else {
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
             div.dataset.entryId = entryId;
@@ -18,10 +20,13 @@
             td.appendChild(div);
         }
 
-        const plus = document.createElement('i');
-        plus.className = 'bi bi-plus text-muted';
-        plus.style.cursor = 'pointer';
-        td.appendChild(plus);
+        // Ensure the plus icon exists
+        if (!td.querySelector('.bi-plus')) {
+            const plus = document.createElement('i');
+            plus.className = 'bi bi-plus text-muted';
+            plus.style.cursor = 'pointer';
+            td.appendChild(plus);
+        }
     }
 
     async function safeFetchJSON(url, options) {
@@ -35,17 +40,19 @@
         }
     }
 
-    // Add or edit time off inline
-    async function handleTimeOffInput(td, entryId = null) {
+    // Inline input for adding or editing time-off
+    async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const currentVal = entryId ? td.querySelector('.timeoff-corner').textContent : '';
+        const existingBadge = td.querySelector('.timeoff-corner');
+        const entryId = existingBadge ? existingBadge.dataset.entryId : null;
+        const currentVal = existingBadge ? existingBadge.textContent : '';
+
         const input = document.createElement('input');
         input.type = 'text';
         input.value = currentVal;
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
-        td.innerHTML = '';
         td.appendChild(input);
         input.focus();
         activeInput = input;
@@ -64,7 +71,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
                     });
-                    if (update.ok && update.data?.success) renderCell(td, val, entryId);
+                    if (update.ok && update.data?.success) renderTimeOff(td, val, entryId);
                     else alert('Failed to update time off.');
                 } else {
                     // Add new time off
@@ -75,7 +82,7 @@
                         body: JSON.stringify({ user_id: td.dataset.userId, week_start: td.dataset.weekStart, assigned_hours: val, is_timeoff: 1 })
                     });
                     if (add.ok && add.data?.success && add.data.entry_id) {
-                        renderCell(td, val, add.data.entry_id);
+                        renderTimeOff(td, val, add.data.entry_id);
                     } else {
                         alert('Failed to add time off.');
                     }
@@ -84,19 +91,18 @@
                 console.error(err);
                 alert('Network error while saving time off.');
             } finally {
+                input.remove();
                 activeInput = null;
             }
         });
     }
 
-    // Right-click to add or edit time off
+    // Right-click on an addable cell triggers input
     document.addEventListener('contextmenu', e => {
-        const target = e.target;
-        if (target.tagName === 'TD' && target.classList.contains('addable')) {
+        const td = e.target;
+        if (td.tagName === 'TD' && td.classList.contains('addable')) {
             e.preventDefault();
-            const timeOffDiv = target.querySelector('.timeoff-corner');
-            const entryId = timeOffDiv ? timeOffDiv.dataset.entryId : null;
-            handleTimeOffInput(target, entryId);
+            handleTimeOffInput(td);
         }
     });
 })();
