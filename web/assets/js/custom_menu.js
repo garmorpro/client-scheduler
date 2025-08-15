@@ -24,7 +24,6 @@
 
     function renderCell(td, timeOffValue = null, entryId = null) {
         td.innerHTML = '';
-
         if (timeOffValue) {
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
@@ -34,35 +33,10 @@
             div.textContent = timeOffValue;
             td.appendChild(div);
         }
-
         const plus = document.createElement('i');
         plus.className = 'bi bi-plus text-muted';
         td.appendChild(plus);
     }
-
-    document.addEventListener('contextmenu', e => {
-        contextMenu.style.display = 'none';
-        selectedCell = null;
-
-        if (e.target.tagName === 'TD' && e.target.classList.contains('addable')) {
-            e.preventDefault();
-            selectedCell = e.target;
-            const timeOff = selectedCell.querySelector('.timeoff-corner');
-            contextMenu.querySelector('li').textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
-            contextMenu.style.top = `${e.pageY}px`;
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.display = 'block';
-        }
-    });
-
-    document.addEventListener('click', e => {
-        if (!contextMenu.contains(e.target) && selectedCell) {
-            const timeOff = selectedCell.querySelector('.timeoff-corner');
-            renderCell(selectedCell, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
-            contextMenu.style.display = 'none';
-            selectedCell = null;
-        }
-    });
 
     async function safeFetchJSON(url, options) {
         try {
@@ -80,18 +54,70 @@
         }
     }
 
-    contextMenu.addEventListener('click', async e => {
-        if (e.target.id !== 'deleteBadge' || !selectedCell) return;
+    // Show context menu
+    document.addEventListener('contextmenu', e => {
+        contextMenu.style.display = 'none';
+        selectedCell = null;
 
+        if (e.target.tagName === 'TD' && e.target.classList.contains('addable')) {
+            e.preventDefault();
+            selectedCell = e.target;
+            const timeOff = selectedCell.querySelector('.timeoff-corner');
+            contextMenu.querySelector('li').textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
+            contextMenu.style.top = `${e.pageY}px`;
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.display = 'block';
+        }
+    });
+
+    // Close context menu if clicking outside
+    document.addEventListener('click', e => {
+        if (!contextMenu.contains(e.target) && selectedCell) {
+            const timeOff = selectedCell.querySelector('.timeoff-corner');
+            renderCell(selectedCell, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
+            contextMenu.style.display = 'none';
+            selectedCell = null;
+        }
+    });
+
+    // Handle add/update/delete
+    contextMenu.addEventListener('click', async e => {
+        if (!selectedCell) return;
         const td = selectedCell;
         const userId = td.dataset.userId;
         const weekStart = td.dataset.weekStart;
         let timeOff = td.querySelector('.timeoff-corner');
+        const entryId = timeOff ? timeOff.dataset.entryId : null;
+
+        if (e.target.id === 'deleteBadge') {
+            if (!entryId) {
+                alert('No entry to delete.');
+                contextMenu.style.display = 'none';
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this time off entry?')) return;
+
+            const del = await safeFetchJSON('delete_timeoff.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ entry_id: entryId })
+            });
+
+            if (del.ok && del.data && del.data.success) {
+                renderCell(td, null, null);
+            } else {
+                alert('Failed to delete entry: ' + (del.data?.error || del.error || 'Server error'));
+            }
+
+            contextMenu.style.display = 'none';
+            return;
+        }
+
+        // Otherwise, show input to add/edit
         const currentVal = timeOff ? timeOff.textContent : '';
-
         td.innerHTML = '';
-        if (timeOff) td.appendChild(timeOff);
-
         const input = document.createElement('input');
         input.type = 'text';
         input.value = currentVal;
@@ -99,6 +125,7 @@
         input.style.width = '100%';
         td.appendChild(input);
         input.focus();
+        contextMenu.style.display = 'none';
 
         input.addEventListener('keydown', async ev => {
             if (ev.key !== 'Enter') return;
@@ -106,36 +133,21 @@
             if (!val) return;
 
             try {
-                let entryId = timeOff ? timeOff.dataset.entryId : null;
+                let finalEntryId = entryId;
 
-                if (!entryId) {
-                    const lookup = await safeFetchJSON('get_timeoff_entry.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ user_id: userId, week_start: weekStart })
-                    });
-                    console.log('Lookup response:', lookup);
-                    if (lookup.ok && lookup.data && lookup.data.success && lookup.data.entry_id) {
-                        entryId = lookup.data.entry_id;
-                    }
-                }
-
-                if (entryId) {
+                if (finalEntryId) {
                     // update existing
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
+                        body: JSON.stringify({ entry_id: finalEntryId, assigned_hours: val })
                     });
-                    console.log('Update response:', update);
-
                     if (update.ok && update.data && update.data.success) {
-                        renderCell(td, val, entryId);
+                        renderCell(td, val, finalEntryId);
                     } else {
                         alert('Failed to update time off: ' + (update.data?.error || update.error || 'Server error'));
-                        renderCell(td, currentVal, entryId);
+                        renderCell(td, currentVal, finalEntryId);
                     }
                 } else {
                     // add new
@@ -145,8 +157,6 @@
                         headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
                     });
-                    console.log('Add response:', add);
-
                     if (add.ok && add.data && add.data.success && add.data.entry_id) {
                         renderCell(td, val, add.data.entry_id);
                     } else {
@@ -154,11 +164,10 @@
                         renderCell(td, null, null);
                     }
                 }
-
             } catch (err) {
                 console.error('Network error while saving time off:', err);
                 alert('Network error while saving time off.');
-                renderCell(td, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
+                renderCell(td, timeOff ? timeOff.textContent : null, entryId);
             }
         });
     });
