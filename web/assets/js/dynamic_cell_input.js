@@ -3,7 +3,6 @@
 
     let activeClients = [];
 
-    // Fetch clients via AJAX
     fetch('get_clients.php')
         .then(res => res.json())
         .then(data => { activeClients = data; })
@@ -35,7 +34,9 @@
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
-        if (!dropdown.contains(e.target)) dropdown.style.display = 'none';
+        if (!dropdown.contains(e.target) && !e.target.closest('.overlay-input')) {
+            dropdown.style.display = 'none';
+        }
     });
 
     function makeBadgeDraggable(badge) {
@@ -47,10 +48,8 @@
 
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
-            // Don't reset if clicking an input inside the cell
             if (e.target.tagName === 'INPUT') return;
 
-            // If cell already has badges, show overlay instead
             if (td.querySelector('.draggable-badge')) {
                 showOverlay(td);
                 return;
@@ -60,7 +59,6 @@
         });
     });
 
-    // Function to show inputs directly in empty cell
     function showInlineInputs(td) {
         td.innerHTML = '';
 
@@ -87,9 +85,9 @@
         setupAutocomplete(clientInput);
     }
 
-    // Function to show overlay for cell with existing badges
     function showOverlay(td) {
         const overlay = document.createElement('div');
+        overlay.className = 'overlay-input';
         overlay.style.position = 'absolute';
         overlay.style.top = td.getBoundingClientRect().top + window.scrollY + 'px';
         overlay.style.left = td.getBoundingClientRect().left + window.scrollX + 'px';
@@ -124,6 +122,7 @@
         clientInput.focus();
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
+        overlay.addEventListener('click', e => e.stopPropagation());
 
         // Remove overlay when clicking outside
         const removeOverlay = e => {
@@ -138,7 +137,6 @@
         setupAutocomplete(clientInput, overlay);
     }
 
-    // Setup autocomplete
     function setupAutocomplete(clientInput, container = dropdown) {
         clientInput.addEventListener('input', () => {
             const val = clientInput.value.trim();
@@ -172,7 +170,6 @@
         });
     }
 
-    // Attach Enter key events to inputs
     function attachInputEvents(td, clientInput, hoursInput, overlay = null) {
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async e => {
