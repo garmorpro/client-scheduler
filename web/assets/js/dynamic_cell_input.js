@@ -46,7 +46,6 @@
         }
     });
 
-    // Restore bi-plus icon in empty cells
     function restoreBiPlus(td) {
         const plus = document.createElement('i');
         plus.className = 'bi bi-plus';
@@ -60,7 +59,6 @@
             activeOverlay = null;
         }
         if (activeTd) {
-            // Only restore plus icon if no badges exist
             if (!activeTd.querySelector('.draggable-badge')) {
                 const timeOff = activeTd.querySelector('.timeoff-corner');
                 activeTd.innerHTML = '';
@@ -78,8 +76,11 @@
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
+    // Click handler for adding new entries
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
+            // Ignore if clicking directly on a badge (let dblclick handle editing)
+            if (e.target.classList.contains('draggable-badge')) return;
             if (e.target.tagName === 'INPUT') return;
             if (activeTd === td) return;
 
@@ -87,7 +88,7 @@
             activeTd = td;
 
             if (td.querySelector('.draggable-badge')) {
-                showOverlay(td);
+                return; // Don't auto-open edit; wait for double-click
             } else {
                 showInlineInputs(td);
             }
@@ -245,7 +246,6 @@
                             span.textContent = `${clientName} (${hours})`;
                             makeBadgeDraggable(span);
 
-                            // Remove plus icon if present
                             const plusIcon = td.querySelector('.bi-plus');
                             if (plusIcon) plusIcon.remove();
 
