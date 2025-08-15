@@ -1,7 +1,8 @@
+// custom_menu.js
 (function() {
-    if (!IS_ADMIN) return;
+    if (!IS_ADMIN) return; // only for admins
 
-    // Context menu
+    // Create context menu
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -10,180 +11,89 @@
         z-index:9999;
         background:#fff;
         border:1px solid #ccc;
-        margin-top:15px;
+        margin-top: 15px;
         border-radius:4px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
+    contextMenu.innerHTML = `
+        <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
+            <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
+        </ul>
+    `;
     document.body.appendChild(contextMenu);
 
-    let selectedCell = null;
     let selectedBadge = null;
-    let menuType = null; // 'badge', 'edit', 'add'
-    let activeInput = null; // for dynamic input
 
-    // Updated renderCell with new styles
-    function renderCell(td, timeOffValue = null, entryId = null) {
-        td.innerHTML = '';
-        td.classList.remove('timeoff-cell');
-        td.style.position = 'relative';
-
-        if (timeOffValue) {
-            td.classList.add('timeoff-cell'); // apply light gray background
-            const div = document.createElement('div');
-            div.className = 'timeoff-corner';
-            div.dataset.entryId = entryId;
-            div.textContent = timeOffValue;
-            td.appendChild(div);
-        }
-
-        const plus = document.createElement('i');
-        plus.className = 'bi bi-plus text-muted';
-        plus.style.cursor = 'pointer';
-        td.appendChild(plus);
-    }
-
-    async function safeFetchJSON(url, options) {
-        try {
-            const resp = await fetch(url, options);
-            const text = await resp.text();
-            return { ok: resp.ok, data: JSON.parse(text) };
-        } catch (err) {
-            console.error('Fetch or parse error:', err);
-            return { ok: false, data: null, error: err.message };
-        }
-    }
-
-    // Show context menu
-    document.addEventListener('contextmenu', e => {
-        contextMenu.style.display = 'none';
-        selectedCell = null;
-        selectedBadge = null;
-        menuType = null;
-
-        const target = e.target;
-
-        // Right-click on badge
-        if (target.classList.contains('timeoff-corner')) {
+    // Show context menu on right-click
+    document.addEventListener('contextmenu', function(e) {
+        if (e.target.classList.contains('draggable-badge')) {
             e.preventDefault();
-            selectedBadge = target;
-            selectedCell = target.parentElement;
-            menuType = 'badge';
-            contextMenu.innerHTML = `
-                <ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
-                    <li id="deleteBadge" style="padding:5px 15px;">Delete Entry</li>
-                </ul>`;
+            selectedBadge = e.target;
+
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
-        }
-        // Right-click on cell
-        else if (target.tagName === 'TD' && target.classList.contains('addable')) {
-            e.preventDefault();
-            selectedCell = target;
-            const timeOff = target.querySelector('.timeoff-corner');
-            menuType = timeOff ? 'edit' : 'add';
-            contextMenu.innerHTML = `
-                <ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
-                    <li id="editAddTimeOff" style="padding:5px 15px;">
-                        ${timeOff ? 'Edit Time Off' : 'Add Time Off'}
-                    </li>
-                </ul>`;
-            contextMenu.style.top = `${e.pageY}px`;
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.display = 'block';
+        } else {
+            contextMenu.style.display = 'none';
+            selectedBadge = null;
         }
     });
 
-    // Hide menu
-    document.addEventListener('click', e => {
+    // Click anywhere hides menu
+    document.addEventListener('click', function(e) {
         if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
-            selectedCell = null;
-            selectedBadge = null;
-            menuType = null;
         }
     });
 
-    // Dynamic inline input for add/edit
-    async function handleTimeOffInput(td, entryId = null) {
-        if (activeInput) activeInput.remove();
+    // Use event delegation for the delete button
+    contextMenu.addEventListener('click', async function(e) {
+        if (e.target.id === 'deleteBadge' && selectedBadge) {
+            // if (!confirm('Are you sure you want to delete this entry?')) return;
 
-        const currentVal = entryId ? td.querySelector('.timeoff-corner').textContent : '';
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = currentVal;
-        input.className = 'form-control form-control-sm';
-        input.style.width = '100%';
-        td.innerHTML = '';
-        td.appendChild(input);
-        input.focus();
-        activeInput = input;
-
-        input.addEventListener('keydown', async e => {
-            if (e.key !== 'Enter') return;
-            const val = input.value.trim();
-            if (!val) return;
+            const entryId = selectedBadge.dataset.entryId;
+            const parentCell = selectedBadge.parentElement;
 
             try {
-                if (entryId) {
-                    // Update existing
-                    const update = await safeFetchJSON('update_timeoff_new.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
-                    });
-                    if (update.ok && update.data?.success) renderCell(td, val, entryId);
-                    else alert('Failed to update time off.');
+                const resp = await fetch('delete_entry_new.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ entry_id: entryId })
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok && data.success) {
+                    // Remove the badge
+                    selectedBadge.remove();
+                    selectedBadge = null;
+
+                    // Check if there are any other badges left
+                    const hasOtherBadges = parentCell.querySelector('.draggable-badge');
+
+                    // Only add plus icon if no other badges exist
+                    if (!hasOtherBadges) {
+                        // Check if a plus icon already exists
+                        if (!parentCell.querySelector('.bi-plus')) {
+                            const plusIcon = document.createElement('i');
+                            plusIcon.className = 'bi bi-plus text-muted';
+                            parentCell.appendChild(plusIcon);
+                        }
+                    }
                 } else {
-                    // Add new
-                    const add = await safeFetchJSON('add_timeoff_new.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({ user_id: td.dataset.userId, week_start: td.dataset.weekStart, assigned_hours: val, is_timeoff: 1 })
-                    });
-                    if (add.ok && add.data?.success && add.data.entry_id) renderCell(td, val, add.data.entry_id);
-                    else alert('Failed to add time off.');
+                    alert('Failed to delete entry: ' + (data.error || 'Server error'));
                 }
             } catch (err) {
                 console.error(err);
-                alert('Network error while saving time off.');
+                alert('Network error while deleting entry.');
             }
-        });
-    }
 
-    // Menu click handling
-    contextMenu.addEventListener('click', async e => {
-        if (!menuType) return;
-
-        // Delete badge
-        if (menuType === 'badge' && e.target.id === 'deleteBadge') {
-            const entryId = selectedBadge.dataset.entryId;
-            if (!entryId) return;
-            if (!confirm('Are you sure you want to delete this entry?')) return;
-
-            const del = await safeFetchJSON('delete_timeoff.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ entry_id: entryId })
-            });
-
-            if (del.ok && del.data?.success) renderCell(selectedBadge.parentElement, null, null);
-            else alert('Failed to delete entry.');
+            contextMenu.style.display = 'none';
         }
-
-        // Add or Edit time off
-        else if ((menuType === 'edit' || menuType === 'add') && e.target.id === 'editAddTimeOff') {
-            const td = selectedCell;
-            const timeOffDiv = td.querySelector('.timeoff-corner');
-            const entryId = timeOffDiv ? timeOffDiv.dataset.entryId : null;
-            handleTimeOffInput(td, entryId);
-        }
-
-        selectedCell = null;
-        selectedBadge = null;
-        menuType = null;
     });
+
 })();
