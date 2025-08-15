@@ -196,7 +196,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         padding-left: 0 !important;
     }
     .week {
-        min-width: 250px;
+        min-width: 200px;
     }
 
 
