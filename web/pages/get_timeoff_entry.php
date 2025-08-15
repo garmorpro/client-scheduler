@@ -13,7 +13,7 @@ if (!$user_id || !$week_start) {
 }
 
 try {
-    $stmt = $db->prepare("SELECT entry_id FROM entries WHERE user_id = :user_id AND week_start = :week_start AND is_timeoff = 1 LIMIT 1");
+    $stmt = $conn->prepare("SELECT entry_id FROM entries WHERE user_id = :user_id AND week_start = :week_start AND is_timeoff = 1 LIMIT 1");
     $stmt->execute([
         ':user_id' => $user_id,
         ':week_start' => $week_start

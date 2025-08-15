@@ -19,7 +19,7 @@ if (!$entry_id || !$assigned_hours) {
 }
 
 try {
-    $stmt = $db->prepare("
+    $stmt = $conn->prepare("
         UPDATE entries
         SET assigned_hours = :assigned_hours
         WHERE entry_id = :entry_id AND is_timeoff = 1

@@ -21,7 +21,7 @@ if (!$user_id || !$week_start || !$assigned_hours) {
 }
 
 try {
-    $stmt = $db->prepare("
+    $stmt = $conn->prepare("
         INSERT INTO entries (user_id, week_start, is_timeoff, assigned_hours)
         VALUES (:user_id, :week_start, :is_timeoff, :assigned_hours)
     ");
@@ -32,7 +32,7 @@ try {
         ':assigned_hours' => $assigned_hours
     ]);
 
-    $entry_id = $db->lastInsertId();
+    $entry_id = $conn->lastInsertId();
 
     echo json_encode(['success' => true, 'entry_id' => $entry_id]);
 } catch (PDOException $e) {
