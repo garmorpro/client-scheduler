@@ -216,10 +216,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         /* border-collapse: separate !important; */
     }
 
-    .week-col {
+    /* .week-col {
     min-width: 140px;
     max-width: 140px;
-}
+} */
 
 
     table th {
