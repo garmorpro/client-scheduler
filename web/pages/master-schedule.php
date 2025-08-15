@@ -19,7 +19,7 @@ $startMonday = strtotime("-2 weeks", $currentMonday);
 $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
 
 $mondays = [];
-for ($i = 0; $i < 7; $i++) {
+for ($i = 0; $i < 26; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
@@ -241,7 +241,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div class="table-responsive">
+        <div class="table-responsive" style="width: 1500px;">
             <table class="table table-bordered align-middle text-center">
                 <thead class="table-light">
                     <tr>
