@@ -3,11 +3,11 @@ require_once '../includes/db.php';
 session_start();
 
 // Only allow logged-in users
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(403);
-    echo 'Forbidden';
-    exit();
-}
+// if (!isset($_SESSION['user_id'])) {
+//     http_response_code(403);
+//     echo 'Forbidden';
+//     exit();
+// }
 
 // ------------------------------
 // Fetch all entries
