@@ -223,8 +223,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     }
 
-td:first-child,
-th:first-child {
+td:first-child {
     position: sticky !important;
     left: 0 !important;
     /* background: #fff !important; */
