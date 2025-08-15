@@ -1,3 +1,4 @@
+// dynamic_cell_input.js
 (function() {
     if (!IS_ADMIN) return;
 
@@ -31,6 +32,17 @@
         if (!dropdown.contains(e.target)) dropdown.style.display = 'none';
     });
 
+    // Helper: attach drag events to a badge
+    function makeBadgeDraggable(badge) {
+        if (!badge) return;
+        if (typeof handleDragStart === 'function') {
+            badge.addEventListener('dragstart', handleDragStart);
+        }
+        if (typeof handleDragEnd === 'function') {
+            badge.addEventListener('dragend', handleDragEnd);
+        }
+    }
+
     // Click handler for empty admin cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
@@ -62,6 +74,7 @@
                 dropdown.style.width = rect.width + 'px';
             }
 
+            // Autocomplete
             clientInput.addEventListener('input', () => {
                 const val = clientInput.value.trim();
                 if (val.length >= 3) {
@@ -126,6 +139,9 @@
                                 span.textContent = `${clientName} (${hours})`;
                                 td.innerHTML = '';
                                 td.appendChild(span);
+
+                                // Make newly added badge draggable
+                                makeBadgeDraggable(span);
                             } else {
                                 alert('Failed to add entry: ' + (data.error || 'Server error'));
                             }
