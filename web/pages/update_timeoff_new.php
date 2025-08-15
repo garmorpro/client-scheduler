@@ -29,7 +29,7 @@ $assigned_hours = mysqli_real_escape_string($conn, $assigned_hours);
 $sql = "
     UPDATE entries
     SET assigned_hours = '$assigned_hours'
-    WHERE entry_id = $entry_id AND is_timeoff = 1
+    WHERE entry_id = $entry_id
 ";
 
 if (mysqli_query($conn, $sql)) {
