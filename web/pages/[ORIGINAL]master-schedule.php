@@ -206,20 +206,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     .week {
         min-width: 200px;
     }
-
-    /* style the scrollbar */
-.table-responsive::-webkit-scrollbar {
-    height: 8px; /* scrollbar thickness */
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background: #888; 
-    border-radius: 4px;
-}
-
-.table-responsive::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
+    
 
 
     </style>
@@ -391,6 +378,31 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 </tbody>
             </table>
         </div>
+
+        <script>
+// Select your scrollable table container
+const tableWrapper = document.querySelector('.table-responsive');
+
+// Add keyboard navigation for left/right arrows
+document.addEventListener('keydown', function(e) {
+    // Only scroll if wrapper exists
+    if (!tableWrapper) return;
+
+    // Prevent scrolling if focus is inside an input or textarea
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
+
+    const scrollAmount = 100; // pixels per arrow press
+    if (e.key === 'ArrowRight') {
+        tableWrapper.scrollLeft += scrollAmount;
+        e.preventDefault();
+    } else if (e.key === 'ArrowLeft') {
+        tableWrapper.scrollLeft -= scrollAmount;
+        e.preventDefault();
+    }
+});
+</script>
+
 
 
     <!-- end master schedule table -->
