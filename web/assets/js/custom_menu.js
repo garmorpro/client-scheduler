@@ -23,19 +23,36 @@
     document.body.appendChild(contextMenu);
 
     let selectedBadge = null;
+    let selectedCell = null;
 
     // Show context menu on right-click
     document.addEventListener('contextmenu', function(e) {
+        contextMenu.style.display = 'none';
+        selectedBadge = null;
+        selectedCell = null;
+
+        // Right-click on a badge
         if (e.target.classList.contains('draggable-badge')) {
             e.preventDefault();
             selectedBadge = e.target;
+            contextMenu.querySelector('li').textContent = 'Delete Entry';
 
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
-        } else {
-            contextMenu.style.display = 'none';
-            selectedBadge = null;
+        } 
+        // Right-click on a cell
+        else if (e.target.tagName === 'TD' && e.target.classList.contains('addable')) {
+            e.preventDefault();
+            selectedCell = e.target;
+            const timeOff = selectedCell.querySelector('.timeoff-corner');
+            const menuItem = contextMenu.querySelector('li');
+
+            menuItem.textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
+
+            contextMenu.style.top = `${e.pageY}px`;
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.display = 'block';
         }
     });
 
@@ -43,14 +60,18 @@
     document.addEventListener('click', function(e) {
         if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
+            selectedBadge = null;
+            selectedCell = null;
         }
     });
 
-    // Use event delegation for the delete button
+    // Click on menu item
     contextMenu.addEventListener('click', async function(e) {
-        if (e.target.id === 'deleteBadge' && selectedBadge) {
-            // if (!confirm('Are you sure you want to delete this entry?')) return;
+        const menuItem = e.target;
+        if (!menuItem.id) return;
 
+        // DELETE BADGE
+        if (menuItem.id === 'deleteBadge' && selectedBadge) {
             const entryId = selectedBadge.dataset.entryId;
             const parentCell = selectedBadge.parentElement;
 
@@ -68,21 +89,14 @@
                 const data = await resp.json();
 
                 if (resp.ok && data.success) {
-                    // Remove the badge
                     selectedBadge.remove();
                     selectedBadge = null;
 
-                    // Check if there are any other badges left
-                    const hasOtherBadges = parentCell.querySelector('.draggable-badge');
-
-                    // Only add plus icon if no other badges exist
-                    if (!hasOtherBadges) {
-                        // Check if a plus icon already exists
-                        if (!parentCell.querySelector('.bi-plus')) {
-                            const plusIcon = document.createElement('i');
-                            plusIcon.className = 'bi bi-plus text-muted';
-                            parentCell.appendChild(plusIcon);
-                        }
+                    // Add plus icon if no badges remain
+                    if (!parentCell.querySelector('.draggable-badge') && !parentCell.querySelector('.bi-plus')) {
+                        const plusIcon = document.createElement('i');
+                        plusIcon.className = 'bi bi-plus text-muted';
+                        parentCell.appendChild(plusIcon);
                     }
                 } else {
                     alert('Failed to delete entry: ' + (data.error || 'Server error'));
@@ -91,9 +105,34 @@
                 console.error(err);
                 alert('Network error while deleting entry.');
             }
+        } 
 
-            contextMenu.style.display = 'none';
+        // ADD / EDIT TIME OFF
+        else if (menuItem.id === 'deleteBadge' && selectedCell) {
+            let timeOff = selectedCell.querySelector('.timeoff-corner');
+            if (timeOff) {
+                // Edit existing time off
+                const currentVal = timeOff.textContent;
+                const newVal = prompt('Edit Time Off:', currentVal);
+                if (newVal !== null) {
+                    timeOff.textContent = newVal;
+                }
+            } else {
+                // Add new time off
+                const newVal = prompt('Add Time Off:', '');
+                if (newVal) {
+                    const div = document.createElement('div');
+                    div.className = 'timeoff-corner';
+                    div.style.fontSize = '0.8em';
+                    div.style.color = '#555';
+                    div.textContent = newVal;
+                    selectedCell.appendChild(div);
+                }
+            }
+            selectedCell = null;
         }
+
+        contextMenu.style.display = 'none';
     });
 
 })();
