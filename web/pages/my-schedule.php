@@ -259,7 +259,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
               <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
               <small class="text-muted">Approved time off</small>
             </div>
-            <div class="text-end text-danger fw-semibold fs-5">
+            <div class="text-end fw-semibold fs-5" style="color: rgb(50,107,61) !important;">
               <?php echo $off['assigned_hours']; ?>hrs
             </div>
           </div>
