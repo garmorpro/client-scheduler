@@ -17,7 +17,7 @@
     `;
     contextMenu.innerHTML = `
         <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
-            <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
+            <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry / Time Off</li>
         </ul>
     `;
     document.body.appendChild(contextMenu);
@@ -79,10 +79,7 @@
                 const resp = await fetch('delete_entry_new.php', {
                     method: 'POST',
                     credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ entry_id: entryId })
                 });
 
@@ -92,7 +89,6 @@
                     selectedBadge.remove();
                     selectedBadge = null;
 
-                    // Add plus icon if no badges remain
                     if (!parentCell.querySelector('.draggable-badge') && !parentCell.querySelector('.bi-plus')) {
                         const plusIcon = document.createElement('i');
                         plusIcon.className = 'bi bi-plus text-muted';
@@ -110,23 +106,67 @@
         // ADD / EDIT TIME OFF
         else if (menuItem.id === 'deleteBadge' && selectedCell) {
             let timeOff = selectedCell.querySelector('.timeoff-corner');
+            const userId = selectedCell.dataset.userId;
+            const weekStart = selectedCell.dataset.weekStart;
+
             if (timeOff) {
                 // Edit existing time off
                 const currentVal = timeOff.textContent;
                 const newVal = prompt('Edit Time Off:', currentVal);
                 if (newVal !== null) {
-                    timeOff.textContent = newVal;
+                    try {
+                        const resp = await fetch('update_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify({
+                                entry_id: timeOff.dataset.entryId,
+                                timeoff_note: newVal
+                            })
+                        });
+                        const data = await resp.json();
+                        if (resp.ok && data.success) {
+                            timeOff.textContent = newVal;
+                        } else {
+                            alert('Failed to update time off: ' + (data.error || 'Server error'));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Network error while updating time off.');
+                    }
                 }
             } else {
                 // Add new time off
                 const newVal = prompt('Add Time Off:', '');
                 if (newVal) {
-                    const div = document.createElement('div');
-                    div.className = 'timeoff-corner';
-                    div.style.fontSize = '0.8em';
-                    div.style.color = '#555';
-                    div.textContent = newVal;
-                    selectedCell.appendChild(div);
+                    try {
+                        const resp = await fetch('add_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                week_start: weekStart,
+                                timeoff_note: newVal,
+                                is_timeoff: 1
+                            })
+                        });
+                        const data = await resp.json();
+                        if (resp.ok && data.success) {
+                            const div = document.createElement('div');
+                            div.className = 'timeoff-corner';
+                            div.style.fontSize = '0.8em';
+                            div.style.color = '#555';
+                            div.dataset.entryId = data.entry_id;
+                            div.textContent = newVal;
+                            selectedCell.appendChild(div);
+                        } else {
+                            alert('Failed to add time off: ' + (data.error || 'Server error'));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Network error while adding time off.');
+                    }
                 }
             }
             selectedCell = null;
