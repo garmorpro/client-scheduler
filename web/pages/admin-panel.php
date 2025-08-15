@@ -165,7 +165,7 @@ if ($settingResult) {
                 <div class="col-md-3">
                     <div class="stat-card">
                         <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
-                        <div class="stat-title">Cnnfirmed Engagements</div>
+                        <div class="stat-title">Confirmed Engagements</div>
                         <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
                         <div class="stat-sub"><?php echo $totalPendingEngagements; ?> pending <i class="bi bi-dot"></i> <?php echo $totalNotConfirmedEngagements; ?> not confirmed</div>
                     </div>
