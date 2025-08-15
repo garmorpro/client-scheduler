@@ -23,8 +23,11 @@
             td.appendChild(div);
         }
 
-        // Ensure the plus icon exists
-        if (!td.querySelector('.bi-plus')) {
+        // Ensure the plus icon exists **only if there’s no other badge except timeoff**
+        const hasOtherBadges = Array.from(td.children).some(
+            el => el !== td.querySelector('.timeoff-corner') && el.classList.contains('entry-badge')
+        );
+        if (!td.querySelector('.bi-plus') && !hasOtherBadges) {
             console.log('Adding plus icon');
             const plus = document.createElement('i');
             plus.className = 'bi bi-plus text-muted';
@@ -72,7 +75,6 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        // Get entry_id from database
         const entryId = await getTimeOffEntry(td);
         const existingBadge = td.querySelector('.timeoff-corner');
         const currentVal = existingBadge ? existingBadge.textContent : '';
@@ -97,7 +99,6 @@
 
             try {
                 if (entryId) {
-                    // Update existing time off
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -112,7 +113,6 @@
                         alert('Failed to update time off.');
                     }
                 } else {
-                    // Add new time off
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -137,7 +137,6 @@
         });
     }
 
-    // Right-click on an addable cell triggers input
     document.addEventListener('contextmenu', e => {
         const td = e.target;
         if (td.tagName === 'TD' && td.classList.contains('addable')) {
