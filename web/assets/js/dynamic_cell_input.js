@@ -60,9 +60,12 @@
             activeOverlay = null;
         }
         if (activeTd) {
-            // If no badges exist, restore the bi-plus icon instead of leaving empty
+            // Only restore plus icon if no badges exist
             if (!activeTd.querySelector('.draggable-badge')) {
+                // Keep existing elements like timeoff-corner
+                const timeOff = activeTd.querySelector('.timeoff-corner');
                 activeTd.innerHTML = '';
+                if (timeOff) activeTd.appendChild(timeOff);
                 restoreBiPlus(activeTd);
             }
             activeTd = null;
@@ -153,11 +156,9 @@
         document.body.appendChild(overlay);
         activeOverlay = overlay;
 
-        // STOP PROPAGATION on inputs and overlay
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
-        // Create per-overlay dropdown
         const overlayDropdown = document.createElement('div');
         overlayDropdown.style.position = 'absolute';
         overlayDropdown.style.zIndex = '10001';
@@ -245,7 +246,10 @@
                             span.textContent = `${clientName} (${hours})`;
                             makeBadgeDraggable(span);
 
-                            if (inline) td.innerHTML = '';
+                            // Preserve timeoff-corner or other elements
+                            const timeOff = td.querySelector('.timeoff-corner');
+                            td.innerHTML = '';
+                            if (timeOff) td.appendChild(timeOff);
                             td.appendChild(span);
 
                             closeActiveInputs();
