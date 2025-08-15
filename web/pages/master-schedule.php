@@ -220,37 +220,33 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         z-index: 1 !important;
     }
     /* Sticky first column cells */
-/* Sticky first column */
+/* Freeze first column */
 table th:first-child,
 table td:first-child {
     position: sticky;
     left: 0;
-    z-index: 2 !important;
-    background: white;
+    background: white; /* or match your table bg */
+    z-index: 2;
 }
 
-/* Sticky header row */
-table thead th {
+/* Freeze top row */
+thead th {
     position: sticky;
     top: 0;
-    z-index: 0 !important;
     background: white;
+    z-index: 1;
 }
 
-/* Top-left cell (corner) above everything */
-table thead th:first-child {
-    z-index: 3 !important;
+/* Make top-left cell above all */
+thead th:first-child {
+    z-index: 3;
 }
 
-table tbody td:first-child {
-    position: sticky !important;
-    border: 1px solid blue;
-}
-/* Scroll container limits visible weeks */
+/* Horizontal scroll area */
 #scheduleContainer {
     overflow-x: auto;
     white-space: nowrap;
-    max-width: calc(140px * 10); /* 7 weeks + employee column */
+    max-width: calc(140px * 8); /* 1 employee col + 7 week cols */
 }
 /* Fixed width for week columns so scroll is smooth */
 .week-col {
