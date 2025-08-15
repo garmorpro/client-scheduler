@@ -211,6 +211,7 @@ $stmt2->close();
                         $thClasses = 'align-middle week';
                         if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
                         if ($isCurrentWeek) $thClasses .= ' highlight-today';
+                        if ($isCurrentWeek && $isGlobalWeek) $thClasses .= ' highlight-today';
                         ?>
                         <th class="<?php echo $thClasses; ?>" style="position: relative;">
                             <?php echo date('M j', $monday); ?><br>
