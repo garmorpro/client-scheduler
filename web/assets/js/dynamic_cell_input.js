@@ -37,7 +37,10 @@
     document.body.appendChild(globalDropdown);
     globalDropdown.addEventListener('click', e => e.stopPropagation());
 
-    // Click outside closes inputs
+    // Custom context menu for time-off
+    const badgeContextMenu = document.getElementById('badgeContextMenu');
+
+    // Click outside closes inputs and menu
     document.addEventListener('click', e => {
         if (activeTd) {
             const clickInsideTd = activeTd.contains(e.target);
@@ -45,6 +48,9 @@
             if (!clickInsideTd && !clickInsideOverlay) {
                 closeActiveInputs();
             }
+        }
+        if (badgeContextMenu.style.display === 'block') {
+            badgeContextMenu.style.display = 'none';
         }
     });
 
@@ -81,25 +87,39 @@
     // Click handler for cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
-            const target = e.target;
-
-            // Ignore clicks on badges, inputs, or timeoff-corner
-            if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.classList.contains('timeoff-corner')) return;
+            if (e.target.tagName === 'INPUT') return;
             if (activeTd === td) return;
 
             closeActiveInputs();
             activeTd = td;
 
+            const clickedBadge = e.target.classList.contains('draggable-badge');
             const hasBadges = td.querySelector('.draggable-badge') !== null;
             const timeOff = td.querySelector('.timeoff-corner');
 
-            if (hasBadges) {
+            if (hasBadges && !clickedBadge) {
                 showOverlay(td);
                 return;
             }
 
-            // Show inline inputs (preserve timeoff)
+            // If only timeoff exists, preserve it during input
             showInlineInputs(td, timeOff);
+        });
+
+        // Right-click handler for time-off
+        td.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.target.classList.contains('draggable-badge')) return;
+
+            activeTd = td;
+            const timeOff = td.querySelector('.timeoff-corner');
+            const menuItem = document.getElementById('deleteBadge');
+            menuItem.textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
+
+            badgeContextMenu.style.top = e.pageY + 'px';
+            badgeContextMenu.style.left = e.pageX + 'px';
+            badgeContextMenu.style.display = 'block';
         });
     });
 
@@ -212,8 +232,12 @@
                     container.style.left = rect.left + window.scrollX + 'px';
                     container.style.width = rect.width + 'px';
                     container.style.display = 'block';
-                } else container.style.display = 'none';
-            } else container.style.display = 'none';
+                } else {
+                    container.style.display = 'none';
+                }
+            } else {
+                container.style.display = 'none';
+            }
         });
     }
 
@@ -233,6 +257,7 @@
                     if (inline) globalDropdown.style.display = 'none';
                     else if (overlay && overlay.nextSibling) overlay.nextSibling.style.display = 'none';
 
+                    // Add badge
                     try {
                         const resp = await fetch('add_entry_new.php', {
                             method: 'POST',
@@ -343,6 +368,7 @@
             input.addEventListener('keydown', async ev => {
                 if (ev.key === 'Enter') {
                     dropdown.style.display = 'none';
+
                     const newName = clientInput.value.trim();
                     const newHours = parseFloat(hoursInput.value);
 
@@ -384,6 +410,30 @@
         });
 
         clientInput.focus();
+    });
+
+    // Right-click menu click logic
+    document.getElementById('deleteBadge').addEventListener('click', () => {
+        if (!activeTd) return;
+        const timeOff = activeTd.querySelector('.timeoff-corner');
+
+        if (timeOff) {
+            const newVal = prompt('Edit Time Off:', timeOff.textContent);
+            if (newVal !== null) timeOff.textContent = newVal;
+        } else {
+            const newVal = prompt('Add Time Off:', '');
+            if (newVal) {
+                const div = document.createElement('div');
+                div.className = 'timeoff-corner';
+                div.style.fontSize = '0.8em';
+                div.style.color = '#555';
+                div.textContent = newVal;
+                activeTd.appendChild(div);
+            }
+        }
+
+        badgeContextMenu.style.display = 'none';
+        activeTd = null;
     });
 
 })();
