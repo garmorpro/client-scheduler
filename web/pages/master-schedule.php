@@ -209,6 +209,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         max-height: 70vh !important;
         margin-top: 40px !important;
     }
+    #scheduleContainer {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
     table {
         min-width: max-content !important;
         /* border-collapse: separate !important; */
