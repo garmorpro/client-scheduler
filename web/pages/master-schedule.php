@@ -217,7 +217,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     table th {
         position: sticky !important;
         top: 0px !important;
-        z-index: -999 !important;
+        z-index: -995 !important;
     }
     /* Sticky first column cells */
 /* Sticky first column */
@@ -239,7 +239,7 @@ table thead th {
 
 /* Top-left cell (corner) above everything */
 table thead th:first-child {
-    z-index: -998;
+    z-index: -999;
 }
 
 /* Scroll container limits visible weeks */
