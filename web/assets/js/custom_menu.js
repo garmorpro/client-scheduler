@@ -1,4 +1,4 @@
-// custom_menu.js (inline time off input)
+// custom_menu.js (inline time off input with console.log)
 (function() {
     if (!IS_ADMIN) return;
 
@@ -93,21 +93,36 @@
 
                 try {
                     if (timeOff) {
+                        console.log('Updating time off:', {
+                            entry_id: timeOff.dataset.entryId,
+                            timeoff_note: val
+                        });
+
                         const resp = await fetch('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, assigned_hours: val })
+                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
                         });
                         const data = await resp.json();
-                        if (resp.ok && data.success) timeOff.textContent = val;
-                        else alert('Failed to update time off: ' + (data.error || 'Server error'));
+                        if (resp.ok && data.success) {
+                            timeOff.textContent = val;
+                        } else {
+                            alert('Failed to update time off: ' + (data.error || 'Server error'));
+                        }
                     } else {
+                        console.log('Adding time off:', {
+                            user_id: userId,
+                            week_start: weekStart,
+                            timeoff_note: val,
+                            is_timeoff: 1
+                        });
+
                         const resp = await fetch('add_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
                         });
                         const data = await resp.json();
                         if (resp.ok && data.success) {
@@ -118,9 +133,14 @@
                             div.style.color = '#555';
                             div.textContent = val;
                             td.appendChild(div);
-                        } else alert('Failed to add time off: ' + (data.error || 'Server error'));
+                        } else {
+                            alert('Failed to add time off: ' + (data.error || 'Server error'));
+                        }
                     }
-                } catch (err) { console.error(err); alert('Network error while saving time off.'); }
+                } catch (err) {
+                    console.error('Network error while saving time off:', err);
+                    alert('Network error while saving time off.');
+                }
 
                 closeActiveInput(td);
             }
