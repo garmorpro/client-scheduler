@@ -249,10 +249,8 @@
                             const plusIcon = td.querySelector('.bi-plus');
                             if (plusIcon) plusIcon.remove();
 
-                            // Append the new badge without removing existing ones
                             td.appendChild(span);
 
-                            // Keep timeoff-corner on top if exists
                             const timeOff = td.querySelector('.timeoff-corner');
                             if (timeOff) td.appendChild(timeOff);
 
@@ -268,4 +266,108 @@
             });
         });
     }
+
+    // Double-click to edit an existing badge
+    document.addEventListener('dblclick', e => {
+        if (e.target.classList.contains('draggable-badge')) {
+            e.stopPropagation();
+
+            const badge = e.target;
+            const td = badge.closest('td');
+            activeTd = td;
+
+            const match = badge.textContent.match(/^(.*)\s+\(([\d.]+)\)$/);
+            const currentName = match ? match[1] : '';
+            const currentHours = match ? match[2] : '';
+
+            const rect = td.getBoundingClientRect();
+            const overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.top = rect.top + window.scrollY + 'px';
+            overlay.style.left = rect.left + window.scrollX + 'px';
+            overlay.style.width = rect.width + 'px';
+            overlay.style.minHeight = '50px';
+            overlay.style.background = 'rgba(255,255,255,0.95)';
+            overlay.style.border = '1px solid #ccc';
+            overlay.style.borderRadius = '4px';
+            overlay.style.padding = '5px';
+            overlay.style.zIndex = '10000';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+
+            const clientInput = document.createElement('input');
+            clientInput.type = 'text';
+            clientInput.value = currentName;
+            clientInput.className = 'form-control form-control-sm mb-1';
+
+            const hoursInput = document.createElement('input');
+            hoursInput.type = 'number';
+            hoursInput.min = '0';
+            hoursInput.value = currentHours;
+            hoursInput.className = 'form-control form-control-sm';
+
+            overlay.appendChild(clientInput);
+            overlay.appendChild(hoursInput);
+            document.body.appendChild(overlay);
+            activeOverlay = overlay;
+
+            const dropdown = document.createElement('div');
+            dropdown.style.position = 'absolute';
+            dropdown.style.zIndex = '10001';
+            dropdown.style.background = '#fff';
+            dropdown.style.border = '1px solid #ccc';
+            dropdown.style.borderRadius = '4px';
+            dropdown.style.display = 'none';
+            dropdown.style.maxHeight = '150px';
+            dropdown.style.overflowY = 'auto';
+            document.body.appendChild(dropdown);
+
+            setupAutocomplete(clientInput, dropdown);
+
+            [clientInput, hoursInput].forEach(input => {
+                input.addEventListener('keydown', async ev => {
+                    if (ev.key === 'Enter') {
+                        const newName = clientInput.value.trim();
+                        const newHours = parseFloat(hoursInput.value);
+
+                        if (!newName || !newHours || newHours <= 0) {
+                            alert('Please enter valid client and hours.');
+                            return;
+                        }
+
+                        try {
+                            const resp = await fetch('update_entry_new.php', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    entry_id: badge.dataset.entryId,
+                                    client_name: newName,
+                                    assigned_hours: newHours
+                                })
+                            });
+
+                            const data = await resp.json();
+                            if (resp.ok && data.success) {
+                                badge.textContent = `${newName} (${newHours})`;
+                                badge.className = `badge badge-status badge-${getClientStatus(newName)} mt-1 draggable-badge`;
+                                closeActiveInputs();
+                            } else {
+                                alert('Failed to update entry: ' + (data.error || 'Server error'));
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert('Network error while updating entry.');
+                        }
+                    }
+                });
+            });
+
+            clientInput.focus();
+        }
+    });
+
 })();
