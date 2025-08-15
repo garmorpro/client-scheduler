@@ -195,9 +195,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     position: relative;
 }
 
-/* Minimum table width for horizontal scroll if many weeks */
+/* Minimum table width for horizontal scroll */
 .table-wrapper table {
-    min-width: 1200px; /* adjust as needed for number of weeks */
+    min-width: 1200px; /* adjust for 26 weeks */
+    border-collapse: separate; /* needed for sticky first column */
 }
 
 /* Freeze first column */
@@ -205,8 +206,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     position: sticky;
     left: 0;
     background: #fff;
-    z-index: 5;
+    z-index: 10;
     box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15);
+}
+
+/* Make first column hover z-index higher */
+tbody .sticky-col:hover {
+    z-index: 20;
 }
 
 /* Highlight current week column */
@@ -228,7 +234,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     font-weight: 600;
 }
 
-/* Optional: badges drag effect */
+/* Drag & Drop badges */
 .draggable-badge {
     cursor: grab;
     user-select: none;
@@ -237,6 +243,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .draggable-badge.dragging {
     opacity: 0.5;
     transform: scale(0.98);
+}
+
+/* Drop target highlight */
+td.drop-target {
+    outline: 3px dashed rgba(0,123,255,0.15);
+}
+
+td.addable:hover {
+    background: rgba(0,0,0,0.02);
 }
     </style>
 
@@ -328,7 +343,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             $role = htmlspecialchars($employee['role']);
             ?>
             <tr>
-                <td class="sticky-col text-start employee-name">
+                <td class="sticky-col text-start employee-name position-relative">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                              style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
@@ -380,8 +395,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         $cellContent = $isAdmin ? "<i class='bi bi-plus text-muted'></i>" : "";
                     }
 
-                    $tdClass = ($isCurrent ? '' : '');
+                    $tdClass = 'text-center';
                     if ($hasTimeOff) $tdClass .= ' position-relative timeoff-cell';
+                    if ($isAdmin) $tdClass .= ' addable';
                     ?>
 
                     <td class="<?php echo $tdClass; ?>" 
