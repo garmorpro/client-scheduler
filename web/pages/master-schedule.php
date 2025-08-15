@@ -186,7 +186,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         position: sticky !important;
         z-index: 9999 !important;
         left:0;
-        border: blue;
+        border: 1px solid gray;
       }
     </style>
 
