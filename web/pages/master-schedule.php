@@ -197,12 +197,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     white-space: nowrap !important;
 }
 
-.table th:first-child,
-.table td:first-child {
+th:first-child,
+td:first-child {
     position: sticky !important;
     left: 0 !important;
     background: #fff !important; /* matches table background */
-    z-index: 2 !important;
+    z-index: 1 !important;
     box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2) !important;
 }
 
@@ -211,7 +211,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 .table th,
-.table td {
+td {
     min-width: 120px !important; /* adjust as needed */
 }
 
