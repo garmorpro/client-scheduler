@@ -227,23 +227,23 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     /* Sticky first column cells */
 table th:first-child,
 table td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background: white;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 2 !important;
+    background: white !important;
 }
 
 /* Sticky header cells */
 table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: white;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1 !important;
+    background: white !important;
 }
 
 /* Top-left corner cell needs the highest stacking */
 table thead th:first-child {
-    z-index: 3;
+    z-index: 3 !important;
 }
 
 
