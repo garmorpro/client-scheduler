@@ -180,17 +180,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         height:6px;
       }
 
- th:first-child,
+      th:first-child,
 td:first-child {
     min-width: 250px;
-    position: sticky;
+    position: sticky !important;
     left: 0;
-    background-color: #fff;
-    z-index: 100;
-    border-left: 2px solid rgba(223, 226, 230); /* visible left border */
-    box-sizing: border-box;                     /* include border in width */
+    background-color: #fff;       
+    z-index: 100;                  
+    outline: 2px solid rgb(223, 226, 230);
+    border-left: 2px solid rgb(223, 226, 230);
 }
-
 
 
     </style>
