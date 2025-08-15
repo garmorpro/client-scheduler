@@ -179,6 +179,31 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         width:100%;
         height:6px;
       }
+
+      .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    position: relative;
+}
+
+.table-scroll {
+    min-width: 900px; /* adjust based on your number of weeks */
+}
+
+.sticky-col {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 5; /* ensures it stays above other columns */
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* optional subtle shadow */
+}
+
+/* Optional: highlight current week column */
+.highlight-today {
+    background-color: #fff3cd !important;
+}
+
+
     </style>
 
     
@@ -241,24 +266,25 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
 
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-
-                        <?php foreach ($mondays as $idx => $monday): ?>
-                            <?php 
-                            $weekStart = $monday;
-                            $isCurrent = ($idx === $currentWeekIndex);
-                            ?>
-                            <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
-                                <?php echo date('M j', $weekStart); ?><br>
-                                <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
-                            </th>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
+        <div class="table-wrapper">
+    <div class="table-scroll">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th class="sticky-col text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                    <?php foreach ($mondays as $idx => $monday): ?>
+                        <?php 
+                        $weekStart = $monday;
+                        $isCurrent = ($idx === $currentWeekIndex);
+                        ?>
+                        <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                            <?php echo date('M j', $weekStart); ?><br>
+                            <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+                        </th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody id="employeesTableBody">
 
                 <tbody id="employeesTableBody">
                 <?php foreach ($employees as $userId => $employee): ?>
@@ -363,10 +389,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         <?php endforeach; ?>
                     </tr>
                 <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
+                 </tbody>
+        </table>
+    </div>
+</div>
     <!-- end master schedule table -->
 
     <?php if ($isAdmin): ?>

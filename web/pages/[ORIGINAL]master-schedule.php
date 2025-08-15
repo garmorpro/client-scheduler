@@ -142,32 +142,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <html>
 <head>
     <title>Master Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-
-    
-    <script>
-      const entries = <?php echo json_encode($entries); ?>;
-    </script>
-    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
-    
-    <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 
     <style>
       /* light highlight for time off cells */
@@ -176,11 +154,41 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .timeoff-cell:hover { background-color: #e0f7fa !important; }
       <?php endif; ?>
       .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
-      .timeoff-card { 
-    border: 2px dashed rgb(209,226, 159) !important;
-    background: rgb(246, 249, 236) !important;
-}
+      .timeoff-card {
+        border: 2px dashed rgb(209,226, 159) !important;
+        background: rgb(246, 249, 236) !important;
+      }
+
+      /* Drag & Drop styles */
+      .draggable-badge {
+        cursor: grab;
+        user-select: none;
+      }
+      .draggable-badge.dragging {
+        opacity: 0.5;
+        transform: scale(0.98);
+      }
+      td.drop-target {
+        outline: 3px dashed rgba(0,123,255,0.15);
+      }
+      td.addable:hover {
+        background: rgba(0,0,0,0.02);
+      }
+      .drop-indicator {
+        display:inline-block;
+        width:100%;
+        height:6px;
+      }
     </style>
+
+    
+
+    <script>
+      // Expose server data to JS
+      const entries = <?php echo json_encode($entries); ?>;
+      const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
+    </script>
+
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -311,23 +319,26 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                         }
                                         $clientName = htmlspecialchars($entry['client_name']);
                                         $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                                        $cellContent .= "<span class='badge badge-status $entry_class mt-1'>{$clientName} ({$assignedHours})</span><br>";
+                                        // badge is draggable only for admins
+                                        $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge' " : "class='badge badge-status $entry_class mt-1' ";
+                                        $badgeId = "badge-entry-{$entry['entry_id']}";
+                                        $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span><br>";
                                     }
                                 }
                             } else {
-                                $cellContent = "<span class='text-muted'>" . ($isAdmin ? "+" : "") . "</span>";
+                                $cellContent = $isAdmin ? "<i class='bi bi-plus text-muted'></i>" : "";
                             }
 
                             // Build td class list
                             $tdClass = ($isCurrent ? '' : '');
                             if ($hasTimeOff) {
-                                $tdClass .= 'position-relative timeoff-cell ';
+                                $tdClass .= ' position-relative timeoff-cell';
                             }
                             ?>
 
                             <?php if ($isAdmin): ?>
                                 <td class="addable <?php echo $tdClass; ?>" 
-                                    style="cursor:pointer;"
+                                    style="cursor:pointer; vertical-align: middle;"
                                     data-user-id="<?php echo $userId; ?>" 
                                     data-user-name="<?php echo htmlspecialchars($fullName); ?>"
                                     data-week-start="<?php echo $weekKey; ?>">
@@ -371,14 +382,30 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
     
+    <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 
-    
+
+
+    <!-- Drag & Drop handler (inline to ensure full code is present) -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
 </body>
 </html>
-
-
-
-
