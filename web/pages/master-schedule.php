@@ -195,6 +195,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         border-left: 2px solid rgb(223, 226, 230);
         padding-left: 0 !important;
     }
+    .week {
+        min-width: 250px;
+    }
 
 
     </style>
@@ -270,7 +273,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             $weekStart = $monday;
                             $isCurrent = ($idx === $currentWeekIndex);
                             ?>
-                            <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                            <th class="align-middle week <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
                                 <?php echo date('M j', $weekStart); ?><br>
                                 <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
                             </th>
