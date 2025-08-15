@@ -67,6 +67,19 @@
             document.querySelectorAll('td.addable.drop-target').forEach(td => td.classList.remove('drop-target'));
         }
 
+        function updatePlusIcon(cell) {
+            // Remove existing icon
+            const existingIcon = cell.querySelector('.bi-plus');
+            if (existingIcon) existingIcon.remove();
+
+            // Only add icon if no badges exist in the cell
+            if (!cell.querySelector('.draggable-badge')) {
+                const plusIcon = document.createElement('i');
+                plusIcon.className = 'bi bi-plus text-muted';
+                cell.appendChild(plusIcon);
+            }
+        }
+
         async function onDrop(e) {
             e.preventDefault();
             removeDropTargetHints();
@@ -120,14 +133,15 @@
                     return;
                 }
 
-                // ✅ Move badge in DOM without full reload
+                // ✅ Move badge in DOM
                 targetTd.appendChild(badge);
                 badge.style.pointerEvents = '';
                 badge.classList.remove('dragging');
                 loadingDot.remove();
 
-                // Optional: scroll to badge (if needed)
-                // badge.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                // Update plus icon for origin and target cells
+                if (originCell) updatePlusIcon(originCell);
+                updatePlusIcon(targetTd);
 
             } catch (err) {
                 console.error(err);
