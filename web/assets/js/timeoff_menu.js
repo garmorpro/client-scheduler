@@ -3,8 +3,8 @@
 
     let activeInput = null;
 
-    // Render or update the time-off badge
-    function renderTimeOff(td, timeOffValue, entryId, isGlobal = false) {
+    // Render or update the personal time-off badge
+    function renderTimeOff(td, timeOffValue, entryId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -20,12 +20,15 @@
             td.appendChild(div);
         }
 
-        // Remove any existing plus icon in case it exists
+        // Remove plus icon when personal time off is present
         const plusIcon = td.querySelector('.bi-plus');
         if (plusIcon) plusIcon.remove();
+    }
 
-        // If global, add a special attribute for reference
-        if (isGlobal) td.dataset.globalTimeoff = '1';
+    // Mark gray background for global time-off without badge
+    function markGlobalTimeOff(td) {
+        td.classList.add('timeoff-cell');
+        td.dataset.globalTimeoff = '1';
     }
 
     async function safeFetchJSON(url, options) {
@@ -68,13 +71,10 @@
         });
 
         if (response.ok && response.data?.success && response.data.assigned_hours) {
-            renderTimeOff(td, response.data.assigned_hours, 'global', true);
+            markGlobalTimeOff(td); // just gray background, no badge
             return true;
         } else {
-            // Remove gray if no global time off
             td.classList.remove('timeoff-cell');
-            const badge = td.querySelector('.timeoff-corner');
-            if (badge && badge.dataset.entryId === 'global') badge.remove();
             td.removeAttribute('data-global-timeoff');
             return false;
         }
@@ -110,7 +110,7 @@
 
             try {
                 if (val === '0' && entryId) {
-                    // DELETE existing time off
+                    // DELETE existing personal time off
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -123,13 +123,20 @@
                         if (badge) badge.remove();
                         td.classList.remove('timeoff-cell');
 
-                        // Check for global time off
+                        // Check for global time off (keep gray if present)
                         await checkGlobalTimeOff(td);
+
+                        // Restore plus icon if no personal time off
+                        if (!td.querySelector('.timeoff-corner') && !td.querySelector('.bi-plus')) {
+                            const plusIcon = document.createElement('i');
+                            plusIcon.className = 'bi bi-plus';
+                            td.appendChild(plusIcon);
+                        }
                     } else {
                         alert('Failed to delete time off.');
                     }
                 } else if (entryId) {
-                    // Update existing time-off
+                    // Update existing personal time off
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -142,7 +149,7 @@
                         alert('Failed to update time off.');
                     }
                 } else {
-                    // Add new time-off
+                    // Add new personal time off
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -179,7 +186,6 @@
         }
     });
 
-    // Global Escape listener to close active input
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && activeInput) {
             activeInput.remove();
