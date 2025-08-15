@@ -46,14 +46,24 @@
         }
     });
 
+    // Restore bi-plus icon in empty cells
+    function restoreBiPlus(td) {
+        const plus = document.createElement('i');
+        plus.className = 'bi bi-plus';
+        plus.style.cursor = 'pointer';
+        td.appendChild(plus);
+    }
+
     function closeActiveInputs() {
         if (activeOverlay) {
             activeOverlay.remove();
             activeOverlay = null;
         }
         if (activeTd) {
+            // If no badges exist, restore the bi-plus icon instead of leaving empty
             if (!activeTd.querySelector('.draggable-badge')) {
                 activeTd.innerHTML = '';
+                restoreBiPlus(activeTd);
             }
             activeTd = null;
         }
@@ -147,7 +157,7 @@
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
-        // Create **per-overlay dropdown**
+        // Create per-overlay dropdown
         const overlayDropdown = document.createElement('div');
         overlayDropdown.style.position = 'absolute';
         overlayDropdown.style.zIndex = '10001';
