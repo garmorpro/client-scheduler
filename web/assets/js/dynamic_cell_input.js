@@ -65,7 +65,10 @@
                 const timeOff = activeTd.querySelector('.timeoff-corner');
                 activeTd.innerHTML = '';
                 if (timeOff) activeTd.appendChild(timeOff);
-                restoreBiPlus(activeTd);
+
+                // Only restore plus if no badges exist
+                const hasOtherBadges = activeTd.querySelectorAll('.draggable-badge').length === 0;
+                if (hasOtherBadges) restoreBiPlus(activeTd);
             }
             activeTd = null;
         }
@@ -82,8 +85,6 @@
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
             const target = e.target;
-
-            // Ignore clicks on badges, inputs, or timeoff-corner
             if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.classList.contains('timeoff-corner')) return;
             if (activeTd === td) return;
 
@@ -98,7 +99,6 @@
                 return;
             }
 
-            // Show inline inputs (preserve timeoff)
             showInlineInputs(td, timeOff);
         });
     });
@@ -140,7 +140,6 @@
             width: rect.width + 'px',
             minHeight: '50px',
             background: 'rgba(255,255,255,0.95)',
-            backdropFilter: 'blur(2px)',
             border: '1px solid #ccc',
             borderRadius: '4px',
             padding: '5px',
@@ -273,6 +272,8 @@
                         console.error(err);
                         alert('Network error while adding entry.');
                     }
+                } else if (e.key === 'Escape') {
+                    closeActiveInputs();
                 }
             });
         });
@@ -379,11 +380,20 @@
                         console.error(err);
                         alert('Network error while updating entry.');
                     }
+                } else if (ev.key === 'Escape') {
+                    closeActiveInputs();
                 }
             });
         });
 
         clientInput.focus();
+    });
+
+    // Global Escape listener
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            closeActiveInputs();
+        }
     });
 
 })();
