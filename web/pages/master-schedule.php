@@ -252,7 +252,11 @@ table tbody td:first-child {
     white-space: nowrap;
     max-width: calc(140px * 10); /* 7 weeks + employee column */
 }
-
+/* Fixed width for week columns so scroll is smooth */
+.week-col {
+    min-width: 140px;
+    max-width: 140px;
+}
 
 
     </style>
