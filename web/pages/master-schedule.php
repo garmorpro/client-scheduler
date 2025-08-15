@@ -198,26 +198,26 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 } */
 
     .tbl-container {
-        max-width: fit-content;
-        max-height: fit-content;
+        max-width: fit-content !important;
+        max-height: fit-content !important;
     }
 
     .tbl-fixed {
-        overflow-x: scroll;
-        overflow-y: scroll;
-        height: fit-content;
-        max-height: 70vh;
-        margin-top: 40px;
+        overflow-x: scroll !important;
+        overflow-y: scroll !important;
+        height: fit-content !important;
+        max-height: 70vh !important;
+        margin-top: 40px !important;
     }
     table {
-        min-width: max-content;
-        border-collapse: separate;
+        min-width: max-content !important;
+        border-collapse: separate !important;
     }
 
     table th {
-        position: sticky;
-        top: 0px;
-        z-index: 2;
+        position: sticky !important;
+        top: 0px !important;
+        z-index: 2 !important;
     }
     table td {
 
