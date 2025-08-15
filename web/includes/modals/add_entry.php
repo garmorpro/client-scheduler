@@ -1,9 +1,9 @@
-<!-- add_entry.php -->
+<!-- 
 <div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 rounded-3 shadow-sm">
       <form id="addEntryForm" action="add_entry.php" method="POST">
-        <!-- Header -->
+
         <div class="modal-header bg-dark text-white py-2">
           <h5 class="modal-title fw-bold" id="addEntryModalLabel">
             <i class="bi bi-calendar-range me-2"></i> New Entry
@@ -11,9 +11,9 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <!-- Body -->
+
         <div class="modal-body">
-          <!-- User Info -->
+
           <div class="p-3 bg-light rounded border mb-4">
             <div class="row">
               <div class="col-md-4">
@@ -27,18 +27,18 @@
             </div>
           </div>
 
-          <!-- Hidden inputs -->
+  
           <input type="hidden" id="addEntryUserId" name="user_id" value="">
           <input type="hidden" id="addEntryWeek" name="week_start" value="">
 
-          <!-- Initial prompt -->
+
           <div id="entryTypePrompt" class="text-center">
             <p>Please choose the type of entry:</p>
             <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" style="font-size: 14px !important;" id="btnTimeOffEntry">Time Off Entry</button>
             <button type="button" class="btn badge text-white p-2 text-decoration-none fw-medium btn-dark" style="font-size: 14px !important;" id="btnNewEntry">New Assignment Entry</button>
           </div>
 
-          <!-- Time Off Entry content -->
+
           <div id="timeOffEntryContent" class="d-none">
             <div class="mb-3">
               <label for="timeOffHours" class="form-label">Hours</label>
@@ -46,9 +46,9 @@
             </div>
           </div>
 
-          <!-- New Assignment Entry content -->
+
           <div id="newEntryContent" class="d-none">
-            <!-- Custom Client Dropdown -->
+
             <div class="mb-3 custom-dropdown">
               <label for="engagementInput" class="form-label">Client Name</label>
               <div class="dropdown-btn" id="dropdownBtn" tabindex="0" role="combobox" aria-expanded="false" aria-labelledby="selectedClient">
@@ -81,7 +81,7 @@
               <input type="hidden" id="engagementInput" name="engagement_id">
             </div>
 
-            <!-- Assigned hours -->
+ 
             <div class="mb-3">
               <label for="assignedHours" class="form-label">Hours</label>
               <input type="number" class="form-control" id="assignedHours" name="assigned_hours" min="0" step="0.25" required>
@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <!-- Footer -->
+
         <div id="modal-footer" class="modal-footer d-none">
           <button type="button" class="btn btn-light fw-medium" style="font-size: 14px !important;" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-dark fw-medium" style="font-size: 14px !important;">Submit</button>
@@ -97,4 +97,4 @@
       </form>
     </div>
   </div>
-</div>
+</div> -->
