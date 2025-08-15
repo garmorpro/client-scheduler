@@ -188,7 +188,7 @@ td:first-child {
     background-color: #fff;       
     z-index: 100;                  
     outline: 1px solid rgba(175, 175, 175, 1);
-    outline-offset: -3px;
+    outline-offset: 1px;
 }
 
 /* Optional: make sticky headers above the first column */
