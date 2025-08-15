@@ -4,8 +4,8 @@
     let activeInput = null;
 
     // Render or update the time-off badge
-    function renderTimeOff(td, timeOffValue, entryId) {
-        console.log('Rendering time off:', { td, timeOffValue, entryId });
+    function renderTimeOff(td, timeOffValue, entryId, hasOtherBadges = false) {
+        console.log('Rendering time off:', { td, timeOffValue, entryId, hasOtherBadges });
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
@@ -23,10 +23,7 @@
             td.appendChild(div);
         }
 
-        // Ensure the plus icon exists **only if there’s no other badge except timeoff**
-        const hasOtherBadges = Array.from(td.children).some(
-            el => el !== td.querySelector('.timeoff-corner') && el.classList.contains('entry-badge')
-        );
+        // Only add plus if there are no other badges and no existing plus
         if (!td.querySelector('.bi-plus') && !hasOtherBadges) {
             console.log('Adding plus icon');
             const plus = document.createElement('i');
@@ -75,11 +72,16 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
+        // Capture whether there are other badges (besides any time-off)
+        const hasOtherBadges = Array.from(td.children).some(
+            el => el.classList.contains('entry-badge')
+        );
+
         const entryId = await getTimeOffEntry(td);
         const existingBadge = td.querySelector('.timeoff-corner');
         const currentVal = existingBadge ? existingBadge.textContent : '';
 
-        console.log('Handling time off input for cell:', td, { entryId, currentVal });
+        console.log('Handling time off input for cell:', td, { entryId, currentVal, hasOtherBadges });
 
         const input = document.createElement('input');
         input.type = 'text';
@@ -107,7 +109,7 @@
                     });
                     if (update.ok && update.data?.success) {
                         console.log('Time off updated successfully');
-                        renderTimeOff(td, val, entryId);
+                        renderTimeOff(td, val, entryId, hasOtherBadges);
                     } else {
                         console.warn('Failed to update time off');
                         alert('Failed to update time off.');
@@ -121,7 +123,7 @@
                     });
                     if (add.ok && add.data?.success && add.data.entry_id) {
                         console.log('Time off added successfully');
-                        renderTimeOff(td, val, add.data.entry_id);
+                        renderTimeOff(td, val, add.data.entry_id, hasOtherBadges);
                     } else {
                         console.warn('Failed to add time off');
                         alert('Failed to add time off.');
