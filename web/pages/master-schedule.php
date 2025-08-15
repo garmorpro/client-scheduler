@@ -524,11 +524,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 }
 
                 // --- DYNAMIC DOM UPDATE ---
-                // Remove placeholder '+' in target cell if exists
-                const placeholder = targetTd.querySelector('.text-muted');
-                if (placeholder && targetTd.querySelectorAll('.draggable-badge').length === 0) {
-                    placeholder.remove();
-                }
+                // Remove placeholder '+' (bi bi-plus) in target cell if exists
+                const placeholder = targetTd.querySelector('.bi-plus');
+                if (placeholder) placeholder.remove();
 
                 // Move badge element
                 targetTd.appendChild(badge);
@@ -541,10 +539,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     const hasBadge = originCell.querySelector('.draggable-badge');
                     const hasTimeOff = originCell.querySelector('.timeoff-corner');
                     if (!hasBadge && !hasTimeOff) {
-                        const plusSpan = document.createElement('span');
-                        plusSpan.className = 'text-muted';
-                        plusSpan.innerText = '+';
-                        originCell.appendChild(plusSpan);
+                        const plusIcon = document.createElement('i');
+                        plusIcon.className = 'bi bi-plus text-muted';
+                        originCell.appendChild(plusIcon);
                     }
                 }
 
