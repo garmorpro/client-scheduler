@@ -83,7 +83,8 @@
                 if (!val) return;
 
                 try {
-                    if (timeOff) {
+                    // UPDATE EXISTING TIME OFF
+                    if (timeOff && timeOff.dataset.entryId) {
                         console.log('Updating time off:', {
                             entry_id: timeOff.dataset.entryId,
                             timeoff_note: val
@@ -103,7 +104,9 @@
                         } else {
                             alert('Failed to update time off: ' + (data.error || 'Server error'));
                         }
-                    } else {
+                    } 
+                    // ADD NEW TIME OFF
+                    else {
                         console.log('Adding time off:', {
                             user_id: userId,
                             week_start: weekStart,
@@ -120,10 +123,10 @@
                         const data = await resp.json();
                         console.log('Add response:', data);
 
-                        if (resp.ok && data.success) {
+                        if (resp.ok && data.success && data.entry_id) {
                             const div = document.createElement('div');
                             div.className = 'timeoff-corner';
-                            div.dataset.entryId = data.entry_id; // IMPORTANT: get entry_id from PHP response
+                            div.dataset.entryId = data.entry_id; // SET entry_id from PHP response
                             div.style.fontSize = '0.8em';
                             div.style.color = '#555';
                             div.textContent = val;
