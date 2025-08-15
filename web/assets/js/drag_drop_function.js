@@ -68,12 +68,11 @@
         }
 
         function updatePlusIcon(cell) {
-            // Remove any existing plus icons
+            // Remove existing plus icons
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
 
-            // Only add plus icon if no badges exist in the cell
-            const hasBadge = cell.querySelector('.draggable-badge');
-            if (!hasBadge) {
+            // Only add icon if no badges exist in the cell
+            if (!cell.querySelector('.draggable-badge')) {
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus text-muted';
                 plusIcon.style.cursor = 'pointer';
@@ -134,13 +133,13 @@
                     return;
                 }
 
-                // ✅ Move badge in DOM
+                // Move badge in DOM
                 targetTd.appendChild(badge);
                 badge.style.pointerEvents = '';
                 badge.classList.remove('dragging');
                 loadingDot.remove();
 
-                // Update plus icon for origin and target cells
+                // Update plus icon for only affected cells
                 if (originCell) updatePlusIcon(originCell);
                 updatePlusIcon(targetTd);
 
@@ -153,19 +152,28 @@
             }
         }
 
-        // Initial setup: add plus icons to empty cells
-        document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
-
+        // Initial setup
         setupBadges();
         setupDropTargets();
 
-        // Observe table for dynamically added badges
-        const tableObserver = new MutationObserver(() => {
-            setupBadges();
-            setupDropTargets();
-            document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
-        });
+        // Add plus icons on page load
+        document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
+
+        // Only observe **direct changes to badges** inside table to avoid infinite loops
         const table = document.querySelector('.table-responsive');
-        if (table) tableObserver.observe(table, { childList: true, subtree: true });
+        if (table) {
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(m => {
+                    m.addedNodes.forEach(node => {
+                        if (node.nodeType === 1 && node.classList.contains('draggable-badge')) {
+                            setupBadges();
+                            const parentCell = node.closest('td.addable');
+                            if (parentCell) updatePlusIcon(parentCell);
+                        }
+                    });
+                });
+            });
+            observer.observe(table, { childList: true, subtree: true });
+        }
     });
 })();
