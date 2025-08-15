@@ -22,20 +22,20 @@
         return client && client.status ? client.status : 'confirmed';
     }
 
-    const dropdown = document.createElement('div');
-    dropdown.style.position = 'absolute';
-    dropdown.style.zIndex = '9999';
-    dropdown.style.background = '#fff';
-    dropdown.style.border = '1px solid #ccc';
-    dropdown.style.borderRadius = '4px';
-    dropdown.style.display = 'none';
-    dropdown.style.maxHeight = '150px';
-    dropdown.style.overflowY = 'auto';
-    document.body.appendChild(dropdown);
+    // Global dropdown for single-badge (inline) cells
+    const globalDropdown = document.createElement('div');
+    globalDropdown.style.position = 'absolute';
+    globalDropdown.style.zIndex = '9999';
+    globalDropdown.style.background = '#fff';
+    globalDropdown.style.border = '1px solid #ccc';
+    globalDropdown.style.borderRadius = '4px';
+    globalDropdown.style.display = 'none';
+    globalDropdown.style.maxHeight = '150px';
+    globalDropdown.style.overflowY = 'auto';
+    document.body.appendChild(globalDropdown);
+    globalDropdown.addEventListener('click', e => e.stopPropagation());
 
-    dropdown.addEventListener('click', e => e.stopPropagation());
-
-    // FIXED document click listener
+    // Click outside listener
     document.addEventListener('click', e => {
         if (activeTd) {
             const clickInsideTd = activeTd.contains(e.target);
@@ -52,13 +52,12 @@
             activeOverlay = null;
         }
         if (activeTd) {
-            // If inline input, restore previous badges if any
             if (!activeTd.querySelector('.draggable-badge')) {
                 activeTd.innerHTML = '';
             }
             activeTd = null;
         }
-        dropdown.style.display = 'none';
+        globalDropdown.style.display = 'none';
     }
 
     function makeBadgeDraggable(badge) {
@@ -105,7 +104,7 @@
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
 
         attachInputEvents(td, clientInput, hoursInput, true);
-        setupAutocomplete(clientInput);
+        setupAutocomplete(clientInput, globalDropdown);
         clientInput.focus();
     }
 
@@ -148,12 +147,24 @@
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
+        // Create **per-overlay dropdown**
+        const overlayDropdown = document.createElement('div');
+        overlayDropdown.style.position = 'absolute';
+        overlayDropdown.style.zIndex = '10001';
+        overlayDropdown.style.background = '#fff';
+        overlayDropdown.style.border = '1px solid #ccc';
+        overlayDropdown.style.borderRadius = '4px';
+        overlayDropdown.style.display = 'none';
+        overlayDropdown.style.maxHeight = '150px';
+        overlayDropdown.style.overflowY = 'auto';
+        document.body.appendChild(overlayDropdown);
+
+        setupAutocomplete(clientInput, overlayDropdown);
         attachInputEvents(td, clientInput, hoursInput, false, overlay);
-        setupAutocomplete(clientInput, overlay);
         clientInput.focus();
     }
 
-    function setupAutocomplete(clientInput, container = dropdown) {
+    function setupAutocomplete(clientInput, container) {
         clientInput.addEventListener('input', () => {
             const val = clientInput.value.trim();
             if (val.length >= 3) {
