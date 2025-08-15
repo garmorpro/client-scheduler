@@ -181,16 +181,19 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       }
 
     th:first-child,
-td:first-child {
-    min-width: 250px;
-    position: sticky !important;
-    left: 0;
-    background-color: #fff;       
-    z-index: 101;                  /* slightly higher than other sticky elements */
-    outline: 2px solid rgb(223, 226, 230); /* works on top of everything */
-    border-left: 2px solid rgb(223, 226, 230);
-    box-sizing: border-box;
-}
+    td:first-child {
+        min-width: 250px;
+        position: sticky !important;
+        left: 0;
+        background-color: #fff;       
+        z-index: 101;                  /* slightly higher than other sticky elements */
+        outline: 2px solid rgb(223, 226, 230); /* works on top of everything */
+        border-left: 2px solid rgb(223, 226, 230);
+        box-sizing: border-box;
+    }
+    .table-responsive {
+        border-left: 1px solid blue;
+    }
 
 
     </style>
