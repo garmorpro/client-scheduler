@@ -31,7 +31,7 @@
     dropdown.style.overflowY = 'auto';
     document.body.appendChild(dropdown);
 
-    // Stop click propagation inside dropdown so it doesn't close the cell
+    // Stop click propagation inside dropdown
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
@@ -47,7 +47,11 @@
 
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
+            // Don't do anything if the cell already has a badge
             if (td.querySelector('.draggable-badge')) return;
+
+            // Don't reset if the click originated from an input inside the cell
+            if (e.target.tagName === 'INPUT') return;
 
             td.innerHTML = '';
 
@@ -68,6 +72,11 @@
             td.appendChild(hoursInput);
             clientInput.focus();
 
+            // Stop clicks from inputs from bubbling up
+            [clientInput, hoursInput].forEach(input => {
+                input.addEventListener('click', e => e.stopPropagation());
+            });
+
             function updateDropdownPosition() {
                 const rect = clientInput.getBoundingClientRect();
                 dropdown.style.top = rect.bottom + window.scrollY + 'px';
@@ -86,7 +95,7 @@
                         div.style.padding = '5px 10px';
                         div.style.cursor = 'pointer';
                         div.addEventListener('click', (e) => {
-                            e.stopPropagation(); // <-- Prevent td click from firing
+                            e.stopPropagation(); // Prevent td click
                             clientInput.value = client.client_name;
                             dropdown.style.display = 'none';
                         });
