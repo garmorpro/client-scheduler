@@ -158,7 +158,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         position: absolute; 
         top: 2px; 
         right: 6px; 
-        font-size: 10px; 
+        font-size: 8px; 
         font-weight: 600;
         color: rgb(50,107,61) !important;
     }
