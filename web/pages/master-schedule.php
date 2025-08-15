@@ -191,36 +191,28 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     border: 2px dashed rgb(209,226, 159) !important;
     background: rgb(246, 249, 236) !important;
 }
-
-/* First column sticky */
-.table th:first-child,
-.table td.employee-name {
+/* Keep first column fixed on the left */
+.employee-name,
+thead th:first-child {
     position: sticky;
     left: 0;
-    background-color: #fff; /* match table background */
-    z-index: 3;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.2);
+    background: white; /* match table background */
+    z-index: 2;
 }
 
-/* Keep the top header row sticky */
-.table thead th {
+/* Keep header row fixed at the top */
+thead th {
     position: sticky;
     top: 0;
-    background-color: #f8f9fa; /* same as table header */
-    z-index: 5;
+    background: #f8f9fa; /* header background */
+    z-index: 3;
 }
 
-/* Top-left cell (header of first column) above both header and first column */
-.table thead th:first-child {
-    z-index: 6;
+/* Make top-left cell above everything */
+thead th:first-child {
+    z-index: 4;
 }
 
-/* Optional: smooth horizontal scroll */
-.table-responsive {
-    overflow-x: auto;
-    white-space: nowrap;
-    scroll-behavior: smooth;
-}
     </style>
 </head>
 <body class="d-flex">
@@ -305,18 +297,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     $role = htmlspecialchars($employee['role']);
                     ?>
                     <tr>
-                        <td class="text-start employee-name">
-    <div class="d-flex align-items-center">
-        <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-             style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-          <?php echo $initials; ?>
-        </div>
-        <div>
-          <div class="fw-semibold"><?php echo $fullName; ?></div>
-          <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-        </div>
-    </div>
-</td>
+                        <td class="text-start employee-name position-sticky">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                                     style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
+                                  <?php echo $initials; ?>
+                                </div>
+                                <div>
+                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                                </div>
+                            </div>
+                        </td>
 
                         <?php foreach ($mondays as $idx => $monday): ?>
                             <?php 
