@@ -11,6 +11,7 @@
         z-index:9999;
         background:#fff;
         border:1px solid #ccc;
+        margin-top: 15px;
         border-radius:4px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
     `;
