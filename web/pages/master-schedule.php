@@ -10,9 +10,54 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Default week offset
-$weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
+// Function to calculate mondays based on offset
+function getMondays($weekOffset = 0, $weeksToShow = 7) {
+    $today = strtotime('today');
+    $currentMonday = strtotime('monday this week', $today);
+    $startMonday = strtotime("-2 weeks", $currentMonday);
+    $startMonday = strtotime("+{$weekOffset} weeks", $startMonday);
+
+    $mondays = [];
+    for ($i = 0; $i < $weeksToShow; $i++) {
+        $mondays[] = strtotime("+{$i} weeks", $startMonday);
+    }
+    return $mondays;
+}
+
+// Default mondays for initial page load
+$weekOffset = 0;
+$mondays = getMondays($weekOffset);
+
+// Get employees
+$employees = [];
+$userQuery = "
+    SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role 
+    FROM users 
+    WHERE status='active' AND role IN ('staff','senior')
+    ORDER BY CASE WHEN role='senior' THEN 1 WHEN role='staff' THEN 2 END, first_name ASC
+";
+$userResult = $conn->query($userQuery);
+while ($userRow = $userResult->fetch_assoc()) {
+    $employees[$userRow['user_id']] = [
+        'full_name' => $userRow['full_name'],
+        'role' => $userRow['role']
+    ];
+}
+
+// Get clients (for dropdowns)
+$clientQuery = "SELECT engagement_id, client_name FROM engagements";
+$clientResult = $conn->query($clientQuery);
+$activeClients = [];
+while ($clientRow = $clientResult->fetch_assoc()) {
+    $activeClients[] = $clientRow;
+}
+
+// Calculate range label
+$firstWeek = reset($mondays);
+$lastWeek = end($mondays);
+$rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +72,8 @@ $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
         .timeoff-cell:hover { background-color: #e0f7fa !important; }
         <?php endif; ?>
         .timeoff-corner { position: absolute; top: 2px; right: 6px; font-size: .50rem; }
-        .timeoff-card { border: 2px dashed rgb(209,226, 159) !important; background: rgb(246, 249, 236) !important; }
+        .timeoff-card { border: 2px dashed rgb(209,226,159) !important; background: rgb(246,249,236) !important; }
+        .highlight-today { background-color: #fff3cd !important; }
     </style>
 </head>
 <body class="d-flex">
@@ -45,23 +91,43 @@ $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
         </div>
     </div>
 
-    <!-- upper search and week slider -->
+    <!-- Search and dynamic week slider -->
     <div class="bg-white border rounded p-4 mb-4">
-        <div class="row align-items-center g-3">
+        <div class="row g-3 align-items-center">
             <div class="col-md-6">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." />
+                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
             </div>
             <div class="col-md-6 d-flex justify-content-end align-items-center gap-3">
-                <input type="range" id="weekSlider" min="-2" max="10" value="<?php echo $weekOffset; ?>" style="width: 200px;">
-                <span id="weekLabel" class="fw-semibold">Loading...</span>
+                <input type="range" id="weekSlider" min="-2" max="10" value="0" style="width:200px;">
+                <span id="weekLabel" class="fw-semibold"><?php echo $rangeLabel; ?></span>
             </div>
         </div>
     </div>
 
-    <!-- Master Schedule table -->
-    <div id="scheduleContainer" class="table-responsive">
-        <!-- Table will load dynamically via AJAX -->
-        <div class="text-center py-5">Loading schedule...</div>
+    <!-- Master Schedule Table -->
+    <div class="table-responsive" id="masterScheduleContainer">
+        <table class="table table-bordered align-middle text-center" id="masterScheduleTable">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                    <?php foreach ($mondays as $monday): ?>
+                        <th><?php echo date('M j', $monday); ?><br><small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody id="employeesTableBody">
+                <?php foreach ($employees as $userId => $employee): ?>
+                    <tr data-user-id="<?php echo $userId; ?>">
+                        <td class="text-start employee-name">
+                            <?php echo htmlspecialchars($employee['full_name']); ?> (<?php echo htmlspecialchars($employee['role']); ?>)
+                        </td>
+                        <?php foreach ($mondays as $monday): ?>
+                            <td class="timeoff-cell" data-week="<?php echo date('Y-m-d',$monday); ?>">Loading...</td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 
     <?php if ($isAdmin): ?>
@@ -80,49 +146,55 @@ $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('weekSlider');
-    const weekLabel = document.getElementById('weekLabel');
-    const container = document.getElementById('scheduleContainer');
+const weekSlider = document.getElementById('weekSlider');
+const weekLabel = document.getElementById('weekLabel');
 
-    // Function to fetch table data
-    function loadSchedule(offset) {
-        fetch(`load_schedule.php?week_offset=${offset}`)
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                updateLabel(offset);
+function fetchSchedule(weekOffset){
+    fetch(`ajax_fetch_schedule.php?week_offset=${weekOffset}`)
+        .then(res => res.json())
+        .then(data => {
+            // Update table headers and cells dynamically
+            const mondays = data.mondays;
+            const tbody = document.getElementById('employeesTableBody');
+
+            // Update header
+            const table = document.getElementById('masterScheduleTable');
+            const thead = table.querySelector('thead tr');
+            thead.innerHTML = '<th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>';
+            mondays.forEach(m => {
+                const th = document.createElement('th');
+                th.innerHTML = `${m.label}<br><small class="text-muted">${m.range}</small>`;
+                thead.appendChild(th);
             });
-    }
 
-    // Function to update the label
-    function updateLabel(offset) {
-        const today = new Date();
-        const currentMonday = new Date(today.setDate(today.getDate() - today.getDay() + 1));
-        const startMonday = new Date(currentMonday);
-        startMonday.setDate(startMonday.getDate() - 14 + (offset * 7));
-        const endMonday = new Date(startMonday);
-        endMonday.setDate(endMonday.getDate() + 6 * 7);
-        const options = { month: 'numeric', day: 'numeric' };
-        weekLabel.textContent = `Week of ${startMonday.toLocaleDateString('en-US', options)} - Week of ${endMonday.toLocaleDateString('en-US', options)}`;
-    }
+            // Update cells
+            tbody.querySelectorAll('tr').forEach(tr => {
+                const userId = tr.dataset.userId;
+                tr.querySelectorAll('td:not(:first-child)').forEach((td, idx) => {
+                    const weekKey = mondays[idx].date;
+                    const entries = data.entries[userId]?.[weekKey] || [];
+                    td.innerHTML = entries.map(e => `${e.client_name} (${e.assigned_hours})`).join('<br>') || '<span class="text-muted">+</span>';
+                });
+            });
 
-    // Initial load
-    loadSchedule(slider.value);
-
-    slider.addEventListener('input', () => {
-        loadSchedule(slider.value);
-    });
-
-    document.getElementById('searchInput').addEventListener('keyup', () => {
-        const filter = document.getElementById('searchInput').value.toLowerCase();
-        document.querySelectorAll('#scheduleContainer tbody tr').forEach(row => {
-            const name = row.querySelector('.employee-name').textContent.toLowerCase();
-            row.style.display = name.includes(filter) ? '' : 'none';
+            // Update label
+            weekLabel.textContent = data.rangeLabel;
         });
-    });
+}
+
+// Initialize
+fetchSchedule(weekSlider.value);
+
+weekSlider.addEventListener('input', () => {
+    weekLabel.textContent = `Loading...`;
+});
+
+weekSlider.addEventListener('change', () => {
+    fetchSchedule(weekSlider.value);
 });
 </script>
+
 </body>
 </html>
