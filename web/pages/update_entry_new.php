@@ -19,7 +19,7 @@ $entry_id = intval($data['entry_id']);
 $client_name = trim($data['client_name']);
 $hours = floatval($data['assigned_hours']);
 
-$stmt = $conn->prepare("UPDATE schedule_entries SET client_name = ?, assigned_hours = ? WHERE entry_id = ?");
+$stmt = $conn->prepare("UPDATE entries SET client_name = ?, assigned_hours = ? WHERE entry_id = ?");
 $stmt->bind_param("sdi", $client_name, $hours, $entry_id);
 
 if ($stmt->execute()) {
