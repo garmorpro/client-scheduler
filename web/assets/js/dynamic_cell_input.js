@@ -31,6 +31,9 @@
     dropdown.style.overflowY = 'auto';
     document.body.appendChild(dropdown);
 
+    // Stop click propagation inside dropdown so it doesn't close the cell
+    dropdown.addEventListener('click', e => e.stopPropagation());
+
     document.addEventListener('click', e => {
         if (!dropdown.contains(e.target)) dropdown.style.display = 'none';
     });
@@ -82,7 +85,8 @@
                         div.textContent = client.client_name;
                         div.style.padding = '5px 10px';
                         div.style.cursor = 'pointer';
-                        div.addEventListener('click', () => {
+                        div.addEventListener('click', (e) => {
+                            e.stopPropagation(); // <-- Prevent td click from firing
                             clientInput.value = client.client_name;
                             dropdown.style.display = 'none';
                         });
