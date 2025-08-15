@@ -47,12 +47,34 @@
         }
     }
 
+    // Fetch existing time-off entry ID for this cell
+    async function getTimeOffEntry(td) {
+        const user_id = td.dataset.userId;
+        const week_start = td.dataset.weekStart;
+
+        const response = await safeFetchJSON('get_timeoff_entry.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id, week_start })
+        });
+
+        if (response.ok && response.data?.success) {
+            console.log('Fetched timeoff entry_id:', response.data.entry_id);
+            return response.data.entry_id; // can be null
+        } else {
+            console.warn('Failed to fetch timeoff entry');
+            return null;
+        }
+    }
+
     // Inline input for adding or editing time-off
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
+        // Get entry_id from database
+        const entryId = await getTimeOffEntry(td);
         const existingBadge = td.querySelector('.timeoff-corner');
-        const entryId = existingBadge ? existingBadge.dataset.entryId : null;
         const currentVal = existingBadge ? existingBadge.textContent : '';
 
         console.log('Handling time off input for cell:', td, { entryId, currentVal });
