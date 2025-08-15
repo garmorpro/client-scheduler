@@ -524,26 +524,28 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 }
 
                 // --- DYNAMIC DOM UPDATE ---
-                // Remove placeholder '+' (bi bi-plus) in target cell if exists
-                const placeholder = targetTd.querySelector('.bi-plus');
-                if (placeholder) placeholder.remove();
+const placeholder = targetTd.querySelector('.bi-plus');
+if (placeholder) placeholder.remove();
 
-                // Move badge element
-                targetTd.appendChild(badge);
-                targetTd.appendChild(document.createElement('br'));
-                badge.dataset.userId = targetUserId;
-                badge.dataset.weekStart = targetWeekStart;
+// Move badge element
+targetTd.appendChild(badge);
+targetTd.appendChild(document.createElement('br'));
+badge.dataset.userId = targetUserId;
+badge.dataset.weekStart = targetWeekStart;
 
-                // Check origin cell for emptiness
-                if (originCell && originCell !== targetTd) {
-                    const hasBadge = originCell.querySelector('.draggable-badge');
-                    const hasTimeOff = originCell.querySelector('.timeoff-corner');
-                    if (!hasBadge && !hasTimeOff) {
-                        const plusIcon = document.createElement('i');
-                        plusIcon.className = 'bi bi-plus text-muted';
-                        originCell.appendChild(plusIcon);
-                    }
-                }
+// Update origin cell
+if (originCell && originCell !== targetTd) {
+    const hasBadge = originCell.querySelector('.draggable-badge');
+    const hasTimeOff = originCell.querySelector('.timeoff-corner');
+    const hasPlus = originCell.querySelector('.bi-plus');
+
+    if (!hasBadge && !hasTimeOff && !hasPlus) {
+        const plusIcon = document.createElement('i');
+        plusIcon.className = 'bi bi-plus text-muted';
+        originCell.appendChild(plusIcon);
+        originCell.appendChild(document.createElement('br')); // ensure spacing
+    }
+}
 
                 // cleanup
                 badge.style.pointerEvents = '';
