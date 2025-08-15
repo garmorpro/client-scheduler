@@ -120,7 +120,7 @@ $stmt2->close();
     <style>
       .timeoff-cell { background-color: rgb(217,217,217) !important; }
       <?php if ($isAdmin): ?>
-      .timeoff-cell:hover { background-color: rgba(222, 222, 222, 1) !important; }
+      .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
       <?php endif; ?>
       .timeoff-corner { 
         position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800;
