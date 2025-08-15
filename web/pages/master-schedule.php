@@ -227,6 +227,7 @@ table td:first-child {
     left: 0;
     z-index: 2 !important;
     background: white;
+    border: 1px solid blue;
 }
 
 /* Sticky header row */
