@@ -224,6 +224,13 @@
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async e => {
                 if (e.key === 'Enter') {
+                    // Close dropdown immediately
+                    if (inline) {
+                        globalDropdown.style.display = 'none';
+                    } else if (overlay && overlay.nextSibling) {
+                        overlay.nextSibling.style.display = 'none';
+                    }
+
                     const clientName = clientInput.value.trim();
                     const hours = parseFloat(hoursInput.value);
                     if (!clientName || !hours || hours <= 0) {
@@ -343,6 +350,8 @@
             [clientInput, hoursInput].forEach(input => {
                 input.addEventListener('keydown', async ev => {
                     if (ev.key === 'Enter') {
+                        dropdown.style.display = 'none'; // Close autocomplete immediately
+
                         const newName = clientInput.value.trim();
                         const newHours = parseFloat(hoursInput.value);
 
