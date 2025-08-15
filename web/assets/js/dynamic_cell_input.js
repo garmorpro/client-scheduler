@@ -81,30 +81,31 @@
     // Click handler for cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
-            if (e.target.tagName === 'INPUT') return;
+            const target = e.target;
+
+            // Ignore clicks on badges, inputs, or timeoff-corner
+            if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.classList.contains('timeoff-corner')) return;
             if (activeTd === td) return;
 
             closeActiveInputs();
             activeTd = td;
 
-            const clickedBadge = e.target.classList.contains('draggable-badge');
             const hasBadges = td.querySelector('.draggable-badge') !== null;
             const timeOff = td.querySelector('.timeoff-corner');
 
-            if (hasBadges && !clickedBadge) {
+            if (hasBadges) {
                 showOverlay(td);
                 return;
             }
 
-            // If only timeoff exists, preserve it during input
+            // Show inline inputs (preserve timeoff)
             showInlineInputs(td, timeOff);
         });
     });
 
     function showInlineInputs(td, timeOff = null) {
-        td.innerHTML = ''; // clear current content
-
-        if (timeOff) td.appendChild(timeOff); // preserve timeoff-corner
+        td.innerHTML = '';
+        if (timeOff) td.appendChild(timeOff);
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
@@ -211,12 +212,8 @@
                     container.style.left = rect.left + window.scrollX + 'px';
                     container.style.width = rect.width + 'px';
                     container.style.display = 'block';
-                } else {
-                    container.style.display = 'none';
-                }
-            } else {
-                container.style.display = 'none';
-            }
+                } else container.style.display = 'none';
+            } else container.style.display = 'none';
         });
     }
 
@@ -232,12 +229,10 @@
                         return;
                     }
 
-                    // Close inputs immediately
                     closeActiveInputs();
                     if (inline) globalDropdown.style.display = 'none';
                     else if (overlay && overlay.nextSibling) overlay.nextSibling.style.display = 'none';
 
-                    // Add badge
                     try {
                         const resp = await fetch('add_entry_new.php', {
                             method: 'POST',
@@ -348,7 +343,6 @@
             input.addEventListener('keydown', async ev => {
                 if (ev.key === 'Enter') {
                     dropdown.style.display = 'none';
-
                     const newName = clientInput.value.trim();
                     const newHours = parseFloat(hoursInput.value);
 
