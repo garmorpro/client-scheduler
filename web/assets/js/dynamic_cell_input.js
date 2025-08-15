@@ -91,13 +91,11 @@
             const hasBadges = td.querySelector('.draggable-badge') !== null;
 
             if (hasBadges && !clickedBadge) {
-                // Empty space in a cell with badges → open overlay to add another entry
                 showOverlay(td);
                 return;
             }
 
             if (!hasBadges) {
-                // No badges in cell → open inline inputs
                 showInlineInputs(td);
             }
         });
@@ -256,6 +254,7 @@
 
                         const data = await resp.json();
                         if (resp.ok && data.success) {
+                            // Create and append badge
                             const span = document.createElement('span');
                             const statusClass = getClientStatus(clientName);
                             span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
@@ -273,6 +272,7 @@
                             const timeOff = td.querySelector('.timeoff-corner');
                             if (timeOff) td.appendChild(timeOff);
 
+                            // ✅ Close inputs after adding badge
                             closeActiveInputs();
                         } else {
                             alert('Failed to add entry: ' + (data.error || 'Server error'));
@@ -350,7 +350,7 @@
             [clientInput, hoursInput].forEach(input => {
                 input.addEventListener('keydown', async ev => {
                     if (ev.key === 'Enter') {
-                        dropdown.style.display = 'none'; // Close autocomplete immediately
+                        dropdown.style.display = 'none'; // Close autocomplete
 
                         const newName = clientInput.value.trim();
                         const newHours = parseFloat(hoursInput.value);
