@@ -132,7 +132,11 @@
                             const data = await resp.json();
                             if (resp.ok && data.success) {
                                 const span = document.createElement('span');
-                                span.className = 'badge badge-status badge-confirmed mt-1 draggable-badge';
+
+                                // Use the actual status returned from server
+                                const statusClass = data.status ? `badge-${data.status}` : 'badge-confirmed';
+
+                                span.className = `badge badge-status ${statusClass} mt-1 draggable-badge`;
                                 span.dataset.entryId = data.entry_id;
                                 span.dataset.userId = td.dataset.userId;
                                 span.dataset.weekStart = td.dataset.weekStart;
