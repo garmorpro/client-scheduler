@@ -16,6 +16,12 @@
         return activeClients.filter(c => c.client_name.toLowerCase().includes(query));
     }
 
+    // Helper to get client status from activeClients
+    function getClientStatus(clientName) {
+        const client = activeClients.find(c => c.client_name === clientName);
+        return client && client.status ? client.status : 'confirmed';
+    }
+
     // Create dropdown container
     const dropdown = document.createElement('div');
     dropdown.style.position = 'absolute';
@@ -35,12 +41,8 @@
     // Helper: attach drag events to a badge
     function makeBadgeDraggable(badge) {
         if (!badge) return;
-        if (typeof handleDragStart === 'function') {
-            badge.addEventListener('dragstart', handleDragStart);
-        }
-        if (typeof handleDragEnd === 'function') {
-            badge.addEventListener('dragend', handleDragEnd);
-        }
+        if (typeof handleDragStart === 'function') badge.addEventListener('dragstart', handleDragStart);
+        if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
     // Click handler for empty admin cells
@@ -133,10 +135,10 @@
                             if (resp.ok && data.success) {
                                 const span = document.createElement('span');
 
-                                // Use the actual status returned from server
-                                const statusClass = data.status ? `badge-${data.status}` : 'badge-confirmed';
+                                // Get the actual status from activeClients
+                                const statusClass = getClientStatus(clientName);
 
-                                span.className = `badge badge-status ${statusClass} mt-1 draggable-badge`;
+                                span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                                 span.dataset.entryId = data.entry_id;
                                 span.dataset.userId = td.dataset.userId;
                                 span.dataset.weekStart = td.dataset.weekStart;
