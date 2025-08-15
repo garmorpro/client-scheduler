@@ -21,25 +21,17 @@
     let menuType = null; // 'badge', 'edit', 'add'
     let activeInput = null; // for dynamic input
 
-    // Updated renderCell
+    // Updated renderCell with new styles
     function renderCell(td, timeOffValue = null, entryId = null) {
         td.innerHTML = '';
-        td.style.background = timeOffValue ? '#f0f0f0' : '';
+        td.classList.remove('timeoff-cell');
         td.style.position = 'relative';
 
         if (timeOffValue) {
+            td.classList.add('timeoff-cell'); // apply light gray background
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
             div.dataset.entryId = entryId;
-            div.style.position = 'absolute';
-            div.style.top = '2px';
-            div.style.right = '2px';
-            div.style.background = '#ddd';
-            div.style.padding = '2px 5px';
-            div.style.borderRadius = '4px';
-            div.style.fontSize = '0.75em';
-            div.style.color = '#555';
-            div.style.cursor = 'default';
             div.textContent = timeOffValue;
             td.appendChild(div);
         }
