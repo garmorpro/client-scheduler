@@ -118,7 +118,7 @@ $stmt2->close();
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <style>
-      .timeoff-cell { background-color: rgb(217,217,217) !important; }
+      .timeoff-cell { background-color: rgb(217,217,217); }
       <?php if ($isAdmin): ?>
       .timeoff-cell:hover { background-color: #e0f7fa !important; }
       <?php endif; ?>
@@ -211,7 +211,6 @@ $stmt2->close();
                         $thClasses = 'align-middle week';
                         if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
                         if ($isCurrentWeek) $thClasses .= ' highlight-today';
-                        if ($isCurrentWeek) && ($isGlobalWeek) $thClasses .= ' highlight-today';
                         ?>
                         <th class="<?php echo $thClasses; ?>" style="position: relative;">
                             <?php echo date('M j', $monday); ?><br>
