@@ -101,6 +101,7 @@
                 let entryId = timeOff ? timeOff.dataset.entryId : null;
 
                 if (!entryId) {
+                    // check for existing entry
                     const lookup = await safeFetchJSON('get_timeoff_entry.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -114,6 +115,7 @@
                 }
 
                 if (entryId) {
+                    // update existing
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -130,10 +132,12 @@
                         }
                         timeOff.dataset.entryId = entryId;
                         timeOff.textContent = val;
+                        closeActiveInput(td); // safe to close input
                     } else {
                         alert('Failed to update time off: ' + (update.data?.error || update.error || 'Server error'));
                     }
                 } else {
+                    // add new
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -149,7 +153,9 @@
                         div.style.fontSize = '0.8em';
                         div.style.color = '#555';
                         div.textContent = val;
+                        td.innerHTML = ''; // clear input but keep div
                         td.appendChild(div);
+                        // do NOT call closeActiveInput here, div stays
                     } else {
                         alert('Failed to add time off: ' + (add.data?.error || add.error || 'Server error'));
                     }
@@ -159,8 +165,6 @@
                 console.error('Network error while saving time off:', err);
                 alert('Network error while saving time off.');
             }
-
-            closeActiveInput(td);
         });
     });
 })();
