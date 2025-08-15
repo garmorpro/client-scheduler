@@ -22,16 +22,22 @@
 
     let selectedCell = null;
 
-    function closeActiveInput(td) {
-        if (!td) return;
-        const timeOff = td.querySelector('.timeoff-corner');
+    function renderCell(td, timeOffValue = null, entryId = null) {
         td.innerHTML = '';
-        if (timeOff) td.appendChild(timeOff);
+
+        if (timeOffValue) {
+            const div = document.createElement('div');
+            div.className = 'timeoff-corner';
+            div.dataset.entryId = entryId;
+            div.style.fontSize = '0.8em';
+            div.style.color = '#555';
+            div.textContent = timeOffValue;
+            td.appendChild(div);
+        }
 
         const plus = document.createElement('i');
         plus.className = 'bi bi-plus text-muted';
         td.appendChild(plus);
-        selectedCell = null;
     }
 
     document.addEventListener('contextmenu', e => {
@@ -51,8 +57,10 @@
 
     document.addEventListener('click', e => {
         if (!contextMenu.contains(e.target) && selectedCell) {
-            closeActiveInput(selectedCell);
+            const timeOff = selectedCell.querySelector('.timeoff-corner');
+            renderCell(selectedCell, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
             contextMenu.style.display = 'none';
+            selectedCell = null;
         }
     });
 
@@ -62,7 +70,7 @@
             const text = await resp.text();
             try {
                 return { ok: resp.ok, data: JSON.parse(text) };
-            } catch (jsonErr) {
+            } catch {
                 console.error('Failed to parse JSON:', text);
                 return { ok: resp.ok, data: null, error: 'Invalid JSON response' };
             }
@@ -101,7 +109,6 @@
                 let entryId = timeOff ? timeOff.dataset.entryId : null;
 
                 if (!entryId) {
-                    // check for existing entry
                     const lookup = await safeFetchJSON('get_timeoff_entry.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -125,16 +132,10 @@
                     console.log('Update response:', update);
 
                     if (update.ok && update.data && update.data.success) {
-                        if (!timeOff) {
-                            timeOff = document.createElement('div');
-                            timeOff.className = 'timeoff-corner';
-                            td.appendChild(timeOff);
-                        }
-                        timeOff.dataset.entryId = entryId;
-                        timeOff.textContent = val;
-                        closeActiveInput(td); // safe to close input
+                        renderCell(td, val, entryId);
                     } else {
                         alert('Failed to update time off: ' + (update.data?.error || update.error || 'Server error'));
+                        renderCell(td, currentVal, entryId);
                     }
                 } else {
                     // add new
@@ -147,23 +148,17 @@
                     console.log('Add response:', add);
 
                     if (add.ok && add.data && add.data.success && add.data.entry_id) {
-                        const div = document.createElement('div');
-                        div.className = 'timeoff-corner';
-                        div.dataset.entryId = add.data.entry_id;
-                        div.style.fontSize = '0.8em';
-                        div.style.color = '#555';
-                        div.textContent = val;
-                        td.innerHTML = ''; // clear input but keep div
-                        td.appendChild(div);
-                        // do NOT call closeActiveInput here, div stays
+                        renderCell(td, val, add.data.entry_id);
                     } else {
                         alert('Failed to add time off: ' + (add.data?.error || add.error || 'Server error'));
+                        renderCell(td, null, null);
                     }
                 }
 
             } catch (err) {
                 console.error('Network error while saving time off:', err);
                 alert('Network error while saving time off.');
+                renderCell(td, timeOff ? timeOff.textContent : null, timeOff ? timeOff.dataset.entryId : null);
             }
         });
     });
