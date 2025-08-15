@@ -72,10 +72,17 @@
                     selectedBadge.remove();
                     selectedBadge = null;
 
-                    // If cell is empty, add the plus icon
+                    // Check if there are any other badges left
                     const hasOtherBadges = parentCell.querySelector('.draggable-badge');
+
+                    // Only add plus icon if no other badges exist
                     if (!hasOtherBadges) {
-                        parentCell.innerHTML = '<i class="bi bi-plus text-muted"></i>';
+                        // Check if a plus icon already exists
+                        if (!parentCell.querySelector('.bi-plus')) {
+                            const plusIcon = document.createElement('i');
+                            plusIcon.className = 'bi bi-plus text-muted';
+                            parentCell.appendChild(plusIcon);
+                        }
                     }
                 } else {
                     alert('Failed to delete entry: ' + (data.error || 'Server error'));
