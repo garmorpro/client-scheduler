@@ -159,7 +159,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         top: 2px; 
         right: 6px; 
         font-size: 8px; 
-        font-weight: 600;
+        font-weight: 800;
         color: rgb(50,107,61) !important;
     }
       .timeoff-card {
