@@ -1,26 +1,30 @@
 <?php
-require_once '../includes/db.php';
+require_once '../includes/db.php'; // adjust path if needed
+session_start();
+
+// Only admins can fetch clients
+$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+if (!$isAdmin) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
+}
+
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
+$clients = [];
 
-$user_id = $data['user_id'];
-$week_start = $data['week_start'];
-$client_name = $data['client_name'];
-$assigned_hours = $data['assigned_hours'];
+// Fetch active clients with their status
+$result = $conn->query("SELECT engagement_id, client_name, status FROM engagements ORDER BY client_name ASC");
 
-// Insert entry
-$stmt = $db->prepare("INSERT INTO entries (user_id, week_start, client_name, assigned_hours) VALUES (?, ?, ?, ?)");
-$stmt->execute([$user_id, $week_start, $client_name, $assigned_hours]);
-$entry_id = $db->lastInsertId();
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        // Ensure a default status if null
+        if (empty($row['status'])) {
+            $row['status'] = 'confirmed';
+        }
+        $clients[] = $row;
+    }
+}
 
-// Get status from clients table
-$stmt2 = $db->prepare("SELECT status FROM clients WHERE client_name = ? LIMIT 1");
-$stmt2->execute([$client_name]);
-$status = $stmt2->fetchColumn() ?: 'confirmed';
-
-echo json_encode([
-    'success' => true,
-    'entry_id' => $entry_id,
-    'status' => $status
-]);
+echo json_encode($clients);
