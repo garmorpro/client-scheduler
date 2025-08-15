@@ -225,7 +225,7 @@ table th:first-child,
 table td:first-child {
     position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 0;
     background: white;
 }
 
