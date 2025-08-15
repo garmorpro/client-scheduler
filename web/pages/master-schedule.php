@@ -366,7 +366,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
                                     <?php
                                     if ($hasTimeOff) {
-                                        echo "<span class='timeoff-corner fw-semibold'>{$timeOffHours}</span>";
+                                        echo "<span class='timeoff-corner'>{$timeOffHours}</span>";
                                     }
                                     echo $cellContent;
                                     ?>
