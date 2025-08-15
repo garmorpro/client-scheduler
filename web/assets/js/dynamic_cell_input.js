@@ -22,20 +22,22 @@
         return client && client.status ? client.status : 'confirmed';
     }
 
-    // Global dropdown for single-badge (inline) cells
+    // Global dropdown for inline cells
     const globalDropdown = document.createElement('div');
-    globalDropdown.style.position = 'absolute';
-    globalDropdown.style.zIndex = '9999';
-    globalDropdown.style.background = '#fff';
-    globalDropdown.style.border = '1px solid #ccc';
-    globalDropdown.style.borderRadius = '4px';
-    globalDropdown.style.display = 'none';
-    globalDropdown.style.maxHeight = '150px';
-    globalDropdown.style.overflowY = 'auto';
+    Object.assign(globalDropdown.style, {
+        position: 'absolute',
+        zIndex: '9999',
+        background: '#fff',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        display: 'none',
+        maxHeight: '150px',
+        overflowY: 'auto'
+    });
     document.body.appendChild(globalDropdown);
     globalDropdown.addEventListener('click', e => e.stopPropagation());
 
-    // Click outside listener
+    // Click outside closes inputs
     document.addEventListener('click', e => {
         if (activeTd) {
             const clickInsideTd = activeTd.contains(e.target);
@@ -76,20 +78,26 @@
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
-    // Click handler for adding new entries
+    // Click handler for cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
-            // Ignore if clicking directly on a badge (let dblclick handle editing)
-            if (e.target.classList.contains('draggable-badge')) return;
             if (e.target.tagName === 'INPUT') return;
             if (activeTd === td) return;
 
             closeActiveInputs();
             activeTd = td;
 
-            if (td.querySelector('.draggable-badge')) {
-                return; // Don't auto-open edit; wait for double-click
-            } else {
+            const clickedBadge = e.target.classList.contains('draggable-badge');
+            const hasBadges = td.querySelector('.draggable-badge') !== null;
+
+            if (hasBadges && !clickedBadge) {
+                // Empty space in a cell with badges → open overlay to add another entry
+                showOverlay(td);
+                return;
+            }
+
+            if (!hasBadges) {
+                // No badges in cell → open inline inputs
                 showInlineInputs(td);
             }
         });
@@ -124,19 +132,21 @@
     function showOverlay(td) {
         const rect = td.getBoundingClientRect();
         const overlay = document.createElement('div');
-        overlay.style.position = 'absolute';
-        overlay.style.top = rect.top + window.scrollY + 'px';
-        overlay.style.left = rect.left + window.scrollX + 'px';
-        overlay.style.width = rect.width + 'px';
-        overlay.style.minHeight = '50px';
-        overlay.style.background = 'rgba(255,255,255,0.95)';
-        overlay.style.backdropFilter = 'blur(2px)';
-        overlay.style.border = '1px solid #ccc';
-        overlay.style.borderRadius = '4px';
-        overlay.style.padding = '5px';
-        overlay.style.zIndex = '10000';
-        overlay.style.display = 'flex';
-        overlay.style.flexDirection = 'column';
+        Object.assign(overlay.style, {
+            position: 'absolute',
+            top: rect.top + window.scrollY + 'px',
+            left: rect.left + window.scrollX + 'px',
+            width: rect.width + 'px',
+            minHeight: '50px',
+            background: 'rgba(255,255,255,0.95)',
+            backdropFilter: 'blur(2px)',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            padding: '5px',
+            zIndex: '10000',
+            display: 'flex',
+            flexDirection: 'column'
+        });
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
@@ -160,14 +170,16 @@
         overlay.addEventListener('click', e => e.stopPropagation());
 
         const overlayDropdown = document.createElement('div');
-        overlayDropdown.style.position = 'absolute';
-        overlayDropdown.style.zIndex = '10001';
-        overlayDropdown.style.background = '#fff';
-        overlayDropdown.style.border = '1px solid #ccc';
-        overlayDropdown.style.borderRadius = '4px';
-        overlayDropdown.style.display = 'none';
-        overlayDropdown.style.maxHeight = '150px';
-        overlayDropdown.style.overflowY = 'auto';
+        Object.assign(overlayDropdown.style, {
+            position: 'absolute',
+            zIndex: '10001',
+            background: '#fff',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            display: 'none',
+            maxHeight: '150px',
+            overflowY: 'auto'
+        });
         document.body.appendChild(overlayDropdown);
 
         setupAutocomplete(clientInput, overlayDropdown);
@@ -282,18 +294,20 @@
 
             const rect = td.getBoundingClientRect();
             const overlay = document.createElement('div');
-            overlay.style.position = 'absolute';
-            overlay.style.top = rect.top + window.scrollY + 'px';
-            overlay.style.left = rect.left + window.scrollX + 'px';
-            overlay.style.width = rect.width + 'px';
-            overlay.style.minHeight = '50px';
-            overlay.style.background = 'rgba(255,255,255,0.95)';
-            overlay.style.border = '1px solid #ccc';
-            overlay.style.borderRadius = '4px';
-            overlay.style.padding = '5px';
-            overlay.style.zIndex = '10000';
-            overlay.style.display = 'flex';
-            overlay.style.flexDirection = 'column';
+            Object.assign(overlay.style, {
+                position: 'absolute',
+                top: rect.top + window.scrollY + 'px',
+                left: rect.left + window.scrollX + 'px',
+                width: rect.width + 'px',
+                minHeight: '50px',
+                background: 'rgba(255,255,255,0.95)',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '5px',
+                zIndex: '10000',
+                display: 'flex',
+                flexDirection: 'column'
+            });
 
             const clientInput = document.createElement('input');
             clientInput.type = 'text';
@@ -312,14 +326,16 @@
             activeOverlay = overlay;
 
             const dropdown = document.createElement('div');
-            dropdown.style.position = 'absolute';
-            dropdown.style.zIndex = '10001';
-            dropdown.style.background = '#fff';
-            dropdown.style.border = '1px solid #ccc';
-            dropdown.style.borderRadius = '4px';
-            dropdown.style.display = 'none';
-            dropdown.style.maxHeight = '150px';
-            dropdown.style.overflowY = 'auto';
+            Object.assign(dropdown.style, {
+                position: 'absolute',
+                zIndex: '10001',
+                background: '#fff',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                display: 'none',
+                maxHeight: '150px',
+                overflowY: 'auto'
+            });
             document.body.appendChild(dropdown);
 
             setupAutocomplete(clientInput, dropdown);
