@@ -2,7 +2,9 @@
     if (!IS_ADMIN) return;
 
     let activeClients = [];
-    let activeInputContainer = null; // Track currently open inputs (inline or overlay)
+    let activeTd = null; // Track currently active cell
+    let activeInputs = []; // Track currently active inputs (inline or overlay)
+    let activeOverlay = null; // For overlays
 
     // Fetch clients via AJAX
     fetch('get_clients.php')
@@ -35,10 +37,21 @@
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
-        if (!dropdown.contains(e.target) && (!activeInputContainer || !activeInputContainer.contains(e.target))) {
-            closeActiveInput();
+        if (!dropdown.contains(e.target) && (!activeInputs.some(input => input.contains(e.target)))) {
+            closeActiveInputs();
         }
     });
+
+    function closeActiveInputs() {
+        activeInputs.forEach(input => input.remove());
+        activeInputs = [];
+        if (activeOverlay) {
+            activeOverlay.remove();
+            activeOverlay = null;
+        }
+        dropdown.style.display = 'none';
+        activeTd = null;
+    }
 
     function makeBadgeDraggable(badge) {
         if (!badge) return;
@@ -51,8 +64,10 @@
         td.addEventListener('click', function(e) {
             if (e.target.tagName === 'INPUT') return;
 
-            // Close previous inputs before opening new
-            closeActiveInput();
+            if (activeTd === td) return; // Already active cell
+
+            closeActiveInputs();
+            activeTd = td;
 
             if (td.querySelector('.draggable-badge')) {
                 showOverlay(td);
@@ -62,18 +77,8 @@
         });
     });
 
-    function closeActiveInput() {
-        if (activeInputContainer) {
-            activeInputContainer.remove();
-            activeInputContainer = null;
-        }
-        dropdown.style.display = 'none';
-    }
-
     function showInlineInputs(td) {
-        const container = document.createElement('div');
-        container.className = 'inline-inputs';
-        container.style.position = 'relative';
+        td.innerHTML = '';
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
@@ -88,29 +93,25 @@
         hoursInput.className = 'form-control form-control-sm';
         hoursInput.style.width = '100%';
 
-        container.appendChild(clientInput);
-        container.appendChild(hoursInput);
-        td.innerHTML = '';
-        td.appendChild(container);
-
-        activeInputContainer = container;
+        td.appendChild(clientInput);
+        td.appendChild(hoursInput);
+        activeInputs = [clientInput, hoursInput];
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
 
-        attachInputEvents(td, clientInput, hoursInput, container, true);
+        attachInputEvents(td, clientInput, hoursInput, true);
         setupAutocomplete(clientInput);
         clientInput.focus();
     }
 
     function showOverlay(td) {
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay-input';
         const rect = td.getBoundingClientRect();
+        const overlay = document.createElement('div');
         overlay.style.position = 'absolute';
         overlay.style.top = rect.top + window.scrollY + 'px';
         overlay.style.left = rect.left + window.scrollX + 'px';
         overlay.style.width = rect.width + 'px';
-        overlay.style.height = rect.height + 'px';
+        overlay.style.minHeight = '50px';
         overlay.style.background = 'rgba(255,255,255,0.95)';
         overlay.style.backdropFilter = 'blur(2px)';
         overlay.style.border = '1px solid #ccc';
@@ -138,12 +139,13 @@
         overlay.appendChild(hoursInput);
         document.body.appendChild(overlay);
 
-        activeInputContainer = overlay;
+        activeOverlay = overlay;
+        activeInputs = [clientInput, hoursInput];
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
-        attachInputEvents(td, clientInput, hoursInput, overlay);
+        attachInputEvents(td, clientInput, hoursInput, false, overlay);
         setupAutocomplete(clientInput, overlay);
         clientInput.focus();
     }
@@ -181,7 +183,7 @@
         });
     }
 
-    function attachInputEvents(td, clientInput, hoursInput, container, inline = false) {
+    function attachInputEvents(td, clientInput, hoursInput, inline = true, overlay = null) {
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async e => {
                 if (e.key === 'Enter') {
@@ -212,22 +214,18 @@
                         if (resp.ok && data.success) {
                             const span = document.createElement('span');
                             const statusClass = getClientStatus(clientName);
-
                             span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                             span.dataset.entryId = data.entry_id;
                             span.dataset.userId = td.dataset.userId;
                             span.dataset.weekStart = td.dataset.weekStart;
                             span.textContent = `${clientName} (${hours})`;
                             span.setAttribute('draggable', 'true');
-
-                            if (inline) {
-                                td.innerHTML = '';
-                            }
-
-                            td.appendChild(span);
                             makeBadgeDraggable(span);
 
-                            closeActiveInput();
+                            if (inline) td.innerHTML = '';
+                            td.appendChild(span);
+
+                            closeActiveInputs();
                         } else {
                             alert('Failed to add entry: ' + (data.error || 'Server error'));
                         }
