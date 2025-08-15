@@ -10,14 +10,5 @@ $pass = getenv('DB_PASSWORD');
 // Turn off mysqli warnings (optional)
 mysqli_report(MYSQLI_REPORT_OFF);
 
-// Try to connect
-$conn = @new mysqli($host, $user, $pass, $db);
-
-// Check connection
-if ($conn->connect_error) {
-    // Connection failed, but don't die — just set $conn to null
-    $conn = null;
-    // Optional: log the error somewhere for debugging
-    // error_log("DB connection failed: " . $conn->connect_error);
-}
-?>
+$db = new mysqli($host, $user, $pass, $dbname);
+if ($db->connect_error) die("Connection failed: " . $db->connect_error);
