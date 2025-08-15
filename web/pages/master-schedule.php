@@ -223,7 +223,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* Sticky first column */
 table th:first-child,
 table td:first-child {
-    position: sticky;
+    /* position: sticky; */
     left: 0;
     z-index: 2 !important;
     background: white;
@@ -235,7 +235,7 @@ table td:first-child {
 
 /* Sticky header row */
 table thead th {
-    position: sticky;
+    /* position: sticky; */
     top: 0;
     z-index: 0 !important;
     background: white;
@@ -247,7 +247,7 @@ table thead th:first-child {
 }
 
 table tbody td:first-child {
-    position: sticky !important;
+    /* position: sticky !important; */
     border: 1px solid blue;
 }
 /* Scroll container limits visible weeks */
