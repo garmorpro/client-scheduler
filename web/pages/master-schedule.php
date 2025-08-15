@@ -393,7 +393,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/view_user_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
