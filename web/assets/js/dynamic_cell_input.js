@@ -35,12 +35,14 @@
 
     dropdown.addEventListener('click', e => e.stopPropagation());
 
+    // FIXED document click listener
     document.addEventListener('click', e => {
-        if (
-            (activeOverlay && !activeOverlay.contains(e.target)) &&
-            (activeTd && !activeTd.contains(e.target))
-        ) {
-            closeActiveInputs();
+        if (activeTd) {
+            const clickInsideTd = activeTd.contains(e.target);
+            const clickInsideOverlay = activeOverlay && activeOverlay.contains(e.target);
+            if (!clickInsideTd && !clickInsideOverlay) {
+                closeActiveInputs();
+            }
         }
     });
 
@@ -50,7 +52,7 @@
             activeOverlay = null;
         }
         if (activeTd) {
-            // Restore badges if inline input (cell was empty)
+            // If inline input, restore previous badges if any
             if (!activeTd.querySelector('.draggable-badge')) {
                 activeTd.innerHTML = '';
             }
@@ -142,6 +144,7 @@
         document.body.appendChild(overlay);
         activeOverlay = overlay;
 
+        // STOP PROPAGATION on inputs and overlay
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
