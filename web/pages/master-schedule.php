@@ -2,12 +2,13 @@
 require_once '../includes/db.php';
 session_start();
 
+$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-
-$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 
 $today = strtotime('today');
 
@@ -16,11 +17,13 @@ $currentMonday = strtotime('monday this week', $today);
 $weekOffset = isset($_GET['week_offset']) ? intval($_GET['week_offset']) : 0;
 $startMonday = strtotime("-2 weeks +{$weekOffset} weeks", $currentMonday);
 
-$weeksToShow = 24;
+$weeksToShow = 7;
 $mondays = [];
 for ($i = 0; $i < $weeksToShow; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
+
+// Range label
 $firstWeek = reset($mondays);
 $lastWeek = end($mondays);
 $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j', $lastWeek);
@@ -35,10 +38,10 @@ $userQuery = "
 ";
 $userResult = $conn->query($userQuery);
 while ($row = $userResult->fetch_assoc()) {
-    $employees[$row['user_id']] = ['full_name' => $row['full_name'], 'role' => $row['role']];
+    $employees[$row['user_id']] = ['full_name'=>$row['full_name'],'role'=>$row['role']];
 }
 
-// Fetch entries including time-off
+// Fetch entries
 $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+6 weeks', $startMonday));
 
@@ -65,7 +68,6 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 $stmt->close();
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -78,7 +80,6 @@ $stmt->close();
         #scheduleContainer {
             overflow-x: auto;
             overflow-y: auto;
-            max-width: calc(140px * 10);
             max-height: 600px;
             white-space: nowrap;
         }
@@ -110,7 +111,7 @@ $stmt->close();
             <thead>
                 <tr>
                     <th>Employee</th>
-                    <?php foreach ($mondays as $idx => $monday):
+                    <?php foreach ($mondays as $monday):
                         $weekKey = date('Y-m-d', $monday);
                         $isCurrent = ($today >= $monday && $today < strtotime('+7 days', $monday));
                     ?>
@@ -143,26 +144,19 @@ $stmt->close();
                         $cellContent = '';
 
                         foreach ($entriesForWeek as $entry) {
-    if ($entry['is_timeoff']) {
-        $hasTimeOff = true;
-        $timeOffHours += floatval($entry['assigned_hours']);
-    } else {
-        $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
-        switch($engagementStatus) {
-            case 'pending':
-                $statusClass = 'badge-pending';
-                break;
-            case 'not_confirmed':
-                $statusClass = 'badge-not-confirmed';
-                break;
-            default:
-                $statusClass = 'badge-confirmed';
-                break;
-        }
-        $cellContent .= "<span class='badge-status $statusClass'>{$entry['client_name']} ({$entry['assigned_hours']})</span>";
-    }
-}
-
+                            if ($entry['is_timeoff']) {
+                                $hasTimeOff = true;
+                                $timeOffHours += floatval($entry['assigned_hours']);
+                            } else {
+                                $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
+                                switch($engagementStatus) {
+                                    case 'pending': $statusClass = 'badge-pending'; break;
+                                    case 'not_confirmed': $statusClass = 'badge-not-confirmed'; break;
+                                    default: $statusClass = 'badge-confirmed'; break;
+                                }
+                                $cellContent .= "<span class='badge-status $statusClass'>{$entry['client_name']} ({$entry['assigned_hours']})</span>";
+                            }
+                        }
                     ?>
                         <td class="<?= $hasTimeOff ? 'timeoff-cell' : '' ?>" <?= $isAdmin ? "data-user-id='$userId' data-week-start='$weekKey'" : "" ?>>
                             <?php if ($hasTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
