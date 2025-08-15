@@ -192,7 +192,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         box-sizing: border-box;
     }
     .table-responsive {
-        border-left: 1px solid blue;
+        border-left: 2px solid rgb(223, 226, 230);
+        
     }
 
 
