@@ -219,6 +219,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         top: 0px !important;
         z-index: 2 !important;
     }
+    table td:first-child {
+        position: sticky !important;
+        top: 0px !important;
+        z-index: 2 !important;
+    }
     table td {
 
     }
