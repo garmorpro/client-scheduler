@@ -13,7 +13,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $user_id = $data['user_id'] ?? null;
 $week_start = $data['week_start'] ?? null;
 $assigned_hours = $data['assigned_hours'] ?? '';
-$is_timeoff = $data['is_timeoff'] ?? 1;
+$is_timeoff = 1;
 
 if (!$user_id || !$week_start || !$assigned_hours) {
     echo json_encode(['success' => false, 'error' => 'Missing required fields']);
