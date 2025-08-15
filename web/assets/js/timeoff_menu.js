@@ -1,7 +1,6 @@
 (function() {
     if (!IS_ADMIN) return;
 
-    let selectedCell = null;
     let activeInput = null;
 
     // Render cell with gray background and top-right assigned_hours
@@ -36,7 +35,7 @@
         }
     }
 
-    // Inline input for adding/editing time off
+    // Add or edit time off inline
     async function handleTimeOffInput(td, entryId = null) {
         if (activeInput) activeInput.remove();
 
@@ -58,32 +57,39 @@
 
             try {
                 if (entryId) {
+                    // Update existing time off
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
-                        headers: {'Content-Type':'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
                     });
                     if (update.ok && update.data?.success) renderCell(td, val, entryId);
                     else alert('Failed to update time off.');
                 } else {
+                    // Add new time off
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
-                        headers: {'Content-Type':'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: td.dataset.userId, week_start: td.dataset.weekStart, assigned_hours: val, is_timeoff: 1 })
                     });
-                    if (add.ok && add.data?.success && add.data.entry_id) renderCell(td, val, add.data.entry_id);
-                    else alert('Failed to add time off.');
+                    if (add.ok && add.data?.success && add.data.entry_id) {
+                        renderCell(td, val, add.data.entry_id);
+                    } else {
+                        alert('Failed to add time off.');
+                    }
                 }
             } catch (err) {
                 console.error(err);
                 alert('Network error while saving time off.');
+            } finally {
+                activeInput = null;
             }
         });
     }
 
-    // Right-click on addable cell triggers input
+    // Right-click to add or edit time off
     document.addEventListener('contextmenu', e => {
         const target = e.target;
         if (target.tagName === 'TD' && target.classList.contains('addable')) {
