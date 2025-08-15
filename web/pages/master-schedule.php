@@ -384,12 +384,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <?php if ($isAdmin): ?>
         <?php //include_once '../includes/modals/manage_entries_prompt.php'; ?>
         <?php //include_once '../includes/modals/manage_entries.php'; ?>
-        <?php include_once '../includes/modals/editEntryModal.php'; ?>
-        <?php include_once '../includes/modals/add_entry.php'; ?>
-        <?php include_once '../includes/modals/add_engagement.php'; ?>
+        <?php //include_once '../includes/modals/editEntryModal.php'; ?>
+        <?php //include_once '../includes/modals/add_entry.php'; ?>
+        <?php //include_once '../includes/modals/add_engagement.php'; ?>
     <?php endif; ?>
 
-    <?php include_once '../includes/modals/engagement_details.php'; ?>
+    <?php //include_once '../includes/modals/engagement_details.php'; ?>
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
@@ -398,17 +398,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/custom_menu.js?v=<?php echo time(); ?>"></script>
     
-    <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script>
+    <!-- <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script> -->
+    <!-- <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script> -->
+    <!-- <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <!-- <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script> -->
+    <!-- <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script> -->
+    <!-- <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script>
+    <!-- <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
