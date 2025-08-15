@@ -275,9 +275,8 @@ $stmt2->close();
                     }
                 }
 
-                // 2️⃣ If there is global time off for this week, add it to the employee's total
-                if (isset($globalTimeOff[$weekKey])) {
-                    $hasTimeOff = true; // Mark that there is time off for styling
+                // 2️⃣ Only add global time off if employee already has individual time off
+                if ($hasTimeOff && isset($globalTimeOff[$weekKey])) {
                     $timeOffHours += floatval($globalTimeOff[$weekKey]);
                 }
 
@@ -326,6 +325,7 @@ $stmt2->close();
         </tr>
     <?php endforeach; ?>
 </tbody>
+
 
         </table>
     </div>
