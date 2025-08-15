@@ -2,11 +2,10 @@
     if (!IS_ADMIN) return;
 
     let activeClients = [];
-    let activeTd = null; // Track currently active cell
-    let activeInputs = []; // Track currently active inputs (inline or overlay)
-    let activeOverlay = null; // For overlays
+    let activeTd = null;
+    let activeOverlay = null;
 
-    // Fetch clients via AJAX
+    // Fetch clients
     fetch('get_clients.php')
         .then(res => res.json())
         .then(data => { activeClients = data; })
@@ -37,34 +36,37 @@
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
-        if (!dropdown.contains(e.target) && (!activeInputs.some(input => input.contains(e.target)))) {
+        if (activeTd && !activeTd.contains(e.target) && (!activeOverlay || !activeOverlay.contains(e.target))) {
             closeActiveInputs();
         }
     });
 
     function closeActiveInputs() {
-        activeInputs.forEach(input => input.remove());
-        activeInputs = [];
         if (activeOverlay) {
             activeOverlay.remove();
             activeOverlay = null;
         }
+        if (activeTd) {
+            // If inline input, restore previous badges if any
+            if (!activeTd.querySelector('.draggable-badge')) {
+                activeTd.innerHTML = '';
+            }
+            activeTd = null;
+        }
         dropdown.style.display = 'none';
-        activeTd = null;
     }
 
     function makeBadgeDraggable(badge) {
-        if (!badge) return;
         badge.setAttribute('draggable', 'true');
         if (typeof handleDragStart === 'function') badge.addEventListener('dragstart', handleDragStart);
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
     document.querySelectorAll('td.addable').forEach(td => {
-        td.addEventListener('click', function(e) {
+        td.addEventListener('click', e => {
             if (e.target.tagName === 'INPUT') return;
 
-            if (activeTd === td) return; // Already active cell
+            if (activeTd === td) return;
 
             closeActiveInputs();
             activeTd = td;
@@ -95,7 +97,6 @@
 
         td.appendChild(clientInput);
         td.appendChild(hoursInput);
-        activeInputs = [clientInput, hoursInput];
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
 
@@ -120,7 +121,6 @@
         overlay.style.zIndex = '10000';
         overlay.style.display = 'flex';
         overlay.style.flexDirection = 'column';
-        overlay.style.justifyContent = 'center';
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
@@ -138,9 +138,7 @@
         overlay.appendChild(clientInput);
         overlay.appendChild(hoursInput);
         document.body.appendChild(overlay);
-
         activeOverlay = overlay;
-        activeInputs = [clientInput, hoursInput];
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
@@ -219,7 +217,6 @@
                             span.dataset.userId = td.dataset.userId;
                             span.dataset.weekStart = td.dataset.weekStart;
                             span.textContent = `${clientName} (${hours})`;
-                            span.setAttribute('draggable', 'true');
                             makeBadgeDraggable(span);
 
                             if (inline) td.innerHTML = '';
@@ -237,5 +234,4 @@
             });
         });
     }
-
 })();
