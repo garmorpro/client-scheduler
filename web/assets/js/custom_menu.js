@@ -1,4 +1,4 @@
-// custom_menu.js (inline time off input with console.log)
+// custom_menu.js (inline time off input with proper entry_id handling)
 (function() {
     if (!IS_ADMIN) return;
 
@@ -21,7 +21,6 @@
     `;
     document.body.appendChild(contextMenu);
 
-    let selectedBadge = null;
     let selectedCell = null;
 
     function closeActiveInput(td) {
@@ -38,17 +37,9 @@
 
     document.addEventListener('contextmenu', e => {
         contextMenu.style.display = 'none';
-        selectedBadge = null;
         selectedCell = null;
 
-        if (e.target.classList.contains('draggable-badge')) {
-            e.preventDefault();
-            selectedBadge = e.target;
-            contextMenu.querySelector('li').textContent = 'Delete Entry';
-            contextMenu.style.top = `${e.pageY}px`;
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.display = 'block';
-        } else if (e.target.tagName === 'TD' && e.target.classList.contains('addable')) {
+        if (e.target.tagName === 'TD' && e.target.classList.contains('addable')) {
             e.preventDefault();
             selectedCell = e.target;
             const timeOff = selectedCell.querySelector('.timeoff-corner');
@@ -95,16 +86,18 @@
                     if (timeOff) {
                         console.log('Updating time off:', {
                             entry_id: timeOff.dataset.entryId,
-                            assigned_hours: val
+                            timeoff_note: val
                         });
 
                         const resp = await fetch('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, assigned_hours: val })
+                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
                         });
                         const data = await resp.json();
+                        console.log('Update response:', data);
+
                         if (resp.ok && data.success) {
                             timeOff.textContent = val;
                         } else {
@@ -114,7 +107,7 @@
                         console.log('Adding time off:', {
                             user_id: userId,
                             week_start: weekStart,
-                            assigned_hours: val,
+                            timeoff_note: val,
                             is_timeoff: 1
                         });
 
@@ -122,13 +115,15 @@
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
                         });
                         const data = await resp.json();
+                        console.log('Add response:', data);
+
                         if (resp.ok && data.success) {
                             const div = document.createElement('div');
                             div.className = 'timeoff-corner';
-                            div.dataset.entryId = data.entry_id;
+                            div.dataset.entryId = data.entry_id; // IMPORTANT: get entry_id from PHP response
                             div.style.fontSize = '0.8em';
                             div.style.color = '#555';
                             div.textContent = val;
