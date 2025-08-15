@@ -417,6 +417,40 @@ table tbody td:first-child {
     </div>
 </div>
 
+<script>
+    function init() {
+    // Add fade-in animation to main content
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+        mainContent.classList.add('fade-in');
+    }
+    
+    // Initialize sticky table functionality
+    initStickyTable();
+    
+    // Add form validation
+    initFormValidation();
+    
+    // Add keyboard navigation
+    initKeyboardNavigation();
+}
+
+function initStickyTable() {
+    const scheduleContainer = document.getElementById('schedule-container');
+    if (!scheduleContainer) return;
+    
+    // Add smooth scrolling behavior
+    scheduleContainer.addEventListener('scroll', function() {
+        // You can add scroll position tracking here if needed
+        const scrollLeft = this.scrollLeft;
+        const scrollTop = this.scrollTop;
+        
+        // Update any scroll indicators if needed
+        // console.log('Scroll position:', { left: scrollLeft, top: scrollTop });
+    });
+}
+</script>
+
 
     <!-- </div>  -->
 
