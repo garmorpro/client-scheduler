@@ -95,14 +95,14 @@
                     if (timeOff) {
                         console.log('Updating time off:', {
                             entry_id: timeOff.dataset.entryId,
-                            timeoff_note: val
+                            assigned_hours: val
                         });
 
                         const resp = await fetch('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
+                            body: JSON.stringify({ entry_id: timeOff.dataset.entryId, assigned_hours: val })
                         });
                         const data = await resp.json();
                         if (resp.ok && data.success) {
@@ -114,7 +114,7 @@
                         console.log('Adding time off:', {
                             user_id: userId,
                             week_start: weekStart,
-                            timeoff_note: val,
+                            assigned_hours: val,
                             is_timeoff: 1
                         });
 
@@ -122,7 +122,7 @@
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
                         });
                         const data = await resp.json();
                         if (resp.ok && data.success) {
