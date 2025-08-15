@@ -101,13 +101,13 @@
                     }
 
                     if (entryId) {
-                        console.log('Updating time off:', { entry_id: entryId, timeoff_note: val });
+                        console.log('Updating time off:', { entry_id: entryId, assigned_hours: val });
 
                         const resp = await fetch('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: entryId, timeoff_note: val })
+                            body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
                         });
                         const data = await resp.json();
                         console.log('Update response:', data);
@@ -125,13 +125,13 @@
                         }
                     } else {
                         // Add new time off
-                        console.log('Adding time off:', { user_id: userId, week_start: weekStart, timeoff_note: val });
+                        console.log('Adding time off:', { user_id: userId, week_start: weekStart, assigned_hours: val });
 
                         const resp = await fetch('add_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
+                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
                         });
                         const data = await resp.json();
                         console.log('Add response:', data);
