@@ -49,7 +49,7 @@
     // Use event delegation for the delete button
     contextMenu.addEventListener('click', async function(e) {
         if (e.target.id === 'deleteBadge' && selectedBadge) {
-            if (!confirm('Are you sure you want to delete this entry?')) return;
+            // if (!confirm('Are you sure you want to delete this entry?')) return;
 
             const entryId = selectedBadge.dataset.entryId;
             const parentCell = selectedBadge.parentElement;
