@@ -187,7 +187,7 @@ td:first-child {
     left: 0;
     background-color: #fff;       
     z-index: 100;                  
-    outline: 1px solid rgba(223, 226, 230);
+    outline: 2px solid rgba(223, 226, 230);
     /* outline-offset: 1px; */
 }
 
