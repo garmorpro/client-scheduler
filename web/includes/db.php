@@ -6,5 +6,5 @@ $user = getenv('DB_USER');
 $pass = getenv('DB_PASSWORD');
 $dbname = getenv('DB_NAME');
 
-$db = new mysqli($host, $user, $pass, $dbname);
-if ($db->connect_error) die("Connection failed: " . $db->connect_error);
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
