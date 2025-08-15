@@ -40,7 +40,7 @@
             this.classList.add('dragging');
         }
 
-        function onDragEnd(e) {
+        function onDragEnd() {
             if (draggedElem) draggedElem.classList.remove('dragging');
             removeDropTargetHints();
             draggedElem = null;
@@ -59,7 +59,7 @@
             this.classList.add('drop-target');
         }
 
-        function onDragLeave(e) {
+        function onDragLeave() {
             this.classList.remove('drop-target');
         }
 
@@ -78,6 +78,7 @@
             const entryId = e.dataTransfer.getData('text/plain') || draggedEntryId;
             if (!entryId) return;
 
+            // same cell? do nothing
             if (originCell &&
                 originCell.dataset.userId === targetUserId &&
                 originCell.dataset.weekStart === targetWeekStart) {
@@ -119,8 +120,14 @@
                     return;
                 }
 
-                // After successful move, reload the page to update all cells properly
-                window.location.reload();
+                // ✅ Move badge in DOM without full reload
+                targetTd.appendChild(badge);
+                badge.style.pointerEvents = '';
+                badge.classList.remove('dragging');
+                loadingDot.remove();
+
+                // Optional: scroll to badge (if needed)
+                // badge.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
             } catch (err) {
                 console.error(err);
