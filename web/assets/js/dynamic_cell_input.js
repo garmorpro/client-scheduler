@@ -36,7 +36,10 @@
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
-        if (activeTd && !activeTd.contains(e.target) && (!activeOverlay || !activeOverlay.contains(e.target))) {
+        if (
+            (activeOverlay && !activeOverlay.contains(e.target)) &&
+            (activeTd && !activeTd.contains(e.target))
+        ) {
             closeActiveInputs();
         }
     });
@@ -47,7 +50,7 @@
             activeOverlay = null;
         }
         if (activeTd) {
-            // If inline input, restore previous badges if any
+            // Restore badges if inline input (cell was empty)
             if (!activeTd.querySelector('.draggable-badge')) {
                 activeTd.innerHTML = '';
             }
@@ -65,7 +68,6 @@
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
             if (e.target.tagName === 'INPUT') return;
-
             if (activeTd === td) return;
 
             closeActiveInputs();
