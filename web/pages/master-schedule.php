@@ -225,7 +225,41 @@ $stmt2->close();
                 </tr>
             </thead>
 
-            <?php foreach ($mondays as $idx => $monday):
+            <tbody id="employeesTableBody">
+                <?php foreach ($employees as $userId => $employee):
+                    $fullName = htmlspecialchars($employee['full_name']);
+                    $role = htmlspecialchars($employee['role']);
+                    ?>
+                    <tr>
+                        <td class="text-start employee-name">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
+                                     style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;
+                                     background-color: <?php 
+                                         if (strtolower($role) === 'senior') {
+                                             echo 'rgb(230,144,65)';
+                                         } elseif (strtolower($role) === 'staff') {
+                                             echo 'rgb(66,127,194)';
+                                         } else {
+                                             echo '#6c757d'; // default color if neither
+                                         }
+                                     ?>;">
+                                  <?php
+                                  $initials = '';
+                                  foreach (explode(' ', $fullName) as $part) {
+                                      $initials .= strtoupper(substr($part, 0, 1));
+                                  }
+                                  echo $initials;
+                                  ?>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold"><?php echo $fullName; ?></div>
+                                    <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <?php foreach ($mondays as $idx => $monday):
     $weekKey = date('Y-m-d', $monday);
     $entriesForWeek = $entries[$userId][$weekKey] ?? [];
     $hasTimeOff = false;
@@ -288,6 +322,9 @@ $stmt2->close();
     </td>
 <?php endforeach; ?>
 
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </div>
 
