@@ -242,6 +242,9 @@ table thead th:first-child {
     z-index: 3 !important;
 }
 
+table tbody td:first-child {
+    border: 1px solid blue;
+}
 /* Scroll container limits visible weeks */
 #scheduleContainer {
     overflow-x: auto;
@@ -339,7 +342,7 @@ table thead th:first-child {
                     ?>
                     <tr>
                         <td class="text-start employee-name" style="">
-                            <div class="d-flex align-items-center" style="border:1px solid blue;">
+                            <div class="d-flex align-items-center">
                                 <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
                                   <?php echo $initials; ?>
