@@ -68,14 +68,15 @@
         }
 
         function updatePlusIcon(cell) {
-            // Remove existing icon
-            const existingIcon = cell.querySelector('.bi-plus');
-            if (existingIcon) existingIcon.remove();
+            // Remove any existing plus icons
+            cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
 
-            // Only add icon if no badges exist in the cell
-            if (!cell.querySelector('.draggable-badge')) {
+            // Only add plus icon if no badges exist in the cell
+            const hasBadge = cell.querySelector('.draggable-badge');
+            if (!hasBadge) {
                 const plusIcon = document.createElement('i');
                 plusIcon.className = 'bi bi-plus text-muted';
+                plusIcon.style.cursor = 'pointer';
                 cell.appendChild(plusIcon);
             }
         }
@@ -152,7 +153,9 @@
             }
         }
 
-        // Initial setup
+        // Initial setup: add plus icons to empty cells
+        document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
+
         setupBadges();
         setupDropTargets();
 
@@ -160,6 +163,7 @@
         const tableObserver = new MutationObserver(() => {
             setupBadges();
             setupDropTargets();
+            document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
         });
         const table = document.querySelector('.table-responsive');
         if (table) tableObserver.observe(table, { childList: true, subtree: true });
