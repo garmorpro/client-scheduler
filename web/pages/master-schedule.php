@@ -180,8 +180,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         height:6px;
       }
 
-      th:first-child {
-        min-width: 30px;
+      th:first-child,
+      td:first-child {
+        min-width: 250px;
       }
     </style>
 
