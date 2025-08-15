@@ -1,12 +1,12 @@
 <?php
 require_once '../includes/db.php'; // make sure the path is correct
-
+session_start();
 if (!$db) {
     die('Database connection not initialized!');
 } else {
     echo "success";
 }
-session_start();
+
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
