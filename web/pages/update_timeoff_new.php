@@ -2,34 +2,27 @@
 require_once '../includes/db.php';
 session_start();
 
-// Only allow admins
-if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-    exit;
-}
+header('Content-Type: application/json');
 
-// Get JSON input
 $data = json_decode(file_get_contents('php://input'), true);
-$entry_id = $data['entry_id'] ?? null;
-$assigned_hours = $data['assigned_hours'] ?? '';
 
-if (!$entry_id || !$assigned_hours) {
+if (!isset($data['entry_id'], $data['timeoff_note'])) {
     echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
 
+$entry_id = intval($data['entry_id']);
+$timeoff_note = $data['timeoff_note'];
+
 try {
-    $stmt = $db->prepare("
-        UPDATE entries
-        SET assigned_hours = :assigned_hours
-        WHERE entry_id = :entry_id AND is_timeoff = 1
-    ");
-    $stmt->execute([
-        ':assigned_hours' => $assigned_hours,
-        ':entry_id' => $entry_id
-    ]);
+    $stmt = $db->prepare("UPDATE entries SET assigned_hours = ? WHERE entry_id = ? AND is_timeoff = 1");
+    $stmt->execute([$timeoff_note, $entry_id]);
+
+    // Log for debugging
+    error_log("Updated time off: entry_id=$entry_id, assigned_hours=$timeoff_note");
 
     echo json_encode(['success' => true]);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+} catch (Exception $e) {
+    error_log("Error updating time off: " . $e->getMessage());
+    echo json_encode(['success' => false, 'error' => 'Database error']);
 }
