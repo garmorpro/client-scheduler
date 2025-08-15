@@ -56,6 +56,22 @@
         }
     });
 
+    async function safeFetchJSON(url, options) {
+        try {
+            const resp = await fetch(url, options);
+            const text = await resp.text();
+            try {
+                return { ok: resp.ok, data: JSON.parse(text) };
+            } catch (jsonErr) {
+                console.error('Failed to parse JSON:', text);
+                return { ok: resp.ok, data: null, error: 'Invalid JSON response' };
+            }
+        } catch (err) {
+            console.error('Network error:', err);
+            return { ok: false, data: null, error: err.message };
+        }
+    }
+
     contextMenu.addEventListener('click', async e => {
         if (e.target.id !== 'deleteBadge' || !selectedCell) return;
 
@@ -77,85 +93,74 @@
         input.focus();
 
         input.addEventListener('keydown', async ev => {
-            if (ev.key === 'Enter') {
-                const val = input.value.trim();
-                if (!val) return;
+            if (ev.key !== 'Enter') return;
+            const val = input.value.trim();
+            if (!val) return;
 
-                try {
-                    // If timeOff exists, get entry_id from server if missing
-                    let entryId = timeOff ? timeOff.dataset.entryId : null;
+            try {
+                let entryId = timeOff ? timeOff.dataset.entryId : null;
 
-                    if (!entryId) {
-                        // Ask server for existing timeoff entry
-                        const lookupResp = await fetch('get_timeoff_entry.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart })
-                        });
-                        const lookupData = await lookupResp.json();
-                        console.log('Lookup response:', lookupData);
-                        if (lookupResp.ok && lookupData.success && lookupData.entry_id) {
-                            entryId = lookupData.entry_id;
-                        }
+                if (!entryId) {
+                    const lookup = await safeFetchJSON('get_timeoff_entry.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ user_id: userId, week_start: weekStart })
+                    });
+                    console.log('Lookup response:', lookup);
+                    if (lookup.ok && lookup.data && lookup.data.success && lookup.data.entry_id) {
+                        entryId = lookup.data.entry_id;
                     }
-
-                    if (entryId) {
-                        console.log('Updating time off:', { entry_id: entryId, assigned_hours: val });
-
-                        const resp = await fetch('update_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
-                        });
-                        const data = await resp.json();
-                        console.log('Update response:', data);
-
-                        if (resp.ok && data.success) {
-                            if (!timeOff) {
-                                timeOff = document.createElement('div');
-                                timeOff.className = 'timeoff-corner';
-                                td.appendChild(timeOff);
-                            }
-                            timeOff.dataset.entryId = entryId;
-                            timeOff.textContent = val;
-                        } else {
-                            alert('Failed to update time off: ' + (data.error || 'Server error'));
-                        }
-                    } else {
-                        // Add new time off
-                        console.log('Adding time off:', { user_id: userId, week_start: weekStart, assigned_hours: val });
-
-                        const resp = await fetch('add_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {'Content-Type':'application/json','Accept':'application/json'},
-                            body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
-                        });
-                        const data = await resp.json();
-                        console.log('Add response:', data);
-
-                        if (resp.ok && data.success && data.entry_id) {
-                            const div = document.createElement('div');
-                            div.className = 'timeoff-corner';
-                            div.dataset.entryId = data.entry_id;
-                            div.style.fontSize = '0.8em';
-                            div.style.color = '#555';
-                            div.textContent = val;
-                            td.appendChild(div);
-                        } else {
-                            alert('Failed to add time off: ' + (data.error || 'Server error'));
-                        }
-                    }
-
-                } catch (err) {
-                    console.error('Network error while saving time off:', err);
-                    alert('Network error while saving time off.');
                 }
 
-                closeActiveInput(td);
+                if (entryId) {
+                    const update = await safeFetchJSON('update_timeoff_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ entry_id: entryId, assigned_hours: val })
+                    });
+                    console.log('Update response:', update);
+
+                    if (update.ok && update.data && update.data.success) {
+                        if (!timeOff) {
+                            timeOff = document.createElement('div');
+                            timeOff.className = 'timeoff-corner';
+                            td.appendChild(timeOff);
+                        }
+                        timeOff.dataset.entryId = entryId;
+                        timeOff.textContent = val;
+                    } else {
+                        alert('Failed to update time off: ' + (update.data?.error || update.error || 'Server error'));
+                    }
+                } else {
+                    const add = await safeFetchJSON('add_timeoff_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ user_id: userId, week_start: weekStart, assigned_hours: val, is_timeoff: 1 })
+                    });
+                    console.log('Add response:', add);
+
+                    if (add.ok && add.data && add.data.success && add.data.entry_id) {
+                        const div = document.createElement('div');
+                        div.className = 'timeoff-corner';
+                        div.dataset.entryId = add.data.entry_id;
+                        div.style.fontSize = '0.8em';
+                        div.style.color = '#555';
+                        div.textContent = val;
+                        td.appendChild(div);
+                    } else {
+                        alert('Failed to add time off: ' + (add.data?.error || add.error || 'Server error'));
+                    }
+                }
+
+            } catch (err) {
+                console.error('Network error while saving time off:', err);
+                alert('Network error while saving time off.');
             }
+
+            closeActiveInput(td);
         });
     });
 })();
