@@ -204,7 +204,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       /* First column (header + cells) pinned on the left */
       .sticky-col {
         position: fixed;
-        left: 0;
+        margin-left: 15px;
         background: #fff;           /* match table background */
         z-index: 5;                 /* above scrolling cells */
         box-shadow: 6px 0 6px -6px rgba(0,0,0,0.15); /* subtle shadow edge */
