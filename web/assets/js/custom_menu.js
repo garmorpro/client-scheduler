@@ -1,8 +1,7 @@
-// custom_menu.js
+// custom_menu.js (time off addition)
 (function() {
-    if (!IS_ADMIN) return; // only for admins
+    if (!IS_ADMIN) return;
 
-    // Create context menu
     const contextMenu = document.createElement('div');
     contextMenu.id = 'badgeContextMenu';
     contextMenu.style.cssText = `
@@ -24,21 +23,19 @@
 
     let selectedBadge = null;
     let selectedCell = null;
-    let activeInput = null;
+    let activeOverlay = null;
 
     function closeActiveInput() {
-        if (activeInput) {
-            activeInput.remove();
-            activeInput = null;
+        if (activeOverlay) {
+            activeOverlay.remove();
+            activeOverlay = null;
         }
     }
 
-    // Show context menu on right-click
-    document.addEventListener('contextmenu', function(e) {
+    document.addEventListener('contextmenu', e => {
         contextMenu.style.display = 'none';
         selectedBadge = null;
         selectedCell = null;
-
         closeActiveInput();
 
         // Right-click on a badge
@@ -46,7 +43,6 @@
             e.preventDefault();
             selectedBadge = e.target;
             contextMenu.querySelector('li').textContent = 'Delete Entry';
-
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
@@ -56,18 +52,14 @@
             e.preventDefault();
             selectedCell = e.target;
             const timeOff = selectedCell.querySelector('.timeoff-corner');
-            const menuItem = contextMenu.querySelector('li');
-
-            menuItem.textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
-
+            contextMenu.querySelector('li').textContent = timeOff ? 'Edit Time Off' : 'Add Time Off';
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
         }
     });
 
-    // Click anywhere hides menu
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', e => {
         if (!contextMenu.contains(e.target)) {
             contextMenu.style.display = 'none';
             selectedBadge = null;
@@ -76,8 +68,7 @@
         }
     });
 
-    // Click on menu item
-    contextMenu.addEventListener('click', async function(e) {
+    contextMenu.addEventListener('click', async e => {
         const menuItem = e.target;
         if (!menuItem.id) return;
 
@@ -85,120 +76,105 @@
         if (menuItem.id === 'deleteBadge' && selectedBadge) {
             const entryId = selectedBadge.dataset.entryId;
             const parentCell = selectedBadge.parentElement;
-
             try {
                 const resp = await fetch('delete_entry_new.php', {
                     method: 'POST',
                     credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
                     body: JSON.stringify({ entry_id: entryId })
                 });
-
                 const data = await resp.json();
-
                 if (resp.ok && data.success) {
                     selectedBadge.remove();
                     selectedBadge = null;
-
                     if (!parentCell.querySelector('.draggable-badge') && !parentCell.querySelector('.bi-plus')) {
-                        const plusIcon = document.createElement('i');
-                        plusIcon.className = 'bi bi-plus text-muted';
-                        parentCell.appendChild(plusIcon);
+                        const plus = document.createElement('i');
+                        plus.className = 'bi bi-plus text-muted';
+                        parentCell.appendChild(plus);
                     }
-                } else {
-                    alert('Failed to delete entry: ' + (data.error || 'Server error'));
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Network error while deleting entry.');
-            }
-        } 
+                } else alert('Failed to delete entry: ' + (data.error || 'Server error'));
+            } catch (err) { console.error(err); alert('Network error while deleting entry.'); }
+        }
 
-        // ADD / EDIT TIME OFF
+        // ADD / EDIT TIME OFF (inline input)
         else if (menuItem.id === 'deleteBadge' && selectedCell) {
             closeActiveInput();
-
-            const userId = selectedCell.dataset.userId;
-            const weekStart = selectedCell.dataset.weekStart;
-            let timeOff = selectedCell.querySelector('.timeoff-corner');
+            const td = selectedCell;
+            const userId = td.dataset.userId;
+            const weekStart = td.dataset.weekStart;
+            let timeOff = td.querySelector('.timeoff-corner');
             const currentVal = timeOff ? timeOff.textContent : '';
 
-            // Create inline input
+            // Overlay input
+            const rect = td.getBoundingClientRect();
+            const overlay = document.createElement('div');
+            Object.assign(overlay.style, {
+                position: 'absolute',
+                top: rect.top + window.scrollY + 'px',
+                left: rect.left + window.scrollX + 'px',
+                width: rect.width + 'px',
+                minHeight: '30px',
+                background: 'rgba(255,255,255,0.95)',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '2px',
+                zIndex: '10000',
+                display: 'flex'
+            });
             const input = document.createElement('input');
             input.type = 'text';
             input.value = currentVal;
             input.className = 'form-control form-control-sm';
             input.style.width = '100%';
-            input.style.marginTop = '2px';
-
-            if (timeOff) timeOff.style.display = 'none';
-            selectedCell.appendChild(input);
+            overlay.appendChild(input);
+            document.body.appendChild(overlay);
+            activeOverlay = overlay;
             input.focus();
-            activeInput = input;
 
-            input.addEventListener('keydown', async (ev) => {
+            // Save on Enter
+            input.addEventListener('keydown', async ev => {
                 if (ev.key === 'Enter') {
                     const val = input.value.trim();
                     if (!val) return;
 
                     try {
                         if (timeOff) {
-                            // Update existing time off
                             const resp = await fetch('update_timeoff_new.php', {
                                 method: 'POST',
                                 credentials: 'same-origin',
-                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                                body: JSON.stringify({
-                                    entry_id: timeOff.dataset.entryId,
-                                    timeoff_note: val
-                                })
+                                headers: {'Content-Type':'application/json','Accept':'application/json'},
+                                body: JSON.stringify({ entry_id: timeOff.dataset.entryId, timeoff_note: val })
                             });
                             const data = await resp.json();
-                            if (resp.ok && data.success) {
-                                timeOff.textContent = val;
-                                timeOff.style.display = '';
-                            } else {
-                                alert('Failed to update time off: ' + (data.error || 'Server error'));
-                            }
+                            if (resp.ok && data.success) timeOff.textContent = val;
+                            else alert('Failed to update time off: ' + (data.error || 'Server error'));
                         } else {
-                            // Add new time off
                             const resp = await fetch('add_timeoff_new.php', {
                                 method: 'POST',
                                 credentials: 'same-origin',
-                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                                body: JSON.stringify({
-                                    user_id: userId,
-                                    week_start: weekStart,
-                                    timeoff_note: val,
-                                    is_timeoff: 1
-                                })
+                                headers: {'Content-Type':'application/json','Accept':'application/json'},
+                                body: JSON.stringify({ user_id: userId, week_start: weekStart, timeoff_note: val, is_timeoff: 1 })
                             });
                             const data = await resp.json();
                             if (resp.ok && data.success) {
                                 const div = document.createElement('div');
                                 div.className = 'timeoff-corner';
+                                div.dataset.entryId = data.entry_id;
                                 div.style.fontSize = '0.8em';
                                 div.style.color = '#555';
-                                div.dataset.entryId = data.entry_id;
                                 div.textContent = val;
-                                selectedCell.appendChild(div);
-                            } else {
-                                alert('Failed to add time off: ' + (data.error || 'Server error'));
-                            }
+                                td.appendChild(div);
+                            } else alert('Failed to add time off: ' + (data.error || 'Server error'));
                         }
-                    } catch (err) {
-                        console.error(err);
-                        alert('Network error while saving time off.');
-                    }
+                    } catch (err) { console.error(err); alert('Network error while saving time off.'); }
 
                     closeActiveInput();
-                    selectedCell = null;
                 }
             });
 
-            // Optional: close input if clicked outside
-            document.addEventListener('click', function clickOutside(e) {
-                if (activeInput && !selectedCell.contains(e.target)) {
+            // Click outside closes input
+            document.addEventListener('click', function clickOutside(ev) {
+                if (activeOverlay && !td.contains(ev.target) && ev.target !== input) {
                     closeActiveInput();
                     if (timeOff) timeOff.style.display = '';
                     document.removeEventListener('click', clickOutside);
