@@ -1,5 +1,9 @@
 <?php
-require_once '../includes/db.php';
+require_once '../includes/db.php'; // make sure the path is correct
+
+if (!$db) {
+    die('Database connection not initialized!');
+}
 session_start();
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
