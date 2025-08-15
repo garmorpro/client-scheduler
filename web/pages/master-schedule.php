@@ -403,28 +403,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- Drag & Drop handler (inline to ensure full code is present) -->
     <script>
         (function () {
-    // Only enable DnD if admin
     if (!IS_ADMIN) return;
-
-    // Refresh a single row via server
-    async function refreshRow(userId) {
-        try {
-            const resp = await fetch('fetch_employee_row.php?user_id=' + userId);
-            if (!resp.ok) throw new Error('Network error');
-            const html = await resp.text();
-            const row = document.querySelector(`tr[data-user-id='${userId}']`);
-            if (row) row.outerHTML = html;
-        } catch (err) {
-            console.error('Failed to refresh row', err);
-        }
-    }
 
     document.addEventListener('DOMContentLoaded', function () {
         let draggedElem = null;
         let draggedEntryId = null;
         let originCell = null;
 
-        // make badges draggable (already have draggable attr if admin)
         function setupBadges() {
             document.querySelectorAll('.draggable-badge').forEach(badge => {
                 badge.removeEventListener('dragstart', onDragStart);
@@ -435,7 +420,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             });
         }
 
-        // make td.addable drop targets
         function setupDropTargets() {
             document.querySelectorAll('td.addable').forEach(td => {
                 td.removeEventListener('dragover', onDragOver);
@@ -452,7 +436,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
         function onDragStart(e) {
             draggedElem = this;
-            draggedEntryId = this.dataset.entryId || this.getAttribute('data-entry-id');
+            draggedEntryId = this.dataset.entryId;
             originCell = this.closest('td');
 
             e.dataTransfer.setData('text/plain', draggedEntryId);
@@ -492,34 +476,29 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             removeDropTargetHints();
 
             const targetTd = this;
-            const targetUserId = targetTd.getAttribute('data-user-id');
-            const targetWeekStart = targetTd.getAttribute('data-week-start');
+            const targetUserId = targetTd.dataset.userId;
+            const targetWeekStart = targetTd.dataset.weekStart;
 
             const entryId = e.dataTransfer.getData('text/plain') || draggedEntryId;
             if (!entryId) return;
 
-            // If dropped into same cell: do nothing
-            if (originCell && originCell.getAttribute('data-user-id') === targetUserId && originCell.getAttribute('data-week-start') === targetWeekStart) {
+            if (originCell &&
+                originCell.dataset.userId === targetUserId &&
+                originCell.dataset.weekStart === targetWeekStart) {
                 return;
             }
 
-            // Find badge element
-            let badge = document.querySelector('#badge-entry-' + entryId) || document.querySelector('[data-entry-id="'+entryId+'"]');
-            if (!badge) {
-                alert('Badge element not found for entry ' + entryId);
-                return;
-            }
+            let badge = document.querySelector('#badge-entry-' + entryId);
+            if (!badge) return;
 
             badge.style.pointerEvents = 'none';
             badge.classList.add('dragging');
 
-            // Subtle loading indicator
             const loadingDot = document.createElement('span');
             loadingDot.className = 'ms-1 text-muted';
             loadingDot.innerText = '...';
             targetTd.appendChild(loadingDot);
 
-            // AJAX request to server
             try {
                 const resp = await fetch('update_entry_position.php', {
                     method: 'POST',
@@ -536,34 +515,50 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 });
 
                 const data = await resp.json();
-
                 if (!resp.ok || !data.success) {
-                    console.error('Server error', data);
                     alert('Failed to move entry: ' + (data.error || 'Server error'));
                     badge.style.pointerEvents = '';
                     badge.classList.remove('dragging');
-                    if (loadingDot && loadingDot.parentNode) loadingDot.parentNode.removeChild(loadingDot);
+                    loadingDot.remove();
                     return;
                 }
 
-                // Refresh rows instead of manual DOM manipulation
-                if (originCell) {
-                    const originUserId = originCell.getAttribute('data-user-id');
-                    await refreshRow(originUserId);
+                // --- DYNAMIC DOM UPDATE ---
+                // Remove placeholder '+' in target cell if exists
+                const placeholder = targetTd.querySelector('.text-muted');
+                if (placeholder && targetTd.querySelectorAll('.draggable-badge').length === 0) {
+                    placeholder.remove();
                 }
-                await refreshRow(targetUserId);
+
+                // Move badge element
+                targetTd.appendChild(badge);
+                targetTd.appendChild(document.createElement('br'));
+                badge.dataset.userId = targetUserId;
+                badge.dataset.weekStart = targetWeekStart;
+
+                // Check origin cell for emptiness
+                if (originCell && originCell !== targetTd) {
+                    const hasBadge = originCell.querySelector('.draggable-badge');
+                    const hasTimeOff = originCell.querySelector('.timeoff-corner');
+                    if (!hasBadge && !hasTimeOff) {
+                        const plusSpan = document.createElement('span');
+                        plusSpan.className = 'text-muted';
+                        plusSpan.innerText = '+';
+                        originCell.appendChild(plusSpan);
+                    }
+                }
 
                 // cleanup
                 badge.style.pointerEvents = '';
                 badge.classList.remove('dragging');
-                if (loadingDot && loadingDot.parentNode) loadingDot.parentNode.removeChild(loadingDot);
+                loadingDot.remove();
 
             } catch (err) {
                 console.error(err);
                 alert('Network error while moving entry.');
                 badge.style.pointerEvents = '';
                 badge.classList.remove('dragging');
-                if (loadingDot && loadingDot.parentNode) loadingDot.parentNode.removeChild(loadingDot);
+                loadingDot.remove();
             }
         }
 
@@ -572,16 +567,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         setupDropTargets();
 
         // Observe table for dynamically added badges
-        const tableObserver = new MutationObserver(function () {
+        const tableObserver = new MutationObserver(() => {
             setupBadges();
             setupDropTargets();
         });
         const table = document.querySelector('.table-responsive');
-        if (table) {
-            tableObserver.observe(table, { childList: true, subtree: true });
-        }
+        if (table) tableObserver.observe(table, { childList: true, subtree: true });
     });
 })();
+
 
     </script>
 
