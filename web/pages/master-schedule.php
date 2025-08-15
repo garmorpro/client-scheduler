@@ -377,8 +377,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- Custom context menu -->
 <div id="badgeContextMenu" style="position:absolute; display:none; z-index:9999; background:#fff; border:1px solid #ccc; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
     <ul style="list-style:none; margin:0; padding:5px 0;">
-        <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Manage Timeoff</li>
-        <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Edit Entry</li>
+        <li id="" style="padding:5px 15px; cursor:pointer;">Manage Timeoff</li>
+        <li id="" style="padding:5px 15px; cursor:pointer;">Edit Entry</li>
         <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
     </ul>
 </div>
