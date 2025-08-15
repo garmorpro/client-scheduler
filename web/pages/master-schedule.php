@@ -314,128 +314,109 @@ table tbody td:first-child {
 <!-- <div class="tbl-container"> -->
 
 
-        <div id="scheduleContainer" class="table-responsive tbl-fixed" style="overflow-x:auto; white-space: nowrap;">
-            <table class="table table-bordered align-middle text-center" style="min-width: max-content;">
-                <thead class="table-light">
+        <div class="border rounded-lg overflow-hidden bg-white">
+    <div class="relative">
+        <div class="overflow-x-auto" id="schedule-container">
+            <table class="min-w-full">
+                <thead class="bg-gray-50 sticky top-0 z-10">
                     <tr>
-                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                        <!-- Employee sticky column -->
+                        <th class="sticky left-0 bg-gray-50 z-20 px-6 py-3 text-left border-r font-medium">
+                            <i class="bi bi-people me-2"></i>Employee
+                        </th>
 
-                        <?php foreach ($mondays as $idx => $monday): ?>
-                            <?php 
+                        <!-- Week headers -->
+                        <?php foreach ($mondays as $idx => $monday): 
                             $weekStart = $monday;
                             $isCurrent = ($idx === $currentWeekIndex);
                             ?>
-                            <th class="align-middle <?php echo $isCurrent ? 'highlight-today' : ''; ?>">
+                            <th class="px-4 py-3 text-center border-r font-medium min-w-[180px] <?php echo $isCurrent ? 'bg-yellow-100' : ''; ?>">
                                 <?php echo date('M j', $weekStart); ?><br>
-                                <small class="text-muted">Week of <?php echo date('n/j', $weekStart); ?></small>
+                                <small class="text-gray-500 text-xs">Week of <?php echo date('n/j', $weekStart); ?></small>
                             </th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
 
-                <tbody id="employeesTableBody">
-                <?php foreach ($employees as $userId => $employee): ?>
-                    <?php
-                    $fullName = htmlspecialchars($employee['full_name']);
-                    $nameParts = explode(' ', trim($fullName));
-                    $initials = '';
-                    foreach ($nameParts as $part) {
-                        $initials .= strtoupper(substr($part, 0, 1));
-                    }
-                    $role = htmlspecialchars($employee['role']);
+                <tbody>
+                    <?php foreach ($employees as $userId => $employee): 
+                        $fullName = htmlspecialchars($employee['full_name']);
+                        $nameParts = explode(' ', trim($fullName));
+                        $initials = '';
+                        foreach ($nameParts as $part) {
+                            $initials .= strtoupper(substr($part, 0, 1));
+                        }
+                        $role = htmlspecialchars($employee['role']);
                     ?>
-                    <tr>
-                        <td class="text-start employee-name" style="">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
-                                     style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;">
-                                  <?php echo $initials; ?>
+                    <tr class="even:bg-white odd:bg-gray-50">
+                        <!-- Employee column -->
+                        <td class="sticky left-0 bg-inherit z-10 px-6 py-4 border-r">
+                            <div class="flex items-center">
+                                <div class="rounded-full bg-dark text-white flex items-center justify-center me-3" style="width:40px;height:40px;font-size:14px;font-weight:500;">
+                                    <?php echo $initials; ?>
                                 </div>
                                 <div>
-                                  <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                  <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                                    <div class="font-medium"><?php echo $fullName; ?></div>
+                                    <div class="text-xs text-gray-600 capitalize"><?php echo $role; ?></div>
                                 </div>
                             </div>
                         </td>
 
-                        <?php foreach ($mondays as $idx => $monday): ?>
-                            <?php 
-                            $weekStart = $monday;
-                            $isCurrent = ($idx === $currentWeekIndex);
-
-                            $weekKey = date('Y-m-d', $weekStart);
+                        <!-- Week cells -->
+                        <?php foreach ($mondays as $idx => $monday): 
+                            $weekKey = date('Y-m-d', $monday);
                             $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                            $cellContent = "";
-
-                            // Build cell content and capture time off
                             $hasTimeOff = false;
                             $timeOffHours = 0;
-
-                            if (!empty($entriesForWeek)) {
-                                // First pass: collect time off hours
-                                foreach ($entriesForWeek as $entry) {
-                                    if (!empty($entry['is_timeoff']) && intval($entry['is_timeoff']) === 1) {
-                                        $hasTimeOff = true;
-                                        $timeOffHours += floatval($entry['assigned_hours']);
-                                    }
+                        ?>
+                        <td class="px-4 py-4 border-r text-center relative">
+                            <?php 
+                            // Calculate time off
+                            foreach ($entriesForWeek as $entry) {
+                                if (!empty($entry['is_timeoff']) && intval($entry['is_timeoff']) === 1) {
+                                    $hasTimeOff = true;
+                                    $timeOffHours += floatval($entry['assigned_hours']);
                                 }
+                            }
 
-                                // Second pass: render ONLY regular entries as badges
+                            // Display regular entries
+                            if (!empty($entriesForWeek)) {
+                                echo "<div class='space-y-1'>";
                                 foreach ($entriesForWeek as $entry) {
                                     if (empty($entry['is_timeoff']) || intval($entry['is_timeoff']) !== 1) {
                                         $engagementStatus = strtolower($entry['engagement_status'] ?? 'confirmed');
                                         switch ($engagementStatus) {
-                                            case 'confirmed': $entry_class = 'badge-confirmed'; break;
-                                            case 'pending': $entry_class = 'badge-pending'; break;
-                                            case 'not_confirmed': $entry_class = 'badge-not-confirmed'; break;
-                                            default: $entry_class = 'badge-confirmed'; break;
+                                            case 'confirmed': $entry_class = 'bg-green-100 text-green-800'; break;
+                                            case 'pending': $entry_class = 'bg-yellow-100 text-yellow-800'; break;
+                                            case 'not_confirmed': $entry_class = 'bg-red-100 text-red-800'; break;
+                                            default: $entry_class = 'bg-gray-100 text-gray-800'; break;
                                         }
                                         $clientName = htmlspecialchars($entry['client_name']);
                                         $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                                        $cellContent .= "<span class='badge badge-status $entry_class mt-1'>{$clientName} ({$assignedHours})</span><br>";
+                                        echo "<div class='text-sm font-medium'>{$clientName}</div>";
+                                        echo "<span class='inline-block px-2 py-1 text-xs rounded-full {$entry_class}'>{$assignedHours}h</span><br>";
                                     }
                                 }
+                                echo "</div>";
                             } else {
-                                $cellContent = "<span class='text-muted'>" . ($isAdmin ? "+" : "") . "</span>";
+                                echo "<div class='text-gray-400 text-sm'>-</div>";
                             }
 
-                            // Build td class list
-                            $tdClass = ($isCurrent ? '' : '');
+                            // Time off badge
                             if ($hasTimeOff) {
-                                $tdClass .= 'position-relative timeoff-cell ';
+                                echo "<span class='absolute top-1 right-1 text-xs font-semibold text-red-600'>{$timeOffHours}h</span>";
                             }
                             ?>
-
-                            <?php if ($isAdmin): ?>
-                                <td class="addable <?php echo $tdClass; ?>" 
-                                    style="cursor:pointer;"
-                                    data-user-id="<?php echo $userId; ?>" 
-                                    data-user-name="<?php echo htmlspecialchars($fullName); ?>"
-                                    data-week-start="<?php echo $weekKey; ?>">
-
-                                    <?php 
-                                      if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger fw-semibold'>{$timeOffHours}</span>";
-                                      }
-                                      echo $cellContent; 
-                                    ?>
-                                </td>
-                            <?php else: ?>
-                                <td class="<?php echo $tdClass; ?>">
-                                    <?php 
-                                      if ($hasTimeOff) {
-                                          echo "<span class='timeoff-corner text-danger'>{$timeOffHours}</span>";
-                                      }
-                                      echo $cellContent; 
-                                    ?>
-                                </td>
-                            <?php endif; ?>
+                        </td>
                         <?php endforeach; ?>
                     </tr>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
 
     <!-- </div>  -->
 
