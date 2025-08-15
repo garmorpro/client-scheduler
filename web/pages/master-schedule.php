@@ -206,7 +206,13 @@ $stmt2->close();
                         $globalHours = $globalTimeOff[$weekKey] ?? null;
                         $isGlobalWeek = $globalHours !== null;
                         ?>
-                        <th class="align-middle week <?php echo $isGlobalWeek ? 'timeoff-cell' : ''; ?>" style="position: relative;">
+                        <?php
+                        // Combine classes
+                        $thClasses = 'align-middle week';
+                        if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
+                        if ($isCurrentWeek) $thClasses .= ' highlight-today';
+                        ?>
+                        <th class="<?php echo $thClasses; ?>" style="position: relative;">
                             <?php echo date('M j', $monday); ?><br>
                             <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
                             <?php if ($isGlobalWeek): ?>
