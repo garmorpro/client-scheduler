@@ -227,6 +227,7 @@ table td:first-child {
     left: 0;
     z-index: 2 !important;
     background: white;
+    border: 1px solid blue;
 }
 table td:first-child {
     /* position: sticky !important; */
@@ -248,7 +249,7 @@ table thead th:first-child {
 
 table tbody td:first-child {
     /* position: sticky !important; */
-    border: 1px solid blue;
+    /* border: 1px solid blue; */
 }
 /* Scroll container limits visible weeks */
 #scheduleContainer {
