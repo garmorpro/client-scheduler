@@ -403,7 +403,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     
     <script src="../assets/js/dynamic_cell_input.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/custom_menu.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/delete_custom_menu.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/timeoff_menu.js?v=<?php echo time(); ?>"></script>
     
     <!-- <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script> -->

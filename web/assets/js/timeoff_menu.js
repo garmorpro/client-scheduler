@@ -1,29 +1,17 @@
 (function() {
     if (!IS_ADMIN) return;
 
-    // Context menu for time-off
-    const contextMenu = document.createElement('div');
-    contextMenu.id = 'timeOffContextMenu';
-    contextMenu.style.cssText = `
-        position:absolute; display:none; z-index:9999;
-        background:#fff; border:1px solid #ccc;
-        margin-top:15px; border-radius:4px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.2);
-    `;
-    document.body.appendChild(contextMenu);
-
     let selectedCell = null;
-    let selectedBadge = null;
-    let menuType = null;
     let activeInput = null;
 
+    // Render cell with gray background and top-right assigned_hours
     function renderCell(td, timeOffValue = null, entryId = null) {
         td.innerHTML = '';
         td.classList.remove('timeoff-cell');
         td.style.position = 'relative';
 
         if (timeOffValue) {
-            td.classList.add('timeoff-cell');
+            td.classList.add('timeoff-cell'); // gray highlight
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
             div.dataset.entryId = entryId;
@@ -48,6 +36,7 @@
         }
     }
 
+    // Inline input for adding/editing time off
     async function handleTimeOffInput(td, entryId = null) {
         if (activeInput) activeInput.remove();
 
@@ -94,66 +83,14 @@
         });
     }
 
-    // Context menu events
+    // Right-click on addable cell triggers input
     document.addEventListener('contextmenu', e => {
-        contextMenu.style.display = 'none';
-        selectedCell = null; selectedBadge = null; menuType = null;
-
         const target = e.target;
-
-        if (target.classList.contains('timeoff-corner')) {
+        if (target.tagName === 'TD' && target.classList.contains('addable')) {
             e.preventDefault();
-            selectedBadge = target;
-            selectedCell = target.parentElement;
-            menuType = 'badge';
-            contextMenu.innerHTML = `<ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
-                <li id="deleteBadge" style="padding:5px 15px;">Delete Entry</li></ul>`;
-            contextMenu.style.top = `${e.pageY}px`;
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.display = 'block';
-        } else if (target.tagName === 'TD' && target.classList.contains('addable')) {
-            e.preventDefault();
-            selectedCell = target;
-            const timeOff = target.querySelector('.timeoff-corner');
-            menuType = timeOff ? 'edit' : 'add';
-            contextMenu.innerHTML = `<ul style="list-style:none;margin:0;padding:5px 0;cursor:pointer;">
-                <li id="editAddTimeOff" style="padding:5px 15px;">${timeOff?'Edit Time Off':'Add Time Off'}</li></ul>`;
-            contextMenu.style.top = `${e.pageY}px`;
-            contextMenu.style.left = `${e.pageX}px`;
-            contextMenu.style.display = 'block';
+            const timeOffDiv = target.querySelector('.timeoff-corner');
+            const entryId = timeOffDiv ? timeOffDiv.dataset.entryId : null;
+            handleTimeOffInput(target, entryId);
         }
     });
-
-    document.addEventListener('click', e => {
-        if (!contextMenu.contains(e.target)) {
-            contextMenu.style.display = 'none';
-            selectedCell = null;
-            selectedBadge = null;
-            menuType = null;
-        }
-    });
-
-    contextMenu.addEventListener('click', async e => {
-        if (!menuType) return;
-
-        if (menuType === 'badge' && e.target.id === 'deleteBadge') {
-            const entryId = selectedBadge.dataset.entryId;
-            if (!entryId || !confirm('Are you sure?')) return;
-            const del = await safeFetchJSON('delete_timeoff.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ entry_id: entryId })
-            });
-            if (del.ok && del.data?.success) renderCell(selectedBadge.parentElement, null, null);
-            else alert('Failed to delete entry.');
-        } else if ((menuType==='edit'||menuType==='add') && e.target.id==='editAddTimeOff') {
-            const td = selectedCell;
-            const entryId = td.querySelector('.timeoff-corner')?.dataset.entryId || null;
-            handleTimeOffInput(td, entryId);
-        }
-
-        selectedCell = null; selectedBadge = null; menuType = null;
-    });
-
 })();
