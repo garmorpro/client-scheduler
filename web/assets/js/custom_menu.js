@@ -21,19 +21,32 @@
     let menuType = null; // 'badge', 'edit', 'add'
     let activeInput = null; // for dynamic input
 
+    // Updated renderCell
     function renderCell(td, timeOffValue = null, entryId = null) {
         td.innerHTML = '';
+        td.style.background = timeOffValue ? '#f0f0f0' : '';
+        td.style.position = 'relative';
+
         if (timeOffValue) {
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
             div.dataset.entryId = entryId;
-            div.style.fontSize = '0.8em';
+            div.style.position = 'absolute';
+            div.style.top = '2px';
+            div.style.right = '2px';
+            div.style.background = '#ddd';
+            div.style.padding = '2px 5px';
+            div.style.borderRadius = '4px';
+            div.style.fontSize = '0.75em';
             div.style.color = '#555';
+            div.style.cursor = 'default';
             div.textContent = timeOffValue;
             td.appendChild(div);
         }
+
         const plus = document.createElement('i');
         plus.className = 'bi bi-plus text-muted';
+        plus.style.cursor = 'pointer';
         td.appendChild(plus);
     }
 
@@ -57,7 +70,7 @@
 
         const target = e.target;
 
-        // 1️⃣ Right-click on badge
+        // Right-click on badge
         if (target.classList.contains('timeoff-corner')) {
             e.preventDefault();
             selectedBadge = target;
@@ -71,7 +84,7 @@
             contextMenu.style.left = `${e.pageX}px`;
             contextMenu.style.display = 'block';
         }
-        // 2️⃣ / 3️⃣ Right-click on cell
+        // Right-click on cell
         else if (target.tagName === 'TD' && target.classList.contains('addable')) {
             e.preventDefault();
             selectedCell = target;
@@ -152,7 +165,7 @@
     contextMenu.addEventListener('click', async e => {
         if (!menuType) return;
 
-        // 1️⃣ Delete badge
+        // Delete badge
         if (menuType === 'badge' && e.target.id === 'deleteBadge') {
             const entryId = selectedBadge.dataset.entryId;
             if (!entryId) return;
@@ -169,7 +182,7 @@
             else alert('Failed to delete entry.');
         }
 
-        // 2️⃣ / 3️⃣ Add or Edit
+        // Add or Edit time off
         else if ((menuType === 'edit' || menuType === 'add') && e.target.id === 'editAddTimeOff') {
             const td = selectedCell;
             const timeOffDiv = td.querySelector('.timeoff-corner');
