@@ -2,6 +2,7 @@
     if (!IS_ADMIN) return;
 
     let activeClients = [];
+    let activeInputContainer = null; // Track currently open inputs (inline or overlay)
 
     // Fetch clients via AJAX
     fetch('get_clients.php')
@@ -31,11 +32,12 @@
     dropdown.style.overflowY = 'auto';
     document.body.appendChild(dropdown);
 
-    // Stop click propagation inside dropdown
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
-        if (!dropdown.contains(e.target)) dropdown.style.display = 'none';
+        if (!dropdown.contains(e.target) && (!activeInputContainer || !activeInputContainer.contains(e.target))) {
+            closeActiveInput();
+        }
     });
 
     function makeBadgeDraggable(badge) {
@@ -47,22 +49,31 @@
 
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
-            // Don't reset if clicking an input inside the cell
             if (e.target.tagName === 'INPUT') return;
 
-            // If cell already has badges, show overlay instead
+            // Close previous inputs before opening new
+            closeActiveInput();
+
             if (td.querySelector('.draggable-badge')) {
                 showOverlay(td);
-                return;
+            } else {
+                showInlineInputs(td);
             }
-
-            showInlineInputs(td);
         });
     });
 
-    // Function to show inputs directly in empty cell
+    function closeActiveInput() {
+        if (activeInputContainer) {
+            activeInputContainer.remove();
+            activeInputContainer = null;
+        }
+        dropdown.style.display = 'none';
+    }
+
     function showInlineInputs(td) {
-        td.innerHTML = '';
+        const container = document.createElement('div');
+        container.className = 'inline-inputs';
+        container.style.position = 'relative';
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
@@ -77,24 +88,29 @@
         hoursInput.className = 'form-control form-control-sm';
         hoursInput.style.width = '100%';
 
-        td.appendChild(clientInput);
-        td.appendChild(hoursInput);
-        clientInput.focus();
+        container.appendChild(clientInput);
+        container.appendChild(hoursInput);
+        td.innerHTML = '';
+        td.appendChild(container);
+
+        activeInputContainer = container;
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
 
-        attachInputEvents(td, clientInput, hoursInput);
+        attachInputEvents(td, clientInput, hoursInput, container, true);
         setupAutocomplete(clientInput);
+        clientInput.focus();
     }
 
-    // Function to show overlay for cell with existing badges
     function showOverlay(td) {
         const overlay = document.createElement('div');
+        overlay.className = 'overlay-input';
+        const rect = td.getBoundingClientRect();
         overlay.style.position = 'absolute';
-        overlay.style.top = td.getBoundingClientRect().top + window.scrollY + 'px';
-        overlay.style.left = td.getBoundingClientRect().left + window.scrollX + 'px';
-        overlay.style.width = td.offsetWidth + 'px';
-        overlay.style.height = td.offsetHeight + 'px';
+        overlay.style.top = rect.top + window.scrollY + 'px';
+        overlay.style.left = rect.left + window.scrollX + 'px';
+        overlay.style.width = rect.width + 'px';
+        overlay.style.height = rect.height + 'px';
         overlay.style.background = 'rgba(255,255,255,0.95)';
         overlay.style.backdropFilter = 'blur(2px)';
         overlay.style.border = '1px solid #ccc';
@@ -121,24 +137,17 @@
         overlay.appendChild(clientInput);
         overlay.appendChild(hoursInput);
         document.body.appendChild(overlay);
-        clientInput.focus();
+
+        activeInputContainer = overlay;
 
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
-
-        // Remove overlay when clicking outside
-        const removeOverlay = e => {
-            if (!overlay.contains(e.target)) {
-                overlay.remove();
-                document.removeEventListener('click', removeOverlay);
-            }
-        };
-        setTimeout(() => document.addEventListener('click', removeOverlay), 0);
+        overlay.addEventListener('click', e => e.stopPropagation());
 
         attachInputEvents(td, clientInput, hoursInput, overlay);
         setupAutocomplete(clientInput, overlay);
+        clientInput.focus();
     }
 
-    // Setup autocomplete
     function setupAutocomplete(clientInput, container = dropdown) {
         clientInput.addEventListener('input', () => {
             const val = clientInput.value.trim();
@@ -172,8 +181,7 @@
         });
     }
 
-    // Attach Enter key events to inputs
-    function attachInputEvents(td, clientInput, hoursInput, overlay = null) {
+    function attachInputEvents(td, clientInput, hoursInput, container, inline = false) {
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async e => {
                 if (e.key === 'Enter') {
@@ -212,10 +220,14 @@
                             span.textContent = `${clientName} (${hours})`;
                             span.setAttribute('draggable', 'true');
 
+                            if (inline) {
+                                td.innerHTML = '';
+                            }
+
                             td.appendChild(span);
                             makeBadgeDraggable(span);
 
-                            if (overlay) overlay.remove();
+                            closeActiveInput();
                         } else {
                             alert('Failed to add entry: ' + (data.error || 'Server error'));
                         }
