@@ -81,10 +81,28 @@
             if (e.key !== 'Enter') return;
 
             const val = input.value.trim();
+
             if (!val) return;
 
             try {
-                if (entryId) {
+                if (val === '0' && entryId) {
+                    // DELETE existing time off
+                    const del = await safeFetchJSON('delete_timeoff_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ entry_id: entryId })
+                    });
+
+                    if (del.ok && del.data?.success) {
+                        // Remove badge and class
+                        const badge = td.querySelector('.timeoff-corner');
+                        if (badge) badge.remove();
+                        td.classList.remove('timeoff-cell');
+                    } else {
+                        alert('Failed to delete time off.');
+                    }
+                } else if (entryId) {
                     // Update existing time-off
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
