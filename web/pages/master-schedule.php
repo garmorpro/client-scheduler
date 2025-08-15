@@ -179,6 +179,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         width:100%;
         height:6px;
       }
+
+      th:first-child {
+        min-width: 30px;
+      }
     </style>
 
     
