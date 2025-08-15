@@ -321,12 +321,20 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         foreach ($entriesForWeek as $entry) {
                             if (empty($entry['is_timeoff']) || intval($entry['is_timeoff']) !== 1) {
                                 $status = strtolower($entry['engagement_status'] ?? 'confirmed');
-                                $entry_class = match ($status) {
-                                    'confirmed' => 'badge-confirmed',
-                                    'pending' => 'badge-pending',
-                                    'not_confirmed' => 'badge-not-confirmed',
-                                    default => 'badge-confirmed'
-                                };
+                                switch ($status) {
+    case 'confirmed':
+        $entry_class = 'badge-confirmed';
+        break;
+    case 'pending':
+        $entry_class = 'badge-pending';
+        break;
+    case 'not_confirmed':
+        $entry_class = 'badge-not-confirmed';
+        break;
+    default:
+        $entry_class = 'badge-confirmed';
+        break;
+}
                                 $clientName = htmlspecialchars($entry['client_name']);
                                 $assignedHours = htmlspecialchars($entry['assigned_hours']);
                                 $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
