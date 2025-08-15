@@ -1,4 +1,3 @@
-// dynamic_cell_input.js
 (function() {
     if (!IS_ADMIN) return;
 
@@ -10,19 +9,17 @@
         .then(data => { activeClients = data; })
         .catch(err => console.error('Failed to fetch clients:', err));
 
-    // Helper to filter clients by input
     function searchClients(query) {
         query = query.toLowerCase();
         return activeClients.filter(c => c.client_name.toLowerCase().includes(query));
     }
 
-    // Helper to get client status from activeClients
     function getClientStatus(clientName) {
-        const client = activeClients.find(c => c.client_name === clientName);
+        const name = clientName.trim().toLowerCase();
+        const client = activeClients.find(c => c.client_name.trim().toLowerCase() === name);
         return client && client.status ? client.status : 'confirmed';
     }
 
-    // Create dropdown container
     const dropdown = document.createElement('div');
     dropdown.style.position = 'absolute';
     dropdown.style.zIndex = '9999';
@@ -38,14 +35,13 @@
         if (!dropdown.contains(e.target)) dropdown.style.display = 'none';
     });
 
-    // Helper: attach drag events to a badge
     function makeBadgeDraggable(badge) {
         if (!badge) return;
+        badge.setAttribute('draggable', 'true');
         if (typeof handleDragStart === 'function') badge.addEventListener('dragstart', handleDragStart);
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
-    // Click handler for empty admin cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', function(e) {
             if (td.querySelector('.draggable-badge')) return;
@@ -76,7 +72,6 @@
                 dropdown.style.width = rect.width + 'px';
             }
 
-            // Autocomplete
             clientInput.addEventListener('input', () => {
                 const val = clientInput.value.trim();
                 if (val.length >= 3) {
@@ -104,7 +99,6 @@
                 }
             });
 
-            // Enter key saves
             [clientInput, hoursInput].forEach(input => {
                 input.addEventListener('keydown', async (e) => {
                     if (e.key === 'Enter') {
@@ -135,7 +129,6 @@
                             if (resp.ok && data.success) {
                                 const span = document.createElement('span');
 
-                                // Get the actual status from activeClients
                                 const statusClass = getClientStatus(clientName);
 
                                 span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
@@ -143,10 +136,11 @@
                                 span.dataset.userId = td.dataset.userId;
                                 span.dataset.weekStart = td.dataset.weekStart;
                                 span.textContent = `${clientName} (${hours})`;
+                                span.setAttribute('draggable', 'true');
+
                                 td.innerHTML = '';
                                 td.appendChild(span);
 
-                                // Make newly added badge draggable
                                 makeBadgeDraggable(span);
                             } else {
                                 alert('Failed to add entry: ' + (data.error || 'Server error'));
