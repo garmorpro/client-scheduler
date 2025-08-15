@@ -215,7 +215,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     table th {
-        position: sticky !important;
+        /* position: sticky !important; */
         top: 0px !important;
         z-index: 1 !important;
     }
@@ -223,7 +223,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* Sticky first column */
 table th:first-child,
 table td:first-child {
-    /* position: sticky; */
+    position: sticky;
     left: 0;
     z-index: 2 !important;
     background: white;
