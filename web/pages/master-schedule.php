@@ -198,7 +198,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* Minimum table width for horizontal scroll */
 .table-wrapper table {
     min-width: 1200px; /* adjust for 26 weeks */
-    border-collapse: separate; /* needed for sticky first column */
+    /* border-collapse: separate;  */
 }
 
 /* Freeze first column */
