@@ -260,72 +260,78 @@ $stmt2->close();
             </td>
 
             <?php foreach ($mondays as $idx => $monday):
-                $weekKey = date('Y-m-d', $monday);
-                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                
-                $hasTimeOff = false;
-                $timeOffHours = 0;
-                $cellContent = '';
+    $weekKey = date('Y-m-d', $monday);
+    $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+    
+    $hasPersonalTimeOff = false;
+    $hasTimeOffHighlight = false; // separate flag for styling
+    $timeOffHours = 0;
+    $cellContent = '';
 
-                // 1️⃣ Sum up employee-specific time off hours
-                foreach ($entriesForWeek as $entry) {
-                    if (!empty($entry['is_timeoff']) && intval($entry['is_timeoff']) === 1) {
-                        $hasTimeOff = true;
-                        $timeOffHours += floatval($entry['assigned_hours']);
-                    }
-                }
+    // 1️⃣ Sum employee-specific time off hours
+    foreach ($entriesForWeek as $entry) {
+        if (!empty($entry['is_timeoff']) && intval($entry['is_timeoff']) === 1) {
+            $hasPersonalTimeOff = true;
+            $timeOffHours += floatval($entry['assigned_hours']);
+        }
+    }
 
-                // 2️⃣ Only add global time off if employee already has individual time off
-                if ($hasTimeOff && isset($globalTimeOff[$weekKey])) {
-                    $timeOffHours += floatval($globalTimeOff[$weekKey]);
-                }
+    // 2️⃣ Highlight if either personal or global time off exists
+    if ($hasPersonalTimeOff || isset($globalTimeOff[$weekKey])) {
+        $hasTimeOffHighlight = true;
+    }
 
-                // 3️⃣ Build normal engagement badges (non-time-off)
-                foreach ($entriesForWeek as $entry) {
-                    if (empty($entry['is_timeoff']) || intval($entry['is_timeoff']) !== 1) {
-                        $status = strtolower($entry['engagement_status'] ?? 'confirmed');
-                        switch ($status) {
-                            case 'confirmed': $entry_class='badge-confirmed'; break;
-                            case 'pending': $entry_class='badge-pending'; break;
-                            case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
-                            default: $entry_class='badge-confirmed'; break;
-                        }
-                        $clientName = htmlspecialchars($entry['client_name']);
-                        $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                        $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
-                        $badgeId = "badge-entry-{$entry['entry_id']}";
-                        $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
-                    }
-                }
+    // 3️⃣ Only add global hours to total if personal time off exists
+    if ($hasPersonalTimeOff && isset($globalTimeOff[$weekKey])) {
+        $timeOffHours += floatval($globalTimeOff[$weekKey]);
+    }
 
-                // 4️⃣ Add plus icon if empty and admin
-                if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
-                    $cellContent = "<i class='bi bi-plus text-muted'></i>";
-                }
+    // 4️⃣ Build normal engagement badges (non-time-off)
+    foreach ($entriesForWeek as $entry) {
+        if (empty($entry['is_timeoff']) || intval($entry['is_timeoff']) !== 1) {
+            $status = strtolower($entry['engagement_status'] ?? 'confirmed');
+            switch ($status) {
+                case 'confirmed': $entry_class='badge-confirmed'; break;
+                case 'pending': $entry_class='badge-pending'; break;
+                case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
+                default: $entry_class='badge-confirmed'; break;
+            }
+            $clientName = htmlspecialchars($entry['client_name']);
+            $assignedHours = htmlspecialchars($entry['assigned_hours']);
+            $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
+            $badgeId = "badge-entry-{$entry['entry_id']}";
+            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
+        }
+    }
 
-                // 5️⃣ Determine cell classes
-                $tdClass = 'addable';
-                if ($hasTimeOff) $tdClass .= ' position-relative timeoff-cell';
-                ?>
-                <td class="<?php echo $tdClass; ?>" 
-                    data-user-id="<?php echo $userId; ?>" 
-                    data-user-name="<?php echo $fullName; ?>" 
-                    data-week-start="<?php echo $weekKey; ?>"
-                    style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
+    // 5️⃣ Add plus icon if empty and admin
+    if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
+        $cellContent = "<i class='bi bi-plus text-muted'></i>";
+    }
 
-                    <?php
-                    // Show total time off hours in corner if any
-                    if ($hasTimeOff) {
-                        echo "<span class='timeoff-corner'>{$timeOffHours}</span>";
-                    }
-                    echo $cellContent;
-                    ?>
-                </td>
-            <?php endforeach; ?>
+    // 6️⃣ Determine cell classes
+    $tdClass = 'addable';
+    if ($hasTimeOffHighlight) $tdClass .= ' position-relative timeoff-cell';
+?>
+    <td class="<?php echo $tdClass; ?>" 
+        data-user-id="<?php echo $userId; ?>" 
+        data-user-name="<?php echo $fullName; ?>" 
+        data-week-start="<?php echo $weekKey; ?>"
+        style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
+
+        <?php
+        // Show total time off hours in corner only if personal time off exists
+        if ($hasPersonalTimeOff) {
+            echo "<span class='timeoff-corner'>{$timeOffHours}</span>";
+        }
+        echo $cellContent;
+        ?>
+    </td>
+<?php endforeach; ?>
+
         </tr>
     <?php endforeach; ?>
 </tbody>
-
 
         </table>
     </div>
