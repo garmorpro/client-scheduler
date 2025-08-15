@@ -192,7 +192,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         box-sizing: border-box;
     }
     .table-responsive {
-        outline: 2px solid rgb(223, 226, 230);
+        /* outline: 2px solid rgb(223, 226, 230); */
         outline-offset: -2px;
     }
     .week {
