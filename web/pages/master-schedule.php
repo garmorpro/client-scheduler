@@ -206,58 +206,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <div class="col-md-6">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
                 </div>
-                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
-                    <a href="?week_offset=<?php //echo $weekOffset - 1; ?>" 
+                <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
                        class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
         
-                    <span class="fw-semibold"><?php //echo $rangeLabel; ?></span>
+                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
         
-                    <a href="?week_offset=<?php //echo $weekOffset + 1; ?>" 
+                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
                        class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-                </div> -->
-
-                <div class="d-flex align-items-center gap-3">
-    <input 
-        type="range" 
-        id="weekSlider" 
-        min="-2" 
-        max="10" 
-        value="<?php echo $weekOffset; ?>" 
-        style="width: 200px;">
-    <span id="weekLabel" class="fw-semibold"><?php echo $rangeLabel; ?></span>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const weekSlider = document.getElementById('weekSlider');
-    const weekLabel = document.getElementById('weekLabel');
-
-    weekSlider.addEventListener('input', () => {
-        // Update label dynamically
-        const sliderValue = parseInt(weekSlider.value);
-        const today = new Date();
-        const currentMonday = new Date(today.setDate(today.getDate() - today.getDay() + 1)); // Monday
-        const startMonday = new Date(currentMonday);
-        startMonday.setDate(startMonday.getDate() - 14 + (sliderValue * 7)); // Adjust -2 weeks as in PHP
-
-        const endMonday = new Date(startMonday);
-        endMonday.setDate(endMonday.getDate() + 6 * 7); // 7 weeks forward
-
-        const options = { month: 'numeric', day: 'numeric' };
-        weekLabel.textContent = `Week of ${startMonday.toLocaleDateString('en-US', options)} - Week of ${endMonday.toLocaleDateString('en-US', options)}`;
-    });
-
-    weekSlider.addEventListener('change', () => {
-        // Redirect with new week_offset
-        const offset = weekSlider.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('week_offset', offset);
-        window.location.href = url.toString();
-    });
-});
-</script>
-
-
+                </div>
             </form>
         </div>
     <!-- end upper search and week range selector -->
