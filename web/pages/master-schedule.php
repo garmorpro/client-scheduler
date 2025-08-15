@@ -523,36 +523,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     return;
                 }
 
-                // --- DYNAMIC DOM UPDATE ---
-                // Remove placeholder '+' (bi bi-plus) in target cell if exists
-                const placeholder = targetTd.querySelector('.bi-plus');
-                if (placeholder) placeholder.remove();
-
-                // Move badge element
-                targetTd.appendChild(badge);
-                targetTd.appendChild(document.createElement('br'));
-                badge.dataset.userId = targetUserId;
-                badge.dataset.weekStart = targetWeekStart;
-
-                // Update origin cell
-                if (originCell && originCell !== targetTd) {
-                    const hasBadge = originCell.querySelector('.draggable-badge');
-                    const hasTimeOff = originCell.querySelector('.timeoff-corner');
-                    const hasPlus = originCell.querySelector('.bi-plus');
-
-                    // Only add bi-plus if the cell has nothing else
-                    if (!hasBadge && !hasTimeOff && !hasPlus) {
-                        const plusIcon = document.createElement('i');
-                        plusIcon.className = 'bi bi-plus text-muted';
-                        originCell.appendChild(plusIcon);
-                        originCell.appendChild(document.createElement('br'));
-                    }
-                }
-
-                // cleanup
-                badge.style.pointerEvents = '';
-                badge.classList.remove('dragging');
-                loadingDot.remove();
+                // After successful move, reload the page to update all cells properly
+                window.location.reload();
 
             } catch (err) {
                 console.error(err);
