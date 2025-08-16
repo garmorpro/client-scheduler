@@ -715,9 +715,12 @@ document.addEventListener("DOMContentLoaded", function() {
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
             rowDiv.className = "week-row d-flex align-items-center gap-2 mb-3";
+            
+            // Store the week's Monday
+            rowDiv.dataset.weekStart = currentWeek.toISOString().split("T")[0];
 
             // Monday–Friday
-            for(let i = 1; i < 6; i++) {
+            for(let i = 0; i < 5; i++) {
                 const d = new Date(currentWeek);
                 d.setDate(d.getDate() + i); 
                 const dateStr = (d.getMonth()+1) + '/' + d.getDate();
@@ -800,7 +803,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if(weekSum>0) {
                 entries.push({
                     timeoff_note: note,
-                    week_start: row.querySelector(".day-hour").dataset.date,
+                    week_start: row.dataset.weekStart, // use stored Monday
                     assigned_hours: weekSum,
                     is_global_timeoff: 1
                 });
@@ -817,6 +820,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 
