@@ -1,4 +1,4 @@
-(function() {
+(async function() {
     if (!IS_ADMIN) return;
 
     let activeInput = null;
@@ -57,7 +57,7 @@
         });
 
         if (response.ok && response.data?.success) {
-            return response.data.entry_id;
+            return response.data.entry_id || null;
         } else {
             return null;
         }
@@ -110,15 +110,20 @@
         if (activeInput) activeInput.remove();
 
         const entryId = await getTimeOffEntry(td);
-        const totalHours = await getTimeOffHours(td) || 0;
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Calculate personal hours to pre-fill input
-        const personalHours = (globalHours > 0) ? (totalHours - globalHours) : totalHours;
+        // If personal entry exists, fetch total assigned hours (personal + global)
+        let totalHours = 0;
+        if (entryId) {
+            totalHours = await getTimeOffHours(td) || 0;
+        }
+
+        // Calculate personal hours
+        const personalHours = Math.max(totalHours - globalHours, 0);
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours >= 0 ? personalHours : '0';
+        input.value = personalHours > 0 ? personalHours : '';
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -137,7 +142,9 @@
             if (!val) return;
 
             try {
-                if (val === '0' && entryId) {
+                const personalValue = parseFloat(val);
+
+                if (personalValue === 0 && entryId) {
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -148,13 +155,8 @@
                     if (del.ok && del.data?.success) {
                         const badge = td.querySelector('.timeoff-corner');
                         if (badge) badge.remove();
-
-                        const otherBadges = td.querySelectorAll('.badge');
-                        if (otherBadges.length === 0) td.classList.remove('timeoff-cell');
-
                         await checkGlobalTimeOff(td);
-
-                        if (otherBadges.length === 0 && !td.querySelector('.bi-plus')) {
+                        if (!td.querySelector('.bi-plus')) {
                             const plusIcon = document.createElement('i');
                             plusIcon.className = 'bi bi-plus';
                             td.appendChild(plusIcon);
@@ -162,37 +164,37 @@
                     } else {
                         alert('Failed to delete time off.');
                     }
-                } else if (entryId) {
-                    const totalHoursToSave = parseFloat(val) + globalHours;
-                    const update = await safeFetchJSON('update_timeoff_new.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
-                    });
-                    if (update.ok && update.data?.success) {
-                        renderTimeOff(td, totalHoursToSave, entryId);
-                    } else {
-                        alert('Failed to update time off.');
-                    }
                 } else {
-                    const totalHoursToSave = parseFloat(val) + globalHours;
-                    const add = await safeFetchJSON('add_timeoff_new.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: td.dataset.userId,
-                            week_start: td.dataset.weekStart,
-                            assigned_hours: totalHoursToSave,
-                            is_timeoff: 1
-                        })
-                    });
-
-                    if (add.ok && add.data?.success && add.data.entry_id) {
-                        renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                    const totalHoursToSave = personalValue + globalHours;
+                    if (entryId) {
+                        const update = await safeFetchJSON('update_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
+                        });
+                        if (update.ok && update.data?.success) {
+                            renderTimeOff(td, totalHoursToSave, entryId);
+                        } else {
+                            alert('Failed to update time off.');
+                        }
                     } else {
-                        alert('Failed to add time off.');
+                        const add = await safeFetchJSON('add_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                user_id: td.dataset.userId,
+                                week_start: td.dataset.weekStart,
+                                assigned_hours: totalHoursToSave,
+                                is_timeoff: 1
+                            })
+                        });
+                        if (add.ok && add.data?.success && add.data.entry_id) {
+                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                        } else {
+                            alert('Failed to add time off.');
+                        }
                     }
                 }
             } catch (err) {
