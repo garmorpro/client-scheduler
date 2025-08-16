@@ -443,7 +443,7 @@ if ($settingResult) {
               </div> -->
 
               <!-- Nested Tabs -->
-                <div class="nested-tabs mb-3">
+                <div class="nested-tabs mb-1">
                     <a href="#time_off#individual_pto" class="text-decoration-none active" data-tab="individual_pto">Individual Time Off</a>
                     <a href="#time_off#global_pto" class="text-decoration-none" data-tab="global_pto">Global Time Off</a>
                 </div>
