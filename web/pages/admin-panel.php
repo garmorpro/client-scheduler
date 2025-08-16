@@ -486,7 +486,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <p class="mb-0">Manage employee time off entries</p>
                         </div>
                                         
-                        <div class="timeoff-search ms-4" style=" max-width: 300px;">
+                        <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
                             <input type="text" id="timeoffSearch" class="form-control form-control-sm" placeholder="Search time off..." minlength="3">
                         </div>
                                         
@@ -555,8 +555,194 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
               <div id="global_pto" class="nested-tab-content" style="display:none;">
-                  <p>Manage global PTO entries here.</p>
-              </div>
+
+    <div class="global-pto-header mb-3 d-flex justify-content-between align-items-center">
+        <div class="titles">
+            <p class="text-black mb-0"><strong>Global PTO Management</strong></p>
+            <p class="mb-0">Create global time off entries for multiple weeks and days</p>
+        </div>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addGlobalPtoModal">
+            <i class="bi bi-plus-circle me-1"></i>Add Global PTO
+        </button>
+    </div>
+
+    <div id="global-pto-table">
+        <!-- Table will be dynamically populated here -->
+    </div>
+</div>
+
+<!-- Add Global PTO Modal -->
+<div class="modal fade" id="addGlobalPtoModal" tabindex="-1" aria-labelledby="addGlobalPtoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="addGlobalPTOForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addGlobalPtoModalLabel">Add Global PTO</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <!-- PTO Note -->
+            <div class="mb-3">
+                <label for="pto_note" class="form-label">Time Off Note</label>
+                <input type="text" class="form-control" id="pto_note" name="timeoff_note" placeholder="e.g., Labor Day" required>
+            </div>
+
+            <!-- Month Selector -->
+            <div class="mb-3">
+                <label for="pto_month" class="form-label">Select Month</label>
+                <select id="pto_month" class="form-select" required>
+                    <option value="">-- Select Month --</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+
+            <!-- Week Selector -->
+            <div class="mb-3" id="weekSelectorContainer" style="display:none;">
+                <label class="form-label">Select Start and End Week</label>
+                <div class="d-flex gap-2">
+                    <select id="startWeek" class="form-select" required>
+                        <option value="">Start Week</option>
+                    </select>
+                    <select id="endWeek" class="form-select" required>
+                        <option value="">End Week</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Day Inputs -->
+            <div id="dayHoursContainer" style="display:none;">
+                <p><strong>Enter Hours per Day:</strong></p>
+                <div id="dayInputs" class="d-flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Add Global PTO</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const ptoMonth = document.getElementById("pto_month");
+    const startWeek = document.getElementById("startWeek");
+    const endWeek = document.getElementById("endWeek");
+    const weekContainer = document.getElementById("weekSelectorContainer");
+    const dayContainer = document.getElementById("dayHoursContainer");
+    const dayInputsDiv = document.getElementById("dayInputs");
+
+    // Generate weeks for a selected month
+    function getWeeksInMonth(year, month) {
+        const weeks = [];
+        const firstDay = new Date(year, month-1, 1);
+        const lastDay = new Date(year, month, 0);
+        let current = new Date(firstDay);
+
+        while (current <= lastDay) {
+            weeks.push(new Date(current));
+            current.setDate(current.getDate() + 7);
+        }
+        return weeks;
+    }
+
+    function populateWeekSelectors(month) {
+        const weeks = getWeeksInMonth(2025, parseInt(month));
+        startWeek.innerHTML = '<option value="">Start Week</option>';
+        endWeek.innerHTML = '<option value="">End Week</option>';
+        weeks.forEach(date => {
+            const val = date.toISOString().split("T")[0];
+            const label = date.toDateString(); // you can format nicer
+            startWeek.innerHTML += `<option value="${val}">${label}</option>`;
+            endWeek.innerHTML += `<option value="${val}">${label}</option>`;
+        });
+        weekContainer.style.display = "block";
+    }
+
+    ptoMonth.addEventListener("change", function() {
+        if (this.value) {
+            populateWeekSelectors(this.value);
+            dayContainer.style.display = "none";
+        }
+    });
+
+    // Generate day inputs once start and end week are selected
+    function generateDayInputs(start, end) {
+        dayInputsDiv.innerHTML = "";
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        let current = new Date(startDate);
+
+        while (current <= endDate) {
+            for (let i=0;i<7;i++) {
+                const day = new Date(current);
+                const val = day.toISOString().split("T")[0];
+                dayInputsDiv.innerHTML += `
+                    <div class="day-input">
+                        <label>${day.toDateString()}</label>
+                        <input type="number" min="0" class="form-control form-control-sm day-hour" data-date="${val}" placeholder="Hours">
+                    </div>`;
+                current.setDate(current.getDate() + 1);
+            }
+        }
+        dayContainer.style.display = "block";
+    }
+
+    startWeek.addEventListener("change", () => {
+        if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
+    });
+
+    endWeek.addEventListener("change", () => {
+        if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
+    });
+
+    // Handle form submission
+    const form = document.getElementById("addGlobalPTOForm");
+    form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const note = document.getElementById("pto_note").value;
+        const entries = [];
+        document.querySelectorAll(".day-hour").forEach(input => {
+            const hours = parseInt(input.value);
+            if (hours > 0) {
+                entries.push({
+                    timeoff_note: note,
+                    week_start: input.dataset.date, // week start or day
+                    assigned_hours: hours,
+                    is_global_timeoff: 1
+                });
+            }
+        });
+
+        if (entries.length === 0) {
+            alert("Please enter hours for at least one day.");
+            return;
+        }
+
+        console.log(entries);
+        // TODO: submit via fetch to backend
+        // await fetch("add_global_pto.php", { method:"POST", body: JSON.stringify(entries) });
+
+        alert("Global PTO entries ready to submit. Check console for preview.");
+    });
+});
+
+</script>
 
 
           </div>
