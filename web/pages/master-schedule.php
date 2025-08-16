@@ -83,7 +83,7 @@ $stmt->close();
 
 // Dropdown query
 $dropdownquery = "
-  SELECT e.engagement_id, e.client_name, e.status, e.total_available_hours, IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
+  SELECT e.engagement_id, e.client_name, e.status, e.budgeted_hours, IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
   FROM engagements e
   LEFT JOIN entries a ON a.engagement_id = e.engagement_id
   GROUP BY e.engagement_id
