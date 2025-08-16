@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         <!-- engagement management -->
 
-            <div id="engagements" class="tab-content <?php if ($isAdmin) echo 'd-none'; ?>">
+            <div id="engagements" class="tab-content">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
                         <!-- Left -->
                         <div class="titles">
