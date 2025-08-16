@@ -1503,7 +1503,7 @@ if ($settingResult) {
 
 <!-- Global PTO Modal -->
     <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
-      <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
             <div class="modal-header">
@@ -1515,6 +1515,9 @@ if ($settingResult) {
             </div>
 
             <div class="modal-body">
+
+                    
+
               
             </div>
 
