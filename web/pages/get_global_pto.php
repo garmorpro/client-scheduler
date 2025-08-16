@@ -1,16 +1,9 @@
 <?php
+
+require_once '../includes/db.php'; // Adjust path as needed
 header("Content-Type: application/json");
 
-// --- DB connection ---
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "your_database";  // change this
-$conn = new mysqli($host, $user, $pass, $db);
 
-if ($conn->connect_error) {
-    die(json_encode(["error" => $conn->connect_error]));
-}
 
 // --- Query for global time off ---
 $sql = "SELECT id, timeoff_note, week_start, assigned_hours 
