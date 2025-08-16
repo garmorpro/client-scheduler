@@ -3,7 +3,6 @@
 
     let activeInput = null;
 
-    // Render or update the personal+global time-off badge
     function renderTimeOff(td, timeOffValue, entryId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
@@ -20,7 +19,6 @@
             td.appendChild(div);
         }
 
-        // Only add plus icon if there are NO other badges except this one
         const otherBadges = Array.from(td.querySelectorAll('.badge')).filter(b => b !== existingBadge);
         const plusIconExists = td.querySelector('.bi-plus');
         if (otherBadges.length === 0 && !plusIconExists) {
@@ -30,7 +28,6 @@
         }
     }
 
-    // Mark gray background for global time-off without badge
     function markGlobalTimeOff(td) {
         td.classList.add('timeoff-cell');
         td.dataset.globalTimeoff = '1';
@@ -116,12 +113,12 @@
         const totalHours = await getTimeOffHours(td) || 0;
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Show personal-only hours if there's a global entry, otherwise show total
+        // Calculate personal hours to pre-fill input
         const personalHours = (globalHours > 0) ? (totalHours - globalHours) : totalHours;
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours > 0 ? personalHours : ''; 
+        input.value = personalHours >= 0 ? personalHours : '0';
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -134,7 +131,6 @@
                 activeInput = null;
                 return;
             }
-
             if (e.key !== 'Enter') return;
 
             let val = input.value.trim();
@@ -142,7 +138,6 @@
 
             try {
                 if (val === '0' && entryId) {
-                    // DELETE personal time off
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -154,14 +149,11 @@
                         const badge = td.querySelector('.timeoff-corner');
                         if (badge) badge.remove();
 
-                        // Remove personal time off class if no other badges exist
                         const otherBadges = td.querySelectorAll('.badge');
                         if (otherBadges.length === 0) td.classList.remove('timeoff-cell');
 
-                        // Keep gray if global time off
                         await checkGlobalTimeOff(td);
 
-                        // Add plus icon if NO other badges
                         if (otherBadges.length === 0 && !td.querySelector('.bi-plus')) {
                             const plusIcon = document.createElement('i');
                             plusIcon.className = 'bi bi-plus';
@@ -171,7 +163,6 @@
                         alert('Failed to delete time off.');
                     }
                 } else if (entryId) {
-                    // Update: total = personal + global
                     const totalHoursToSave = parseFloat(val) + globalHours;
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
@@ -185,17 +176,16 @@
                         alert('Failed to update time off.');
                     }
                 } else {
-                    // Add: total = personal + global
                     const totalHoursToSave = parseFloat(val) + globalHours;
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            user_id: td.dataset.userId, 
-                            week_start: td.dataset.weekStart, 
-                            assigned_hours: totalHoursToSave, 
-                            is_timeoff: 1 
+                        body: JSON.stringify({
+                            user_id: td.dataset.userId,
+                            week_start: td.dataset.weekStart,
+                            assigned_hours: totalHoursToSave,
+                            is_timeoff: 1
                         })
                     });
 
