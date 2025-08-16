@@ -1550,14 +1550,17 @@ if ($settingResult) {
   $result = $conn->query($sql);
   if ($result && $result->num_rows > 0):
     while ($row = $result->fetch_assoc()):
+      $formattedWeekStart = date('M j, Y', strtotime($row['week_start']));
   ?>
   <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm" 
        style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;">
     <div>
-      <p class="mb-1 fs-6 fw-semibold text-capitalize" style="">
-         - <?= htmlspecialchars($row['timeoff_note']) ?>
+      <p class="mb-1 fs-6 fw-semibold text-capitalize">
+        <?= htmlspecialchars($row['timeoff_note']) ?>
       </p>
-      <small class="text-muted" style="font-size: 13px;"><?= htmlspecialchars($row['week_start']) ?> - <?= htmlspecialchars($row['assigned_hours']) ?> hours</small>
+      <small class="text-muted" style="font-size: 13px;">
+        <?= $formattedWeekStart ?> - <?= htmlspecialchars($row['assigned_hours']) ?> hours
+      </small>
     </div>
     <div class="d-flex gap-2">
       <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm">Edit</a>
@@ -1577,6 +1580,7 @@ if ($settingResult) {
   <p class="text-muted text-center">No global PTO entries found.</p>
   <?php endif; ?>
 </div>
+
 
 
       </div>
