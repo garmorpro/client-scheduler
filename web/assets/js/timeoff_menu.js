@@ -157,8 +157,8 @@
                         alert('Failed to delete time off.');
                     }
                 } else {
-                    const totalHoursToSave = personalValue + globalHours;
-                    console.log('Total hours including global PTO (personal + global):', totalHoursToSave);
+                    const totalHours = personalValue + globalHours;
+                    console.log('Total hours including global PTO (personal + global):', totalHours);
 
                     if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
@@ -168,7 +168,7 @@
                             body: JSON.stringify({ entry_id: entryId, assigned_hours: personalValue })
                         });
                         if (update.ok && update.data?.success) {
-                            renderTimeOff(td, personalValue, entryId);
+                            renderTimeOff(td, totalHours, entryId);
                         } else {
                             alert('Failed to update time off.');
                         }
@@ -185,7 +185,7 @@
                             })
                         });
                         if (add.ok && add.data?.success && add.data.entry_id) {
-                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                            renderTimeOff(td, totalHours, add.data.entry_id);
                         } else {
                             alert('Failed to add time off.');
                         }
