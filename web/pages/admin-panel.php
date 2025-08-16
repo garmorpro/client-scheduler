@@ -205,13 +205,6 @@ if ($settingResult) {
 </div>
 <!-- end Tabs -->
 
-<!-- Tab Contents -->
-<!-- <div id="users" class="tab-content">User Management Content</div>
-<div id="engagements" class="tab-content">Engagement Management Content</div>
-<div id="activity" class="tab-content">System Activity Content</div>
-<div id="time_off" class="tab-content">Time Off Content</div>
-<div id="settings" class="tab-content">Settings Content</div> -->
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Select both buttons and links
@@ -590,7 +583,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- end engagement management -->
 
         <!-- system activty -->
-            <div id="activity" class="tab-content d-none">
+            <div id="activity" class="tab-content">
                 <div class="activity-header mb-3">
                     <div class="titles">
                         <p class="text-black"><strong>System Activity Log</strong></p>
@@ -757,7 +750,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- end system activty -->
 
         <!-- system activty -->
-            <div id="time_off" class="tab-content d-none">
+            <div id="time_off" class="tab-content">
                 <div class="activity-header mb-3">
                     <div class="titles">
                         <p class="text-black"><strong>System Activity Log</strong></p>
@@ -777,7 +770,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- end system activty -->
 
         <!-- Settings Tab -->
-            <div id="settings" class="tab-content d-none">
+            <div id="settings" class="tab-content">
               <div class="row g-3 ps-3 pe-3 mt-1" style="height: 350px !important;">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
