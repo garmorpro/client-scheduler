@@ -581,34 +581,54 @@ if ($result && mysqli_num_rows($result) > 0) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+
             <!-- PTO Note -->
             <div class="mb-3">
                 <label for="pto_note" class="form-label">Time Off Note</label>
                 <input type="text" class="form-control" id="pto_note" name="timeoff_note" placeholder="e.g., Labor Day" required>
             </div>
 
-            <!-- Month Selector -->
-            <div class="mb-3">
-                <label for="pto_month" class="form-label">Select Month</label>
-                <select id="pto_month" class="form-select" required>
-                    <option value="">-- Select Month --</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                    <option value="12">December</option>
-                </select>
+            <!-- Month Selectors -->
+            <div class="mb-3 d-flex gap-2">
+                <div>
+                    <label for="startMonth" class="form-label">Start Month</label>
+                    <select id="startMonth" class="form-select" required>
+                        <option value="">-- Select Month --</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="endMonth" class="form-label">End Month</label>
+                    <select id="endMonth" class="form-select" required>
+                        <option value="">-- Select Month --</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Week Selector -->
+            <!-- Week Selectors -->
             <div class="mb-3" id="weekSelectorContainer" style="display:none;">
                 <label class="form-label">Select Start and End Week</label>
                 <div class="d-flex gap-2">
@@ -622,12 +642,12 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
 
             <!-- Day Inputs -->
-            <div id="dayHoursContainer" style="display:none;">
+            <div id="dayHoursContainer" style="display:none; margin-top:1rem;">
                 <p><strong>Enter Hours per Day:</strong></p>
                 <div id="dayInputs" class="d-flex flex-wrap gap-2"></div>
             </div>
-        </div>
 
+        </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Add Global PTO</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -636,7 +656,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
   </div>
 </div>
-
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -648,11 +667,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
 
-    // Generate all Mondays in a given month
+    // Generate Mondays in a month
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
-        while (date.getDay() !== 1) { date.setDate(date.getDate() + 1); } // first Monday
+        while (date.getDay() !== 1) { date.setDate(date.getDate() + 1); }
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -665,8 +684,8 @@ document.addEventListener("DOMContentLoaded", function() {
         return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    // Populate a week selector dropdown with Mondays
     function populateWeekSelector(selector, month) {
+        if(!month) return;
         const weeks = getMondaysInMonth(2025, parseInt(month));
         selector.innerHTML = '<option value="">Select Week</option>';
         weeks.forEach(date => {
@@ -674,26 +693,15 @@ document.addEventListener("DOMContentLoaded", function() {
             const label = formatDateLong(date);
             selector.innerHTML += `<option value="${val}">${label}</option>`;
         });
+        weekContainer.style.display = "block";
+        dayContainer.style.display = "none";
     }
 
-    // When either month changes, populate its corresponding week dropdown
-    startMonth.addEventListener("change", function() {
-        if (this.value) {
-            populateWeekSelector(startWeek, this.value);
-            dayContainer.style.display = "none";
-            weekContainer.style.display = "block";
-        }
-    });
+    // When either month changes
+    startMonth.addEventListener("change", () => populateWeekSelector(startWeek, startMonth.value));
+    endMonth.addEventListener("change", () => populateWeekSelector(endWeek, endMonth.value));
 
-    endMonth.addEventListener("change", function() {
-        if (this.value) {
-            populateWeekSelector(endWeek, this.value);
-            dayContainer.style.display = "none";
-            weekContainer.style.display = "block";
-        }
-    });
-
-    // Generate daily hour inputs from start week to end week
+    // Generate day inputs between start and end week
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
         const startDate = new Date(start);
@@ -705,9 +713,9 @@ document.addEventListener("DOMContentLoaded", function() {
             dayInputsDiv.innerHTML += `
                 <div class="day-input" style="width:60px; text-align:center;">
                     <label style="font-size:0.75rem;">${dayLabel}</label>
-                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" 
-                           data-date="${current.toISOString().split("T")[0]}" 
-                           style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
+                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour"
+                        data-date="${current.toISOString().split("T")[0]}"
+                        style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
                 </div>`;
             current.setDate(current.getDate() + 1);
         }
@@ -715,7 +723,6 @@ document.addEventListener("DOMContentLoaded", function() {
         dayInputsDiv.style.display = "flex";
     }
 
-    // Listen to both week dropdowns
     startWeek.addEventListener("change", () => {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
@@ -725,7 +732,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Form submission
     const form = document.getElementById("addGlobalPTOForm");
-    form.addEventListener("submit", async function(e) {
+    form.addEventListener("submit", function(e) {
         e.preventDefault();
         const note = document.getElementById("pto_note").value;
         const entries = [];
@@ -749,9 +756,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         console.log(entries);
         alert("Global PTO entries ready to submit. Check console for preview.");
+        // TODO: Send entries to backend via fetch/ajax
     });
 });
 </script>
+
 
 
 
