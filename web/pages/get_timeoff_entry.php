@@ -16,7 +16,7 @@ if (!$user_id || !$week_start) {
 $user_id = $conn->real_escape_string($user_id);
 $week_start = $conn->real_escape_string($week_start);
 
-$sql = "SELECT entry_id FROM entries WHERE user_id = '$user_id' AND week_start = '$week_start' AND is_timeoff = 1 LIMIT 1";
+$sql = "SELECT entry_id, assigned_hours FROM entries WHERE user_id = '$user_id' AND week_start = '$week_start' AND is_timeoff = 1 LIMIT 1";
 
 $result = $conn->query($sql);
 
