@@ -2,23 +2,34 @@
 require_once '../includes/db.php';
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-$entry_id = $data['entry_id'] ?? null;
-$field = $data['field'] ?? null;
-$value = $data['value'] ?? null;
+// Accept POST data from FormData or JSON
+if ($_SERVER['CONTENT_TYPE'] ?? '' === 'application/json') {
+    $data = json_decode(file_get_contents('php://input'), true);
+} else {
+    $data = $_POST;
+}
 
-$allowedFields = ['timeoff_note', 'week_start', 'assigned_hours'];
+$entry_id = $data['timeoff_id'] ?? null;
+$week_start = $data['week_start'] ?? null;
+$assigned_hours = $data['assigned_hours'] ?? null;
+$timeoff_note = $data['timeoff_note'] ?? null;
 
-if (!$entry_id || !$field || !in_array($field, $allowedFields)) {
-    echo json_encode(['success' => false, 'error' => 'Invalid request']);
+if (!$entry_id) {
+    echo json_encode(['success' => false, 'error' => 'Missing entry ID']);
     exit;
 }
 
-$entry_id = $conn->real_escape_string($entry_id);
-$field = $conn->real_escape_string($field);
-$value = $conn->real_escape_string($value);
+// Validate inputs
+$entry_id = intval($entry_id);
+$assigned_hours = is_numeric($assigned_hours) ? intval($assigned_hours) : 0;
+$week_start = $conn->real_escape_string($week_start);
+$timeoff_note = $conn->real_escape_string($timeoff_note);
 
-$sql = "UPDATE time_off SET $field = '$value' WHERE timeoff_id = '$timeoff_id' AND is_global_timeoff = 1 LIMIT 1";
+// Update SQL
+$sql = "UPDATE time_off 
+        SET week_start = '$week_start', assigned_hours = '$assigned_hours', timeoff_note = '$timeoff_note' 
+        WHERE timeoff_id = $entry_id AND is_global_timeoff = 1
+        LIMIT 1";
 
 if ($conn->query($sql)) {
     echo json_encode(['success' => true]);
