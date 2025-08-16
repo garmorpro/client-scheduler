@@ -644,7 +644,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             <!-- Day Inputs -->
             <div id="dayHoursContainer" style="display:none; margin-top:1rem;">
                 <p><strong>Enter Hours per Day:</strong></p>
-                <div id="dayInputs" class="d-flex flex-column gap-1"></div>
+                <div id="dayInputs" class="d-flex flex-column gap-2"></div>
 
                 <!-- Summary -->
                 <div id="summaryContainer" style="margin-top:1rem; font-weight:bold;">
@@ -675,7 +675,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const summaryText = document.getElementById("summaryText");
     const weeklyTotalsDiv = document.getElementById("weeklyTotals");
 
-    // Generate Mondays in a month
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
@@ -713,27 +712,57 @@ document.addEventListener("DOMContentLoaded", function() {
         const startDate = new Date(start);
         const endDate = new Date(end);
         let current = new Date(startDate);
-        const weekHours = {};
+        const weekMap = {}; // { weekStartDate: [dates] }
 
         while (current <= endDate) {
-            const dayLabel = (current.getMonth() + 1) + '/' + current.getDate();
-            const weekKey = current.toISOString().split("T")[0].slice(0, 7); // Year-Month
-            if (!weekHours[weekKey]) weekHours[weekKey] = 0;
+            const weekStart = new Date(current);
+            weekStart.setDate(current.getDate() - current.getDay() + 1); // Monday of the week
+            const weekKey = weekStart.toISOString().split("T")[0];
 
-            const row = document.createElement("div");
-            row.className = "day-row d-flex align-items-center gap-2";
-            row.innerHTML = `
-                <label style="width:120px;">${dayLabel}</label>
-                <span>=</span>
-                <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" 
-                       data-date="${current.toISOString().split("T")[0]}" style="width:60px; padding:0 3px; font-size:0.75rem;" placeholder="0">
-            `;
-            dayInputsDiv.appendChild(row);
+            if (!weekMap[weekKey]) weekMap[weekKey] = [];
+            weekMap[weekKey].push(new Date(current));
             current.setDate(current.getDate() + 1);
         }
 
+        // Create horizontal rows per week
+        for (const weekStart in weekMap) {
+            const dates = weekMap[weekStart];
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
+            
+            // Date labels
+            dates.forEach(d => {
+                const dateStr = (d.getMonth()+1) + '/' + d.getDate();
+                const input = document.createElement("input");
+                input.type = "number";
+                input.min = 0;
+                input.max = 10;
+                input.value = 0;
+                input.className = "form-control form-control-sm day-hour";
+                input.style.width = "50px";
+                input.dataset.date = d.toISOString().split("T")[0];
+                const wrapper = document.createElement("div");
+                wrapper.className = "d-flex flex-column align-items-center";
+                const label = document.createElement("label");
+                label.style.fontSize = "0.75rem";
+                label.textContent = dateStr;
+                wrapper.appendChild(label);
+                wrapper.appendChild(input);
+                rowDiv.appendChild(wrapper);
+            });
+
+            // Week total
+            const weekTotalLabel = document.createElement("span");
+            weekTotalLabel.textContent = "= 0";
+            weekTotalLabel.style.fontWeight = "bold";
+            weekTotalLabel.style.marginLeft = "10px";
+            weekTotalLabel.className = "week-total";
+            rowDiv.appendChild(weekTotalLabel);
+
+            dayInputsDiv.appendChild(rowDiv);
+        }
+
         dayContainer.style.display = "flex";
-        dayInputsDiv.style.display = "flex";
 
         // Update totals dynamically
         document.querySelectorAll(".day-hour").forEach(input => {
@@ -744,27 +773,25 @@ document.addEventListener("DOMContentLoaded", function() {
         function updateTotals() {
             let totalHours = 0;
             let totalEntries = 0;
-            const weekTotals = {};
+            weeklyTotalsDiv.innerHTML = "";
 
-            document.querySelectorAll(".day-hour").forEach(input => {
-                const val = parseInt(input.value) || 0;
-                const date = input.dataset.date;
-                const weekKey = date.slice(0, 7);
-                if (!weekTotals[weekKey]) weekTotals[weekKey] = 0;
-                weekTotals[weekKey] += val;
+            const weekRows = document.querySelectorAll(".week-row");
+            weekRows.forEach(row => {
+                let weekSum = 0;
+                row.querySelectorAll(".day-hour").forEach(input => {
+                    const val = parseInt(input.value) || 0;
+                    weekSum += val;
+                    if(val>0) totalEntries++;
+                });
+                row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
+                totalHours += weekSum;
 
-                if (val > 0) totalEntries++;
-                totalHours += val;
+                const weekLabelDiv = document.createElement("div");
+                weekLabelDiv.textContent = `Week ${row.querySelector(".day-hour").dataset.date}: ${weekSum} hrs`;
+                weeklyTotalsDiv.appendChild(weekLabelDiv);
             });
 
-            weeklyTotalsDiv.innerHTML = "";
-            for (const wk in weekTotals) {
-                const div = document.createElement("div");
-                div.textContent = `Week ${wk}: ${weekTotals[wk]} hrs`;
-                weeklyTotalsDiv.appendChild(div);
-            }
-
-            summaryText.textContent = `Total Entries: ${totalEntries} | Total Hours: ${totalHours}`;
+            summaryText.textContent = `Total Entries: ${weekRows.length} | Total Hours: ${totalHours}`;
         }
     }
 
@@ -775,26 +802,30 @@ document.addEventListener("DOMContentLoaded", function() {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
 
-    // Form submission
     const form = document.getElementById("addGlobalPTOForm");
     form.addEventListener("submit", function(e) {
         e.preventDefault();
         const note = document.getElementById("pto_note").value;
         const entries = [];
 
-        document.querySelectorAll(".day-hour").forEach(input => {
-            const hours = parseInt(input.value);
-            if (hours > 0) {
+        // One entry per week
+        const weekRows = document.querySelectorAll(".week-row");
+        weekRows.forEach(row => {
+            let weekSum = 0;
+            row.querySelectorAll(".day-hour").forEach(input => {
+                weekSum += parseInt(input.value) || 0;
+            });
+            if(weekSum>0) {
                 entries.push({
                     timeoff_note: note,
-                    week_start: input.dataset.date,
-                    assigned_hours: hours,
+                    week_start: row.querySelector(".day-hour").dataset.date,
+                    assigned_hours: weekSum,
                     is_global_timeoff: 1
                 });
             }
         });
 
-        if (entries.length === 0) {
+        if(entries.length===0){
             alert("Please enter hours for at least one day.");
             return;
         }
@@ -805,6 +836,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 
