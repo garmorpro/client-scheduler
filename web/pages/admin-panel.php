@@ -1543,31 +1543,41 @@ if ($settingResult) {
           </form>
         </div>
 
-        <!-- Current Global PTO Entries -->
-        <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
-          <?php
-          $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start DESC";
-          $result = $conn->query($sql);
-          if ($result && $result->num_rows > 0):
-            while ($row = $result->fetch_assoc()):
-          ?>
-          <div class="card p-2 d-flex flex-row justify-content-between align-items-center" style="border:1px solid #e0e0e0;">
-            <div>
-              <p class="mb-1 fw-semibold"><?= htmlspecialchars($row['week_start']) ?> - <?= htmlspecialchars($row['timeoff_note']) ?></p>
-              <small class="text-muted"><?= htmlspecialchars($row['assigned_hours']) ?> hours</small>
-            </div>
-            <div class="d-flex gap-2">
-              <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm">Edit</a>
-              <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-danger btn-sm">Delete</a>
-            </div>
-          </div>
-          <?php
-            endwhile;
-          else:
-          ?>
-          <p class="text-muted text-center">No global PTO entries found.</p>
-          <?php endif; ?>
-        </div>
+       <!-- Current Global PTO Entries -->
+<div id="currentGlobalPTO" class="d-flex flex-column gap-2">
+  <?php
+  $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start DESC";
+  $result = $conn->query($sql);
+  if ($result && $result->num_rows > 0):
+    while ($row = $result->fetch_assoc()):
+  ?>
+  <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm" 
+       style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;">
+    <div>
+      <p class="mb-1 fw-semibold" style="font-size: 14px;">
+        <?= htmlspecialchars($row['week_start']) ?> - <?= htmlspecialchars($row['timeoff_note']) ?>
+      </p>
+      <small class="text-muted" style="font-size: 13px;"><?= htmlspecialchars($row['assigned_hours']) ?> hours</small>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm">Edit</a>
+      <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-danger btn-sm">Delete</a>
+    </div>
+  </div>
+  <style>
+    #currentGlobalPTO .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+  </style>
+  <?php
+    endwhile;
+  else:
+  ?>
+  <p class="text-muted text-center">No global PTO entries found.</p>
+  <?php endif; ?>
+</div>
+
 
       </div>
 
