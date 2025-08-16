@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div>
           <label class="form-label small mb-0">Hours</label>
-          <input type="number" name="assigned_hours" value="${entry.assigned_hours}" class="form-control form-control-sm" min="0" required>
+          <input type="number" name="assigned_hours" value="" class="form-control form-control-sm" min="0" required>
         </div>
         <div class="flex-fill">
           <label class="form-label small mb-0">Note</label>
