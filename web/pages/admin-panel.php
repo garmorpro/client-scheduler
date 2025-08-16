@@ -713,8 +713,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const startMonday = new Date(start);
         const endMonday = new Date(end);
 
-        // Create each week from start Monday to end Monday
         let currentWeek = new Date(startMonday);
+
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
             rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
@@ -722,7 +722,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Monday–Friday for this week
             for(let i = 0; i < 5; i++) {
                 const d = new Date(currentWeek);
-                d.setDate(d.getDate() + i);
+                d.setDate(d.getDate() + i); // Monday + i (0–4) = Mon–Fri
                 const dateStr = (d.getMonth()+1) + '/' + d.getDate();
                 const input = document.createElement("input");
                 input.type = "number";
@@ -759,7 +759,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         dayContainer.style.display = "flex";
 
-        // Update totals dynamically
         document.querySelectorAll(".day-hour").forEach(input => {
             input.addEventListener("input", updateTotals);
         });
@@ -767,7 +766,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         function updateTotals() {
             let totalHours = 0;
-            let totalEntries = 0;
             weeklyTotalsDiv.innerHTML = "";
 
             const weekRows = document.querySelectorAll(".week-row");
@@ -776,7 +774,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 row.querySelectorAll(".day-hour").forEach(input => {
                     const val = parseInt(input.value) || 0;
                     weekSum += val;
-                    if(val>0) totalEntries++;
                 });
                 row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
                 totalHours += weekSum;
@@ -825,7 +822,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         console.log(entries);
         alert("Global PTO entries ready to submit. Check console for preview.");
-        // TODO: send entries to backend
     });
 });
 </script>
