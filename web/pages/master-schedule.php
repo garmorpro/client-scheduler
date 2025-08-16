@@ -226,7 +226,7 @@ $stmt2->close();
             </thead>
 
             <tbody id="employeesTableBody">
-    <?php foreach ($employees as $userId => $employee):
+        <?php foreach ($employees as $userId => $employee):
         $fullName = htmlspecialchars($employee['full_name']);
         $role = htmlspecialchars($employee['role']);
         ?>
