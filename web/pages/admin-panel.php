@@ -1545,7 +1545,7 @@ if ($settingResult) {
 
 
 <!-- Current Global PTO Entries -->
-<div id="currentGlobalPTO" class="accordion d-flex flex-column gap-2" id="ptoAccordion">
+<div class="accordion d-flex flex-column gap-2" id="ptoAccordion">
   <?php
   // Query all entries, then group manually for accordion display
   $sql = "
