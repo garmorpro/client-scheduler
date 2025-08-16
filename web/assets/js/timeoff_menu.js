@@ -51,10 +51,10 @@
         if (resp.ok && resp.data?.success) {
             return {
                 entryId: resp.data.entry_id || null,
-                totalAssigned: parseFloat(resp.data.assigned_hours || 0)
+                personalHours: parseFloat(resp.data.assigned_hours || 0)
             };
         }
-        return { entryId: null, totalAssigned: 0 };
+        return { entryId: null, personalHours: 0 };
     }
 
     async function getGlobalTimeOffHours(week_start) {
@@ -74,13 +74,10 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const { entryId, totalAssigned } = await getTimeOffEntry(td);
+        const { entryId, personalHours } = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart);
 
-        let personalHours = entryId ? totalAssigned - globalHours : 0;
-        if (personalHours < 0) personalHours = totalAssigned; // fallback
-
-        // Blank if no personal entry
+        // Input value shows only personal hours (if any)
         const inputValue = entryId ? personalHours : '';
 
         const input = document.createElement('input');
@@ -104,7 +101,7 @@
             if (!val) return;
 
             const personalValue = parseFloat(val);
-            const totalHoursToSave = personalValue + globalHours;
+            const totalHoursToSave = personalValue + globalHours; // save total including global for backend
 
             if (personalValue === 0 && entryId) {
                 const del = await safeFetchJSON('delete_timeoff_new.php', {
