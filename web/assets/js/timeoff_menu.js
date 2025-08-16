@@ -106,13 +106,13 @@
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
         // Show individual (personal) hours in the input only if the entry exists
-        const personalHours = entryId ? Math.max(assigned_hours - globalHours, 0) : '';
+        const totalHoursPlusGlobal = entryId ? Math.max(assigned_hours + globalHours, 0) : '';
 
-        console.log('Opening input:', { entryId, assigned_hours, globalHours, personalHours });
+        console.log('Opening input:', { entryId, assigned_hours, globalHours, totalHoursPlusGlobal });
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours; // <--- This is where the DB value shows
+        input.value = assigned_hours; // <--- This is where the DB value shows
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
