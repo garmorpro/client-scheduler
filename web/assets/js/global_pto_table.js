@@ -1,3 +1,4 @@
+<script>
 document.addEventListener("DOMContentLoaded", function () {
     const globalPtoContainer = document.getElementById("global-pto-table");
 
@@ -67,13 +68,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <input type="number" class="form-control form-control-sm" 
                                                name="assigned_hours" value="${entry.assigned_hours}">
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label mb-0 small">Note</label>
                                         <input type="text" class="form-control form-control-sm" 
                                                name="timeoff_note" value="${entry.timeoff_note}">
                                     </div>
-                                    <div class="col-md-1 d-flex align-items-end">
-                                        <button class="btn btn-sm btn-success w-100">Save</button>
+                                    <div class="col-md-2 d-flex align-items-end gap-1">
+                                        <button type="submit" class="btn btn-sm btn-success flex-fill">Save</button>
+                                        <button type="button" class="btn btn-sm btn-danger flex-fill delete-entry">Delete</button>
                                     </div>
                                 </div>
                             </form>
@@ -94,12 +96,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Save entry", id, formData);
 
                 // TODO: call API to update entry
-                // fetch(`/api/global-pto/${id}`, { method:"PUT", body: JSON.stringify(formData) })
+                // await fetch(`/api/global-pto/${id}`, {
+                //   method: "PUT",
+                //   headers: { "Content-Type": "application/json" },
+                //   body: JSON.stringify(formData)
+                // });
 
                 alert(`Entry ${id} saved!`);
+            });
+
+            // Delete button handler
+            form.querySelector(".delete-entry").addEventListener("click", async function () {
+                const id = form.dataset.id;
+                if (!confirm(`Are you sure you want to delete entry ${id}?`)) return;
+
+                console.log("Delete entry", id);
+
+                // TODO: call API to delete entry
+                // await fetch(`/api/global-pto/${id}`, { method: "DELETE" });
+
+                alert(`Entry ${id} deleted!`);
+                renderGlobalPTOs(); // re-render after deletion
             });
         });
     }
 
     renderGlobalPTOs();
 });
+</script>
