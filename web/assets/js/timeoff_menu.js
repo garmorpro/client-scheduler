@@ -108,11 +108,13 @@
         // Show individual (personal) hours in the input only if the entry exists
         const totalHoursPlusGlobal = entryId ? (assigned_hours > 0 ? assigned_hours : '') : '';
 
+        const personalHours = entryId ? assigned_hours : 0;
+
         console.log('Opening input:', { entryId, assigned_hours, globalHours, totalHoursPlusGlobal });
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = assigned_hours; // <--- This is where the DB value shows
+        input.value = personalHours; // <--- This is where the DB value shows
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
