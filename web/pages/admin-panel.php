@@ -486,7 +486,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <p class="mb-0">Manage employee time off entries</p>
                         </div>
                                         
-                        <div class="timeoff-search ms-4" style="flex: 1; max-width: 300px;">
+                        <div class="timeoff-search ms-4" style=" max-width: 300px;">
                             <input type="text" id="timeoffSearch" class="form-control form-control-sm" placeholder="Search time off..." minlength="3">
                         </div>
                                         
