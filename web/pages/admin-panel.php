@@ -1542,12 +1542,11 @@ if ($settingResult) {
           </form>
         </div>
 
-
         <!-- Current Global PTO Entries -->
         <div id="currentGlobalPTO" class="accordion">
 
         <?php
-        // Fetch grouped entries by note
+        // Group PTO entries by note
         $sql = "
           SELECT 
             timeoff_note,
@@ -1568,18 +1567,23 @@ if ($settingResult) {
             $ids = explode(",", $row['timeoff_ids']);
             $accordionId = "group" . $index;
         ?>
-          <!-- Accordion Card -->
-          <div class="accordion-item mb-2 border rounded">
-            <h2 class="accordion-header" id="heading<?= $accordionId ?>">
-              <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $accordionId ?>" aria-expanded="false" aria-controls="collapse<?= $accordionId ?>">
-                <div class="d-flex justify-content-between w-100">
-                  <span class="fw-semibold"><?= $note ?: "No Note" ?></span>
-                  <span class="text-muted"><?= $totalHours ?> hrs</span>
-                </div>
-              </button>
-            </h2>
-            <div id="collapse<?= $accordionId ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $accordionId ?>" data-bs-parent="#currentGlobalPTO">
-              <div class="accordion-body">
+          <!-- Card + Accordion -->
+          <div class="card shadow-sm mb-2 border" style="border-radius: 6px;">
+            <div class="card-header d-flex justify-content-between align-items-center" 
+                 style="cursor:pointer; background:#fff;" 
+                 data-bs-toggle="collapse" data-bs-target="#collapse<?= $accordionId ?>" 
+                 aria-expanded="false" aria-controls="collapse<?= $accordionId ?>">
+              <div>
+                <p class="mb-0 fs-6 fw-semibold"><?= $note ?: "No Note" ?></p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="fw-semibold text-muted"><?= $totalHours ?> hrs</span>
+                <i class="bi bi-chevron-down small"></i>
+              </div>
+            </div>
+
+            <div id="collapse<?= $accordionId ?>" class="accordion-collapse collapse" data-bs-parent="#currentGlobalPTO">
+              <div class="card-body">
                 <?php
                 // Fetch all entries for this group
                 $idsIn = implode(",", array_map('intval', $ids));
@@ -1588,6 +1592,7 @@ if ($settingResult) {
 
                 if ($entries && $entries->num_rows > 0):
                   while ($e = $entries->fetch_assoc()):
+                    $formattedWeek = date('M j, Y', strtotime($e['week_start']));
                 ?>
                   <!-- Editable Row -->
                   <form action="update_global_pto.php" method="POST" class="row g-2 align-items-center mb-2">
@@ -1623,7 +1628,6 @@ if ($settingResult) {
         <?php endif; ?>
         </div>
 
-
       </div>
 
       <div class="modal-footer border-0">
@@ -1632,6 +1636,16 @@ if ($settingResult) {
     </div>
   </div>
 </div>
+
+<style>
+  #currentGlobalPTO .card-header:hover {
+    background: #f8f9fa;
+  }
+  #currentGlobalPTO .accordion-collapse {
+    transition: all 0.2s ease;
+  }
+</style>
+
 
 
 <script>
