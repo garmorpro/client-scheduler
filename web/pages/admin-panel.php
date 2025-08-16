@@ -195,53 +195,16 @@ if ($settingResult) {
         <!-- end stats cards -->
 
         <!-- Tabs -->
-            <!-- Tabs -->
-<div class="custom-tabs">
-    <a href="#users" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</a>
-    <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a>
-    <a href="#time_off" class=" text-decoration-none" data-tab="time_off">Time Off</a>
-    <a href="#activity" class=" text-decoration-none" data-tab="activity">System Activity</a>
-    <a href="#settings" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</a>
-</div>
-<!-- end Tabs -->
+          <div class="custom-tabs">
+              <a href="#users" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</a>
+              <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a>
+              <a href="#time_off" class=" text-decoration-none" data-tab="time_off">Time Off</a>
+              <a href="#activity" class=" text-decoration-none" data-tab="activity">System Activity</a>
+              <a href="#settings" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</a>
+          </div>
+        <!-- end Tabs -->
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Select both buttons and links
-    const tabs = document.querySelectorAll(".custom-tabs button, .custom-tabs a");
-    const tabContents = document.querySelectorAll(".tab-content"); // each tab content must have id matching data-tab
-
-    function openTab(tabName) {
-        // Remove active from all tabs
-        tabs.forEach(tab => tab.classList.remove("active"));
-        // Hide all tab content
-        tabContents.forEach(content => content.style.display = "none");
-
-        // Activate selected tab
-        const activeTab = document.querySelector(`.custom-tabs button[data-tab="${tabName}"], .custom-tabs a[data-tab="${tabName}"]`);
-        const activeContent = document.getElementById(tabName);
-        if (activeTab && activeContent) {
-            activeTab.classList.add("active");
-            activeContent.style.display = "block";
-            // Update URL hash without scrolling
-            history.replaceState(null, null, "#" + tabName);
-        }
-    }
-
-    // Click handler
-    tabs.forEach(tab => {
-        tab.addEventListener("click", (e) => {
-            e.preventDefault(); // Prevent default link jump
-            openTab(tab.dataset.tab);
-        });
-    });
-
-    // Open tab on page load based on hash or default
-    const hash = window.location.hash.substring(1);
-    const defaultTab = hash && document.querySelector(`.custom-tabs button[data-tab="${hash}"], .custom-tabs a[data-tab="${hash}"]`) ? hash : "users";
-    openTab(defaultTab);
-});
-</script>
+        <script src="../assets/js/admin_panel_tabs.js?v=<?php echo time(); ?>"></script>
 
         <!-- user management -->
             <div id="users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
@@ -582,6 +545,76 @@ document.addEventListener("DOMContentLoaded", function() {
 
         <!-- end engagement management -->
 
+         <!-- system activty -->
+            <div id="time_off" class="tab-content">
+    <div class="activity-header mb-3">
+        <div class="titles">
+            <p class="text-black"><strong>Time Off Management</strong></p>
+            <p>Manage employee and global time off entries</p>
+        </div>
+    </div>
+
+    <!-- Nested Tabs -->
+    <div class="nested-tabs mb-3">
+        <a href="#individual_time_off" class="active" data-tab="individual_time_off">Individual Time Off</a>
+        <a href="#global_time_off" data-tab="global_time_off">Global Time Off</a>
+    </div>
+
+    <!-- Nested Tab Contents -->
+    <div id="individual_time_off" class="nested-tab-content">
+        <p>Here you can manage individual employee time off entries.</p>
+        <div id="individual-activity-list">
+            <!-- Individual entries will go here -->
+        </div>
+    </div>
+
+    <div id="global_time_off" class="nested-tab-content" style="display:none;">
+        <p>Here you can manage global time off entries.</p>
+        <div id="global-activity-list">
+            <!-- Global entries will go here -->
+        </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav>
+        <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
+    </nav>
+</div>
+        <!-- end system activty -->
+
+        <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const nestedTabs = document.querySelectorAll("#time_off .nested-tabs a");
+    const nestedContents = document.querySelectorAll("#time_off .nested-tab-content");
+
+    function openNestedTab(tabName) {
+        // Hide all nested tab contents
+        nestedContents.forEach(content => content.style.display = "none");
+        // Remove active from all nested tabs
+        nestedTabs.forEach(tab => tab.classList.remove("active"));
+
+        // Show selected nested tab content
+        const activeTab = document.querySelector(`#time_off .nested-tabs a[data-tab="${tabName}"]`);
+        const activeContent = document.getElementById(tabName);
+        if (activeTab && activeContent) {
+            activeTab.classList.add("active");
+            activeContent.style.display = "block";
+        }
+    }
+
+    // Click handler for nested tabs
+    nestedTabs.forEach(tab => {
+        tab.addEventListener("click", (e) => {
+            e.preventDefault();
+            openNestedTab(tab.dataset.tab);
+        });
+    });
+
+    // Open default nested tab
+    openNestedTab("individual_time_off");
+});
+</script>
+
         <!-- system activty -->
             <div id="activity" class="tab-content">
                 <div class="activity-header mb-3">
@@ -740,26 +773,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         echo '<p class="text-muted">No system activities found.</p>';
                     }
                     ?>
-                </div>
-
-                        <!-- Pagination Controls for activity -->
-                <nav>
-                    <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
-                </nav>
-            </div>
-        <!-- end system activty -->
-
-        <!-- system activty -->
-            <div id="time_off" class="tab-content">
-                <div class="activity-header mb-3">
-                    <div class="titles">
-                        <p class="text-black"><strong>System Activity Log</strong></p>
-                        <p>Recent system events and user activities</p>
-                    </div>
-                </div>
-
-                <div id="activity-list">
-                    time off
                 </div>
 
                         <!-- Pagination Controls for activity -->
