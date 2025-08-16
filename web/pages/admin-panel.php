@@ -714,7 +714,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
-            rowDiv.className = "week-row d-flex align-items-center gap-2 mb-3";
+            rowDiv.className = "week-row d-flex flex-column align-items-center gap-2 mb-3";
 
             // Monday–Friday
             for(let i = 1; i < 6; i++) {
