@@ -673,12 +673,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
     const summaryText = document.getElementById("summaryText");
-    const weeklyTotalsDiv = document.getElementById("weeklyTotals");
 
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
-        while (date.getDay() !== 1) date.setDate(date.getDate() + 1);
+        while (date.getDay() !== 1) date.setDate(date.getDate() + 1); // find first Monday
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -708,7 +707,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
-        weeklyTotalsDiv.innerHTML = "";
 
         const startMonday = new Date(start);
         const endMonday = new Date(end);
@@ -717,12 +715,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
-            rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
+            rowDiv.className = "week-row d-flex align-items-center gap-2 mb-3";
 
-            // Monday–Friday for this week
+            // Monday–Friday
             for(let i = 1; i < 6; i++) {
                 const d = new Date(currentWeek);
-                d.setDate(d.getDate() + i); // Monday + i (0–4) = Mon–Fri
+                d.setDate(d.getDate() + i); 
                 const dateStr = (d.getMonth()+1) + '/' + d.getDate();
                 const input = document.createElement("input");
                 input.type = "number";
@@ -730,7 +728,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 input.max = 10;
                 input.value = 0;
                 input.className = "form-control form-control-sm day-hour";
-                input.style.width = "50px";
+                input.style.width = "55px";
                 input.dataset.date = d.toISOString().split("T")[0];
 
                 const wrapper = document.createElement("div");
@@ -743,22 +741,22 @@ document.addEventListener("DOMContentLoaded", function() {
                 rowDiv.appendChild(wrapper);
             }
 
-            // Week total
+            // Inline week total
             const weekTotalLabel = document.createElement("span");
-            weekTotalLabel.textContent = "= 0";
+            weekTotalLabel.textContent = "= 0 hrs";
             weekTotalLabel.style.fontWeight = "bold";
-            weekTotalLabel.style.marginLeft = "10px";
+            weekTotalLabel.style.marginLeft = "15px";
             weekTotalLabel.className = "week-total";
             rowDiv.appendChild(weekTotalLabel);
 
             dayInputsDiv.appendChild(rowDiv);
 
-            // Move to next Monday
-            currentWeek.setDate(currentWeek.getDate() + 7);
+            currentWeek.setDate(currentWeek.getDate() + 7); // next Monday
         }
 
         dayContainer.style.display = "flex";
 
+        // Bind totals
         document.querySelectorAll(".day-hour").forEach(input => {
             input.addEventListener("input", updateTotals);
         });
@@ -766,7 +764,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         function updateTotals() {
             let totalHours = 0;
-            weeklyTotalsDiv.innerHTML = "";
 
             const weekRows = document.querySelectorAll(".week-row");
             weekRows.forEach(row => {
@@ -777,13 +774,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
                 row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
                 totalHours += weekSum;
-
-                const weekLabelDiv = document.createElement("div");
-                weekLabelDiv.textContent = `Week ${row.querySelector(".day-hour").dataset.date}: ${weekSum} hrs`;
-                weeklyTotalsDiv.appendChild(weekLabelDiv);
             });
 
-            summaryText.textContent = `Total Entries: ${weekRows.length} | Total Hours: ${totalHours}`;
+            summaryText.textContent = `Total Weeks: ${weekRows.length} | Total Hours: ${totalHours}`;
         }
     }
 
