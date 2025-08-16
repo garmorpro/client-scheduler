@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div>
           <label class="form-label small mb-0">Hours</label>
-          <input type="number" name="assigned_hours" value="" class="form-control form-control-sm" min="0" required>
+          <input type="number" name="assigned_hours" value="${entry.assigned_hours}" class="form-control form-control-sm" min="0" required>
         </div>
         <div class="flex-fill">
           <label class="form-label small mb-0">Note</label>
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="d-flex gap-2 align-items-end">
           <button type="submit" class="btn btn-sm btn-primary">Save</button>
-          <button type="button" class="btn btn-sm btn-outline-danger deletePTOBtn" data-id="${entry.timeoff_id}">${entry.timeoff_id}</button>
+          <button type="button" class="btn btn-sm btn-outline-danger deletePTOBtn" data-id="${entry.timeoff_id}">Delete${entry.timeoff_id}</button>
         </div>
       </form>
     `;

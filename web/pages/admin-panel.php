@@ -199,6 +199,7 @@ if ($settingResult) {
                 <button class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</button>
                 <button class="<?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
+                <button data-tab="time_off">Time Off</button>
                 <button class="<?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</button>
             </div>
         <!-- end Tabs -->
@@ -1502,7 +1503,7 @@ if ($settingResult) {
 <!-- end Email Notification Modal -->
 
 <!-- Global PTO Modal -->
-<div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
+  <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content border-0 shadow-sm">
 
