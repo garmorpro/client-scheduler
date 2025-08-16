@@ -665,70 +665,30 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const startMonth = document.getElementById("startMonth");
-    const endMonth = document.getElementById("endMonth");
     const startWeek = document.getElementById("startWeek");
     const endWeek = document.getElementById("endWeek");
-    const weekContainer = document.getElementById("weekSelectorContainer");
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
     const summaryText = document.getElementById("summaryText");
     const weeklyTotalsDiv = document.getElementById("weeklyTotals");
 
-    function getMondaysInMonth(year, month) {
-        const mondays = [];
-        let date = new Date(year, month - 1, 1);
-        while (date.getDay() !== 1) date.setDate(date.getDate() + 1);
-        while (date.getMonth() === month - 1) {
-            mondays.push(new Date(date));
-            date.setDate(date.getDate() + 7);
-        }
-        return mondays;
-    }
-
-    function formatDateLong(date) {
-        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function populateWeekSelector(selector, month) {
-        if(!month) return;
-        const weeks = getMondaysInMonth(2025, parseInt(month));
-        selector.innerHTML = '<option value="">Select Week</option>';
-        weeks.forEach(date => {
-            const val = date.toISOString().split("T")[0];
-            const label = formatDateLong(date);
-            selector.innerHTML += `<option value="${val}">${label}</option>`;
-        });
-        weekContainer.style.display = "block";
-        dayContainer.style.display = "none";
-    }
-
-    startMonth.addEventListener("change", () => populateWeekSelector(startWeek, startMonth.value));
-    endMonth.addEventListener("change", () => populateWeekSelector(endWeek, endMonth.value));
-
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
         weeklyTotalsDiv.innerHTML = "";
 
-        const startDate = new Date(start);
-        const endDate = new Date(end);
+        if (!start || !end) return;
 
-        // Get all Mondays between start and end week
-        const mondays = [];
-        let current = new Date(startDate);
-        while(current <= endDate) {
-            if(current.getDay() === 1) mondays.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-        }
+        const selectedWeeks = [new Date(start), new Date(end)];
 
-        mondays.forEach(weekStart => {
+        selectedWeeks.forEach(weekStart => {
             const rowDiv = document.createElement("div");
             rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
 
-            for(let i = 0; i < 5; i++) { // Monday–Friday
+            for (let i = 0; i < 5; i++) { // Monday–Friday
                 const d = new Date(weekStart);
                 d.setDate(d.getDate() + i);
-                const dateStr = (d.getMonth()+1) + '/' + d.getDate();
+                const dateStr = (d.getMonth() + 1) + '/' + d.getDate();
+
                 const input = document.createElement("input");
                 input.type = "number";
                 input.min = 0;
@@ -778,7 +738,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 row.querySelectorAll(".day-hour").forEach(input => {
                     const val = parseInt(input.value) || 0;
                     weekSum += val;
-                    if(val>0) totalEntries++;
+                    if (val > 0) totalEntries++;
                 });
                 row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
                 totalHours += weekSum;
@@ -805,13 +765,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const note = document.getElementById("pto_note").value;
         const entries = [];
 
-        // One entry per week
         document.querySelectorAll(".week-row").forEach(row => {
             let weekSum = 0;
             row.querySelectorAll(".day-hour").forEach(input => {
                 weekSum += parseInt(input.value) || 0;
             });
-            if(weekSum>0) {
+            if (weekSum > 0) {
                 entries.push({
                     timeoff_note: note,
                     week_start: row.querySelector(".day-hour").dataset.date,
@@ -821,7 +780,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        if(entries.length===0){
+        if (entries.length === 0) {
             alert("Please enter hours for at least one day.");
             return;
         }
@@ -832,6 +791,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 
