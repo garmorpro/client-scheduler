@@ -49,7 +49,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- Delete PTO dynamically ---
   function attachDeleteHandlers() {
     document.querySelectorAll(".deletePTOBtn").forEach(btn => {
-      btn.addEventListener("click", async function () {
+      btn.addEventListener("click", async function (e) {
+        e.preventDefault(); // ✅ Prevent form submission
+
         if (!confirm("Are you sure you want to delete this PTO entry?")) return;
 
         const id = this.dataset.id;
@@ -154,5 +156,4 @@ document.addEventListener("DOMContentLoaded", function () {
       </form>
     `;
   }
-
 });
