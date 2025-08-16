@@ -711,7 +711,7 @@ if ($settingResult) {
 
         <!-- Settings Tab -->
             <div id="tab-settings" class="tab-content d-none">
-              <div class="row g-3 ps-3 pe-3 mt-1" style="height: 350px !important;">
+              <div class="row g-3 ps-3 pe-3 mt-1" style="height: 400px !important;">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
                   <div class="settings-card">
