@@ -710,29 +710,18 @@ document.addEventListener("DOMContentLoaded", function() {
         dayInputsDiv.innerHTML = "";
         weeklyTotalsDiv.innerHTML = "";
 
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-
-        // Include start Monday and end Monday, plus any Mondays in between
-        const mondays = [];
-        let current = new Date(startDate);
-        while(current <= endDate) {
-            if(current.getDay() === 1) mondays.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-        }
-        // Ensure end week Monday is included
+        const startMonday = new Date(start);
         const endMonday = new Date(end);
-        if(endMonday.getDay() !== 1) {
-            endMonday.setDate(endMonday.getDate() - ((endMonday.getDay() + 6) % 7));
-        }
-        if(!mondays.find(d => d.getTime() === endMonday.getTime())) mondays.push(endMonday);
 
-        mondays.forEach(weekStart => {
+        // Create each week from start Monday to end Monday
+        let currentWeek = new Date(startMonday);
+        while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
             rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
 
-            for(let i = 0; i < 5; i++) { // Monday–Friday
-                const d = new Date(weekStart);
+            // Monday–Friday for this week
+            for(let i = 0; i < 5; i++) {
+                const d = new Date(currentWeek);
                 d.setDate(d.getDate() + i);
                 const dateStr = (d.getMonth()+1) + '/' + d.getDate();
                 const input = document.createElement("input");
@@ -763,7 +752,10 @@ document.addEventListener("DOMContentLoaded", function() {
             rowDiv.appendChild(weekTotalLabel);
 
             dayInputsDiv.appendChild(rowDiv);
-        });
+
+            // Move to next Monday
+            currentWeek.setDate(currentWeek.getDate() + 7);
+        }
 
         dayContainer.style.display = "flex";
 
@@ -811,7 +803,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const note = document.getElementById("pto_note").value;
         const entries = [];
 
-        // One entry per week
         document.querySelectorAll(".week-row").forEach(row => {
             let weekSum = 0;
             row.querySelectorAll(".day-hour").forEach(input => {
