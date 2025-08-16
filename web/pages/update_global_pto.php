@@ -8,7 +8,7 @@ $week_start = $_POST['week_start'] ?? null;
 $assigned_hours = $_POST['assigned_hours'] ?? null;
 $timeoff_note = $_POST['timeoff_note'] ?? null;
 
-if (!$entry_id) {
+if (!$timeoff_id) {
     echo json_encode(['success' => false, 'error' => 'Missing entry ID']);
     exit;
 }
