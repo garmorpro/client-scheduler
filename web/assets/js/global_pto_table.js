@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const globalPtoContainer = document.getElementById("global-pto-table");
 
@@ -22,8 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return groups;
     }
 
+    // Parse YYYY-MM-DD as local date to avoid -1 day issue
     function formatDateShort(ymd) {
-        const d = new Date(ymd);
+        const [year, month, day] = ymd.split("-").map(Number);
+        const d = new Date(year, month - 1, day); // local date
         return d.toLocaleDateString('en-US', { month: "short", day: "numeric" });
     }
 
@@ -120,4 +121,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderGlobalPTOs();
 });
-
