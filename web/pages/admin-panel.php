@@ -218,7 +218,7 @@ if ($settingResult) {
                     <!-- Middle (Search) -->
                     <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
                         <input type="text" id="userSearch" class="form-control form-control-sm" 
-                               placeholder="Search users..." minlength="3">
+                               placeholder="Search employees..." minlength="3">
                     </div>
 
                     <!-- Right -->
@@ -247,7 +247,7 @@ if ($settingResult) {
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="selectAllUsers"></th>
-                                <th>User</th>
+                                <th>Employee Name</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Last Active</th>
@@ -308,7 +308,7 @@ if ($settingResult) {
                     <ul id="pagination-users" class="pagination justify-content-center mt-3"></ul>
                 </nav>
             </div>
-        <!-- end user management -->
+        <!-- end employee management -->
 
         <!-- engagement management -->
 
