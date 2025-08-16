@@ -1033,7 +1033,7 @@ if ($settingResult) {
 
               <!-- Total Available Hours -->
               <div class="mb-3">
-                <label for="budgeted_hours" class="form-label">Total Available Hours</label>
+                <label for="budgeted_hours" class="form-label">Budgeted Hours</label>
                 <input type="number" class="form-control" id="budgeted_hours" name="budgeted_hours" min="1" required>
               </div>
 
