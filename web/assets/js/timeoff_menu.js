@@ -26,11 +26,14 @@
             plusIcon.className = 'bi bi-plus';
             td.appendChild(plusIcon);
         }
+
+        console.log('Rendered badge:', { td, timeOffValue, entryId });
     }
 
     function markGlobalTimeOff(td) {
         td.classList.add('timeoff-cell');
         td.dataset.globalTimeoff = '1';
+        console.log('Marked global time off for cell:', td);
     }
 
     async function safeFetchJSON(url, options) {
@@ -55,6 +58,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id, week_start })
         });
+
+        console.log('Fetched time off entry:', { td, response });
 
         if (response.ok && response.data?.success) {
             return response.data.entry_id || null;
@@ -112,7 +117,7 @@
         const entryId = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // If personal entry exists, fetch total assigned hours (personal + global)
+        // Fetch total assigned hours (personal + global)
         let totalHours = 0;
         if (entryId) {
             totalHours = await getTimeOffHours(td) || 0;
@@ -120,6 +125,7 @@
 
         // Calculate personal hours
         const personalHours = Math.max(totalHours - globalHours, 0);
+        console.log('Opening input:', { entryId, totalHours, globalHours, personalHours });
 
         const input = document.createElement('input');
         input.type = 'text';
@@ -143,6 +149,7 @@
 
             try {
                 const personalValue = parseFloat(val);
+                console.log('Saving personal time off value:', personalValue);
 
                 if (personalValue === 0 && entryId) {
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
@@ -161,11 +168,14 @@
                             plusIcon.className = 'bi bi-plus';
                             td.appendChild(plusIcon);
                         }
+                        console.log('Deleted personal time off for cell:', td);
                     } else {
                         alert('Failed to delete time off.');
                     }
                 } else {
                     const totalHoursToSave = personalValue + globalHours;
+                    console.log('Saving total hours (personal + global):', totalHoursToSave);
+
                     if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
