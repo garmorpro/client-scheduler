@@ -1550,7 +1550,7 @@ if ($settingResult) {
   $result = $conn->query($sql);
   if ($result && $result->num_rows > 0):
     while ($row = $result->fetch_assoc()):
-      $formattedWeekStart = date('mm/dd/yyyy', strtotime($row['week_start']));
+      $formattedWeekStart = date('m/d/Y', strtotime($row['week_start']));
   ?>
   <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm" 
        style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;">
