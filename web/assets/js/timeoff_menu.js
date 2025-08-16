@@ -3,7 +3,7 @@
 
     let activeInput = null;
 
-    // Render or update the personal time-off badge
+    // Render or update the personal+global time-off badge
     function renderTimeOff(td, timeOffValue, entryId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
@@ -66,6 +66,23 @@
         }
     }
 
+    async function getTimeOffHours(td) {
+        const user_id = td.dataset.userId;
+        const week_start = td.dataset.weekStart;
+
+        const response = await safeFetchJSON('get_timeoff_entry.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id, week_start })
+        });
+
+        if (response.ok && response.data?.success && response.data.assigned_hours) {
+            return parseFloat(response.data.assigned_hours);
+        }
+        return 0;
+    }
+
     async function getGlobalTimeOffHours(week_start) {
         const response = await safeFetchJSON('check_global_timeoff.php', {
             method: 'POST',
@@ -96,12 +113,12 @@
         if (activeInput) activeInput.remove();
 
         const entryId = await getTimeOffEntry(td);
-        const existingBadge = td.querySelector('.timeoff-corner');
-        const currentVal = existingBadge ? existingBadge.textContent : '';
+        const personalHours = await getTimeOffHours(td) || 0; // Personal only
+        const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = currentVal;
+        input.value = personalHours; // show ONLY personal hours in the input
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -121,10 +138,8 @@
             if (!val) return;
 
             try {
-                const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart);
-
                 if (val === '0' && entryId) {
-                    // DELETE existing personal time off
+                    // DELETE personal time off
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -140,7 +155,7 @@
                         const otherBadges = td.querySelectorAll('.badge');
                         if (otherBadges.length === 0) td.classList.remove('timeoff-cell');
 
-                        // Check for global time off (keep gray if present)
+                        // Keep gray if global time off
                         await checkGlobalTimeOff(td);
 
                         // Add plus icon if NO other badges
@@ -153,7 +168,7 @@
                         alert('Failed to delete time off.');
                     }
                 } else if (entryId) {
-                    // Update existing personal time off (include global hours)
+                    // Update: total = personal + global
                     const totalHours = parseFloat(val) + globalHours;
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
@@ -167,7 +182,7 @@
                         alert('Failed to update time off.');
                     }
                 } else {
-                    // Add new personal time off (include global hours)
+                    // Add: total = personal + global
                     const totalHours = parseFloat(val) + globalHours;
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
