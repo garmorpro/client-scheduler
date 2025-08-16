@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         // Redirect back to the page where modal is
-        header("Location: your_page.php#globalPTOModal"); 
+        header("Location: admin-panel.php#globalPTOModal"); 
         exit();
     } else {
         die("Error inserting: " . $stmt->error);
