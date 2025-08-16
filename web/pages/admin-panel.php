@@ -1575,7 +1575,7 @@ if ($settingResult) {
       $total_hours = array_sum(array_column($entries, 'assigned_hours'));
   ?>
   
-  <div class="card shadow-sm" style="border-radius: 6px; border: 1px solid #e0e0e0;">
+  <div class="card shadow-sm" style="border-radius: 6px; border: 1px solid #e0e0e0; height: 35px;">
     <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#collapse<?= $i ?>">
       <!-- Left side -->
       <div>
