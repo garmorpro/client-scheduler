@@ -112,7 +112,7 @@
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours; // <--- This is where the DB value shows
+        input.value = assigned_hours; // <--- This is where the DB value shows
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
