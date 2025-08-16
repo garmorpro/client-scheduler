@@ -1,4 +1,3 @@
-<script>
 document.addEventListener("DOMContentLoaded", function () {
     const globalPtoContainer = document.getElementById("global-pto-table");
 
@@ -123,4 +122,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderGlobalPTOs();
 });
-</script>
