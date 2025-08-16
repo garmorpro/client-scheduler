@@ -714,7 +714,7 @@ if ($settingResult) {
               <div class="row g-3 ps-3 pe-3 mt-1" style="height: 375px !important;">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
-                  <div class="settings-card d-flex flex-column">
+                  <div class="settings-card d-flex flex-column h-100">
                     <div class="settings-header mb-4">
                       <div class="titles">
                         <p class="text-black fs-6 fw-bold mb-1">System Configuration</p>
