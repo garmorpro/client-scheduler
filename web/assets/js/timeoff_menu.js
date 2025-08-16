@@ -57,12 +57,12 @@
         });
 
         if (response.ok && response.data?.success) {
-            return {
-                entryId: response.data.entry_id || null,
-                personalHours: parseFloat(response.data.assigned_hours || 0)
-            };
+            // Ensure personalHours is numeric
+            const totalAssigned = parseFloat(response.data.assigned_hours || 0);
+            const entryId = response.data.entry_id || null;
+            return { entryId, totalAssigned };
         } else {
-            return { entryId: null, personalHours: 0 };
+            return { entryId: null, totalAssigned: 0 };
         }
     }
 
@@ -95,18 +95,18 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const { entryId, personalHours } = await getTimeOffEntry(td);
+        const { entryId, totalAssigned } = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Pre-fill input logic:
-        // 1. No entry yet => empty
-        // 2. Only personal => show personal
-        // 3. Personal + global => show personal only
-        const inputValue = entryId ? personalHours : '';
+        // Determine personal hours
+        let personalHours = entryId ? totalAssigned - globalHours : 0;
+        if (personalHours < 0) personalHours = totalAssigned; // fallback if totalAssigned < global
+
+        console.log(`TD[${td.dataset.userId}, ${td.dataset.weekStart}] - entryId: ${entryId}, totalAssigned: ${totalAssigned}, globalHours: ${globalHours}, personalHours: ${personalHours}`);
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = inputValue;
+        input.value = entryId ? personalHours : '';
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
