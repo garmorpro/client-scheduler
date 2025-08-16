@@ -644,7 +644,13 @@ if ($result && mysqli_num_rows($result) > 0) {
             <!-- Day Inputs -->
             <div id="dayHoursContainer" style="display:none; margin-top:1rem;">
                 <p><strong>Enter Hours per Day:</strong></p>
-                <div id="dayInputs" class="d-flex flex-wrap gap-2"></div>
+                <div id="dayInputs" class="d-flex flex-column gap-1"></div>
+
+                <!-- Summary -->
+                <div id="summaryContainer" style="margin-top:1rem; font-weight:bold;">
+                    <p id="summaryText">Total Entries: 0 | Total Hours: 0</p>
+                    <div id="weeklyTotals" class="d-flex gap-3 flex-wrap"></div>
+                </div>
             </div>
 
         </div>
@@ -666,6 +672,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const weekContainer = document.getElementById("weekSelectorContainer");
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
+    const summaryText = document.getElementById("summaryText");
+    const weeklyTotalsDiv = document.getElementById("weeklyTotals");
 
     // Generate Mondays in a month
     function getMondaysInMonth(year, month) {
@@ -679,7 +687,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return mondays;
     }
 
-    // Format as "Monday, Aug 11, 2025"
     function formatDateLong(date) {
         return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
     }
@@ -697,30 +704,68 @@ document.addEventListener("DOMContentLoaded", function() {
         dayContainer.style.display = "none";
     }
 
-    // When either month changes
     startMonth.addEventListener("change", () => populateWeekSelector(startWeek, startMonth.value));
     endMonth.addEventListener("change", () => populateWeekSelector(endWeek, endMonth.value));
 
-    // Generate day inputs between start and end week
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
+        weeklyTotalsDiv.innerHTML = "";
         const startDate = new Date(start);
         const endDate = new Date(end);
         let current = new Date(startDate);
+        const weekHours = {};
 
         while (current <= endDate) {
             const dayLabel = (current.getMonth() + 1) + '/' + current.getDate();
-            dayInputsDiv.innerHTML += `
-                <div class="day-input" style="width:60px; text-align:center;">
-                    <label style="font-size:0.75rem;">${dayLabel}</label>
-                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour"
-                        data-date="${current.toISOString().split("T")[0]}"
-                        style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
-                </div>`;
+            const weekKey = current.toISOString().split("T")[0].slice(0, 7); // Year-Month
+            if (!weekHours[weekKey]) weekHours[weekKey] = 0;
+
+            const row = document.createElement("div");
+            row.className = "day-row d-flex align-items-center gap-2";
+            row.innerHTML = `
+                <label style="width:120px;">${dayLabel}</label>
+                <span>=</span>
+                <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" 
+                       data-date="${current.toISOString().split("T")[0]}" style="width:60px; padding:0 3px; font-size:0.75rem;" placeholder="0">
+            `;
+            dayInputsDiv.appendChild(row);
             current.setDate(current.getDate() + 1);
         }
+
         dayContainer.style.display = "flex";
         dayInputsDiv.style.display = "flex";
+
+        // Update totals dynamically
+        document.querySelectorAll(".day-hour").forEach(input => {
+            input.addEventListener("input", updateTotals);
+        });
+        updateTotals();
+
+        function updateTotals() {
+            let totalHours = 0;
+            let totalEntries = 0;
+            const weekTotals = {};
+
+            document.querySelectorAll(".day-hour").forEach(input => {
+                const val = parseInt(input.value) || 0;
+                const date = input.dataset.date;
+                const weekKey = date.slice(0, 7);
+                if (!weekTotals[weekKey]) weekTotals[weekKey] = 0;
+                weekTotals[weekKey] += val;
+
+                if (val > 0) totalEntries++;
+                totalHours += val;
+            });
+
+            weeklyTotalsDiv.innerHTML = "";
+            for (const wk in weekTotals) {
+                const div = document.createElement("div");
+                div.textContent = `Week ${wk}: ${weekTotals[wk]} hrs`;
+                weeklyTotalsDiv.appendChild(div);
+            }
+
+            summaryText.textContent = `Total Entries: ${totalEntries} | Total Hours: ${totalHours}`;
+        }
     }
 
     startWeek.addEventListener("change", () => {
@@ -756,10 +801,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         console.log(entries);
         alert("Global PTO entries ready to submit. Check console for preview.");
-        // TODO: Send entries to backend via fetch/ajax
+        // TODO: send entries to backend
     });
 });
 </script>
+
 
 
 
