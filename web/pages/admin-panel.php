@@ -461,7 +461,7 @@ if ($settingResult) {
                         <!-- Middle (Search) -->
                         <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
                             <input type="text" id="timeoffSearch" class="form-control form-control-sm" 
-                                   placeholder="Search time off..." minlength="3">
+                                   placeholder="Search employee time off..." minlength="3">
                         </div>
 
                         <!-- Right -->
