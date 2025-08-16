@@ -51,25 +51,27 @@
     async function getTimeOffEntryWithHours(td) {
         const user_id = td.dataset.userId;
         const week_start = td.dataset.weekStart;
-
+        
         const response = await safeFetchJSON('get_timeoff_entry.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id, week_start })
         });
-
+    
         console.log('Fetched time off entry with hours:', { td, response });
-
+    
         if (response.ok && response.data?.success) {
             return {
                 entryId: response.data.entry_id || null,
-                assigned_hours: response.data.assigned_hours ? parseFloat(response.data.assigned_hours) : 0
+                // Only return hours if entry exists
+                assigned_hours: response.data.entry_id ? parseFloat(response.data.assigned_hours) : 0
             };
         } else {
             return { entryId: null, assigned_hours: 0 };
         }
     }
+
 
     async function getGlobalTimeOffHours(week_start) {
         const response = await safeFetchJSON('check_global_timeoff.php', {
