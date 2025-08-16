@@ -626,3 +626,22 @@ input, select {
     color: rgb(41,41,41) !important; /* keep same text color */
     border-color: rgb(229,229,229) !important; /* keep same border */
 }
+
+
+
+  /* Summary footer inside modal */
+  #summaryFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-top: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    border-radius: 0 0 6px 6px;
+  }
+  #summaryFooter span {
+    color: #333;
+  }
