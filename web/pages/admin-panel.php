@@ -204,6 +204,47 @@ if ($settingResult) {
             </div>
         <!-- end Tabs -->
 
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+    const tabs = document.querySelectorAll(".custom-tabs button");
+    const tabContents = document.querySelectorAll(".tab-content"); // assume your tab content divs have class="tab-content" and id matching data-tab
+
+    function openTab(tabName) {
+        // Remove active from all tabs
+        tabs.forEach(tab => tab.classList.remove("active"));
+        // Hide all tab content
+        tabContents.forEach(content => content.style.display = "none");
+
+        // Activate selected tab
+        const activeTab = document.querySelector(`.custom-tabs button[data-tab="${tabName}"]`);
+        const activeContent = document.getElementById(tabName);
+        if (activeTab && activeContent) {
+            activeTab.classList.add("active");
+            activeContent.style.display = "block";
+            // Update URL hash without scrolling
+            history.replaceState(null, null, "#" + tabName);
+        }
+    }
+
+    // Click handler
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            openTab(tab.dataset.tab);
+        });
+    });
+
+    // Open tab from hash on page load
+    const hash = window.location.hash.substring(1); // remove #
+    if (hash) {
+        openTab(hash);
+    } else {
+        // Optionally open default tab
+        const defaultTab = document.querySelector(".custom-tabs button.active")?.dataset.tab || tabs[0].dataset.tab;
+        openTab(defaultTab);
+    }
+});
+        </script>
+
         <!-- user management -->
             <div id="tab-users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
