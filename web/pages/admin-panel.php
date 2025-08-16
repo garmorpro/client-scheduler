@@ -714,46 +714,43 @@ if ($settingResult) {
               <div class="row g-3 ps-3 pe-3 mt-1">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
-  <div class="settings-card p-3">
-    <div class="analytic-header mb-4">
-      <p class="text-black fs-5 fw-bold mb-1">System Configuration</p>
-      <p class="fs-6 mb-0 text-muted">Manage system-wide settings</p>
-    </div>
+  <div class="settings-card p-2">
+    <p class="text-black fw-bold mb-2" style="font-size: 15px;">System Configuration</p>
 
-    <!-- Global PTO Settings -->
-    <div class="setting-item d-flex justify-content-between align-items-center p-3 mb-3 border rounded shadow-sm">
+    <!-- Global PTO -->
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
       <div>
-        <p class="text-black fw-semibold mb-1">Global PTO</p>
-        <p class="mb-0 text-muted" style="font-size: 13px;">View and manage company-wide paid time off</p>
+        <p class="mb-0 fw-semibold">Global PTO</p>
+        <p class="mb-0 text-muted" style="font-size: 12px;">Manage company-wide paid time off</p>
       </div>
-      <a href="#" id="configureGlobalPTO" class="badge bg-light text-dark p-2 fw-medium border">Configure</a>
+      <a href="#" id="configureGlobalPTO" class="badge text-dark p-1 border" style="font-size: 12px;">Configure</a>
     </div>
 
     <!-- Email Notifications -->
-    <div class="setting-item d-flex justify-content-between align-items-center p-3 mb-3 border rounded shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
       <div>
-        <p class="text-black fw-semibold mb-1">Email Notifications</p>
-        <p class="mb-0 text-muted" style="font-size: 13px;">Send system notifications via email</p>
+        <p class="mb-0 fw-semibold">Email Notifications</p>
+        <p class="mb-0 text-muted" style="font-size: 12px;">Send system notifications via email</p>
       </div>
-      <a href="#" id="configureEmailBtn" class="badge bg-light text-dark p-2 fw-medium border">Configure</a>
+      <a href="#" id="configureEmailBtn" class="badge text-dark p-1 border" style="font-size: 12px;">Configure</a>
     </div>
 
     <!-- Backup Settings -->
-    <div class="setting-item d-flex justify-content-between align-items-center p-3 mb-3 border rounded shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
       <div>
-        <p class="text-black fw-semibold mb-1">Backup Settings</p>
-        <p class="mb-0 text-muted" style="font-size: 13px;">Automated data backup configuration</p>
+        <p class="mb-0 fw-semibold">Backup Settings</p>
+        <p class="mb-0 text-muted" style="font-size: 12px;">Automated backup configuration</p>
       </div>
-      <a href="#" id="configureBackupBtn" class="badge bg-light text-dark p-2 fw-medium border">Configure</a>
+      <a href="#" id="configureBackupBtn" class="badge text-dark p-1 border" style="font-size: 12px;">Configure</a>
     </div>
 
     <!-- Security Policies -->
-    <div class="setting-item d-flex justify-content-between align-items-center p-3 border rounded shadow-sm">
+    <div class="d-flex justify-content-between align-items-center" style="font-size: 13px; padding: 4px 0;">
       <div>
-        <p class="text-black fw-semibold mb-1">Security Policies</p>
-        <p class="mb-0 text-muted" style="font-size: 13px;">Password and access requirements</p>
+        <p class="mb-0 fw-semibold">Security Policies</p>
+        <p class="mb-0 text-muted" style="font-size: 12px;">Password & access requirements</p>
       </div>
-      <a href="#" id="configureSecurityBtn" class="badge bg-light text-dark p-2 fw-medium border">Configure</a>
+      <a href="#" id="configureSecurityBtn" class="badge text-dark p-1 border" style="font-size: 12px;">Configure</a>
     </div>
   </div>
 </div>
