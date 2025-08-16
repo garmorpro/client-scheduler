@@ -19,7 +19,9 @@
             td.appendChild(div);
         }
 
-        if (!td.querySelector('.bi-plus')) {
+        const otherBadges = Array.from(td.querySelectorAll('.badge')).filter(b => b !== existingBadge);
+        const plusIconExists = td.querySelector('.bi-plus');
+        if (otherBadges.length === 0 && !plusIconExists) {
             const plusIcon = document.createElement('i');
             plusIcon.className = 'bi bi-plus';
             td.appendChild(plusIcon);
@@ -46,8 +48,8 @@
         }
     }
 
-    // Fetch the personal time off entry (is_timeoff = 1)
-    async function getPersonalTimeOff(td) {
+    // Fetch entry with assigned hours directly
+    async function getTimeOffEntryWithHours(td) {
         const user_id = td.dataset.userId;
         const week_start = td.dataset.weekStart;
 
@@ -55,17 +57,19 @@
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, week_start, is_timeoff: 1 })
+            body: JSON.stringify({ user_id, week_start })
         });
 
-        if (response.ok && response.data?.success && response.data.entry_id) {
-            return {
-                entryId: response.data.entry_id,
-                assigned_hours: parseFloat(response.data.assigned_hours || 0)
-            };
-        }
+        console.log('Fetched time off entry with hours:', { td, response });
 
-        return null; // No personal entry exists
+        if (response.ok && response.data?.success) {
+            return {
+                entryId: response.data.entry_id || null,
+                assigned_hours: response.data.assigned_hours ? parseFloat(response.data.assigned_hours) : 0
+            };
+        } else {
+            return { entryId: null, assigned_hours: 0 };
+        }
     }
 
     async function getGlobalTimeOffHours(week_start) {
@@ -97,20 +101,16 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const entry = await getPersonalTimeOff(td);
-        if (!entry) {
-            console.log('No personal time off for this cell, skipping input.');
-            return; // Don't create an input if no entry exists
-        }
-
+        const { entryId, assigned_hours } = await getTimeOffEntryWithHours(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
-        const personalHours = entry.assigned_hours;
 
-        console.log('Opening input with personal hours:', { entryId: entry.entryId, personalHours, globalHours });
+        // Calculate personal hours
+        const personalHours = Math.max(assigned_hours - globalHours, 0);
+        console.log('Opening input:', { entryId, assigned_hours, globalHours, personalHours });
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours;
+        input.value = personalHours > 0 ? personalHours : '';
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -125,26 +125,67 @@
             }
             if (e.key !== 'Enter') return;
 
-            const val = input.value.trim();
+            let val = input.value.trim();
             if (!val) return;
 
             try {
                 const personalValue = parseFloat(val);
                 console.log('Saving personal time off value:', personalValue);
 
-                const totalHoursToSave = personalValue + globalHours;
-
-                if (entry.entryId) {
-                    const update = await safeFetchJSON('update_timeoff_new.php', {
+                if (personalValue === 0 && entryId) {
+                    const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ entry_id: entry.entryId, assigned_hours: totalHoursToSave })
+                        body: JSON.stringify({ entry_id: entryId })
                     });
-                    if (update.ok && update.data?.success) {
-                        renderTimeOff(td, totalHoursToSave, entry.entryId);
+
+                    if (del.ok && del.data?.success) {
+                        const badge = td.querySelector('.timeoff-corner');
+                        if (badge) badge.remove();
+                        await checkGlobalTimeOff(td);
+                        if (!td.querySelector('.bi-plus')) {
+                            const plusIcon = document.createElement('i');
+                            plusIcon.className = 'bi bi-plus';
+                            td.appendChild(plusIcon);
+                        }
+                        console.log('Deleted personal time off for cell:', td);
                     } else {
-                        alert('Failed to update time off.');
+                        alert('Failed to delete time off.');
+                    }
+                } else {
+                    const totalHoursToSave = personalValue + globalHours;
+                    console.log('Saving total hours (personal + global):', totalHoursToSave);
+
+                    if (entryId) {
+                        const update = await safeFetchJSON('update_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
+                        });
+                        if (update.ok && update.data?.success) {
+                            renderTimeOff(td, totalHoursToSave, entryId);
+                        } else {
+                            alert('Failed to update time off.');
+                        }
+                    } else {
+                        const add = await safeFetchJSON('add_timeoff_new.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                user_id: td.dataset.userId,
+                                week_start: td.dataset.weekStart,
+                                assigned_hours: totalHoursToSave,
+                                is_timeoff: 1
+                            })
+                        });
+                        if (add.ok && add.data?.success && add.data.entry_id) {
+                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                        } else {
+                            alert('Failed to add time off.');
+                        }
                     }
                 }
             } catch (err) {
