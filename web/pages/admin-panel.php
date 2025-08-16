@@ -728,7 +728,7 @@ if ($settingResult) {
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Global PTO</p>
                         <p class="mb-0" style="font-size: 14px;">View and manage company-wide paid time off</p>
                       </div>
-                      <a href="#" id="configureGlobalPTO" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#globalPTOModal"> class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
@@ -1502,7 +1502,7 @@ if ($settingResult) {
 <!-- end Email Notification Modal -->
 
 <!-- Global PTO Modal -->
-    <div class="modal fade" id="configureGlobalPTO" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
+    <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
       <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
