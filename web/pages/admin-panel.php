@@ -1553,9 +1553,9 @@ if ($settingResult) {
   $sql = "
     SELECT 
       timeoff_note,
-      GROUP_CONCAT(DATE_FORMAT(week_start, '%b %e, %Y') ORDER BY week_start DESC SEPARATOR ', ') AS weeks,
+      GROUP_CONCAT(DATE_FORMAT(week_start, '%m/%d/%Y') ORDER BY week_start DESC SEPARATOR ', ') AS weeks,
       SUM(assigned_hours) AS total_hours,
-      GROUP_CONCAT(entry_id) AS entry_ids
+      GROUP_CONCAT(timeoff_id) AS timeoff_ids
     FROM time_off
     WHERE is_global_timeoff = 1
     GROUP BY timeoff_note
