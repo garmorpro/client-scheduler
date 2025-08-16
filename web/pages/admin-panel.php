@@ -1546,43 +1546,55 @@ if ($settingResult) {
 
 
        <!-- Current Global PTO Entries -->
+<!-- Current Global PTO Entries -->
 <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
   <?php
-  $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start DESC";
+  // Group by note, sum hours, and collect week_start dates
+  $sql = "
+    SELECT 
+      timeoff_note,
+      GROUP_CONCAT(DATE_FORMAT(week_start, '%b %e, %Y') ORDER BY week_start DESC SEPARATOR ', ') AS weeks,
+      SUM(assigned_hours) AS total_hours,
+      GROUP_CONCAT(entry_id) AS entry_ids
+    FROM time_off
+    WHERE is_global_timeoff = 1
+    GROUP BY timeoff_note
+    ORDER BY MIN(week_start) DESC
+  ";
   $result = $conn->query($sql);
+
   if ($result && $result->num_rows > 0):
     while ($row = $result->fetch_assoc()):
-      $formattedWeekStart = date('M j, Y', strtotime($row['week_start']));
   ?>
   <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm global-pto-card" 
        style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;"
-       data-entry-id="<?= $row['entry_id'] ?>">
+       data-entry-ids="<?= htmlspecialchars($row['entry_ids']) ?>">
     
-    <!-- Left side: note and date (clickable) -->
+    <!-- Left side: note and list of weeks -->
     <div class="pto-left" style="cursor: pointer;">
       <p class="mb-1 fs-6 fw-semibold text-capitalize pto-note" data-field="timeoff_note">
         <?= htmlspecialchars($row['timeoff_note']) ?>
       </p>
       <small class="text-muted" style="font-size: 13px;" data-field="week_start">
-        Week of <?= $formattedWeekStart ?>
+        Weeks: <?= htmlspecialchars($row['weeks']) ?>
       </small>
     </div>
 
-    <!-- Right side: hours + dropdown -->
+    <!-- Right side: total hours + dropdown -->
     <div class="d-flex align-items-center gap-2">
       <span class="fw-semibold pto-hours" data-field="assigned_hours" style="cursor:pointer;">
-        <?= htmlspecialchars($row['assigned_hours']) ?> hrs
+        <?= htmlspecialchars($row['total_hours']) ?> hrs
       </span>
 
       <!-- Dropdown menu -->
       <div class="dropdown">
-        <a class="text-muted" href="#" role="button" id="dropdownMenu<?= $row['entry_id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="text-muted" href="#" role="button" id="dropdownMenu<?= md5($row['entry_ids']) ?>" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-three-dots fs-5"></i>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu<?= $row['entry_id'] ?>">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu<?= md5($row['entry_ids']) ?>">
           <li>
-            <a class="dropdown-item text-danger" href="delete_global_pto.php?id=<?= $row['entry_id'] ?>">
-              Delete
+            <a class="dropdown-item text-danger" href="delete_global_pto.php?ids=<?= urlencode($row['entry_ids']) ?>">
+              Delete All
             </a>
           </li>
         </ul>
@@ -1596,6 +1608,7 @@ if ($settingResult) {
   <p class="text-muted text-center">No global PTO entries found.</p>
   <?php endif; ?>
 </div>
+
 
 
 
