@@ -1520,6 +1520,7 @@ if ($settingResult) {
         <!-- Add New Global PTO Section -->
         <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
           <form id="addGlobalPTOForm" action="add_global_pto.php" method="POST" class="d-flex flex-column gap-2">
+
             <div class="row g-2">
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Week Start (Monday)</label>
@@ -1542,91 +1543,93 @@ if ($settingResult) {
           </form>
         </div>
 
-        <!-- Current Global PTO Entries -->
-        <div id="currentGlobalPTO" class="accordion">
 
-        <?php
-        // Group PTO entries by note
-        $sql = "
-          SELECT 
-            timeoff_note,
-            SUM(assigned_hours) AS total_hours,
-            GROUP_CONCAT(timeoff_id ORDER BY week_start DESC) AS timeoff_ids
-          FROM time_off
-          WHERE is_global_timeoff = 1
-          GROUP BY timeoff_note
-          ORDER BY MIN(week_start) DESC
-        ";
-        $grouped = $conn->query($sql);
+<!-- Current Global PTO Entries -->
+<div id="currentGlobalPTO" class="accordion d-flex flex-column gap-2" id="ptoAccordion">
+  <?php
+  // Query all entries, then group manually for accordion display
+  $sql = "
+    SELECT 
+      timeoff_id,
+      DATE_FORMAT(week_start, '%m/%d/%Y') AS week_start,
+      assigned_hours,
+      timeoff_note
+    FROM time_off
+    WHERE is_global_timeoff = 1
+    ORDER BY week_start DESC
+  ";
+  $result = $conn->query($sql);
 
-        if ($grouped && $grouped->num_rows > 0):
-          $index = 0;
-          while ($row = $grouped->fetch_assoc()):
-            $note = htmlspecialchars($row['timeoff_note']);
-            $totalHours = htmlspecialchars($row['total_hours']);
-            $ids = explode(",", $row['timeoff_ids']);
-            $accordionId = "group" . $index;
-        ?>
-          <!-- Card + Accordion -->
-          <div class="card shadow-sm mb-2 border" style="border-radius: 6px;">
-            <div class="card-header d-flex justify-content-between align-items-center" 
-                 style="cursor:pointer; background:#fff;" 
-                 data-bs-toggle="collapse" data-bs-target="#collapse<?= $accordionId ?>" 
-                 aria-expanded="false" aria-controls="collapse<?= $accordionId ?>">
-              <div>
-                <p class="mb-0 fs-6 fw-semibold"><?= $note ?: "No Note" ?></p>
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                <span class="fw-semibold text-muted"><?= $totalHours ?> hrs</span>
-                <i class="bi bi-chevron-down small"></i>
-              </div>
+  // Group rows by note
+  $groups = [];
+  if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      $groups[$row['timeoff_note']][] = $row;
+    }
+  }
+
+  if (!empty($groups)):
+    $i = 0;
+    foreach ($groups as $note => $entries):
+      $i++;
+      $total_hours = array_sum(array_column($entries, 'assigned_hours'));
+  ?>
+  
+  <div class="card shadow-sm" style="border-radius: 6px; border: 1px solid #e0e0e0;">
+    <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#collapse<?= $i ?>">
+      <!-- Left side -->
+      <div>
+        <p class="mb-1 fs-6 fw-semibold text-capitalize"><?= htmlspecialchars($note ?: 'No Note') ?></p>
+        <small class="text-muted">Weeks: 
+          <?= implode(', ', array_column($entries, 'week_start')) ?>
+        </small>
+      </div>
+
+      <!-- Right side -->
+      <div class="d-flex align-items-center gap-3">
+        <span class="fw-semibold"><?= $total_hours ?> hrs</span>
+        <i class="bi bi-chevron-down text-muted"></i>
+      </div>
+    </div>
+
+    <!-- Accordion Content -->
+    <div id="collapse<?= $i ?>" class="collapse" data-bs-parent="#ptoAccordion">
+      <div class="card-body d-flex flex-column gap-2">
+        <?php foreach ($entries as $entry): ?>
+          <form action="update_global_pto.php" method="POST" class="d-flex flex-row align-items-center gap-2 border p-2 rounded">
+            <input type="hidden" name="timeoff_id" value="<?= $entry['timeoff_id'] ?>">
+            
+            <div>
+              <label class="form-label small mb-0">Week</label>
+              <input type="date" name="week_start" value="<?= date('Y-m-d', strtotime($entry['week_start'])) ?>" class="form-control form-control-sm" required>
+            </div>
+            <div>
+              <label class="form-label small mb-0">Hours</label>
+              <input type="number" name="assigned_hours" value="<?= $entry['assigned_hours'] ?>" class="form-control form-control-sm" min="0" required>
+            </div>
+            <div class="flex-fill">
+              <label class="form-label small mb-0">Note</label>
+              <input type="text" name="timeoff_note" value="<?= htmlspecialchars($note) ?>" class="form-control form-control-sm">
             </div>
 
-            <div id="collapse<?= $accordionId ?>" class="accordion-collapse collapse" data-bs-parent="#currentGlobalPTO">
-              <div class="card-body">
-                <?php
-                // Fetch all entries for this group
-                $idsIn = implode(",", array_map('intval', $ids));
-                $sqlEntries = "SELECT * FROM time_off WHERE timeoff_id IN ($idsIn) ORDER BY week_start DESC";
-                $entries = $conn->query($sqlEntries);
-
-                if ($entries && $entries->num_rows > 0):
-                  while ($e = $entries->fetch_assoc()):
-                    $formattedWeek = date('M j, Y', strtotime($e['week_start']));
-                ?>
-                  <!-- Editable Row -->
-                  <form action="update_global_pto.php" method="POST" class="row g-2 align-items-center mb-2">
-                    <input type="hidden" name="timeoff_id" value="<?= $e['timeoff_id'] ?>">
-                    
-                    <div class="col-md-4">
-                      <input type="date" name="week_start" value="<?= htmlspecialchars($e['week_start']) ?>" 
-                             class="form-control form-control-sm" required>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="number" name="assigned_hours" value="<?= htmlspecialchars($e['assigned_hours']) ?>" 
-                             class="form-control form-control-sm" min="0" required>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="timeoff_note" value="<?= htmlspecialchars($e['timeoff_note']) ?>" 
-                             class="form-control form-control-sm">
-                    </div>
-                    <div class="col-md-2 d-flex gap-1">
-                      <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></button>
-                      <a href="delete_global_pto.php?id=<?= $e['timeoff_id'] ?>" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    </div>
-                  </form>
-                <?php endwhile; endif; ?>
-              </div>
+            <div class="d-flex gap-2 align-items-end">
+              <button type="submit" class="btn btn-sm btn-primary">Save</button>
+              <a href="delete_global_pto.php?id=<?= $entry['timeoff_id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
             </div>
-          </div>
-        <?php
-            $index++;
-          endwhile;
-        else:
-        ?>
-          <p class="text-muted text-center">No global PTO entries found.</p>
-        <?php endif; ?>
-        </div>
+          </form>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </div>
+
+  <?php
+    endforeach;
+  else:
+  ?>
+    <p class="text-muted text-center">No global PTO entries found.</p>
+  <?php endif; ?>
+</div>
+
 
       </div>
 
@@ -1636,16 +1639,6 @@ if ($settingResult) {
     </div>
   </div>
 </div>
-
-<style>
-  #currentGlobalPTO .card-header:hover {
-    background: #f8f9fa;
-  }
-  #currentGlobalPTO .accordion-collapse {
-    transition: all 0.2s ease;
-  }
-</style>
-
 
 
 <script>
