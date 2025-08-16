@@ -467,8 +467,8 @@ if ($settingResult) {
                             <tr>
                                 <th><input type="checkbox" id="selectAllEngagements"></th>
                                 <th>Client</th>
-                                <th>Estimated Hours</th>
-                                <th>Assigned Hours</th>
+                                <th>Budgeted Hours</th>
+                                <th>Allocated Hours</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
