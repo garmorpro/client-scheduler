@@ -715,8 +715,8 @@ if ($settingResult) {
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
   <div class="settings-card p-2">
-    <p class="text-black fw-bold mb-2 fs-5">System Configuration</p>
-    <p class="fs-6 mb-0">Manage system-wide settings</p>
+    <p class="text-black fw-bold mb-2" style="font-size: 14px;">System Configuration</p>
+    <p class="mb-0" style="font-size: 14px;">Manage system-wide settings</p>
 
     <!-- Global PTO -->
     <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px; padding: 4px 0;">
