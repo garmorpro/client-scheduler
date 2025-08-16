@@ -1,41 +1,38 @@
 <?php
-require_once '../includes/db.php'; // $conn = mysqli_connect(...)
+require_once '../includes/db.php'; // defines $conn
 session_start();
-
-header('Content-Type: application/json');
 
 // Optional: require login
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["success" => false, "error" => "Unauthorized"]);
+    header("Location: admin-panel.php?error=unauthorized");
     exit();
 }
 
-// Validate POST input (match JS)
-if (!isset($_POST['timeoff_id']) || !is_numeric($_POST['timeoff_id'])) {
-    echo json_encode(["success" => false, "error" => "Invalid ID"]);
+// Validate input
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: admin-panel.php?error=invalid_id");
     exit();
 }
 
-$id = (int) $_POST['timeoff_id'];
+$id = (int) $_GET['id'];
 
 // Prepare statement
 $stmt = mysqli_prepare($conn, "DELETE FROM time_off WHERE timeoff_id = ?");
-if (!$stmt) {
-    echo json_encode(["success" => false, "error" => "Prepare failed: " . mysqli_error($conn)]);
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    if (mysqli_stmt_execute($stmt) && mysqli_stmt_affected_rows($stmt) > 0) {
+        // Success → redirect back with success flag
+        // header("Location: admin-panel.php?deleted=1");
+        exit();
+    } else {
+        // Record not found or execute failed
+        // header("Location: admin-panel.php?error=not_found");
+        exit();
+    }
+    mysqli_stmt_close($stmt);
+} else {
+    // header("Location: admin-panel.php?error=prepare_failed");
     exit();
 }
 
-mysqli_stmt_bind_param($stmt, "i", $id);
-
-if (mysqli_stmt_execute($stmt)) {
-    if (mysqli_stmt_affected_rows($stmt) > 0) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "error" => "Record not found"]);
-    }
-} else {
-    echo json_encode(["success" => false, "error" => "Execute failed: " . mysqli_stmt_error($stmt)]);
-}
-
-mysqli_stmt_close($stmt);
 mysqli_close($conn);

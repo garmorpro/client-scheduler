@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await res.json();
 
       if (data.success) {
-        const entry = data.entry; // {timeoff_id, week_start, assigned_hours, timeoff_note, week_start_raw}
+        const entry = data.entry;
         mergeOrCreateGroup(entry);
         addForm.reset();
       } else {
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const res = await fetch("update_global_pto.php", { method: "POST", body: formData });
           const data = await res.json();
           if (data.success) {
-            reloadPTOAccordion();
+            // Optionally: update UI dynamically
           } else {
             alert("Error: " + data.error);
           }
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // --- Delete PTO ---
+  // --- Delete PTO dynamically ---
   function attachDeleteHandlers() {
     document.querySelectorAll(".deletePTOBtn").forEach(btn => {
       btn.addEventListener("click", async function () {
@@ -60,7 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
           const res = await fetch("delete_global_pto.php", { method: "POST", body: formData });
           const data = await res.json();
           if (data.success) {
-            reloadPTOAccordion();
+            // Remove this entry row from the DOM
+            const formRow = this.closest("form.updatePTOForm");
+            if (formRow) {
+              const cardBody = formRow.closest(".card-body");
+              formRow.remove();
+
+              // If no more entries in this card, remove the entire card
+              if (cardBody && cardBody.children.length === 0) {
+                const card = cardBody.closest(".global-pto-card");
+                if (card) card.remove();
+              }
+            }
           } else {
             alert("Error: " + data.error);
           }
@@ -81,11 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const existingCard = ptoAccordion.querySelector(`.global-pto-card[data-note='${CSS.escape(note)}']`);
 
     if (existingCard) {
-      // Merge into existing card
       const body = existingCard.querySelector(".card-body");
       body.insertAdjacentHTML("beforeend", makeEntryRow(entry));
 
-      // Update weeks and hours
       const weeksEl = existingCard.querySelector(".group-weeks");
       const hoursEl = existingCard.querySelector(".group-hours");
 
@@ -95,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
       attachUpdateHandlers();
       attachDeleteHandlers();
     } else {
-      // Create a new card at top
       const newIndex = document.querySelectorAll(".global-pto-card").length + 1;
       const cardHTML = `
         <div class="card shadow-sm global-pto-card" data-note="${note}" style="border-radius:6px;border:1px solid #e0e0e0;">
@@ -147,16 +155,4 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
   }
 
-  // --- Reload PTO Accordion ---
-  async function reloadPTOAccordion() {
-    try {
-      const res = await fetch("get_global_pto.php");
-      const html = await res.text();
-      ptoAccordion.innerHTML = html;
-      attachUpdateHandlers();
-      attachDeleteHandlers();
-    } catch (err) {
-      console.error(err);
-    }
-  }
 });
