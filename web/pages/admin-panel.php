@@ -722,6 +722,17 @@ if ($settingResult) {
                       </div>
                     </div>
 
+                    <!-- Global PTO Settings -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Global PTO</p>
+                        <p class="mb-0" style="font-size: 14px;">View and manage company-wide paid time off</p>
+                      </div>
+                      <a href="#" id="configureGlobalPTO" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
+                        Configure
+                      </a>
+                    </div>
+
                     <!-- Email Notifications -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <div>
