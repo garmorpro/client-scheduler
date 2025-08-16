@@ -1610,61 +1610,51 @@ if ($settingResult) {
 
 
 
-<!-- 
-      </div>
-
-      <div class="modal-footer border-0">
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-  // Click handler for editable fields
-  document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
-    el.addEventListener('click', async function() {
-      const field = this.dataset.field;
-      const entryCard = this.closest('.global-pto-card');
-      const entryId = entryCard.dataset.entryId;
+//   document.addEventListener('DOMContentLoaded', function() {
+//   // Click handler for editable fields
+//   document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
+//     el.addEventListener('click', async function() {
+//       const field = this.dataset.field;
+//       const entryCard = this.closest('.global-pto-card');
+//       const entryId = entryCard.dataset.entryId;
 
-      let currentValue = this.innerText.trim();
-      if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
-      if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
+//       let currentValue = this.innerText.trim();
+//       if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
+//       if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
 
-      // Prompt user for new value (can be replaced by a proper modal)
-      const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
-      if (newValue === null || newValue === currentValue) return;
+//       // Prompt user for new value (can be replaced by a proper modal)
+//       const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
+//       if (newValue === null || newValue === currentValue) return;
 
-      // Send AJAX request to update
-      try {
-        const response = await fetch('update_global_pto.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entry_id: entryId, field, value: newValue })
-        });
-        const data = await response.json();
+//       // Send AJAX request to update
+//       try {
+//         const response = await fetch('update_global_pto.php', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({ entry_id: entryId, field, value: newValue })
+//         });
+//         const data = await response.json();
 
-        if (data.success) {
-          if (field === 'assigned_hours') {
-            this.innerText = `${newValue} hrs`;
-          } else if (field === 'week_start') {
-            const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            this.innerText = `Week of ${formatted}`;
-          } else {
-            this.innerText = newValue;
-          }
-        } else {
-          alert('Failed to update: ' + data.error);
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Error updating PTO entry.');
-      }
-    });
-  });
-});
+//         if (data.success) {
+//           if (field === 'assigned_hours') {
+//             this.innerText = `${newValue} hrs`;
+//           } else if (field === 'week_start') {
+//             const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+//             this.innerText = `Week of ${formatted}`;
+//           } else {
+//             this.innerText = newValue;
+//           }
+//         } else {
+//           alert('Failed to update: ' + data.error);
+//         }
+//       } catch (err) {
+//         console.error(err);
+//         alert('Error updating PTO entry.');
+//       }
+//     });
+//   });
+// });
 
 </script>
 
