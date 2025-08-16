@@ -800,6 +800,15 @@ if ($settingResult) {
                       </span>
                     </div>
 
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px;">
+                      <div>
+                        <i class="bi bi-check2-circle text-success me-1"></i>Last Successful Backup
+                      </div>
+                      <span class="badge pe-3 ps-3" style="font-size: 11px; background-color: rgb(226,251,232); color: rgba(64,109,72,1);">
+                        12 hrs ago
+                      </span>
+                    </div>
+
                     <?php
                     $path = '/'; // Root filesystem for container/VM
                                       
