@@ -1525,7 +1525,7 @@ if ($settingResult) {
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Week Start (Monday)</label>
                 <input type="date" name="week_start" class="form-control form-control-sm" required 
-                       oninput="if(new Date(this.value).getDay() !== 1) { alert('Please select a Monday'); this.value=''; }">
+                       oninput="if(new Date(this.value).getDay() !== 0) { alert('Please select a Monday'); this.value=''; }">
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Assigned Hours</label>
