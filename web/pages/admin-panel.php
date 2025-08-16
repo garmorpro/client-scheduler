@@ -1546,7 +1546,7 @@ if ($settingResult) {
         <!-- Current Global PTO Entries -->
         <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
           <?php
-          $sql = "SELECT * FROM time_off WHERE is_global = 1 ORDER BY week_start DESC";
+          $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start DESC";
           $result = $conn->query($sql);
           if ($result && $result->num_rows > 0):
             while ($row = $result->fetch_assoc()):
