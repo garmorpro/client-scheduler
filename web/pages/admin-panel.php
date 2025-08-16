@@ -196,7 +196,7 @@ if ($settingResult) {
 
         <!-- Tabs -->
             <div class="custom-tabs">
-                <button class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</button>
+                <a href="#users" class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</button>
                 <button class="<?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</button>
                 <button data-tab="activity">System Activity</button>
                 <button data-tab="time_off">Time Off</button>
