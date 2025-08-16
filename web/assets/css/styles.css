@@ -74,15 +74,28 @@ td.addable:hover {
     /* margin-bottom: 20px; */
     background-color: rgb(235,235,239);
     border-radius: 15px;
-    padding: 2px;
+    padding: 5px;
     width: 50%;
     justify-content: center;
 }
-.custom-tabs a,
-.nested-tabs a {
+.custom-tabs a {
     background: none;
     border: none;
     padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    flex: 1;
+    text-align: center;
+    margin: 0 4px;
+}
+.nested-tabs a {
+    background: none;
+    border: none;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: 500;
