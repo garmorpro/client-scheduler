@@ -99,13 +99,13 @@ $engagementSQL = "
   SELECT 
     e.engagement_id,
     e.client_name,
-    e.total_available_hours,
+    e.budgeted_hours,
     e.status,
     e.notes,
     COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours
   FROM engagements e
   LEFT JOIN entries a ON e.engagement_id = a.engagement_id
-  GROUP BY e.engagement_id, e.client_name, e.total_available_hours, e.status, e.notes
+  GROUP BY e.engagement_id, e.client_name, e.budgeted_hours, e.status, e.notes
   ORDER BY e.client_name ASC
 ";
 
@@ -482,7 +482,7 @@ if ($settingResult) {
                                         <?php echo $E_row['client_name']; ?><br>
                                     </td>
                                     <td>
-                                        <?php echo (int)$E_row['total_available_hours']; ?> hours
+                                        <?php echo (int)$E_row['budgeted_hours']; ?> hours
                                     </td>
                                     <td>
                                         <?php echo $E_row['total_assigned_hours']; ?> hours
@@ -1033,8 +1033,8 @@ if ($settingResult) {
 
               <!-- Total Available Hours -->
               <div class="mb-3">
-                <label for="total_available_hours" class="form-label">Total Available Hours</label>
-                <input type="number" class="form-control" id="total_available_hours" name="total_available_hours" min="1" required>
+                <label for="budgeted_hours" class="form-label">Total Available Hours</label>
+                <input type="number" class="form-control" id="budgeted_hours" name="budgeted_hours" min="1" required>
               </div>
 
               <!-- Status -->
@@ -1154,8 +1154,8 @@ if ($settingResult) {
             </div>
 
             <div class="mb-3">
-              <label for="update_total_available_hours" class="form-label">Estimated Hours</label>
-              <input type="number" min="0" class="form-control" id="update_total_available_hours" name="total_available_hours" required>
+              <label for="update_budgeted_hours" class="form-label">Estimated Hours</label>
+              <input type="number" min="0" class="form-control" id="update_budgeted_hours" name="budgeted_hours" required>
             </div>
 
             <div class="mb-3">
@@ -1326,7 +1326,7 @@ if ($settingResult) {
 
               <div class="alert alert-info small">
                 Only CSV files are supported. Required columns: 
-                <strong>client_name, total_available_hours, status</strong><br>
+                <strong>client_name, budgeted_hours, status</strong><br>
                 Allowed status values: <em>confirmed, pending, not_confirmed</em>
               </div>
 
@@ -2051,7 +2051,7 @@ if ($settingResult) {
           // Populate form fields using querySelector for accuracy
           updateEngagementForm.querySelector('#update_engagement_id').value = engagement.engagement_id;
           updateEngagementForm.querySelector('#update_client_name').value = engagement.client_name;
-          updateEngagementForm.querySelector('#update_total_available_hours').value = parseInt(engagement.total_available_hours, 10);
+          updateEngagementForm.querySelector('#update_budgeted_hours').value = parseInt(engagement.budgeted_hours, 10);
           updateEngagementForm.querySelector('#update_status').value = engagement.status;
           updateEngagementForm.querySelector('#update_notes').value = engagement.notes || '';
         } catch (error) {
@@ -2115,7 +2115,7 @@ if ($settingResult) {
               const count = engagement.assigned_user_count || 0;
               const memberText = count === 1 ? 'member' : 'members';
               setText('view_engagement_team_size', `${count} ${memberText}`);
-              setText('view_engagement_estimated_hours', formatHours(engagement.total_available_hours) + ' hrs');
+              setText('view_engagement_estimated_hours', formatHours(engagement.budgeted_hours) + ' hrs');
               setText('view_engagement_allocated_hours', formatHours(engagement.total_assigned_hours) + ' hrs');
               setText('view_engagement_created', formatDate(engagement.created));
               setText('view_engagement_updated', formatDate(engagement.last_updated));
