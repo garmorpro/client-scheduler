@@ -640,7 +640,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const startMonth = document.getElementById("pto_month"); // we can rename to startMonth if desired
+    const startMonth = document.getElementById("startMonth");
+    const endMonth = document.getElementById("endMonth");
     const startWeek = document.getElementById("startWeek");
     const endWeek = document.getElementById("endWeek");
     const weekContainer = document.getElementById("weekSelectorContainer");
@@ -651,10 +652,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
-        // move to first Monday
-        while (date.getDay() !== 1) {
-            date.setDate(date.getDate() + 1);
-        }
+        while (date.getDay() !== 1) { date.setDate(date.getDate() + 1); } // move to first Monday
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -662,17 +660,23 @@ document.addEventListener("DOMContentLoaded", function() {
         return mondays;
     }
 
+    // Format date as "Monday, Aug 11, 2025"
+    function formatDateLong(date) {
+        const options = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+
     function populateWeekSelector(selector, month) {
         const weeks = getMondaysInMonth(2025, parseInt(month));
         selector.innerHTML = '<option value="">Select Week</option>';
         weeks.forEach(date => {
             const val = date.toISOString().split("T")[0];
-            const label = (date.getMonth() + 1) + '/' + date.getDate(); // MM/DD
+            const label = formatDateLong(date);
             selector.innerHTML += `<option value="${val}">${label}</option>`;
         });
     }
 
-    // When month changes, populate startWeek
+    // Populate weeks when month changes
     startMonth.addEventListener("change", function() {
         if (this.value) {
             populateWeekSelector(startWeek, this.value);
@@ -681,7 +685,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Generate day inputs for selected weeks
+    endMonth.addEventListener("change", function() {
+        if (this.value) {
+            populateWeekSelector(endWeek, this.value);
+            dayContainer.style.display = "none";
+            weekContainer.style.display = "block";
+        }
+    });
+
+    // Generate daily inputs between start and end week
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
         const startDate = new Date(start);
@@ -737,6 +749,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
 
 
 
