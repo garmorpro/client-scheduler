@@ -1576,7 +1576,7 @@ if ($settingResult) {
   ?>
   
   <div class="card shadow-sm" style="border-radius: 6px; border: 1px solid #e0e0e0;">
-    <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer; height: 35px;" data-bs-toggle="collapse" data-bs-target="#collapse<?= $i ?>">
+    <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer; height: 85px;" data-bs-toggle="collapse" data-bs-target="#collapse<?= $i ?>">
       <!-- Left side -->
       <div>
         <p class="mb-1 fs-6 fw-semibold text-capitalize"><?= htmlspecialchars($note ?: 'No Note') ?></p>
