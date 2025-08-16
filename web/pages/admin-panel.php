@@ -1518,38 +1518,47 @@ if ($settingResult) {
       <div class="modal-body">
 
         <!-- Add New Global PTO Section -->
-        <div class="p-3 mb-4 bg-light rounded">
+        <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
           <form id="addGlobalPTOForm" action="add_global_pto.php" method="POST" class="d-flex flex-column gap-2">
+
             <div class="row g-2">
-              <div class="col-md-8">
-                <input type="text" name="pto_name" class="form-control form-control-sm rounded-pill" placeholder="Enter PTO description" required>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Week Start (Monday)</label>
+                <input type="date" name="week_start" class="form-control form-control-sm" required 
+                       oninput="if(new Date(this.value).getDay() !== 1) { alert('Please select a Monday'); this.value=''; }">
               </div>
               <div class="col-md-4">
-                <input type="number" name="hours" class="form-control form-control-sm rounded-pill" placeholder="Hours" min="0" required>
+                <label class="form-label small fw-semibold">Assigned Hours</label>
+                <input type="number" name="assigned_hours" class="form-control form-control-sm" placeholder="Hours" min="0" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Note</label>
+                <input type="text" name="timeoff_note" class="form-control form-control-sm" placeholder="Optional note">
               </div>
             </div>
-            <button type="submit" class="btn btn-dark btn-sm mt-2 align-self-end rounded-pill">
+
+            <button type="submit" class="btn btn-dark btn-sm mt-3 align-self-start">
               <i class="bi bi-plus-circle me-1"></i>Add PTO
             </button>
           </form>
         </div>
 
         <!-- Current Global PTO Entries -->
-        <div id="currentGlobalPTO" class="d-flex flex-column gap-3">
+        <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
           <?php
           $sql = "SELECT * FROM time_off WHERE is_global = 1 ORDER BY week_start DESC";
           $result = $conn->query($sql);
           if ($result && $result->num_rows > 0):
             while ($row = $result->fetch_assoc()):
           ?>
-          <div class="card shadow-sm p-3 d-flex flex-row justify-content-between align-items-center rounded-3 hover-shadow">
+          <div class="card p-2 d-flex flex-row justify-content-between align-items-center" style="border:1px solid #e0e0e0;">
             <div>
-              <p class="mb-1 fw-semibold"><?= htmlspecialchars($row['pto_name']) ?></p>
-              <small class="text-muted"><?= htmlspecialchars($row['hours']) ?> hours</small>
+              <p class="mb-1 fw-semibold"><?= htmlspecialchars($row['week_start']) ?> - <?= htmlspecialchars($row['timeoff_note']) ?></p>
+              <small class="text-muted"><?= htmlspecialchars($row['assigned_hours']) ?> hours</small>
             </div>
             <div class="d-flex gap-2">
-              <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm rounded-pill">Edit</a>
-              <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-danger btn-sm rounded-pill">Delete</a>
+              <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm">Edit</a>
+              <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-danger btn-sm">Delete</a>
             </div>
           </div>
           <?php
@@ -1563,11 +1572,12 @@ if ($settingResult) {
       </div>
 
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+
 
 
 <!-- Backup Configuration Modal -->
