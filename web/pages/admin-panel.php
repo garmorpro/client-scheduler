@@ -1544,8 +1544,6 @@ if ($settingResult) {
         </div>
 
 
-
-       <!-- Current Global PTO Entries -->
 <!-- Current Global PTO Entries -->
 <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
   <?php
@@ -1612,7 +1610,7 @@ if ($settingResult) {
 
 
 
-
+<!-- 
       </div>
 
       <div class="modal-footer border-0">
@@ -1620,7 +1618,7 @@ if ($settingResult) {
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
