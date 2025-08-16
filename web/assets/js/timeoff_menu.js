@@ -48,7 +48,8 @@
         }
     }
 
-    async function getTimeOffEntry(td) {
+    // Fetch entry with assigned hours directly
+    async function getTimeOffEntryWithHours(td) {
         const user_id = td.dataset.userId;
         const week_start = td.dataset.weekStart;
 
@@ -59,30 +60,16 @@
             body: JSON.stringify({ user_id, week_start })
         });
 
-        console.log('Fetched time off entry:', { td, response });
+        console.log('Fetched time off entry with hours:', { td, response });
 
         if (response.ok && response.data?.success) {
-            return response.data.entry_id || null;
+            return {
+                entryId: response.data.entry_id || null,
+                assigned_hours: response.data.assigned_hours ? parseFloat(response.data.assigned_hours) : 0
+            };
         } else {
-            return null;
+            return { entryId: null, assigned_hours: 0 };
         }
-    }
-
-    async function getTimeOffHours(td) {
-        const user_id = td.dataset.userId;
-        const week_start = td.dataset.weekStart;
-
-        const response = await safeFetchJSON('get_timeoff_entry.php', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, week_start })
-        });
-
-        if (response.ok && response.data?.success && response.data.assigned_hours) {
-            return parseFloat(response.data.assigned_hours);
-        }
-        return 0;
     }
 
     async function getGlobalTimeOffHours(week_start) {
@@ -114,18 +101,12 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const entryId = await getTimeOffEntry(td);
+        const { entryId, assigned_hours } = await getTimeOffEntryWithHours(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Fetch total assigned hours (personal + global)
-        let totalHours = 0;
-        if (entryId) {
-            totalHours = await getTimeOffHours(td) || 0;
-        }
-
         // Calculate personal hours
-        const personalHours = Math.max(totalHours - globalHours, 0);
-        console.log('Opening input:', { entryId, totalHours, globalHours, personalHours });
+        const personalHours = Math.max(assigned_hours - globalHours, 0);
+        console.log('Opening input:', { entryId, assigned_hours, globalHours, personalHours });
 
         const input = document.createElement('input');
         input.type = 'text';
