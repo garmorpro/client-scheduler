@@ -57,27 +57,13 @@
         });
 
         if (response.ok && response.data?.success) {
-            return response.data.entry_id || null;
+            return {
+                entryId: response.data.entry_id || null,
+                totalHours: parseFloat(response.data.assigned_hours || 0)
+            };
         } else {
-            return null;
+            return { entryId: null, totalHours: 0 };
         }
-    }
-
-    async function getTimeOffHours(td) {
-        const user_id = td.dataset.userId;
-        const week_start = td.dataset.weekStart;
-
-        const response = await safeFetchJSON('get_timeoff_entry.php', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, week_start })
-        });
-
-        if (response.ok && response.data?.success && response.data.assigned_hours) {
-            return parseFloat(response.data.assigned_hours);
-        }
-        return 0;
     }
 
     async function getGlobalTimeOffHours(week_start) {
@@ -109,21 +95,15 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const entryId = await getTimeOffEntry(td);
+        const { entryId, totalHours } = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // If personal entry exists, fetch total assigned hours (personal + global)
-        let totalHours = 0;
-        if (entryId) {
-            totalHours = await getTimeOffHours(td) || 0;
-        }
-
-        // Calculate personal hours
+        // Calculate personal hours safely
         const personalHours = Math.max(totalHours - globalHours, 0);
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours > 0 ? personalHours : '';
+        input.value = entryId ? personalHours : '';
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -143,6 +123,7 @@
 
             try {
                 const personalValue = parseFloat(val);
+                const totalHoursToSave = personalValue + globalHours;
 
                 if (personalValue === 0 && entryId) {
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
@@ -164,37 +145,34 @@
                     } else {
                         alert('Failed to delete time off.');
                     }
-                } else {
-                    const totalHoursToSave = personalValue + globalHours;
-                    if (entryId) {
-                        const update = await safeFetchJSON('update_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
-                        });
-                        if (update.ok && update.data?.success) {
-                            renderTimeOff(td, totalHoursToSave, entryId);
-                        } else {
-                            alert('Failed to update time off.');
-                        }
+                } else if (entryId) {
+                    const update = await safeFetchJSON('update_timeoff_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
+                    });
+                    if (update.ok && update.data?.success) {
+                        renderTimeOff(td, totalHoursToSave, entryId);
                     } else {
-                        const add = await safeFetchJSON('add_timeoff_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                user_id: td.dataset.userId,
-                                week_start: td.dataset.weekStart,
-                                assigned_hours: totalHoursToSave,
-                                is_timeoff: 1
-                            })
-                        });
-                        if (add.ok && add.data?.success && add.data.entry_id) {
-                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
-                        } else {
-                            alert('Failed to add time off.');
-                        }
+                        alert('Failed to update time off.');
+                    }
+                } else {
+                    const add = await safeFetchJSON('add_timeoff_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: td.dataset.userId,
+                            week_start: td.dataset.weekStart,
+                            assigned_hours: totalHoursToSave,
+                            is_timeoff: 1
+                        })
+                    });
+                    if (add.ok && add.data?.success && add.data.entry_id) {
+                        renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                    } else {
+                        alert('Failed to add time off.');
                     }
                 }
             } catch (err) {
