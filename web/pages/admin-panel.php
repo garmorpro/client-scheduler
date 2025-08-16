@@ -197,8 +197,8 @@ if ($settingResult) {
         <!-- Tabs -->
             <!-- Tabs -->
 <div class="custom-tabs">
-    <a href="#users" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">Users</a>
-    <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagements</a>
+    <a href="#users" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</a>
+    <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a>
     <a href="#time_off" class=" text-decoration-none" data-tab="time_off">Time Off</a>
     <a href="#activity" class=" text-decoration-none" data-tab="activity">System Activity</a>
     <a href="#settings" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</a>
