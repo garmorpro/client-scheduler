@@ -648,8 +648,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                 <!-- Summary -->
                 <div id="summaryFooter">
-  <span id="summaryText">Total Weeks: 0 | Total Hours: 0</span>
-</div>
+                  <span id="summaryText">Total Weeks: 0 | Total Hours: 0</span>
+                </div>
             </div>
 
         </div>
@@ -714,7 +714,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
-            rowDiv.className = "week-row d-flex flex-column align-items-center gap-2 mb-3";
+            rowDiv.className = "week-row d-flex align-items-center gap-2 mb-3";
 
             // Monday–Friday
             for(let i = 1; i < 6; i++) {
