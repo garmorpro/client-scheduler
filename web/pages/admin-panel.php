@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
         <!-- user management -->
-            <div id="tab-users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
+            <div id="users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
                     <!-- Left -->
                     <div class="titles">
@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         <!-- engagement management -->
 
-            <div id="tab-engagements" class="tab-content <?php if ($isAdmin) echo 'd-none'; ?>">
+            <div id="engagements" class="tab-content <?php if ($isAdmin) echo 'd-none'; ?>">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
                         <!-- Left -->
                         <div class="titles">
@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- end engagement management -->
 
         <!-- system activty -->
-            <div id="tab-activity" class="tab-content d-none">
+            <div id="activity" class="tab-content d-none">
                 <div class="activity-header mb-3">
                     <div class="titles">
                         <p class="text-black"><strong>System Activity Log</strong></p>
@@ -756,8 +756,28 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         <!-- end system activty -->
 
+        <!-- system activty -->
+            <div id="time_off" class="tab-content d-none">
+                <div class="activity-header mb-3">
+                    <div class="titles">
+                        <p class="text-black"><strong>System Activity Log</strong></p>
+                        <p>Recent system events and user activities</p>
+                    </div>
+                </div>
+
+                <div id="activity-list">
+                    time off
+                </div>
+
+                        <!-- Pagination Controls for activity -->
+                <nav>
+                    <ul id="activity-pagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
+            </div>
+        <!-- end system activty -->
+
         <!-- Settings Tab -->
-            <div id="tab-settings" class="tab-content d-none">
+            <div id="settings" class="tab-content d-none">
               <div class="row g-3 ps-3 pe-3 mt-1" style="height: 350px !important;">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
