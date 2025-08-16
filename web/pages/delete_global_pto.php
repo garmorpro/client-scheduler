@@ -1,6 +1,8 @@
 <?php
-require_once '../includes/db.php'; // $conn = mysqli_connect(...);
+require_once '../includes/db.php'; // should define $conn = mysqli_connect(...)
 session_start();
+
+header('Content-Type: application/json');
 
 // Require login
 if (!isset($_SESSION['user_id'])) {
@@ -8,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Validate input
+// Validate POST input
 if (!isset($_POST['timeoff_id']) || !is_numeric($_POST['timeoff_id'])) {
     echo json_encode(["success" => false, "error" => "Invalid ID"]);
     exit();
@@ -16,9 +18,10 @@ if (!isset($_POST['timeoff_id']) || !is_numeric($_POST['timeoff_id'])) {
 
 $id = (int) $_POST['timeoff_id'];
 
+// Prepare delete
 $stmt = mysqli_prepare($conn, "DELETE FROM time_off WHERE timeoff_id = ?");
 if (!$stmt) {
-    echo json_encode(["success" => false, "error" => mysqli_error($conn)]);
+    echo json_encode(["success" => false, "error" => "Prepare failed"]);
     exit();
 }
 
@@ -30,7 +33,7 @@ if (mysqli_stmt_execute($stmt)) {
         echo json_encode(["success" => false, "error" => "Record not found"]);
     }
 } else {
-    echo json_encode(["success" => false, "error" => mysqli_stmt_error($stmt)]);
+    echo json_encode(["success" => false, "error" => "Execute failed"]);
 }
 
 mysqli_stmt_close($stmt);

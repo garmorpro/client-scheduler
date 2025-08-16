@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const res = await fetch("add_global_pto.php", { method: "POST", body: formData });
       const data = await res.json();
-
       if (data.success) {
         const entry = data.entry;
         mergeOrCreateGroup(entry);
@@ -24,21 +23,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // --- Update existing PTO ---
+  // --- Update handlers ---
   function attachUpdateHandlers() {
     document.querySelectorAll(".updatePTOForm").forEach(form => {
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
         const formData = new FormData(form);
-
         try {
           const res = await fetch("update_global_pto.php", { method: "POST", body: formData });
           const data = await res.json();
-          if (data.success) {
-            // Optionally: update UI dynamically
-          } else {
-            alert("Error: " + data.error);
-          }
+          if (!data.success) alert("Error: " + data.error);
         } catch (err) {
           console.error(err);
         }
@@ -46,15 +40,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // --- Delete PTO dynamically ---
+  // --- Delete handlers ---
   function attachDeleteHandlers() {
     document.querySelectorAll(".deletePTOBtn").forEach(btn => {
       btn.addEventListener("click", async function (e) {
-        e.preventDefault(); // ✅ Prevent form submission
+        e.preventDefault();
 
         if (!confirm("Are you sure you want to delete this PTO entry?")) return;
 
         const id = this.dataset.id;
+        if (!id) return alert("Invalid PTO ID");
+
         const formData = new FormData();
         formData.append("timeoff_id", id);
 
@@ -62,13 +58,12 @@ document.addEventListener("DOMContentLoaded", function () {
           const res = await fetch("delete_global_pto.php", { method: "POST", body: formData });
           const data = await res.json();
           if (data.success) {
-            // Remove this entry row from the DOM
+            // Remove this row from DOM
             const formRow = this.closest("form.updatePTOForm");
             if (formRow) {
               const cardBody = formRow.closest(".card-body");
               formRow.remove();
-
-              // If no more entries in this card, remove the entire card
+              // If card empty, remove card
               if (cardBody && cardBody.children.length === 0) {
                 const card = cardBody.closest(".global-pto-card");
                 if (card) card.remove();
@@ -88,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
   attachUpdateHandlers();
   attachDeleteHandlers();
 
-  // --- Merge or Create a Group Card ---
+  // --- Merge or Create Card ---
   function mergeOrCreateGroup(entry) {
     const note = entry.timeoff_note || 'No Note';
     const existingCard = ptoAccordion.querySelector(`.global-pto-card[data-note='${CSS.escape(note)}']`);
@@ -96,15 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (existingCard) {
       const body = existingCard.querySelector(".card-body");
       body.insertAdjacentHTML("beforeend", makeEntryRow(entry));
-
-      const weeksEl = existingCard.querySelector(".group-weeks");
-      const hoursEl = existingCard.querySelector(".group-hours");
-
-      weeksEl.textContent += ", " + entry.week_start;
-      hoursEl.textContent = (parseInt(hoursEl.textContent) + parseInt(entry.assigned_hours)) + " hrs";
-
-      attachUpdateHandlers();
-      attachDeleteHandlers();
     } else {
       const newIndex = document.querySelectorAll(".global-pto-card").length + 1;
       const cardHTML = `
@@ -127,15 +113,16 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `;
       ptoAccordion.insertAdjacentHTML("afterbegin", cardHTML);
-      attachUpdateHandlers();
-      attachDeleteHandlers();
     }
+
+    attachUpdateHandlers();
+    attachDeleteHandlers();
   }
 
   // --- Make Entry Row ---
   function makeEntryRow(entry) {
     return `
-      <form action="update_global_pto.php" method="POST" class="updatePTOForm d-flex flex-row align-items-center gap-2 border p-2 rounded">
+      <form class="updatePTOForm d-flex flex-row align-items-center gap-2 border p-2 rounded">
         <input type="hidden" name="timeoff_id" value="${entry.timeoff_id}">
         <div>
           <label class="form-label small mb-0">Week</label>
