@@ -157,6 +157,7 @@
                         alert('Failed to delete time off.');
                     }
                 } else {
+                    const totalHoursToSave = personalValue + globalHours;
                     console.log('Saving total hours (personal + global):', personalValue);
 
                     if (entryId) {
@@ -184,7 +185,7 @@
                             })
                         });
                         if (add.ok && add.data?.success && add.data.entry_id) {
-                            renderTimeOff(td, personalValue, add.data.entry_id);
+                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
                         } else {
                             alert('Failed to add time off.');
                         }
