@@ -711,11 +711,11 @@ if ($settingResult) {
 
         <!-- Settings Tab -->
             <div id="tab-settings" class="tab-content d-none">
-              <div class="row g-3 ps-3 pe-3 mt-1" style="height: 400px !important;">
+              <div class="row g-3 ps-3 pe-3 mt-1" style="height: 375px !important;">
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
-                  <div class="settings-card">
-                    <div class="analytic-header mb-4">
+                  <div class="settings-card d-flex flex-column">
+                    <div class="settings-header mb-4">
                       <div class="titles">
                         <p class="text-black fs-6 fw-bold mb-1">System Configuration</p>
                         <p class="fs-6 mb-0">Manage system-wide settings</p>
@@ -771,7 +771,7 @@ if ($settingResult) {
 
                 <!-- Right Column: Engagement Status -->
                 <div class="col-md-6">
-                  <div class="settings-card d-flex flex-column h-100">
+                  <div class="settings-card d-flex flex-column">
                     <div class="settings-header mb-2">
                       <div class="titles">
                         <p class="text-black fw-bold mb-1" style="font-size: 14px;">System Health</p>
