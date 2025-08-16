@@ -195,19 +195,27 @@ if ($settingResult) {
         <!-- end stats cards -->
 
         <!-- Tabs -->
-            <div class="custom-tabs">
-                <a href="#users" class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</button>
-                <button class="<?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</button>
-                <button data-tab="activity">System Activity</button>
-                <button data-tab="time_off">Time Off</button>
-                <button class="<?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</button>
-            </div>
-        <!-- end Tabs -->
+            <!-- Tabs -->
+<div class="custom-tabs">
+    <a href="#users" class="<?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</a>
+    <button class="<?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</button>
+    <button data-tab="activity">System Activity</button>
+    <button data-tab="time_off">Time Off</button>
+    <button class="<?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</button>
+</div>
+<!-- end Tabs -->
 
-        <script>
+<!-- Tab Contents -->
+<div id="users" class="tab-content">User Management Content</div>
+<div id="engagements" class="tab-content">Engagement Management Content</div>
+<div id="activity" class="tab-content">System Activity Content</div>
+<div id="time_off" class="tab-content">Time Off Content</div>
+<div id="settings" class="tab-content">Settings Content</div>
 
+<script>
 document.addEventListener("DOMContentLoaded", function() {
-    const tabs = document.querySelectorAll(".custom-tabs button");
+    // Select both buttons and links
+    const tabs = document.querySelectorAll(".custom-tabs button, .custom-tabs a");
     const tabContents = document.querySelectorAll(".tab-content"); // each tab content must have id matching data-tab
 
     function openTab(tabName) {
@@ -217,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tabContents.forEach(content => content.style.display = "none");
 
         // Activate selected tab
-        const activeTab = document.querySelector(`.custom-tabs button[data-tab="${tabName}"]`);
+        const activeTab = document.querySelector(`.custom-tabs button[data-tab="${tabName}"], .custom-tabs a[data-tab="${tabName}"]`);
         const activeContent = document.getElementById(tabName);
         if (activeTab && activeContent) {
             activeTab.classList.add("active");
@@ -229,20 +237,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Click handler
     tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
+        tab.addEventListener("click", (e) => {
+            e.preventDefault(); // Prevent default link jump
             openTab(tab.dataset.tab);
         });
     });
 
-    // Open tab on page load
+    // Open tab on page load based on hash or default
     const hash = window.location.hash.substring(1);
-    const defaultTab = hash && document.querySelector(`.custom-tabs button[data-tab="${hash}"]`) ? hash : "users";
+    const defaultTab = hash && document.querySelector(`.custom-tabs button[data-tab="${hash}"], .custom-tabs a[data-tab="${hash}"]`) ? hash : "users";
     openTab(defaultTab);
 });
-
-
 </script>
-
 
         <!-- user management -->
             <div id="tab-users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
