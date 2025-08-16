@@ -639,49 +639,49 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const ptoMonth = document.getElementById("pto_month");
+document.addEventListener("DOMContentLoaded", function() {
+    const startMonth = document.getElementById("pto_month"); // we can rename to startMonth if desired
     const startWeek = document.getElementById("startWeek");
     const endWeek = document.getElementById("endWeek");
     const weekContainer = document.getElementById("weekSelectorContainer");
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
 
-    // Generate weeks for a selected month
-    function getWeeksInMonth(year, month) {
-        const weeks = [];
-        const firstDay = new Date(year, month-1, 1);
-        const lastDay = new Date(year, month, 0);
-        let current = new Date(firstDay);
-
-        while (current <= lastDay) {
-            weeks.push(new Date(current));
-            current.setDate(current.getDate() + 7);
+    // Generate Mondays in a month
+    function getMondaysInMonth(year, month) {
+        const mondays = [];
+        let date = new Date(year, month - 1, 1);
+        // move to first Monday
+        while (date.getDay() !== 1) {
+            date.setDate(date.getDate() + 1);
         }
-        return weeks;
+        while (date.getMonth() === month - 1) {
+            mondays.push(new Date(date));
+            date.setDate(date.getDate() + 7);
+        }
+        return mondays;
     }
 
-    function populateWeekSelectors(month) {
-        const weeks = getWeeksInMonth(2025, parseInt(month));
-        startWeek.innerHTML = '<option value="">Start Week</option>';
-        endWeek.innerHTML = '<option value="">End Week</option>';
+    function populateWeekSelector(selector, month) {
+        const weeks = getMondaysInMonth(2025, parseInt(month));
+        selector.innerHTML = '<option value="">Select Week</option>';
         weeks.forEach(date => {
             const val = date.toISOString().split("T")[0];
-            const label = date.toDateString(); // you can format nicer
-            startWeek.innerHTML += `<option value="${val}">${label}</option>`;
-            endWeek.innerHTML += `<option value="${val}">${label}</option>`;
+            const label = (date.getMonth() + 1) + '/' + date.getDate(); // MM/DD
+            selector.innerHTML += `<option value="${val}">${label}</option>`;
         });
-        weekContainer.style.display = "block";
     }
 
-    ptoMonth.addEventListener("change", function() {
+    // When month changes, populate startWeek
+    startMonth.addEventListener("change", function() {
         if (this.value) {
-            populateWeekSelectors(this.value);
+            populateWeekSelector(startWeek, this.value);
             dayContainer.style.display = "none";
+            weekContainer.style.display = "block";
         }
     });
 
-    // Generate day inputs once start and end week are selected
+    // Generate day inputs for selected weeks
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
         const startDate = new Date(start);
@@ -689,18 +689,16 @@ if ($result && mysqli_num_rows($result) > 0) {
         let current = new Date(startDate);
 
         while (current <= endDate) {
-            for (let i=0;i<7;i++) {
-                const day = new Date(current);
-                const val = day.toISOString().split("T")[0];
-                dayInputsDiv.innerHTML += `
-                    <div class="day-input">
-                        <label>${day.toDateString()}</label>
-                        <input type="number" min="0" class="form-control form-control-sm day-hour" data-date="${val}" placeholder="Hours">
-                    </div>`;
-                current.setDate(current.getDate() + 1);
-            }
+            const dayLabel = (current.getMonth() + 1) + '/' + current.getDate();
+            dayInputsDiv.innerHTML += `
+                <div class="day-input" style="width:60px; text-align:center;">
+                    <label style="font-size:0.75rem;">${dayLabel}</label>
+                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" data-date="${current.toISOString().split("T")[0]}" style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
+                </div>`;
+            current.setDate(current.getDate() + 1);
         }
-        dayContainer.style.display = "block";
+        dayContainer.style.display = "flex";
+        dayInputsDiv.style.display = "flex";
     }
 
     startWeek.addEventListener("change", () => {
@@ -711,7 +709,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
 
-    // Handle form submission
+    // Form submission
     const form = document.getElementById("addGlobalPTOForm");
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
@@ -722,7 +720,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             if (hours > 0) {
                 entries.push({
                     timeoff_note: note,
-                    week_start: input.dataset.date, // week start or day
+                    week_start: input.dataset.date,
                     assigned_hours: hours,
                     is_global_timeoff: 1
                 });
@@ -735,14 +733,11 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
 
         console.log(entries);
-        // TODO: submit via fetch to backend
-        // await fetch("add_global_pto.php", { method:"POST", body: JSON.stringify(entries) });
-
         alert("Global PTO entries ready to submit. Check console for preview.");
     });
 });
-
 </script>
+
 
 
           </div>
