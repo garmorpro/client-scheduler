@@ -59,14 +59,23 @@ td.addable:hover {
     background: #111;
     height: 100%;
 }
-.custom-tabs,
-.nested-tabs {
+.custom-tabs {
     display: flex;
     margin-top: 2rem;
     margin-bottom: 20px;
     background-color: rgb(235,235,239);
     border-radius: 15px;
     padding: 5px;
+    justify-content: center;
+}
+.nested-tabs {
+    display: flex;
+    /* margin-top: 2rem; */
+    /* margin-bottom: 20px; */
+    background-color: rgb(235,235,239);
+    border-radius: 15px;
+    padding: 5px;
+    width: 50%;
     justify-content: center;
 }
 .custom-tabs a,
