@@ -106,7 +106,7 @@
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
         // Show individual (personal) hours in the input only if the entry exists
-        const personalHours = entryId ? (assigned_hours > 0 ? assigned_hours : '') : '';
+        const totalHoursPlusGlobal = entryId ? (assigned_hours > 0 ? assigned_hours : '') : '';
 
         console.log('Opening input:', { entryId, assigned_hours, globalHours, totalHoursPlusGlobal });
 
