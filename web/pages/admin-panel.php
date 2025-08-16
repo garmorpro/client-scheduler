@@ -647,10 +647,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div id="dayInputs" class="d-flex flex-column gap-2"></div>
 
                 <!-- Summary -->
-                <div id="summaryContainer" style="margin-top:1rem; font-weight:bold;">
-                    <p id="summaryText">Total Entries: 0 | Total Hours: 0</p>
-                    <div id="weeklyTotals" class="d-flex gap-3 flex-wrap"></div>
-                </div>
+                <div id="summaryFooter">
+  <span id="summaryText">Total Weeks: 0 | Total Hours: 0</span>
+</div>
             </div>
 
         </div>
