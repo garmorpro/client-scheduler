@@ -158,7 +158,7 @@
                     }
                 } else {
                     const totalHoursToSave = personalValue + globalHours;
-                    console.log('Saving total hours (personal + global):', personalValue);
+                    console.log('Total hours including global PTO (personal + global):', totalHoursToSave);
 
                     if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
