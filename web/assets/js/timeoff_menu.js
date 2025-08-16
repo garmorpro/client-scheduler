@@ -59,7 +59,7 @@
             body: JSON.stringify({ user_id, week_start })
         });
 
-        console.log('Fetched time off entry with hours:', { td, response });
+        console.log('Fetched time off entry with hours:', { td, response, assigned_hours });
 
         if (response.ok && response.data?.success) {
             return {
