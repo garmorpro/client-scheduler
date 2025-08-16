@@ -1544,7 +1544,7 @@ if ($settingResult) {
         </div>
 
 
-        
+
        <!-- Current Global PTO Entries -->
 <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
   <?php
@@ -1554,23 +1554,26 @@ if ($settingResult) {
     while ($row = $result->fetch_assoc()):
       $formattedWeekStart = date('M j, Y', strtotime($row['week_start']));
   ?>
-  <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm" 
-       style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;">
+  <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm global-pto-card" 
+       style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;"
+       data-entry-id="<?= $row['entry_id'] ?>">
     
-    <!-- Left side: note and date -->
-    <div>
-      <p class="mb-1 fs-6 fw-semibold text-capitalize">
+    <!-- Left side: note and date (clickable) -->
+    <div class="pto-left" style="cursor: pointer;">
+      <p class="mb-1 fs-6 fw-semibold text-capitalize pto-note" data-field="timeoff_note">
         <?= htmlspecialchars($row['timeoff_note']) ?>
       </p>
-      <small class="text-muted" style="font-size: 13px;">
+      <small class="text-muted" style="font-size: 13px;" data-field="week_start">
         Week of <?= $formattedWeekStart ?>
       </small>
     </div>
 
     <!-- Right side: hours + dropdown -->
     <div class="d-flex align-items-center gap-2">
-      <span class="fw-semibold"><?= htmlspecialchars($row['assigned_hours']) ?> hrs</span>
-      
+      <span class="fw-semibold pto-hours" data-field="assigned_hours" style="cursor:pointer;">
+        <?= htmlspecialchars($row['assigned_hours']) ?> hrs
+      </span>
+
       <!-- Dropdown menu -->
       <div class="dropdown">
         <a class="text-muted" href="#" role="button" id="dropdownMenu<?= $row['entry_id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1586,14 +1589,6 @@ if ($settingResult) {
       </div>
     </div>
   </div>
-
-  <style>
-    #currentGlobalPTO .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-  </style>
-
   <?php
     endwhile;
   else:
@@ -1613,6 +1608,54 @@ if ($settingResult) {
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // Click handler for editable fields
+  document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
+    el.addEventListener('click', async function() {
+      const field = this.dataset.field;
+      const entryCard = this.closest('.global-pto-card');
+      const entryId = entryCard.dataset.entryId;
+
+      let currentValue = this.innerText.trim();
+      if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
+      if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
+
+      // Prompt user for new value (can be replaced by a proper modal)
+      const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
+      if (newValue === null || newValue === currentValue) return;
+
+      // Send AJAX request to update
+      try {
+        const response = await fetch('update_global_pto.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ entry_id: entryId, field, value: newValue })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          if (field === 'assigned_hours') {
+            this.innerText = `${newValue} hrs`;
+          } else if (field === 'week_start') {
+            const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            this.innerText = `Week of ${formatted}`;
+          } else {
+            this.innerText = newValue;
+          }
+        } else {
+          alert('Failed to update: ' + data.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error updating PTO entry.');
+      }
+    });
+  });
+});
+
+</script>
 
 
 
