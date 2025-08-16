@@ -1,14 +1,16 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const globalPtoContainer = document.getElementById("global-pto-table");
 
-    // ---- Fake fetch for demo (replace with API call) ----
+    // Fetch entries from PHP/MySQL
     async function fetchGlobalPTOs() {
-        // Example: You’d replace this with a real `fetch('/api/global-pto')`
-        return [
-            { id: 1, timeoff_note: "Labor Day", week_start: "2025-08-11", assigned_hours: 8 },
-            { id: 2, timeoff_note: "Labor Day", week_start: "2025-08-18", assigned_hours: 8 },
-            { id: 3, timeoff_note: "Annual Training", week_start: "2025-09-01", assigned_hours: 16 }
-        ];
+        try {
+            const res = await fetch("get_global_pto.php");
+            return await res.json();
+        } catch (err) {
+            console.error("Error fetching PTOs:", err);
+            return [];
+        }
     }
 
     function groupByNote(entries) {
@@ -33,14 +35,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         Object.keys(grouped).forEach((note, idx) => {
             const group = grouped[note];
-            const totalHours = group.reduce((sum, e) => sum + e.assigned_hours, 0);
+            const totalHours = group.reduce((sum, e) => sum + Number(e.assigned_hours), 0);
             const weeks = group.map(e => formatDateShort(e.week_start)).join(", ");
 
             // Card wrapper
             const card = document.createElement("div");
             card.className = "card mb-3 shadow-sm";
 
-            // Card header (clickable accordion)
+            // Card header (accordion trigger)
             card.innerHTML = `
                 <div class="card-header d-flex justify-content-between align-items-center" 
                      data-bs-toggle="collapse" 
@@ -94,14 +96,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 const formData = Object.fromEntries(new FormData(form).entries());
                 console.log("Save entry", id, formData);
 
-                // TODO: call API to update entry
-                // await fetch(`/api/global-pto/${id}`, {
-                //   method: "PUT",
-                //   headers: { "Content-Type": "application/json" },
-                //   body: JSON.stringify(formData)
-                // });
+                // TODO: call a PHP script to update DB
+                // fetch(`update_global_pto.php?id=${id}`, { method:"POST", body: new FormData(form) })
 
-                alert(`Entry ${id} saved!`);
+                alert(`Entry ${id} saved (mock)!`);
             });
 
             // Delete button handler
@@ -111,14 +109,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 console.log("Delete entry", id);
 
-                // TODO: call API to delete entry
-                // await fetch(`/api/global-pto/${id}`, { method: "DELETE" });
+                // TODO: call a PHP script to delete DB row
+                // fetch(`delete_global_pto.php?id=${id}`, { method:"POST" })
 
-                alert(`Entry ${id} deleted!`);
-                renderGlobalPTOs(); // re-render after deletion
+                alert(`Entry ${id} deleted (mock)!`);
+                renderGlobalPTOs(); // reload after deletion
             });
         });
     }
 
     renderGlobalPTOs();
 });
+
