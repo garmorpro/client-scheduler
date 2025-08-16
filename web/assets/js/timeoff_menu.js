@@ -113,12 +113,15 @@
         if (activeInput) activeInput.remove();
 
         const entryId = await getTimeOffEntry(td);
-        const personalHours = await getTimeOffHours(td) || 0; // Personal only
+        const totalHours = await getTimeOffHours(td) || 0;
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
+
+        // Show personal-only hours if there's a global entry, otherwise show total
+        const personalHours = (globalHours > 0) ? (totalHours - globalHours) : totalHours;
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours; // show ONLY personal hours in the input
+        input.value = personalHours > 0 ? personalHours : ''; 
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
@@ -169,21 +172,21 @@
                     }
                 } else if (entryId) {
                     // Update: total = personal + global
-                    const totalHours = parseFloat(val) + globalHours;
+                    const totalHoursToSave = parseFloat(val) + globalHours;
                     const update = await safeFetchJSON('update_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHours })
+                        body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
                     });
                     if (update.ok && update.data?.success) {
-                        renderTimeOff(td, totalHours, entryId);
+                        renderTimeOff(td, totalHoursToSave, entryId);
                     } else {
                         alert('Failed to update time off.');
                     }
                 } else {
                     // Add: total = personal + global
-                    const totalHours = parseFloat(val) + globalHours;
+                    const totalHoursToSave = parseFloat(val) + globalHours;
                     const add = await safeFetchJSON('add_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -191,13 +194,13 @@
                         body: JSON.stringify({ 
                             user_id: td.dataset.userId, 
                             week_start: td.dataset.weekStart, 
-                            assigned_hours: totalHours, 
+                            assigned_hours: totalHoursToSave, 
                             is_timeoff: 1 
                         })
                     });
 
                     if (add.ok && add.data?.success && add.data.entry_id) {
-                        renderTimeOff(td, totalHours, add.data.entry_id);
+                        renderTimeOff(td, totalHoursToSave, add.data.entry_id);
                     } else {
                         alert('Failed to add time off.');
                     }
