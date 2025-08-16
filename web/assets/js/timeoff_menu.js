@@ -48,7 +48,6 @@
         }
     }
 
-    // Fetch entry with assigned hours directly
     async function getTimeOffEntryWithHours(td) {
         const user_id = td.dataset.userId;
         const week_start = td.dataset.weekStart;
@@ -104,13 +103,14 @@
         const { entryId, assigned_hours } = await getTimeOffEntryWithHours(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Calculate personal hours
-        const personalHours = Math.max(assigned_hours - globalHours, 0);
+        // Show individual (personal) hours in the input only if the entry exists
+        const personalHours = entryId ? Math.max(assigned_hours - globalHours, 0) : '';
+
         console.log('Opening input:', { entryId, assigned_hours, globalHours, personalHours });
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours > 0 ? personalHours : '';
+        input.value = personalHours;
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
