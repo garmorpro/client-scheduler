@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = intval($_POST['timeoff_id'] ?? 0);
+    $id = intval($_POST['id'] ?? 0);
 
     if ($id > 0) {
         $stmt = $pdo->prepare("DELETE FROM time_off WHERE timeoff_id = ?");
