@@ -1531,8 +1531,8 @@ if ($settingResult) {
                 <input type="number" name="assigned_hours" class="form-control form-control-sm" placeholder="Hours" min="0" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Note</label>
-                <input type="text" name="timeoff_note" class="form-control form-control-sm" placeholder="Optional note">
+                <label class="form-label small fw-semibold">Reason</label>
+                <input type="text" name="timeoff_note" class="form-control form-control-sm" placeholder="Reason">
               </div>
             </div>
 
@@ -1558,57 +1558,6 @@ if ($settingResult) {
 
 <script src="../assets/js/global_pto_functions.js?v=<?php echo time(); ?>"></script>
 
-
-
-
-
-<script>
-//   document.addEventListener('DOMContentLoaded', function() {
-//   // Click handler for editable fields
-//   document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
-//     el.addEventListener('click', async function() {
-//       const field = this.dataset.field;
-//       const entryCard = this.closest('.global-pto-card');
-//       const entryId = entryCard.dataset.entryId;
-
-//       let currentValue = this.innerText.trim();
-//       if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
-//       if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
-
-//       // Prompt user for new value (can be replaced by a proper modal)
-//       const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
-//       if (newValue === null || newValue === currentValue) return;
-
-//       // Send AJAX request to update
-//       try {
-//         const response = await fetch('update_global_pto.php', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify({ entry_id: entryId, field, value: newValue })
-//         });
-//         const data = await response.json();
-
-//         if (data.success) {
-//           if (field === 'assigned_hours') {
-//             this.innerText = `${newValue} hrs`;
-//           } else if (field === 'week_start') {
-//             const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-//             this.innerText = `Week of ${formatted}`;
-//           } else {
-//             this.innerText = newValue;
-//           }
-//         } else {
-//           alert('Failed to update: ' + data.error);
-//         }
-//       } catch (err) {
-//         console.error(err);
-//         alert('Error updating PTO entry.');
-//       }
-//     });
-//   });
-// });
-
-</script>
 
 
 

@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const addForm = document.getElementById("addGlobalPTOForm");
   const ptoAccordion = document.getElementById("ptoAccordion");
 
-  // Add new PTO
-  addForm.addEventListener("submit", async function(e) {
+  // --- Add new PTO ---
+  addForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     const formData = new FormData(addForm);
 
@@ -18,16 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         alert("Error: " + data.error);
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
       alert("Something went wrong while adding PTO.");
     }
   });
 
-  // Update existing PTO forms
+  // --- Update existing PTO ---
   function attachUpdateHandlers() {
     document.querySelectorAll(".updatePTOForm").forEach(form => {
-      form.addEventListener("submit", async function(e) {
+      form.addEventListener("submit", async function (e) {
         e.preventDefault();
         const formData = new FormData(form);
 
@@ -39,15 +39,43 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             alert("Error: " + data.error);
           }
-        } catch(err) {
+        } catch (err) {
           console.error(err);
         }
       });
     });
   }
 
-  attachUpdateHandlers();
+  // --- Delete PTO ---
+  function attachDeleteHandlers() {
+    document.querySelectorAll(".deletePTOBtn").forEach(btn => {
+      btn.addEventListener("click", async function () {
+        if (!confirm("Are you sure you want to delete this PTO entry?")) return;
 
+        const id = this.dataset.id;
+        const formData = new FormData();
+        formData.append("timeoff_id", id);
+
+        try {
+          const res = await fetch("delete_global_pto.php", { method: "POST", body: formData });
+          const data = await res.json();
+          if (data.success) {
+            reloadPTOAccordion();
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Something went wrong while deleting PTO.");
+        }
+      });
+    });
+  }
+
+  attachUpdateHandlers();
+  attachDeleteHandlers();
+
+  // --- Merge or Create a Group Card ---
   function mergeOrCreateGroup(entry) {
     const note = entry.timeoff_note || 'No Note';
     const existingCard = ptoAccordion.querySelector(`.global-pto-card[data-note='${CSS.escape(note)}']`);
@@ -65,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
       hoursEl.textContent = (parseInt(hoursEl.textContent) + parseInt(entry.assigned_hours)) + " hrs";
 
       attachUpdateHandlers();
+      attachDeleteHandlers();
     } else {
       // Create a new card at top
       const newIndex = document.querySelectorAll(".global-pto-card").length + 1;
@@ -89,9 +118,11 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
       ptoAccordion.insertAdjacentHTML("afterbegin", cardHTML);
       attachUpdateHandlers();
+      attachDeleteHandlers();
     }
   }
 
+  // --- Make Entry Row ---
   function makeEntryRow(entry) {
     return `
       <form action="update_global_pto.php" method="POST" class="updatePTOForm d-flex flex-row align-items-center gap-2 border p-2 rounded">
@@ -110,18 +141,22 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="d-flex gap-2 align-items-end">
           <button type="submit" class="btn btn-sm btn-primary">Save</button>
-          <a href="delete_global_pto.php?id=${entry.timeoff_id}" class="btn btn-sm btn-outline-danger">Delete</a>
+          <button type="button" class="btn btn-sm btn-outline-danger deletePTOBtn" data-id="${entry.timeoff_id}">Delete</button>
         </div>
       </form>
     `;
   }
 
+  // --- Reload PTO Accordion ---
   async function reloadPTOAccordion() {
     try {
       const res = await fetch("get_global_pto.php");
       const html = await res.text();
       ptoAccordion.innerHTML = html;
       attachUpdateHandlers();
-    } catch(err) { console.error(err); }
+      attachDeleteHandlers();
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
