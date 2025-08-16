@@ -720,7 +720,7 @@ document.addEventListener("DOMContentLoaded", function() {
             rowDiv.className = "week-row d-flex align-items-center gap-1 mb-2";
 
             // Monday–Friday for this week
-            for(let i = 0; i < 5; i++) {
+            for(let i = 1; i < 5; i++) {
                 const d = new Date(currentWeek);
                 d.setDate(d.getDate() + i); // Monday + i (0–4) = Mon–Fri
                 const dateStr = (d.getMonth()+1) + '/' + d.getDate();
