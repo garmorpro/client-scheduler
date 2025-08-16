@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function makeEntryRow(entry) {
     return `
       <form class="updatePTOForm d-flex flex-row align-items-center gap-2 border p-2 rounded">
-        <input type="hidden" name="timeoff_id" value="${entry.timeoff_id}">
+        <input type="text" name="timeoff_id" value="${entry.timeoff_id}">
         <div>
           <label class="form-label small mb-0">Week</label>
           <input type="date" name="week_start" value="${entry.week_start_raw}" class="form-control form-control-sm" required>
