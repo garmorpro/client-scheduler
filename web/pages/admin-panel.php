@@ -435,15 +435,15 @@ if ($settingResult) {
 
         <!-- time off -->
           <div id="time_off" class="tab-content">
-              <!-- <div class="activity-header mb-3">
+              <div class="activity-header mb-1">
                   <div class="titles">
                       <p class="text-black"><strong>Time Off Management</strong></p>
                       <p>Manage employee and global time off entries</p>
                   </div>
-              </div> -->
+              </div>
 
               <!-- Nested Tabs -->
-                <div class="nested-tabs mb-1">
+                <div class="nested-tabs mb-3">
                     <a href="#time_off#individual_pto" class="text-decoration-none active" data-tab="individual_pto">Individual Time Off</a>
                     <a href="#time_off#global_pto" class="text-decoration-none" data-tab="global_pto">Global Time Off</a>
                 </div>
