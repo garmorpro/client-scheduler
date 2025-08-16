@@ -205,9 +205,10 @@ if ($settingResult) {
         <!-- end Tabs -->
 
         <script>
+
 document.addEventListener("DOMContentLoaded", function() {
     const tabs = document.querySelectorAll(".custom-tabs button");
-    const tabContents = document.querySelectorAll(".tab-content"); // make sure each content has id matching data-tab
+    const tabContents = document.querySelectorAll(".tab-content"); // each tab content must have id matching data-tab
 
     function openTab(tabName) {
         // Remove active from all tabs
@@ -233,15 +234,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Determine which tab to open on load
-    const hash = window.location.hash.substring(1); // remove #
-    let defaultTab = "users"; // <-- set User Management as default
-    if (hash && document.querySelector(`.custom-tabs button[data-tab="${hash}"]`)) {
-        defaultTab = hash;
-    }
-
+    // Open tab on page load
+    const hash = window.location.hash.substring(1);
+    const defaultTab = hash && document.querySelector(`.custom-tabs button[data-tab="${hash}"]`) ? hash : "users";
     openTab(defaultTab);
 });
+
+
 </script>
 
 
