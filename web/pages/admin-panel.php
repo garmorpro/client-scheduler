@@ -1520,12 +1520,11 @@ if ($settingResult) {
         <!-- Add New Global PTO Section -->
         <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
           <form id="addGlobalPTOForm" action="add_global_pto.php" method="POST" class="d-flex flex-column gap-2">
-
             <div class="row g-2">
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Week Start (Monday)</label>
                 <input type="date" name="week_start" class="form-control form-control-sm" required 
-                       oninput="if(new Date(this.value).getDay() !== 0) { alert('Please select a Monday'); this.value=''; }">
+                       oninput="if(new Date(this.value).getDay() !== 1) { alert('Please select a Monday'); this.value=''; }">
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Assigned Hours</label>
@@ -1544,71 +1543,85 @@ if ($settingResult) {
         </div>
 
 
-<!-- Current Global PTO Entries -->
-<div id="currentGlobalPTO" class="d-flex flex-column gap-2">
-  <?php
-  // Group by note, sum hours, and collect week_start dates
-  $sql = "
-    SELECT 
-      timeoff_note,
-      GROUP_CONCAT(DATE_FORMAT(week_start, '%m/%d/%Y') ORDER BY week_start DESC SEPARATOR ', ') AS weeks,
-      SUM(assigned_hours) AS total_hours,
-      GROUP_CONCAT(timeoff_id) AS timeoff_ids
-    FROM time_off
-    WHERE is_global_timeoff = 1
-    GROUP BY timeoff_note
-    ORDER BY MIN(week_start) DESC
-  ";
-  $result = $conn->query($sql);
+        <!-- Current Global PTO Entries -->
+        <div id="currentGlobalPTO" class="accordion">
 
-  if ($result && $result->num_rows > 0):
-    while ($row = $result->fetch_assoc()):
-  ?>
-  <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm global-pto-card" 
-       style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;"
-       data-entry-ids="<?= htmlspecialchars($row['entry_ids']) ?>">
-    
-    <!-- Left side: note and list of weeks -->
-    <div class="pto-left" style="cursor: pointer;">
-      <p class="mb-1 fs-6 fw-semibold text-capitalize pto-note" data-field="timeoff_note">
-        <?= htmlspecialchars($row['timeoff_note']) ?>
-      </p>
-      <small class="text-muted" style="font-size: 13px;" data-field="week_start">
-        Weeks: <?= htmlspecialchars($row['weeks']) ?>
-      </small>
-    </div>
+        <?php
+        // Fetch grouped entries by note
+        $sql = "
+          SELECT 
+            timeoff_note,
+            SUM(assigned_hours) AS total_hours,
+            GROUP_CONCAT(timeoff_id ORDER BY week_start DESC) AS timeoff_ids
+          FROM time_off
+          WHERE is_global_timeoff = 1
+          GROUP BY timeoff_note
+          ORDER BY MIN(week_start) DESC
+        ";
+        $grouped = $conn->query($sql);
 
-    <!-- Right side: total hours + dropdown -->
-    <div class="d-flex align-items-center gap-2">
-      <span class="fw-semibold pto-hours" data-field="assigned_hours" style="cursor:pointer;">
-        <?= htmlspecialchars($row['total_hours']) ?> hrs
-      </span>
+        if ($grouped && $grouped->num_rows > 0):
+          $index = 0;
+          while ($row = $grouped->fetch_assoc()):
+            $note = htmlspecialchars($row['timeoff_note']);
+            $totalHours = htmlspecialchars($row['total_hours']);
+            $ids = explode(",", $row['timeoff_ids']);
+            $accordionId = "group" . $index;
+        ?>
+          <!-- Accordion Card -->
+          <div class="accordion-item mb-2 border rounded">
+            <h2 class="accordion-header" id="heading<?= $accordionId ?>">
+              <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $accordionId ?>" aria-expanded="false" aria-controls="collapse<?= $accordionId ?>">
+                <div class="d-flex justify-content-between w-100">
+                  <span class="fw-semibold"><?= $note ?: "No Note" ?></span>
+                  <span class="text-muted"><?= $totalHours ?> hrs</span>
+                </div>
+              </button>
+            </h2>
+            <div id="collapse<?= $accordionId ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $accordionId ?>" data-bs-parent="#currentGlobalPTO">
+              <div class="accordion-body">
+                <?php
+                // Fetch all entries for this group
+                $idsIn = implode(",", array_map('intval', $ids));
+                $sqlEntries = "SELECT * FROM time_off WHERE timeoff_id IN ($idsIn) ORDER BY week_start DESC";
+                $entries = $conn->query($sqlEntries);
 
-      <!-- Dropdown menu -->
-      <div class="dropdown">
-        <a class="text-muted" href="#" role="button" id="dropdownMenu<?= md5($row['entry_ids']) ?>" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi bi-three-dots fs-5"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu<?= md5($row['entry_ids']) ?>">
-          <li>
-            <a class="dropdown-item text-danger" href="delete_global_pto.php?ids=<?= urlencode($row['entry_ids']) ?>">
-              Delete All
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <?php
-    endwhile;
-  else:
-  ?>
-  <p class="text-muted text-center">No global PTO entries found.</p>
-  <?php endif; ?>
-</div>
-
-
-
+                if ($entries && $entries->num_rows > 0):
+                  while ($e = $entries->fetch_assoc()):
+                ?>
+                  <!-- Editable Row -->
+                  <form action="update_global_pto.php" method="POST" class="row g-2 align-items-center mb-2">
+                    <input type="hidden" name="timeoff_id" value="<?= $e['timeoff_id'] ?>">
+                    
+                    <div class="col-md-4">
+                      <input type="date" name="week_start" value="<?= htmlspecialchars($e['week_start']) ?>" 
+                             class="form-control form-control-sm" required>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="number" name="assigned_hours" value="<?= htmlspecialchars($e['assigned_hours']) ?>" 
+                             class="form-control form-control-sm" min="0" required>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="timeoff_note" value="<?= htmlspecialchars($e['timeoff_note']) ?>" 
+                             class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2 d-flex gap-1">
+                      <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></button>
+                      <a href="delete_global_pto.php?id=<?= $e['timeoff_id'] ?>" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    </div>
+                  </form>
+                <?php endwhile; endif; ?>
+              </div>
+            </div>
+          </div>
+        <?php
+            $index++;
+          endwhile;
+        else:
+        ?>
+          <p class="text-muted text-center">No global PTO entries found.</p>
+        <?php endif; ?>
+        </div>
 
 
       </div>
@@ -1620,51 +1633,52 @@ if ($settingResult) {
   </div>
 </div>
 
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-  // Click handler for editable fields
-  document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
-    el.addEventListener('click', async function() {
-      const field = this.dataset.field;
-      const entryCard = this.closest('.global-pto-card');
-      const entryId = entryCard.dataset.entryId;
+//   document.addEventListener('DOMContentLoaded', function() {
+//   // Click handler for editable fields
+//   document.querySelectorAll('.global-pto-card [data-field]').forEach(el => {
+//     el.addEventListener('click', async function() {
+//       const field = this.dataset.field;
+//       const entryCard = this.closest('.global-pto-card');
+//       const entryId = entryCard.dataset.entryId;
 
-      let currentValue = this.innerText.trim();
-      if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
-      if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
+//       let currentValue = this.innerText.trim();
+//       if (field === 'assigned_hours') currentValue = currentValue.replace(' hrs', '');
+//       if (field === 'week_start') currentValue = new Date(currentValue.replace('Week of ', '')).toISOString().split('T')[0];
 
-      // Prompt user for new value (can be replaced by a proper modal)
-      const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
-      if (newValue === null || newValue === currentValue) return;
+//       // Prompt user for new value (can be replaced by a proper modal)
+//       const newValue = prompt(`Edit ${field.replace('_', ' ')}`, currentValue);
+//       if (newValue === null || newValue === currentValue) return;
 
-      // Send AJAX request to update
-      try {
-        const response = await fetch('update_global_pto.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entry_id: entryId, field, value: newValue })
-        });
-        const data = await response.json();
+//       // Send AJAX request to update
+//       try {
+//         const response = await fetch('update_global_pto.php', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({ entry_id: entryId, field, value: newValue })
+//         });
+//         const data = await response.json();
 
-        if (data.success) {
-          if (field === 'assigned_hours') {
-            this.innerText = `${newValue} hrs`;
-          } else if (field === 'week_start') {
-            const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            this.innerText = `Week of ${formatted}`;
-          } else {
-            this.innerText = newValue;
-          }
-        } else {
-          alert('Failed to update: ' + data.error);
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Error updating PTO entry.');
-      }
-    });
-  });
-});
+//         if (data.success) {
+//           if (field === 'assigned_hours') {
+//             this.innerText = `${newValue} hrs`;
+//           } else if (field === 'week_start') {
+//             const formatted = new Date(newValue).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+//             this.innerText = `Week of ${formatted}`;
+//           } else {
+//             this.innerText = newValue;
+//           }
+//         } else {
+//           alert('Failed to update: ' + data.error);
+//         }
+//       } catch (err) {
+//         console.error(err);
+//         alert('Error updating PTO entry.');
+//       }
+//     });
+//   });
+// });
 
 </script>
 
