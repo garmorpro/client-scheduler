@@ -435,12 +435,12 @@ if ($settingResult) {
 
         <!-- time off -->
           <div id="time_off" class="tab-content">
-              <!-- <div class="activity-header mb-1">
+              <div class="activity-header mb-1">
                   <div class="titles">
                       <p class="text-black"><strong>Time Off Management</strong></p>
                       <p>Manage employee and global time off entries</p>
                   </div>
-              </div> -->
+              </div>
 
               <!-- Nested Tabs -->
                 <div class="nested-tabs mb-3">
@@ -453,10 +453,10 @@ if ($settingResult) {
                 <div id="individual_pto" class="nested-tab-content">
                     <div class="timeoff-header d-flex justify-content-between align-items-center mb-3">
                         <!-- Left -->
-                        <div class="titles">
+                        <!-- <div class="titles">
                             <p class="text-black mb-0"><strong>Individual Time Off</strong></p>
                             <p class="mb-0">Manage employee time off entries</p>
-                        </div>
+                        </div> -->
 
                         <!-- Middle (Search) -->
                         <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
