@@ -546,7 +546,8 @@ if ($settingResult) {
         <!-- end engagement management -->
 
          <!-- system activty -->
-            <div id="time_off" class="tab-content">
+            <!-- Nested tabs inside #time_off -->
+<div id="time_off" class="tab-content">
     <div class="activity-header mb-3">
         <div class="titles">
             <p class="text-black"><strong>Time Off Management</strong></p>
@@ -556,23 +557,16 @@ if ($settingResult) {
 
     <!-- Nested Tabs -->
     <div class="nested-tabs mb-3">
-        <a href="#individual_time_off" class="active" data-tab="individual_time_off">Individual Time Off</a>
-        <a href="#global_time_off" data-tab="global_time_off">Global Time Off</a>
+        <a href="#time_off#individual_pto" class="active" data-tab="individual_pto">Individual Time Off</a>
+        <a href="#time_off#global_pto" data-tab="global_pto">Global Time Off</a>
     </div>
 
     <!-- Nested Tab Contents -->
-    <div id="individual_time_off" class="nested-tab-content">
-        <p>Here you can manage individual employee time off entries.</p>
-        <div id="individual-activity-list">
-            <!-- Individual entries will go here -->
-        </div>
+    <div id="individual_pto" class="nested-tab-content">
+        <p>Manage individual employee time off entries here.</p>
     </div>
-
-    <div id="global_time_off" class="nested-tab-content" style="display:none;">
-        <p>Here you can manage global time off entries.</p>
-        <div id="global-activity-list">
-            <!-- Global entries will go here -->
-        </div>
+    <div id="global_pto" class="nested-tab-content" style="display:none;">
+        <p>Manage global PTO entries here.</p>
     </div>
 
     <!-- Pagination Controls -->
@@ -581,39 +575,6 @@ if ($settingResult) {
     </nav>
 </div>
         <!-- end system activty -->
-
-        <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const nestedTabs = document.querySelectorAll("#time_off .nested-tabs a");
-    const nestedContents = document.querySelectorAll("#time_off .nested-tab-content");
-
-    function openNestedTab(tabName) {
-        // Hide all nested tab contents
-        nestedContents.forEach(content => content.style.display = "none");
-        // Remove active from all nested tabs
-        nestedTabs.forEach(tab => tab.classList.remove("active"));
-
-        // Show selected nested tab content
-        const activeTab = document.querySelector(`#time_off .nested-tabs a[data-tab="${tabName}"]`);
-        const activeContent = document.getElementById(tabName);
-        if (activeTab && activeContent) {
-            activeTab.classList.add("active");
-            activeContent.style.display = "block";
-        }
-    }
-
-    // Click handler for nested tabs
-    nestedTabs.forEach(tab => {
-        tab.addEventListener("click", (e) => {
-            e.preventDefault();
-            openNestedTab(tab.dataset.tab);
-        });
-    });
-
-    // Open default nested tab
-    openNestedTab("individual_time_off");
-});
-</script>
 
         <!-- system activty -->
             <div id="activity" class="tab-content">
