@@ -157,18 +157,17 @@
                         alert('Failed to delete time off.');
                     }
                 } else {
-                    const totalHoursToSave = personalValue + globalHours;
-                    console.log('Saving total hours (personal + global):', totalHoursToSave);
+                    console.log('Saving total hours (personal + global):', personalValue);
 
                     if (entryId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ entry_id: entryId, assigned_hours: totalHoursToSave })
+                            body: JSON.stringify({ entry_id: entryId, assigned_hours: personalValue })
                         });
                         if (update.ok && update.data?.success) {
-                            renderTimeOff(td, totalHoursToSave, entryId);
+                            renderTimeOff(td, personalValue, entryId);
                         } else {
                             alert('Failed to update time off.');
                         }
@@ -180,12 +179,12 @@
                             body: JSON.stringify({
                                 user_id: td.dataset.userId,
                                 week_start: td.dataset.weekStart,
-                                assigned_hours: totalHoursToSave,
+                                assigned_hours: personalValue,
                                 is_timeoff: 1
                             })
                         });
                         if (add.ok && add.data?.success && add.data.entry_id) {
-                            renderTimeOff(td, totalHoursToSave, add.data.entry_id);
+                            renderTimeOff(td, personalValue, add.data.entry_id);
                         } else {
                             alert('Failed to add time off.');
                         }
