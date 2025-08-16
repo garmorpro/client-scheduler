@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="d-flex gap-2 align-items-end">
           <button type="submit" class="btn btn-sm btn-primary">Save</button>
-          <button type="button" class="btn btn-sm btn-outline-danger deletePTOBtn" data-id="${entry.timeoff_id}">Delete${entry.timeoff_id}</button>
+          <button type="button" class="btn btn-sm btn-outline-danger deletePTOBtn" data-id="${entry.timeoff_id}">${entry.timeoff_id}</button>
         </div>
       </form>
     `;
