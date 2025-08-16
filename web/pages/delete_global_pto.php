@@ -1,33 +1,40 @@
 <?php
-require_once '../includes/db.php'; // this should have your mysqli connection as $conn
+require_once '../includes/db.php'; // should define $conn = mysqli_connect(...)
+session_start();
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // match JS: timeoff_id
-    $id = intval($_POST['timeoff_id'] ?? 0);
-
-    if ($id > 0) {
-        // prepare statement
-        $stmt = mysqli_prepare($conn, "DELETE FROM time_off WHERE timeoff_id = ?");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "i", $id);
-            if (mysqli_stmt_execute($stmt)) {
-                echo json_encode(['success' => true]);
-                exit;
-            } else {
-                echo json_encode(['success' => false, 'error' => 'Database delete failed.']);
-                exit;
-            }
-            mysqli_stmt_close($stmt);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to prepare statement.']);
-            exit;
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid ID.']);
-        exit;
-    }
+// Optional: require login
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["success" => false, "error" => "Unauthorized"]);
+    exit();
 }
 
-echo json_encode(['success' => false, 'error' => 'Invalid request.']);
+// Validate input
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo json_encode(["success" => false, "error" => "Invalid request."]);
+    exit();
+}
+
+$id = (int) $_GET['id'];
+
+// Prepare statement
+$stmt = mysqli_prepare($conn, "DELETE FROM time_off WHERE timeoff_id = ?");
+if (!$stmt) {
+    echo json_encode(["success" => false, "error" => "Prepare failed: " . mysqli_error($conn)]);
+    exit();
+}
+
+mysqli_stmt_bind_param($stmt, "i", $id);
+if (mysqli_stmt_execute($stmt)) {
+    if (mysqli_stmt_affected_rows($stmt) > 0) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["success" => false, "error" => "Record not found."]);
+    }
+} else {
+    echo json_encode(["success" => false, "error" => "Execute failed: " . mysqli_stmt_error($stmt)]);
+}
+
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
