@@ -59,10 +59,10 @@
         if (response.ok && response.data?.success) {
             return {
                 entryId: response.data.entry_id || null,
-                totalHours: parseFloat(response.data.assigned_hours || 0)
+                personalHours: parseFloat(response.data.assigned_hours || 0)
             };
         } else {
-            return { entryId: null, totalHours: 0 };
+            return { entryId: null, personalHours: 0 };
         }
     }
 
@@ -95,15 +95,18 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const { entryId, totalHours } = await getTimeOffEntry(td);
+        const { entryId, personalHours } = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
 
-        // Calculate personal hours safely
-        const personalHours = Math.max(totalHours - globalHours, 0);
+        // Pre-fill input logic:
+        // 1. No entry yet => empty
+        // 2. Only personal => show personal
+        // 3. Personal + global => show personal only
+        const inputValue = entryId ? personalHours : '';
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = entryId ? personalHours : '';
+        input.value = inputValue;
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
