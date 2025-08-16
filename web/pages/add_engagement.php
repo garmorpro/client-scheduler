@@ -36,7 +36,7 @@ function generateUniqueIdno($conn) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate and sanitize inputs
     $clientName = trim($_POST['client_name'] ?? '');
-    $totalHours = $_POST['total_available_hours'] ?? 0;
+    $totalHours = $_POST['budgeted_hours'] ?? 0;
     $status = $_POST['status'] ?? '';
     $notes = trim($_POST['notes'] ?? '');
 
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Generate unique idno
     $idno = generateUniqueIdno($conn);
 
-    $stmt = $conn->prepare("INSERT INTO engagements (idno, client_name, total_available_hours, assigned_hours, status, notes, last_updated, created) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+    $stmt = $conn->prepare("INSERT INTO engagements (idno, client_name, budgeted_hours, assigned_hours, status, notes, last_updated, created) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
