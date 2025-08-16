@@ -715,10 +715,11 @@ if ($settingResult) {
                 <!-- Left Column: System Configuration -->
                 <div class="col-md-6">
   <div class="settings-card p-2">
-    <p class="text-black fw-bold mb-2" style="font-size: 15px;">System Configuration</p>
+    <p class="text-black fw-bold mb-2 fs-5">System Configuration</p>
+    <p class="fs-6 mb-0">Manage system-wide settings</p>
 
     <!-- Global PTO -->
-    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px; padding: 4px 0;">
       <div>
         <p class="mb-0 fw-semibold">Global PTO</p>
         <p class="mb-0 text-muted" style="font-size: 12px;">Manage company-wide paid time off</p>
@@ -727,7 +728,7 @@ if ($settingResult) {
     </div>
 
     <!-- Email Notifications -->
-    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px; padding: 4px 0;">
       <div>
         <p class="mb-0 fw-semibold">Email Notifications</p>
         <p class="mb-0 text-muted" style="font-size: 12px;">Send system notifications via email</p>
@@ -736,7 +737,7 @@ if ($settingResult) {
     </div>
 
     <!-- Backup Settings -->
-    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 13px; padding: 4px 0;">
+    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 14px; padding: 4px 0;">
       <div>
         <p class="mb-0 fw-semibold">Backup Settings</p>
         <p class="mb-0 text-muted" style="font-size: 12px;">Automated backup configuration</p>
@@ -745,7 +746,7 @@ if ($settingResult) {
     </div>
 
     <!-- Security Policies -->
-    <div class="d-flex justify-content-between align-items-center" style="font-size: 13px; padding: 4px 0;">
+    <div class="d-flex justify-content-between align-items-center" style="font-size: 14px; padding: 4px 0;">
       <div>
         <p class="mb-0 fw-semibold">Security Policies</p>
         <p class="mb-0 text-muted" style="font-size: 12px;">Password & access requirements</p>
