@@ -648,11 +648,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const dayContainer = document.getElementById("dayHoursContainer");
     const dayInputsDiv = document.getElementById("dayInputs");
 
-    // Generate Mondays in a month
+    // Generate all Mondays in a given month
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
-        while (date.getDay() !== 1) { date.setDate(date.getDate() + 1); } // move to first Monday
+        while (date.getDay() !== 1) { date.setDate(date.getDate() + 1); } // first Monday
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -660,12 +660,12 @@ document.addEventListener("DOMContentLoaded", function() {
         return mondays;
     }
 
-    // Format date as "Monday, Aug 11, 2025"
+    // Format as "Monday, Aug 11, 2025"
     function formatDateLong(date) {
-        const options = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
+        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
     }
 
+    // Populate a week selector dropdown with Mondays
     function populateWeekSelector(selector, month) {
         const weeks = getMondaysInMonth(2025, parseInt(month));
         selector.innerHTML = '<option value="">Select Week</option>';
@@ -676,7 +676,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Populate weeks when month changes
+    // When either month changes, populate its corresponding week dropdown
     startMonth.addEventListener("change", function() {
         if (this.value) {
             populateWeekSelector(startWeek, this.value);
@@ -693,7 +693,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Generate daily inputs between start and end week
+    // Generate daily hour inputs from start week to end week
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
         const startDate = new Date(start);
@@ -705,7 +705,9 @@ document.addEventListener("DOMContentLoaded", function() {
             dayInputsDiv.innerHTML += `
                 <div class="day-input" style="width:60px; text-align:center;">
                     <label style="font-size:0.75rem;">${dayLabel}</label>
-                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" data-date="${current.toISOString().split("T")[0]}" style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
+                    <input type="number" min="0" max="10" class="form-control form-control-sm day-hour" 
+                           data-date="${current.toISOString().split("T")[0]}" 
+                           style="width:50px; padding:0 3px; font-size:0.75rem;" placeholder="0">
                 </div>`;
             current.setDate(current.getDate() + 1);
         }
@@ -713,10 +715,10 @@ document.addEventListener("DOMContentLoaded", function() {
         dayInputsDiv.style.display = "flex";
     }
 
+    // Listen to both week dropdowns
     startWeek.addEventListener("change", () => {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
-
     endWeek.addEventListener("change", () => {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
@@ -727,6 +729,7 @@ document.addEventListener("DOMContentLoaded", function() {
         e.preventDefault();
         const note = document.getElementById("pto_note").value;
         const entries = [];
+
         document.querySelectorAll(".day-hour").forEach(input => {
             const hours = parseInt(input.value);
             if (hours > 0) {
