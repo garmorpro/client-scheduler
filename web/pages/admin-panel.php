@@ -1502,42 +1502,74 @@ if ($settingResult) {
 <!-- end Email Notification Modal -->
 
 <!-- Global PTO Modal -->
-    <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="emailNotifConfigLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <form id="emailNotifConfigForm" action="settings_backend.php" method="POST">
-            <div class="modal-header">
-              <h5 class="modal-title" id="emailNotifConfigLabel">
-                <i class="bi bi-calendar-week"></i> Global PTO <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">View and manage company-wide paid time off</span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="globalPTOModalLabel">
+          <i class="bi bi-calendar-week"></i> Global PTO <br>
+          <span class="text-muted" style="font-size: 12px; font-weight: 400;">View and manage company-wide paid time off</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Add New Global PTO Section -->
+        <div class="p-3 mb-4" style="background-color: #f5f5f5; border-radius: 8px;">
+          <form id="addGlobalPTOForm" action="add_global_pto.php" method="POST" class="d-flex flex-column gap-2">
+            <div class="mb-2">
+              <label for="ptoName" class="form-label fw-semibold">PTO Name</label>
+              <input type="text" name="pto_name" id="ptoName" class="form-control form-control-sm" placeholder="Enter PTO description" required>
             </div>
-
-            <div class="modal-body">
-
-                    
-
-              
+            <div class="mb-2">
+              <label for="ptoHours" class="form-label fw-semibold">Hours</label>
+              <input type="number" name="hours" id="ptoHours" class="form-control form-control-sm" placeholder="Enter number of hours" min="0" required>
             </div>
-
-            <div class="modal-footer">
-              <a href="#" 
-                 class="badge text-black p-2 text-decoration-none fw-medium" 
-                 style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-                 data-bs-dismiss="modal">
-                Cancel
-              </a>
-
-              <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18); border:none;">
-                <i class="bi bi-person-plus me-3"></i>Save Settings
-              </button>
-            </div>
+            <button type="submit" class="btn btn-dark btn-sm mt-2">
+              <i class="bi bi-plus-circle me-2"></i>Add Global PTO
+            </button>
           </form>
         </div>
+
+        <!-- Current Global PTO Entries -->
+        <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
+          <!-- Example card, populate dynamically with PHP or JS -->
+          <?php
+          // Fetch global PTO entries
+          $sql = "SELECT * FROM time_off WHERE is_global = 1 ORDER BY week_start DESC";
+          $result = $conn->query($sql);
+          if ($result && $result->num_rows > 0):
+            while ($row = $result->fetch_assoc()):
+          ?>
+          <div class="card shadow-sm p-2 d-flex flex-row justify-content-between align-items-center">
+            <div>
+              <p class="mb-0 fw-semibold"><?= htmlspecialchars($row['pto_name']) ?></p>
+              <small class="text-muted"><?= htmlspecialchars($row['hours']) ?> hours</small>
+            </div>
+            <div>
+              <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+              <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-sm btn-outline-danger">Delete</a>
+            </div>
+          </div>
+          <?php
+            endwhile;
+          else:
+          ?>
+          <p class="text-muted text-center">No global PTO entries found.</p>
+          <?php endif; ?>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
+  </div>
+</div>
 <!-- end Global PTO Modal -->
+
 
 
 <!-- Backup Configuration Modal -->
