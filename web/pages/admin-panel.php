@@ -1543,6 +1543,8 @@ if ($settingResult) {
           </form>
         </div>
 
+
+        
        <!-- Current Global PTO Entries -->
 <div id="currentGlobalPTO" class="d-flex flex-column gap-2">
   <?php
@@ -1550,29 +1552,48 @@ if ($settingResult) {
   $result = $conn->query($sql);
   if ($result && $result->num_rows > 0):
     while ($row = $result->fetch_assoc()):
-      $formattedWeekStart = date('m/d/Y', strtotime($row['week_start']));
+      $formattedWeekStart = date('M j, Y', strtotime($row['week_start']));
   ?>
   <div class="card p-3 d-flex flex-row justify-content-between align-items-center shadow-sm" 
        style="border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.2s, box-shadow 0.2s;">
+    
+    <!-- Left side: note and date -->
     <div>
       <p class="mb-1 fs-6 fw-semibold text-capitalize">
         <?= htmlspecialchars($row['timeoff_note']) ?>
       </p>
       <small class="text-muted" style="font-size: 13px;">
-        Week of <?= $formattedWeekStart ?> - <?= htmlspecialchars($row['assigned_hours']) ?> hours
+        Week of <?= $formattedWeekStart ?>
       </small>
     </div>
-    <div class="d-flex gap-2">
-      <a href="edit_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-primary btn-sm">Edit</a>
-      <a href="delete_global_pto.php?id=<?= $row['entry_id'] ?>" class="btn btn-outline-danger btn-sm">Delete</a>
+
+    <!-- Right side: hours + dropdown -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="fw-semibold"><?= htmlspecialchars($row['assigned_hours']) ?> hrs</span>
+      
+      <!-- Dropdown menu -->
+      <div class="dropdown">
+        <a class="text-muted" href="#" role="button" id="dropdownMenu<?= $row['entry_id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-three-dots fs-5"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu<?= $row['entry_id'] ?>">
+          <li>
+            <a class="dropdown-item text-danger" href="delete_global_pto.php?id=<?= $row['entry_id'] ?>">
+              Delete
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
+
   <style>
     #currentGlobalPTO .card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
   </style>
+
   <?php
     endwhile;
   else:
@@ -1580,6 +1601,7 @@ if ($settingResult) {
   <p class="text-muted text-center">No global PTO entries found.</p>
   <?php endif; ?>
 </div>
+
 
 
 
