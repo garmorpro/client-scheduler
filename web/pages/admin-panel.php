@@ -437,101 +437,103 @@ if ($settingResult) {
           <div id="time_off" class="tab-content">
               <div class="activity-header mb-3">
                   <div class="titles">
-                      <p class="text-black"><strong>Time Off Management</strong></p>
-                      <p>Manage employee and global time off entries</p>
+                      <!-- <p class="text-black"><strong>Time Off Management</strong></p>
+                      <p>Manage employee and global time off entries</p> -->
                   </div>
               </div>
 
               <!-- Nested Tabs -->
-              <div class="nested-tabs mb-3">
-                  <a href="#time_off#individual_pto" class="text-decoration-none active" data-tab="individual_pto">Individual Time Off</a>
-                  <a href="#time_off#global_pto" class="text-decoration-none" data-tab="global_pto">Global Time Off</a>
-              </div>
+                <div class="nested-tabs mb-3">
+                    <a href="#time_off#individual_pto" class="text-decoration-none active" data-tab="individual_pto">Individual Time Off</a>
+                    <a href="#time_off#global_pto" class="text-decoration-none" data-tab="global_pto">Global Time Off</a>
+                </div>
+              <!-- end nested tabs -->
 
-              <!-- Nested Tab Contents -->
-<div id="individual_pto" class="nested-tab-content">
-    <div class="timeoff-header d-flex justify-content-between align-items-center mb-3">
-        <!-- Left -->
-        <div class="titles">
-            <p class="text-black mb-0"><strong>Individual Time Off</strong></p>
-            <p class="mb-0">Manage employee time off entries</p>
-        </div>
+              <!-- individual pto -->
+                <div id="individual_pto" class="nested-tab-content">
+                    <div class="timeoff-header d-flex justify-content-between align-items-center mb-3">
+                        <!-- Left -->
+                        <div class="titles">
+                            <p class="text-black mb-0"><strong>Individual Time Off</strong></p>
+                            <p class="mb-0">Manage employee time off entries</p>
+                        </div>
 
-        <!-- Middle (Search) -->
-        <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
-            <input type="text" id="timeoffSearch" class="form-control form-control-sm" 
-                   placeholder="Search time off..." minlength="3">
-        </div>
+                        <!-- Middle (Search) -->
+                        <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
+                            <input type="text" id="timeoffSearch" class="form-control form-control-sm" 
+                                   placeholder="Search time off..." minlength="3">
+                        </div>
 
-        <!-- Right -->
-        <div class="timeoff-buttons d-flex align-items-center gap-2">
-            <a href="#" id="bulkDeleteTimeoffBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; background-color: darkred; display:none;">
-              <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedTimeoffCount">0</span>)
-            </a>
-
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-               data-bs-toggle="modal" data-bs-target="#importTimeoffModal">
-                <i class="bi bi-upload me-3"></i>Import Time Off
-            </a>
-
-            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; background-color: rgb(3,2,18);" 
-               data-bs-toggle="modal" data-bs-target="#addTimeoffModal">
-                <i class="bi bi-plus-circle me-3"></i>Add Time Off
-            </a>
-        </div>
-    </div>
-
-    <div class="timeoff-table">
-        <table id="timeoff-table" class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" id="selectAllTimeoff"></th>
-                    <th>Employee</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Hours</th>
-                    <th>Reason / Note</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if (!empty($timeoffEntries)): ?>
-                <?php foreach ($timeoffEntries as $entry): ?>
-                    <tr>
-                        <td><input type="checkbox" class="selectTimeoff" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>"></td>
-                        <td>
-                            <?php echo htmlspecialchars($entry['employee_name']); ?><br>
-                            <small class="text-muted"><?php echo htmlspecialchars($entry['employee_email']); ?></small>
-                        </td>
-                        <td><?php echo date("n/j/Y", strtotime($entry['start_date'])); ?></td>
-                        <td><?php echo date("n/j/Y", strtotime($entry['end_date'])); ?></td>
-                        <td><?php echo htmlspecialchars($entry['hours']); ?> hrs</td>
-                        <td><?php echo htmlspecialchars($entry['note']); ?></td>
-                        <td class="table-actions">
-                            <a href="#" class="edit-timeoff-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#editTimeoffModal" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
-                                <i class="bi bi-pencil text-purple"></i>
+                        <!-- Right -->
+                        <div class="timeoff-buttons d-flex align-items-center gap-2">
+                            <a href="#" id="bulkDeleteTimeoffBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; background-color: darkred; display:none;">
+                              <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedTimeoffCount">0</span>)
                             </a>
-                            <a href="#" class="delete-timeoff-btn text-decoration-none" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
-                                <i class="bi bi-trash text-danger"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr><td colspan="7" class="text-center">No time off entries found</td></tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
 
-    <!-- Pagination Controls -->
-    <nav>
-        <ul id="pagination-timeoff" class="pagination justify-content-center mt-3"></ul>
-    </nav>
-</div>
+                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                               data-bs-toggle="modal" data-bs-target="#importTimeoffModal">
+                                <i class="bi bi-upload me-3"></i>Import Time Off
+                            </a>
+
+                            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+                               style="font-size: .875rem; background-color: rgb(3,2,18);" 
+                               data-bs-toggle="modal" data-bs-target="#addTimeoffModal">
+                                <i class="bi bi-plus-circle me-3"></i>Add Time Off
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="timeoff-table">
+                        <table id="timeoff-table" class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllTimeoff"></th>
+                                    <th>Employee</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Hours</th>
+                                    <th>Reason / Note</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (!empty($timeoffEntries)): ?>
+                                <?php foreach ($timeoffEntries as $entry): ?>
+                                    <tr>
+                                        <td><input type="checkbox" class="selectTimeoff" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>"></td>
+                                        <td>
+                                            <?php echo htmlspecialchars($entry['employee_name']); ?><br>
+                                            <small class="text-muted"><?php echo htmlspecialchars($entry['employee_email']); ?></small>
+                                        </td>
+                                        <td><?php echo date("n/j/Y", strtotime($entry['start_date'])); ?></td>
+                                        <td><?php echo date("n/j/Y", strtotime($entry['end_date'])); ?></td>
+                                        <td><?php echo htmlspecialchars($entry['hours']); ?> hrs</td>
+                                        <td><?php echo htmlspecialchars($entry['note']); ?></td>
+                                        <td class="table-actions">
+                                            <a href="#" class="edit-timeoff-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#editTimeoffModal" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
+                                                <i class="bi bi-pencil text-purple"></i>
+                                            </a>
+                                            <a href="#" class="delete-timeoff-btn text-decoration-none" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
+                                                <i class="bi bi-trash text-danger"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center">No time off entries found</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                            
+                    <!-- Pagination Controls -->
+                    <nav>
+                        <ul id="pagination-timeoff" class="pagination justify-content-center mt-3"></ul>
+                    </nav>
+                </div>
+              <!-- end individual pto -->
 
 
               <div id="global_pto" class="nested-tab-content" style="display:none;">
