@@ -642,7 +642,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
 
             <!-- Day Inputs -->
-            <div id="dayHoursContainer" style="display:none; margin-top:1rem;">
+            <div id="dayHoursContainer" class="flex-column" style="display:none; margin-top:1rem;">
                 <p><strong>Enter Hours per Day:</strong></p>
                 <div id="dayInputs" class="d-flex flex-column gap-2"></div>
 
