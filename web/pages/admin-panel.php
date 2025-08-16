@@ -728,7 +728,7 @@ if ($settingResult) {
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Global PTO</p>
                         <p class="mb-0" style="font-size: 14px;">View and manage company-wide paid time off</p>
                       </div>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#globalPTOModal"> class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#globalPTOModal" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
                     </div>
