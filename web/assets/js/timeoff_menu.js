@@ -56,7 +56,7 @@
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, week_start })
+            body: JSON.stringify({ user_id, week_start, assigned_hours })
         });
 
         console.log('Fetched time off entry with hours:', { td, response });
