@@ -90,10 +90,10 @@ $notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
 $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
 
-$sql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
+$usersql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
         FROM users 
         ORDER BY first_name ASC";
-$result = mysqli_query($conn, $sql);
+$userresult = mysqli_query($conn, $usersql);
 
 $engagementSQL = "
   SELECT 
@@ -284,42 +284,42 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </tr>
                         </thead>
                         <tbody>
-                        <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <?php if (mysqli_num_rows($userresult) > 0): ?>
+                            <?php while ($userrow = mysqli_fetch_assoc($userresult)): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $row['user_id']; ?>"></td>
+                                    <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>"></td>
                                     <td>
-                                        <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?><br>
-                                        <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
+                                        <?php echo htmlspecialchars($userrow['first_name'] . ' ' . $userrow['last_name']); ?><br>
+                                        <small class="text-muted"><?php echo htmlspecialchars($userrow['email']); ?></small>
                                     </td>
                                     <td>
                                         <span class="badge-role">
-                                            <?php echo ucfirst(htmlspecialchars($row['role'])); ?>
+                                            <?php echo ucfirst(htmlspecialchars($userrow['role'])); ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
-                                            <?php echo ucfirst($row['status']); ?>
+                                        <span class="badge-status <?php echo strtolower($userrow['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                                            <?php echo ucfirst($userrow['status']); ?>
                                         </span>
                                     </td>
                                     <td>
                                         <?php 
-                                            if (empty($row['last_active']) || $row['last_active'] === null) {
+                                            if (empty($userrow['last_active']) || $userrow['last_active'] === null) {
                                                 echo "Never";
                                             } else {
-                                                echo date("n/j/Y", strtotime($row['last_active']));
+                                                echo date("n/j/Y", strtotime($userrow['last_active']));
                                             }
                                         ?>
                                     </td>
                                     <td class="table-actions">
-                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-eye text-success"></i>
                                         </a>
-                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
-                                        <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $row['user_id']; ?>">
+                                        <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-trash text-danger"></i>
                                         </a>
                                     </td>
