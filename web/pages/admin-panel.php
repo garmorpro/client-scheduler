@@ -196,7 +196,7 @@ if ($settingResult) {
 
         <!-- Tabs -->
           <div class="custom-tabs">
-              <a href="#users" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="users">User Management</a>
+              <a href="#employees" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="employees">Employee Management</a>
               <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a>
               <a href="#time_off" class=" text-decoration-none" data-tab="time_off">Time Off</a>
               <a href="#activity" class=" text-decoration-none" data-tab="activity">System Activity</a>
@@ -206,13 +206,13 @@ if ($settingResult) {
 
         <script src="../assets/js/admin_panel_tabs.js?v=<?php echo time(); ?>"></script>
 
-        <!-- user management -->
-            <div id="users" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
+        <!-- employee management -->
+            <div id="employees" class="tab-content <?php if ($isManager) echo 'd-none'; ?>">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
                     <!-- Left -->
                     <div class="titles">
-                        <p class="text-black mb-0"><strong>User Management</strong></p>
-                        <p class="mb-0">Manage user accounts, roles, and permissions</p>
+                        <p class="text-black mb-0"><strong>Employee Management</strong></p>
+                        <p class="mb-0">Manage employee accounts, roles, and permissions</p>
                     </div>
 
                     <!-- Middle (Search) -->

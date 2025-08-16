@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Open tab on page load based on hash
     const hash = window.location.hash.substring(1); // remove #
-    let mainTab = "users";
+    let mainTab = "employees";
     let nestedTab = null;
 
     if (hash) {
         const parts = hash.split("#");
-        mainTab = parts[0] || "users";
+        mainTab = parts[0] || "employees";
         nestedTab = parts[1] || null;
     }
 
