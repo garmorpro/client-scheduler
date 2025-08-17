@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const globalPtoContainer = document.getElementById("global-pto-table");
 
-    // Fetch entries from PHP/MySQL
     async function fetchGlobalPTOs() {
         try {
             const res = await fetch("get_global_pto.php");
@@ -21,10 +20,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return groups;
     }
 
-    // Parse YYYY-MM-DD as local date to avoid -1 day issue
     function formatDateShort(ymd) {
         const [year, month, day] = ymd.split("-").map(Number);
-        const d = new Date(year, month - 1, day); // local date
+        const d = new Date(year, month - 1, day);
         return d.toLocaleDateString('en-US', { month: "short", day: "numeric" });
     }
 
@@ -39,11 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const totalHours = group.reduce((sum, e) => sum + Number(e.assigned_hours), 0);
             const weeks = group.map(e => formatDateShort(e.week_start)).join(", ");
 
-            // Card wrapper
             const card = document.createElement("div");
             card.className = "card mb-3 shadow-sm";
 
-            // Card header (accordion trigger)
             card.innerHTML = `
                 <div class="card-header d-flex justify-content-between align-items-center" 
                      data-bs-toggle="collapse" 
@@ -89,32 +85,48 @@ document.addEventListener("DOMContentLoaded", function () {
             globalPtoContainer.appendChild(card);
         });
 
-        // Save form handlers
+        // Save & Delete handlers
         document.querySelectorAll(".entry-form").forEach(form => {
-            form.addEventListener("submit", function (e) {
+            form.addEventListener("submit", async function (e) {
                 e.preventDefault();
                 const id = form.dataset.id;
-                const formData = Object.fromEntries(new FormData(form).entries());
-                console.log("Save entry", id, formData);
+                const formData = new FormData(form);
 
-                // TODO: call a PHP script to update DB
-                // fetch(`update_global_pto.php?id=${id}`, { method:"POST", body: new FormData(form) })
-
-                alert(`Entry ${id} saved (mock)!`);
+                try {
+                    const res = await fetch(`update_global_pto.php?id=${id}`, {
+                        method: "POST",
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert(`Entry ${id} saved successfully!`);
+                        renderGlobalPTOs(); // reload after save
+                    } else {
+                        alert(`Error saving entry ${id}: ${data.error}`);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Network error while saving entry.");
+                }
             });
 
-            // Delete button handler
             form.querySelector(".delete-entry").addEventListener("click", async function () {
                 const id = form.dataset.id;
                 if (!confirm(`Are you sure you want to delete entry ${id}?`)) return;
 
-                console.log("Delete entry", id);
-
-                // TODO: call a PHP script to delete DB row
-                // fetch(`delete_global_pto.php?id=${id}`, { method:"POST" })
-
-                alert(`Entry ${id} deleted (mock)!`);
-                renderGlobalPTOs(); // reload after deletion
+                try {
+                    const res = await fetch(`delete_global_pto.php?id=${id}`, { method: "POST" });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert(`Entry ${id} deleted!`);
+                        renderGlobalPTOs();
+                    } else {
+                        alert(`Error deleting entry ${id}: ${data.error}`);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Network error while deleting entry.");
+                }
             });
         });
     }

@@ -1,40 +1,26 @@
 <?php
-require_once '../includes/db.php'; // should define $conn = mysqli_connect(...)
-session_start();
+require '../includes/db.php';
 
-header('Content-Type: application/json');
-
-// Require login
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["success" => false, "error" => "Unauthorized"]);
-    exit();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["success" => false, "error" => "Invalid request"]);
+    exit;
 }
 
-// Validate POST input
-if (!isset($_POST['timeoff_id']) || !is_numeric($_POST['timeoff_id'])) {
+$id = intval($_GET['id'] ?? 0);
+if ($id <= 0) {
     echo json_encode(["success" => false, "error" => "Invalid ID"]);
-    exit();
+    exit;
 }
 
-$id = (int) $_POST['timeoff_id'];
-
-// Prepare delete
-$stmt = mysqli_prepare($conn, "DELETE FROM time_off WHERE timeoff_id = ?");
+$stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id=?");
 if (!$stmt) {
-    echo json_encode(["success" => false, "error" => "Prepare failed"]);
-    exit();
+    echo json_encode(["success" => false, "error" => $conn->error]);
+    exit;
 }
 
-mysqli_stmt_bind_param($stmt, "i", $id);
-if (mysqli_stmt_execute($stmt)) {
-    if (mysqli_stmt_affected_rows($stmt) > 0) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "error" => "Record not found"]);
-    }
-} else {
-    echo json_encode(["success" => false, "error" => "Execute failed"]);
-}
+$stmt->bind_param("i", $id);
+$success = $stmt->execute();
+$stmt->close();
+$conn->close();
 
-mysqli_stmt_close($stmt);
-mysqli_close($conn);
+echo json_encode(["success" => $success]);

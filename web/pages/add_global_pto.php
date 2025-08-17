@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $entries = $_POST['entries'] ?? [];
 
 if (!is_array($entries) || count($entries) === 0) {
-    header("Location: /pages/admin-panel.php#time_off#global_pto");
+    header("Location: admin-panel.php#time_off#global_pto");
     exit;
 }
 
