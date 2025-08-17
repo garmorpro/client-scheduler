@@ -231,7 +231,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                 <?php foreach ($mondays as $idx => $monday):
                     $weekKey = date('Y-m-d', $monday);
-                    $globalHours = GLOBAL_TIMEOFF[$weekKey]['assigned_hours'] ?? null;
+                    $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
                     $isGlobalWeek = $globalHours !== null;
                     $isCurrentWeek = ($idx === $currentWeekIndex);
                     $thClasses = 'align-middle week';
