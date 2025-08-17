@@ -12,13 +12,13 @@ if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'ad
 // Read POSTed JSON
 $data = json_decode(file_get_contents('php://input'), true);
 
-if (empty($data['entry_id'])) {
+if (empty($data['timeoff_id'])) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing entry_id']);
+    echo json_encode(['success' => false, 'message' => 'Missing timeoff_id']);
     exit();
 }
 
-$entry_id = intval($data['entry_id']);
+$timeoff_id = intval($data['timeoff_id']);
 
 // Prepare and execute delete
 $stmt = $conn->prepare("DELETE FROM time_off WHERE time_off_id = ?");
@@ -28,7 +28,7 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param('i', $entry_id);
+$stmt->bind_param('i', $timeoff_id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
