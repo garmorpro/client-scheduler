@@ -1,42 +1,62 @@
 <?php
-require '../includes/db.php';
+require_once '../includes/db.php';
+session_start();
 
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-// --- Read raw JSON input ---
-$input = json_decode(file_get_contents("php://input"), true);
-if (!$input || empty($input["entries"])) {
-    echo json_encode(["success" => false, "error" => "No entries provided"]);
+// Only allow POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["success" => false, "error" => "Invalid request method"]);
     exit;
 }
 
-// Always insert as global PTO (is_global_timeoff = 1)
-$stmt = $conn->prepare("
-    INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff)
-    VALUES (?, ?, ?, 1)
-");
+// Validate input
+if (empty($_POST['date']) || empty($_POST['hours'])) {
+    echo json_encode(["success" => false, "error" => "Missing date or hours"]);
+    exit;
+}
 
-$results = [];
-foreach ($input["entries"] as $entry) {
-    $note = $entry["timeoff_note"] ?? '';
-    $week_start = $entry["week_start"];
-    $assigned_hours = intval($entry["assigned_hours"]);
+$date  = $_POST['date'];
+$hours = (float) $_POST['hours'];
 
-    $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
-    $ok = $stmt->execute();
+// Insert into DB
+$stmt = $conn->prepare("INSERT INTO global_pto (pto_date, hours) VALUES (?, ?)");
+if (!$stmt) {
+    echo json_encode(["success" => false, "error" => $conn->error]);
+    exit;
+}
+$stmt->bind_param("sd", $date, $hours);
+$ok = $stmt->execute();
 
-    $results[] = [
-        "entry"   => $entry,
-        "success" => $ok,
-        "id"      => $ok ? $stmt->insert_id : null,
-        "error"   => $ok ? null : $stmt->error
-    ];
+if ($ok) {
+    $entryId = $stmt->insert_id;
+
+    // Fetch the inserted row
+    $stmt2 = $conn->prepare("SELECT id, pto_date, hours FROM global_pto WHERE id = ?");
+    $stmt2->bind_param("i", $entryId);
+    $stmt2->execute();
+    $result = $stmt2->get_result();
+    $entry = $result->fetch_assoc();
+
+    if ($entry) {
+        echo json_encode([
+            "success" => true,
+            "entry"   => $entry
+        ]);
+    } else {
+        echo json_encode([
+            "success" => true,
+            "message" => "Entry added, but could not fetch inserted row.",
+            "entryId" => $entryId
+        ]);
+    }
+    $stmt2->close();
+} else {
+    echo json_encode([
+        "success" => false,
+        "error"   => $stmt->error
+    ]);
 }
 
 $stmt->close();
 $conn->close();
-
-echo json_encode([
-    "success" => true,
-    "results" => $results
-]);
