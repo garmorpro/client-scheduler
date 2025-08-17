@@ -1639,7 +1639,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <!-- end Email Notification Modal -->
 
 <!-- Global PTO Modal -->
-  <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
+  <!-- <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content border-0 shadow-sm">
 
@@ -1652,10 +1652,10 @@ if ($result && mysqli_num_rows($result) > 0) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body"> -->
 
         <!-- Add New Global PTO Section -->
-        <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
+        <!-- <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
           <form id="addGlobalPTOForm" method="POST" class="d-flex flex-column gap-2">
             <div class="row g-2">
               <div class="col-md-4">
@@ -1677,11 +1677,11 @@ if ($result && mysqli_num_rows($result) > 0) {
               <i class="bi bi-plus-circle me-1"></i>Add PTO
             </button>
           </form>
-        </div>
+        </div> -->
 
         <!-- Current Global PTO Entries -->
-        <div class="accordion d-flex flex-column gap-2" id="ptoAccordion">
-          <?php include 'get_global_pto.php'; ?>
+        <!-- <div class="accordion d-flex flex-column gap-2" id="ptoAccordion">
+          <?php //include 'get_global_pto.php'; ?>
         </div>
 
       </div>
@@ -1691,7 +1691,7 @@ if ($result && mysqli_num_rows($result) > 0) {
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- <script src="../assets/js/global_pto_functions.js?v=<?php //echo time(); ?>"></script> -->
 
