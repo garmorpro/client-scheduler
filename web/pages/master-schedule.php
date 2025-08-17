@@ -84,49 +84,7 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Individual Time Off
-// $individualTimeOffQuery = "
-//     SELECT timeoff_id, user_id, week_start, assigned_hours, timeoff_note
-//     FROM time_off 
-//     WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?
-// ";
-// $stmtTimeOff = $conn->prepare($individualTimeOffQuery);
-// $stmtTimeOff->bind_param('ss', $startDate, $endDate);
-// $stmtTimeOff->execute();
-// $resultTimeOff = $stmtTimeOff->get_result();
-
-// $individualTimeOff = [];
-// while ($row = $resultTimeOff->fetch_assoc()) {
-//     $individualTimeOff[$row['user_id']][$row['week_start']][] = [
-//         'timeoff_id' => $row['timeoff_id'],
-//         'assigned_hours' => $row['assigned_hours'],
-//         'timeoff_note' => $row['timeoff_note']
-//     ];
-// }
-// $stmtTimeOff->close();
-
-// // Global Time Off
-// $globalTimeOffQuery = "
-//     SELECT week_start, assigned_hours, timeoff_note
-//     FROM time_off
-//     WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?
-// ";
-// $stmt2 = $conn->prepare($globalTimeOffQuery);
-// $stmt2->bind_param('ss', $startDate, $endDate);
-// $stmt2->execute();
-// $result2 = $stmt2->get_result();
-
-// $globalTimeOff = [];
-// while ($row = $result2->fetch_assoc()) {
-//     $globalTimeOff[$row['week_start']] = [
-//         'assigned_hours' => $row['assigned_hours'],
-//         'note' => $row['timeoff_note']
-//     ];
-// }
-// $stmt2->close();
-
-
-// FETCH GLOBAL TIME OFF
+// Global Time Off
 $globalTimeOffQuery = "SELECT week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?";
 $stmt2 = $conn->prepare($globalTimeOffQuery);
 $stmt2->bind_param('ss', $startDate, $endDate);
@@ -141,7 +99,7 @@ while ($row = $result2->fetch_assoc()) {
 }
 $stmt2->close();
 
-// FETCH INDIVIDUAL TIME OFF
+// Individual Time Off
 $individualTimeOffQuery = "SELECT user_id, week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?";
 $stmt3 = $conn->prepare($individualTimeOffQuery);
 $stmt3->bind_param('ss', $startDate, $endDate);
@@ -155,8 +113,6 @@ while ($row = $result3->fetch_assoc()) {
     ];
 }
 $stmt3->close();
-
-
 
 // Dropdown query remains the same
 $dropdownquery = "
@@ -180,7 +136,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-
     <style>
       .timeoff-cell { background-color: rgb(217,217,217) !important; }
       .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
@@ -200,15 +155,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
       .week { min-width: 200px; }
     </style>
-
-    
-
     <script>
       const entries = <?php echo json_encode($entries); ?>;
       const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
       const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
     </script>
-
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
@@ -269,11 +220,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     function filterEmployees() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const rows = document.querySelectorAll('#employeesTableBody tr');
-        const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value);
+        const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value.toLowerCase());
 
         rows.forEach(row => {
             const nameCell = row.querySelector('.employee-name').textContent.toLowerCase();
-            const role = row.dataset.role; // we'll add data-role to each tr
+            const role = row.dataset.role.toLowerCase();
             const matchesSearch = nameCell.includes(searchTerm);
             const matchesRole = activeRoles.includes(role);
 
@@ -288,23 +239,21 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     // Initial filter to apply default checked roles
     filterEmployees();
-</script>
-
+    </script>
 
     <!-- Master Schedule table -->
-        <?php
-        // Find current week index for highlight (keep same)
-        $currentWeekIndex = null;
-        foreach ($mondays as $idx => $monday) {
-            $weekStart = $monday;
-            $weekEnd = strtotime('+7 days', $weekStart);
-            if ($today >= $weekStart && $today < $weekEnd) {
-                $currentWeekIndex = $idx;
-                break;
-            }
+    <?php
+    // Find current week index for highlight
+    $currentWeekIndex = null;
+    foreach ($mondays as $idx => $monday) {
+        $weekStart = $monday;
+        $weekEnd = strtotime('+7 days', $weekStart);
+        if ($today >= $weekStart && $today < $weekEnd) {
+            $currentWeekIndex = $idx;
+            break;
         }
-        ?>
-    <!-- Master Schedule table -->
+    }
+    ?>
     <div class="table-responsive" style="overflow-x: auto;">
 <table class="table table-bordered align-middle text-center">
     <thead class="table-light">
@@ -336,7 +285,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         $fullName = htmlspecialchars($employee['full_name']);
         $role = htmlspecialchars($employee['role']);
     ?>
-    <tr>
+    <tr data-role="<?php echo strtolower($role); ?>">
         <td class="text-start employee-name">
             <div class="d-flex align-items-center">
                     <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
@@ -468,10 +417,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
-
-
-
-    <!-- Drag & Drop handler (inline to ensure full code is present) -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
