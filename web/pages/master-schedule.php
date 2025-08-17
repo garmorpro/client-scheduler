@@ -182,8 +182,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- upper search and filter -->
         <div class="bg-white border rounded p-4 mb-4 d-flex justify-content-between align-items-center">
             <!-- Search bar on left -->
-            <div class="flex-grow-1 w-75 me-3">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
+            <div class="flex-grow-1 me-3">
+                <input type="search" id="searchInput" class="form-control w-75" placeholder="Search employees..." onkeyup="filterEmployees()" />
             </div>
 
             <!-- Role filter dropdown on right -->
@@ -351,7 +351,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
-
+    
 
     <?php //include_once '../includes/modals/engagement_details.php'; ?>
     <?php include_once '../includes/modals/user_details.php'; ?>
