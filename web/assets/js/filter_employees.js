@@ -1,28 +1,38 @@
 function filterEmployees() {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
-
-  // Only search if 3 or more chars (or at least one valid term)
-  if (!query || query.length < 3) {
-    // Show all rows if less than 3 characters
-    document.querySelectorAll('#employeesTableBody tr').forEach(row => {
-      row.style.display = '';
-    });
-    return;
-  }
+  const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked'))
+                           .map(cb => cb.value.toLowerCase());
 
   // Split query by commas and trim spaces
-  const terms = query.split(',').map(t => t.trim()).filter(t => t.length > 0);
+  const terms = query ? query.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
 
-  // Loop through all employee rows
   document.querySelectorAll('#employeesTableBody tr').forEach(row => {
+    const role = row.dataset.role.toLowerCase();
     const nameCell = row.querySelector('.employee-name');
-    if (!nameCell) return;
+    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
 
-    const nameText = nameCell.textContent.toLowerCase();
+    // Role match
+    const matchesRole = activeRoles.includes(role);
 
-    // Check if any term matches
-    const matches = terms.some(term => nameText.includes(term));
+    // Name match
+    const matchesSearch = terms.length === 0 || terms.some(term => nameText.includes(term));
 
-    row.style.display = matches ? '' : 'none';
+    // Show only if both match
+    row.style.display = (matchesRole && matchesSearch) ? '' : 'none';
   });
 }
+
+// Update table whenever a role checkbox changes
+document.querySelectorAll('.role-checkbox').forEach(cb => {
+  cb.addEventListener('change', filterEmployees);
+});
+
+// Update table whenever the search input changes
+document.getElementById('searchInput').addEventListener('keyup', filterEmployees);
+
+// Initial filter on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Make sure manager is unchecked by default
+  document.getElementById('roleManager').checked = false;
+  filterEmployees();
+});
