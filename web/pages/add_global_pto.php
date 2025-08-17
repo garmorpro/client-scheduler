@@ -8,11 +8,11 @@ $raw = file_get_contents("php://input");
 $input = json_decode($raw, true);
 
 // Validate
-if (!is_array($input) || !isset($input['entries']) || !is_array($input['entries'])) {
-    http_response_code(400);
-    echo json_encode(["success" => false, "error" => "No entries provided"]);
-    exit;
-}
+// if (!is_array($input) || !isset($input['entries']) || !is_array($input['entries'])) {
+//     http_response_code(400);
+//     echo json_encode(["success" => false, "error" => "No entries provided"]);
+//     exit;
+// }
 
 $stmt = $conn->prepare("
     INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff)
