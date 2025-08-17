@@ -164,26 +164,29 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h3 class="mb-0">Master Schedule</h3>
-            <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
+
+    <!-- header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="mb-0">Master Schedule</h3>
+                <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
+            </div>
+            <div class="header-buttons">
+                <a href="#" 
+                   onclick="location.reload();" 
+                   class="badge text-black p-2 text-decoration-none fw-medium me-1" 
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                  <i class="bi bi-arrow-clockwise me-3"></i>Refresh
+                </a>
+            </div>
         </div>
-        <div class="header-buttons">
-            <a href="#" 
-               onclick="location.reload();" 
-               class="badge text-black p-2 text-decoration-none fw-medium me-1" 
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
-              <i class="bi bi-arrow-clockwise me-3"></i>Refresh
-            </a>
-        </div>
-    </div>
+    <!-- end header -->
 
     <!-- upper search and filter -->
         <div class="bg-white border rounded p-4 mb-4 d-flex justify-content-between align-items-center">
             <!-- Search bar on left -->
             <div class="flex-grow-1 me-3">
-                <input type="search" id="searchInput" class="form-control w-75" placeholder="Search employees..." onkeyup="filterEmployees()" />
+                <input type="search" id="searchInput" class="form-control w-50" placeholder="Search employees..." onkeyup="filterEmployees()" />
             </div>
 
             <!-- Role filter dropdown on right -->
@@ -214,8 +217,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             </div>
         </div>
     <!-- end upper search and week range selector -->
-
-    
 
     <!-- Master Schedule table -->
         <?php
@@ -351,9 +352,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
-    
-
-    <?php //include_once '../includes/modals/engagement_details.php'; ?>
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
@@ -364,17 +362,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/timeoff_menu.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/filter_role.js?v=<?php echo time(); ?>"></script>
     
-    <!-- <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script> -->
-    <!-- <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script> -->
-    <!-- <script src="../assets/js/view_engagement_details.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
-    <!-- <script src="../assets/js/dynamic_add_modal.js?v=<?php echo time(); ?>"></script> -->
-    <!-- <script src="../assets/js/dynamic_manage_modal.js?v=<?php echo time(); ?>"></script> -->
-    <!-- <script src="../assets/js/manage_entry_modal.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
-    <!-- <script src="../assets/js/edit_modal.js?v=<?php echo time(); ?>"></script> -->
     <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
