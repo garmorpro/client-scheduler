@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        alert(`Entry ${id} saved successfully!`);
+                        // alert(`Entry ${id} saved successfully!`);
                         renderGlobalPTOs(); // reload after save
                     } else {
                         alert(`Error saving entry ${id}: ${data.error}`);
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const res = await fetch(`delete_global_pto.php?id=${id}`, { method: "POST" });
                     const data = await res.json();
                     if (data.success) {
-                        alert(`Entry ${id} deleted!`);
+                        // alert(`Entry ${id} deleted!`);
                         renderGlobalPTOs();
                     } else {
                         alert(`Error deleting entry ${id}: ${data.error}`);
