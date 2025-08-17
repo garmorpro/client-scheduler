@@ -117,7 +117,12 @@ document.addEventListener("DOMContentLoaded", function() {
             let weekSum = 0;
             row.querySelectorAll(".day-hour").forEach(input => weekSum += parseInt(input.value) || 0);
             if (weekSum > 0) {
-                entries.push({ timeoff_note: note, week_start: row.dataset.weekStart, assigned_hours: weekSum, is_global_timeoff: 1 });
+                entries.push({
+                    timeoff_note: note,
+                    week_start: row.dataset.weekStart,
+                    assigned_hours: weekSum,
+                    is_global_timeoff: 1
+                });
             }
         });
 
@@ -128,11 +133,23 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ entries })
         })
-        .then(res => res.json())
-        .then(data => {
-            // Redirect regardless of per-entry success
-            window.location.href = "/pages/admin-panel.php#time_off#global_pto";
+        .then(async res => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            const data = await res.json();
+            return data;
         })
-        .catch(err => console.error(err));
+        .then(data => {
+            if (data && data.success) {
+                // Redirect on success
+                window.location.href = "/pages/admin-panel.php#time_off#global_pto";
+            } else {
+                console.error("Error saving PTO:", data);
+                alert("Something went wrong while adding PTO.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Something went wrong while adding PTO.");
+        });
     });
 });
