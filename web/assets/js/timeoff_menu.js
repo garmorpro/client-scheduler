@@ -3,18 +3,18 @@
 
     let activeInput = null;
 
-    function renderTimeOff(td, timeOffValue, entryId) {
+    function renderTimeOff(td, timeOffValue, timeoffId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
 
         let existingBadge = td.querySelector('.timeoff-corner');
         if (existingBadge) {
             existingBadge.textContent = timeOffValue;
-            existingBadge.dataset.entryId = entryId;
+            existingBadge.dataset.timeoffId = timeoffId;
         } else {
             const div = document.createElement('div');
             div.className = 'timeoff-corner';
-            div.dataset.entryId = entryId;
+            div.dataset.timeoffId = timeoffId;
             div.textContent = timeOffValue;
             td.appendChild(div);
         }
@@ -27,7 +27,7 @@
             td.appendChild(plusIcon);
         }
 
-        console.log('Rendered badge:', { td, timeOffValue, entryId });
+        console.log('Rendered badge:', { td, timeOffValue, timeoffId });
     }
 
     function markGlobalTimeOff(td) {
@@ -48,30 +48,28 @@
         }
     }
 
-    async function getTimeOffEntryWithHours(td) {
+    async function getTimeOffEntry(td) {
         const user_id = td.dataset.userId;
         const week_start = td.dataset.weekStart;
-        
+
         const response = await safeFetchJSON('get_timeoff_entry.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, week_start })
+            body: JSON.stringify({ user_id, week_start, is_global_timeoff: 0 })
         });
-    
-        console.log('Fetched time off entry with hours:', { td, response });
-    
+
+        console.log('Fetched individual time off:', { td, response });
+
         if (response.ok && response.data?.success) {
             return {
-                entryId: response.data.entry_id || null,
-                // Only return hours if entry exists
-                assigned_hours: response.data.entry_id ? parseFloat(response.data.assigned_hours) : 0
+                timeoffId: response.data.timeoff_id || null,
+                assigned_hours: response.data.assigned_hours ? parseFloat(response.data.assigned_hours) : 0
             };
         } else {
-            return { entryId: null, assigned_hours: 0 };
+            return { timeoffId: null, assigned_hours: 0 };
         }
     }
-
 
     async function getGlobalTimeOffHours(week_start) {
         const response = await safeFetchJSON('check_global_timeoff.php', {
@@ -102,25 +100,18 @@
     async function handleTimeOffInput(td) {
         if (activeInput) activeInput.remove();
 
-        const { entryId, assigned_hours } = await getTimeOffEntryWithHours(td);
+        const { timeoffId, assigned_hours } = await getTimeOffEntry(td);
         const globalHours = await getGlobalTimeOffHours(td.dataset.weekStart) || 0;
-
-        // Show individual (personal) hours in the input only if the entry exists
-        const totalHoursPlusGlobal = entryId ? (assigned_hours > 0 ? assigned_hours : '') : '';
-
-        const personalHours = entryId ? assigned_hours : '';
-
-        console.log('Opening input:', { entryId, assigned_hours, globalHours, totalHoursPlusGlobal });
+        const personalHours = timeoffId ? assigned_hours : '';
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = personalHours; // <--- This is where the DB value shows
+        input.value = personalHours;
         input.className = 'form-control form-control-sm';
         input.style.width = '100%';
         td.appendChild(input);
         input.focus();
         activeInput = input;
-
 
         input.addEventListener('keydown', async e => {
             if (e.key === 'Escape') {
@@ -135,14 +126,13 @@
 
             try {
                 const personalValue = parseFloat(val);
-                console.log('Saving personal time off value:', personalValue);
 
-                if (personalValue === 0 && entryId) {
+                if (personalValue === 0 && timeoffId) {
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ entry_id: entryId })
+                        body: JSON.stringify({ timeoff_id: timeoffId })
                     });
 
                     if (del.ok && del.data?.success) {
@@ -160,17 +150,16 @@
                     }
                 } else {
                     const totalHours = personalValue + globalHours;
-                    console.log('Total hours including global PTO (personal + global):', totalHours);
 
-                    if (entryId) {
+                    if (timeoffId) {
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ entry_id: entryId, assigned_hours: personalValue })
+                            body: JSON.stringify({ timeoff_id: timeoffId, assigned_hours: personalValue })
                         });
                         if (update.ok && update.data?.success) {
-                            renderTimeOff(td, totalHours, entryId);
+                            renderTimeOff(td, totalHours, timeoffId);
                         } else {
                             alert('Failed to update time off.');
                         }
@@ -183,11 +172,11 @@
                                 user_id: td.dataset.userId,
                                 week_start: td.dataset.weekStart,
                                 assigned_hours: personalValue,
-                                is_timeoff: 1
+                                is_global_timeoff: 0
                             })
                         });
-                        if (add.ok && add.data?.success && add.data.entry_id) {
-                            renderTimeOff(td, totalHours, add.data.entry_id);
+                        if (add.ok && add.data?.success && add.data.timeoff_id) {
+                            renderTimeOff(td, totalHours, add.data.timeoff_id);
                         } else {
                             alert('Failed to add time off.');
                         }
