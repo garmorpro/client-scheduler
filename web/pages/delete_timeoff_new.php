@@ -21,7 +21,7 @@ if (empty($data['timeoff_id'])) {
 $timeoff_id = intval($data['timeoff_id']);
 
 // Prepare and execute delete
-$stmt = $conn->prepare("DELETE FROM time_off WHERE time_off_id = ?");
+$stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ?");
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
