@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div id="collapse-${idx}" class="collapse">
                     <div class="card-body">
                         ${group.map(entry => `
-                            <form class="entry-form mb-3" data-id="${entry.id}">
+                            <form class="entry-form mb-3" data-id="${entry.timeoff_id}">
                                 <div class="row g-2 align-items-center">
                                     <div class="col-md-4">
                                         <label class="form-label mb-0 small">Week Start</label>

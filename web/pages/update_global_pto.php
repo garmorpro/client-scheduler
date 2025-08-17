@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Use timeoff_id
 $id = intval($_GET['id'] ?? 0);
 $week_start = $_POST['week_start'] ?? '';
 $assigned_hours = intval($_POST['assigned_hours'] ?? 0);
