@@ -32,31 +32,37 @@ header("Content-Type: application/json");
 $input = json_decode(file_get_contents("php://input"), true);
 if (!$input || !isset($input["entries"])) {
     http_response_code(400);
-    echo json_encode(["error" => "Invalid input"]);
+    echo json_encode(["success" => false, "error" => "Invalid input"]);
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff) VALUES (?, ?, ?, ?)");
+// Always insert as global PTO (is_global_timeoff = 1)
+$stmt = $conn->prepare("
+    INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff)
+    VALUES (?, ?, ?, 1)
+");
 
 $results = [];
 foreach ($input["entries"] as $entry) {
-    $note = $entry["timeoff_note"];
+    $note = $entry["timeoff_note"] ?? '';
     $week_start = $entry["week_start"];
     $assigned_hours = intval($entry["assigned_hours"]);
-    $is_global = intval($entry["is_global_timeoff"]);
 
-    $stmt->bind_param("ssii", $note, $week_start, $assigned_hours, $is_global);
+    $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
     $ok = $stmt->execute();
 
     $results[] = [
-        "entry" => $entry,
+        "entry"   => $entry,
         "success" => $ok,
-        "id" => $ok ? $stmt->insert_id : null,
-        "error" => $ok ? null : $stmt->error
+        "id"      => $ok ? $stmt->insert_id : null,
+        "error"   => $ok ? null : $stmt->error
     ];
 }
 
 $stmt->close();
 $conn->close();
 
-echo json_encode(["results" => $results]);
+echo json_encode([
+    "success" => true,
+    "results" => $results
+]);
