@@ -355,7 +355,7 @@
                     closeActiveInputs();
 
 
-                    
+
                     try {
     const resp = await fetch('update_entry_new.php', {
         method: 'POST',
@@ -380,7 +380,7 @@
             switch ((status || '').toLowerCase()) {
                 case 'confirmed': return 'confirmed';
                 case 'pending': return 'pending';
-                case 'not confirmed':
+                // case 'not confirmed':
                 case 'not_confirmed': return 'not-confirmed';
                 default: return 'confirmed'; // fallback
             }
