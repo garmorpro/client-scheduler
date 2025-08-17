@@ -354,32 +354,51 @@
 
                     closeActiveInputs();
 
-                    try {
-                        const resp = await fetch('update_entry_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                entry_id: badge.dataset.entryId,
-                                client_name: newName,
-                                assigned_hours: newHours
-                            })
-                        });
 
-                        const data = await resp.json();
-                        if (resp.ok && data.success) {
-                            badge.textContent = `${newName} (${newHours})`;
-                            badge.className = `badge badge-status badge-${getClientStatus(newName)} mt-1 draggable-badge`;
-                        } else {
-                            alert('Failed to update entry: ' + (data.error || 'Server error'));
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        alert('Network error while updating entry.');
-                    }
+                    
+                    try {
+    const resp = await fetch('update_entry_new.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            entry_id: badge.dataset.entryId,
+            client_name: newName,
+            assigned_hours: newHours
+        })
+    });
+
+    const data = await resp.json();
+    if (resp.ok && data.success) {
+        badge.textContent = `${newName} (${newHours})`;
+
+        // Map status to valid CSS class
+        function getBadgeClass(status) {
+            switch ((status || '').toLowerCase()) {
+                case 'confirmed': return 'confirmed';
+                case 'pending': return 'pending';
+                case 'not confirmed':
+                case 'not_confirmed': return 'not-confirmed';
+                default: return 'confirmed'; // fallback
+            }
+        }
+
+        // Use the switch to generate the correct class
+        const statusClass = getBadgeClass(getClientStatus(newName));
+        badge.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
+    } else {
+        alert('Failed to update entry: ' + (data.error || 'Server error'));
+    }
+} catch (err) {
+    console.error(err);
+    alert('Network error while updating entry.');
+}
+
+
+
                 } else if (ev.key === 'Escape') {
                     closeActiveInputs();
                 }
