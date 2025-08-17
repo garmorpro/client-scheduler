@@ -122,12 +122,13 @@
             if (e.key !== 'Enter') return;
 
             let val = input.value.trim();
-            if (!val) return;
+            if (!val) val = '0'; // treat empty as 0
+
+            const personalValue = parseFloat(val);
 
             try {
-                const personalValue = parseFloat(val);
-
                 if (personalValue === 0 && timeoffId) {
+                    // DELETE existing time off
                     const del = await safeFetchJSON('delete_timeoff_new.php', {
                         method: 'POST',
                         credentials: 'same-origin',
@@ -139,6 +140,7 @@
                         const badge = td.querySelector('.timeoff-corner');
                         if (badge) badge.remove();
                         await checkGlobalTimeOff(td);
+
                         if (!td.querySelector('.bi-plus')) {
                             const plusIcon = document.createElement('i');
                             plusIcon.className = 'bi bi-plus';
@@ -148,10 +150,11 @@
                     } else {
                         alert('Failed to delete time off.');
                     }
-                } else {
+                } else if (personalValue > 0) {
                     const totalHours = personalValue + globalHours;
 
                     if (timeoffId) {
+                        // UPDATE existing entry
                         const update = await safeFetchJSON('update_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
@@ -164,6 +167,7 @@
                             alert('Failed to update time off.');
                         }
                     } else {
+                        // ADD new entry
                         const add = await safeFetchJSON('add_timeoff_new.php', {
                             method: 'POST',
                             credentials: 'same-origin',
