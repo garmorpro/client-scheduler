@@ -229,15 +229,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         <thead class="table-light">
             <tr>
                 <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-                <?php foreach ($mondays as $idx => $monday):
-                    $weekKey = date('Y-m-d', $monday);
-                    $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
-                    $isGlobalWeek = $globalHours !== null;
-                    $isCurrentWeek = ($idx === $currentWeekIndex);
-                    $thClasses = 'align-middle week';
-                    if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
-                    if ($isCurrentWeek) $thClasses .= ' highlight-today';
-                    if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
+                    <?php foreach ($mondays as $idx => $monday):
+                        $weekKey = date('Y-m-d', $monday);
+                        $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
+                        $isGlobalWeek = $globalHours !== null;
+                        $isCurrentWeek = ($idx === $currentWeekIndex);
+                        $thClasses = 'align-middle week';
+                        if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
+                        if ($isCurrentWeek) $thClasses .= ' highlight-today';
+                        if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
                     ?>
                     <th class="<?php echo $thClasses; ?>" style="position: relative;">
                         <?php echo date('M j', $monday); ?><br>
@@ -246,7 +246,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             <span class="timeoff-corner"><?php echo $globalHours; ?></span>
                         <?php endif; ?>
                     </th>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
             </tr>
         </thead>
 
