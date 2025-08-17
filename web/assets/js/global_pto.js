@@ -9,22 +9,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const summaryText = document.getElementById("summaryText");
 
     const pad2 = n => String(n).padStart(2, "0");
-    function ymd(date) { 
-        return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}`;
-    }
-    function parseLocalYMD(s) { 
-        const [Y,M,D] = s.split("-").map(Number);
-        return new Date(Y, M-1, D);
-    }
+    function ymd(date) { return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}`; }
+    function parseLocalYMD(s) { const [Y,M,D] = s.split("-").map(Number); return new Date(Y, M-1, D); }
 
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
         while (date.getDay() !== 1) date.setDate(date.getDate() + 1);
-        while (date.getMonth() === month - 1) {
-            mondays.push(new Date(date));
-            date.setDate(date.getDate() + 7);
-        }
+        while (date.getMonth() === month - 1) { mondays.push(new Date(date)); date.setDate(date.getDate() + 7); }
         return mondays;
     }
 
@@ -52,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function() {
         dayInputsDiv.innerHTML = "";
         const startMonday = parseLocalYMD(start);
         const endMonday = parseLocalYMD(end);
-
         let currentWeek = new Date(startMonday);
 
         while (currentWeek <= endMonday) {
@@ -96,9 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         dayContainer.style.display = "flex";
-        document.querySelectorAll(".day-hour").forEach(input => {
-            input.addEventListener("input", updateTotals);
-        });
+        document.querySelectorAll(".day-hour").forEach(input => input.addEventListener("input", updateTotals));
         updateTotals();
 
         function updateTotals() {
@@ -106,9 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const weekRows = document.querySelectorAll(".week-row");
             weekRows.forEach(row => {
                 let weekSum = 0;
-                row.querySelectorAll(".day-hour").forEach(input => {
-                    weekSum += parseInt(input.value) || 0;
-                });
+                row.querySelectorAll(".day-hour").forEach(input => { weekSum += parseInt(input.value) || 0; });
                 row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
                 totalHours += weekSum;
             });
@@ -116,38 +103,25 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    startWeek.addEventListener("change", () => {
-        if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
-    });
-    endWeek.addEventListener("change", () => {
-        if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
-    });
+    startWeek.addEventListener("change", () => { if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value); });
+    endWeek.addEventListener("change", () => { if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value); });
 
-    // ---- FORM SUBMIT ----
     const form = document.getElementById("addGlobalPTOForm");
     form.addEventListener("submit", function(e) {
         e.preventDefault();
+
         const note = document.getElementById("pto_note").value.trim();
         const entries = [];
 
         document.querySelectorAll(".week-row").forEach(row => {
             let weekSum = 0;
-            row.querySelectorAll(".day-hour").forEach(input => {
-                weekSum += parseInt(input.value) || 0;
-            });
+            row.querySelectorAll(".day-hour").forEach(input => weekSum += parseInt(input.value) || 0);
             if (weekSum > 0) {
-                entries.push({
-                    timeoff_note: note,
-                    week_start: row.dataset.weekStart,
-                    assigned_hours: weekSum,
-                    is_global_timeoff: 1
-                });
+                entries.push({ timeoff_note: note, week_start: row.dataset.weekStart, assigned_hours: weekSum, is_global_timeoff: 1 });
             }
         });
 
-        if (entries.length === 0) {
-            return; // quietly ignore, no alert
-        }
+        if (entries.length === 0) return;
 
         fetch("add_global_pto.php", {
             method: "POST",
@@ -156,15 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success) {
-                // Redirect instead of alert
-                window.location.href = "/pages/admin-panel.php#time_off#global_pto";
-            } else {
-                console.error("Save error:", data);
-            }
+            // Redirect regardless of per-entry success
+            window.location.href = "/pages/admin-panel.php#time_off#global_pto";
         })
-        .catch(err => {
-            console.error("Server error:", err);
-        });
+        .catch(err => console.error(err));
     });
 });
