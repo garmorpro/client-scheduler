@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             form.querySelector(".delete-entry").addEventListener("click", async function () {
                 const id = form.dataset.id;
-                if (!confirm(`Are you sure you want to delete entry ${id}?`)) return;
+                // if (!confirm(`Are you sure you want to delete entry ${id}?`)) return;
 
                 try {
                     const res = await fetch(`delete_global_pto.php?id=${id}`, { method: "POST" });
