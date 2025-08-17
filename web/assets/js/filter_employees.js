@@ -28,7 +28,13 @@ document.querySelectorAll('.role-checkbox').forEach(cb => {
 });
 
 // Update table whenever the search input changes
-document.getElementById('searchInput').addEventListener('keyup', filterEmployees);
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('keyup', filterEmployees);
+
+// Handle the built-in "×" clear button in type="search" inputs
+searchInput.addEventListener('search', () => {
+  filterEmployees();
+});
 
 // Initial filter on page load
 document.addEventListener('DOMContentLoaded', () => {
