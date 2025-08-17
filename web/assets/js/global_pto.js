@@ -140,7 +140,14 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(data => {
             if (data && data.success) {
-                // Redirect on success
+                // Close modal first (Bootstrap example)
+                const modalEl = document.getElementById("addGlobalPTO");
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                }
+
+                // Redirect after modal closes
                 window.location.href = "/pages/admin-panel.php#time_off#global_pto";
             } else {
                 console.error("Error saving PTO:", data);
