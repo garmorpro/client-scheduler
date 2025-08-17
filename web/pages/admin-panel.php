@@ -859,17 +859,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                       </div>
                     </div>
 
-                    <!-- Global PTO Settings -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <div>
-                        <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Global PTO</p>
-                        <p class="mb-0" style="font-size: 14px;">View and manage company-wide paid time off</p>
-                      </div>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#globalPTOModal" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
-                        Configure
-                      </a>
-                    </div>
-
                     <!-- Email Notifications -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <div>
@@ -1637,66 +1626,6 @@ if ($result && mysqli_num_rows($result) > 0) {
       </div>
     </div>
 <!-- end Email Notification Modal -->
-
-<!-- Global PTO Modal -->
-  <!-- <div class="modal fade" id="globalPTOModal" tabindex="-1" aria-labelledby="globalPTOModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content border-0 shadow-sm">
-
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="globalPTOModalLabel">
-          <i class="bi bi-calendar-week me-2"></i>Global PTO
-          <br>
-          <span class="text-muted" style="font-size: 12px; font-weight: 400;">View and manage company-wide paid time off</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body"> -->
-
-        <!-- Add New Global PTO Section -->
-        <!-- <div class="p-3 mb-4 bg-light border" style="border-radius: 4px;">
-          <form id="addGlobalPTOForm" method="POST" class="d-flex flex-column gap-2">
-            <div class="row g-2">
-              <div class="col-md-4">
-                <label class="form-label small fw-semibold">Week Start (Monday)</label>
-                <input type="date" name="week_start" class="form-control form-control-sm" required 
-                       oninput="if(new Date(this.value).getDay() !== 0) { alert('Please select a Monday'); this.value=''; }">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label small fw-semibold">Assigned Hours</label>
-                <input type="number" name="assigned_hours" class="form-control form-control-sm" placeholder="Hours" min="0" required>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label small fw-semibold">Reason</label>
-                <input type="text" name="timeoff_note" class="form-control form-control-sm" placeholder="Reason">
-              </div>
-            </div>
-
-            <button type="submit" class="btn btn-dark btn-sm mt-3 align-self-start">
-              <i class="bi bi-plus-circle me-1"></i>Add PTO
-            </button>
-          </form>
-        </div> -->
-
-        <!-- Current Global PTO Entries -->
-        <!-- <div class="accordion d-flex flex-column gap-2" id="ptoAccordion">
-          <?php //include 'get_global_pto.php'; ?>
-        </div>
-
-      </div>
-
-      <div class="modal-footer border-0">
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!-- <script src="../assets/js/global_pto_functions.js?v=<?php //echo time(); ?>"></script> -->
-
-
-
 
 <!-- Backup Configuration Modal -->
     <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
