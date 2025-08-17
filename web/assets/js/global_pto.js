@@ -120,43 +120,29 @@ document.addEventListener("DOMContentLoaded", function() {
                 entries.push({
                     timeoff_note: note,
                     week_start: row.dataset.weekStart,
-                    assigned_hours: weekSum,
-                    is_global_timeoff: 1
+                    assigned_hours: weekSum
                 });
             }
         });
 
         if (entries.length === 0) return;
 
-        fetch("add_global_pto.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ entries })
-        })
-        .then(async res => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            const data = await res.json();
-            return data;
-        })
-        .then(data => {
-            if (data && data.success) {
-                // Close modal first (Bootstrap example)
-                const modalEl = document.getElementById("addGlobalPTO");
-                if (modalEl) {
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    if (modal) modal.hide();
-                }
+        // Clear previous hidden inputs
+        document.querySelectorAll(".hidden-entry").forEach(el => el.remove());
 
-                // Redirect after modal closes
-                window.location.href = "/pages/admin-panel.php#time_off#global_pto";
-            } else {
-                console.error("Error saving PTO:", data);
-                alert("Something went wrong while adding PTO.");
+        // Add entries as hidden inputs
+        entries.forEach((entry, i) => {
+            for (const key in entry) {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = `entries[${i}][${key}]`;
+                input.value = entry[key];
+                input.className = "hidden-entry";
+                form.appendChild(input);
             }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Something went wrong while adding PTO.");
         });
+
+        // Submit form normally so PHP handles redirect
+        form.submit();
     });
 });

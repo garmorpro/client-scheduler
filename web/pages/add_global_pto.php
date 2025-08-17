@@ -1,59 +1,45 @@
 <?php
 require '../includes/db.php';
 
-header("Content-Type: application/json");
+// Only accept POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die("Invalid request");
+}
 
-// Read raw input
-$raw = file_get_contents("php://input");
-$input = json_decode($raw, true);
-
-// If no entries, just return empty results
-if (!isset($input['entries']) || !is_array($input['entries']) || count($input['entries']) === 0) {
-    echo json_encode(["success" => true, "results" => []]);
+// Check if entries exist
+if (!isset($_POST['entries']) || !is_array($_POST['entries']) || count($_POST['entries']) === 0) {
+    header("Location: /pages/admin-panel.php#time_off#global_pto");
     exit;
 }
 
-// Prepare insert (always global PTO)
+$results = [];
 $stmt = $conn->prepare("
     INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff)
     VALUES (?, ?, ?, 1)
 ");
 
 if (!$stmt) {
-    echo json_encode(["success" => false, "error" => $conn->error]);
-    exit;
+    die("DB prepare failed: " . $conn->error);
 }
 
-$results = [];
-foreach ($input['entries'] as $entry) {
-    $note           = $entry['timeoff_note'] ?? '';
-    $week_start     = $entry['week_start'] ?? '';
+// Insert each entry
+foreach ($_POST['entries'] as $entry) {
+    $note = $entry['timeoff_note'] ?? '';
+    $week_start = $entry['week_start'] ?? '';
     $assigned_hours = isset($entry['assigned_hours']) ? intval($entry['assigned_hours']) : 0;
 
-    // Only insert valid entries
     if (!empty($week_start) && $assigned_hours > 0) {
         $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
         $stmt->execute();
-        $results[] = [
-            "entry"   => $entry,
-            "success" => true,
-            "id"      => $stmt->insert_id,
-            "error"   => null
-        ];
+        $results[] = true;
     } else {
-        $results[] = [
-            "entry"   => $entry,
-            "success" => false,
-            "id"      => null,
-            "error"   => "Invalid week_start or assigned_hours"
-        ];
+        $results[] = false;
     }
 }
 
 $stmt->close();
 $conn->close();
 
-echo json_encode([
-    "success" => true,  // ALWAYS true for the whole request
-    "results" => $results
-]);
+// After processing, redirect back to admin panel
+header("Location: admin-panel.php#time_off#global_pto");
+exit;
