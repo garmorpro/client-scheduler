@@ -1,62 +1,60 @@
 <?php
-require_once '../includes/db.php';
-session_start();
+require '../includes/db.php';
 
-header('Content-Type: application/json');
+header("Content-Type: application/json");
 
-// Only allow POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(["success" => false, "error" => "Invalid request method"]);
-    exit;
-}
+// --- Read raw JSON input ---
+$raw = file_get_contents("php://input");
+$input = json_decode($raw, true);
 
 // Validate input
-if (empty($_POST['date']) || empty($_POST['hours'])) {
-    echo json_encode(["success" => false, "error" => "Missing date or hours"]);
+if (!is_array($input) || !isset($input["entries"]) || !is_array($input["entries"]) || count($input["entries"]) === 0) {
+    echo json_encode(["success" => false, "error" => "No entries provided"]);
     exit;
 }
 
-$date  = $_POST['date'];
-$hours = (float) $_POST['hours'];
+// Prepare insert (always global PTO)
+$stmt = $conn->prepare("
+    INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff)
+    VALUES (?, ?, ?, 1)
+");
 
-// Insert into DB
-$stmt = $conn->prepare("INSERT INTO global_pto (pto_date, hours) VALUES (?, ?)");
 if (!$stmt) {
     echo json_encode(["success" => false, "error" => $conn->error]);
     exit;
 }
-$stmt->bind_param("sd", $date, $hours);
-$ok = $stmt->execute();
 
-if ($ok) {
-    $entryId = $stmt->insert_id;
+$results = [];
+foreach ($input["entries"] as $entry) {
+    $note          = $entry["timeoff_note"] ?? '';
+    $week_start    = $entry["week_start"] ?? '';
+    $assigned_hours = isset($entry["assigned_hours"]) ? intval($entry["assigned_hours"]) : 0;
 
-    // Fetch the inserted row
-    $stmt2 = $conn->prepare("SELECT id, pto_date, hours FROM global_pto WHERE id = ?");
-    $stmt2->bind_param("i", $entryId);
-    $stmt2->execute();
-    $result = $stmt2->get_result();
-    $entry = $result->fetch_assoc();
-
-    if ($entry) {
-        echo json_encode([
-            "success" => true,
-            "entry"   => $entry
-        ]);
-    } else {
-        echo json_encode([
-            "success" => true,
-            "message" => "Entry added, but could not fetch inserted row.",
-            "entryId" => $entryId
-        ]);
+    if (empty($week_start) || $assigned_hours <= 0) {
+        $results[] = [
+            "entry"   => $entry,
+            "success" => false,
+            "id"      => null,
+            "error"   => "Missing or invalid week_start/assigned_hours"
+        ];
+        continue;
     }
-    $stmt2->close();
-} else {
-    echo json_encode([
-        "success" => false,
-        "error"   => $stmt->error
-    ]);
+
+    $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
+    $ok = $stmt->execute();
+
+    $results[] = [
+        "entry"   => $entry,
+        "success" => $ok,
+        "id"      => $ok ? $stmt->insert_id : null,
+        "error"   => $ok ? null : $stmt->error
+    ];
 }
 
 $stmt->close();
 $conn->close();
+
+echo json_encode([
+    "success" => true,
+    "results" => $results
+]);
