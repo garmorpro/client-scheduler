@@ -182,7 +182,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- upper search and filter -->
         <div class="bg-white border rounded p-4 mb-4 d-flex justify-content-between align-items-center">
             <!-- Search bar on left -->
-            <div class="flex-grow-1 me-3">
+            <div class="flex-grow-1 w-75 me-3">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
             </div>
 
@@ -351,25 +351,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
-    <!-- Custom delete menu -->
-        <!-- <div id="badgeContextMenu" style="position:absolute; display:none; z-index:9999; background:#fff; border:1px solid #ccc; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
-            <ul style="list-style:none; margin:0; padding:5px 0;">
-                <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
-            </ul>
-        </div> -->
-    <!-- end custom delete menu -->
 
-        <script>
-  
-</script>
-
-    <?php if ($isAdmin): ?>
-        <?php //include_once '../includes/modals/manage_entries_prompt.php'; ?>
-        <?php //include_once '../includes/modals/manage_entries.php'; ?>
-        <?php //include_once '../includes/modals/editEntryModal.php'; ?>
-        <?php //include_once '../includes/modals/add_entry.php'; ?>
-        <?php //include_once '../includes/modals/add_engagement.php'; ?>
-    <?php endif; ?>
 
     <?php //include_once '../includes/modals/engagement_details.php'; ?>
     <?php include_once '../includes/modals/user_details.php'; ?>
