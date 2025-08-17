@@ -32,8 +32,12 @@ $employees = [];
 $userQuery = "
     SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role 
     FROM users 
-    WHERE status = 'active' AND role IN ('staff', 'senior')
-    ORDER BY CASE WHEN role = 'senior' THEN 1 WHEN role = 'staff' THEN 2 END, first_name ASC
+    WHERE status = 'active' AND role IN ('staff', 'senior', 'manager')
+    ORDER BY CASE 
+                WHEN role = 'senior' THEN 1 
+                WHEN role = 'staff' THEN 2 
+                WHEN role = 'manager' THEN 3 
+             END, first_name ASC
 ";
 $userResult = $conn->query($userQuery);
 if ($userResult) {
@@ -224,24 +228,68 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         </div>
     </div>
 
-    <!-- upper search and week range selector -->
-        <div class="bg-white border rounded p-4 mb-4">
-            <form id="filterForm" method="get" class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
-                </div>
-                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
-                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
-                       class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
-        
-                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
-        
-                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
-                       class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
-                </div> -->
-            </form>
+    <!-- upper search and filter -->
+        <div class="bg-white border rounded p-4 mb-4 d-flex justify-content-between align-items-center">
+            <!-- Search bar on left -->
+            <div class="flex-grow-1 me-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
+            </div>
+
+            <!-- Role filter dropdown on right -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter Roles
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="roleFilterDropdown" style="min-width: 200px;">
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input role-checkbox" type="checkbox" value="staff" id="roleStaff" checked>
+                            <label class="form-check-label" for="roleStaff">Staff</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input role-checkbox" type="checkbox" value="senior" id="roleSenior" checked>
+                            <label class="form-check-label" for="roleSenior">Senior</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input role-checkbox" type="checkbox" value="manager" id="roleManager">
+                            <label class="form-check-label" for="roleManager">Manager</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     <!-- end upper search and week range selector -->
+
+    <script>
+    // Filter function for search input
+    function filterEmployees() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#employeesTableBody tr');
+        const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value);
+
+        rows.forEach(row => {
+            const nameCell = row.querySelector('.employee-name').textContent.toLowerCase();
+            const role = row.dataset.role; // we'll add data-role to each tr
+            const matchesSearch = nameCell.includes(searchTerm);
+            const matchesRole = activeRoles.includes(role);
+
+            row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
+        });
+    }
+
+    // Update table whenever a role checkbox changes
+    document.querySelectorAll('.role-checkbox').forEach(cb => {
+        cb.addEventListener('change', filterEmployees);
+    });
+
+    // Initial filter to apply default checked roles
+    filterEmployees();
+</script>
+
 
     <!-- Master Schedule table -->
         <?php
