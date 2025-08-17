@@ -127,10 +127,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (entries.length === 0) return;
 
-        // Clear previous hidden inputs
+        // Remove old hidden inputs
         document.querySelectorAll(".hidden-entry").forEach(el => el.remove());
 
-        // Add entries as hidden inputs
+        // Create hidden inputs properly for PHP
         entries.forEach((entry, i) => {
             for (const key in entry) {
                 const input = document.createElement("input");
@@ -142,7 +142,9 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        // Submit form normally so PHP handles redirect
+        // Submit normally
+        form.method = "POST";
+        form.action = "add_global_pto.php";
         form.submit();
     });
 });
