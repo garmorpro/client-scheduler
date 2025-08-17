@@ -351,38 +351,16 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
-    <!-- Custom context menu -->
-        <div id="badgeContextMenu" style="position:absolute; display:none; z-index:9999; background:#fff; border:1px solid #ccc; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+    <!-- Custom delete menu -->
+        <!-- <div id="badgeContextMenu" style="position:absolute; display:none; z-index:9999; background:#fff; border:1px solid #ccc; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
             <ul style="list-style:none; margin:0; padding:5px 0;">
                 <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
             </ul>
-        </div>
+        </div> -->
+    <!-- end custom delete menu -->
 
         <script>
-  // Filter function for search input
-  function filterEmployees() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#employeesTableBody tr');
-      const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value.toLowerCase());
-
-      rows.forEach(row => {
-          const nameCell = row.querySelector('.employee-name').textContent.toLowerCase();
-          const role = row.dataset.role.toLowerCase();
-          const matchesSearch = nameCell.includes(searchTerm);
-          const matchesRole = activeRoles.includes(role);
-
-          row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
-      });
-  }
-
-  // Update table whenever a role checkbox changes
-  document.querySelectorAll('.role-checkbox').forEach(cb => {
-      cb.addEventListener('change', filterEmployees);
-  });
-
-  // Initial filter to hide unchecked roles
-  document.getElementById('roleManager').checked = false;
-  filterEmployees(); // <-- call this AFTER table exists
+  
 </script>
 
     <?php if ($isAdmin): ?>
@@ -402,6 +380,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/delete_custom_menu.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/timeoff_menu.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/filter_role.js?v=<?php echo time(); ?>"></script>
     
     <!-- <script src="../assets/js/open_modal.js?v=<?php echo time(); ?>"></script> -->
     <!-- <script src="../assets/js/add_entry_modal.js?v=<?php echo time(); ?>"></script> -->
