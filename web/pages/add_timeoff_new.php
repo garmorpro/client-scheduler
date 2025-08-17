@@ -36,8 +36,8 @@ $sql = "
 ";
 
 if (mysqli_query($conn, $sql)) {
-    $entry_id = mysqli_insert_id($conn);
-    echo json_encode(['success' => true, 'entry_id' => $entry_id]);
+    $timeoff_id = mysqli_insert_id($conn);
+    echo json_encode(['success' => true, 'timeoff_id' => $timeoff_id]);
 } else {
     echo json_encode(['success' => false, 'error' => mysqli_error($conn)]);
 }
