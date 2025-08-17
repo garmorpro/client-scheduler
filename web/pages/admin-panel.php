@@ -1693,7 +1693,7 @@ if ($result && mysqli_num_rows($result) > 0) {
   </div>
 </div>
 
-<script src="../assets/js/global_pto_functions.js?v=<?php echo time(); ?>"></script>
+<!-- <script src="../assets/js/global_pto_functions.js?v=<?php //echo time(); ?>"></script> -->
 
 
 
