@@ -81,32 +81,49 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // Individual Time Off
-$individualTimeOffQuery = "
-    SELECT timeoff_id, user_id, week_start, assigned_hours, timeoff_note
-    FROM time_off 
-    WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?
-";
-$stmtTimeOff = $conn->prepare($individualTimeOffQuery);
-$stmtTimeOff->bind_param('ss', $startDate, $endDate);
-$stmtTimeOff->execute();
-$resultTimeOff = $stmtTimeOff->get_result();
+// $individualTimeOffQuery = "
+//     SELECT timeoff_id, user_id, week_start, assigned_hours, timeoff_note
+//     FROM time_off 
+//     WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?
+// ";
+// $stmtTimeOff = $conn->prepare($individualTimeOffQuery);
+// $stmtTimeOff->bind_param('ss', $startDate, $endDate);
+// $stmtTimeOff->execute();
+// $resultTimeOff = $stmtTimeOff->get_result();
 
-$individualTimeOff = [];
-while ($row = $resultTimeOff->fetch_assoc()) {
-    $individualTimeOff[$row['user_id']][$row['week_start']][] = [
-        'timeoff_id' => $row['timeoff_id'],
-        'assigned_hours' => $row['assigned_hours'],
-        'timeoff_note' => $row['timeoff_note']
-    ];
-}
-$stmtTimeOff->close();
+// $individualTimeOff = [];
+// while ($row = $resultTimeOff->fetch_assoc()) {
+//     $individualTimeOff[$row['user_id']][$row['week_start']][] = [
+//         'timeoff_id' => $row['timeoff_id'],
+//         'assigned_hours' => $row['assigned_hours'],
+//         'timeoff_note' => $row['timeoff_note']
+//     ];
+// }
+// $stmtTimeOff->close();
 
-// Global Time Off
-$globalTimeOffQuery = "
-    SELECT week_start, assigned_hours, timeoff_note
-    FROM time_off
-    WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?
-";
+// // Global Time Off
+// $globalTimeOffQuery = "
+//     SELECT week_start, assigned_hours, timeoff_note
+//     FROM time_off
+//     WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?
+// ";
+// $stmt2 = $conn->prepare($globalTimeOffQuery);
+// $stmt2->bind_param('ss', $startDate, $endDate);
+// $stmt2->execute();
+// $result2 = $stmt2->get_result();
+
+// $globalTimeOff = [];
+// while ($row = $result2->fetch_assoc()) {
+//     $globalTimeOff[$row['week_start']] = [
+//         'assigned_hours' => $row['assigned_hours'],
+//         'note' => $row['timeoff_note']
+//     ];
+// }
+// $stmt2->close();
+
+
+// FETCH GLOBAL TIME OFF
+$globalTimeOffQuery = "SELECT week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?";
 $stmt2 = $conn->prepare($globalTimeOffQuery);
 $stmt2->bind_param('ss', $startDate, $endDate);
 $stmt2->execute();
@@ -115,11 +132,27 @@ $result2 = $stmt2->get_result();
 $globalTimeOff = [];
 while ($row = $result2->fetch_assoc()) {
     $globalTimeOff[$row['week_start']] = [
-        'assigned_hours' => $row['assigned_hours'],
-        'note' => $row['timeoff_note']
+        'assigned_hours' => $row['assigned_hours']
     ];
 }
 $stmt2->close();
+
+// FETCH INDIVIDUAL TIME OFF
+$individualTimeOffQuery = "SELECT user_id, week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?";
+$stmt3 = $conn->prepare($individualTimeOffQuery);
+$stmt3->bind_param('ss', $startDate, $endDate);
+$stmt3->execute();
+$result3 = $stmt3->get_result();
+
+$individualTimeOff = [];
+while ($row = $result3->fetch_assoc()) {
+    $individualTimeOff[$row['user_id']][$row['week_start']][] = [
+        'assigned_hours' => $row['assigned_hours']
+    ];
+}
+$stmt3->close();
+
+
 
 // Dropdown query remains the same
 $dropdownquery = "
@@ -225,98 +258,97 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         ?>
     <!-- Master Schedule table -->
     <div class="table-responsive" style="overflow-x: auto;">
-    <table class="table table-bordered align-middle text-center">
-        <thead class="table-light">
-            <tr>
-                <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-                    <?php foreach ($mondays as $idx => $monday):
-                        $weekKey = date('Y-m-d', $monday);
-                        $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
-                        $isGlobalWeek = $globalHours !== null;
-                        $isCurrentWeek = ($idx === $currentWeekIndex);
-                        $thClasses = 'align-middle week';
-                        if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
-                        if ($isCurrentWeek) $thClasses .= ' highlight-today';
-                        if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
-                    ?>
-                    <th class="<?php echo $thClasses; ?>" style="position: relative;">
-                        <?php echo date('M j', $monday); ?><br>
-                        <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
-                        <?php if ($isGlobalWeek): ?>
-                            <span class="timeoff-corner"><?php echo $globalHours; ?></span>
-                        <?php endif; ?>
-                    </th>
-                    <?php endforeach; ?>
-            </tr>
-        </thead>
-
-        <tbody id="employeesTableBody">
-        <?php foreach ($employees as $userId => $employee):
-            $fullName = htmlspecialchars($employee['full_name']);
-            $role = htmlspecialchars($employee['role']);
-        ?>
+<table class="table table-bordered align-middle text-center">
+    <thead class="table-light">
         <tr>
-            <td class="text-start employee-name">
-                <!-- ... employee avatar & name same as before ... -->
-            </td>
-
+            <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
             <?php foreach ($mondays as $idx => $monday):
                 $weekKey = date('Y-m-d', $monday);
-                $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                $timeOffForWeek = INDIVIDUAL_TIMEOFF[$userId][$weekKey] ?? [];
-
-                $hasPersonalTimeOff = !empty($timeOffForWeek);
-                $timeOffHours = 0;
-                $cellContent = '';
-
-                if ($hasPersonalTimeOff) {
-                    foreach ($timeOffForWeek as $to) {
-                        $timeOffHours += floatval($to['assigned_hours']);
-                    }
-                }
-
-                if (isset(GLOBAL_TIMEOFF[$weekKey]) && $hasPersonalTimeOff) {
-                    $timeOffHours += floatval(GLOBAL_TIMEOFF[$weekKey]['assigned_hours']);
-                }
-
-                // Build engagement badges
-                foreach ($entriesForWeek as $entry) {
-                    $status = strtolower($entry['engagement_status'] ?? 'confirmed');
-                    switch ($status) {
-                        case 'confirmed': $entry_class='badge-confirmed'; break;
-                        case 'pending': $entry_class='badge-pending'; break;
-                        case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
-                        default: $entry_class='badge-confirmed'; break;
-                    }
-                    $clientName = htmlspecialchars($entry['client_name']);
-                    $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                    $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
-                    $badgeId = "badge-entry-{$entry['entry_id']}";
-                    $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
-                }
-
-                if ($isAdmin && empty($cellContent) && !isset(GLOBAL_TIMEOFF[$weekKey])) {
-                    $cellContent = "<i class='bi bi-plus text-muted'></i>";
-                }
-
-                $tdClass = 'addable';
-                if ($hasPersonalTimeOff || isset(GLOBAL_TIMEOFF[$weekKey])) $tdClass .= ' position-relative timeoff-cell';
+                $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
+                $isGlobalWeek = $globalHours !== null;
+                $isCurrentWeek = ($idx === $currentWeekIndex);
+                $thClasses = 'align-middle week';
+                if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
+                if ($isCurrentWeek) $thClasses .= ' highlight-today';
+                if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
             ?>
-            <td class="<?php echo $tdClass; ?>" 
-                data-user-id="<?php echo $userId; ?>" 
-                data-user-name="<?php echo $fullName; ?>" 
-                data-week-start="<?php echo $weekKey; ?>"
-                style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
-                <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
-                <?php echo $cellContent; ?>
-            </td>
+            <th class="<?php echo $thClasses; ?>" style="position: relative;">
+                <?php echo date('M j', $monday); ?><br>
+                <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                <?php if ($isGlobalWeek): ?>
+                    <span class="timeoff-corner"><?php echo $globalHours; ?></span>
+                <?php endif; ?>
+            </th>
             <?php endforeach; ?>
-
         </tr>
+    </thead>
+
+    <tbody id="employeesTableBody">
+    <?php foreach ($employees as $userId => $employee):
+        $fullName = htmlspecialchars($employee['full_name']);
+        $role = htmlspecialchars($employee['role']);
+    ?>
+    <tr>
+        <td class="text-start employee-name">
+            <!-- ... employee avatar & name same as before ... -->
+        </td>
+
+        <?php foreach ($mondays as $idx => $monday):
+            $weekKey = date('Y-m-d', $monday);
+            $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+            $timeOffForWeek = $individualTimeOff[$userId][$weekKey] ?? [];
+
+            $hasPersonalTimeOff = !empty($timeOffForWeek);
+            $timeOffHours = 0;
+            $cellContent = '';
+
+            if ($hasPersonalTimeOff) {
+                foreach ($timeOffForWeek as $to) {
+                    $timeOffHours += floatval($to['assigned_hours']);
+                }
+            }
+
+            if (isset($globalTimeOff[$weekKey]) && $hasPersonalTimeOff) {
+                $timeOffHours += floatval($globalTimeOff[$weekKey]['assigned_hours']);
+            }
+
+            // Build engagement badges
+            foreach ($entriesForWeek as $entry) {
+                $status = strtolower($entry['engagement_status'] ?? 'confirmed');
+                switch ($status) {
+                    case 'confirmed': $entry_class='badge-confirmed'; break;
+                    case 'pending': $entry_class='badge-pending'; break;
+                    case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
+                    default: $entry_class='badge-confirmed'; break;
+                }
+                $clientName = htmlspecialchars($entry['client_name']);
+                $assignedHours = htmlspecialchars($entry['assigned_hours']);
+                $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
+                $badgeId = "badge-entry-{$entry['entry_id']}";
+                $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
+            }
+
+            if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
+                $cellContent = "<i class='bi bi-plus text-muted'></i>";
+            }
+
+            $tdClass = 'addable';
+            if ($hasPersonalTimeOff || isset($globalTimeOff[$weekKey])) $tdClass .= ' position-relative timeoff-cell';
+        ?>
+        <td class="<?php echo $tdClass; ?>" 
+            data-user-id="<?php echo $userId; ?>" 
+            data-user-name="<?php echo $fullName; ?>" 
+            data-week-start="<?php echo $weekKey; ?>"
+            style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
+            <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
+            <?php echo $cellContent; ?>
+        </td>
         <?php endforeach; ?>
-        </tbody>
-    </table>
-    </div>
+
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
 </div>
 
 
