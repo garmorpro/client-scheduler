@@ -10,19 +10,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // ----- helpers (LOCAL time, no timezone shift) -----
     const pad2 = n => String(n).padStart(2, "0");
-    function ymd(date) { // format local date as YYYY-MM-DD
+    function ymd(date) { 
         return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}`;
     }
-    function parseLocalYMD(s) { // parse 'YYYY-MM-DD' as a local Date
+    function parseLocalYMD(s) { 
         const [Y,M,D] = s.split("-").map(Number);
         return new Date(Y, M-1, D);
     }
 
-    // Get Mondays (local time) for a month
     function getMondaysInMonth(year, month) {
         const mondays = [];
-        let date = new Date(year, month - 1, 1); // local
-        while (date.getDay() !== 1) date.setDate(date.getDate() + 1); // to Monday
+        let date = new Date(year, month - 1, 1);
+        while (date.getDay() !== 1) date.setDate(date.getDate() + 1); 
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -34,13 +33,12 @@ document.addEventListener("DOMContentLoaded", function() {
         return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    // Populate week (Monday) selector using LOCAL ymd values
     function populateWeekSelector(selector, month) {
         if (!month) return;
         const weeks = getMondaysInMonth(2025, parseInt(month, 10));
         selector.innerHTML = '<option value="">Select Week</option>';
         weeks.forEach(date => {
-            const val = ymd(date); // use local Y-M-D
+            const val = ymd(date); 
             const label = formatDateLong(date);
             selector.innerHTML += `<option value="${val}">${label}</option>`;
         });
@@ -53,8 +51,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function generateDayInputs(start, end) {
         dayInputsDiv.innerHTML = "";
-
-        // Parse selected weeks as LOCAL dates (not UTC)
         const startMonday = parseLocalYMD(start);
         const endMonday = parseLocalYMD(end);
 
@@ -63,15 +59,11 @@ document.addEventListener("DOMContentLoaded", function() {
         while (currentWeek <= endMonday) {
             const rowDiv = document.createElement("div");
             rowDiv.className = "week-row d-flex align-items-center gap-2 mb-3";
-
-            // Store the Monday for this row so submit uses the correct week_start
             rowDiv.dataset.weekStart = ymd(currentWeek);
 
-            // Monday–Friday (i = 0..4)
             for (let i = 0; i < 5; i++) {
                 const d = new Date(currentWeek);
                 d.setDate(d.getDate() + i);
-
                 const dateStr = (d.getMonth() + 1) + '/' + d.getDate();
 
                 const input = document.createElement("input");
@@ -81,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 input.value = 0;
                 input.className = "form-control form-control-sm day-hour";
                 input.style.width = "55px";
-                input.dataset.date = ymd(d); // local YYYY-MM-DD
+                input.dataset.date = ymd(d);
 
                 const wrapper = document.createElement("div");
                 wrapper.className = "d-flex flex-column align-items-center";
@@ -93,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 rowDiv.appendChild(wrapper);
             }
 
-            // Inline week total
             const weekTotalLabel = document.createElement("span");
             weekTotalLabel.textContent = "= 0 hrs";
             weekTotalLabel.style.fontWeight = "bold";
@@ -102,14 +93,10 @@ document.addEventListener("DOMContentLoaded", function() {
             rowDiv.appendChild(weekTotalLabel);
 
             dayInputsDiv.appendChild(rowDiv);
-
-            // Next Monday
             currentWeek.setDate(currentWeek.getDate() + 7);
         }
 
         dayContainer.style.display = "flex";
-
-        // Totals
         document.querySelectorAll(".day-hour").forEach(input => {
             input.addEventListener("input", updateTotals);
         });
@@ -117,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         function updateTotals() {
             let totalHours = 0;
-
             const weekRows = document.querySelectorAll(".week-row");
             weekRows.forEach(row => {
                 let weekSum = 0;
@@ -127,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 row.querySelector(".week-total").textContent = `= ${weekSum} hrs`;
                 totalHours += weekSum;
             });
-
             summaryText.textContent = `Total Weeks: ${weekRows.length} | Total Hours: ${totalHours}`;
         }
     }
@@ -139,11 +124,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if (startWeek.value && endWeek.value) generateDayInputs(startWeek.value, endWeek.value);
     });
 
-    // Submit one entry per week row using the stored Monday (local)
+    // ---- FORM SUBMIT ----
     const form = document.getElementById("addGlobalPTOForm");
     form.addEventListener("submit", function(e) {
         e.preventDefault();
-        const note = document.getElementById("pto_note").value;
+        const note = document.getElementById("pto_note").value.trim();
         const entries = [];
 
         document.querySelectorAll(".week-row").forEach(row => {
@@ -154,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (weekSum > 0) {
                 entries.push({
                     timeoff_note: note,
-                    week_start: row.dataset.weekStart, // exact Monday, no +1 shift
+                    week_start: row.dataset.weekStart,
                     assigned_hours: weekSum,
                     is_global_timeoff: 1
                 });
@@ -166,7 +151,27 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        console.log(entries);
-        alert("Global PTO entries ready to submit. Check console for preview.");
+        // Send to backend
+        fetch("add_global_pto.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ entries })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Global PTO saved successfully!");
+                form.reset();
+                dayInputsDiv.innerHTML = "";
+                summaryText.textContent = "";
+                dayContainer.style.display = "none";
+            } else {
+                alert("Error: " + (data.message || "Unable to save PTO"));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Server error. Please try again.");
+        });
     });
 });
