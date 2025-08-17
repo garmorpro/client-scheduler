@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const dayInputsDiv = document.getElementById("dayInputs");
     const summaryText = document.getElementById("summaryText");
 
-    // ----- helpers (LOCAL time, no timezone shift) -----
     const pad2 = n => String(n).padStart(2, "0");
     function ymd(date) { 
         return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}`;
@@ -21,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function getMondaysInMonth(year, month) {
         const mondays = [];
         let date = new Date(year, month - 1, 1);
-        while (date.getDay() !== 1) date.setDate(date.getDate() + 1); 
+        while (date.getDay() !== 1) date.setDate(date.getDate() + 1);
         while (date.getMonth() === month - 1) {
             mondays.push(new Date(date));
             date.setDate(date.getDate() + 7);
@@ -38,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const weeks = getMondaysInMonth(2025, parseInt(month, 10));
         selector.innerHTML = '<option value="">Select Week</option>';
         weeks.forEach(date => {
-            const val = ymd(date); 
+            const val = ymd(date);
             const label = formatDateLong(date);
             selector.innerHTML += `<option value="${val}">${label}</option>`;
         });
@@ -147,11 +146,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         if (entries.length === 0) {
-            alert("Please enter hours for at least one day.");
-            return;
+            return; // quietly ignore, no alert
         }
 
-        // Send to backend
         fetch("add_global_pto.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -160,18 +157,14 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert("Global PTO saved successfully!");
-                form.reset();
-                dayInputsDiv.innerHTML = "";
-                summaryText.textContent = "";
-                dayContainer.style.display = "none";
+                // Redirect instead of alert
+                window.location.href = "/pages/admin-panel.php#time_off#global_pto";
             } else {
-                alert("Error: " + (data.message || "Unable to save PTO"));
+                console.error("Save error:", data);
             }
         })
         .catch(err => {
-            console.error(err);
-            alert("Server error. Please try again.");
+            console.error("Server error:", err);
         });
     });
 });
