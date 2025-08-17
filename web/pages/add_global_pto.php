@@ -3,11 +3,11 @@ require '../includes/db.php';
 
 header("Content-Type: application/json");
 
-// Read raw JSON input
+// Read raw input
 $raw = file_get_contents("php://input");
 $input = json_decode($raw, true);
 
-// If no entries at all, just return empty results (but no error)
+// If no entries, just return empty results
 if (!isset($input['entries']) || !is_array($input['entries']) || count($input['entries']) === 0) {
     echo json_encode(["success" => true, "results" => []]);
     exit;
@@ -30,32 +30,30 @@ foreach ($input['entries'] as $entry) {
     $week_start     = $entry['week_start'] ?? '';
     $assigned_hours = isset($entry['assigned_hours']) ? intval($entry['assigned_hours']) : 0;
 
-    // Skip invalid entries
-    if (empty($week_start) || $assigned_hours <= 0) {
+    // Only insert valid entries
+    if (!empty($week_start) && $assigned_hours > 0) {
+        $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
+        $stmt->execute();
+        $results[] = [
+            "entry"   => $entry,
+            "success" => true,
+            "id"      => $stmt->insert_id,
+            "error"   => null
+        ];
+    } else {
         $results[] = [
             "entry"   => $entry,
             "success" => false,
             "id"      => null,
             "error"   => "Invalid week_start or assigned_hours"
         ];
-        continue;
     }
-
-    $stmt->bind_param("ssi", $note, $week_start, $assigned_hours);
-    $ok = $stmt->execute();
-
-    $results[] = [
-        "entry"   => $entry,
-        "success" => $ok,
-        "id"      => $ok ? $stmt->insert_id : null,
-        "error"   => $ok ? null : $stmt->error
-    ];
 }
 
 $stmt->close();
 $conn->close();
 
 echo json_encode([
-    "success" => true,
+    "success" => true,  // ALWAYS true for the whole request
     "results" => $results
 ]);
