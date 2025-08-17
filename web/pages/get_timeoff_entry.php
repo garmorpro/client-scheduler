@@ -16,11 +16,11 @@ if (!$user_id || !$week_start) {
 $user_id = $conn->real_escape_string($user_id);
 $week_start = $conn->real_escape_string($week_start);
 
-$sql = "SELECT entry_id, assigned_hours 
-        FROM entries 
+$sql = "SELECT timeoff_id, assigned_hours 
+        FROM time_off 
         WHERE user_id = '$user_id' 
           AND week_start = '$week_start' 
-          AND is_timeoff = 1 
+          AND is_global_timeoff = 0
         LIMIT 1";
 
 $result = $conn->query($sql);
@@ -29,14 +29,14 @@ if ($result) {
     if ($row = $result->fetch_assoc()) {
         echo json_encode([
             'success' => true,
-            'entry_id' => $row['entry_id'],
+            'timeoff_id' => $row['timeoff_id'],
             'assigned_hours' => $row['assigned_hours'] // <-- include assigned_hours
         ]);
     } else {
         echo json_encode([
             'success' => true,
-            'entry_id' => null,
-            'assigned_hours' => 0 // <-- no entry, return 0
+            'entrtimeoff_idy_id' => null,
+            'assigned_hours' => 0 // <-- no timeoff, return 0
         ]);
     }
 } else {

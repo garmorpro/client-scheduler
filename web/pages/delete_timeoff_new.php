@@ -21,7 +21,7 @@ if (empty($data['entry_id'])) {
 $entry_id = intval($data['entry_id']);
 
 // Prepare and execute delete
-$stmt = $conn->prepare("DELETE FROM entries WHERE entry_id = ?");
+$stmt = $conn->prepare("DELETE FROM time_off WHERE time_off_id = ?");
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
