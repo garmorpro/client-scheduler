@@ -140,20 +140,89 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 <head>
     <title>Master Schedule</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- ... all your CSS & JS includes remain the same ... -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+
+    <style>
+      .timeoff-cell { background-color: rgb(217,217,217) !important; }
+      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
+      <?php if ($isAdmin): ?>
+      .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
+      <?php endif; ?>
+      .timeoff-corner { 
+        position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800;
+        color: rgb(50,107,61) !important;
+      }
+      .timeoff-card { border: 2px dashed rgb(209,226, 159) !important; background: rgb(246, 249, 236) !important; }
+      .draggable-badge { cursor: grab; user-select: none; }
+      .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
+      td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
+      td.addable:hover { background: rgba(0,0,0,0.02); }
+      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
+      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
+      .week { min-width: 200px; }
+    </style>
+
+    
 
     <script>
       const entries = <?php echo json_encode($entries); ?>;
-      const INDIVIDUAL_TIMEOFF = <?php echo json_encode($individualTimeOff); ?>;
-      const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
       const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
+      const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
     </script>
+
 </head>
 <body class="d-flex">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
-    <!-- ... header & filters remain unchanged ... -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-0">Master Schedule</h3>
+            <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
+        </div>
+        <div class="header-buttons">
+            <a href="#" 
+               onclick="location.reload();" 
+               class="badge text-black p-2 text-decoration-none fw-medium me-1" 
+               style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+              <i class="bi bi-arrow-clockwise me-3"></i>Refresh
+            </a>
+        </div>
+    </div>
 
+    <!-- upper search and week range selector -->
+        <div class="bg-white border rounded p-4 mb-4">
+            <form id="filterForm" method="get" class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search employees..." onkeyup="filterEmployees()" />
+                </div>
+                <!-- <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <a href="?week_offset=<?php echo $weekOffset - 1; ?>" 
+                       class="btn btn-outline-secondary btn-sm me-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-left"></i></a>
+        
+                    <span class="fw-semibold"><?php echo $rangeLabel; ?></span>
+        
+                    <a href="?week_offset=<?php echo $weekOffset + 1; ?>" 
+                       class="btn btn-outline-secondary btn-sm ms-2" style="border-color: rgb(229,229,229);"><i class="bi bi-chevron-right"></i></a>
+                </div> -->
+            </form>
+        </div>
+    <!-- end upper search and week range selector -->
+
+    <!-- Master Schedule table -->
+        <?php
+        // Find current week index for highlight (keep same)
+        $currentWeekIndex = null;
+        foreach ($mondays as $idx => $monday) {
+            $weekStart = $monday;
+            $weekEnd = strtotime('+7 days', $weekStart);
+            if ($today >= $weekStart && $today < $weekEnd) {
+                $currentWeekIndex = $idx;
+                break;
+            }
+        }
+        ?>
     <!-- Master Schedule table -->
     <div class="table-responsive" style="overflow-x: auto;">
     <table class="table table-bordered align-middle text-center">
