@@ -1,5 +1,10 @@
 /* Admin Panel */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+  --primary-color: #003f47;
+  --secondary-color: #a3cc38;
+}
 body {
     background-color: #ffffff;
     color: #1a1a1a;
@@ -645,3 +650,41 @@ input, select {
   #summaryFooter span {
     color: #333;
   }
+
+  .pagination .page-item {
+  margin: 0 5px; /* adds spacing */
+  font-size: 12px !important;
+}
+
+/* Default button look */
+.pagination .page-link {
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #333;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effect */
+.pagination .page-link:hover {
+  background-color: #e2e6ea;
+  color: #000;
+  text-decoration: none;
+}
+
+/* Active page */
+.pagination .page-item.active .page-link {
+  background-color: #003f47; /* Bootstrap blue */
+  border-color: #003f47;
+  color: #a3cc38;
+  font-weight: bold;
+}
+
+/* Disabled (Prev/Next when inactive) */
+.pagination .page-item.disabled .page-link {
+  background-color: #f8f9fa;
+  color: #ccc;
+  border-color: #ddd;
+  pointer-events: none;
+}
