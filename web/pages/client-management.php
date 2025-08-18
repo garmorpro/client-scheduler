@@ -69,7 +69,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name (comma separated)...">
+    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name...">
 
     <div id="clientCards" class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: .5rem 1rem;">
         <?php foreach ($clients as $client): ?>
@@ -150,10 +150,16 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
     searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase();
-        const searchTerms = query.split(',').map(term => term.trim()).filter(term => term !== "");
+
+        // split by comma, trim spaces, require at least 3 characters
+        const searchTerms = query
+            .split(',')
+            .map(term => term.trim())
+            .filter(term => term.length >= 3);
 
         cards.forEach(card => {
             const name = card.querySelector('.client-name').innerText.toLowerCase();
+
             if (searchTerms.length === 0 || searchTerms.some(term => name.includes(term))) {
                 card.style.display = '';
             } else {
@@ -162,6 +168,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         });
     });
 </script>
+
 
 </body>
 </html>
