@@ -133,19 +133,34 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
         <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
     </div>
 
-    <!-- Status Filter -->
-    <div class="status-filters d-flex align-items-center gap-3">
-        <label class="form-check-label">
-            <input type="checkbox" class="form-check-input status-filter" value="confirmed" checked> Confirmed
-        </label>
-        <label class="form-check-label">
-            <input type="checkbox" class="form-check-input status-filter" value="pending" checked> Pending
-        </label>
-        <label class="form-check-label">
-            <input type="checkbox" class="form-check-input status-filter" value="not_confirmed" checked> Not Confirmed
-        </label>
+    <!-- Status Filter Dropdown -->
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter Status
+        </button>
+        <ul class="dropdown-menu p-3" aria-labelledby="statusDropdown" style="min-width: 200px;">
+            <li>
+                <label class="form-check d-flex align-items-center">
+                    <input type="checkbox" class="form-check-input status-filter me-2" value="confirmed" checked>
+                    Confirmed
+                </label>
+            </li>
+            <li>
+                <label class="form-check d-flex align-items-center">
+                    <input type="checkbox" class="form-check-input status-filter me-2" value="pending" checked>
+                    Pending
+                </label>
+            </li>
+            <li>
+                <label class="form-check d-flex align-items-center">
+                    <input type="checkbox" class="form-check-input status-filter me-2" value="not_confirmed" checked>
+                    Not Confirmed
+                </label>
+            </li>
+        </ul>
     </div>
 </div>
+
 
 <!-- Engagements Table -->
 <div class="user-table mt-3">
