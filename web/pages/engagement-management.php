@@ -161,7 +161,7 @@ $totalNotAssigned = $notAssignedRow['total_not_assigned'];
                         <div class="util-bar-fill bg-primary" style="width: <?php echo $percentageAssigned; ?>%"></div>
                     </div>
                     <div class="stat-sub mt-2">
-                        <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
+                        <?php echo $totalAssigned; ?> have assignment <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
                     </div>
                 </div>
             </div>
