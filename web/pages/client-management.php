@@ -73,7 +73,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
     <div class="row" id="clientCards">
         <?php foreach($clients as $client): ?>
-            <div class="col-md-3">
+            <div class="col-md-4 bg-card text-card-foreground flex flex-col gap-6 rounded-xl border">
     <div class="client-card p-4">
         <!-- Client Header -->
         <div class="d-flex align-items-center mb-4">
