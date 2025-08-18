@@ -22,11 +22,15 @@ $engagementQuery = "
         e.engagement_id,
         c.client_name,
         e.status,
-        e.budgeted_hours
+        e.budgeted_hours,
+        COALESCE(SUM(en.assigned_hours), 0) AS total_assigned_hours
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
+    LEFT JOIN entries en ON e.engagement_id = en.engagement_id
+    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours
     ORDER BY e.client_id DESC
 ";
+
 $engagementResult = mysqli_query($conn, $engagementQuery);
 ?>
 <!DOCTYPE html>
@@ -95,7 +99,8 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                     <tr>
                         <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
                         <td><?php echo htmlspecialchars($row['client_name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['engagement_type']); ?></td>
+                        <td><?php echo $row['budgeted_hours']; ?></td>
+                        <td>0</td>
                         <td>
                             <?php
                             $status = strtolower($E_row['status']);
@@ -118,8 +123,6 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                                 <?php echo ucfirst($row['status']); ?>
                             </span>
                         </td>
-                        <td><?php echo date("n/j/Y", strtotime($row['start_date'])); ?></td>
-                        <td><?php echo !empty($row['end_date']) ? date("n/j/Y", strtotime($row['end_date'])) : "Ongoing"; ?></td>
                         <td class="table-actions">
                             <a href="#" class="view-engagement-btn text-decoration-none" 
                                data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
