@@ -129,7 +129,7 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
 
 <div class="flex-grow-1 mt-3 d-flex align-items-start gap-3">
     <!-- Search -->
-    <div class="user-search" style="flex:1; max-width:300px;">
+    <div class="user-search">
         <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
     </div>
 
