@@ -88,14 +88,11 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <?php
                 $status = strtolower($client['status']);
                 switch ($status) {
-                    case 'confirmed':
+                    case 'active':
                         $badgeClass = 'badge-confirmed';   
                         break;
-                    case 'pending':
-                        $badgeClass = 'badge-pending';     
-                        break;
-                    case 'not_confirmed':
-                        $badgeClass = 'badge-not-confirmed'; 
+                    case 'inactive':
+                        $badgeClass = 'badge-inactive';     
                         break;
                     default:
                         $badgeClass = 'badge-default';    

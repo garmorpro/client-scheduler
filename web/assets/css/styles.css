@@ -246,11 +246,11 @@ td.addable:hover {
     min-width: 70px;
     text-align: center;
 }
-.badge-status.active {
+.badge-status.badge-active {
     background-color: rgb(226,251,232);
     color: rgb(50,107,61);
 }
-.badge-status.inactive {
+.badge-status.badge-inactive {
     background-color: rgb(253, 249, 200);
     color: rgb(131,82,23);
 }
