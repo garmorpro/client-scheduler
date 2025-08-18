@@ -64,8 +64,18 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <p class="text-muted mb-0">Manage all onboarded clients and their engagement status</p>
         </div>
         <div>
-            <button class="btn btn-outline-secondary me-2"><i class="bi bi-upload"></i> Bulk Import Client</button>
-            <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add New Client</button>
+            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+               data-bs-toggle="modal" data-bs-target="#importClientsModal">
+                <i class="bi bi-upload me-3"></i>Import Clients
+            </a>
+            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem; background-color: rgb(3,2,18);" 
+               data-bs-toggle="modal" data-bs-target="#addClientModal">
+                <i class="bi bi-person-plus me-3"></i>Add New Client
+            </a>
+            <!-- <button class="btn btn-outline-secondary me-2"><i class="bi bi-upload"></i> Bulk Import Client</button>
+            <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add New Client</button> -->
         </div>
     </div>
 
