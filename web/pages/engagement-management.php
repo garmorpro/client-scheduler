@@ -28,7 +28,7 @@ $engagementQuery = "
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours
-    ORDER BY e.client_id DESC
+    ORDER BY c.client_name ASC
 ";
 
 $engagementResult = mysqli_query($conn, $engagementQuery);
