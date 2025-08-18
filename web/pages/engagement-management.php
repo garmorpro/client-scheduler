@@ -21,10 +21,8 @@ $engagementQuery = "
     SELECT 
         e.engagement_id,
         c.client_name,
-        e.engagement_type,
         e.status,
-        e.start_date,
-        e.end_date
+        e.budgeted_hours
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     ORDER BY e.start_date DESC
