@@ -79,7 +79,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <div class="client-card p-4 bg-card text-card-foreground flex gap-6 rounded-xl" style="min-width: 350px;">
             <!-- Client Header -->
             <div class="d-flex align-items-center mb-4">
-                <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                <div class="bg-dark text-white rounded p-2 me-2 d-flex flex-row align-items-center justify-content-center" style="width: 30px; height: 30px;">
                     <i class="bi bi-building"></i>
                 </div>
                 <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
