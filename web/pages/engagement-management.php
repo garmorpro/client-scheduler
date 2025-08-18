@@ -25,7 +25,7 @@ $engagementQuery = "
         e.budgeted_hours
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
-    ORDER BY e.start_date DESC
+    ORDER BY e.client_id DESC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
 ?>
