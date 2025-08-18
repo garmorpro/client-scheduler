@@ -85,8 +85,25 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         <!-- Status and Onboarded Duration -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge">
-                <?php echo htmlspecialchars($client['status']); ?>
+            <?php
+                $status = strtolower($client['status']);
+                switch ($status) {
+                    case 'confirmed':
+                        $badgeClass = 'badge-confirmed';   
+                        break;
+                    case 'pending':
+                        $badgeClass = 'badge-pending';     
+                        break;
+                    case 'not_confirmed':
+                        $badgeClass = 'badge-not-confirmed'; 
+                        break;
+                    default:
+                        $badgeClass = 'badge-default';    
+                        break;
+                }
+            ?>
+            <span class="badge-status <?php echo $badgeClass; ?>">
+                <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
             </span>
             <span class="text-muted">
                 <?php
@@ -111,11 +128,11 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         <!-- Engagements Info -->
         <div class="d-flex justify-content-between mb-1">
-            <span><i class="bi bi-people"></i> Active engagements</span>
+            <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
             <span>2</span>
         </div>
         <div class="d-flex justify-content-between mb-3">
-            <span><i class="bi bi-calendar-event"></i> Total engagements</span>
+            <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
             <span>5</span>
         </div>
 
