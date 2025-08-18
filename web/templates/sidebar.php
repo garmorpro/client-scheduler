@@ -52,6 +52,20 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
                     Master Schedule
                 </a>
             </li>
+            <?php if ($isAdmin || $isManager): ?>
+                <li class="nav-item mb-2">
+                    <a href="client-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                        <i class="bi bi-building-gear me-2"></i>
+                        Clients
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="engagement-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                        <i class="bi bi-file-earmark-text me-2"></i>
+                        Engagements
+                    </a>
+                </li>
+            <?php endif; ?>
         </ul>
     </div>
 
