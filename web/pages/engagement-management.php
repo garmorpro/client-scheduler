@@ -103,7 +103,7 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                         <td><?php echo $row['total_assigned_hours']; ?></td>
                         <td>
                             <?php
-                            $status = strtolower($E_row['status']);
+                            $status = strtolower($row['status']);
                             switch ($status) {
                                 case 'confirmed':
                                     $badgeClass = 'badge-confirmed';   
