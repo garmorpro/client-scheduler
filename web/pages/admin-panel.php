@@ -337,6 +337,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                   /* Space between buttons */
 .pagination .page-item {
   margin: 0 5px; /* adds spacing */
+  font-size: 14px !important;
 }
 
 /* Default button look */
