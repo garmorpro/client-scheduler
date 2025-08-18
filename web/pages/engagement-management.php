@@ -32,6 +32,20 @@ $engagementQuery = "
 ";
 
 $engagementResult = mysqli_query($conn, $engagementQuery);
+
+
+// Total engagements
+$totalEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements";
+$totalResult = mysqli_query($conn, $totalEngagementsQuery);
+$totalRow = mysqli_fetch_assoc($totalResult);
+$totalEngagements = $totalRow['total'];
+
+// Get users added in last 30 days
+$newEngagementsQuery = "SELECT COUNT(*) AS recent FROM engagements WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+$newEngagementsResult = mysqli_query($conn, $newEngagementsQuery);
+$newEngagmentRow = mysqli_fetch_assoc($newEngagementsResult);
+$newEngagments = $newEngagmentRow['recent'];
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -46,45 +60,49 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <div class="user-management-header d-flex justify-content-between align-items-center">
-        <!-- Left -->
-        <div class="titles">
-            <p class="text-black mb-0"><strong>Engagement Management</strong></p>
-            <p class="mb-0">Monitor all client engagements and details</p>
+
+
+    <!-- header -->
+        <div class="user-management-header d-flex justify-content-between align-items-center">
+            <!-- Left -->
+            <div class="titles">
+                <p class="text-black mb-0"><strong>Engagement Management</strong></p>
+                <p class="mb-0">Monitor all client engagements and details</p>
+            </div>
+
+            <!-- Middle (Search) -->
+
+
+            <!-- Right -->
+            <div class="user-management-buttons d-flex align-items-center gap-2">
+                <a href="#" id="bulkDeleteEngagementsBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                   style="font-size: .875rem; background-color: darkred; display:none;">
+                  <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
+                </a>
+
+                <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                   data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
+                    <i class="bi bi-upload me-3"></i>Import Engagements
+                </a>
+
+                <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+                   style="font-size: .875rem; background-color: rgb(3,2,18);" 
+                   data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                    <i class="bi bi-plus-circle me-3"></i>Add Engagement
+                </a>
+            </div>
         </div>
-
-        <!-- Middle (Search) -->
-        
-
-        <!-- Right -->
-        <div class="user-management-buttons d-flex align-items-center gap-2">
-            <a href="#" id="bulkDeleteEngagementsBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; background-color: darkred; display:none;">
-              <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
-            </a>
-
-            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
-               data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
-                <i class="bi bi-upload me-3"></i>Import Engagements
-            </a>
-
-            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; background-color: rgb(3,2,18);" 
-               data-bs-toggle="modal" data-bs-target="#addEngagementModal">
-                <i class="bi bi-plus-circle me-3"></i>Add Engagement
-            </a>
-        </div>
-    </div>
+    <!-- end header -->
 
     <!-- Stat cards -->
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="card-icon"><i class="bi bi-people"></i></div>
-                    <div class="stat-title">Total Users</div>
-                    <div class="stat-value"><?php echo $totalUsers; ?></div>
-                    <div class="stat-sub">+<?php echo $newUsers; ?> this month</div>
+                    <div class="stat-title">Total Engagements</div>
+                    <div class="stat-value"><?php echo $totalEngagements; ?></div>
+                    <div class="stat-sub">+<?php echo $newEngagments; ?> this month</div>
                 </div>
             </div>
             <div class="col-md-3">
@@ -127,224 +145,227 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
         </div>
     <!-- end stats cards -->
 
-<div class="flex-grow-1 mt-3 d-flex align-items-start gap-3">
-    <!-- Search -->
-    <div class="user-search w-100">
-        <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
-    </div>
+    <!-- search bar and filter dropdown -->
+        <div class="flex-grow-1 mt-3 d-flex align-items-start gap-3">
+            <!-- Search -->
+            <div class="user-search w-100">
+                <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
+            </div>
 
-    <!-- Status Filter Dropdown -->
-    <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter Status
-        </button>
-        <ul class="dropdown-menu p-3" aria-labelledby="statusDropdown" style="min-width: 200px;">
-            <li>
-                <label class="form-check d-flex align-items-center">
-                    <input type="checkbox" class="form-check-input status-filter me-2" value="confirmed" checked>
-                    Confirmed
-                </label>
-            </li>
-            <li>
-                <label class="form-check d-flex align-items-center">
-                    <input type="checkbox" class="form-check-input status-filter me-2" value="pending" checked>
-                    Pending
-                </label>
-            </li>
-            <li>
-                <label class="form-check d-flex align-items-center">
-                    <input type="checkbox" class="form-check-input status-filter me-2" value="not_confirmed" checked>
-                    Not Confirmed
-                </label>
-            </li>
-        </ul>
-    </div>
+            <!-- Status Filter Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter Status
+                </button>
+                <ul class="dropdown-menu p-3" aria-labelledby="statusDropdown" style="min-width: 200px;">
+                    <li>
+                        <label class="form-check d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input status-filter me-2" value="confirmed" checked>
+                            Confirmed
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-check d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input status-filter me-2" value="pending" checked>
+                            Pending
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-check d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input status-filter me-2" value="not_confirmed" checked>
+                            Not Confirmed
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <!-- end earch bar and filter dropdown -->
+
+
+    <!-- Engagements Table -->
+        <div class="user-table mt-3">
+            <table id="engagement-table" class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAllEngagements"></th>
+                        <th>Client</th>
+                        <th>Budgeted Hours</th>
+                        <th>Allocated Hours</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (mysqli_num_rows($engagementResult) > 0): ?>
+                    <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
+                        <tr data-status="<?php echo strtolower($row['status']); ?>">
+                            <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
+                            <td><?php echo htmlspecialchars($row['client_name']); ?></td>
+                            <td><?php echo $row['budgeted_hours']; ?></td>
+                            <td><?php echo $row['total_assigned_hours']; ?></td>
+                            <td>
+                                <?php
+                                $status = strtolower($row['status']);
+                                switch ($status) {
+                                    case 'confirmed':
+                                        $badgeClass = 'badge-confirmed';   
+                                        break;
+                                    case 'pending':
+                                        $badgeClass = 'badge-pending';     
+                                        break;
+                                    case 'not_confirmed':
+                                        $badgeClass = 'badge-not-confirmed'; 
+                                        break;
+                                    default:
+                                        $badgeClass = 'badge-default';    
+                                        break;
+                                }
+                                ?>
+                                <span class="badge-status <?php echo $badgeClass; ?>">
+                                    <?php echo ucfirst($row['status']); ?>
+                                </span>
+                            </td>
+                            <td class="table-actions">
+                                <a href="#" class="view-engagement-btn text-decoration-none" 
+                                   data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
+                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                    <i class="bi bi-eye text-success"></i>
+                                </a>
+                                <a href="#" class="edit-engagement-btn text-decoration-none" 
+                                   data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
+                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                    <i class="bi bi-pencil text-purple"></i>
+                                </a>
+                                <a href="#" class="delete-engagement-btn text-decoration-none" 
+                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                    <i class="bi bi-trash text-danger"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr><td colspan="7" class="text-center">No engagements found</td></tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+                
+        <!-- Pagination Controls -->
+        <nav>
+            <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
+        </nav>
+    <!-- end engagement table -->
+
 </div>
 
 
-<!-- Engagements Table -->
-<div class="user-table mt-3">
-    <table id="engagement-table" class="table table-hover mb-0">
-        <thead>
-            <tr>
-                <th><input type="checkbox" id="selectAllEngagements"></th>
-                <th>Client</th>
-                <th>Budgeted Hours</th>
-                <th>Allocated Hours</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php if (mysqli_num_rows($engagementResult) > 0): ?>
-            <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
-                <tr data-status="<?php echo strtolower($row['status']); ?>">
-                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
-                    <td><?php echo htmlspecialchars($row['client_name']); ?></td>
-                    <td><?php echo $row['budgeted_hours']; ?></td>
-                    <td><?php echo $row['total_assigned_hours']; ?></td>
-                    <td>
-                        <?php
-                        $status = strtolower($row['status']);
-                        switch ($status) {
-                            case 'confirmed':
-                                $badgeClass = 'badge-confirmed';   
-                                break;
-                            case 'pending':
-                                $badgeClass = 'badge-pending';     
-                                break;
-                            case 'not_confirmed':
-                                $badgeClass = 'badge-not-confirmed'; 
-                                break;
-                            default:
-                                $badgeClass = 'badge-default';    
-                                break;
-                        }
-                        ?>
-                        <span class="badge-status <?php echo $badgeClass; ?>">
-                            <?php echo ucfirst($row['status']); ?>
-                        </span>
-                    </td>
-                    <td class="table-actions">
-                        <a href="#" class="view-engagement-btn text-decoration-none" 
-                           data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
-                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                            <i class="bi bi-eye text-success"></i>
-                        </a>
-                        <a href="#" class="edit-engagement-btn text-decoration-none" 
-                           data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
-                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                            <i class="bi bi-pencil text-purple"></i>
-                        </a>
-                        <a href="#" class="delete-engagement-btn text-decoration-none" 
-                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                            <i class="bi bi-trash text-danger"></i>
-                        </a>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr><td colspan="7" class="text-center">No engagements found</td></tr>
-        <?php endif; ?>
-        </tbody>
-    </table>
-</div>
-        
-<!-- Pagination Controls -->
-<nav>
-    <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
-</nav>
-<!-- end engagement table -->
+<!-- search, filter, and pagination -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const engagementSearch = document.getElementById('engagementSearch');
+        const engagementTable = document.getElementById('engagement-table').getElementsByTagName('tbody')[0];
+        const statusFilters = document.querySelectorAll('.status-filter');
+        const paginationContainer = document.getElementById('pagination-engagements');
 
+        const rowsPerPage = 10;
+        let currentPage = 1;
+        let allRows = Array.from(engagementTable.getElementsByTagName('tr'));
+        let filteredRows = [...allRows];
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const engagementSearch = document.getElementById('engagementSearch');
-    const engagementTable = document.getElementById('engagement-table').getElementsByTagName('tbody')[0];
-    const statusFilters = document.querySelectorAll('.status-filter');
-    const paginationContainer = document.getElementById('pagination-engagements');
+        // ✅ Create pagination controls (build li inside existing <ul>)
+        function createPaginationControls(totalPages, currentPage, onPageChange) {
+            paginationContainer.innerHTML = '';
 
-    const rowsPerPage = 10;
-    let currentPage = 1;
-    let allRows = Array.from(engagementTable.getElementsByTagName('tr'));
-    let filteredRows = [...allRows];
-
-    // ✅ Create pagination controls (build li inside existing <ul>)
-    function createPaginationControls(totalPages, currentPage, onPageChange) {
-        paginationContainer.innerHTML = '';
-
-        function createPageItem(label, disabled, active, clickHandler) {
-            const li = document.createElement('li');
-            li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
-            const a = document.createElement('a');
-            a.className = 'page-link';
-            a.href = '#';
-            a.innerText = label;
-            if (!disabled) {
-                a.addEventListener('click', e => {
-                    e.preventDefault();
-                    clickHandler();
-                });
+            function createPageItem(label, disabled, active, clickHandler) {
+                const li = document.createElement('li');
+                li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.innerText = label;
+                if (!disabled) {
+                    a.addEventListener('click', e => {
+                        e.preventDefault();
+                        clickHandler();
+                    });
+                }
+                li.appendChild(a);
+                paginationContainer.appendChild(li);
             }
-            li.appendChild(a);
-            paginationContainer.appendChild(li);
+
+            // Prev button
+            createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1));
+
+            // Max 10 visible pages
+            const maxVisiblePages = 10;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = startPage + maxVisiblePages - 1;
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                createPageItem(i, false, i === currentPage, () => onPageChange(i));
+            }
+
+            // Next button
+            createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1));
         }
 
-        // Prev button
-        createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1));
+        // ✅ Show rows for current page
+        function renderTablePage(page) {
+            currentPage = page;
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            allRows.forEach(row => (row.style.display = 'none'));
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
 
-        // Max 10 visible pages
-        const maxVisiblePages = 10;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = startPage + maxVisiblePages - 1;
-        if (endPage > totalPages) {
-            endPage = totalPages;
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            if (totalPages > 1) {
+                paginationContainer.style.display = 'flex';
+                createPaginationControls(totalPages, currentPage, renderTablePage);
+            } else {
+                paginationContainer.style.display = 'none';
+            }
         }
 
-        for (let i = startPage; i <= endPage; i++) {
-            createPageItem(i, false, i === currentPage, () => onPageChange(i));
+        // ✅ Filtering logic (search + status)
+        function filterEngagements() {
+            const query = engagementSearch.value ? engagementSearch.value.toLowerCase() : '';
+            const searchTerms = query.split(',').map(term => term.trim()).filter(term => term.length >= 3);
+            const activeStatuses = Array.from(statusFilters).filter(cb => cb.checked).map(cb => cb.value);
+
+            filteredRows = allRows.filter(row => {
+                const text = row.innerText.toLowerCase();
+                const rowStatus = row.getAttribute('data-status');
+
+                const statusMatch = activeStatuses.length === 0 || activeStatuses.includes(rowStatus);
+                let searchMatch = searchTerms.length === 0 || searchTerms.some(term => text.includes(term));
+
+                return statusMatch && searchMatch;
+            });
+
+            renderTablePage(1);
         }
 
-        // Next button
-        createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1));
-    }
-
-    // ✅ Show rows for current page
-    function renderTablePage(page) {
-        currentPage = page;
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        allRows.forEach(row => (row.style.display = 'none'));
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
-
-        if (totalPages > 1) {
-            paginationContainer.style.display = 'flex';
-            createPaginationControls(totalPages, currentPage, renderTablePage);
-        } else {
-            paginationContainer.style.display = 'none';
+        // ✅ Event listeners
+        if (engagementSearch) {
+            engagementSearch.addEventListener('input', filterEngagements);
         }
-    }
+        statusFilters.forEach(cb => cb.addEventListener('change', filterEngagements));
 
-    // ✅ Filtering logic (search + status)
-    function filterEngagements() {
-        const query = engagementSearch.value ? engagementSearch.value.toLowerCase() : '';
-        const searchTerms = query.split(',').map(term => term.trim()).filter(term => term.length >= 3);
-        const activeStatuses = Array.from(statusFilters).filter(cb => cb.checked).map(cb => cb.value);
-
-        filteredRows = allRows.filter(row => {
-            const text = row.innerText.toLowerCase();
-            const rowStatus = row.getAttribute('data-status');
-
-            const statusMatch = activeStatuses.length === 0 || activeStatuses.includes(rowStatus);
-            let searchMatch = searchTerms.length === 0 || searchTerms.some(term => text.includes(term));
-
-            return statusMatch && searchMatch;
+        // ✅ Bulk select engagements
+        document.getElementById('selectAllEngagements').addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('.selectEngagement').forEach(cb => cb.checked = checked);
         });
 
-        renderTablePage(1);
-    }
-
-    // ✅ Event listeners
-    if (engagementSearch) {
-        engagementSearch.addEventListener('input', filterEngagements);
-    }
-    statusFilters.forEach(cb => cb.addEventListener('change', filterEngagements));
-
-    // ✅ Bulk select engagements
-    document.getElementById('selectAllEngagements').addEventListener('change', function() {
-        const checked = this.checked;
-        document.querySelectorAll('.selectEngagement').forEach(cb => cb.checked = checked);
+        // ✅ Initialize
+        filterEngagements();
     });
-
-    // ✅ Initialize
-    filterEngagements();
-});
-</script>
-
-
-
+    </script>
+<!-- end search, filter, and pagination -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
