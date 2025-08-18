@@ -249,10 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let allRows = Array.from(engagementTable.getElementsByTagName('tr'));
     let filteredRows = [...allRows];
 
-    // ✅ Create pagination controls
+    // ✅ Create pagination controls (build li inside existing <ul>)
     function createPaginationControls(totalPages, currentPage, onPageChange) {
-        const ul = document.createElement('ul');
-        ul.className = 'pagination justify-content-center';
+        paginationContainer.innerHTML = '';
 
         function createPageItem(label, disabled, active, clickHandler) {
             const li = document.createElement('li');
@@ -268,11 +267,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             li.appendChild(a);
-            return li;
+            paginationContainer.appendChild(li);
         }
 
         // Prev button
-        ul.appendChild(createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1)));
+        createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1));
 
         // Max 10 visible pages
         const maxVisiblePages = 10;
@@ -284,13 +283,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         for (let i = startPage; i <= endPage; i++) {
-            ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
+            createPageItem(i, false, i === currentPage, () => onPageChange(i));
         }
 
         // Next button
-        ul.appendChild(createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1)));
-
-        return ul;
+        createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1));
     }
 
     // ✅ Show rows for current page
@@ -302,27 +299,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const end = start + rowsPerPage;
         filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
 
-        renderPagination(totalPages);
-    }
-
-    // ✅ Render pagination bar
-    function renderPagination(totalPages) {
-        paginationContainer.innerHTML = '';
-        if (totalPages <= 1) {
+        if (totalPages > 1) {
+            paginationContainer.style.display = 'flex';
+            createPaginationControls(totalPages, currentPage, renderTablePage);
+        } else {
             paginationContainer.style.display = 'none';
-            return;
         }
-        paginationContainer.style.display = 'flex';
-
-        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-            renderTablePage(page);
-        });
-        paginationContainer.appendChild(paginationControls);
     }
 
     // ✅ Filtering logic (search + status)
     function filterEngagements() {
-        const query = engagementSearch.value.toLowerCase();
+        const query = engagementSearch.value ? engagementSearch.value.toLowerCase() : '';
         const searchTerms = query.split(',').map(term => term.trim()).filter(term => term.length >= 3);
         const activeStatuses = Array.from(statusFilters).filter(cb => cb.checked).map(cb => cb.value);
 
@@ -330,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = row.innerText.toLowerCase();
             const rowStatus = row.getAttribute('data-status');
 
-            const statusMatch = activeStatuses.includes(rowStatus);
+            const statusMatch = activeStatuses.length === 0 || activeStatuses.includes(rowStatus);
             let searchMatch = searchTerms.length === 0 || searchTerms.some(term => text.includes(term));
 
             return statusMatch && searchMatch;
@@ -340,7 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ✅ Event listeners
-    engagementSearch.addEventListener('input', filterEngagements);
+    if (engagementSearch) {
+        engagementSearch.addEventListener('input', filterEngagements);
+    }
     statusFilters.forEach(cb => cb.addEventListener('change', filterEngagements));
 
     // ✅ Bulk select engagements
@@ -353,6 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     filterEngagements();
 });
 </script>
+
 
 
 
