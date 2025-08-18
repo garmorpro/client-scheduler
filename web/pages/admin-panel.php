@@ -337,13 +337,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                   /* Space between buttons */
 .pagination .page-item {
   margin: 0 5px; /* adds spacing */
-  font-size: 14px !important;
+  font-size: 12px !important;
 }
 
 /* Default button look */
 .pagination .page-link {
   border-radius: 8px;
-  padding: 8px 14px;
+  padding: 6px 12px;
   color: #333;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
