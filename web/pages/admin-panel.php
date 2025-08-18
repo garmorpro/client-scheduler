@@ -333,6 +333,45 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </div>
                         
                 <!-- Pagination Controls -->
+                 <style>
+                  /* Space between buttons */
+.pagination .page-item {
+  margin: 0 5px; /* adds spacing */
+}
+
+/* Default button look */
+.pagination .page-link {
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #333;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effect */
+.pagination .page-link:hover {
+  background-color: #e2e6ea;
+  color: #000;
+  text-decoration: none;
+}
+
+/* Active page */
+.pagination .page-item.active .page-link {
+  background-color: #007bff; /* Bootstrap blue */
+  border-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Disabled (Prev/Next when inactive) */
+.pagination .page-item.disabled .page-link {
+  background-color: #f8f9fa;
+  color: #ccc;
+  border-color: #ddd;
+  pointer-events: none;
+}
+                 </style>
                 <nav>
                     <ul id="pagination-users" class="pagination justify-content-center mt-3"></ul>
                 </nav>
