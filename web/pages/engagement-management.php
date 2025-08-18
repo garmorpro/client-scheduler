@@ -99,7 +99,7 @@ $newEngagments = $newEngagmentRow['recent'];
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-people"></i></div>
+                    <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
                     <div class="stat-title">Total Engagements</div>
                     <div class="stat-value"><?php echo $totalEngagements; ?></div>
                     <div class="stat-sub">+<?php echo $newEngagments; ?> this month</div>
@@ -131,11 +131,11 @@ $newEngagments = $newEngagmentRow['recent'];
             ?>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                    <div class="stat-title">Engagement Status</div>
+                    <div class="card-icon"><i class="bi bi-bullseye"></i></div>
+                    <div class="stat-title">Assignment Rate</div>
                     <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
                     <div class="util-bar mt-2">
-                        <div class="util-bar-fill" style="width: <?php echo $percentageAssigned; ?>%"></div>
+                        <div class="util-bar-fill bg-primary" style="width: <?php echo $percentageAssigned; ?>%"></div>
                     </div>
                     <div class="stat-sub mt-2">
                         <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
