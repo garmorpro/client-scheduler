@@ -82,9 +82,28 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
                     </div>
                     <!-- <p class="text-muted mb-2"><?php //echo htmlspecialchars($client['contact_name']); ?></p> -->
-                    <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge mb-2">
-                        <?php echo htmlspecialchars($client['status']); ?>
-                    </span>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge">
+        <?php echo htmlspecialchars($client['status']); ?>
+    </span>
+    <span class="text-muted">
+        <?php
+            $onboarded = new DateTime($client['onboarded_date']);
+            $now = new DateTime();
+            $diff = $now->diff($onboarded);
+
+            if ($diff->y < 1) {
+                echo "New client";
+            } else {
+                echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+                if ($diff->m > 0) {
+                    echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+                }
+            }
+        ?>
+    </span>
+</div>
+
                     <p class="mb-1"><i class="bi bi-people"></i> Active engagements: 2</p>
                     <p class="mb-1"><i class="bi bi-calendar-event"></i> Total engagements: 5</p>
                     <p class="mb-3"><i class="bi bi-clock"></i> Onboarded: <?php echo date("n/j/Y", strtotime($client['onboarded_date'])); ?></p>
