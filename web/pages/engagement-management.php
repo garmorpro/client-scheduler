@@ -238,53 +238,122 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
 
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
     const engagementSearch = document.getElementById('engagementSearch');
     const engagementTable = document.getElementById('engagement-table').getElementsByTagName('tbody')[0];
     const statusFilters = document.querySelectorAll('.status-filter');
+    const paginationContainer = document.getElementById('pagination-engagements');
 
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    let allRows = Array.from(engagementTable.getElementsByTagName('tr'));
+    let filteredRows = [...allRows];
+
+    // ✅ Create pagination controls
+    function createPaginationControls(totalPages, currentPage, onPageChange) {
+        const ul = document.createElement('ul');
+        ul.className = 'pagination justify-content-center';
+
+        function createPageItem(label, disabled, active, clickHandler) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+            const a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.innerText = label;
+            if (!disabled) {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    clickHandler();
+                });
+            }
+            li.appendChild(a);
+            return li;
+        }
+
+        // Prev button
+        ul.appendChild(createPageItem('Prev', currentPage === 1, false, () => onPageChange(currentPage - 1)));
+
+        // Max 10 visible pages
+        const maxVisiblePages = 10;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = startPage + maxVisiblePages - 1;
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            ul.appendChild(createPageItem(i, false, i === currentPage, () => onPageChange(i)));
+        }
+
+        // Next button
+        ul.appendChild(createPageItem('Next', currentPage === totalPages, false, () => onPageChange(currentPage + 1)));
+
+        return ul;
+    }
+
+    // ✅ Show rows for current page
+    function renderTablePage(page) {
+        currentPage = page;
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        allRows.forEach(row => (row.style.display = 'none'));
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
+
+        renderPagination(totalPages);
+    }
+
+    // ✅ Render pagination bar
+    function renderPagination(totalPages) {
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+        paginationContainer.style.display = 'flex';
+
+        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+            renderTablePage(page);
+        });
+        paginationContainer.appendChild(paginationControls);
+    }
+
+    // ✅ Filtering logic (search + status)
     function filterEngagements() {
         const query = engagementSearch.value.toLowerCase();
         const searchTerms = query.split(',').map(term => term.trim()).filter(term => term.length >= 3);
+        const activeStatuses = Array.from(statusFilters).filter(cb => cb.checked).map(cb => cb.value);
 
-        const activeStatuses = Array.from(statusFilters)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-
-        const rows = engagementTable.getElementsByTagName('tr');
-
-        Array.from(rows).forEach(row => {
+        filteredRows = allRows.filter(row => {
             const text = row.innerText.toLowerCase();
             const rowStatus = row.getAttribute('data-status');
 
-            // Status check
             const statusMatch = activeStatuses.includes(rowStatus);
+            let searchMatch = searchTerms.length === 0 || searchTerms.some(term => text.includes(term));
 
-            // Search check
-            let searchMatch = false;
-            if (searchTerms.length === 0) {
-                searchMatch = true; // No search terms = show all
-            } else {
-                searchMatch = searchTerms.some(term => text.includes(term));
-            }
-
-            if (statusMatch && searchMatch) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            return statusMatch && searchMatch;
         });
+
+        renderTablePage(1);
     }
 
-    // Event listeners
+    // ✅ Event listeners
     engagementSearch.addEventListener('input', filterEngagements);
     statusFilters.forEach(cb => cb.addEventListener('change', filterEngagements));
 
-    // Bulk select engagements
+    // ✅ Bulk select engagements
     document.getElementById('selectAllEngagements').addEventListener('change', function() {
         const checked = this.checked;
         document.querySelectorAll('.selectEngagement').forEach(cb => cb.checked = checked);
     });
+
+    // ✅ Initialize
+    filterEngagements();
+});
 </script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
