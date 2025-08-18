@@ -16,7 +16,10 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-
+// Fetch clients from database
+$stmt = $conn->prepare("SELECT id, company_name, contact_name, status, onboarded_date, active_engagements, total_engagements FROM clients ORDER BY company_name ASC");
+$stmt->execute();
+$clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,105 +27,91 @@ if (!$isAdmin && !$isManager) {
     <title>Client Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-
+    <style>
+        .client-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .client-card .status-badge {
+            text-transform: capitalize;
+            font-size: 0.8rem;
+        }
+        .client-card .card-buttons button {
+            margin-right: 5px;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .client-search {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body class="d-flex">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <h3 class="mb-0">Client Management</h3>
-    <p class="text-muted mb-4">Manage all onboarded clients and engagements</p>
-
-    <div class="container-fluid">
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    <!-- Left: Bulk Import -->
-    <div>
-        <a href="#" class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#importClientsModal">
-            <i class="bi bi-upload me-1"></i> Bulk Import Clients
-        </a>
-    </div>
-
-    <!-- Right: Add Client -->
-    <div>
-        <a href="#" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addClientModal">
-            <i class="bi bi-plus-lg me-1"></i> Add New Client
-        </a>
-    </div>
-</div>
-
-<div class="row g-3">
-<?php
-$query = "SELECT * FROM clients ORDER BY onboarded_date DESC";
-$result = mysqli_query($conn, $query);
-
-if ($result && mysqli_num_rows($result) > 0) {
-    while ($client = mysqli_fetch_assoc($result)) {
-        // Calculate years onboard
-        $onboarded = new DateTime($client['onboarded_date']);
-        $now = new DateTime();
-        $interval = $onboarded->diff($now);
-        $yearsOnboard = $interval->y;
-
-        // Example: get active and total engagements (replace with real queries)
-        $client_id = $client['client_id'];
-        $engagementQuery = "SELECT COUNT(*) as total, 
-                                   SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active 
-                            FROM engagements WHERE client_id = $client_id";
-        $engagementResult = mysqli_query($conn, $engagementQuery);
-        $engagementData = mysqli_fetch_assoc($engagementResult);
-        $totalEngagements = $engagementData['total'];
-        $activeEngagements = $engagementData['active'];
-
-        // Determine status
-        $status = $activeEngagements > 0 ? 'Active' : 'Inactive';
-        $statusBadge = $status === 'Active' ? 'bg-dark' : 'bg-secondary';
-?>
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-2">
-                    <i class="bi bi-building me-2 fs-4 text-muted"></i>
-                    <h5 class="card-title mb-0"><?php echo htmlspecialchars($client['client_name']); ?></h5>
-                </div>
-                <?php if (!empty($client['notes'])): ?>
-                    <p class="text-muted mb-1"><?php echo htmlspecialchars($client['notes']); ?></p>
-                <?php endif; ?>
-
-                <span class="badge <?php echo $statusBadge; ?> mb-2"><?php echo $status; ?></span>
-                <p class="mb-1"><i class="bi bi-people me-1"></i> Active engagements: <?php echo $activeEngagements; ?></p>
-                <p class="mb-1"><i class="bi bi-calendar-check me-1"></i> Total engagements: <?php echo $totalEngagements; ?></p>
-                <p class="mb-0"><i class="bi bi-clock me-1"></i> Onboarded: <?php echo date('n/j/Y', strtotime($client['onboarded_date'])); ?> (<?php echo $yearsOnboard; ?> years)</p>
-            </div>
-            <div class="card-footer bg-transparent border-top d-flex gap-2">
-                <a href="view_client.php?id=<?php echo $client['client_id']; ?>" class="btn btn-outline-secondary flex-grow-1">
-                    <i class="bi bi-eye me-1"></i> View
-                </a>
-                <a href="#" class="btn btn-outline-dark flex-grow-1" data-bs-toggle="modal" data-bs-target="#editClientModal" data-client-id="<?php echo $client['client_id']; ?>">
-                    <i class="bi bi-pencil me-1"></i> Edit
-                </a>
-            </div>
+    <div class="header-row">
+        <div>
+            <h3 class="mb-0">Client Management</h3>
+            <p class="text-muted mb-0">Manage all onboarded clients and their engagement status</p>
+        </div>
+        <div>
+            <button class="btn btn-outline-secondary me-2"><i class="bi bi-upload"></i> Bulk Import Client</button>
+            <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add New Client</button>
         </div>
     </div>
-<?php
-    }
-} else {
-    echo '<div class="col-12 text-center text-muted">No clients found.</div>';
-}
-?>
+
+    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name...">
+
+    <div class="row" id="clientCards">
+        <?php foreach($clients as $client): ?>
+            <div class="col-md-4">
+                <div class="client-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-building me-2"></i>
+                        <h5 class="mb-0"><?php echo htmlspecialchars($client['company_name']); ?></h5>
+                    </div>
+                    <p class="text-muted mb-2"><?php echo htmlspecialchars($client['contact_name']); ?></p>
+                    <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge mb-2">
+                        <?php echo htmlspecialchars($client['status']); ?>
+                    </span>
+                    <p class="mb-1"><i class="bi bi-people"></i> Active engagements: <?php echo $client['active_engagements']; ?></p>
+                    <p class="mb-1"><i class="bi bi-calendar-event"></i> Total engagements: <?php echo $client['total_engagements']; ?></p>
+                    <p class="mb-3"><i class="bi bi-clock"></i> Onboarded: <?php echo date("n/j/Y", strtotime($client['onboarded_date'])); ?></p>
+                    <div class="card-buttons d-flex">
+                        <button class="btn btn-outline-dark btn-sm flex-grow-1"><i class="bi bi-eye"></i> View</button>
+                        <button class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil"></i> Edit</button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
 </div>
 
-        
-
-    </div> <!-- end container -->
-</div> <!-- end flex-grow -->
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const clientCards = document.getElementById('clientCards');
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        Array.from(clientCards.children).forEach(cardCol => {
+            const companyName = cardCol.querySelector('h5').innerText.toLowerCase();
+            if (companyName.includes(query)) {
+                cardCol.style.display = '';
+            } else {
+                cardCol.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
