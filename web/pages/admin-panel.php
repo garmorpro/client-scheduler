@@ -359,9 +359,9 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 /* Active page */
 .pagination .page-item.active .page-link {
-  background-color: #007bff; /* Bootstrap blue */
-  border-color: #007bff;
-  color: #fff;
+  background-color: #003f47; /* Bootstrap blue */
+  border-color: #003f47;
+  color: #a3cc38;
   font-weight: bold;
 }
 
