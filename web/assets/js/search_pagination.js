@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Engagement Management pagination (5 rows per page)
   function initEngagementPagination() {
     const rowsPerPage = 5;
-    const table = document.querySelector('#tab-engagements table');
+    const table = document.querySelector('#engagements table');
     if (!table) return;
     const tbody = table.querySelector('tbody');
     const allRows = Array.from(tbody.querySelectorAll('tr'));
