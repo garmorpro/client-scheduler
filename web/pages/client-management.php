@@ -75,7 +75,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <?php foreach($clients as $client): ?>
             <div class="col-md-4">
                 <div class="client-card">
-                    <div class="d-flex align-items-center mb-4">
+                    <div class="d-flex align-items-center mb-5">
                         <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                             <i class="bi bi-building"></i>
                         </div>
