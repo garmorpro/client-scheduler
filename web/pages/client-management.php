@@ -17,7 +17,7 @@ if (!$isAdmin && !$isManager) {
 }
 
 // Fetch clients from database
-$stmt = $conn->prepare("SELECT client_id, client_name, status, onboarded_date FROM clients ORDER BY onboarded_date DESC");
+$stmt = $conn->prepare("SELECT client_id, client_name, status, onboarded_date FROM clients ORDER BY client_name ASC");
 $stmt->execute();
 $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
