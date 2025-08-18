@@ -226,7 +226,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         <!-- Tabs -->
           <div class="custom-tabs">
               <a href="#employees" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="employees">Employee Management</a>
-              <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a>
+              <!-- <a href="#engagement" class=" text-decoration-none <?php if ($isManager) echo 'active'; ?>" data-tab="engagements">Engagement Management</a> -->
               <a href="#time_off" class=" text-decoration-none" data-tab="time_off">Time Off</a>
               <a href="#activity" class=" text-decoration-none" data-tab="activity">System Activity</a>
               <a href="#settings" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?>" data-tab="settings">Settings</a>
@@ -345,21 +345,21 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         <!-- engagement management -->
 
-            <div id="engagements" class="tab-content">
+            <!-- <div id="engagements" class="tab-content">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
-                        <!-- Left -->
+           
                         <div class="titles">
                             <p class="text-black mb-0"><strong>Engagement Management</strong></p>
                             <p class="mb-0">Manage all engagements and entries</p>
                         </div>
 
-                        <!-- Middle (Search) -->
+           
                         <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
                             <input type="text" id="engagementSearch" class="form-control form-control-sm" 
                                    placeholder="Search engagements..." minlength="3">
                         </div>
 
-                        <!-- Right -->
+         
                         <div class="user-management-buttons d-flex align-items-center gap-2">
                             <a href="#" id="bulkDeleteEngagementBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
                                style="font-size: .875rem; background-color: darkred; display:none;">
@@ -395,71 +395,71 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </tr>
                         </thead>
                         <tbody>
-                        <?php if (mysqli_num_rows($engagementResults) > 0): ?>
-                            <?php while ($E_row = mysqli_fetch_assoc($engagementResults)): ?>
+                        <?php // if (mysqli_num_rows($engagementResults) > 0): ?>
+                            <?php //while ($E_row = mysqli_fetch_assoc($engagementResults)): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $E_row['engagement_id']; ?>"></td>
+                                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php //echo $E_row['engagement_id']; ?>"></td>
                                     <td>
-                                        <?php echo $E_row['client_name']; ?><br>
+                                        <?php// echo $E_row['client_name']; ?><br>
                                     </td>
                                     <td>
-                                        <?php echo (int)$E_row['budgeted_hours']; ?> hours
+                                        <?php //echo (int)$E_row['budgeted_hours']; ?> hours
                                     </td>
                                     <td>
-                                        <?php echo $E_row['total_assigned_hours']; ?> hours
+                                        <?php //echo $E_row['total_assigned_hours']; ?> hours
                                     </td>
                                     <td>
                                         <?php
-                                        $status = strtolower($E_row['status']);
-                                        switch ($status) {
-                                            case 'confirmed':
-                                                $badgeClass = 'badge-confirmed';   // e.g., green badge
-                                                break;
-                                            case 'pending':
-                                                $badgeClass = 'badge-pending';     // e.g., yellow badge
-                                                break;
-                                            case 'not_confirmed':
-                                                $badgeClass = 'badge-not-confirmed'; // e.g., red badge
-                                                break;
-                                            default:
-                                                $badgeClass = 'badge-default';     // fallback class
-                                                break;
-                                        }
+                                        // $status = strtolower($E_row['status']);
+                                        // switch ($status) {
+                                        //     case 'confirmed':
+                                        //         $badgeClass = 'badge-confirmed';   
+                                        //         break;
+                                        //     case 'pending':
+                                        //         $badgeClass = 'badge-pending';     
+                                        //         break;
+                                        //     case 'not_confirmed':
+                                        //         $badgeClass = 'badge-not-confirmed'; 
+                                        //         break;
+                                        //     default:
+                                        //         $badgeClass = 'badge-default';    
+                                        //         break;
+                                        // }
                                         ?>
 
-                                        <span class="badge-status <?php echo $badgeClass; ?>">
-                                            <?php echo ucfirst(str_replace('_', ' ', $E_row['status'])); ?>
+                                        <span class="badge-status <?php //echo $badgeClass; ?>">
+                                            <?php //echo ucfirst(str_replace('_', ' ', $E_row['status'])); ?>
                                         </span>
 
                                     </td>
                                     <td class="table-actions">
-                                        <a href="#" class="view-engagement-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewEngagementModal" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
+                                        <a href="#" class="view-engagement-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewEngagementModal" data-engagement-id="<?php //echo $E_row['engagement_id']; ?>">
                                             <i class="bi bi-eye text-success"></i>
                                         </a>
-                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateEngagementModal" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
+                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateEngagementModal" data-engagement-id="<?php// echo $E_row['engagement_id']; ?>">
                                             <i class="bi bi-pencil text-purple "></i>
                                         </a>
 
-                                        <a href="#" class="delete-engagement-btn text-decoration-none" data-engagement-id="<?php echo $E_row['engagement_id']; ?>">
+                                        <a href="#" class="delete-engagement-btn text-decoration-none" data-engagement-id="<?php //echo $E_row['engagement_id']; ?>">
                                           <i class="bi bi-trash"></i>
                                         </a>
 
                                     </td>
                                 </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
+                            <?php //endwhile; ?>
+                        <?php //else: ?>
                             <tr><td colspan="5" class="text-center">No engagements found</td></tr>
-                        <?php endif; ?>
+                        <?php// endif; ?>
                         </tbody>
                     </table>
                 </div>
                         
-                <!-- Pagination Controls -->
+    
                 <nav>
                   <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
                 </nav>
                             
-            </div>
+            </div> -->
 
         <!-- end engagement management -->
 
