@@ -114,52 +114,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('#tab-engagements table');
     if (!table) return;
     const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const allRows = Array.from(tbody.querySelectorAll('tr'));
     const paginationContainer = document.getElementById('pagination-engagements');
 
     let currentPage = 1;
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let filteredRows = [...allRows];
 
     function renderTablePage(page) {
-      currentPage = page;
-      rows.forEach(row => (row.style.display = 'none'));
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      rows.slice(start, end).forEach(row => (row.style.display = ''));
-      renderPagination();
+        currentPage = page;
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        filteredRows.forEach(row => (row.style.display = 'none'));
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
+        renderPagination(totalPages);
     }
 
-    function renderPagination() {
-      paginationContainer.innerHTML = '';
-      if (totalPages <= 1) {
-        paginationContainer.style.display = 'none';
-        return;
-      }
-      paginationContainer.style.display = 'flex';
-
-      const paginationControls = createPaginationControls(totalPages, currentPage, page => {
-        renderTablePage(page);
-      });
-      paginationContainer.appendChild(paginationControls);
+    function renderPagination(totalPages) {
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+        paginationContainer.style.display = 'flex';
+        const paginationControls = createPaginationControls(totalPages, currentPage, page => {
+            renderTablePage(page);
+        });
+        paginationContainer.appendChild(paginationControls);
     }
 
-    // Optional: filter by search input
+    // Search input
     const searchInput = document.getElementById('engagementSearch');
     if (searchInput) {
-      searchInput.addEventListener('input', function () {
-        const value = this.value.trim().toLowerCase();
-        const filteredRows = rows.filter(row => row.innerText.toLowerCase().includes(value));
-        rows.forEach(row => (row.style.display = 'none'));
-        filteredRows.forEach((row, index) => {
-          if (index < rowsPerPage) row.style.display = '';
+        searchInput.addEventListener('input', function () {
+            const value = this.value.trim().toLowerCase();
+            if (value.length >= 3) {
+                filteredRows = allRows.filter(row => row.innerText.toLowerCase().includes(value));
+            } else {
+                filteredRows = [...allRows];
+            }
+            renderTablePage(1);
         });
-        currentPage = 1;
-        renderPagination();
-      });
     }
 
     renderTablePage(1);
-  }
+}
+
 
   // System Activity pagination (3 cards per page)
   function initActivityPagination() {
