@@ -75,74 +75,73 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <?php foreach($clients as $client): ?>
            <!-- Container to hold multiple client cards -->
 <div class="d-flex flex-row flex-wrap gap-3">
-    <div class="col-auto">
-        <div class="client-card p-4 bg-card text-card-foreground flex gap-1 rounded-xl" style="min-width: 350px;">
-            <!-- Client Header -->
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-dark text-white rounded p-2 me-2 d-flex flex-row align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                    <i class="bi bi-building"></i>
-                </div>
-                <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
+    <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-3 rounded-xl" style="flex: 1 1 350px; min-width: 350px;">
+        <!-- Client Header -->
+        <div class="d-flex align-items-center mb-4">
+            <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                <i class="bi bi-building"></i>
             </div>
+            <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
+        </div>
 
-            <!-- Status and Onboarded Duration -->
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <!-- Status and Onboarded Duration -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+            <?php
+                $status = strtolower($client['status']);
+                switch ($status) {
+                    case 'active':
+                        $badgeClass = 'badge-confirmed';   
+                        break;
+                    case 'inactive':
+                        $badgeClass = 'badge-inactive';     
+                        break;
+                    default:
+                        $badgeClass = 'badge-default';    
+                        break;
+                }
+            ?>
+            <span class="badge-status <?php echo $badgeClass; ?>">
+                <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
+            </span>
+            <span class="text-muted mt-1 mt-md-0">
                 <?php
-                    $status = strtolower($client['status']);
-                    switch ($status) {
-                        case 'active':
-                            $badgeClass = 'badge-confirmed';   
-                            break;
-                        case 'inactive':
-                            $badgeClass = 'badge-inactive';     
-                            break;
-                        default:
-                            $badgeClass = 'badge-default';    
-                            break;
+                    $onboarded = new DateTime($client['onboarded_date']);
+                    $now = new DateTime();
+                    $diff = $now->diff($onboarded);
+
+                    if ($diff->y == 0 && $diff->m == 0) {
+                        echo "New client";
+                    } elseif ($diff->y == 0) {
+                        echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
+                    } else {
+                        echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+                        if ($diff->m > 0) {
+                            echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+                        }
+                        echo " onboarded";
                     }
                 ?>
-                <span class="badge-status <?php echo $badgeClass; ?>">
-                    <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
-                </span>
-                <span class="text-muted mt-1 mt-md-0">
-                    <?php
-                        $onboarded = new DateTime($client['onboarded_date']);
-                        $now = new DateTime();
-                        $diff = $now->diff($onboarded);
+            </span>
+        </div>
 
-                        if ($diff->y == 0 && $diff->m == 0) {
-                            echo "New client";
-                        } elseif ($diff->y == 0) {
-                            echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
-                        } else {
-                            echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
-                            if ($diff->m > 0) {
-                                echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
-                            }
-                            echo " onboarded";
-                        }
-                    ?>
-                </span>
-            </div>
+        <!-- Engagements Info -->
+        <div class="d-flex justify-content-between mb-1 flex-wrap">
+            <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
+            <span><?php echo $client['active_engagements'] ?? 2; ?></span>
+        </div>
+        <div class="d-flex justify-content-between mb-3 flex-wrap">
+            <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
+            <span><?php echo $client['total_engagements'] ?? 5; ?></span>
+        </div>
 
-            <!-- Engagements Info -->
-            <div class="d-flex justify-content-between mb-1 flex-wrap">
-                <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
-                <span><?php echo $client['active_engagements'] ?? 2; ?></span>
-            </div>
-            <div class="d-flex justify-content-between mb-3 flex-wrap">
-                <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
-                <span><?php echo $client['total_engagements'] ?? 5; ?></span>
-            </div>
-
-            <!-- Card Buttons -->
-            <div class="card-buttons d-flex flex-wrap gap-2">
-                <button class="btn btn-outline-dark btn-sm flex-grow-1 me-0" style="border-color: rgb(242,242,242) !important;"><i class="bi bi-eye"></i> View</button>
-                <button class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil"></i> Edit</button>
-            </div>
+        <!-- Card Buttons -->
+        <div class="card-buttons d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-dark btn-sm flex-grow-1 me-0" style="border-color: rgb(242,242,242) !important;"><i class="bi bi-eye"></i> View</button>
+            <button class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil"></i> Edit</button>
         </div>
     </div>
 </div>
+
 
 
 
