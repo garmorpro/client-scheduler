@@ -74,7 +74,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="row" id="clientCards">
         <?php foreach($clients as $client): ?>
            <!-- Container to hold multiple client cards -->
-<div class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+<div class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
 
     <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-3 rounded-xl">
         <!-- Client Header -->
