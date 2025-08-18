@@ -100,7 +100,7 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                         <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
                         <td><?php echo htmlspecialchars($row['client_name']); ?></td>
                         <td><?php echo $row['budgeted_hours']; ?></td>
-                        <td>0</td>
+                        <td><?php echo $row['total_assigned_hours']; ?></td>
                         <td>
                             <?php
                             $status = strtolower($E_row['status']);
