@@ -69,99 +69,95 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name...">
+    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name (comma separated)...">
 
-    <div class="row" id="clientCards">
-        <!-- Container to hold multiple client cards -->
-<div class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: .5rem 1rem;">
-
-    <?php foreach ($clients as $client): ?>
-        <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl">
-            <!-- Client Header -->
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                    <i class="bi bi-building"></i>
+    <div id="clientCards" class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: .5rem 1rem;">
+        <?php foreach ($clients as $client): ?>
+            <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl">
+                <!-- Client Header -->
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="fs-6 mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
                 </div>
-                <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
-            </div>
 
-            <!-- Status and Onboarded Duration -->
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-                <?php
-                    $status = strtolower($client['status']);
-                    switch ($status) {
-                        case 'active':
-                            $badgeClass = 'badge-confirmed';   
-                            break;
-                        case 'inactive':
-                            $badgeClass = 'badge-inactive';     
-                            break;
-                        default:
-                            $badgeClass = 'badge-default';    
-                            break;
-                    }
-                ?>
-                <span class="badge-status <?php echo $badgeClass; ?>">
-                    <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
-                </span>
-                <span class="text-muted mt-1 mt-md-0">
+                <!-- Status and Onboarded Duration -->
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                     <?php
-                        $onboarded = new DateTime($client['onboarded_date']);
-                        $now = new DateTime();
-                        $diff = $now->diff($onboarded);
-
-                        if ($diff->y == 0 && $diff->m == 0) {
-                            echo "New client";
-                        } elseif ($diff->y == 0) {
-                            echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
-                        } else {
-                            echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
-                            if ($diff->m > 0) {
-                                echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
-                            }
-                            echo " onboarded";
+                        $status = strtolower($client['status']);
+                        switch ($status) {
+                            case 'active':
+                                $badgeClass = 'badge-confirmed';   
+                                break;
+                            case 'inactive':
+                                $badgeClass = 'badge-inactive';     
+                                break;
+                            default:
+                                $badgeClass = 'badge-default';    
+                                break;
                         }
                     ?>
-                </span>
+                    <span class="badge-status <?php echo $badgeClass; ?>">
+                        <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
+                    </span>
+                    <span class="text-muted mt-1 mt-md-0">
+                        <?php
+                            $onboarded = new DateTime($client['onboarded_date']);
+                            $now = new DateTime();
+                            $diff = $now->diff($onboarded);
+
+                            if ($diff->y == 0 && $diff->m == 0) {
+                                echo "New client";
+                            } elseif ($diff->y == 0) {
+                                echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
+                            } else {
+                                echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+                                if ($diff->m > 0) {
+                                    echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+                                }
+                                echo " onboarded";
+                            }
+                        ?>
+                    </span>
+                </div>
+
+                <!-- Engagements Info -->
+                <div class="d-flex justify-content-between mb-1 flex-wrap">
+                    <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
+                    <span><?php echo $client['active_engagements'] ?? 2; ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 flex-wrap">
+                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
+                    <span><?php echo $client['total_engagements'] ?? 5; ?></span>
+                </div>
+
+                <!-- Card Buttons -->
+                <div class="card-buttons d-flex flex-wrap gap-2">
+                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; border: none !important;"><i class="bi bi-eye"></i> View</button>
+                    <button class="badge text-white btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"><i class="bi bi-pencil"></i> Edit</button>
+                </div>
             </div>
-
-            <!-- Engagements Info -->
-            <div class="d-flex justify-content-between mb-1 flex-wrap">
-                <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
-                <span><?php echo $client['active_engagements'] ?? 2; ?></span>
-            </div>
-            <div class="d-flex justify-content-between mb-3 flex-wrap">
-                <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
-                <span><?php echo $client['total_engagements'] ?? 5; ?></span>
-            </div>
-
-            <!-- Card Buttons -->
-            <div class="card-buttons d-flex flex-wrap gap-2">
-                <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; border: none !important;"><i class="bi bi-eye"></i> View</button>
-                <button class="badge text-white btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"><i class="bi bi-pencil"></i> Edit</button>
-                <!-- <button class="btn btn-outline-dark btn-sm flex-grow-1 me-0" style="border-color: rgb(229,229,229) !important;"><i class="bi bi-eye"></i> View</button>
-                <button class="btn btn-outline-secondary btn-sm flex-grow-1" style="background-color: rgb(229,229,229) !important;border-color: rgb(229,229,229) !important;"><i class="bi bi-pencil"></i> Edit</button> -->
-            </div>
-        </div>
-    <?php endforeach; ?>
-
-</div>
-
-
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const searchInput = document.getElementById('searchInput');
     const clientCards = document.getElementById('clientCards');
+    const cards = Array.from(clientCards.getElementsByClassName('client-card'));
+
     searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase();
-        Array.from(clientCards.children).forEach(cardCol => {
-            const companyName = cardCol.querySelector('h5').innerText.toLowerCase();
-            if (companyName.includes(query)) {
-                cardCol.style.display = '';
+        const searchTerms = query.split(',').map(term => term.trim()).filter(term => term !== "");
+
+        cards.forEach(card => {
+            const name = card.querySelector('.client-name').innerText.toLowerCase();
+            if (searchTerms.length === 0 || searchTerms.some(term => name.includes(term))) {
+                card.style.display = '';
             } else {
-                cardCol.style.display = 'none';
+                card.style.display = 'none';
             }
         });
     });
