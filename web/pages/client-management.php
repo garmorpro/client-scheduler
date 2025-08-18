@@ -74,8 +74,9 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <div class="row" id="clientCards">
         <?php foreach($clients as $client): ?>
             <div class="col-md-4">
-    <div class="client-card">
-        <div class="d-flex align-items-center mb-5">
+    <div class="client-card p-3">
+        <!-- Client Header -->
+        <div class="d-flex align-items-center mb-4">
             <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                 <i class="bi bi-building"></i>
             </div>
@@ -83,7 +84,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <!-- Status and Onboarded Duration -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge">
                 <?php echo htmlspecialchars($client['status']); ?>
             </span>
@@ -108,15 +109,24 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             </span>
         </div>
 
-        <p class="mb-1"><i class="bi bi-people"></i> Active engagements: 2</p>
-        <p class="mb-1"><i class="bi bi-calendar-event"></i> Total engagements: 5</p>
+        <!-- Engagements Info -->
+        <div class="d-flex justify-content-between mb-1">
+            <span><i class="bi bi-people"></i> Active engagements</span>
+            <span>2</span>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+            <span><i class="bi bi-calendar-event"></i> Total engagements</span>
+            <span>5</span>
+        </div>
 
+        <!-- Card Buttons -->
         <div class="card-buttons d-flex">
-            <button class="btn btn-outline-dark btn-sm flex-grow-1"><i class="bi bi-eye"></i> View</button>
+            <button class="btn btn-outline-dark btn-sm flex-grow-1 me-2"><i class="bi bi-eye"></i> View</button>
             <button class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil"></i> Edit</button>
         </div>
     </div>
 </div>
+
 
         <?php endforeach; ?>
     </div>
