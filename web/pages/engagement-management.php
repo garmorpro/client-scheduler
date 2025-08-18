@@ -80,6 +80,56 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
         </div>
     </div>
 
+    <!-- Stat cards -->
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-people"></i></div>
+                        <div class="stat-title">Total Users</div>
+                        <div class="stat-value"><?php echo $totalUsers; ?></div>
+                        <div class="stat-sub">+<?php echo $newUsers; ?> this month</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-person-up"></i></div>
+                        <div class="stat-title">Active Users</div>
+                        <div class="stat-value"><?php echo $totalActiveUsers; ?></div>
+                        <div class="stat-sub"><?php echo $totalInactiveUsers; ?> inactive users</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
+                        <div class="stat-title">Confirmed Engagements</div>
+                        <div class="stat-value"><?php echo $totalConfirmedEngagements; ?></div>
+                        <div class="stat-sub"><?php echo $totalPendingEngagements; ?> pending <i class="bi bi-dot"></i> <?php echo $totalNotConfirmedEngagements; ?> not confirmed</div>
+                    </div>
+                </div>
+                <?php
+                // Ensure totalEngagements is not zero to avoid division by zero
+                if ($totalEngagements > 0) {
+                    $percentageAssigned = round(($totalAssigned / $totalEngagements) * 100);
+                } else {
+                    $percentageAssigned = 0;
+                }
+                ?>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="stat-title">Engagement Status</div>
+                        <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
+                        <div class="util-bar mt-2">
+                            <div class="util-bar-fill" style="width: <?php echo $percentageAssigned; ?>%"></div>
+                        </div>
+                        <div class="stat-sub mt-2">
+                            <?php echo $totalAssigned; ?> assigned <i class="bi bi-dot"></i> <?php echo $totalNotAssigned; ?> not assigned
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- end stats cards -->
+
     <!-- Engagements Table -->
     <div class="user-table mt-3">
         <table id="engagement-table" class="table table-hover mb-0">
