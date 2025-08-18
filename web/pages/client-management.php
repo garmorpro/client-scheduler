@@ -79,7 +79,7 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                             <i class="bi bi-building"></i>
                         </div>
-                        <h5 class="mb-0"><?php echo htmlspecialchars($client['client_name']); ?></h5>
+                        <div class="fs-6 mb-0"><?php echo htmlspecialchars($client['client_name']); ?></div>
                     </div>
                     <!-- <p class="text-muted mb-2"><?php //echo htmlspecialchars($client['contact_name']); ?></p> -->
                     <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge mb-2">
