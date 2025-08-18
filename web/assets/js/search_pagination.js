@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
   function setupTable(searchInputId, tableId, paginationId) {
     const searchInput = document.getElementById(searchInputId);
@@ -13,10 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const start = (page - 1) * perPage;
       const end = start + perPage;
 
-      // Hide all
+      // Hide all rows
       allRows.forEach(row => row.style.display = 'none');
 
-      // Show only the relevant
+      // Show only rows for this page
       filteredRows.forEach((row, index) => {
         if (index >= start && index < end) {
           row.style.display = '';
@@ -36,6 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       pagination.style.display = '';
 
+      // Prev button
+      const prev = document.createElement('li');
+      prev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+      prev.innerHTML = `<a class="page-link" href="#">«</a>`;
+      prev.addEventListener('click', e => {
+        e.preventDefault();
+        if (currentPage > 1) showPage(currentPage - 1);
+      });
+      pagination.appendChild(prev);
+
+      // Page numbers
       for (let i = 1; i <= pageCount; i++) {
         const li = document.createElement('li');
         li.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -52,6 +62,16 @@ document.addEventListener('DOMContentLoaded', function () {
         li.appendChild(a);
         pagination.appendChild(li);
       }
+
+      // Next button
+      const next = document.createElement('li');
+      next.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+      next.innerHTML = `<a class="page-link" href="#">»</a>`;
+      next.addEventListener('click', e => {
+        e.preventDefault();
+        if (currentPage < pageCount) showPage(currentPage + 1);
+      });
+      pagination.appendChild(next);
     }
 
     function filterRows(query) {
@@ -88,4 +108,3 @@ document.addEventListener('DOMContentLoaded', function () {
   setupTable('userSearch', 'user-table', 'pagination-users');
   setupTable('engagementSearch', 'engagement-table', 'pagination-engagements');
 });
-
