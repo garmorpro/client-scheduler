@@ -46,6 +46,29 @@ $newEngagementsResult = mysqli_query($conn, $newEngagementsQuery);
 $newEngagmentRow = mysqli_fetch_assoc($newEngagementsResult);
 $newEngagments = $newEngagmentRow['recent'];
 
+// Total assigned
+$assignedEngagementsQuery = "
+    SELECT COUNT(DISTINCT e.engagement_id) AS total_assigned
+    FROM engagements e
+    JOIN entries a ON e.engagement_id = a.engagement_id
+";
+
+$assignedResult = mysqli_query($conn, $assignedEngagementsQuery);
+$assignedRow = mysqli_fetch_assoc($assignedResult);
+$totalAssigned = $assignedRow['total_assigned'];
+
+// Total not assigned
+$notAssignedEngagementsQuery = "
+    SELECT COUNT(*) AS total_not_assigned
+    FROM engagements e
+    LEFT JOIN entries a ON e.engagement_id = a.engagement_id
+    WHERE a.engagement_id IS NULL
+";
+
+$notAssignedResult = mysqli_query($conn, $notAssignedEngagementsQuery);
+$notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
+$totalNotAssigned = $notAssignedRow['total_not_assigned'];
+
 ?>
 <!DOCTYPE html>
 <html>
