@@ -126,8 +126,8 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
             </div>
         </div>
     <!-- end stats cards -->
-     
-        <div class="flex-grow-1 p-4" style="margin-left: 250px;">
+
+        <div class="flex-grow-1 p-4">
             <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
                 <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
             </div>
