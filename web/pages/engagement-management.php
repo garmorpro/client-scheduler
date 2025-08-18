@@ -127,108 +127,142 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
         </div>
     <!-- end stats cards -->
 
-        <div class="flex-grow-1 mt-3">
-            <div class="user-search" style="; max-width: 600px;">
-                <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
-            </div>
-        </div>
+<div class="flex-grow-1 mt-3 d-flex align-items-start gap-3">
+    <!-- Search -->
+    <div class="user-search" style="flex:1; max-width:300px;">
+        <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
+    </div>
 
-    <!-- Engagements Table -->
-        <div class="user-table mt-3">
-            <table id="engagement-table" class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAllEngagements"></th>
-                        <th>Client</th>
-                        <th>Budgeted Hours</th>
-                        <th>Allocated Hours</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (mysqli_num_rows($engagementResult) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
-                        <tr>
-                            <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
-                            <td><?php echo htmlspecialchars($row['client_name']); ?></td>
-                            <td><?php echo $row['budgeted_hours']; ?></td>
-                            <td><?php echo $row['total_assigned_hours']; ?></td>
-                            <td>
-                                <?php
-                                $status = strtolower($row['status']);
-                                switch ($status) {
-                                    case 'confirmed':
-                                        $badgeClass = 'badge-confirmed';   
-                                        break;
-                                    case 'pending':
-                                        $badgeClass = 'badge-pending';     
-                                        break;
-                                    case 'not_confirmed':
-                                        $badgeClass = 'badge-not-confirmed'; 
-                                        break;
-                                    default:
-                                        $badgeClass = 'badge-default';    
-                                        break;
-                                }
-                                ?>
-                                <span class="badge-status <?php echo $badgeClass; ?>">
-                                    <?php echo ucfirst($row['status']); ?>
-                                </span>
-                            </td>
-                            <td class="table-actions">
-                                <a href="#" class="view-engagement-btn text-decoration-none" 
-                                   data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-eye text-success"></i>
-                                </a>
-                                <a href="#" class="edit-engagement-btn text-decoration-none" 
-                                   data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-pencil text-purple"></i>
-                                </a>
-                                <a href="#" class="delete-engagement-btn text-decoration-none" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-trash text-danger"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="7" class="text-center">No engagements found</td></tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-                
-        <!-- Pagination Controls -->
-        <nav>
-            <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
-        </nav>
-    <!-- end engagement table -->
-
-
+    <!-- Status Filter -->
+    <div class="status-filters d-flex align-items-center gap-3">
+        <label class="form-check-label">
+            <input type="checkbox" class="form-check-input status-filter" value="confirmed" checked> Confirmed
+        </label>
+        <label class="form-check-label">
+            <input type="checkbox" class="form-check-input status-filter" value="pending" checked> Pending
+        </label>
+        <label class="form-check-label">
+            <input type="checkbox" class="form-check-input status-filter" value="not_confirmed" checked> Not Confirmed
+        </label>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Engagements Table -->
+<div class="user-table mt-3">
+    <table id="engagement-table" class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAllEngagements"></th>
+                <th>Client</th>
+                <th>Budgeted Hours</th>
+                <th>Allocated Hours</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (mysqli_num_rows($engagementResult) > 0): ?>
+            <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
+                <tr data-status="<?php echo strtolower($row['status']); ?>">
+                    <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
+                    <td><?php echo htmlspecialchars($row['client_name']); ?></td>
+                    <td><?php echo $row['budgeted_hours']; ?></td>
+                    <td><?php echo $row['total_assigned_hours']; ?></td>
+                    <td>
+                        <?php
+                        $status = strtolower($row['status']);
+                        switch ($status) {
+                            case 'confirmed':
+                                $badgeClass = 'badge-confirmed';   
+                                break;
+                            case 'pending':
+                                $badgeClass = 'badge-pending';     
+                                break;
+                            case 'not_confirmed':
+                                $badgeClass = 'badge-not-confirmed'; 
+                                break;
+                            default:
+                                $badgeClass = 'badge-default';    
+                                break;
+                        }
+                        ?>
+                        <span class="badge-status <?php echo $badgeClass; ?>">
+                            <?php echo ucfirst($row['status']); ?>
+                        </span>
+                    </td>
+                    <td class="table-actions">
+                        <a href="#" class="view-engagement-btn text-decoration-none" 
+                           data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
+                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                            <i class="bi bi-eye text-success"></i>
+                        </a>
+                        <a href="#" class="edit-engagement-btn text-decoration-none" 
+                           data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
+                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                            <i class="bi bi-pencil text-purple"></i>
+                        </a>
+                        <a href="#" class="delete-engagement-btn text-decoration-none" 
+                           data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                            <i class="bi bi-trash text-danger"></i>
+                        </a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr><td colspan="7" class="text-center">No engagements found</td></tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+        
+<!-- Pagination Controls -->
+<nav>
+    <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
+</nav>
+<!-- end engagement table -->
+
+
 <script>
-    // Engagement Search
     const engagementSearch = document.getElementById('engagementSearch');
     const engagementTable = document.getElementById('engagement-table').getElementsByTagName('tbody')[0];
+    const statusFilters = document.querySelectorAll('.status-filter');
 
-    engagementSearch.addEventListener('input', function() {
-        const query = this.value.toLowerCase();
+    function filterEngagements() {
+        const query = engagementSearch.value.toLowerCase();
+        const searchTerms = query.split(',').map(term => term.trim()).filter(term => term.length >= 3);
+
+        const activeStatuses = Array.from(statusFilters)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
         const rows = engagementTable.getElementsByTagName('tr');
 
         Array.from(rows).forEach(row => {
             const text = row.innerText.toLowerCase();
-            if (query.length < 3 || text.includes(query)) {
+            const rowStatus = row.getAttribute('data-status');
+
+            // Status check
+            const statusMatch = activeStatuses.includes(rowStatus);
+
+            // Search check
+            let searchMatch = false;
+            if (searchTerms.length === 0) {
+                searchMatch = true; // No search terms = show all
+            } else {
+                searchMatch = searchTerms.some(term => text.includes(term));
+            }
+
+            if (statusMatch && searchMatch) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
             }
         });
-    });
+    }
+
+    // Event listeners
+    engagementSearch.addEventListener('input', filterEngagements);
+    statusFilters.forEach(cb => cb.addEventListener('change', filterEngagements));
 
     // Bulk select engagements
     document.getElementById('selectAllEngagements').addEventListener('change', function() {
@@ -236,5 +270,8 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
         document.querySelectorAll('.selectEngagement').forEach(cb => cb.checked = checked);
     });
 </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
