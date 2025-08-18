@@ -16,7 +16,20 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-
+// Fetch engagements
+$engagementQuery = "
+    SELECT 
+        e.engagement_id,
+        c.client_name,
+        e.engagement_type,
+        e.status,
+        e.start_date,
+        e.end_date
+    FROM engagements e
+    JOIN clients c ON e.client_id = c.client_id
+    ORDER BY e.start_date DESC
+";
+$engagementResult = mysqli_query($conn, $engagementQuery);
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,28 +37,131 @@ if (!$isAdmin && !$isManager) {
     <title>Engagement Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-
 </head>
 <body class="d-flex">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <h3 class="mb-0">Engagement Management</h3>
-    <p class="text-muted mb-4">Monitor all client engagements and details</p>
+    <div class="user-management-header d-flex justify-content-between align-items-center">
+        <!-- Left -->
+        <div class="titles">
+            <p class="text-black mb-0"><strong>Engagement Management</strong></p>
+            <p class="mb-0">Monitor all client engagements and details</p>
+        </div>
 
-    <div class="container-fluid">
+        <!-- Middle (Search) -->
+        <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
+            <input type="text" id="engagementSearch" class="form-control form-control-sm" 
+                   placeholder="Search engagements..." minlength="3">
+        </div>
 
-        
+        <!-- Right -->
+        <div class="user-management-buttons d-flex align-items-center gap-2">
+            <a href="#" id="bulkDeleteEngagementsBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem; background-color: darkred; display:none;">
+              <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
+            </a>
 
-    </div> <!-- end container -->
-</div> <!-- end flex-grow -->
+            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+               data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
+                <i class="bi bi-upload me-3"></i>Import Engagements
+            </a>
 
+            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem; background-color: rgb(3,2,18);" 
+               data-bs-toggle="modal" data-bs-target="#addEngagementModal">
+                <i class="bi bi-plus-circle me-3"></i>Add Engagement
+            </a>
+        </div>
+    </div>
 
+    <!-- Engagements Table -->
+    <div class="user-table mt-3">
+        <table id="engagement-table" class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllEngagements"></th>
+                    <th>Client</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (mysqli_num_rows($engagementResult) > 0): ?>
+                <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
+                    <tr>
+                        <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
+                        <td><?php echo htmlspecialchars($row['client_name']); ?></td>
+                        <td><?php echo htmlspecialchars($row['engagement_type']); ?></td>
+                        <td>
+                            <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                                <?php echo ucfirst($row['status']); ?>
+                            </span>
+                        </td>
+                        <td><?php echo date("n/j/Y", strtotime($row['start_date'])); ?></td>
+                        <td><?php echo !empty($row['end_date']) ? date("n/j/Y", strtotime($row['end_date'])) : "Ongoing"; ?></td>
+                        <td class="table-actions">
+                            <a href="#" class="view-engagement-btn text-decoration-none" 
+                               data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
+                               data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                <i class="bi bi-eye text-success"></i>
+                            </a>
+                            <a href="#" class="edit-engagement-btn text-decoration-none" 
+                               data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
+                               data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                <i class="bi bi-pencil text-purple"></i>
+                            </a>
+                            <a href="#" class="delete-engagement-btn text-decoration-none" 
+                               data-engagement-id="<?php echo $row['engagement_id']; ?>">
+                                <i class="bi bi-trash text-danger"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="7" class="text-center">No engagements found</td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav>
+        <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
+    </nav>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Engagement Search
+    const engagementSearch = document.getElementById('engagementSearch');
+    const engagementTable = document.getElementById('engagement-table').getElementsByTagName('tbody')[0];
 
+    engagementSearch.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const rows = engagementTable.getElementsByTagName('tr');
+
+        Array.from(rows).forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (query.length < 3 || text.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Bulk select engagements
+    document.getElementById('selectAllEngagements').addEventListener('change', function() {
+        const checked = this.checked;
+        document.querySelectorAll('.selectEngagement').forEach(cb => cb.checked = checked);
+    });
+</script>
 </body>
 </html>
