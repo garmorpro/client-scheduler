@@ -17,7 +17,7 @@ if (!$isAdmin && !$isManager) {
 }
 
 // Fetch clients from database
-$stmt = $conn->prepare("SELECT id, company_name, contact_name, status, onboarded_date, active_engagements, total_engagements FROM clients ORDER BY company_name ASC");
+$stmt = $conn->prepare("SELECT client_id, client_name, status, onboarded_date FROM clients ORDER BY client_name ASC");
 $stmt->execute();
 $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -77,14 +77,14 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <div class="client-card">
                     <div class="d-flex align-items-center mb-2">
                         <i class="bi bi-building me-2"></i>
-                        <h5 class="mb-0"><?php echo htmlspecialchars($client['company_name']); ?></h5>
+                        <h5 class="mb-0"><?php echo htmlspecialchars($client['client_name']); ?></h5>
                     </div>
-                    <p class="text-muted mb-2"><?php echo htmlspecialchars($client['contact_name']); ?></p>
+                    <!-- <p class="text-muted mb-2"><?php //echo htmlspecialchars($client['contact_name']); ?></p> -->
                     <span class="badge bg-<?php echo $client['status'] === 'active' ? 'dark' : 'secondary'; ?> status-badge mb-2">
                         <?php echo htmlspecialchars($client['status']); ?>
                     </span>
-                    <p class="mb-1"><i class="bi bi-people"></i> Active engagements: <?php echo $client['active_engagements']; ?></p>
-                    <p class="mb-1"><i class="bi bi-calendar-event"></i> Total engagements: <?php echo $client['total_engagements']; ?></p>
+                    <p class="mb-1"><i class="bi bi-people"></i> Active engagements: 2</p>
+                    <p class="mb-1"><i class="bi bi-calendar-event"></i> Total engagements: 5</p>
                     <p class="mb-3"><i class="bi bi-clock"></i> Onboarded: <?php echo date("n/j/Y", strtotime($client['onboarded_date'])); ?></p>
                     <div class="card-buttons d-flex">
                         <button class="btn btn-outline-dark btn-sm flex-grow-1"><i class="bi bi-eye"></i> View</button>
