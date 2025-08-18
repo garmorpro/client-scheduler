@@ -83,10 +83,9 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                 <tr>
                     <th><input type="checkbox" id="selectAllEngagements"></th>
                     <th>Client</th>
-                    <th>Type</th>
+                    <th>Budgeted Hours</th>
+                    <th>Allocated Hours</th>
                     <th>Status</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -98,7 +97,24 @@ $engagementResult = mysqli_query($conn, $engagementQuery);
                         <td><?php echo htmlspecialchars($row['client_name']); ?></td>
                         <td><?php echo htmlspecialchars($row['engagement_type']); ?></td>
                         <td>
-                            <span class="badge-status <?php echo strtolower($row['status']) === 'active' ? 'active' : 'inactive'; ?>">
+                            <?php
+                            $status = strtolower($E_row['status']);
+                            switch ($status) {
+                                case 'confirmed':
+                                    $badgeClass = 'badge-confirmed';   
+                                    break;
+                                case 'pending':
+                                    $badgeClass = 'badge-pending';     
+                                    break;
+                                case 'not_confirmed':
+                                    $badgeClass = 'badge-not-confirmed'; 
+                                    break;
+                                default:
+                                    $badgeClass = 'badge-default';    
+                                    break;
+                            }
+                            ?>
+                            <span class="badge-status <?php echo $badgeClass; ?>">
                                 <?php echo ucfirst($row['status']); ?>
                             </span>
                         </td>
