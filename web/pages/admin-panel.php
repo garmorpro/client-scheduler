@@ -464,7 +464,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         <!-- end engagement management -->
 
         <!-- Search + Pagination Script -->
-          <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
+          
 
         <!-- time off -->
           <div id="time_off" class="tab-content">
@@ -2770,6 +2770,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     </script>
 
 <!-- Security Policy Script -->
+
+
+<script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
