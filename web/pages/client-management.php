@@ -137,8 +137,8 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             <!-- Card Buttons -->
             <div class="card-buttons d-flex flex-wrap gap-2">
-                <button class="btn btn-outline-dark btn-sm flex-grow-1 me-0" style="border-color: rgb(242,242,242) !important;"><i class="bi bi-eye"></i> View</button>
-                <button class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-outline-dark btn-sm flex-grow-1 me-0" style="border-color: rgb(229,229,229) !important;"><i class="bi bi-eye"></i> View</button>
+                <button class="btn btn-outline-secondary btn-sm flex-grow-1" style="background-color: rgb(229,229,229) !important;"><i class="bi bi-pencil"></i> Edit</button>
             </div>
         </div>
     <?php endforeach; ?>
