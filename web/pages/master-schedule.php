@@ -386,7 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
-    // Master list of all clients
     const allClients = Array.from(document.querySelectorAll('td[data-client]'))
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
@@ -414,8 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    
-                    // Correct regex to get badge status
+
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
 
@@ -424,24 +422,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Initialize clients map with all clients
             const clientsMap = {};
             allClients.forEach(client => {
                 clientsMap[client] = { total: 0, status: 'not-confirmed', weeks: [] };
             });
 
-            // Merge actual assignments
             allAssignments.forEach(a => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                // Always update status from badge
                 clientsMap[a.clientName].status = a.status;
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
-            // Build modal HTML
             let html = `
             <div class="d-flex align-items-center mb-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
@@ -513,7 +507,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
                             <span class="fs-6 fw-semibold text-black">${clientName}</span> 
-                            <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">${info.status.replace('_',' ')}</span>
+                            <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
+                                ${info.status === 'not-confirmed' ? 'not confirmed' : info.status}
+                            </span>
                         </div>
                         <div class="col-2 text-center">
                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
@@ -537,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
