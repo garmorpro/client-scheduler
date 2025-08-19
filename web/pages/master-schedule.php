@@ -405,12 +405,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let allAssignments = [];
             let totalHours = 0;
-            const weeklyHoursMap = {};
 
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
-                let weekTotal = 0;
 
                 badges.forEach(b => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
@@ -420,11 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const statusClass = statusMatch ? statusMatch[1] : 'confirmed';
 
                     allAssignments.push({clientName, hours, status: statusClass, weekStart});
-                    weekTotal += hours;
+                    totalHours += hours;
                 });
-
-                weeklyHoursMap[weekStart] = weekTotal;
-                totalHours += weekTotal;
             });
 
             const activeClients = new Set(allAssignments.map(a => a.clientName));
@@ -439,6 +434,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return wkDate >= oneWeekAgo && wkDate <= futureLimit;
             });
 
+            // Group assignments by client
+            const clientsMap = {};
+            allAssignments.forEach(a => {
+                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = {total:0, status:a.status, weeks:{}};
+                clientsMap[a.clientName].total += a.hours;
+                clientsMap[a.clientName].weeks[a.weekStart] = a.hours;
+                clientsMap[a.clientName].status = a.status;
+            });
+
             // Build modal HTML
             let html = `
             <div class="d-flex align-items-center mb-3">
@@ -450,20 +454,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                     <div class="fw-semibold">${userName}</div>
-                    <div class="text-muted text-capitalize">${role}<i class="bi bi-dot ms-1 me-1"></i><span class="text-muted small text-lowercase">${email}</span></div>
+                    <div class="text-muted text-capitalize">${role} <i class="bi bi-dot ms-1 me-1"></i>
+                        <span class="small text-lowercase">${email}</span>
+                    </div>
                 </div>
             </div>
 
             <div class="mb-3 d-flex gap-3">
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(68,125,252);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
                             <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${activeClients.size}</div>
                         </div>
-
-                        <!-- Right side: circle with icon -->
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
                             <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
                         </div>
@@ -472,13 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(79,197,95);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <!-- Left side: text and number -->
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
+                            <small class="text-muted" style="font-size: 14px !important;">Total Hours</small>
                             <div class="fw-semibold fs-4" style="color: rgb(79,197,95);">${totalHours}</div>
                         </div>
-                        
-                        <!-- Right side: circle with icon -->
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(226,251,232);">
                             <i class="bi bi-people" style="color: rgb(79,197,95)"></i>
                         </div>
@@ -487,66 +487,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(161,77,253);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Week</small>
                             <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
                         </div>
-                        
-                        <!-- Right side: circle with icon -->
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
                             <i class="bi bi-people" style="color: rgb(161,77,253);"></i>
                         </div>
                     </div>
                 </div>
-
-            
             </div>
 
-            <ul class="list-group">
+            <div class="border rounded p-3 mb-3">
+                <small class="text-muted mb-2 d-block">Current Assignments</small>
+                <ul class="list-group">
             `;
-
-            // Group assignments by client
-            const clientsMap = {};
-            allAssignments.forEach(a => {
-                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = {total:0, status:a.status, weeks:{}};
-                clientsMap[a.clientName].total += a.hours;
-                clientsMap[a.clientName].weeks[a.weekStart] = a.hours;
-                clientsMap[a.clientName].status = a.status; // last status wins
-            });
 
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
-                <li class="list-group-item">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <span>${clientName}</span>
-                            <span class="badge badge-status badge-${info.status} ms-2">${info.status.replace('-', ' ')}</span>
+                    <li class="list-group-item p-2">
+                        <div class="row align-items-center text-truncate">
+                            <div class="col-6 text-truncate">
+                                <span>${clientName}</span>
+                                <span class="badge badge-status badge-${info.status} ms-2">${info.status.replace('-', ' ')}</span>
+                            </div>
+                            <div class="col-2 text-center">
+                                ${info.total}<br><small class="text-muted">hrs</small>
+                            </div>
+                            <div class="col-4 d-flex flex-wrap gap-1">
+                                ${filteredWeeks.map(week => {
+                                    const hrs = info.weeks[week] || 0;
+                                    return `<div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
+                                        ${new Date(week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>${hrs}h
+                                    </div>`;
+                                }).join('')}
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <span>${info.total}</span><br><small class="text-muted">hours</small>
-                        </div>
-                        <div class="col-md-7 d-flex flex-wrap gap-1">
-                            ${filteredWeeks.map(week => {
-                                const hrs = info.weeks[week] || 0;
-                                return `<div style="background-color:#f5f5f5; padding:5px; min-width:60px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>${hrs}h
-                                </div>`;
-                            }).join('')}
-                        </div>
-                    </div>
-                </li>`;
+                    </li>`;
             });
 
-            html += `</ul>`;
+            html += `</ul></div>`;
 
             modalContent.innerHTML = html;
             modal.show();
         });
     });
 });
-
 </script>
+
 
 
 
