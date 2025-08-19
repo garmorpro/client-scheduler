@@ -416,8 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const clientName = b.textContent.split('(')[0].trim();
                     
                     // Correct regex to get badge status
-                    const statusMatch = b.className.match(/badge-(confirmed|pending|not_confirmed)/);
-                    const statusClass = statusMatch ? statusMatch[1] : 'not_confirmed';
+                    const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
+                    const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
 
                     allAssignments.push({clientName, hours, status: statusClass, weekStart});
                     totalHours += hours;
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Initialize clients map with all clients
             const clientsMap = {};
             allClients.forEach(client => {
-                clientsMap[client] = { total: 0, status: 'not_confirmed', weeks: [] };
+                clientsMap[client] = { total: 0, status: 'not-confirmed', weeks: [] };
             });
 
             // Merge actual assignments
