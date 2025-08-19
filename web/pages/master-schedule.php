@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <!-- Right side: circle with icon -->
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
-                            <i class="bi bi-people fw-semibold" style="color: rgb(68,125,252);"></i>
+                            <i class="bi bi-people-fill fs-3" style="color: rgb(68,125,252);"></i>
                         </div>
                     </div>
                 </div>
