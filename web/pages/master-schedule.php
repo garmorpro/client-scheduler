@@ -405,15 +405,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Capture global time off and normalize weeks to Monday
     const globalTimeOffMap = {};
     if (window.globalTimeOff) {
-        console.log('window.globalTimeOff:', window.globalTimeOff);
         Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
-            if (info.is_global_timeoff == 1 || info.is_global_timeoff === '1') {
+            if (info.is_global_timeoff == 1) {
                 const mondayWeek = getMonday(weekStart);
                 globalTimeOffMap[mondayWeek] = parseFloat(info.assigned_hours) || 0;
-                console.log('Global PTO added:', mondayWeek, globalTimeOffMap[mondayWeek]);
             }
         });
     }
+
+    console.log("Global Time Off Map:", globalTimeOffMap);
 
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
@@ -433,27 +433,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const timeOffMap = {};
 
-            // Start with global PTO for all weeks
-            Object.entries(globalTimeOffMap).forEach(([week, hours]) => {
-                timeOffMap[week] = hours;
-            });
-            console.log(`Starting timeOffMap for ${userName}:`, timeOffMap);
-
-            // Process assignments and personal PTO
+            // Collect global and personal PTO only for weeks present in the table
             weekTds.forEach(weekTd => {
                 const weekStartRaw = weekTd.dataset.weekStart;
                 const weekStart = getMonday(weekStartRaw);
 
+                // Use 0 if global PTO is not set for this week
+                const globalHours = globalTimeOffMap[weekStart] || 0;
+
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 const personalHours = timeOffCorner ? parseFloat(timeOffCorner.textContent) || 0 : 0;
 
-                if (personalHours > 0) {
-                    if (timeOffMap[weekStart]) {
-                        timeOffMap[weekStart] += personalHours;
-                    } else {
-                        timeOffMap[weekStart] = personalHours;
-                    }
+                const totalWeekHours = globalHours + personalHours;
+
+                if (totalWeekHours > 0) {
+                    timeOffMap[weekStart] = totalWeekHours;
                 }
+
+                console.log(`Week ${weekStart} for ${userName}: global=${globalHours}, personal=${personalHours}, total=${totalWeekHours}`);
 
                 // Handle badges (assignments)
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
@@ -468,8 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     totalHours += hours;
                     if (engagementId) uniqueEngagements.add(engagementId);
                 });
-
-                console.log(`Week ${weekStart} for ${userName}: total hours=${timeOffMap[weekStart]}`);
             });
 
             console.log(`Final timeOffMap for ${userName}:`, timeOffMap);
