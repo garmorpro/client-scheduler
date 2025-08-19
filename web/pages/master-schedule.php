@@ -395,12 +395,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Normalize a date string to Monday of that week
     function getMonday(dateStr) {
-        const d = new Date(dateStr);
-        const day = d.getDay(); // 0 = Sunday, 1 = Monday
-        const diff = day === 0 : 1 - day;
-        d.setDate(d.getDate() + diff);
-        return d.toISOString().slice(0,10); // YYYY-MM-DD
-    }
+    const d = new Date(dateStr);
+    const day = d.getDay(); // 0 = Sunday, 1 = Monday
+    const diff = day === 0 ? -6 : 1 - day; // adjust to Monday
+    d.setDate(d.getDate() + diff);
+    // Return YYYY-MM-DD in local time
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const date = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${date}`;
+}
 
     // Fetch global time off from server
     let globalTimeOffMap = {};
