@@ -506,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-4 d-flex flex-wrap gap-1">
                             ${info.weeks.map(w => `
                                 <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>${w.hours}h
+                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br><span class="fw-semibold text-black">${w.hours}h</span>
                                 </div>
                             `).join('')}
                         </div>
