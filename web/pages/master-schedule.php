@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMonday(dateStr) {
     const d = new Date(dateStr);
     const day = d.getDay(); // 0 = Sunday, 1 = Monday, ...
-    const diff = (day + 6) % 7; // shift Sunday->6, Monday->0, etc.
+    const diff = (day + 7) % 7; // shift Sunday->6, Monday->0, etc.
     d.setDate(d.getDate() - diff);
 
     // Return YYYY-MM-DD in local time
