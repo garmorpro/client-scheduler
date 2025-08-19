@@ -22,6 +22,15 @@
         return client && client.status ? client.status : 'confirmed';
     }
 
+    function getBadgeClass(status) {
+        switch ((status || '').toLowerCase()) {
+            case 'confirmed': return 'confirmed';
+            case 'pending': return 'pending';
+            case 'not_confirmed': return 'not-confirmed'; // always use hyphen
+            default: return 'confirmed';
+        }
+    }
+
     // Global dropdown for inline cells
     const globalDropdown = document.createElement('div');
     Object.assign(globalDropdown.style, {
@@ -37,14 +46,11 @@
     document.body.appendChild(globalDropdown);
     globalDropdown.addEventListener('click', e => e.stopPropagation());
 
-    // Click outside closes inputs
     document.addEventListener('click', e => {
         if (activeTd) {
             const clickInsideTd = activeTd.contains(e.target);
             const clickInsideOverlay = activeOverlay && activeOverlay.contains(e.target);
-            if (!clickInsideTd && !clickInsideOverlay) {
-                closeActiveInputs();
-            }
+            if (!clickInsideTd && !clickInsideOverlay) closeActiveInputs();
         }
     });
 
@@ -66,7 +72,6 @@
                 activeTd.innerHTML = '';
                 if (timeOff) activeTd.appendChild(timeOff);
 
-                // Only restore plus if no badges exist
                 const hasOtherBadges = activeTd.querySelectorAll('.draggable-badge').length === 0;
                 if (hasOtherBadges) restoreBiPlus(activeTd);
             }
@@ -81,7 +86,6 @@
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
-    // Click handler for cells
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
             const target = e.target;
@@ -251,7 +255,7 @@
                         const data = await resp.json();
                         if (resp.ok && data.success) {
                             const span = document.createElement('span');
-                            const statusClass = getClientStatus(clientName);
+                            const statusClass = getBadgeClass(getClientStatus(clientName));
                             span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                             span.dataset.entryId = data.entry_id;
                             span.dataset.userId = td.dataset.userId;
@@ -372,18 +376,6 @@
                         const data = await resp.json();
                         if (resp.ok && data.success) {
                             badge.textContent = `${newName} (${newHours})`;
-                        
-                            // Map status to valid CSS class
-                            function getBadgeClass(status) {
-                                switch ((status || '').toLowerCase()) {
-                                    case 'confirmed': return 'confirmed';
-                                    case 'pending': return 'pending';
-                                    case 'not_confirmed': return 'not-confirmed';
-                                    default: return 'confirmed'; // fallback
-                                }
-                            }
-                        
-                            // Use the switch to generate the correct class
                             const statusClass = getBadgeClass(getClientStatus(newName));
                             badge.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                         } else {
@@ -402,11 +394,8 @@
         clientInput.focus();
     });
 
-    // Global Escape listener
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-            closeActiveInputs();
-        }
+        if (e.key === 'Escape') closeActiveInputs();
     });
 
 })();
