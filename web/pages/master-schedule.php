@@ -501,7 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${clientName} <span class="badge badge-status badge-${info.status} ms-1">${info.status.replace('-', ' ')}</span>
                         </div>
                         <div class="col-2 text-center">
-                            ${info.total}
+                            ${info.total}<br>
+                            <span class="text-muted">hours</span>
                         </div>
                         <div class="col-4 d-flex flex-wrap gap-1">
                             ${info.weeks.map(w => `
