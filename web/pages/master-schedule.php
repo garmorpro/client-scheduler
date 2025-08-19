@@ -352,6 +352,64 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- end master schedule table -->
 
+
+    <!-- Employee Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="employeeModalContent">
+          <!-- Dynamic content goes here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const employeeCells = document.querySelectorAll('td.employee-name');
+    const modalEl = document.getElementById('employeeModal');
+    const modal = new bootstrap.Modal(modalEl);
+    const modalContent = document.getElementById('employeeModalContent');
+    const modalTitle = document.getElementById('employeeModalLabel');
+
+    employeeCells.forEach(td => {
+        td.style.cursor = 'pointer'; // make sure it looks clickable
+        td.addEventListener('click', () => {
+            const userName = td.dataset.userName;
+            const role = td.dataset.role || td.querySelector('.text-muted')?.textContent;
+
+            // Optional: Collect weekly entries for this employee
+            const badges = Array.from(td.closest('tr').querySelectorAll('td.addable .draggable-badge'))
+                .map(b => b.textContent);
+
+            // Set modal title and content
+            modalTitle.textContent = userName;
+            modalContent.innerHTML = `
+                <p><strong>Role:</strong> ${role}</p>
+                <p><strong>Current Week Assignments:</strong></p>
+                <ul>
+                    ${badges.map(b => `<li>${b}</li>`).join('') || '<li>No assignments yet</li>'}
+                </ul>
+            `;
+
+            // Show modal
+            modal.show();
+        });
+    });
+});
+
+</script>
+
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
