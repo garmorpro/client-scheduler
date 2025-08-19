@@ -386,6 +386,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
+    // Assuming you have a master list of clients in your table header or data attribute
+    const allClients = Array.from(document.querySelectorAll('td[data-client]'))
+        .map(td => td.dataset.client)
+        .filter((v, i, a) => a.indexOf(v) === i); // unique clients
+
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
         td.addEventListener('click', () => {
@@ -418,17 +423,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            const activeClients = new Set(allAssignments.map(a => a.clientName));
-            const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
-
-            // Group assignments by client
+            // Initialize clients map with all clients first
             const clientsMap = {};
-            allAssignments.forEach(a => {
-                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = {total:0, status:a.status, weeks:[]};
-                clientsMap[a.clientName].total += a.hours;
-                clientsMap[a.clientName].weeks.push({week: a.weekStart, hours: a.hours});
-                clientsMap[a.clientName].status = a.status;
+            allClients.forEach(client => {
+                clientsMap[client] = { total: 0, status: 'not_confirmed', weeks: [] };
             });
+
+            // Merge actual assignments
+            allAssignments.forEach(a => {
+                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
+                clientsMap[a.clientName].total += a.hours;
+                clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
+                clientsMap[a.clientName].status = a.status; // last status wins
+            });
+
+            const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
             // Build modal HTML
             let html = `
@@ -452,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${activeClients.size}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${allAssignments.length}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
                             <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
@@ -525,6 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
