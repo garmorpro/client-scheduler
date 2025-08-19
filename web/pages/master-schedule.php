@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
                     const statusMatch = b.className.match(/badge-(\w+)$/);
-                    const statusClass = statusMatch ? statusMatch[1] : 'confirmed';
+                    const statusClass = statusMatch ? statusMatch[1] : 'not_confirmed';
 
                     allAssignments.push({clientName, hours, status: statusClass, weekStart});
                     totalHours += hours;
@@ -434,7 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                clientsMap[a.clientName].status = a.status; // last status wins
+                // Only update status if not 'not_confirmed' (so real status shows)
+                if(a.status && a.status !== 'not_confirmed') {
+                    clientsMap[a.clientName].status = a.status;
+                }
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
@@ -510,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
-                            <span class="fs-6 fw-semibold text-black">${clientName}</span> <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">${info.status.replace('-', ' ')}</span>
+                            <span class="fs-6 fw-semibold text-black">${clientName}</span> <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">${info.status.replace('_',' ')}</span>
                         </div>
                         <div class="col-2 text-center">
                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
@@ -534,6 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
