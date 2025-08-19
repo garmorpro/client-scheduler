@@ -454,9 +454,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <div class="mb-3 d-flex gap-2">
+            <div class="mb-3 d-flex gap-3">
                 <div class="card flex-fill d-flex justify-content-between align-items-center" style="border-left: 4px solid blue;">
-                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                    <div class="card-body p-3 d-flex ">
                         <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
