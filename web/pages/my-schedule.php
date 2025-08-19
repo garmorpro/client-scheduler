@@ -15,7 +15,6 @@ if ($isAdmin && $isManager) {
     exit();
 }
 
-
 $userId = $_SESSION['user_id'];
 
 // ------------------------------------------------------
@@ -49,11 +48,11 @@ for ($i = 0; $i < 8; $i++) {
 $startDateRange = date('Y-m-d', $startMonday);
 $endDateRange = date('Y-m-d', strtotime('+7 weeks', $startMonday));
 
+// Get engagements hours (no timeoff here anymore)
 $sqlEntries = "
     SELECT 
         week_start,
-        assigned_hours,
-        is_timeoff
+        assigned_hours
     FROM entries
     WHERE user_id = ?
       AND week_start BETWEEN ? AND ?
@@ -64,30 +63,42 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $totalAssignedHours = [];
-$timeOffHours = [];
 while ($row = $result->fetch_assoc()) {
     $week = $row['week_start'];
     if (!isset($totalAssignedHours[$week])) $totalAssignedHours[$week] = 0;
-    if (!isset($timeOffHours[$week])) $timeOffHours[$week] = 0;
+    $totalAssignedHours[$week] += floatval($row['assigned_hours']);
+}
+$stmt->close();
 
-    if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
-        $timeOffHours[$week] += floatval($row['assigned_hours']);
-    } else {
-        // ONLY count regular assignments
-        $totalAssignedHours[$week] += floatval($row['assigned_hours']);
-    }
+// Get time off hours separately
+$sqlTimeOff = "
+    SELECT week_start, hours
+    FROM time_off
+    WHERE user_id = ?
+      AND week_start BETWEEN ? AND ?
+";
+$stmt = $conn->prepare($sqlTimeOff);
+$stmt->bind_param('iss', $userId, $startDateRange, $endDateRange);
+$stmt->execute();
+$resTO = $stmt->get_result();
+
+$timeOffHours = [];
+while ($row = $resTO->fetch_assoc()) {
+    $week = $row['week_start'];
+    if (!isset($timeOffHours[$week])) $timeOffHours[$week] = 0;
+    $timeOffHours[$week] += floatval($row['hours']);
 }
 $stmt->close();
 
 // ------------------------------------------------------
-// SELECTED WEEK DETAILS (INCLUDE TIME OFF)
+// SELECTED WEEK DETAILS
+// Engagements
 $sqlWeekDetails = "
     SELECT 
         e.entry_id,
         e.assigned_hours,
-        e.is_timeoff,
         e.engagement_id,
-        COALESCE(eng.client_name, 'Time Off') AS client_name,
+        eng.client_name,
         eng.status
     FROM entries e
     LEFT JOIN engagements eng ON e.engagement_id = eng.engagement_id
@@ -100,23 +111,39 @@ $stmt->execute();
 $weekResult = $stmt->get_result();
 
 $engagements = [];
-$timeOffs = [];
 $totalHours = 0;
-$timeOffTotal = 0;
 
 while ($row = $weekResult->fetch_assoc()) {
-    if (!empty($row['is_timeoff']) && $row['is_timeoff'] == 1) {
-        $timeOffs[] = $row;
-        $timeOffTotal += floatval($row['assigned_hours']);
-    } else {
-        $engagements[] = $row;
-        // ONLY sum regular assignments
-        $totalHours += floatval($row['assigned_hours']);
-    }
+    $engagements[] = $row;
+    $totalHours += floatval($row['assigned_hours']);
 }
 $stmt->close();
 
-$netHours = $totalHours; // now time off is NOT subtracted
+// Time off for selected week
+$sqlWeekTO = "
+    SELECT id, hours
+    FROM time_off
+    WHERE user_id = ?
+      AND week_start = ?
+";
+$stmt = $conn->prepare($sqlWeekTO);
+$stmt->bind_param('is', $userId, $weekStartDate);
+$stmt->execute();
+$weekTORes = $stmt->get_result();
+
+$timeOffs = [];
+$timeOffTotal = 0;
+while ($row = $weekTORes->fetch_assoc()) {
+    $timeOffs[] = [
+        'id' => $row['id'],
+        'assigned_hours' => $row['hours'],
+        'client_name' => 'Time Off'
+    ];
+    $timeOffTotal += floatval($row['hours']);
+}
+$stmt->close();
+
+$netHours = $totalHours; // Net hours = engagements only
 
 // ------------------------------------------------------
 // FETCH TEAM MEMBERS FOR EACH ENGAGEMENT (EXCLUDE CURRENT USER)
@@ -141,6 +168,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     return $members;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
