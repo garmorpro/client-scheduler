@@ -7,10 +7,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isAdmin   = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 
-if ($isAdmin && $isManager) {
+// ✅ FIX: should be OR, not AND
+if ($isAdmin || $isManager) {
     header("Location: admin-panel.php");
     exit();
 }
@@ -19,7 +20,7 @@ $userId = $_SESSION['user_id'];
 
 // ------------------------------------------------------
 // WEEK NAVIGATION LOGIC
-$today = strtotime('today');
+$today         = strtotime('today');
 $currentMonday = strtotime('monday this week', $today);
 
 if (isset($_GET['week_start'])) {
@@ -40,24 +41,26 @@ $weekEndDate   = date('Y-m-d', strtotime('+4 days', $selectedMonday));
 // ------------------------------------------------------
 // 8-WEEK OVERVIEW
 $startMonday = strtotime('-1 week', $currentMonday);
-$mondays = [];
+$mondays     = [];
 for ($i = 0; $i < 8; $i++) {
     $mondays[] = strtotime("+{$i} weeks", $startMonday);
 }
 
 $startDateRange = date('Y-m-d', $startMonday);
-$endDateRange = date('Y-m-d', strtotime('+7 weeks', $startMonday));
+$endDateRange   = date('Y-m-d', strtotime('+7 weeks', $startMonday));
 
-// Get engagements hours (no timeoff here anymore)
+// ------------------------------------------------------
+// Get engagements hours
 $sqlEntries = "
-    SELECT 
-        week_start,
-        assigned_hours
+    SELECT week_start, assigned_hours
     FROM entries
     WHERE user_id = ?
       AND week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($sqlEntries);
+if (!$stmt) {
+    die("SQL error in entries query: " . $conn->error);
+}
 $stmt->bind_param('iss', $userId, $startDateRange, $endDateRange);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -70,7 +73,8 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Get time off hours separately
+// ------------------------------------------------------
+// Get time off
 $sqlTimeOff = "
     SELECT week_start, hours
     FROM time_off
@@ -78,6 +82,9 @@ $sqlTimeOff = "
       AND week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($sqlTimeOff);
+if (!$stmt) {
+    die("SQL error in time_off query: " . $conn->error);
+}
 $stmt->bind_param('iss', $userId, $startDateRange, $endDateRange);
 $stmt->execute();
 $resTO = $stmt->get_result();
@@ -91,34 +98,31 @@ while ($row = $resTO->fetch_assoc()) {
 $stmt->close();
 
 // ------------------------------------------------------
-// SELECTED WEEK DETAILS
-// Engagements
+// Selected week details
 $sqlWeekDetails = "
-    SELECT 
-        e.entry_id,
-        e.assigned_hours,
-        e.engagement_id,
-        eng.client_name,
-        eng.status
+    SELECT e.entry_id, e.assigned_hours, e.engagement_id, eng.client_name, eng.status
     FROM entries e
     LEFT JOIN engagements eng ON e.engagement_id = eng.engagement_id
     WHERE e.user_id = ?
       AND e.week_start = ?
 ";
 $stmt = $conn->prepare($sqlWeekDetails);
+if (!$stmt) {
+    die("SQL error in week details query: " . $conn->error);
+}
 $stmt->bind_param('is', $userId, $weekStartDate);
 $stmt->execute();
 $weekResult = $stmt->get_result();
 
 $engagements = [];
-$totalHours = 0;
-
+$totalHours  = 0;
 while ($row = $weekResult->fetch_assoc()) {
     $engagements[] = $row;
-    $totalHours += floatval($row['assigned_hours']);
+    $totalHours   += floatval($row['assigned_hours']);
 }
 $stmt->close();
 
+// ------------------------------------------------------
 // Time off for selected week
 $sqlWeekTO = "
     SELECT id, hours
@@ -127,26 +131,29 @@ $sqlWeekTO = "
       AND week_start = ?
 ";
 $stmt = $conn->prepare($sqlWeekTO);
+if (!$stmt) {
+    die("SQL error in week TO query: " . $conn->error);
+}
 $stmt->bind_param('is', $userId, $weekStartDate);
 $stmt->execute();
 $weekTORes = $stmt->get_result();
 
-$timeOffs = [];
+$timeOffs     = [];
 $timeOffTotal = 0;
 while ($row = $weekTORes->fetch_assoc()) {
     $timeOffs[] = [
-        'id' => $row['id'],
+        'id'             => $row['id'],
         'assigned_hours' => $row['hours'],
-        'client_name' => 'Time Off'
+        'client_name'    => 'Time Off'
     ];
     $timeOffTotal += floatval($row['hours']);
 }
 $stmt->close();
 
-$netHours = $totalHours; // Net hours = engagements only
+$netHours = $totalHours;
 
 // ------------------------------------------------------
-// FETCH TEAM MEMBERS FOR EACH ENGAGEMENT (EXCLUDE CURRENT USER)
+// Fetch team members
 function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $sql = "
         SELECT u.first_name, u.last_name, e.assigned_hours
@@ -157,6 +164,9 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
           AND e.user_id != ?
     ";
     $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        die("SQL error in team members query: " . $conn->error);
+    }
     $stmt->bind_param('isi', $engagement_id, $weekStart, $currentUserId);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -168,6 +178,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     return $members;
 }
 ?>
+
 
 
 <!DOCTYPE html>
