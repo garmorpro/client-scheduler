@@ -364,10 +364,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
           <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <!-- <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5> -->
+                <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" style="margin-top: -25px !important;">
+              <div class="modal-body" style="">
                 <div id="employeeModalContent">
                   <!-- Dynamic content goes here -->
                 </div>
