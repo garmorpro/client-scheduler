@@ -398,41 +398,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
-            let totalHours = 0;
 
-            // Map of clientName -> set of unique engagement IDs
-            const clientEngagementsMap = {};
+            let totalHours = 0;
+            let totalEntries = 0;
+            const uniqueEngagements = new Set();
+
+            const clientsMap = {};
 
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
 
                 badges.forEach(b => {
+                    totalEntries++; // count every badge as one entry
+
                     const hoursMatch = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
-                    const clientName = b.textContent.split('(')[0].trim();
+                    totalHours += hours;
 
-                    // Get engagementId safely
+                    const clientName = b.textContent.split('(')[0].trim();
                     const engagementId = b.getAttribute('data-engagement-id') || b.dataset.engagementId || null;
+                    if (engagementId) uniqueEngagements.add(engagementId);
 
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
 
-                    totalHours += hours;
-
-                    if (!clientEngagementsMap[clientName]) clientEngagementsMap[clientName] = { totalHours: 0, weeks: [], status: statusClass, engagements: new Set() };
-                    clientEngagementsMap[clientName].totalHours += hours;
-                    clientEngagementsMap[clientName].weeks.push({ week: weekStart, hours });
-                    clientEngagementsMap[clientName].status = statusClass;
-                    if (engagementId) clientEngagementsMap[clientName].engagements.add(engagementId);
+                    if (!clientsMap[clientName]) clientsMap[clientName] = { totalHours: 0, weeks: [], status: statusClass };
+                    clientsMap[clientName].totalHours += hours;
+                    clientsMap[clientName].weeks.push({ week: weekStart, hours });
+                    clientsMap[clientName].status = statusClass;
                 });
             });
 
-            // Calculate total unique engagements across all clients
-            const totalUniqueEngagements = Object.values(clientEngagementsMap)
-                .reduce((sum, c) => sum + c.engagements.size, 0);
-
-            const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
+            const avgHoursPerWeek = (weekTds.length ? (totalHours / weekTds.length).toFixed(1) : 0);
 
             // Build modal HTML
             let html = `
@@ -455,11 +453,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(68,125,252);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${totalUniqueEngagements}</div>
+                            <small class="text-muted" style="font-size: 14px !important;">Total Entries</small>
+                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${totalEntries}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
-                            <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
+                            <i class="bi bi-card-checklist" style="color: rgb(68,125,252);"></i>
                         </div>
                     </div>
                 </div>
@@ -467,8 +465,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(79,197,95);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Total Hours</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(79,197,95);">${totalHours}</div>
+                            <small class="text-muted" style="font-size: 14px !important;">Unique Engagements</small>
+                            <div class="fw-semibold fs-4" style="color: rgb(79,197,95);">${uniqueEngagements.size}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(226,251,232);">
                             <i class="bi bi-people" style="color: rgb(79,197,95)"></i>
@@ -483,13 +481,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
-                            <i class="bi bi-people" style="color: rgb(161,77,253);"></i>
+                            <i class="bi bi-clock" style="color: rgb(161,77,253);"></i>
                         </div>
                     </div>
                 </div>
             </div>
+            `;
 
-            <div class="border rounded p-3 mb-3">
+            // Optional: List client breakdown
+            html += `<div class="border rounded p-3 mb-3">
                 <div class="mb-3">
                     <i class="bi bi-briefcase me-2"></i>Current Engagements
                 </div>
@@ -498,20 +498,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-6">Client Name</div>
                         <div class="col-2 text-center">Total Hours</div>
                         <div class="col-4">Week Assignments</div>
-                    </li>
-            `;
+                    </li>`;
 
-            Object.entries(clientEngagementsMap).forEach(([clientName, info]) => {
+            Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
-                            <span class="fs-6 fw-semibold text-black">${clientName}</span> 
+                            <span class="fs-6 fw-semibold text-black">${clientName}</span>
                             <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
                                 ${info.status === 'not-confirmed' ? 'not confirmed' : info.status}
                             </span>
                         </div>
                         <div class="col-2 text-center">
-                           <span class="fs-5 fw-semibold text-black">${info.totalHours}</span><br>
+                            <span class="fs-5 fw-semibold text-black">${info.totalHours}</span><br>
                             <span class="text-muted" style="font-size: 10px;">hours</span>
                         </div>
                         <div class="col-4 d-flex flex-wrap gap-1">
