@@ -397,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const globalTimeOffMap = {};
     if (window.globalTimeOff) {
         Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
-            // Only include global time off
             if (info.is_global_timeoff == 1) {
                 globalTimeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
             }
@@ -423,14 +422,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Build a map for time off: { weekStart: totalHours }
             const timeOffMap = {};
 
-            // Pre-populate global time off for all employees
-            Object.entries(globalTimeOffMap).forEach(([weekStart, hours]) => {
-                timeOffMap[weekStart] = hours;
+            // Pre-populate weeks from the table and add global time off if it matches
+            weekTds.forEach(weekTd => {
+                const weekStart = weekTd.dataset.weekStart;
+                let globalHours = 0;
+                if (globalTimeOffMap[weekStart]) {
+                    globalHours = globalTimeOffMap[weekStart];
+                }
+                timeOffMap[weekStart] = globalHours;
             });
 
             // Process employee-specific assignments and personal time off
             weekTds.forEach(weekTd => {
-                const weekStart = weekTd.dataset.weekStart || 'unknown';
+                const weekStart = weekTd.dataset.weekStart;
 
                 // Handle badges (assignments)
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
@@ -449,18 +453,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (engagementId) uniqueEngagements.add(engagementId);
                 });
 
-                // Handle personal time off (combine with global if exists)
+                // Handle personal time off (add on top of global)
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 const personalHours = timeOffCorner ? parseFloat(timeOffCorner.textContent) || 0 : 0;
 
-                if (timeOffMap[weekStart]) {
+                if (timeOffMap[weekStart] !== undefined) {
                     timeOffMap[weekStart] += personalHours;
                 } else {
                     timeOffMap[weekStart] = personalHours;
                 }
             });
 
-            // Convert timeOffMap to array of objects and sort by week
+            // Convert timeOffMap to array and sort by week
             const timeOffWeeks = Object.entries(timeOffMap)
                 .map(([week, hours]) => ({ week, hours }))
                 .sort((a, b) => new Date(a.week) - new Date(b.week));
@@ -482,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
-            // Build modal HTML
+            // Build modal HTML (same as before)
             let html = `
             <div class="d-flex align-items-center mb-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
@@ -535,8 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </div>
-            </div>
-            `;
+            </div>`;
 
             html += `<div class="border rounded p-3 mb-3">
                 <ul class="list-group">
@@ -591,6 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
