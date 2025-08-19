@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                     <div class="fw-semibold">${userName}</div>
-                    <div class="text-muted text-capitalize">${role}<i class="bi bi-dot ms-1 me-1"></i><span class="text-muted small">${email.toLowerCase()}</span></div>
+                    <div class="text-muted text-capitalize">${role}<i class="bi bi-dot ms-1 me-1"></i><span class="text-muted small text-lowercase">${email}</span></div>
                     
                 </div>
             </div>
