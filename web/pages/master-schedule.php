@@ -360,24 +360,25 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
     <!-- Employee Modal -->
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <!-- <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5> -->
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" style="margin-top: -25px !important;">
-        <div id="employeeModalContent">
-          <!-- Dynamic content goes here -->
+        <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <!-- <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5> -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="margin-top: -25px !important;">
+                <div id="employeeModalContent">
+                  <!-- Dynamic content goes here -->
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+    <!-- end employee modal -->
 
 
 <script>
@@ -442,7 +443,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[a.clientName].status = a.status;
             });
 
-            const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
+            // Correct avg: totalHours / total entries
+            const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
             // Build modal HTML
             let html = `
@@ -489,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(161,77,253);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Week</small>
+                            <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Entry</small>
                             <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
@@ -543,6 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
