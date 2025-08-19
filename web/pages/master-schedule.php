@@ -382,7 +382,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const employeeCells = document.querySelectorAll('td.employee-name');
     const modalEl = document.getElementById('employeeModal');
     const modal = new bootstrap.Modal(modalEl);
