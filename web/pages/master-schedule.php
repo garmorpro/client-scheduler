@@ -416,10 +416,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let allAssignments = [];
             let totalHours = 0;
             const uniqueEngagements = new Set();
-            
+
             // Build a map for time off: { weekStart: totalHours }
-            // Start with global time off for all weeks
-            const timeOffMap = {...globalTimeOffMap};
+            const timeOffMap = {};
+
+            // Pre-populate with global time off for all weeks
+            Object.entries(globalTimeOffMap).forEach(([weekStart, hours]) => {
+                timeOffMap[weekStart] = hours;
+            });
 
             // Process employee-specific assignments and personal time off
             weekTds.forEach(weekTd => {
@@ -444,13 +448,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Handle personal time off (combine with global if exists)
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
-                if (timeOffCorner) {
-                    const personalHours = parseFloat(timeOffCorner.textContent) || 0;
-                    if (timeOffMap[weekStart]) {
-                        timeOffMap[weekStart] += personalHours;
-                    } else {
-                        timeOffMap[weekStart] = personalHours;
-                    }
+                const personalHours = timeOffCorner ? parseFloat(timeOffCorner.textContent) || 0 : 0;
+
+                if (timeOffMap[weekStart]) {
+                    timeOffMap[weekStart] += personalHours;
+                } else {
+                    timeOffMap[weekStart] = personalHours;
                 }
             });
 
@@ -459,7 +462,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 .map(([week, hours]) => ({ week, hours }))
                 .sort((a, b) => new Date(a.week) - new Date(b.week));
 
-            // Total time off hours
             const totalTimeOffHours = timeOffWeeks.reduce((sum, w) => sum + w.hours, 0);
 
             // Initialize clients map
@@ -468,7 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[client] = { total: 0, status: 'not-confirmed', weeks: [] };
             });
 
-            // Merge actual assignments
             allAssignments.forEach(a => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
@@ -476,7 +477,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[a.clientName].status = a.status;
             });
 
-            // Average hours per entry
             const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
             // Build modal HTML
@@ -535,7 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             `;
 
-            // Build clients + time off list
             html += `<div class="border rounded p-3 mb-3">
                 <ul class="list-group">
                     <li class="list-group-item d-flex fw-semibold text-muted bg-light">
@@ -544,7 +543,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-4">Week Assignments / Time Off</div>
                     </li>`;
 
-            // Time off row (first row under header)
             html += `
                 <li class="list-group-item d-flex align-items-center text-truncate">
                     <div class="col-6 fw-semibold text-black">Time Off</div>
@@ -559,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </li>`;
 
-            // Client rows
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
