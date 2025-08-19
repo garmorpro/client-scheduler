@@ -393,11 +393,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
 
-    // Capture all global time off weeks for reference
+    // Capture all global time off entries from window.globalTimeOff
     const globalTimeOffMap = {};
     if (window.globalTimeOff) {
         Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
-            globalTimeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
+            // Only include global time off
+            if (info.is_global_timeoff == 1) {
+                globalTimeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
+            }
         });
     }
 
@@ -420,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Build a map for time off: { weekStart: totalHours }
             const timeOffMap = {};
 
-            // Pre-populate with global time off for all weeks
+            // Pre-populate global time off for all employees
             Object.entries(globalTimeOffMap).forEach(([weekStart, hours]) => {
                 timeOffMap[weekStart] = hours;
             });
@@ -588,6 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
