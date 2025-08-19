@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMonday(dateStr) {
         const d = new Date(dateStr);
         const day = d.getDay(); // 0 = Sunday, 1 = Monday
-        const diff = day === 0 ? -6 : 1 - day;
+        const diff = day === 0 ? : 1 - day;
         d.setDate(d.getDate() + diff);
         return d.toISOString().slice(0,10); // YYYY-MM-DD
     }
