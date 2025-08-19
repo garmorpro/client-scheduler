@@ -30,7 +30,7 @@ $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j',
 // Employees
 $employees = [];
 $userQuery = "
-    SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role 
+    SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name, role, email
     FROM users 
     WHERE status = 'active' AND role IN ('staff', 'senior', 'manager')
     ORDER BY CASE 
