@@ -9,14 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
 
-    // Normalize a date string to Monday of that week
     function getMonday(dateStr) {
     const d = new Date(dateStr);
-    const day = d.getDay(); // 0 = Sunday, 1 = Monday, ...
-    const diff = (day + 5) % 7; // shift Sunday->6, Monday->0, etc.
-    d.setDate(d.getDate() - diff);
+    const day = d.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const diff = (day === 0 ? -6 : 1 - day); // shift Sunday back 6, otherwise back to Monday
+    d.setDate(d.getDate() + diff);
 
-    // Return YYYY-MM-DD in local time
+    // Format YYYY-MM-DD
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const date = String(d.getDate()).padStart(2, '0');

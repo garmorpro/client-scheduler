@@ -382,21 +382,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
