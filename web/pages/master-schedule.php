@@ -44,7 +44,8 @@ if ($userResult) {
     while ($userRow = $userResult->fetch_assoc()) {
         $employees[$userRow['user_id']] = [
             'full_name' => $userRow['full_name'],
-            'role' => $userRow['role']
+            'role' => $userRow['role'],
+            'email' => $userRow['email']
         ];
     }
 }
