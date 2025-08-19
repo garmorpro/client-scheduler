@@ -33,14 +33,13 @@ $engagementQuery = "
 
 $engagementResult = mysqli_query($conn, $engagementQuery);
 
-
 // Total engagements
 $totalEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements";
 $totalResult = mysqli_query($conn, $totalEngagementsQuery);
 $totalRow = mysqli_fetch_assoc($totalResult);
 $totalEngagements = $totalRow['total'];
 
-// Get users added in last 30 days
+// New engagements in last 30 days
 $newEngagementsQuery = "SELECT COUNT(*) AS recent FROM engagements WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 $newEngagementsResult = mysqli_query($conn, $newEngagementsQuery);
 $newEngagmentRow = mysqli_fetch_assoc($newEngagementsResult);
@@ -52,7 +51,6 @@ $assignedEngagementsQuery = "
     FROM engagements e
     JOIN entries a ON e.engagement_id = a.engagement_id
 ";
-
 $assignedResult = mysqli_query($conn, $assignedEngagementsQuery);
 $assignedRow = mysqli_fetch_assoc($assignedResult);
 $totalAssigned = $assignedRow['total_assigned'];
@@ -64,12 +62,24 @@ $notAssignedEngagementsQuery = "
     LEFT JOIN entries a ON e.engagement_id = a.engagement_id
     WHERE a.engagement_id IS NULL
 ";
-
 $notAssignedResult = mysqli_query($conn, $notAssignedEngagementsQuery);
 $notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
 $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
+// Average engagements per assigned employee (only include users assigned to at least one engagement)
+$avgEngagementsPerUserQuery = "
+    SELECT ROUND(AVG(user_engagement_count), 2) AS avg_engagements_per_user
+    FROM (
+        SELECT en.user_id, COUNT(DISTINCT en.engagement_id) AS user_engagement_count
+        FROM entries en
+        GROUP BY en.user_id
+    ) AS user_counts
+";
+$avgResult = mysqli_query($conn, $avgEngagementsPerUserQuery);
+$avgRow = mysqli_fetch_assoc($avgResult);
+$avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -130,13 +140,15 @@ $totalNotAssigned = $notAssignedRow['total_not_assigned'];
         </div>
     </div>
 
-    <!-- Upcoming Engagements -->
+    <!-- Average Engagements per Employee -->
     <div class="col-md-3">
         <div class="stat-card">
-            <div class="card-icon"><i class="bi bi-calendar-event"></i></div>
-            <div class="stat-title">Upcoming (7 Days)</div>
-            <div class="stat-value"><?php echo $upcomingEngagements; ?></div>
-            <div class="stat-sub">Out of <?php echo $totalEngagements; ?> total</div>
+            <div class="card-icon"><i class="bi bi-people"></i></div>
+            <div class="stat-title">Avg Engagements per Employee</div>
+            <div class="stat-value"><?php echo $avgEngagementsPerUser; ?></div>
+            <div class="stat-sub">
+                Based on employees assigned to at least one engagement
+            </div>
         </div>
     </div>
 
@@ -169,14 +181,12 @@ $totalNotAssigned = $notAssignedRow['total_not_assigned'];
             </div>
             <div class="stat-sub mt-2">
                 Engagements assigned to employees
-                <!-- <?php //echo $totalAssigned; ?> assigned 
-                <i class="bi bi-dot"></i> 
-                <?php //echo $totalNotAssigned; ?> not assigned -->
             </div>
         </div>
     </div>
 </div>
 <!-- end stats cards -->
+
 
 
     <!-- search bar and filter dropdown -->
