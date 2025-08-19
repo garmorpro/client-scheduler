@@ -397,33 +397,42 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMonday(dateStr) {
         const d = new Date(dateStr);
         const day = d.getDay(); // 0 = Sunday, 1 = Monday
-        const diff = day === 0 ? -6 : 1 - day; // adjust Sunday to Monday
+        const diff = day === 0 ? -6 : 1 - day;
         d.setDate(d.getDate() + diff);
-        return d.toISOString().slice(0,10); // "YYYY-MM-DD"
+        return d.toISOString().slice(0,10); // YYYY-MM-DD
     }
 
-    // Capture global time off and normalize weeks to Monday
-    const globalTimeOffMap = {};
-    if (window.globalTimeOff) {
-        Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
-            if (info.is_global_timeoff == 1) {
-                const mondayWeek = getMonday(weekStart);
-                globalTimeOffMap[mondayWeek] = parseFloat(info.assigned_hours) || 0;
-            }
+    // Fetch global time off from server
+    let globalTimeOffMap = {};
+    async function fetchGlobalTimeOff() {
+    try {
+        const res = await fetch('/ajax/get_global_pto.php'); // Your PHP file
+        const data = await res.json();
+
+        globalTimeOffMap = {};
+        data.forEach(item => {
+            const mondayWeek = getMonday(item.week_start);
+            globalTimeOffMap[mondayWeek] = parseFloat(item.assigned_hours) || 0;
         });
-    }
 
-    console.log("Global Time Off Map:", globalTimeOffMap);
+        console.log("Global Time Off Map:", globalTimeOffMap);
+    } catch(err) {
+        console.error("Failed to fetch global time off:", err);
+    }
+}
 
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
-        td.addEventListener('click', () => {
+        td.addEventListener('click', async () => {
             const userName = td.dataset.userName;
             const role = td.dataset.role || td.querySelector('.text-muted')?.textContent || 'staff';
             const email = td.dataset.email || '';
             if (!userName) return;
 
             const initials = userName.split(' ').map(p => p[0].toUpperCase()).join('');
+
+            // Ensure global PTO is loaded before opening modal
+            await fetchGlobalTimeOff();
 
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
@@ -437,13 +446,10 @@ document.addEventListener('DOMContentLoaded', () => {
             weekTds.forEach(weekTd => {
                 const weekStartRaw = weekTd.dataset.weekStart;
                 const weekStart = getMonday(weekStartRaw);
-
-                // Use 0 if global PTO is not set for this week
                 const globalHours = globalTimeOffMap[weekStart] || 0;
 
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 const personalHours = timeOffCorner ? parseFloat(timeOffCorner.textContent) || 0 : 0;
-
                 const totalWeekHours = globalHours + personalHours;
 
                 if (totalWeekHours > 0) {
@@ -452,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log(`Week ${weekStart} for ${userName}: global=${globalHours}, personal=${personalHours}, total=${totalWeekHours}`);
 
-                // Handle badges (assignments)
+                // Assignments
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
                 badges.forEach(b => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
@@ -597,6 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
