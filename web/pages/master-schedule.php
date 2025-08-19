@@ -429,20 +429,27 @@ document.addEventListener('DOMContentLoaded', () => {
             let totalHours = 0;
             const uniqueEngagements = new Set();
 
+            // Create a timeOffMap that starts with all global PTO
             const timeOffMap = {};
+            Object.entries(globalTimeOffMap).forEach(([week, hours]) => {
+                timeOffMap[week] = hours;
+            });
 
-            // Collect global and personal PTO only for weeks present in the table
+            // Add personal PTO and assignments
             weekTds.forEach(weekTd => {
                 const weekStartRaw = weekTd.dataset.weekStart;
                 const weekStart = getMonday(weekStartRaw);
-                const globalHours = globalTimeOffMap[weekStart] || 0;
 
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 const personalHours = timeOffCorner ? parseFloat(timeOffCorner.textContent) || 0 : 0;
 
-                const totalWeekHours = globalHours + personalHours;
-                if (totalWeekHours > 0) {
-                    timeOffMap[weekStart] = totalWeekHours;
+                // Merge personal PTO with any existing global PTO
+                if (personalHours > 0) {
+                    if (timeOffMap[weekStart]) {
+                        timeOffMap[weekStart] += personalHours;
+                    } else {
+                        timeOffMap[weekStart] = personalHours;
+                    }
                 }
 
                 // Handle badges (assignments)
@@ -460,7 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
+            // Only include weeks with PTO > 0
             const timeOffWeeks = Object.entries(timeOffMap)
+                .filter(([week, hours]) => hours > 0)
                 .map(([week, hours]) => ({ week, hours }))
                 .sort((a,b) => new Date(a.week) - new Date(b.week));
 
