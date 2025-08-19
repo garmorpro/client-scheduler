@@ -470,32 +470,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <div class="card flex-fill d-flex" style="border-left: 4px solid blue;">
+                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(79,197,95);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: blue;">${totalHours}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(79,197,95);">${totalHours}</div>
                         </div>
                         
                         <!-- Right side: circle with icon -->
-                        <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
-                            <i class="bi bi-people text-white"></i>
+                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(226,251,232);">
+                            <i class="bi bi-people" style="color: rgb(79,197,95)"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="card flex-fill d-flex" style="border-left: 4px solid blue;">
+                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(161,77,253);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Week</small>
-                            <div class="fw-semibold fs-4" style="color: blue;">${avgHoursPerWeek}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
                         </div>
                         
                         <!-- Right side: circle with icon -->
-                        <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
-                            <i class="bi bi-people text-white"></i>
+                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
+                            <i class="bi bi-people" style="color: rgb(161,77,253);"></i>
                         </div>
                     </div>
                 </div>
