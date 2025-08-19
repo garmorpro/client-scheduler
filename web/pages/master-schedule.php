@@ -561,7 +561,10 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `
                 <li class="list-group-item d-flex align-items-center text-truncate">
                     <div class="col-6 fw-semibold text-black">Time Off</div>
-                    <div class="col-2 text-center">${totalTimeOffHours}</div>
+                    <div class="col-2 text-center">
+                        <span class="fs-5 fw-semibold text-black">${totalTimeOffHours}</span><br>
+                        <span class="text-muted" style="font-size: 10px;">hours</span>
+                    </div>
                     <div class="col-4 d-flex flex-wrap gap-1">
                         ${timeOffWeeks.map(w => `
                             <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
@@ -582,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </div>
                         <div class="col-2 text-center">
-                           <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
+                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
                             <span class="text-muted" style="font-size: 10px;">hours</span>
                         </div>
                         <div class="col-4 d-flex flex-wrap gap-1">
