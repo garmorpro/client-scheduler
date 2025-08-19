@@ -486,8 +486,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="border rounded p-3 mb-3">
-                <div>
+                <div class+"">
                     <i class="bi bi-briefcase me-2"></i>Current Engagements
+                </div>
                 <ul class="list-group">
                     <li class="list-group-item d-flex fw-semibold text-muted bg-light">
                         <div class="col-6">Client Name</div>
