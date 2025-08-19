@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let globalTimeOffMap = {};
     async function fetchGlobalTimeOff() {
     try {
-        const res = await fetch('/ajax/get_global_pto.php'); // Your PHP file
+        const res = await fetch('get_global_pto.php'); // Your PHP file
         const data = await res.json();
 
         globalTimeOffMap = {};
