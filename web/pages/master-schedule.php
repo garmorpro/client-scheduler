@@ -393,20 +393,22 @@ document.addEventListener('DOMContentLoaded', () => {
         td.style.cursor = 'pointer';
         td.addEventListener('click', () => {
             const userName = td.dataset.userName;
-            const role = td.dataset.role || td.querySelector('.text-muted')?.textContent;
+            const role = td.dataset.role || td.querySelector('.text-muted')?.textContent || 'staff';
             const email = td.dataset.email || '';
+            if (!userName) return;
 
             const initials = userName.split(' ').map(p => p[0].toUpperCase()).join('');
 
-            // Collect all entries for this employee across weeks
+            // Collect assignments
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
+
             let allAssignments = [];
             let totalHours = 0;
-            const weeklyHoursMap = {}; // week_start => hours
+            const weeklyHoursMap = {};
 
             weekTds.forEach(weekTd => {
-                const weekStart = weekTd.dataset.weekStart;
+                const weekStart = weekTd.dataset.weekStart || 'unknown';
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
                 let weekTotal = 0;
 
@@ -414,13 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    const statusClass = b.className.match(/badge-(\w+)$/)[1];
-                    allAssignments.push({
-                        clientName,
-                        hours,
-                        status: statusClass,
-                        weekStart
-                    });
+                    const statusMatch = b.className.match(/badge-(\w+)$/);
+                    const statusClass = statusMatch ? statusMatch[1] : 'confirmed';
+
+                    allAssignments.push({clientName, hours, status: statusClass, weekStart});
                     weekTotal += hours;
                 });
 
@@ -431,26 +430,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const activeClients = new Set(allAssignments.map(a => a.clientName));
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
-            // Filter weeks: 1 week before to 26 weeks forward
+            // Filter weeks: 1 week before today, 26 weeks forward
             const today = new Date();
-            const oneWeekAgo = new Date(today);
-            oneWeekAgo.setDate(today.getDate() - 7);
-            const futureLimit = new Date(today);
-            futureLimit.setDate(today.getDate() + 7*26);
-
+            const oneWeekAgo = new Date(today); oneWeekAgo.setDate(today.getDate() - 7);
+            const futureLimit = new Date(today); futureLimit.setDate(today.getDate() + 7*26);
             const filteredWeeks = weekHeaders.filter(wk => {
                 const wkDate = new Date(wk);
                 return wkDate >= oneWeekAgo && wkDate <= futureLimit;
             });
 
-            // Build HTML
+            // Build modal HTML
             let html = `
             <div class="d-flex align-items-center mb-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
-                     style="width: 50px; height: 50px; font-size: 18px; font-weight: 500; background-color: ${
-                        role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
-                        role.toLowerCase() === 'staff' ? 'rgb(66,127,194)' : '#6c757d'
-                     };">
+                     style="width:50px;height:50px;font-size:18px;font-weight:500;
+                     background-color:${role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
+                        role.toLowerCase() === 'staff' ? 'rgb(66,127,194)' : '#6c757d'};">
                     ${initials}
                 </div>
                 <div>
@@ -475,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = {total:0, status:a.status, weeks:{}};
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks[a.weekStart] = a.hours;
-                clientsMap[a.clientName].status = a.status; // last status wins for simplicity
+                clientsMap[a.clientName].status = a.status; // last status wins
             });
 
             Object.entries(clientsMap).forEach(([clientName, info]) => {
@@ -487,15 +482,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="badge badge-status badge-${info.status} ms-2">${info.status.replace('-', ' ')}</span>
                         </div>
                         <div class="col-md-2">
-                            <span>${info.total}</span><br>
-                            <small class="text-muted">hours</small>
+                            <span>${info.total}</span><br><small class="text-muted">hours</small>
                         </div>
                         <div class="col-md-7 d-flex flex-wrap gap-1">
                             ${filteredWeeks.map(week => {
                                 const hrs = info.weeks[week] || 0;
                                 return `<div style="background-color:#f5f5f5; padding:5px; min-width:60px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
-                                    ${hrs}h
+                                    ${new Date(week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>${hrs}h
                                 </div>`;
                             }).join('')}
                         </div>
@@ -505,8 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             html += `</ul>`;
 
-            // TODO: Add time off info at bottom if needed
-
             modalContent.innerHTML = html;
             modalTitle.textContent = userName;
             modal.show();
@@ -514,7 +505,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-
 
 
 
