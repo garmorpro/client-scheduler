@@ -385,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalEl = document.getElementById('employeeModal');
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
-    const modalTitle = document.getElementById('employeeModalLabel');
 
     // Get list of weeks from the table header
     const weekHeaders = Array.from(document.querySelectorAll('table thead th.week')).map(th => th.dataset.weekStart);
@@ -452,14 +451,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                     <div class="fw-semibold">${userName}</div>
                     <div class="text-muted text-capitalize">${role}<i class="bi bi-dot ms-1 me-1"></i><span class="text-muted small text-lowercase">${email}</span></div>
-                    
                 </div>
             </div>
 
             <div class="mb-3 d-flex gap-3">
-                <div><strong>Active Clients:</strong> ${activeClients.size}</div>
-                <div><strong>Total Hours:</strong> ${totalHours}</div>
-                <div><strong>Avg Hours/Week:</strong> ${avgHoursPerWeek}</div>
+                <div class="card flex-fill border-start border-3 border-primary">
+                    <div class="card-body p-2">
+                        <div class="fw-semibold">${activeClients.size}</div>
+                        <small class="text-muted">Active Clients</small>
+                    </div>
+                </div>
+                <div class="card flex-fill border-start border-3 border-success">
+                    <div class="card-body p-2">
+                        <div class="fw-semibold">${totalHours}</div>
+                        <small class="text-muted">Total Hours</small>
+                    </div>
+                </div>
+                <div class="card flex-fill border-start border-3 border-warning">
+                    <div class="card-body p-2">
+                        <div class="fw-semibold">${avgHoursPerWeek}</div>
+                        <small class="text-muted">Avg Hours/Week</small>
+                    </div>
+                </div>
             </div>
 
             <ul class="list-group">
@@ -500,11 +513,11 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `</ul>`;
 
             modalContent.innerHTML = html;
-            // modalTitle.textContent = userName;
             modal.show();
         });
     });
 });
+
 </script>
 
 
