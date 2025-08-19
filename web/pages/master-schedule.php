@@ -386,59 +386,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalContent = document.getElementById('employeeModalContent');
     const modalTitle = document.getElementById('employeeModalLabel');
 
-    // Debug: check table headers
-    const weekHeaders = Array.from(document.querySelectorAll('table thead th.week')).map(th => {
-        console.log('Header TH:', th);
-        console.log('Dataset:', th.dataset);
-        return th.dataset.weekStart;
-    });
-    console.log('Week headers:', weekHeaders);
+    // Get list of weeks from the table header
+    const weekHeaders = Array.from(document.querySelectorAll('table thead th.week')).map(th => th.dataset.weekStart);
 
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
         td.addEventListener('click', () => {
-            console.log('Clicked employee cell:', td);
-            console.log('Cell datasets:', td.dataset);
-
             const userName = td.dataset.userName;
             const role = td.dataset.role || td.querySelector('.text-muted')?.textContent;
             const email = td.dataset.email || '';
-            console.log('UserName:', userName, 'Role:', role, 'Email:', email);
-
-            if (!userName) {
-                console.warn('No userName found in dataset. Modal will not open.');
-                return;
-            }
 
             const initials = userName.split(' ').map(p => p[0].toUpperCase()).join('');
 
             // Collect all entries for this employee across weeks
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
-            console.log('Week TDs:', weekTds);
-
             let allAssignments = [];
             let totalHours = 0;
-            const weeklyHoursMap = {};
+            const weeklyHoursMap = {}; // week_start => hours
 
             weekTds.forEach(weekTd => {
-                console.log('Week TD dataset:', weekTd.dataset);
-
-                const weekStart = weekTd.dataset.weekStart || 'unknown';
+                const weekStart = weekTd.dataset.weekStart;
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
-                console.log('Badges in this week:', badges);
-
                 let weekTotal = 0;
+
                 badges.forEach(b => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    const statusMatch = b.className.match(/badge-(\w+)$/);
-                    const statusClass = statusMatch ? statusMatch[1] : 'confirmed';
-
-                    console.log('Badge info:', {clientName, hours, statusClass, weekStart});
-
-                    allAssignments.push({clientName, hours, status: statusClass, weekStart});
+                    const statusClass = b.className.match(/badge-(\w+)$/)[1];
+                    allAssignments.push({
+                        clientName,
+                        hours,
+                        status: statusClass,
+                        weekStart
+                    });
                     weekTotal += hours;
                 });
 
@@ -446,18 +428,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalHours += weekTotal;
             });
 
-            console.log('All assignments:', allAssignments);
-            console.log('Total hours:', totalHours);
-            console.log('Weekly hours map:', weeklyHoursMap);
+            const activeClients = new Set(allAssignments.map(a => a.clientName));
+            const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
-            // ... rest of your modal HTML generation ...
+            // Filter weeks: 1 week before to 26 weeks forward
+            const today = new Date();
+            const oneWeekAgo = new Date(today);
+            oneWeekAgo.setDate(today.getDate() - 7);
+            const futureLimit = new Date(today);
+            futureLimit.setDate(today.getDate() + 7*26);
+
+            const filteredWeeks = weekHeaders.filter(wk => {
+                const wkDate = new Date(wk);
+                return wkDate >= oneWeekAgo && wkDate <= futureLimit;
+            });
+
+            // Build HTML
+            let html = `
+            <div class="d-flex align-items-center mb-3">
+                <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
+                     style="width: 50px; height: 50px; font-size: 18px; font-weight: 500; background-color: ${
+                        role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
+                        role.toLowerCase() === 'staff' ? 'rgb(66,127,194)' : '#6c757d'
+                     };">
+                    ${initials}
+                </div>
+                <div>
+                    <div class="fw-semibold">${userName}</div>
+                    <div class="text-muted text-capitalize">${role}</div>
+                    <div class="text-muted small">${email}</div>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex gap-3">
+                <div><strong>Active Clients:</strong> ${activeClients.size}</div>
+                <div><strong>Total Hours:</strong> ${totalHours}</div>
+                <div><strong>Avg Hours/Week:</strong> ${avgHoursPerWeek}</div>
+            </div>
+
+            <ul class="list-group">
+            `;
+
+            // Group assignments by client
+            const clientsMap = {};
+            allAssignments.forEach(a => {
+                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = {total:0, status:a.status, weeks:{}};
+                clientsMap[a.clientName].total += a.hours;
+                clientsMap[a.clientName].weeks[a.weekStart] = a.hours;
+                clientsMap[a.clientName].status = a.status; // last status wins for simplicity
+            });
+
+            Object.entries(clientsMap).forEach(([clientName, info]) => {
+                html += `
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <span>${clientName}</span>
+                            <span class="badge badge-status badge-${info.status} ms-2">${info.status.replace('-', ' ')}</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>${info.total}</span><br>
+                            <small class="text-muted">hours</small>
+                        </div>
+                        <div class="col-md-7 d-flex flex-wrap gap-1">
+                            ${filteredWeeks.map(week => {
+                                const hrs = info.weeks[week] || 0;
+                                return `<div style="background-color:#f5f5f5; padding:5px; min-width:60px; text-align:center; border-radius:4px; font-size:12px;">
+                                    ${new Date(week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                    ${hrs}h
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </li>`;
+            });
+
+            html += `</ul>`;
+
+            // TODO: Add time off info at bottom if needed
+
+            modalContent.innerHTML = html;
             modalTitle.textContent = userName;
-            modalContent.innerHTML = `<p>Debug: see console for dataset output</p>`;
             modal.show();
         });
     });
 });
 </script>
+
 
 
 
