@@ -408,8 +408,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let allAssignments = [];
             let totalHours = 0;
             const uniqueEngagements = new Set();
-            const timeOffWeeks = [];
+            
+            // Build a map for time off: { weekStart: totalHours }
+            const timeOffMap = {};
 
+            // Add global time off first
+            if (window.globalTimeOff) {
+                Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
+                    timeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
+                });
+            }
+
+            // Process employee-specific assignments and personal time off
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
 
@@ -430,23 +440,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (engagementId) uniqueEngagements.add(engagementId);
                 });
 
-                // Handle personal time off
+                // Handle personal time off (add to map, combine with global if exists)
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 if (timeOffCorner) {
-                    timeOffWeeks.push({ week: weekStart, hours: parseFloat(timeOffCorner.textContent) });
-                }
-
-                // Handle global time off
-                const globalTimeOffEl = window.globalTimeOff?.[weekStart];
-                if (globalTimeOffEl) {
-                    const existing = timeOffWeeks.find(w => w.week === weekStart);
-                    if (existing) {
-                        existing.hours += parseFloat(globalTimeOffEl.assigned_hours);
+                    const personalHours = parseFloat(timeOffCorner.textContent) || 0;
+                    if (timeOffMap[weekStart]) {
+                        timeOffMap[weekStart] += personalHours;
                     } else {
-                        timeOffWeeks.push({ week: weekStart, hours: parseFloat(globalTimeOffEl.assigned_hours) });
+                        timeOffMap[weekStart] = personalHours;
                     }
                 }
             });
+
+            // Convert timeOffMap to array of objects and sort by week
+            const timeOffWeeks = Object.entries(timeOffMap)
+                .map(([week, hours]) => ({ week, hours }))
+                .sort((a, b) => new Date(a.week) - new Date(b.week));
 
             // Total time off hours
             const totalTimeOffHours = timeOffWeeks.reduce((sum, w) => sum + w.hours, 0);
@@ -465,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[a.clientName].status = a.status;
             });
 
-            // Correct avg: totalHours / total entries
+            // Average hours per entry
             const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
             // Build modal HTML
