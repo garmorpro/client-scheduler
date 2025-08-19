@@ -9,37 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
 
-    function getMonday(dateStr) {
-    const d = new Date(dateStr);
-    const day = d.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    const diff = (day === 0 ? -6 : 1 - day); // shift Sunday back 6, otherwise back to Monday
-    d.setDate(d.getDate() + diff);
-
-    // Format YYYY-MM-DD
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const date = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${date}`;
-}
-
     // Fetch global time off from server
     let globalTimeOffMap = {};
     async function fetchGlobalTimeOff() {
-    try {
-        const res = await fetch('get_global_pto.php'); // Your PHP file
-        const data = await res.json();
+        try {
+            const res = await fetch('get_global_pto.php'); // Your PHP file
+            const data = await res.json();
 
-        globalTimeOffMap = {};
-        data.forEach(item => {
-            const mondayWeek = getMonday(item.week_start);
-            globalTimeOffMap[mondayWeek] = parseFloat(item.assigned_hours) || 0;
-        });
+            globalTimeOffMap = {};
+            data.forEach(item => {
+                const weekStart = item.week_start; // <-- use directly
+                globalTimeOffMap[weekStart] = parseFloat(item.assigned_hours) || 0;
+            });
 
-        console.log("Global Time Off Map:", globalTimeOffMap);
-    } catch(err) {
-        console.error("Failed to fetch global time off:", err);
+            console.log("Global Time Off Map:", globalTimeOffMap);
+        } catch(err) {
+            console.error("Failed to fetch global time off:", err);
+        }
     }
-}
 
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
@@ -64,8 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Collect global and personal PTO only for weeks present in the table
             weekTds.forEach(weekTd => {
-                const weekStartRaw = weekTd.dataset.weekStart;
-                const weekStart = getMonday(weekStartRaw);
+                const weekStart = weekTd.dataset.weekStart; // <-- no conversion
                 const globalHours = globalTimeOffMap[weekStart] || 0;
 
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
