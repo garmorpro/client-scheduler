@@ -397,15 +397,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function getMonday(dateStr) {
     const d = new Date(dateStr);
     const day = d.getDay(); // 0 = Sunday, 1 = Monday, ...
-    // Calculate how many days to subtract to get Monday
-    const diff = (day + 6) % 7; // Sunday(0)->6, Monday(1)->0, Tuesday(2)->1, ...
+    const diff = (day + 6) % 7; // shift Sunday->6, Monday->0, etc.
     d.setDate(d.getDate() - diff);
-    
+
+    // Return YYYY-MM-DD in local time
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const date = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${date}`;
 }
+
     // Fetch global time off from server
     let globalTimeOffMap = {};
     async function fetchGlobalTimeOff() {
