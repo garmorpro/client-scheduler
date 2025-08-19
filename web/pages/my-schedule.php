@@ -76,7 +76,7 @@ $stmt->close();
 // ------------------------------------------------------
 // Get time off
 $sqlTimeOff = "
-    SELECT week_start, hours
+    SELECT week_start, assigned_hours
     FROM time_off
     WHERE user_id = ?
       AND week_start BETWEEN ? AND ?
@@ -125,7 +125,7 @@ $stmt->close();
 // ------------------------------------------------------
 // Time off for selected week
 $sqlWeekTO = "
-    SELECT id, hours
+    SELECT timeoff_id, assigned_hours
     FROM time_off
     WHERE user_id = ?
       AND week_start = ?
@@ -142,7 +142,7 @@ $timeOffs     = [];
 $timeOffTotal = 0;
 while ($row = $weekTORes->fetch_assoc()) {
     $timeOffs[] = [
-        'id'             => $row['id'],
+        'id'             => $row['timeoff_id'],
         'assigned_hours' => $row['assigned_hours'],
         'client_name'    => 'Time Off'
     ];
