@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
+    // Utility: parse YYYY-MM-DD safely as local date
+    function parseDateOnly(yyyyMmDd) {
+        const [y, m, d] = yyyyMmDd.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
     // Master list of all clients
     const allClients = Array.from(document.querySelectorAll('td[data-client]'))
         .map(td => td.dataset.client)
@@ -83,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const timeOffWeeks = Object.entries(timeOffMap)
                 .map(([week, hours]) => ({ week, hours }))
-                .sort((a,b) => new Date(a.week) - new Date(b.week));
+                .sort((a,b) => parseDateOnly(a.week) - parseDateOnly(b.week));
 
             const totalTimeOffHours = timeOffWeeks.reduce((sum, w) => sum + w.hours, 0);
 
@@ -174,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="col-4 d-flex flex-wrap gap-1">
                         ${timeOffWeeks.map(w => `
                             <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                ${parseDateOnly(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
                                 <span class="fw-semibold text-black">${w.hours}h</span>
                             </div>
                         `).join('')}
@@ -197,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-4 d-flex flex-wrap gap-1">
                             ${info.weeks.map(w => `
                                 <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                    ${parseDateOnly(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
                                     <span class="fw-semibold text-black">${w.hours}h</span>
                                 </div>
                             `).join('')}
