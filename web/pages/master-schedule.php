@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
-                            ${clientName} <span class="badge badge-status badge-${info.status} ms-1">${info.status.replace('-', ' ')}</span>
+                            <span class="fs-6 fw-semibold text-black">${clientName}</span> <span class="badge badge-status badge-${info.status} ms-1">${info.status.replace('-', ' ')}</span>
                         </div>
                         <div class="col-2 text-center">
                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
