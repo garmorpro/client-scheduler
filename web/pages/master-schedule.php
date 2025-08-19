@@ -455,8 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="mb-3 d-flex gap-3">
-                <div class="card flex-fill" style="border-left: 2px solid blue;">
-                    <div class="card-body p-2">
+                <div class="card flex-fill" style="border-left: 4px solid blue;">
+                    <div class="card-body p-4">
                         <div class="fw-semibold">${activeClients.size}</div>
                         <small class="text-muted">Active Clients</small>
                     </div>
