@@ -398,7 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
-            let allAssignments = [];
             let totalHours = 0;
 
             // Map of clientName -> set of unique engagement IDs
@@ -409,39 +408,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
 
                 badges.forEach(b => {
-                    const match = b.textContent.match(/\(([\d.]+)\)/);
-                    const hours = match ? parseFloat(match[1]) : 0;
+                    const hoursMatch = b.textContent.match(/\(([\d.]+)\)/);
+                    const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    let engagementId = b.dataset.engagementId || null;
 
-                    // Debug: log each badge
-                    console.log('Badge:', b.textContent, 'Engagement ID:', engagementId);
+                    // Get engagementId safely
+                    const engagementId = b.getAttribute('data-engagement-id') || b.dataset.engagementId || null;
 
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
 
-                    allAssignments.push({clientName, hours, status: statusClass, weekStart, engagementId});
                     totalHours += hours;
 
-                    if (!clientEngagementsMap[clientName]) clientEngagementsMap[clientName] = new Set();
-                    if (engagementId) clientEngagementsMap[clientName].add(engagementId);
+                    if (!clientEngagementsMap[clientName]) clientEngagementsMap[clientName] = { totalHours: 0, weeks: [], status: statusClass, engagements: new Set() };
+                    clientEngagementsMap[clientName].totalHours += hours;
+                    clientEngagementsMap[clientName].weeks.push({ week: weekStart, hours });
+                    clientEngagementsMap[clientName].status = statusClass;
+                    if (engagementId) clientEngagementsMap[clientName].engagements.add(engagementId);
                 });
             });
 
             // Calculate total unique engagements across all clients
             const totalUniqueEngagements = Object.values(clientEngagementsMap)
-                .reduce((sum, set) => sum + set.size, 0);
-
-            console.log('Total Unique Engagements:', totalUniqueEngagements);
-
-            // Build clients map for display
-            const clientsMap = {};
-            allAssignments.forEach(a => {
-                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks: [] };
-                clientsMap[a.clientName].total += a.hours;
-                clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                clientsMap[a.clientName].status = a.status;
-            });
+                .reduce((sum, c) => sum + c.engagements.size, 0);
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
@@ -499,8 +488,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
+
+            <div class="border rounded p-3 mb-3">
+                <div class="mb-3">
+                    <i class="bi bi-briefcase me-2"></i>Current Engagements
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex fw-semibold text-muted bg-light">
+                        <div class="col-6">Client Name</div>
+                        <div class="col-2 text-center">Total Hours</div>
+                        <div class="col-4">Week Assignments</div>
+                    </li>
             `;
 
+            Object.entries(clientEngagementsMap).forEach(([clientName, info]) => {
+                html += `
+                    <li class="list-group-item d-flex align-items-center text-truncate">
+                        <div class="col-6 text-truncate">
+                            <span class="fs-6 fw-semibold text-black">${clientName}</span> 
+                            <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
+                                ${info.status === 'not-confirmed' ? 'not confirmed' : info.status}
+                            </span>
+                        </div>
+                        <div class="col-2 text-center">
+                           <span class="fs-5 fw-semibold text-black">${info.totalHours}</span><br>
+                            <span class="text-muted" style="font-size: 10px;">hours</span>
+                        </div>
+                        <div class="col-4 d-flex flex-wrap gap-1">
+                            ${info.weeks.map(w => `
+                                <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
+                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                    <span class="fw-semibold text-black">${w.hours}h</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </li>`;
+            });
+
+            html += `</ul></div>`;
             modalContent.innerHTML = html;
             modal.show();
         });
