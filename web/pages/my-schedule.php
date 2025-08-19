@@ -143,10 +143,10 @@ $timeOffTotal = 0;
 while ($row = $weekTORes->fetch_assoc()) {
     $timeOffs[] = [
         'id'             => $row['id'],
-        'assigned_hours' => $row['hours'],
+        'assigned_hours' => $row['assigned_hours'],
         'client_name'    => 'Time Off'
     ];
-    $timeOffTotal += floatval($row['hours']);
+    $timeOffTotal += floatval($row['assigned_hours']);
 }
 $stmt->close();
 
