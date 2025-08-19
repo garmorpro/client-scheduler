@@ -393,6 +393,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
 
+    // Capture all global time off weeks for reference
+    const globalTimeOffMap = {};
+    if (window.globalTimeOff) {
+        Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
+            globalTimeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
+        });
+    }
+
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
         td.addEventListener('click', () => {
@@ -410,14 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const uniqueEngagements = new Set();
             
             // Build a map for time off: { weekStart: totalHours }
-            const timeOffMap = {};
-
-            // Add global time off first
-            if (window.globalTimeOff) {
-                Object.entries(window.globalTimeOff).forEach(([weekStart, info]) => {
-                    timeOffMap[weekStart] = parseFloat(info.assigned_hours) || 0;
-                });
-            }
+            // Start with global time off for all weeks
+            const timeOffMap = {...globalTimeOffMap};
 
             // Process employee-specific assignments and personal time off
             weekTds.forEach(weekTd => {
@@ -440,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (engagementId) uniqueEngagements.add(engagementId);
                 });
 
-                // Handle personal time off (add to map, combine with global if exists)
+                // Handle personal time off (combine with global if exists)
                 const timeOffCorner = weekTd.querySelector('.timeoff-corner');
                 if (timeOffCorner) {
                     const personalHours = parseFloat(timeOffCorner.textContent) || 0;
