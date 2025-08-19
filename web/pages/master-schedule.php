@@ -386,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
+    // Master list of all clients
     const allClients = Array.from(document.querySelectorAll('td[data-client]'))
         .map(td => td.dataset.client)
         .filter((v, i, a) => a.indexOf(v) === i);
@@ -404,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
             let allAssignments = [];
             let totalHours = 0;
+            const uniqueEngagements = new Set();
 
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
@@ -413,29 +415,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
+                    const engagementId = b.dataset.engagementId; // make sure badges have this attribute
 
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
 
-                    allAssignments.push({clientName, hours, status: statusClass, weekStart});
+                    allAssignments.push({clientName, hours, status: statusClass, weekStart, engagementId});
                     totalHours += hours;
+
+                    if (engagementId) uniqueEngagements.add(engagementId);
                 });
             });
 
+            // Initialize clients map
             const clientsMap = {};
             allClients.forEach(client => {
                 clientsMap[client] = { total: 0, status: 'not-confirmed', weeks: [] };
             });
 
+            // Merge actual assignments
             allAssignments.forEach(a => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                clientsMap[a.clientName].status = a.status;
+                clientsMap[a.clientName].status = a.status; // always update to last status
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
 
+            // Build modal HTML
             let html = `
             <div class="d-flex align-items-center mb-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
@@ -457,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${allAssignments.length}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${uniqueEngagements.size}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
                             <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
@@ -533,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
