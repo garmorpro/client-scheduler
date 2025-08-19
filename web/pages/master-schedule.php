@@ -263,7 +263,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                     $role = htmlspecialchars($employee['role']);
                 ?>
                 <tr data-role="<?php echo strtolower($role); ?>">
-                    <td class="text-start employee-name">
+                    <td class="text-start employee-name"
+                        data-user-id="<?php echo $userId; ?>"
+                        data-user-name="<?php echo $fullName; ?>"
+                        data-role="<?php echo strtolower($role); ?>"
+                        data-email="<?php echo htmlspecialchars($employee['email']); ?>">
                         <div class="d-flex align-items-center">
                                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;
