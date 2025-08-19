@@ -448,6 +448,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Total time off hours
+            const totalTimeOffHours = timeOffWeeks.reduce((sum, w) => sum + w.hours, 0);
+
             // Initialize clients map
             const clientsMap = {};
             allClients.forEach(client => {
@@ -530,22 +533,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-4">Week Assignments / Time Off</div>
                     </li>`;
 
-            // Time off row (top, right under header)
-            if (timeOffWeeks.length > 0) {
-                html += `
-                    <li class="list-group-item d-flex align-items-center text-truncate bg-warning bg-opacity-25">
-                        <div class="col-6 fw-semibold text-black">Time Off</div>
-                        <div class="col-2 text-center">-</div>
-                        <div class="col-4 d-flex flex-wrap gap-1">
-                            ${timeOffWeeks.map(w => `
-                                <div style="background-color:#fff3cd; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
-                                    <span class="fw-semibold text-black">${w.hours}h</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </li>`;
-            }
+            // Time off row (first row under header)
+            html += `
+                <li class="list-group-item d-flex align-items-center text-truncate">
+                    <div class="col-6 fw-semibold text-black">Time Off</div>
+                    <div class="col-2 text-center">${totalTimeOffHours}</div>
+                    <div class="col-4 d-flex flex-wrap gap-1">
+                        ${timeOffWeeks.map(w => `
+                            <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
+                                ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                <span class="fw-semibold text-black">${w.hours}h</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </li>`;
 
             // Client rows
             Object.entries(clientsMap).forEach(([clientName, info]) => {
