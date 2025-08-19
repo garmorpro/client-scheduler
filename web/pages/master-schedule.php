@@ -361,7 +361,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- Employee Modal -->
         <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
             <div class="modal-content">
               <div class="modal-header">
                 <!-- <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5> -->
@@ -408,11 +408,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let allAssignments = [];
             let totalHours = 0;
             const uniqueEngagements = new Set();
+            const timeOffWeeks = [];
 
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
-                const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
 
+                // Handle badges (assignments)
+                const badges = Array.from(weekTd.querySelectorAll('.draggable-badge'));
                 badges.forEach(b => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
@@ -427,6 +429,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (engagementId) uniqueEngagements.add(engagementId);
                 });
+
+                // Handle personal time off
+                const timeOffCorner = weekTd.querySelector('.timeoff-corner');
+                if (timeOffCorner) {
+                    timeOffWeeks.push({ week: weekStart, hours: parseFloat(timeOffCorner.textContent) });
+                }
+
+                // Handle global time off
+                const globalTimeOffEl = window.globalTimeOff?.[weekStart];
+                if (globalTimeOffEl) {
+                    const existing = timeOffWeeks.find(w => w.week === weekStart);
+                    if (existing) {
+                        existing.hours += parseFloat(globalTimeOffEl.assigned_hours);
+                    } else {
+                        timeOffWeeks.push({ week: weekStart, hours: parseFloat(globalTimeOffEl.assigned_hours) });
+                    }
+                }
             });
 
             // Initialize clients map
@@ -502,18 +521,33 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             `;
 
-            // Build clients list
+            // Build clients + time off list
             html += `<div class="border rounded p-3 mb-3">
-                <div class="mb-3">
-                    <i class="bi bi-briefcase me-2"></i>Current Engagements
-                </div>
                 <ul class="list-group">
                     <li class="list-group-item d-flex fw-semibold text-muted bg-light">
                         <div class="col-6">Client Name</div>
                         <div class="col-2 text-center">Total Hours</div>
-                        <div class="col-4">Week Assignments</div>
+                        <div class="col-4">Week Assignments / Time Off</div>
                     </li>`;
 
+            // Time off row (top, right under header)
+            if (timeOffWeeks.length > 0) {
+                html += `
+                    <li class="list-group-item d-flex align-items-center text-truncate bg-warning bg-opacity-25">
+                        <div class="col-6 fw-semibold text-black">Time Off</div>
+                        <div class="col-2 text-center">-</div>
+                        <div class="col-4 d-flex flex-wrap gap-1">
+                            ${timeOffWeeks.map(w => `
+                                <div style="background-color:#fff3cd; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
+                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                    <span class="fw-semibold text-black">${w.hours}h</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </li>`;
+            }
+
+            // Client rows
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
@@ -545,6 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
