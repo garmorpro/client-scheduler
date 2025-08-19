@@ -455,17 +455,17 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="mb-3 d-flex gap-3">
-                <div class="card flex-fill d-flex" style="border-left: 4px solid blue;">
+                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(68,125,252);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <!-- Left side: text and number -->
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: blue;">${activeClients.size}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${activeClients.size}</div>
                         </div>
 
                         <!-- Right side: circle with icon -->
-                        <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
-                            <i class="bi bi-people text-white"></i>
+                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
+                            <i class="bi bi-people" style="color: rgb(68,125,252);"></i>
                         </div>
                     </div>
                 </div>
