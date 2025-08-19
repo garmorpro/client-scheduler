@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    const engagementId = b.dataset.engagementId; // make sure badges have this attribute
+                    const engagementId = b.dataset.engagementId;
 
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                clientsMap[a.clientName].status = a.status; // always update to last status
+                clientsMap[a.clientName].status = a.status;
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(68,125,252);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
+                            <small class="text-muted" style="font-size: 14px !important;">Total Engagements</small>
                             <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${uniqueEngagements.size}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
@@ -497,8 +497,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
+            `;
 
-            <div class="border rounded p-3 mb-3">
+            // Build clients list
+            html += `<div class="border rounded p-3 mb-3">
                 <div class="mb-3">
                     <i class="bi bi-briefcase me-2"></i>Current Engagements
                 </div>
@@ -507,8 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-6">Client Name</div>
                         <div class="col-2 text-center">Total Hours</div>
                         <div class="col-4">Week Assignments</div>
-                    </li>
-            `;
+                    </li>`;
 
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
@@ -541,6 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
