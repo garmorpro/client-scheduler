@@ -326,6 +326,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             }
                             $clientName = htmlspecialchars($entry['client_name']);
                             $assignedHours = htmlspecialchars($entry['assigned_hours']);
+                            $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
                             $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
                             $badgeId = "badge-entry-{$entry['entry_id']}";
                             $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
