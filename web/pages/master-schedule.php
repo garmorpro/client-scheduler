@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             html += `
                 <li class="list-group-item d-flex align-items-center text-truncate">
-                    <div class="col-6 fw-semibold text-black">Time Off</div>
+                    <div class="col-6 fs-6 fw-semibold text-black">Time Off</div>
                     <div class="col-2 text-center">
                         <span class="fs-5 fw-semibold text-black">${totalTimeOffHours}</span><br>
                         <span class="text-muted" style="font-size: 10px;">hours</span>
