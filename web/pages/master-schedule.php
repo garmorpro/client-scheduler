@@ -386,11 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
-    // Master list of all clients
-    const allClients = Array.from(document.querySelectorAll('td[data-client]'))
-        .map(td => td.dataset.client)
-        .filter((v, i, a) => a.indexOf(v) === i);
-
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
         td.addEventListener('click', () => {
@@ -405,7 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
             let allAssignments = [];
             let totalHours = 0;
-            const uniqueEngagements = new Set();
+
+            // Map of clientName -> set of unique engagement IDs
+            const clientEngagementsMap = {};
 
             weekTds.forEach(weekTd => {
                 const weekStart = weekTd.dataset.weekStart || 'unknown';
@@ -415,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    const engagementId = b.dataset.engagementId; // make sure badges have this attribute
+                    const engagementId = b.dataset.engagementId || null;
 
                     const statusMatch = b.className.match(/badge-(confirmed|pending|not-confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not-confirmed';
@@ -423,22 +420,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     allAssignments.push({clientName, hours, status: statusClass, weekStart, engagementId});
                     totalHours += hours;
 
-                    if (engagementId) uniqueEngagements.add(engagementId);
+                    if (!clientEngagementsMap[clientName]) clientEngagementsMap[clientName] = new Set();
+                    if (engagementId) clientEngagementsMap[clientName].add(engagementId);
                 });
             });
 
-            // Initialize clients map
-            const clientsMap = {};
-            allClients.forEach(client => {
-                clientsMap[client] = { total: 0, status: 'not-confirmed', weeks: [] };
-            });
+            // Calculate total unique engagements across all clients
+            const totalUniqueEngagements = Object.values(clientEngagementsMap)
+                .reduce((sum, set) => sum + set.size, 0);
 
-            // Merge actual assignments
+            // Build clients map for display
+            const clientsMap = {};
             allAssignments.forEach(a => {
-                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
+                if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks: [] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                clientsMap[a.clientName].status = a.status; // always update to last status
+                clientsMap[a.clientName].status = a.status;
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
@@ -465,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
                             <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${uniqueEngagements.size}</div>
+                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${totalUniqueEngagements}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
                             <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
@@ -541,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
