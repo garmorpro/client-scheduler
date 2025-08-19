@@ -386,10 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
-    // Assuming you have a master list of clients in your table header or data attribute
+    // Master list of all clients
     const allClients = Array.from(document.querySelectorAll('td[data-client]'))
         .map(td => td.dataset.client)
-        .filter((v, i, a) => a.indexOf(v) === i); // unique clients
+        .filter((v, i, a) => a.indexOf(v) === i);
 
     employeeCells.forEach(td => {
         td.style.cursor = 'pointer';
@@ -401,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const initials = userName.split(' ').map(p => p[0].toUpperCase()).join('');
 
-            // Collect assignments from each week td
             const row = td.closest('tr');
             const weekTds = Array.from(row.querySelectorAll('td.addable'));
             let allAssignments = [];
@@ -415,7 +414,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const match = b.textContent.match(/\(([\d.]+)\)/);
                     const hours = match ? parseFloat(match[1]) : 0;
                     const clientName = b.textContent.split('(')[0].trim();
-                    const statusMatch = b.className.match(/badge-(\w+)$/);
+                    
+                    // Correct regex to get badge status
+                    const statusMatch = b.className.match(/badge-(confirmed|pending|not_confirmed)/);
                     const statusClass = statusMatch ? statusMatch[1] : 'not_confirmed';
 
                     allAssignments.push({clientName, hours, status: statusClass, weekStart});
@@ -423,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Initialize clients map with all clients first
+            // Initialize clients map with all clients
             const clientsMap = {};
             allClients.forEach(client => {
                 clientsMap[client] = { total: 0, status: 'not_confirmed', weeks: [] };
@@ -434,10 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!clientsMap[a.clientName]) clientsMap[a.clientName] = { total:0, status:a.status, weeks:[] };
                 clientsMap[a.clientName].total += a.hours;
                 clientsMap[a.clientName].weeks.push({ week: a.weekStart, hours: a.hours });
-                // Only update status if not 'not_confirmed' (so real status shows)
-                if(a.status && a.status !== 'not_confirmed') {
-                    clientsMap[a.clientName].status = a.status;
-                }
+                // Always update status from badge
+                clientsMap[a.clientName].status = a.status;
             });
 
             const avgHoursPerWeek = (totalHours / weekTds.length).toFixed(1);
@@ -513,7 +512,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `
                     <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
-                            <span class="fs-6 fw-semibold text-black">${clientName}</span> <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">${info.status.replace('_',' ')}</span>
+                            <span class="fs-6 fw-semibold text-black">${clientName}</span> 
+                            <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">${info.status.replace('_',' ')}</span>
                         </div>
                         <div class="col-2 text-center">
                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
@@ -522,7 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="col-4 d-flex flex-wrap gap-1">
                             ${info.weeks.map(w => `
                                 <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br><span class="fw-semibold text-black">${w.hours}h</span>
+                                    ${new Date(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
+                                    <span class="fw-semibold text-black">${w.hours}h</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -530,7 +531,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             html += `</ul></div>`;
-
             modalContent.innerHTML = html;
             modal.show();
         });
