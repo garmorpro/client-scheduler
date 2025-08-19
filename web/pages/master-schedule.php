@@ -455,12 +455,21 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="mb-3 d-flex gap-3">
-                <div class="card flex-fill" style="border-left: 4px solid blue;">
-                    <div class="card-body p-4">
-                        <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
-                        <div class="fw-semibold fs-5" style="color: blue;">${activeClients.size}</div>
+                <div class="card flex-fill d-flex justify-content-between align-items-center" style="border-left: 4px solid blue;">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <!-- Left side: text and number -->
+                        <div>
+                            <small class="text-muted" style="font-size: 14px !important;">Active Clients</small>
+                            <div class="fw-semibold fs-4" style="color: blue;">${activeClients.size}</div>
+                        </div>
+                        
+                        <!-- Right side: circle with icon -->
+                        <div class="rounded-circle bg-primary d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+                            <i class="bi bi-people text-white"></i>
+                        </div>
                     </div>
                 </div>
+
                 <div class="card flex-fill border-start border-3 border-success">
                     <div class="card-body p-2">
                         <div class="fw-semibold">${totalHours}</div>
