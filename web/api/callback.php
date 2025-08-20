@@ -94,9 +94,14 @@ if ($result && $result->num_rows > 0) {
     $role = $user['role'] ?? 'staff';
 
     // Update last_active only for existing users
-    $conn->query("UPDATE ms_users 
-                  SET last_active=$now 
-                  WHERE user_id=$userId");
+    // Update last_active only for existing users
+    $updateSql = "UPDATE ms_users SET last_active=$now WHERE user_id=$userId";
+    if (!$conn->query($updateSql)) {
+        die(json_encode([
+            'error' => 'Failed to update last_active',
+            'sql_error' => $conn->error
+        ]));
+    }
 
 } else {
     // Insert new user with last_active
