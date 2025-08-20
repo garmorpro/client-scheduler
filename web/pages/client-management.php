@@ -183,7 +183,13 @@ unset($client);
                 </button>
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
-                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
+                    <button 
+                        class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" 
+                        style="font-size: .875rem; background-color: white !important; border: 1px solid rgb(229,229,229) !important; outline: none !important;"
+                        data-client-id="<?php echo $client['client_id']; ?>"
+                    >
+                        <i class="bi bi-eye me-2"></i>View
+                    </button>
                     <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2 edit-client-btn" 
                             style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"
                             data-bs-toggle="modal" 
