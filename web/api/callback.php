@@ -5,7 +5,6 @@ session_start();
 
 // Microsoft App settings
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
-$clientSecret = "569283c9-a1ce-4931-8094-14f826fd1fab";
 $redirectUri = "https://10.10.254.127/api/callback.php";
 
 // Get code from query
@@ -14,7 +13,13 @@ if (!isset($_GET['code'])) {
 }
 $code = $_GET['code'];
 
-// Exchange code for tokens
+// Get code verifier from session
+$codeVerifier = $_SESSION['code_verifier'] ?? null;
+if (!$codeVerifier) {
+    respond(['error' => 'Code verifier missing'], 400);
+}
+
+// Exchange code for tokens (PKCE flow)
 $tokenUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 $postFields = http_build_query([
     "client_id" => $clientId,
@@ -22,7 +27,7 @@ $postFields = http_build_query([
     "code" => $code,
     "redirect_uri" => $redirectUri,
     "grant_type" => "authorization_code",
-    "client_secret" => $clientSecret,
+    "code_verifier" => $codeVerifier
 ]);
 
 $ch = curl_init($tokenUrl);
@@ -35,7 +40,7 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 if (!isset($data['id_token'])) {
-    respond(['error' => 'Failed to get ID token'], 400);
+    respond(['error' => 'Failed to get ID token', 'response' => $data], 400);
 }
 
 // Decode JWT (simple, without verifying signature for local testing)
@@ -57,15 +62,17 @@ if (!$user) {
     $stmt = $pdo->prepare("INSERT INTO users (microsoft_id, email, name, role) VALUES (?, ?, ?, ?)");
     $stmt->execute([$msId, $email, $name, 'employee']);
     $userId = $pdo->lastInsertId();
+    $role = 'employee';
 } else {
     $userId = $user['id'];
+    $role = $user['role'] ?? 'employee';
 }
 
 // Create session
 $_SESSION['user_id'] = $userId;
 $_SESSION['email'] = $email;
-$_SESSION['role'] = $user['role'] ?? 'employee';
+$_SESSION['role'] = $role;
 
-// Redirect to frontend dashboard (adjust as needed)
+// Redirect to frontend dashboard
 header("Location: /index.php");
 exit;
