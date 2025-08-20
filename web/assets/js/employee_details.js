@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
             // Build modal HTML
-            let html = `<div class="d-flex align-items-center mb-3">
+            let html = `<div class="d-flex align-items-center mb-3" style="overflow-y: auto !important;">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
                      style="width:50px;height:50px;font-size:18px;font-weight:500;
                      background-color:${role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
