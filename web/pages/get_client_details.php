@@ -13,8 +13,8 @@ if (!$client_id) {
 // Get client info
 $stmt = $conn->prepare("
     SELECT client_name, onboarded_date,
-        (SELECT COUNT(*) FROM client_engagement_history WHERE client_id = ?) AS total_engagements,
-        (SELECT COUNT(*) FROM client_engagement_history WHERE client_id = ? AND status='confirmed') AS confirmed_engagements
+        (SELECT COUNT(*) FROM engagements WHERE client_id = ?) AS total_engagements,
+        (SELECT COUNT(*) FROM engagements WHERE client_id = ? AND status='confirmed') AS confirmed_engagements
     FROM clients
     WHERE client_id = ?
 ");
