@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </li>`;
 
             html += `
-                <li class="list-group-item d-flex align-items-center text-truncate" style="background-color: blue;">
+                <li class="list-group-item d-flex align-items-center text-truncate" style="background-color: pink; border: 2px dashed blue;">
                     <div class="col-6 fs-6 fw-semibold text-black">Time Off</div>
                     <div class="col-2 text-center">
                         <span class="fs-5 fw-semibold text-black">${totalTimeOffHours}</span><br>
