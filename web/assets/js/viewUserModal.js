@@ -105,7 +105,7 @@ setText('view_email_detail2', user.email);
 
 setText('view_status2', user.status);
 setText('view_acct_status2', user.status);
-setText('view_acct_created', formatDate(user.created));
+setText('view_acct_created', formatDate(user.created_at));
 setText('view_acct_last_active2', formatDate(user.last_active));
 
 
