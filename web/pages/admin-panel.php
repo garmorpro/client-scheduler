@@ -91,7 +91,7 @@ $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
 
 $usersql = "SELECT user_id, full_name, email, role, status, last_active 
-        FROM msusers 
+        FROM ms_users 
         ORDER BY full_name ASC";
 $userresult = mysqli_query($conn, $usersql);
 
