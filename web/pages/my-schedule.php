@@ -2,19 +2,19 @@
 session_start();
 require_once '../includes/db.php';
 
-// if (!isset($_SESSION['user_id'])) {
-//     header("Location: login.php");
-//     exit();
-// }
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-// $isAdmin   = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
-// $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+$isAdmin   = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
+$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 
-// // ✅ FIX: should be OR, not AND
-// if ($isAdmin || $isManager) {
-//     header("Location: admin-panel.php");
-//     exit();
-// }
+// ✅ FIX: should be OR, not AND
+if ($isAdmin || $isManager) {
+    header("Location: admin-panel.php");
+    exit();
+}
 
 $userId = $_SESSION['user_id'];
 
