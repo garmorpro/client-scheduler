@@ -2,13 +2,7 @@ let activityTimeout;
 let inactivitySeconds = 0;
 
 // Set limit (1 minute for testing)
-const INACTIVITY_LIMIT = 1 * 60 * 1000;
-
-// Optional: log inactivity seconds
-// setInterval(() => {
-//     inactivitySeconds++;
-//     console.log("Inactivity time (seconds):", inactivitySeconds);
-// }, 1000);
+const INACTIVITY_LIMIT = 15 * 60 * 1000;
 
 function resetActivityTimer() {
     clearTimeout(activityTimeout);
