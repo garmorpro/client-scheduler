@@ -81,7 +81,7 @@ unset($client);
             margin-bottom: 20px;
         }
         .view-btn:hover {
-          background-color: rgba(168, 45, 45, 1) !important;
+          background-color: rgb(229,229,229) !important;
         }
     </style>
 </head>
@@ -174,12 +174,13 @@ unset($client);
 
                 <!-- Card Buttons -->
                  <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100" 
-                            style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#addEngagementModal" 
-                            data-client-id="<?php echo $client['client_id']; ?>">
-                        <i class="bi bi-plus-circle me-2"></i>Add Engagement
-                    </button>
+                        style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEngagementModal" 
+                        data-client-id="<?php echo $client['client_id']; ?>"
+                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
+                    <i class="bi bi-plus-circle me-2"></i>Add Engagement
+                </button>
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
                     <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
@@ -216,6 +217,92 @@ unset($client);
         });
     });
 </script>
+
+
+<!-- add engagement modal: -->
+<div class="modal fade" id="addEngagementModal" tabindex="-1" aria-labelledby="addEngagementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <form id="addEngagementForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEngagementModalLabel">Add Engagement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" name="client_id" id="modal_client_id">
+          <input type="hidden" name="client_name" id="modal_client_name">
+          <input type="hidden" name="year" id="modal_year" value="<?php echo date('Y'); ?>">
+
+          <div class="mb-3">
+            <label for="budget_hours" class="form-label">Budget Hours</label>
+            <input type="number" min="0" class="form-control" id="budget_hours" name="budget_hours" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="not_confirmed">Not Confirmed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer p-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end add engagement modal -->
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const addEngagementModal = document.getElementById('addEngagementModal');
+    const clientButtons = document.querySelectorAll('[data-bs-target="#addEngagementModal"]');
+    const addForm = document.getElementById('addEngagementForm');
+
+    // When modal opens, populate client info
+    clientButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const clientId = btn.getAttribute('data-client-id');
+            const clientName = btn.getAttribute('data-client-name');
+
+            document.getElementById('modal_client_id').value = clientId;
+            document.getElementById('modal_client_name').value = clientName;
+        });
+    });
+
+    // Handle form submission via AJAX
+    addForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(addForm);
+
+        try {
+            const response = await fetch('add_engagement.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Engagement added successfully!');
+                addEngagementModal.querySelector('.btn-close').click();
+                location.reload(); // Refresh to update counts
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error adding engagement: ' + error.message);
+        }
+    });
+});
+</script>
+
 
 
 <!-- import engagements modal -->

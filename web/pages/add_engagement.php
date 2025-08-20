@@ -1,84 +1,36 @@
 <?php
+date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
+session_start();
 
-session_start();  // START SESSION AT TOP!
+header('Content-Type: application/json');
 
-// LOG ACTIVITY FUNCTION
-function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
-    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-    }
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'Not logged in']);
+    exit;
 }
 
-// Generate a unique 6-digit idno
-function generateUniqueIdno($conn) {
-    do {
-        $idno = random_int(100000, 999999); // 6-digit number
+// Validate POST
+$client_id = $_POST['client_id'] ?? null;
+$client_name = $_POST['client_name'] ?? null;
+$budget_hours = $_POST['budget_hours'] ?? null;
+$status = $_POST['status'] ?? null;
+$year = $_POST['year'] ?? date('Y');
 
-        $checkStmt = $conn->prepare("SELECT COUNT(*) FROM engagements WHERE idno = ?");
-        if (!$checkStmt) {
-            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-        }
-        $checkStmt->bind_param("i", $idno);
-        $checkStmt->execute();
-        $checkStmt->bind_result($count);
-        $checkStmt->fetch();
-        $checkStmt->close();
-    } while ($count > 0);
-
-    return $idno;
+if (!$client_id || !$client_name || !$budget_hours || !$status) {
+    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate and sanitize inputs
-    $clientName = trim($_POST['client_name'] ?? '');
-    $totalHours = $_POST['budgeted_hours'] ?? 0;
-    $status = $_POST['status'] ?? '';
-    $notes = trim($_POST['notes'] ?? '');
+// Insert into engagements
+$stmt = $conn->prepare("INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param('isisi', $client_id, $client_name, $budget_hours, $status, $year);
 
-    // assigned_hours is not in modal, so default to 0 here
-    $assignedHours = 0;
-
-    // Basic validation
-    if ($clientName === '' || $totalHours === '' || $status === '') {
-        die("Please fill all required fields.");
-    }
-
-    // Generate unique idno
-    $idno = generateUniqueIdno($conn);
-
-    $stmt = $conn->prepare("INSERT INTO engagements (idno, client_name, budgeted_hours, assigned_hours, status, notes, last_updated, created) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
-    if (!$stmt) {
-        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-    }
-
-    // Bind parameters: i = int, s = string, i = int, i = int, s = string, s = string
-    $stmt->bind_param("isisss", $idno, $clientName, $totalHours, $assignedHours, $status, $notes);
-
-    if ($stmt->execute()) {
-        $user_id = $_SESSION['user_id'] ?? null;
-        $email = $_SESSION['email'] ?? '';
-        $full_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-
-        logActivity(
-            $conn,
-            "engagement_created",
-            $user_id,
-            $email,
-            $full_name,
-            "Engagement Created",
-            "Created engagement: " . $clientName . "(" . $status . ")"
-        );
-
-        header("Location: master-schedule.php?status=success");
-        exit();
-    } else {
-        echo "Error creating engagement: " . $stmt->error;
-    }
+if ($stmt->execute()) {
+    echo json_encode(['success' => true]);
 } else {
-    die('Invalid request method.');
+    echo json_encode(['success' => false, 'message' => $stmt->error]);
 }
+
+$stmt->close();
+$conn->close();
