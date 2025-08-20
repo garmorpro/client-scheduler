@@ -434,7 +434,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
               <!-- global pto tab -->
-                <div id="global_pto" class="nested-tab-content" style="display:none;">
+                <!-- <div id="global_pto" class="nested-tab-content" style="display:none;"> -->
                     <div class="global-pto-header mb-3 d-flex justify-content-between align-items-center">
                         <div class="titles">
                             <p class="text-black mb-0"><strong>Global PTO Management</strong></p>
@@ -451,7 +451,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <div id="global-pto-table">
                         <!-- Table will be dynamically populated here -->
                     </div>
-                </div>
+                <!-- </div> -->
               <!-- end global pto tab -->
 
               <!-- Add Global PTO Modal -->
@@ -549,14 +549,6 @@ if ($result && mysqli_num_rows($result) > 0) {
               <script src="../assets/js/global_pto.js?v=<?php echo time(); ?>"></script>
 
               <script src="../assets/js/global_pto_table.js?v=<?php echo time(); ?>"></script>
-
-
-
-
-
-
-
-
 
           </div>
         <!-- end time off -->
