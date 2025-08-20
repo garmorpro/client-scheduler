@@ -343,11 +343,11 @@ if (client.status.toLowerCase() === 'active') {
                 if (history.length === 0) {
     historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
 } else {
-    // Helper function to format comma-separated fields
+    // Helper function to format comma-separated fields vertically
     function formatListField(label, value) {
         if (!value) return '';
         const items = value.split(',').map(i => i.trim());
-        return `${label}: ${items.join('<br>')}`;
+        return `${label}:<br>${items.map(i => i).join('<br>')}`;
     }
 
     history.forEach(h => {
