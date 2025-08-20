@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
   const viewProfileModal = document.getElementById('viewProfileModal');
-  // console.log('viewProfileModal element:', viewProfileModal);
+  console.log('viewProfileModal element:', viewProfileModal);
 
   viewProfileModal.addEventListener('show.bs.modal', async (event) => {
-    // console.log('viewProfileModal show.bs.modal triggered');
+    console.log('viewProfileModal show.bs.modal triggered');
     
     const button = event.relatedTarget;
-    // console.log('Related trigger element:', button);
+    console.log('Related trigger element:', button);
     
     const userId = button ? button.getAttribute('data-user-id') : null;
-    // console.log('userId from trigger:', userId);
+    console.log('userId from trigger:', userId);
 
     if (!userId) {
-      // console.warn('No userId provided, aborting modal population.');
+      console.warn('No userId provided, aborting modal population.');
       return;
     }
 
     try {
       const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
-      // console.log('Fetch response:', response);
+      console.log('Fetch response:', response);
 
       if (!response.ok) throw new Error('Network response was not ok');
 
@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
       function setText(id, text) {
         const el = document.getElementById(id);
         if (!el) {
-          // console.warn(`Element with ID "${id}" not found.`);
+          console.warn(`Element with ID "${id}" not found.`);
           return;
         }
         el.textContent = (text && text.toString().trim()) ? text : '-';
-        // console.log(`Set #${id} textContent to:`, el.textContent);
+        console.log(`Set #${id} textContent to:`, el.textContent);
       }
 
       function formatDate(dateString) {
