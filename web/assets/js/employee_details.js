@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
-                    <li class="list-group-item d-flex align-items-center text-truncate" style="overflow-y: auto !important;">
+                    <li class="list-group-item d-flex align-items-center text-truncate">
                         <div class="col-6 text-truncate">
                             <span class="fs-6 fw-semibold text-black">${clientName}</span> 
                             <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
