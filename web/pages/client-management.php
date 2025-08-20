@@ -287,13 +287,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 const client = data.client;
                 const history = data.history;
 
-                // Fill modal content with client details
+                // Generate initials from client name
+                const initials = client.client_name
+                    .split(' ')
+                    .map(n => n[0].toUpperCase())
+                    .slice(0, 2)
+                    .join('');
+
+                // Fill modal content with styled top details
                 let html = `
-                    <div class="mb-3">
-                        <h5>${client.client_name}</h5>
-                        <p>Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</p>
-                        <p>Total Engagements: ${client.total_engagements}</p>
-                        <p>Confirmed Engagements: ${client.confirmed_engagements}</p>
+                    <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
+                        <div id="view_client_initials" 
+                             class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" 
+                             style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
+                            ${initials}
+                        </div>
+                        <div>
+                            <div id="view_client_name" class="fw-semibold">${client.client_name}</div>
+                            <small id="view_onboarded_date" class="text-muted">Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</small><br>
+                            <small class="text-muted">Total Engagements: ${client.total_engagements}</small><br>
+                            <small class="text-muted">Confirmed Engagements: ${client.confirmed_engagements}</small>
+                        </div>
                     </div>
                     <hr>
                     <div id="engagementHistoryContainer"></div>
@@ -338,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 
 </script>
 
