@@ -80,6 +80,9 @@ unset($client);
         .client-search {
             margin-bottom: 20px;
         }
+        .view-btn:hover {
+          background-color: rgb(229,229,229) !important;
+        }
     </style>
 </head>
 <body class="d-flex">
@@ -116,7 +119,7 @@ unset($client);
                     <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                         <i class="bi bi-building"></i>
                     </div>
-                    <div class="fs-6 mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
+                    <div class="fs-6 fw-semibold mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
                 </div>
 
                 <!-- Status and Onboarded Duration -->
@@ -179,7 +182,7 @@ unset($client);
                     </button>
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
-                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
+                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
                     <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"><i class="bi bi-pencil-square me-2"></i>Edit</button>
                 </div>
             </div>
