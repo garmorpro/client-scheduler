@@ -5,7 +5,7 @@ require_once '../api/api_helper.php';
 session_start();
 
 // ---------------- SESSION TIMEOUT (INACTIVITY) ----------------
-$timeout_duration = 60; // 30 minutes
+$timeout_duration = 1800; // 30 minutes
 
 if (isset($_SESSION['last_activity'])) {
     $elapsed_time = time() - $_SESSION['last_activity'];
@@ -83,7 +83,8 @@ $idTokenParts = explode('.', $data['id_token']);
 $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true);
 
 // ---- TOKEN EXPIRATION CHECK ----
-if (isset($payload['exp']) && time() >= $payload['exp']) {
+$tokenExp = $payload['exp'] ?? null;
+if ($tokenExp && time() >= $tokenExp) {
     session_unset();
     session_destroy();
     header("Location: /pages/logout.php?expired=1");
@@ -105,9 +106,15 @@ if ($result && $result->num_rows > 0) {
     $userId = $user['user_id'];
     $fullName = $user['full_name'];
     $role = $user['role'] ?? 'staff';
+
+    // update token_exp on login
+    $conn->query("UPDATE ms_users 
+                  SET token_exp=" . ($tokenExp ? intval($tokenExp) : "NULL") . " 
+                  WHERE user_id=$userId");
+
 } else {
-    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, full_name, role) 
-                            VALUES ('$msId', '$email', '$full_name', '$role')");
+    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, full_name, role, token_exp) 
+                            VALUES ('$msId', '$email', '$full_name', '$role', " . ($tokenExp ? intval($tokenExp) : "NULL") . ")");
     if (!$insert) {
         die(json_encode(['error' => 'Failed to insert user', 'message' => $conn->error]));
     }
@@ -121,7 +128,7 @@ $_SESSION['user_id'] = $userId;
 $_SESSION['full_name'] = $fullName;
 $_SESSION['email'] = $email;
 $_SESSION['user_role'] = $role;
-$_SESSION['token_exp'] = $payload['exp'] ?? null; // store token expiry
+$_SESSION['token_exp'] = $tokenExp;
 // --------------------------------------------------------------
 
 // ---------------- REDIRECT ------------------------------
