@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   modal.addEventListener('show.bs.modal', async (event) => {
     console.log('Modal show event triggered');
 
-    const button = event.relatedTarget;
+    const button = event.relatedTarget; // button that triggered the modal
     const userId = button ? button.getAttribute('data-user-id') : null;
     console.log('userId from trigger:', userId);
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Fetched user data:', user);
 
       // Helper functions
-      function setText(id, text) {
+      const setText = (id, text) => {
         const el = document.getElementById(id);
         if (!el) {
           console.warn(`Element with ID "${id}" not found.`);
@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         el.textContent = text && text.toString().trim() ? text : '-';
         console.log(`Set #${id} textContent to:`, el.textContent);
-      }
+      };
 
-      function formatDate(dateString) {
+      const formatDate = (dateString) => {
         if (!dateString) return '-';
         const d = new Date(dateString);
         if (isNaN(d)) return '-';
         return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-      }
+      };
 
-      function timeSince(dateString) {
+      const timeSince = (dateString) => {
         if (!dateString) return '-';
         const now = new Date();
         const past = new Date(dateString);
@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const days = Math.floor(hours / 24);
         if (days < 7) return `${days}d ago`;
         return formatDate(dateString);
-      }
+      };
 
-      function getAccessLevel(role) {
+      const getAccessLevel = (role) => {
         switch(role?.toLowerCase()) {
           case 'admin': return 'Full Access';
           case 'manager': return 'High Access';
@@ -68,11 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
           case 'intern': return 'Restricted Access';
           default: return 'Unknown Access';
         }
-      }
+      };
 
-      function boolToEnabledDisabled(value) {
-        return value == 1 ? 'Enabled' : 'Disabled';
-      }
+      const boolToEnabledDisabled = (value) => value == 1 ? 'Enabled' : 'Disabled';
 
       // Populate fields
       const fullName = user.full_name || '-';
