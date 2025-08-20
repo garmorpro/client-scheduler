@@ -18,6 +18,13 @@ require_once '../includes/auth.php';
         <h5 class="text-center mb-2">Welcome Back</h5>
         <p class="text-center text-muted">Sign in to access your engagement schedules</p>
 
+        <!-- Show inactivity alert -->
+        <?php if (isset($_GET['timeout']) && $_GET['timeout'] == 1): ?>
+            <div class="alert alert-warning text-center" role="alert">
+                You have been logged out due to inactivity. Please log in again.
+            </div>
+        <?php endif; ?>
+
         <!-- SSO Login Button -->
         <div class="d-grid mt-4 mb-3">
             <a href="../api/login.php" class="btn btn-primary" style="background-color: rgb(23,62,70); color: white; font-weight: 500; border: none !important;">
