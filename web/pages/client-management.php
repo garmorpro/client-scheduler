@@ -170,7 +170,7 @@ unset($client);
                 </div>
 
                 <!-- Card Buttons -->
-                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-1 w-100" 
+                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100" 
                             style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
                             data-bs-toggle="modal" 
                             data-bs-target="#addEngagementModal" 
@@ -180,7 +180,7 @@ unset($client);
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
                     <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye"></i> View</button>
-                    <button class="badge text-white btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"><i class="bi bi-pencil"></i> Edit</button>
+                    <button class="badge text-white btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"><i class="bi bi-pencil"></i> Edit</button>
                 </div>
             </div>
         <?php endforeach; ?>
