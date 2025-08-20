@@ -387,20 +387,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <div class="timeoff-search mx-3" style="flex: 1; max-width: 300px;">
                             <input type="text" id="timeoffSearch" class="form-control form-control-sm" placeholder="Search time off..." minlength="3">
                         </div>
-                                        
-                        <div class="timeoff-buttons d-flex align-items-center gap-2">
-                            <a href="#" id="bulkDeleteTimeoffBtn" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: darkred; display:none;">
-                                <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedTimeoffCount">0</span>)
-                            </a>
-                                        
-                            <!-- <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-toggle="modal" data-bs-target="#importTimeoffModal">
-                                <i class="bi bi-upload me-3"></i>Import Time Off
-                            </a>
-                                        
-                            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addTimeoffModal">
-                                <i class="bi bi-plus-circle me-3"></i>Add Time Off
-                            </a> -->
-                        </div>
                     </div>
                                         
                     <div class="timeoff-table">
