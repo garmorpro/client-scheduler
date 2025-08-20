@@ -344,21 +344,21 @@ if (client.status.toLowerCase() === 'active') {
                     history.forEach(h => {
                         historyContainer.innerHTML += `
                             <div class="card p-2 mb-2">
-                                <div class="d-flex justify-content-between" style="font-size: 12px;">
+                                <div class="d-flex justify-content-between">
                                     <span>${h.engagement_year}</span>
-                                    <span>${h.status || 'Archived'}</span>
+                                    <span style="font-size: 10px;">${h.status || 'Archived'}</span>
                                 </div>
-                                <div class="d-flex justify-content-between" style="font-size: 12px;">
+                                <div class="d-flex justify-content-between" style="font-size: 10px;">
                                     <span><span class="text-muted">Budgeted: ${h.budgeted_hours}</span>
                                     <span>Allocated: ${h.allocated_hours}</span>
                                 </div>
-                                <div class="d-flex justify-content-between" style="font-size: 12px;">
+                                <div class="d-flex justify-content-between" style="font-size: 10px;">
                                     <span>Manager: ${h.manager}</span>
                                     <span>Senior: ${h.senior}</span>
                                     <span>Staff: ${h.staff}</span>
                                 </div>
                                 <hr>
-                                <div style="font-size: 12px;">Archived: ${h.archive_date || 'N/A'}</div>
+                                <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
                             </div>
                         `;
                     });
