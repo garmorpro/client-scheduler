@@ -344,7 +344,7 @@ if (client.status.toLowerCase() === 'active') {
                     history.forEach(h => {
                         historyContainer.innerHTML += `
                             <div class="card p-2 mb-2">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between mb-2">
                                     <span>${h.engagement_year}</span>
                                     <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">${h.status || 'Archived'}</span>
                                 </div>
