@@ -4,9 +4,9 @@ require_once '../api/api_helper.php';
 session_start();
 
 // Microsoft App settings
-$clientId = "YOUR_MICROSOFT_APP_CLIENT_ID";
-$clientSecret = "YOUR_MICROSOFT_APP_CLIENT_SECRET";
-$redirectUri = "http://localhost/api/callback.php";
+$clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
+$clientSecret = "569283c9-a1ce-4931-8094-14f826fd1fab";
+$redirectUri = "https://10.10.254.127/api/callback.php";
 
 // Get code from query
 if (!isset($_GET['code'])) {
