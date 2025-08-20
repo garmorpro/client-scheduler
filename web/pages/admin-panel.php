@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const userName = this.dataset.userName;
             const newRole = this.dataset.newRole;
 
-            if (!confirm(`Are you sure you want to change ${userName} role to ${newRole}?`)) return;
+            if (!confirm(`Are you sure you want to change ${userName}'s role to ${newRole}?`)) return;
 
             fetch('update_role.php', {
                 method: 'POST',
