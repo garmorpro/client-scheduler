@@ -370,14 +370,14 @@ if ($result && mysqli_num_rows($result) > 0) {
           <div id="time_off" class="tab-content">
 
               <!-- Nested Tabs -->
-                <div class="nested-tabs mb-3">
+                <!-- <div class="nested-tabs mb-3">
                     <a href="#time_off#individual_pto" class="text-decoration-none active" data-tab="individual_pto">Individual Time Off</a>
                     <a href="#time_off#global_pto" class="text-decoration-none" data-tab="global_pto">Global Time Off</a>
-                </div>
+                </div> -->
               <!-- end nested tabs -->
 
               <!-- individual pto -->
-                <div id="individual_pto" class="nested-tab-content">
+                <!-- <div id="individual_pto" class="nested-tab-content">
                     <div class="timeoff-header d-flex justify-content-between align-items-center mb-3">
                         <div class="titles mb-2">
                             <p class="text-black mb-0"><strong>Individual Time Off</strong></p>
@@ -401,35 +401,35 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if (!empty($timeoffEntries)): ?>
-                                    <?php foreach ($timeoffEntries as $entry): ?>
+                                <?php //if (!empty($timeoffEntries)): ?>
+                                    <?php //foreach ($timeoffEntries as $entry): ?>
                                         <tr>
-                                            <td><input type="checkbox" class="selectTimeoff" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>"></td>
+                                            <td><input type="checkbox" class="selectTimeoff" data-timeoff-id="<?php //echo $entry['timeoff_id']; ?>"></td>
                                             <td>
-                                                <?php echo htmlspecialchars($entry['employee_name']); ?><br>
-                                                <small class="text-muted"><?php echo htmlspecialchars($entry['employee_email']); ?></small>
+                                                <?php //echo htmlspecialchars($entry['employee_name']); ?><br>
+                                                <small class="text-muted"><?php //echo htmlspecialchars($entry['employee_email']); ?></small>
                                             </td>
-                                            <td><?php echo date("n/j/Y", strtotime($entry['week_start'])); ?></td>
-                                            <td><?php echo htmlspecialchars($entry['hours']); ?> hrs</td>
+                                            <td><?php //echo date("n/j/Y", strtotime($entry['week_start'])); ?></td>
+                                            <td><?php //echo htmlspecialchars($entry['hours']); ?> hrs</td>
                                             <td class="table-actions">
-                                                <a href="#" class="delete-timeoff-btn text-decoration-none" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
+                                                <a href="#" class="delete-timeoff-btn text-decoration-none" data-timeoff-id="<?php //echo $entry['timeoff_id']; ?>">
                                                     <i class="bi bi-trash text-danger"></i>
                                                 </a>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
+                                    <?php //endforeach; ?>
+                                <?php //else: ?>
                                     <tr><td colspan="6" class="text-center">No individual time off entries found</td></tr>
-                                <?php endif; ?>
+                                <?php //endif; ?>
                             </tbody>
                         </table>
                     </div>
                                 
-                    <!-- Pagination -->
+                   
                     <nav>
                         <ul id="pagination-timeoff" class="pagination justify-content-center mt-3"></ul>
                     </nav>
-                </div>
+                </div> -->
               <!-- end individual pto -->
 
 
