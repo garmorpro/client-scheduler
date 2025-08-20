@@ -20,7 +20,7 @@ require_once '../includes/auth.php';
 
         <!-- SSO Login Button -->
         <div class="d-grid mt-4 mb-3">
-            <a href="sso_login.php" class="btn btn-primary" style="background-color: rgb(23,62,70); color: white; font-weight: 500; border: none !important;">
+            <a href="../api/login.php" class="btn btn-primary" style="background-color: rgb(23,62,70); color: white; font-weight: 500; border: none !important;">
                 <i class="bi bi-person-circle me-2"></i>Login with SSO
             </a>
         </div>
