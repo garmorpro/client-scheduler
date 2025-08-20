@@ -175,12 +175,12 @@ unset($client);
                             data-bs-toggle="modal" 
                             data-bs-target="#addEngagementModal" 
                             data-client-id="<?php echo $client['client_id']; ?>">
-                        <i class="bi bi-plus-circle"></i> Add Engagement
+                        <i class="bi bi-plus-circle me-2"></i>Add Engagement
                     </button>
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
-                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye"></i> View</button>
-                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"><i class="bi bi-pencil-square"></i> Edit</button>
+                    <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
+                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"><i class="bi bi-pencil-square me-2"></i>Edit</button>
                 </div>
             </div>
         <?php endforeach; ?>
