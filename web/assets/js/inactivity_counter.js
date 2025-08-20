@@ -16,7 +16,7 @@ function resetActivityTimer() {
     // Set new timer
     activityTimeout = setTimeout(() => {
         console.log("User inactive, logging out...");
-        window.location.href = "/logout.php"; 
+        window.location.href = "/auth/logout.php"; 
     }, INACTIVITY_LIMIT);
 }
 
