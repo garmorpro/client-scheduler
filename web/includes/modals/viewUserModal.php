@@ -30,13 +30,13 @@
                   <i class="bi bi-envelope"></i> Personal Information
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
-                  <strong style="float: left;">First Name:</strong>
-                  <span id="view_first_name_detail2" class="text-capitalize" style="float: right;"></span>
+                  <strong style="float: left;">Full Name:</strong>
+                  <span id="full_name2" class="text-capitalize" style="float: right;"></span>
                 </p>
-                <p class="text-muted mb-1" style="overflow: hidden;">
+                <!-- <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Last Name:</strong>
                   <span id="view_last_name_detail2" class="text-capitalize" style="float: right;"></span>
-                </p>
+                </p> -->
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Email:</strong>
                   <span id="view_email_detail2" style="float: right;"></span>
@@ -78,10 +78,10 @@
                         <strong style="float: left;">Access Level:</strong>
                         <span id="view_acct_access_level2" class="text-capitalize" style="float: right;"></span>
                     </p>
-                    <p class="text-muted mb-1" style="overflow: hidden;">
+                    <!-- <p class="text-muted mb-1" style="overflow: hidden;">
                         <strong style="float: left;">Two-Factor Auth:</strong>
                         <span id="view_acct_mfa2" style="float: right;"></span>
-                    </p>
+                    </p> -->
                 </div>
                 <div class="col-md-6"></div>
             </div>
