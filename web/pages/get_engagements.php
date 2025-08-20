@@ -19,8 +19,7 @@ $engagement_id = (int)$_GET['engagement_id'];
 $sql = "
     SELECT 
         e.engagement_id,
-        e.client_id,
-        c.client_name,
+        e.client_name,
         e.total_available_hours,
         e.status,
         e.notes,
@@ -29,20 +28,17 @@ $sql = "
         COALESCE(SUM(a.assigned_hours), 0) AS total_assigned_hours,
         COALESCE(COUNT(DISTINCT a.user_id), 0) AS assigned_user_count
     FROM engagements e
-    LEFT JOIN clients c ON e.client_id = c.id
     LEFT JOIN entries a ON e.engagement_id = a.engagement_id
     WHERE e.engagement_id = ?
     GROUP BY 
-        e.engagement_id,
-        e.client_id,
-        c.client_name,
+        e.engagement_id, 
+        e.client_name, 
         e.total_available_hours, 
         e.status, 
         e.notes,
         e.last_updated,
         e.created
 ";
-
 
 
 $stmt = $conn->prepare($sql);
