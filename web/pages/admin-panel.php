@@ -312,13 +312,46 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         ?>
                                     </td>
                                     <td class="table-actions">
+                                        <!-- View Button -->
                                         <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-eye text-success"></i>
                                         </a>
-                                        <a href="#" class="edit-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#updateUserModal" data-user-id="<?php echo $userrow['user_id']; ?>">
-                                            <i class="bi bi-pencil text-purple "></i>
-                                        </a>
-
+                                                                              
+                                        <!-- Promote/Role Dropdown -->
+                                        <div class="dropdown d-inline">
+                                            <a href="#" class="text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-person-up text-primary"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <?php
+                                                $role = strtolower($userrow['role']);
+                                                switch ($role) {
+                                                    case 'staff':
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Promote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Promote to Manager</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        break;
+                                                    case 'senior':
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Promote to Manager</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        break;
+                                                    case 'manager':
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Demote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        break;
+                                                    case 'admin':
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Demote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Demote to Manager</a></li>';
+                                                        break;
+                                                }
+                                                ?>
+                                            </ul>
+                                        </div>
+                                              
+                                        <!-- Delete Button -->
                                         <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-trash text-danger"></i>
                                         </a>
@@ -1234,7 +1267,7 @@ if ($result && mysqli_num_rows($result) > 0) {
           
           <div class="modal-body">
 
-            <input type="hidden" id="update_user_id" name="user_id" required>
+            <input type="text" id="update_user_id" name="user_id" required>
 
             <div class="mb-3">
               <label for="update_first_name" class="form-label">First Name</label>
