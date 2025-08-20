@@ -1,11 +1,17 @@
 <?php
-require_once '../includes/db.php';
+require_once '../includes/db.php'; // should define $dbHost, $dbUser, $dbPass, $dbName
 require_once '../api/api_helper.php';
 session_start();
 
 // Microsoft App settings
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
 $redirectUri = "https://10.10.254.127/api/callback.php";
+
+// Connect to MySQL (mysqli)
+$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+if ($mysqli->connect_error) {
+    respond(['error' => 'DB connection failed', 'message' => $mysqli->connect_error], 500);
+}
 
 // Get code from query
 if (!isset($_GET['code'])) {
@@ -48,24 +54,24 @@ $idTokenParts = explode('.', $data['id_token']);
 $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true);
 
 // Extract user info
-$msId = $payload['sub'];
-$email = $payload['preferred_username'];
-$name = $payload['name'] ?? '';
+$msId = $mysqli->real_escape_string($payload['sub']);
+$email = $mysqli->real_escape_string($payload['preferred_username']);
+$name = $mysqli->real_escape_string($payload['name'] ?? '');
+$role = 'employee';
 
-// Check if user exists in MySQL
-$stmt = $pdo->prepare("SELECT * FROM users WHERE microsoft_id = ?");
-$stmt->execute([$msId]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$user) {
-    // Create new user
-    $stmt = $pdo->prepare("INSERT INTO users (microsoft_id, email, name, role) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$msId, $email, $name, 'employee']);
-    $userId = $pdo->lastInsertId();
-    $role = 'employee';
-} else {
+// Check if user exists
+$result = $mysqli->query("SELECT * FROM users WHERE microsoft_id='$msId'");
+if ($result && $result->num_rows > 0) {
+    $user = $result->fetch_assoc();
     $userId = $user['id'];
     $role = $user['role'] ?? 'employee';
+} else {
+    // Insert new user
+    $insert = $mysqli->query("INSERT INTO users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
+    if (!$insert) {
+        respond(['error' => 'Failed to insert user', 'message' => $mysqli->error], 500);
+    }
+    $userId = $mysqli->insert_id;
 }
 
 // Create session
