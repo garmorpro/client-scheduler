@@ -787,7 +787,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
                     <!-- Security Policies -->
-                    <div class="d-flex justify-content-between align-items-center">
+                    <!-- <div class="d-flex justify-content-between align-items-center">
                       <div>
                         <p class="text-black fw-semibold mb-0" style="font-size: 14px;">Security Policies</p>
                         <p class="mb-0" style="font-size: 14px;">Password and access requirements</p>
@@ -795,7 +795,10 @@ if ($result && mysqli_num_rows($result) > 0) {
                       <a href="#" id="configureSecurityBtn" class="badge text-black p-2 text-decoration-none fw-medium border" style="font-size: 14px;">
                         Configure
                       </a>
-                    </div>
+                    </div> -->
+
+
+                    
                   </div>
                 </div>
 
