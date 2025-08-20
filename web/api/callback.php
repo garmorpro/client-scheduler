@@ -4,6 +4,27 @@ require_once '../includes/db.php'; // defines $conn (mysqli)
 require_once '../api/api_helper.php';
 session_start();
 
+// Timeout duration in seconds (e.g., 30 minutes = 1800s)
+$timeout_duration = 60;
+
+// Check if "last_activity" is set
+if (isset($_SESSION['last_activity'])) {
+    $elapsed_time = time() - $_SESSION['last_activity'];
+
+    // If inactive too long → destroy session and force re-login
+    if ($elapsed_time > $timeout_duration) {
+        session_unset();
+        session_destroy();
+
+        header("Location: /pages/logout.php?timeout=1");
+        exit;
+    }
+}
+
+// Update last activity time
+$_SESSION['last_activity'] = time();
+
+
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
