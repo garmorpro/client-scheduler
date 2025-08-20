@@ -82,7 +82,7 @@ $msId = $conn->real_escape_string($payload['sub'] ?? '');
 $email = $conn->real_escape_string($payload['preferred_username'] ?? '');
 $full_name = $conn->real_escape_string($payload['name'] ?? '');
 $role = 'staff';
-$now = date('Y-m-d H:i:s');
+$now = time();
 // --------------------------------------------------------------
 
 // ---------------- DB USER LOOKUP ------------------------------
@@ -93,22 +93,21 @@ if ($result && $result->num_rows > 0) {
     $fullName = $user['full_name'];
     $role = $user['role'] ?? 'staff';
 
-    // Update last_active only for existing users
-    // Update last_active only for existing users
-    $updateSql = "UPDATE ms_users SET last_active=$now WHERE user_id=$userId";
+    $now = date('Y-m-d H:i:s'); // current time as DATETIME string
+
+    $updateSql = "UPDATE ms_users SET last_active='$now' WHERE user_id=$userId";
     if (!$conn->query($updateSql)) {
-        die(json_encode([
-            'error' => 'Failed to update last_active',
-            'sql_error' => $conn->error
-        ]));
+        die(json_encode(['error' => 'Failed to update last_active', 'sql_error' => $conn->error]));
     }
 
+
 } else {
+    $now = date('Y-m-d H:i:s'); // current time as DATETIME string
     // Insert new user with last_active
-    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, full_name, role, last_active) 
-                            VALUES ('$msId', '$email', '$full_name', '$role', $now)");
-    if (!$insert) {
-        die(json_encode(['error' => 'Failed to insert user', 'message' => $conn->error]));
+    $insertSql = "INSERT INTO ms_users (microsoft_id, email, full_name, role, last_active) 
+              VALUES ('$msId', '$email', '$full_name', '$role', '$now')";
+    if (!$conn->query($insertSql)) {
+        die(json_encode(['error' => 'Failed to insert user', 'sql_error' => $conn->error]));
     }
     $userId = $conn->insert_id;
     $fullName = $full_name; // fallback for session
