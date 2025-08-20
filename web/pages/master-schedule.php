@@ -37,7 +37,7 @@ $userQuery = "
                 WHEN role = 'senior' THEN 1 
                 WHEN role = 'staff' THEN 2 
                 WHEN role = 'manager' THEN 3 
-             END, first_name ASC
+             END, full_name ASC
 ";
 $userResult = $conn->query($userQuery);
 if ($userResult) {
