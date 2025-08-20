@@ -77,7 +77,7 @@ $name = $conn->real_escape_string($payload['name'] ?? '');
 $role = 'employee';
 
 // Check if user exists
-$result = $conn->query("SELECT * FROM users WHERE microsoft_id='$msId'");
+$result = $conn->query("SELECT * FROM ms_users WHERE microsoft_id='$msId'");
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $userId = $user['id'];
@@ -96,14 +96,11 @@ $_SESSION['user_id'] = $userId;
 $_SESSION['email'] = $email;
 $_SESSION['role'] = $role;
 
-// Debug: show success
-echo json_encode([
-    'message' => 'Login successful',
-    'user_id' => $userId,
-    'email' => $email,
-    'role' => $role
-]);
-
-// Or redirect to frontend
-// header("Location: /index.php");
-// exit;
+// Redirect based on role
+if ($role === 'admin') {
+    header("Location: /admin-panel.php");
+    exit;
+} else {
+    header("Location: /my-schedule.php");
+    exit;
+}
