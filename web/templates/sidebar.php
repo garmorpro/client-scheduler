@@ -74,13 +74,27 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
         <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
              style="cursor: pointer; width: 36px; height: 36px;">
             <?php
-            $firstInitial = isset($_SESSION['first_name'][0]) ? $_SESSION['first_name'][0] : '';
-            $lastInitial = isset($_SESSION['last_name'][0]) ? $_SESSION['last_name'][0] : '';
-            echo strtoupper($firstInitial . $lastInitial);
+            $fullName = $_SESSION['full_name'] ?? ''; // get full name from session
+            $initials = '';
+                        
+            // Split the full name by spaces
+            $nameParts = explode(' ', $fullName);
+                        
+            // Take the first character of the first two parts (first and last names)
+            if (isset($nameParts[0])) {
+                $initials .= strtoupper($nameParts[0][0]);
+            }
+            if (isset($nameParts[1])) {
+                $initials .= strtoupper($nameParts[1][0]);
+            }
+            
+            // Output the initials
+            echo $initials;
             ?>
+
         </div>
         <div>
-            <div class="fw-semibold"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name']; ?></div>
+            <div class="fw-semibold"><?php echo $_SESSION['full_name']; ?></div>
             <small class="text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
         </div>
         <!-- <a href="logout.php" class="ms-auto text-decoration-none text-muted">
