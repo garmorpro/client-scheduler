@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const client = data.client;
                 const history = data.history;
 
-                // Fill modal content
+                // Fill modal content with client details
                 let html = `
                     <div class="mb-3">
                         <h5>${client.client_name}</h5>
@@ -296,31 +296,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>Confirmed Engagements: ${client.confirmed_engagements}</p>
                     </div>
                     <hr>
+                    <div id="engagementHistoryContainer"></div>
                 `;
 
-                history.forEach(h => {
-                    html += `
-                        <div class="card p-2 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <span>${h.engagement_year}</span>
-                                <span>${h.status || 'Archived'}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Budgeted: ${h.budgeted_hours}</span>
-                                <span>Allocated: ${h.allocated_hours}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Manager: ${h.manager}</span>
-                                <span>Senior: ${h.senior}</span>
-                                <span>Staff: ${h.staff}</span>
-                            </div>
-                            <hr>
-                            <div>Archived: ${h.archive_date || 'N/A'}</div>
-                        </div>
-                    `;
-                });
-
                 modalBody.innerHTML = html;
+
+                const historyContainer = document.getElementById('engagementHistoryContainer');
+
+                if (history.length === 0) {
+                    historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
+                } else {
+                    history.forEach(h => {
+                        historyContainer.innerHTML += `
+                            <div class="card p-2 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span>${h.engagement_year}</span>
+                                    <span>${h.status || 'Archived'}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Budgeted: ${h.budgeted_hours}</span>
+                                    <span>Allocated: ${h.allocated_hours}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Manager: ${h.manager}</span>
+                                    <span>Senior: ${h.senior}</span>
+                                    <span>Staff: ${h.staff}</span>
+                                </div>
+                                <hr>
+                                <div>Archived: ${h.archive_date || 'N/A'}</div>
+                            </div>
+                        `;
+                    });
+                }
+
                 modal.show();
 
             } catch (err) {
@@ -330,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 </script>
 
 
