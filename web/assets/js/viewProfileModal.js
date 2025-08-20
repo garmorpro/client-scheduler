@@ -1,4 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('show.bs.modal', async (event) => {
+  if (event.target.id !== 'viewUserModal') return;
+
+  console.log('Modal show event triggered');
+
+  const button = event.relatedTarget;
+  const userId = button ? button.getAttribute('data-user-id') : null;
+  console.log('userId:', userId);
+
+  if (!userId) return;
   const viewProfileModal = document.getElementById('viewProfileModal');
   console.log('viewProfileModal element:', viewProfileModal);
 
