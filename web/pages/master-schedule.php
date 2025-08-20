@@ -34,10 +34,9 @@ $userQuery = "
     FROM ms_users 
     WHERE status = 'active' AND role IN ('staff', 'senior', 'manager')
     ORDER BY CASE 
-                WHEN role = 'admin' THEN 1 
-                WHEN role = 'senior' THEN 2
-                WHEN role = 'staff' THEN 3
-                WHEN role = 'manager' THEN 4
+                WHEN role = 'senior' THEN 1 
+                WHEN role = 'staff' THEN 2 
+                WHEN role = 'manager' THEN 3 
              END, full_name ASC
 ";
 $userResult = $conn->query($userQuery);

@@ -19,25 +19,25 @@ if (!$isAdmin && !$isManager) {
 
 
 // Get total users
-$totalUsersQuery = "SELECT COUNT(*) AS total FROM users";
+$totalUsersQuery = "SELECT COUNT(*) AS total FROM ms_users";
 $totalUsersResult = mysqli_query($conn, $totalUsersQuery);
 $totalUsersRow = mysqli_fetch_assoc($totalUsersResult);
 $totalUsers = $totalUsersRow['total'];
 
 // Get users added in last 30 days
-$newUsersQuery = "SELECT COUNT(*) AS recent FROM users WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+$newUsersQuery = "SELECT COUNT(*) AS recent FROM ms_users WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
 // Get total active users
-$totalActiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'active'";
+$totalActiveUsersQuery = "SELECT COUNT(*) AS total FROM ms_users WHERE status = 'active'";
 $totalActiveUsersResult = mysqli_query($conn, $totalActiveUsersQuery);
 $totalActiveUsersRow = mysqli_fetch_assoc($totalActiveUsersResult);
 $totalActiveUsers = $totalActiveUsersRow['total'];
 
 // Get total inactive users
-$totalInactiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'inactive'";
+$totalInactiveUsersQuery = "SELECT COUNT(*) AS total FROM ms_users WHERE status = 'inactive'";
 $totalInactiveUsersResult = mysqli_query($conn, $totalInactiveUsersQuery);
 $totalInactiveUsersRow = mysqli_fetch_assoc($totalInactiveUsersResult);
 $totalInactiveUsers = $totalInactiveUsersRow['total'];
@@ -90,9 +90,9 @@ $notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
 $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
 
-$usersql = "SELECT user_id, first_name, last_name, email, role, status, last_active 
-        FROM users 
-        ORDER BY first_name ASC";
+$usersql = "SELECT user_id, full_name, email, role, status, last_active 
+        FROM msusers 
+        ORDER BY full_name ASC";
 $userresult = mysqli_query($conn, $usersql);
 
 $engagementSQL = "
@@ -128,7 +128,7 @@ $sql = "
     SELECT t.timeoff_id, t.user_id, t.week_start, t.assigned_hours, t.timeoff_note, t.created, t.last_updated,
            u.first_name, u.last_name, u.email
     FROM time_off t
-    INNER JOIN users u ON t.user_id = u.user_id
+    INNER JOIN ms_users u ON t.user_id = u.user_id
     WHERE t.is_global_timeoff = 0
     ORDER BY t.week_start DESC
 ";
@@ -289,7 +289,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <tr>
                                     <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>"></td>
                                     <td>
-                                        <?php echo htmlspecialchars($userrow['first_name'] . ' ' . $userrow['last_name']); ?><br>
+                                        <?php echo htmlspecialchars($userrow['full_name']); ?><br>
                                         <small class="text-muted"><?php echo htmlspecialchars($userrow['email']); ?></small>
                                     </td>
                                     <td>
