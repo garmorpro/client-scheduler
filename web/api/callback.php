@@ -98,9 +98,9 @@ $_SESSION['role'] = $role;
 
 // Redirect based on role
 if ($role === 'admin') {
-    header("Location: pages/admin-panel.php");
+    header("Location: /pages/admin-panel.php");
     exit;
 } else {
-    header("Location: pages/my-schedule.php");
+    header("Location: /pages/my-schedule.php");
     exit;
 }
