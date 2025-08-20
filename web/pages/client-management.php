@@ -26,7 +26,7 @@ $stmt->close();
 $sql = "
     SELECT client_id,
            COUNT(*) AS total_engagements,
-           SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_engagements
+           SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS active_engagements
     FROM engagements
     GROUP BY client_id
 ";
@@ -37,7 +37,7 @@ if ($result) {
     while ($row = $result->fetch_assoc()) {
         $engagementCounts[$row['client_id']] = [
             'total_engagements' => (int)$row['total_engagements'],
-            'active_engagements' => (int)$row['active_engagements']
+            'confirmed_engagements' => (int)$row['confirmed_engagements']
         ];
     }
 }
@@ -46,7 +46,7 @@ if ($result) {
 foreach ($clients as &$client) {
     $clientId = $client['client_id'];
     $client['total_engagements'] = $engagementCounts[$clientId]['total_engagements'] ?? 0;
-    $client['active_engagements'] = $engagementCounts[$clientId]['active_engagements'] ?? 0;
+    $client['confirmed_engagements'] = $engagementCounts[$clientId]['confirmed_engagements'] ?? 0;
 }
 unset($client); // break reference
 ?>
@@ -163,8 +163,8 @@ unset($client); // break reference
 
                 <!-- Engagements Info -->
                 <div class="d-flex justify-content-between mb-1 flex-wrap">
-                    <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
-                    <span><?php echo $client['active_engagements'] ?? 0; ?></span>
+                    <span class="text-muted"><i class="bi bi-people me-2"></i> Confirmed engagements</span>
+                    <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-3 flex-wrap">
                     <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
