@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) throw new Error('Network response was not ok');
 
       const user = await response.json();
-      // console.log('Fetched user data:', user);
+      console.log('Fetched user data:', user);
 
       function setText(id, text) {
         const el = document.getElementById(id);
