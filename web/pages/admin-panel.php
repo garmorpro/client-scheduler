@@ -126,7 +126,7 @@ if ($settingResult) {
 $timeoffEntries = [];
 $sql = "
     SELECT t.timeoff_id, t.user_id, t.week_start, t.assigned_hours, t.timeoff_note, t.created, t.last_updated,
-           u.first_name, u.last_name, u.email
+           u.full_name, u.email
     FROM time_off t
     INNER JOIN ms_users u ON t.user_id = u.user_id
     WHERE t.is_global_timeoff = 0
@@ -138,7 +138,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $timeoffEntries[] = [
             'timeoff_id' => $row['timeoff_id'],
-            'employee_name' => $row['first_name'] . ' ' . $row['last_name'],
+            'employee_name' => $row['full_name'],
             'employee_email' => $row['email'],
             'week_start' => $row['week_start'],
             'hours' => $row['assigned_hours'],
