@@ -74,14 +74,14 @@ $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true)
 $msId = $conn->real_escape_string($payload['sub'] ?? '');
 $email = $conn->real_escape_string($payload['preferred_username'] ?? '');
 $name = $conn->real_escape_string($payload['name'] ?? '');
-$role = 'employee';
+$role = 'staff';
 
 // Check if user exists
 $result = $conn->query("SELECT * FROM ms_users WHERE microsoft_id='$msId'");
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $userId = $user['id'];
-    $role = $user['role'] ?? 'employee';
+    $role = $user['role'] ?? 'staff';
 } else {
     // Insert new user
     $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
