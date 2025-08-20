@@ -1,6 +1,6 @@
 <!-- Add Client Modal -->
 <div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
+  <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
       <form id="addClientForm">
         <div class="modal-header">
