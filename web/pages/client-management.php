@@ -299,11 +299,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+// Determine status class
+let statusClass = '';
+if (client.status.toLowerCase() === 'active') {
+    statusClass = 'text-success';
+} else if (client.status.toLowerCase() === 'inactive') {
+    statusClass = 'text-warning';
+} else {
+    statusClass = 'text-muted';
+}
                 // Fill modal content with styled top details
                 let html = `
     <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
         <div class="justify-content-between d-flex" style="flex-grow: 1;">
-            <div id="view_client_name" class="fw-semibold">${client.client_name}<br><span>${ucfirst(client.status)}</span></div>
+            <div id="view_client_name" class="fw-semibold">${client.client_name}<br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
             <small id="view_onboarded_date" class="text-end">Onboarded<br><span class="text-muted">${new Date(client.onboarded_date).toLocaleDateString()}</span></small>
             
             
