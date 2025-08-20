@@ -1,13 +1,13 @@
 
 let activityTimeout;
 let inactivitySeconds = 0;
-const INACTIVITY_LIMIT = 1 * 60 * 1000; // 15 minutes
+const INACTIVITY_LIMIT = 1 * 60 * 1000; // 30 minutes
 
 // Count seconds of inactivity
-setInterval(() => {
-    inactivitySeconds++;
-    console.log("Inactivity time (seconds):", inactivitySeconds);
-}, 1000);
+// setInterval(() => {
+//     inactivitySeconds++;
+//     console.log("Inactivity time (seconds):", inactivitySeconds);
+// }, 1000);
 
 function resetActivityTimer() {
     clearTimeout(activityTimeout);

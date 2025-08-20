@@ -180,5 +180,6 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 </script>
 
 
+<script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

@@ -2771,7 +2771,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <!-- Security Policy Script -->
 
-
+<script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
