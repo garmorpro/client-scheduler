@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(161,77,253);">
                     <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
                         <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Entry</small>
+                            <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Engagement</small>
                             <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
