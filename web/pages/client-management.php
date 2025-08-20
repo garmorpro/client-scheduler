@@ -350,12 +350,12 @@ if (client.status.toLowerCase() === 'active') {
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size: 10px;">
                                     <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
-                                    <div>Allocated: ${h.allocated_hours}</div>
+                                    <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size: 10px;">
-                                    <span>Manager: ${h.manager}</span>
-                                    <span>Senior: ${h.senior}</span>
-                                    <span>Staff: ${h.staff}</span>
+                                    <span><span class="text-muted">Manager:</span> ${h.manager}</span>
+                                    <span><span class="text-muted">Senior:</span> ${h.senior}</span>
+                                    <span><span class="text-muted">Staff:</span> ${h.staff}</span>
                                 </div>
                                 <hr>
                                 <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
