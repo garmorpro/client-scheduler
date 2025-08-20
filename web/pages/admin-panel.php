@@ -313,9 +313,36 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     </td>
                                     <td class="table-actions">
                                         <!-- View Button -->
-                                        <a href="#" class="view-user-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#viewUserModal" data-user-id="<?php echo $userrow['user_id']; ?>">
-                                            <i class="bi bi-eye text-success"></i>
+                                        <a href="#" class="view-user-btn text-decoration-none" 
+                                           data-bs-toggle="modal" 
+                                           data-bs-target="#viewUserModal" 
+                                           data-user-id="<?php echo $userrow['user_id']; ?>">
+                                           <i class="bi bi-eye text-success"></i>
                                         </a>
+
+                                        <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const viewButtons = document.querySelectorAll('.view-user-btn');
+
+  viewButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault(); // Stop the modal from opening immediately
+
+      const targetModalId = button.getAttribute('data-bs-target');
+      const userId = button.getAttribute('data-user-id');
+
+      // Add 2 second delay before opening modal
+      setTimeout(() => {
+        const modalEl = document.querySelector(targetModalId);
+        if (modalEl) {
+          const bsModal = new bootstrap.Modal(modalEl);
+          bsModal.show();
+        }
+      }, 2000); // 2000ms = 2 seconds
+    });
+  });
+});
+</script>
 
                                         <!-- Promote/Role Dropdown -->
                                         <div class="dropdown d-inline">
