@@ -361,14 +361,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- Employee Modal -->
         <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg ">
+          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg " style="overflow-y: initial !important">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" style="max-height: 70vh;">
-                <div id="employeeModalContent" class="overflow-y: auto;">
+              <div class="modal-body" style="max-height: 70vh !important; overflow-y: auto !important;">
+                <div id="employeeModalContent" class="">
                   <!-- Dynamic content goes here -->
                 </div>
               </div>
