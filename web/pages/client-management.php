@@ -238,6 +238,113 @@ unset($client);
 <script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
 
 
+
+
+<!-- View Client Modal -->
+<div class="modal fade" id="viewClientModal" tabindex="-1" aria-labelledby="viewClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewClientModalLabel">Client Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Client Info -->
+        <div class="mb-3">
+          <h5 id="view_client_name"></h5>
+          <p class="mb-1"><strong>Onboarded:</strong> <span id="view_onboarded_date"></span></p>
+          <p class="mb-1"><strong>Total Engagements:</strong> <span id="view_total_engagements"></span></p>
+          <p class="mb-3"><strong>Confirmed Engagements:</strong> <span id="view_confirmed_engagements"></span></p>
+        </div>
+
+        <!-- Engagement History Cards -->
+        <div id="engagementHistoryContainer" class="d-flex flex-column gap-3">
+          <!-- Engagement cards will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <div class="modal-footer p-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const viewModal = new bootstrap.Modal(document.getElementById('viewClientModal'));
+    const clientNameEl = document.getElementById('view_client_name');
+    const onboardedDateEl = document.getElementById('view_onboarded_date');
+    const totalEngEl = document.getElementById('view_total_engagements');
+    const confirmedEngEl = document.getElementById('view_confirmed_engagements');
+    const engagementContainer = document.getElementById('engagementHistoryContainer');
+
+    // Event listener for view buttons
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const clientCard = button.closest('.client-card');
+            const clientId = clientCard.dataset.clientId;
+
+            // Fetch client info & engagements
+            try {
+                const response = await fetch(`get_client_details.php?client_id=${clientId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const client = data.client;
+                    clientNameEl.textContent = client.client_name;
+                    onboardedDateEl.textContent = client.onboarded_date;
+                    totalEngEl.textContent = client.total_engagements;
+                    confirmedEngEl.textContent = client.confirmed_engagements;
+
+                    engagementContainer.innerHTML = ''; // clear previous
+
+                    data.history.forEach(item => {
+                        const card = document.createElement('div');
+                        card.classList.add('border', 'p-3', 'rounded');
+
+                        card.innerHTML = `
+                            <div class="d-flex justify-content-between mb-1">
+                                <span><strong>Year:</strong> ${item.engagement_year}</span>
+                                <span class="text-danger">Archived</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span><strong>Budgeted:</strong> ${item.budgeted_hours}</span>
+                                <span><strong>Allocated:</strong> ${item.allocated_hours}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span><strong>Manager:</strong> ${item.manager}</span>
+                                <span><strong>Senior:</strong> ${item.senior}</span>
+                                <span><strong>Staff:</strong> ${item.staff}</span>
+                            </div>
+                            <hr class="my-2">
+                            <div><strong>Archived:</strong> ${item.archive_date || '-'}</div>
+                        `;
+
+                        engagementContainer.appendChild(card);
+                    });
+
+                    viewModal.show();
+                } else {
+                    alert('Error fetching client details.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to fetch client details.');
+            }
+        });
+    });
+});
+</script>
+
+
+
+
+
+
+
 <!-- import engagements modal -->
 
     <div class="modal fade" id="importEngagementsModal" tabindex="-1" aria-labelledby="importEngagementsModalLabel" aria-hidden="true">
