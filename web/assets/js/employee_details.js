@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
 
             // Build modal HTML
-            let html = `<div class="d-flex align-items-center mb-3" style="overflow-y: auto !important;">
+            let html = `<div class="d-flex align-items-center mb-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
                      style="width:50px;height:50px;font-size:18px;font-weight:500;
                      background-color:${role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             Object.entries(clientsMap).forEach(([clientName, info]) => {
                 html += `
-                    <li class="list-group-item d-flex align-items-center text-truncate">
+                    <li class="list-group-item d-flex align-items-center text-truncate" style="overflow-y: auto !important;">
                         <div class="col-6 text-truncate">
                             <span class="fs-6 fw-semibold text-black">${clientName}</span> 
                             <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
