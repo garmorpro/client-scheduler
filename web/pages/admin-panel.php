@@ -412,9 +412,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                             <td><?php echo date("n/j/Y", strtotime($entry['week_start'])); ?></td>
                                             <td><?php echo htmlspecialchars($entry['hours']); ?> hrs</td>
                                             <td class="table-actions">
-                                                <a href="#" class="edit-timeoff-btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#editTimeoffModal" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
-                                                    <i class="bi bi-pencil text-purple"></i>
-                                                </a>
                                                 <a href="#" class="delete-timeoff-btn text-decoration-none" data-timeoff-id="<?php echo $entry['timeoff_id']; ?>">
                                                     <i class="bi bi-trash text-danger"></i>
                                                 </a>
