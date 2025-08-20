@@ -248,7 +248,7 @@ unset($client);
 
 <!-- View Client Modal -->
 <div class="modal fade" id="viewClientModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-scrollable">
+  <div class="modal-dialog modal-md modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Client Details</h5>
