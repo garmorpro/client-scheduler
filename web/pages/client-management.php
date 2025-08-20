@@ -81,7 +81,7 @@ unset($client);
             margin-bottom: 20px;
         }
         .view-btn:hover {
-          background-color: rgb(229,229,229) !important;
+          background-color: rgba(168, 45, 45, 1) !important;
         }
     </style>
 </head>
