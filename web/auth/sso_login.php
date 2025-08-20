@@ -21,7 +21,7 @@ require_once '../includes/auth.php';
         <!-- Show inactivity alert -->
         <?php if (isset($_GET['timeout']) && $_GET['timeout'] == 1): ?>
             <div class="alert alert-warning text-center" role="alert">
-                You have been logged out due to inactivity. Please log in again.
+                <?= htmlspecialchars($_GET['message']); ?>
             </div>
         <?php endif; ?>
 
