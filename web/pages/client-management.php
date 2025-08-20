@@ -184,7 +184,18 @@ unset($client);
                 <div class="card-buttons d-flex flex-wrap gap-2">
                     
                     <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" style="font-size: .875rem; background-color: white !important; border:none !important; outline: 1px solid rgb(229,229,229) !important;"><i class="bi bi-eye me-2"></i>View</button>
-                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2" style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"><i class="bi bi-pencil-square me-2"></i>Edit</button>
+                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2 edit-client-btn" 
+                            style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editClientModal"
+                            data-client-id="<?php echo $client['client_id']; ?>"
+                            data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                            data-onboarded-date="<?php echo $client['onboarded_date']; ?>"
+                            data-status="<?php echo strtolower($client['status']); ?>"
+                            data-notes="<?php echo htmlspecialchars($client['notes'] ?? ''); ?>">
+                        <i class="bi bi-pencil-square me-2"></i>Edit
+                    </button>
+
                 </div>
             </div>
         <?php endforeach; ?>
@@ -259,6 +270,7 @@ unset($client);
 </div>
 <!-- end add engagement modal -->
 
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const addEngagementModal = document.getElementById('addEngagementModal');
@@ -298,6 +310,98 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             alert('Error adding engagement: ' + error.message);
+        }
+    });
+});
+</script>
+
+
+<!-- Edit Client Modal -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <form id="editClientForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editClientModalLabel">Edit Client</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" name="client_id" id="edit_modal_client_id">
+
+          <div class="mb-3">
+            <label for="edit_client_name" class="form-label">Client Name</label>
+            <input type="text" class="form-control" id="edit_client_name" name="client_name" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="edit_onboarded_date" class="form-label">Onboarded Date</label>
+            <input type="date" class="form-control" id="edit_onboarded_date" name="onboarded_date" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="edit_status" class="form-label">Status</label>
+            <select class="form-select" id="edit_status" name="status" required>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="edit_notes" class="form-label">Notes</label>
+            <textarea class="form-control" id="edit_notes" name="notes" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer p-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const editModal = document.getElementById('editClientModal');
+    const editForm = document.getElementById('editClientForm');
+
+    // Populate modal when edit button is clicked
+    const editButtons = document.querySelectorAll('.edit-client-btn');
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('edit_modal_client_id').value = btn.getAttribute('data-client-id');
+            document.getElementById('edit_client_name').value = btn.getAttribute('data-client-name');
+            document.getElementById('edit_onboarded_date').value = btn.getAttribute('data-onboarded-date');
+            document.getElementById('edit_status').value = btn.getAttribute('data-status');
+            document.getElementById('edit_notes').value = btn.getAttribute('data-notes');
+        });
+    });
+
+    // Handle form submission
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(editForm);
+
+        try {
+            const response = await fetch('edit_client.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Client updated successfully!');
+                editModal.querySelector('.btn-close').click();
+                location.reload(); // refresh to update client card
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error updating client: ' + error.message);
         }
     });
 });
