@@ -294,6 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     .slice(0, 2)
                     .join('');
 
+                    function ucfirst(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
                 // Fill modal content with styled top details
                 let html = `
     <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
