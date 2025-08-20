@@ -11,7 +11,7 @@ $client_id = intval($_GET['client_id']);
 
 // Fetch client info
 $stmt = $conn->prepare("
-    SELECT client_id, client_name, onboarded_date, status
+    SELECT client_id, client_name, onboarded_date, status,
         (SELECT COUNT(*) FROM engagements WHERE client_id = ?) AS total_engagements,
         (SELECT COUNT(*) FROM engagements WHERE client_id = ? AND status = 'confirmed') AS confirmed_engagements
     FROM clients
