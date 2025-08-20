@@ -34,5 +34,5 @@ $stmt->close();
 $conn->close();
 
 // Redirect back to admin panel
-header("Location: admin-panel.php#time_off#global_pto");
+header("Location: admin-panel.php#time_off");
 exit;
