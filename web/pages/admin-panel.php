@@ -368,12 +368,6 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         <!-- time off -->
           <div id="time_off" class="tab-content">
-              <!-- <div class="activity-header mb-0">
-                  <div class="titles">
-                      <p class="text-black"><strong>Time Off Management</strong></p>
-                      <p>Manage employee and global time off entries</p>
-                  </div>
-              </div> -->
 
               <!-- Nested Tabs -->
                 <div class="nested-tabs mb-3">
@@ -399,13 +393,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedTimeoffCount">0</span>)
                             </a>
                                         
-                            <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-toggle="modal" data-bs-target="#importTimeoffModal">
+                            <!-- <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-toggle="modal" data-bs-target="#importTimeoffModal">
                                 <i class="bi bi-upload me-3"></i>Import Time Off
                             </a>
                                         
                             <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addTimeoffModal">
                                 <i class="bi bi-plus-circle me-3"></i>Add Time Off
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                                         
@@ -785,7 +779,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                       </a>
                     </div>
 
-                    
+
                   </div>
                 </div>
 
