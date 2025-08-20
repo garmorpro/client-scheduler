@@ -306,7 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="view_client_name" class="fw-semibold">${client.client_name}</div>
             <small id="view_onboarded_date" class="text-muted">Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</small>
             
-            <div class="d-flex gap-2 mt-2">
+            
+        </div>
+    </div>
+    <div class="d-flex gap-2 mt-2">
                 <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     <div class="fw-semibold">${client.total_engagements}</div>
                     <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
@@ -316,8 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-muted" style="font-size: 12px;">Confirmed Engagements</div>
                 </div>
             </div>
-        </div>
-    </div>
     <hr>
     <div id="engagementHistoryContainer"></div>
 `;
