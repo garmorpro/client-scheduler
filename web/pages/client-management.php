@@ -298,17 +298,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 let html = `
     <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
         <div class="justify-content-between d-flex" style="flex-grow: 1;">
-            <div id="view_client_name" class="fw-semibold">${client.client_name}</div>
+            <div id="view_client_name" class="fw-semibold">${client.client_name}<br><span>${client.status}</span></div>
             <small id="view_onboarded_date" class="text-end">Onboarded<br><span class="text-muted">${new Date(client.onboarded_date).toLocaleDateString()}</span></small>
             
             
         </div>
     </div>
     <div class="d-flex gap-2 mt-2">
-                <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <div class="fw-semibold"></div>
-                    <div class="text-muted" style="font-size: 12px;">Onboarded</div>
-                </div>
+
                 <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     <div class="fw-semibold">${client.total_engagements}</div>
                     <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
