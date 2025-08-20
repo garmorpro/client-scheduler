@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let html = `
     <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
         <div class="justify-content-between d-flex" style="flex-grow: 1;">
-            <div id="view_client_name" class="fw-semibold">${client.client_name}<br><span>${client.status}</span></div>
+            <div id="view_client_name" class="fw-semibold">${client.client_name}<br><span>${ucfirst(client.status)}</span></div>
             <small id="view_onboarded_date" class="text-end">Onboarded<br><span class="text-muted">${new Date(client.onboarded_date).toLocaleDateString()}</span></small>
             
             
