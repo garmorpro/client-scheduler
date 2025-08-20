@@ -170,8 +170,8 @@ unset($client);
                 </div>
 
                 <!-- Card Buttons -->
-                 <button class="badge text-white btn-sm flex-grow-1 fw-medium p-2 mb-2" 
-                            style="font-size: .875rem; background-color: rgb(0,123,255); border: none !important;"
+                 <button class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2" 
+                            style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
                             data-bs-toggle="modal" 
                             data-bs-target="#addEngagementModal" 
                             data-client-id="<?php echo $client['client_id']; ?>">
