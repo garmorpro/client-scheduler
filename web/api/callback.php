@@ -82,7 +82,7 @@ $msId = $conn->real_escape_string($payload['sub'] ?? '');
 $email = $conn->real_escape_string($payload['preferred_username'] ?? '');
 $full_name = $conn->real_escape_string($payload['name'] ?? '');
 $role = 'staff';
-$now = time(); // current timestamp for last_active
+$now = date('Y-m-d H:i:s');
 // --------------------------------------------------------------
 
 // ---------------- DB USER LOOKUP ------------------------------
