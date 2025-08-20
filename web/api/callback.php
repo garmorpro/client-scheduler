@@ -5,8 +5,9 @@ require_once '../api/api_helper.php';
 session_start();
 
 // Load .env
-$dotenv = Dotenv\Dotenv::createImmutable('/var/www/html');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
+
 
 // Microsoft App settings
 $clientId = getenv('CLIENT_ID');
