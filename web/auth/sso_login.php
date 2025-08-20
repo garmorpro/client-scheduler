@@ -19,7 +19,7 @@ require_once '../includes/auth.php';
         <p class="text-center text-muted">Sign in to access your engagement schedules</p>
 
         <!-- Show inactivity alert -->
-        <?php if (isset($_GET['timeout']) && $_GET['timeout'] == 1): ?>
+        <?php if (isset($_GET['message'])): ?>
             <div class="alert alert-warning text-center" role="alert">
                 <?= htmlspecialchars($_GET['message']); ?>
             </div>
