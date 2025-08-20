@@ -247,31 +247,18 @@ unset($client);
 
 
 <!-- View Client Modal -->
-<div class="modal fade" id="viewClientModal" tabindex="-1" aria-labelledby="viewClientModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal fade" id="viewClientModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="viewClientModalLabel">Client Details</h5>
+        <h5 class="modal-title">Client Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
-      <div class="modal-body">
-        <!-- Client Info -->
-        <div class="mb-3">
-          <h5 id="view_client_name"></h5>
-          <p class="mb-1"><strong>Onboarded:</strong> <span id="view_onboarded_date"></span></p>
-          <p class="mb-1"><strong>Total Engagements:</strong> <span id="view_total_engagements"></span></p>
-          <p class="mb-3"><strong>Confirmed Engagements:</strong> <span id="view_confirmed_engagements"></span></p>
-        </div>
-
-        <!-- Engagement History Cards -->
-        <div id="engagementHistoryContainer" class="d-flex flex-column gap-3">
-          <!-- Engagement cards will be dynamically inserted here -->
-        </div>
+      <div class="modal-body" id="viewClientModalBody">
+        <!-- Filled dynamically by JS -->
       </div>
-
-      <div class="modal-footer p-2">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
