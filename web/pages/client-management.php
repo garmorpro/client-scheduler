@@ -338,31 +338,45 @@ if (client.status.toLowerCase() === 'active') {
 
                 const historyContainer = document.getElementById('engagementHistoryContainer');
 
+                
+
                 if (history.length === 0) {
-                    historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
-                } else {
-                    history.forEach(h => {
-                        historyContainer.innerHTML += `
-                            <div class="card p-2 mb-2">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>${h.engagement_year}</span>
-                                    <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">${h.status || 'Archived'}</span>
-                                </div>
-                                <div class="d-flex justify-content-between mb-1" style="font-size: 10px;">
-                                    <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
-                                    <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
-                                </div>
-                                <div class="d-flex justify-content-between" style="font-size: 10px;">
-                                    <span><span class="text-muted">Manager:</span> ${h.manager}</span>
-                                    <span><span class="text-muted">Senior:</span> ${h.senior}</span>
-                                    <span><span class="text-muted">Staff:</span> ${h.staff}</span>
-                                </div>
-                                <hr>
-                                <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
-                            </div>
-                        `;
-                    });
-                }
+    historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
+} else {
+    // Helper function to format comma-separated fields
+    function formatListField(label, value) {
+        if (!value) return '';
+        const items = value.split(',').map(i => i.trim());
+        return `${label}: ${items.join('<br>')}`;
+    }
+
+    history.forEach(h => {
+        const managerHtml = formatListField('Manager', h.manager);
+        const seniorHtml = formatListField('Senior', h.senior);
+        const staffHtml = formatListField('Staff', h.staff);
+
+        historyContainer.innerHTML += `
+            <div class="card p-2 mb-2">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>${h.engagement_year}</span>
+                    <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">${h.status || 'Archived'}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1" style="font-size: 10px;">
+                    <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
+                    <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size: 10px;">
+                    <span>${managerHtml}</span>
+                    <span>${seniorHtml}</span>
+                    <span>${staffHtml}</span>
+                </div>
+                <hr>
+                <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
+            </div>
+        `;
+    });
+}
+
 
                 modal.show();
 
