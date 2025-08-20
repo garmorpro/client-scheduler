@@ -70,6 +70,9 @@ if (!$data || !isset($data['id_token'])) {
 $idTokenParts = explode('.', $data['id_token']);
 $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true);
 
+// Output the payload to the browser console
+echo "<script>console.log('Microsoft ID Token Payload:', " . json_encode($payload) . ");</script>";
+
 // Extract user info safely
 $msId = $conn->real_escape_string($payload['sub'] ?? '');
 $email = $conn->real_escape_string($payload['preferred_username'] ?? '');
@@ -100,9 +103,9 @@ $_SESSION['user_role'] = $role;
 
 // Redirect based on role
 if ($role === 'admin') {
-    header("Location: /pages/admin-panel.php");
+    // header("Location: /pages/admin-panel.php");
     exit;
 } else {
-    header("Location: /pages/my-schedule.php");
+    // header("Location: /pages/my-schedule.php");
     exit;
 }
