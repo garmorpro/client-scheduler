@@ -63,7 +63,7 @@ $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+26 weeks', $startMonday));
 
 $query = "
-    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status
+    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_id, a.week_start, a.assigned_hours, e.status AS engagement_status
     FROM entries a
     LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
     WHERE a.week_start BETWEEN ? AND ?
