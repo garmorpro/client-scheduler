@@ -11,6 +11,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - MS_CLIENT_ID=${MS_CLIENT_ID}
+      - MS_CLIENT_SECRET=${MS_CLIENT_SECRET}
     ports:
       - "80:80"
     networks:
