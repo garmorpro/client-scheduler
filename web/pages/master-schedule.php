@@ -62,12 +62,10 @@ while ($clientRow = $clientResult->fetch_assoc()) {
 $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+26 weeks', $startMonday));
 
-// Updated entries query to pull client_name from clients table
 $query = "
-    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_id, c.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status
+    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_id, a.week_start, a.assigned_hours, e.status AS engagement_status
     FROM entries a
     LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
-    LEFT JOIN clients c ON e.client_id = c.id
     WHERE a.week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($query);
@@ -117,22 +115,20 @@ while ($row = $result3->fetch_assoc()) {
 }
 $stmt3->close();
 
-// Dropdown query updated to join clients for client_name
+// Dropdown query remains the same
 $dropdownquery = "
-    SELECT e.engagement_id, e.client_id, c.client_name, e.status, e.budgeted_hours, IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
-    FROM engagements e
-    LEFT JOIN entries a ON a.engagement_id = e.engagement_id
-    LEFT JOIN clients c ON e.client_id = c.id
-    GROUP BY e.engagement_id
-    ORDER BY e.client_id
+  SELECT e.engagement_id, e.client_id, e.status, e.budgeted_hours, IFNULL(SUM(a.assigned_hours), 0) AS assigned_hours
+  FROM engagements e
+  LEFT JOIN entries a ON a.engagement_id = e.engagement_id
+  GROUP BY e.engagement_id
+  ORDER BY e.client_id
 ";
 $dropdownresult = $conn->query($dropdownquery);
 $clientsWithHours = [];
 while ($D_row = $dropdownresult->fetch_assoc()) {
-    $clientsWithHours[] = $D_row;
+  $clientsWithHours[] = $D_row;
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>

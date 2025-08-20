@@ -14,8 +14,15 @@ header('Content-Type: application/json');
 
 $clients = [];
 
-// Fetch active clients with their status
-$result = $conn->query("SELECT engagement_id, client_name, status FROM engagements ORDER BY client_name ASC");
+// Fetch active clients with their status using JOIN to get client_name from clients table
+$query = "
+    SELECT e.engagement_id, c.client_name, e.status
+    FROM engagements e
+    LEFT JOIN clients c ON e.client_id = c.id
+    ORDER BY c.client_name ASC
+";
+
+$result = $conn->query($query);
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {
