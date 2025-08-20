@@ -84,7 +84,7 @@ if ($result && $result->num_rows > 0) {
     $role = $user['role'] ?? 'employee';
 } else {
     // Insert new user
-    $insert = $conn->query("INSERT INTO users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
+    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
     if (!$insert) {
         die(json_encode(['error' => 'Failed to insert user', 'message' => $conn->error]));
     }
