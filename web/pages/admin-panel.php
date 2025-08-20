@@ -257,7 +257,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
 
-                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+                        <!-- <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
                            style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
                            data-bs-toggle="modal" data-bs-target="#importUsersModal">
                             <i class="bi bi-upload me-3"></i>Import Users
@@ -267,7 +267,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                            style="font-size: .875rem; background-color: rgb(3,2,18);" 
                            data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bi bi-person-plus me-3"></i>Add User
-                        </a>
+                        </a> -->
                     </div>
                 </div>
 
