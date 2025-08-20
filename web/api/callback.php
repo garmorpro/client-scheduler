@@ -1,18 +1,12 @@
 <?php
-require_once '../includes/db.php'; // define $dbHost, $dbUser, $dbPass, $dbName
+require_once '../includes/db.php'; // $conn is defined here
 require_once '../api/api_helper.php';
 session_start();
 
 // Microsoft App settings
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
-// Use HTTP for local testing
+// Use HTTP/HTTPS depending on your testing environment
 $redirectUri = "https://scheduler.morganserver.com/api/callback.php";
-
-// Connect to MySQL (mysqli)
-$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-if ($mysqli->connect_error) {
-    die(json_encode(['error' => 'DB connection failed', 'message' => $mysqli->connect_error]));
-}
 
 // Get code from query
 if (!isset($_GET['code'])) {
@@ -57,24 +51,25 @@ if (!$data || !isset($data['id_token'])) {
 $idTokenParts = explode('.', $data['id_token']);
 $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true);
 
-// Extract user info
-$msId = $mysqli->real_escape_string($payload['sub']);
-$email = $mysqli->real_escape_string($payload['preferred_username']);
-$name = $mysqli->real_escape_string($payload['name'] ?? '');
+// Extract user info and escape
+$msId = $conn->real_escape_string($payload['sub']);
+$email = $conn->real_escape_string($payload['preferred_username']);
+$name = $conn->real_escape_string($payload['name'] ?? '');
 $role = 'employee';
 
 // Check if user exists
-$result = $mysqli->query("SELECT * FROM users WHERE microsoft_id='$msId'");
+$result = $conn->query("SELECT * FROM users WHERE microsoft_id='$msId'");
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $userId = $user['id'];
     $role = $user['role'] ?? 'employee';
 } else {
-    $insert = $mysqli->query("INSERT INTO users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
+    // Insert new user
+    $insert = $conn->query("INSERT INTO users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
     if (!$insert) {
-        die(json_encode(['error' => 'Failed to insert user', 'message' => $mysqli->error]));
+        die(json_encode(['error' => 'Failed to insert user', 'message' => $conn->error]));
     }
-    $userId = $mysqli->insert_id;
+    $userId = $conn->insert_id;
 }
 
 // Create session
@@ -82,7 +77,7 @@ $_SESSION['user_id'] = $userId;
 $_SESSION['email'] = $email;
 $_SESSION['role'] = $role;
 
-// Debugging output (optional)
+// Debugging output
 echo json_encode([
     'message' => 'Login successful',
     'user_id' => $userId,
@@ -90,6 +85,6 @@ echo json_encode([
     'role' => $role
 ]);
 
-// Or redirect
+// Or redirect to frontend dashboard
 // header("Location: /index.php");
 // exit;
