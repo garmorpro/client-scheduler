@@ -16,10 +16,39 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch clients from database
+// Fetch all clients
 $stmt = $conn->prepare("SELECT client_id, client_name, status, onboarded_date FROM clients ORDER BY client_name ASC");
 $stmt->execute();
 $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Fetch all engagement counts in one query
+$sql = "
+    SELECT client_id,
+           COUNT(*) AS total_engagements,
+           SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_engagements
+    FROM engagements
+    GROUP BY client_id
+";
+$result = $conn->query($sql);
+
+$engagementCounts = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $engagementCounts[$row['client_id']] = [
+            'total_engagements' => (int)$row['total_engagements'],
+            'active_engagements' => (int)$row['active_engagements']
+        ];
+    }
+}
+
+// Map engagement counts to clients
+foreach ($clients as &$client) {
+    $clientId = $client['client_id'];
+    $client['total_engagements'] = $engagementCounts[$clientId]['total_engagements'] ?? 0;
+    $client['active_engagements'] = $engagementCounts[$clientId]['active_engagements'] ?? 0;
+}
+unset($client); // break reference
 ?>
 <!DOCTYPE html>
 <html>
@@ -135,11 +164,11 @@ $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <!-- Engagements Info -->
                 <div class="d-flex justify-content-between mb-1 flex-wrap">
                     <span class="text-muted"><i class="bi bi-people me-2"></i> Active engagements</span>
-                    <span><?php echo $client['active_engagements'] ?? 2; ?></span>
+                    <span><?php echo $client['active_engagements'] ?? 0; ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-3 flex-wrap">
                     <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
-                    <span><?php echo $client['total_engagements'] ?? 5; ?></span>
+                    <span><?php echo $client['total_engagements'] ?? 0; ?></span>
                 </div>
 
                 <!-- Card Buttons -->
