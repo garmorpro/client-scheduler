@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Edit Client Modal -->
 <div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
+  <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content">
       <form id="editClientForm">
         <div class="modal-header">
