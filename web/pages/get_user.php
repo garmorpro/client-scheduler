@@ -4,12 +4,14 @@ session_start();
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
+    header('Content-Type: application/json');
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
 
 if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
     http_response_code(400);
+    header('Content-Type: application/json');
     echo json_encode(['error' => 'Invalid user ID']);
     exit;
 }
@@ -24,7 +26,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if ($user) {
-    // Fetch last 3 activity logs for this user
+    // Fetch last 3 activity logs
     $activityStmt = $conn->prepare("SELECT description, created_at FROM system_activity_log WHERE user_id = ? ORDER BY created_at DESC LIMIT 3");
     $activityStmt->bind_param("i", $user_id);
     $activityStmt->execute();
@@ -42,8 +44,9 @@ if ($user) {
     echo json_encode($user);
 } else {
     http_response_code(404);
+    header('Content-Type: application/json');
     echo json_encode(['error' => 'User not found']);
 }
+
 $stmt->close();
 $conn->close();
-?>
