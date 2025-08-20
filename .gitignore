@@ -1,4 +1,5 @@
 .env
+web/.env
 
 # Composer dependencies
 web/vendor/
