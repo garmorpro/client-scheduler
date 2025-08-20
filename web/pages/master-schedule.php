@@ -51,7 +51,7 @@ if ($userResult) {
 }
 
 // Clients
-$clientQuery = "SELECT engagement_id, client_name FROM engagements";
+$clientQuery = "SELECT engagement_id, client_id FROM engagements";
 $clientResult = $conn->query($clientQuery);
 $activeClients = [];
 while ($clientRow = $clientResult->fetch_assoc()) {
