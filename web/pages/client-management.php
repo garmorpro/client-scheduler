@@ -296,22 +296,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Fill modal content with styled top details
                 let html = `
-                    <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
-                        <div id="view_client_initials" 
-                             class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" 
-                             style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
-                            ${initials}
-                        </div>
-                        <div>
-                            <div id="view_client_name" class="fw-semibold">${client.client_name}</div>
-                            <small id="view_onboarded_date" class="text-muted">Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</small><br>
-                            <small class="text-muted">Total Engagements: ${client.total_engagements}</small><br>
-                            <small class="text-muted">Confirmed Engagements: ${client.confirmed_engagements}</small>
-                        </div>
-                    </div>
-                    <hr>
-                    <div id="engagementHistoryContainer"></div>
-                `;
+    <div style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
+        <div id="view_client_initials" 
+             class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" 
+             style="padding: 25px !important; width: 50px; height: 50px; font-weight: 500; font-size: 20px;">
+            ${initials}
+        </div>
+        <div style="flex-grow: 1;">
+            <div id="view_client_name" class="fw-semibold">${client.client_name}</div>
+            <small id="view_onboarded_date" class="text-muted">Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</small>
+            
+            <div class="d-flex gap-2 mt-2">
+                <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div class="fw-semibold">${client.total_engagements}</div>
+                    <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
+                </div>
+                <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div class="fw-semibold">${client.confirmed_engagements}</div>
+                    <div class="text-muted" style="font-size: 12px;">Confirmed Engagements</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div id="engagementHistoryContainer"></div>
+`;
+
 
                 modalBody.innerHTML = html;
 
