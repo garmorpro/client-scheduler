@@ -17,7 +17,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $user_id = intval($input['user_id'] ?? 0);
 $week_start = $input['week_start'] ?? null;
-$client_name = trim($input['client_id'] ?? '');
+$client_name = trim($input['client_name'] ?? '');
 $assigned_hours = floatval($input['assigned_hours'] ?? 0);
 
 if (!$user_id || !$week_start || !$client_name || $assigned_hours <= 0) {
@@ -27,7 +27,7 @@ if (!$user_id || !$week_start || !$client_name || $assigned_hours <= 0) {
 }
 
 // Find engagement_id by client_name
-$stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_id = ? LIMIT 1");
+$stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ? LIMIT 1");
 $stmt->bind_param('s', $client_name);
 $stmt->execute();
 $result = $stmt->get_result();

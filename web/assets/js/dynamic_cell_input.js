@@ -26,7 +26,7 @@
         switch ((status || '').toLowerCase()) {
             case 'confirmed': return 'confirmed';
             case 'pending': return 'pending';
-            case 'not_confirmed': return 'not-confirmed';
+            case 'not_confirmed': return 'not-confirmed'; // always use hyphen
             default: return 'confirmed';
         }
     }
@@ -232,12 +232,6 @@
                         return;
                     }
 
-                    const selectedClient = activeClients.find(c => c.client_name.trim().toLowerCase() === clientName.toLowerCase());
-                    if (!selectedClient) {
-                        alert('Selected client not found.');
-                        return;
-                    }
-
                     closeActiveInputs();
                     if (inline) globalDropdown.style.display = 'none';
                     else if (overlay && overlay.nextSibling) overlay.nextSibling.style.display = 'none';
@@ -253,7 +247,7 @@
                             body: JSON.stringify({
                                 user_id: td.dataset.userId,
                                 week_start: td.dataset.weekStart,
-                                client_id: selectedClient.client_id, // updated here
+                                client_name: clientName,
                                 assigned_hours: hours
                             })
                         });
@@ -261,7 +255,7 @@
                         const data = await resp.json();
                         if (resp.ok && data.success) {
                             const span = document.createElement('span');
-                            const statusClass = getBadgeClass(selectedClient.status);
+                            const statusClass = getBadgeClass(getClientStatus(clientName));
                             span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                             span.dataset.entryId = data.entry_id;
                             span.dataset.userId = td.dataset.userId;
@@ -301,8 +295,6 @@
         const match = badge.textContent.match(/^(.*)\s+\(([\d.]+)\)$/);
         const currentName = match ? match[1] : '';
         const currentHours = match ? match[2] : '';
-
-        const selectedClient = activeClients.find(c => c.client_name.trim().toLowerCase() === currentName.toLowerCase());
 
         const rect = td.getBoundingClientRect();
         const overlay = document.createElement('div');
@@ -364,12 +356,6 @@
                         return;
                     }
 
-                    const updatedClient = activeClients.find(c => c.client_name.trim().toLowerCase() === newName.toLowerCase());
-                    if (!updatedClient) {
-                        alert('Selected client not found.');
-                        return;
-                    }
-
                     closeActiveInputs();
 
                     try {
@@ -382,7 +368,7 @@
                             },
                             body: JSON.stringify({
                                 entry_id: badge.dataset.entryId,
-                                client_id: updatedClient.client_id, // updated here
+                                client_name: newName,
                                 assigned_hours: newHours
                             })
                         });
@@ -390,7 +376,7 @@
                         const data = await resp.json();
                         if (resp.ok && data.success) {
                             badge.textContent = `${newName} (${newHours})`;
-                            const statusClass = getBadgeClass(updatedClient.status);
+                            const statusClass = getBadgeClass(getClientStatus(newName));
                             badge.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
                         } else {
                             alert('Failed to update entry: ' + (data.error || 'Server error'));
