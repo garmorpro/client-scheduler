@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                alert('Client added successfully!');
+                // alert('Client added successfully!');
                 addModal.hide();
                 location.reload(); // reload page to show new client
             } else {

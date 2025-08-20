@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                alert('Client updated successfully!');
+                // alert('Client updated successfully!');
                 editModal.querySelector('.btn-close').click();
                 location.reload(); // refresh to update client card
             } else {

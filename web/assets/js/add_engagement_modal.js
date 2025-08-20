@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                alert('Engagement added successfully!');
+                // alert('Engagement added successfully!');
                 addEngagementModal.querySelector('.btn-close').click();
                 location.reload(); // Refresh to update counts
             } else {
