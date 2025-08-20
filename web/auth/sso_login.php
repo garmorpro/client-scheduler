@@ -19,9 +19,9 @@ require_once '../includes/auth.php';
         <p class="text-center text-muted">Sign in to access your engagement schedules</p>
 
         <!-- Show inactivity alert -->
-        <?php if (isset($_GET['message'])): ?>
+        <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-warning text-center" role="alert">
-                <?= htmlspecialchars($_GET['message']); ?>
+                <?= htmlspecialchars($_SESSION['message']); ?>
             </div>
         <?php endif; ?>
 
