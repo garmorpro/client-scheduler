@@ -25,6 +25,7 @@ session_start();
             <div class="alert alert-warning text-center" role="alert">
                 <?= htmlspecialchars($_SESSION['message']); ?>
             </div>
+            <?php unset($_SESSION['message']); // remove after displaying ?>
         <?php endif; ?>
 
         <!-- SSO Login Button -->
