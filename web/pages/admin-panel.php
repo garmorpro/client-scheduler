@@ -327,24 +327,24 @@ if ($result && mysqli_num_rows($result) > 0) {
                                                 $role = strtolower($userrow['role']);
                                                 switch ($role) {
                                                     case 'staff':
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Promote to Senior</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Promote to Manager</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior">Promote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager">Promote to Manager</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin">Promote to Admin</a></li>';
                                                         break;
                                                     case 'senior':
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Promote to Manager</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager">Promote to Manager</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin">Promote to Admin</a></li>';
                                                         break;
                                                     case 'manager':
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Demote to Senior</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="admin">Promote to Admin</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior">Demote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin">Promote to Admin</a></li>';
                                                         break;
                                                     case 'admin':
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="staff">Demote to Staff</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="senior">Demote to Senior</a></li>';
-                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-new-role="manager">Demote to Manager</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff">Demote to Staff</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior">Demote to Senior</a></li>';
+                                                        echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager">Demote to Manager</a></li>';
                                                         break;
                                                 }
                                                 ?>
@@ -385,9 +385,10 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", function(e) {
             e.preventDefault();
             const userId = this.dataset.userId;
+            const userName = this.dataset.userName;
             const newRole = this.dataset.newRole;
 
-            if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
+            if (!confirm(`Are you sure you want to change ${userName} role to ${newRole}?`)) return;
 
             fetch('update_role.php', {
                 method: 'POST',
@@ -399,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert("Role updated successfully!");
+                    // alert("Role updated successfully!");
                     // Optionally reload or update table row dynamically
                     location.reload();
                 } else {
