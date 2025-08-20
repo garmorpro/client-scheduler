@@ -4,6 +4,9 @@ require_once '../includes/db.php'; // defines $conn (mysqli)
 require_once '../api/api_helper.php';
 session_start();
 
+var_dump($_ENV['MS_CLIENT_ID'], $_ENV['MS_CLIENT_SECRET']);
+exit;
+
 // Load .env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
