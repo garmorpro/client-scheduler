@@ -5,6 +5,7 @@ session_start();
 
 // Microsoft App settings
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
+// Pull client secret from environment
 $clientSecret = getenv('CLIENT_SECRET'); 
 $redirectUri = "https://scheduler.morganserver.com/api/callback.php";
 
@@ -56,14 +57,14 @@ $payload = json_decode(base64_decode(strtr($idTokenParts[1], '-_', '+/')), true)
 $msId = mysqli_real_escape_string($conn, $payload['sub']);
 $email = mysqli_real_escape_string($conn, $payload['preferred_username']);
 $name = mysqli_real_escape_string($conn, $payload['name'] ?? '');
-$role = 'staff';
+$role = 'employee';
 
 // Check if user exists
 $result = $conn->query("SELECT * FROM users WHERE microsoft_id='$msId'");
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $userId = $user['id'];
-    $role = $user['role'] ?? 'staff';
+    $role = $user['role'] ?? 'employee';
 } else {
     // Insert new user
     $insert = $conn->query("INSERT INTO users (microsoft_id, email, name, role) VALUES ('$msId', '$email', '$name', '$role')");
