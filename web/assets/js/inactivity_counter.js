@@ -1,10 +1,10 @@
 let activityTimeout;
 let inactivitySeconds = 0;
 
-// For testing, set a short limit (1 minute here)
-const INACTIVITY_LIMIT = 1 * 60 * 1000; // 1 minute
+// Set limit (1 minute for testing)
+const INACTIVITY_LIMIT = 1 * 60 * 1000;
 
-// Optional: log seconds of inactivity
+// Optional: log inactivity seconds
 // setInterval(() => {
 //     inactivitySeconds++;
 //     console.log("Inactivity time (seconds):", inactivitySeconds);
@@ -12,20 +12,18 @@ const INACTIVITY_LIMIT = 1 * 60 * 1000; // 1 minute
 
 function resetActivityTimer() {
     clearTimeout(activityTimeout);
-    inactivitySeconds = 0; // reset inactivity counter
+    inactivitySeconds = 0; // reset counter
 
     activityTimeout = setTimeout(() => {
         console.log("User inactive, logging out...");
-        // Redirect to logout with timeout flag
         window.location.href = "/auth/logout.php?timeout=1"; 
     }, INACTIVITY_LIMIT);
 }
 
-// List of events that count as "activity"
+// Track all relevant activity events
 ["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(evt => {
     document.addEventListener(evt, resetActivityTimer, true);
 });
 
-// Initialize timer on page load
+// Initialize timer
 resetActivityTimer();
-
