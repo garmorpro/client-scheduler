@@ -346,7 +346,7 @@ if (client.status.toLowerCase() === 'active') {
                             <div class="card p-2 mb-2">
                                 <div class="d-flex justify-content-between">
                                     <span>${h.engagement_year}</span>
-                                    <span style="font-size: 10px;">${h.status || 'Archived'}</span>
+                                    <span class="badge" style="font-size: 10px; background-color: black !important;">${h.status || 'Archived'}</span>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size: 10px;">
                                     <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
