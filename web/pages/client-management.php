@@ -163,7 +163,7 @@ unset($client); // break reference
 
                 <!-- Engagements Info -->
                 <div class="d-flex justify-content-between mb-1 flex-wrap">
-                    <span class="text-muted"><i class="bi bi-people me-2"></i> Confirmed engagements</span>
+                    <span class="text-muted"><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
                     <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-3 flex-wrap">
