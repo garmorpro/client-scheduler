@@ -63,23 +63,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return formatDate(dateString);
       }
 
-      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
-      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
-      setText('view_user_initials', firstInitial + lastInitial);
+      const fullName = user.full_name || '-';
+const initials = fullName
+    .split(' ')
+    .map(name => name.charAt(0).toUpperCase())
+    .slice(0, 2) // get at most first two initials
+    .join('');
 
-      setText('view_user_fullname', `${user.first_name || '-'} ${user.last_name || '-'}`);
-      setText('view_user_fullname_intro', `${user.first_name || '-'} ${user.last_name || '-'}`);
-      setText('view_email', user.email);
-      setText('view_user_role', user.role);
+setText('view_user_initials', initials);
 
-      setText('view_first_name_detail', user.first_name);
-      setText('view_last_name_detail', user.last_name);
-      setText('view_email_detail', user.email);
+setText('view_user_fullname', fullName);
+setText('view_user_fullname_intro', fullName);
+setText('view_email', user.email);
+setText('view_user_role', user.role);
 
-      setText('view_status', user.status);
-      setText('view_acct_status', user.status);
-      setText('view_acct_created', formatDate(user.created));
-      setText('view_acct_last_active', formatDate(user.last_active));
+setText('view_first_name_detail', fullName); // if you still need a detail field
+setText('view_last_name_detail', ''); // empty since no last_name exists
+setText('view_email_detail', user.email);
+
+setText('view_status', user.status);
+setText('view_acct_status', user.status);
+setText('view_acct_created', formatDate(user.created));
+setText('view_acct_last_active', formatDate(user.last_active));
 
       function getAccessLevel(role) {
         switch(role.toLowerCase()) {
