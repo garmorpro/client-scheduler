@@ -72,8 +72,11 @@ const initials = fullName
 
 setText('view_user_initials', initials);
 
-setText('view_user_fullname', fullName);
-setText('view_user_fullname_intro', fullName);
+setText('full_name_1', fullName);
+setText('full_name_2', fullName);
+setText('full_name_3', fullName);
+setText('full_name_4', fullName);
+setText('full_name_5', fullName);
 setText('view_email', user.email);
 setText('view_user_role', user.role);
 

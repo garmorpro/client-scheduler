@@ -78,22 +78,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Fill user details
-      const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '-';
-      const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '-';
-      setText('view_user_initials2', firstInitial + lastInitial);
-      setText('view_user_fullname2', `${user.first_name || '-'} ${user.last_name || '-'}`);
-      setText('view_user_fullname_intro2', `${user.first_name || '-'} ${user.last_name || '-'}`);
-      setText('view_email2', user.email);
-      setText('view_user_role2', user.role);
 
-      setText('view_first_name_detail2', user.first_name);
-      setText('view_last_name_detail2', user.last_name);
-      setText('view_email_detail2', user.email);
+      const fullName = user.full_name || '-';
+const initials = fullName
+    .split(' ')
+    .map(name => name.charAt(0).toUpperCase())
+    .slice(0, 2) // get at most first two initials
+    .join('');
 
-      setText('view_status2', user.status);
-      setText('view_acct_status2', user.status);
-      setText('view_acct_created2', formatDate(user.created));
-      setText('view_acct_last_active2', formatDate(user.last_active));
+setText('view_user_initials2', initials);
+
+setText('view_user_fullname2', fullName);
+setText('view_user_fullname_intro2', fullName);
+setText('full_name_1', fullName);
+setText('full_name_4', fullName);
+setText('full_name_5', fullName);
+setText('view_email2', user.email);
+setText('view_user_role2', user.role);
+
+setText('view_first_name_detail', fullName); // if you still need a detail field
+setText('view_email_detail2', user.email);
+
+setText('view_status2', user.status);
+setText('view_acct_status2', user.status);
+setText('view_acct_created', formatDate(user.created));
+setText('view_acct_last_active2', formatDate(user.last_active));
+
+
+
 
       setText('view_acct_role2', user.role);
       setText('view_acct_access_level2', getAccessLevel(user.role));
