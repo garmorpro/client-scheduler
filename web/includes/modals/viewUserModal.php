@@ -31,15 +31,15 @@
                 </h6>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Full Name:</strong>
-                  <span id="full_name2" class="text-capitalize" style="float: right;"></span>
+                  <span id="view_first_name_detail2" class="text-capitalize" style="float: right;"></span>
+                </p>
+                <p class="text-muted mb-1" style="overflow: hidden;">
+                  <strong style="float: left;">Last Name:</strong>
+                  <span id="view_last_name_detail2" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <p class="text-muted mb-1" style="overflow: hidden;">
                   <strong style="float: left;">Email:</strong>
                   <span id="view_email_detail2" style="float: right;"></span>
-                </p>
-                <p class=" mb-1" style="overflow: hidden; text:white !important;">
-                  <strong style="float: left;">Last Name:</strong>
-                  <span id="view_last_name_detail2" class="text-capitalize" style="float: right;"></span>
                 </p>
                 <div class="mt-3"></div>
                 <hr>

@@ -80,6 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Fill user details
 
       const fullName = user.full_name || '-';
+      // Split full name into first and last
+const nameParts = fullName.trim().split(' ');
+const firstName = nameParts[0] || '-';
+const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '-';
 const initials = fullName
     .split(' ')
     .map(name => name.charAt(0).toUpperCase())
@@ -91,7 +95,8 @@ setText('view_user_initials2', initials);
 setText('view_user_fullname2', fullName);
 setText('view_user_fullname_intro2', fullName);
 setText('full_name_1', fullName);
-setText('full_name2', fullName);
+setText('view_first_name_detail2', firstName);
+setText('view_last_name_detail2', lastName);
 setText('view_email2', user.email);
 setText('view_user_role2', user.role);
 
