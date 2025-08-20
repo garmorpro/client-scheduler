@@ -361,7 +361,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <!-- Employee Modal -->
         <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-dialog modal-dialog-centered modal-lg modal-scrollable">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
