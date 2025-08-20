@@ -5,7 +5,7 @@ session_start();
 
 // Microsoft App settings
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
-$clientSecret = "569283c9-a1ce-4931-8094-14f826fd1fab"; // <-- put your secret here
+$clientSecret = getenv('CLIENT_SECRET'); 
 $redirectUri = "https://scheduler.morganserver.com/api/callback.php";
 
 // Get code from query
