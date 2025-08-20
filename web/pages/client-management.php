@@ -349,7 +349,7 @@ if (client.status.toLowerCase() === 'active') {
                                     <span style="font-size: 10px;">${h.status || 'Archived'}</span>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size: 10px;">
-                                    <div><span class="text-muted">Budgeted: ${h.budgeted_hours}</div>
+                                    <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
                                     <div>Allocated: ${h.allocated_hours}</div>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size: 10px;">
