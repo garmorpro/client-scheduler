@@ -367,7 +367,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" style="">
+              <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <div id="employeeModalContent">
                   <!-- Dynamic content goes here -->
                 </div>
