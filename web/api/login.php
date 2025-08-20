@@ -8,7 +8,7 @@ $_SESSION['code_verifier'] = $verifier;
 $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
 
 $clientId = "d27315bd-3815-48d6-a27b-aeaa9fe2105a";
-$redirectUri = "http://10.10.254.127/api/callback.php";
+$redirectUri = "https://10.10.254.127/api/callback.php";
 $scopes = "openid profile email";
 
 $authUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" . http_build_query([
