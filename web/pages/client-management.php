@@ -280,65 +280,65 @@ unset($client);
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const viewModal = new bootstrap.Modal(document.getElementById('viewClientModal'));
-    const clientNameEl = document.getElementById('view_client_name');
-    const onboardedDateEl = document.getElementById('view_onboarded_date');
-    const totalEngEl = document.getElementById('view_total_engagements');
-    const confirmedEngEl = document.getElementById('view_confirmed_engagements');
-    const engagementContainer = document.getElementById('engagementHistoryContainer');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const modal = new bootstrap.Modal(document.getElementById('viewClientModal'));
+    const modalBody = document.getElementById('viewClientModalBody');
 
-    // Event listener for view buttons
-    document.querySelectorAll('.view-btn').forEach(button => {
+    viewButtons.forEach(button => {
         button.addEventListener('click', async () => {
-            const clientCard = button.closest('.client-card');
-            const clientId = clientCard.dataset.clientId;
+            const clientId = button.dataset.clientId;
 
-            // Fetch client info & engagements
             try {
-                const response = await fetch(`get_client_details.php?client_id=${clientId}`);
-                const data = await response.json();
+                const res = await fetch(`view_client.php?client_id=${clientId}`);
+                const data = await res.json();
 
-                if (data.success) {
-                    const client = data.client;
-                    clientNameEl.textContent = client.client_name;
-                    onboardedDateEl.textContent = client.onboarded_date;
-                    totalEngEl.textContent = client.total_engagements;
-                    confirmedEngEl.textContent = client.confirmed_engagements;
-
-                    engagementContainer.innerHTML = ''; // clear previous
-
-                    data.history.forEach(item => {
-                        const card = document.createElement('div');
-                        card.classList.add('border', 'p-3', 'rounded');
-
-                        card.innerHTML = `
-                            <div class="d-flex justify-content-between mb-1">
-                                <span><strong>Year:</strong> ${item.engagement_year}</span>
-                                <span class="text-danger">Archived</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span><strong>Budgeted:</strong> ${item.budgeted_hours}</span>
-                                <span><strong>Allocated:</strong> ${item.allocated_hours}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span><strong>Manager:</strong> ${item.manager}</span>
-                                <span><strong>Senior:</strong> ${item.senior}</span>
-                                <span><strong>Staff:</strong> ${item.staff}</span>
-                            </div>
-                            <hr class="my-2">
-                            <div><strong>Archived:</strong> ${item.archive_date || '-'}</div>
-                        `;
-
-                        engagementContainer.appendChild(card);
-                    });
-
-                    viewModal.show();
-                } else {
-                    alert('Error fetching client details.');
+                if (data.error) {
+                    alert(data.error);
+                    return;
                 }
+
+                const client = data.client;
+                const history = data.history;
+
+                // Fill modal content
+                let html = `
+                    <div class="mb-3">
+                        <h5>${client.client_name}</h5>
+                        <p>Onboarded: ${new Date(client.onboarded_date).toLocaleDateString()}</p>
+                        <p>Total Engagements: ${client.total_engagements}</p>
+                        <p>Confirmed Engagements: ${client.confirmed_engagements}</p>
+                    </div>
+                    <hr>
+                `;
+
+                history.forEach(h => {
+                    html += `
+                        <div class="card p-2 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>${h.engagement_year}</span>
+                                <span>${h.status || 'Archived'}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Budgeted: ${h.budgeted_hours}</span>
+                                <span>Allocated: ${h.allocated_hours}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Manager: ${h.manager}</span>
+                                <span>Senior: ${h.senior}</span>
+                                <span>Staff: ${h.staff}</span>
+                            </div>
+                            <hr>
+                            <div>Archived: ${h.archive_date || 'N/A'}</div>
+                        </div>
+                    `;
+                });
+
+                modalBody.innerHTML = html;
+                modal.show();
+
             } catch (err) {
+                alert('Error fetching client details.');
                 console.error(err);
-                alert('Failed to fetch client details.');
             }
         });
     });
