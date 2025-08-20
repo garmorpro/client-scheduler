@@ -26,7 +26,7 @@ $stmt->close();
 $sql = "
     SELECT client_id,
            COUNT(*) AS total_engagements,
-           SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS active_engagements
+           SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed_engagements
     FROM engagements
     GROUP BY client_id
 ";
