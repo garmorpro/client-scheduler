@@ -245,7 +245,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
                     <!-- Middle (Search) -->
-                    <div class="user-search mx-3" style="flex: 1; max-width: 300px;">
+                    <div class="user-search mx-3" style="flex: 1; max-width: 600px;">
                         <input type="text" id="userSearch" class="form-control form-control-sm" 
                                placeholder="Search employees..." minlength="3">
                     </div>
