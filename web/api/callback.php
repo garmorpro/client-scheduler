@@ -4,7 +4,6 @@ require_once '../includes/db.php'; // defines $conn (mysqli)
 require_once '../api/api_helper.php';
 session_start();
 
-
 // ---------------- ENVIRONMENT SETUP ---------------------------
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -83,6 +82,7 @@ $msId = $conn->real_escape_string($payload['sub'] ?? '');
 $email = $conn->real_escape_string($payload['preferred_username'] ?? '');
 $full_name = $conn->real_escape_string($payload['name'] ?? '');
 $role = 'staff';
+$now = time(); // current timestamp for last_active
 // --------------------------------------------------------------
 
 // ---------------- DB USER LOOKUP ------------------------------
@@ -93,14 +93,15 @@ if ($result && $result->num_rows > 0) {
     $fullName = $user['full_name'];
     $role = $user['role'] ?? 'staff';
 
-    // update token_exp on login
+    // Update last_active only for existing users
     $conn->query("UPDATE ms_users 
-                  SET token_exp=" . ($tokenExp ? intval($tokenExp) : "NULL") . " 
+                  SET last_active=$now 
                   WHERE user_id=$userId");
 
 } else {
-    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, full_name, role, token_exp) 
-                            VALUES ('$msId', '$email', '$full_name', '$role', " . ($tokenExp ? intval($tokenExp) : "NULL") . ")");
+    // Insert new user with last_active
+    $insert = $conn->query("INSERT INTO ms_users (microsoft_id, email, full_name, role, last_active) 
+                            VALUES ('$msId', '$email', '$full_name', '$role', $now)");
     if (!$insert) {
         die(json_encode(['error' => 'Failed to insert user', 'message' => $conn->error]));
     }
@@ -114,7 +115,7 @@ $_SESSION['user_id'] = $userId;
 $_SESSION['full_name'] = $fullName;
 $_SESSION['email'] = $email;
 $_SESSION['user_role'] = $role;
-$_SESSION['token_exp'] = $tokenExp;
+// Note: Do NOT store token_exp in session for existing users
 // --------------------------------------------------------------
 
 // ---------------- REDIRECT ------------------------------
@@ -125,3 +126,4 @@ if ($role === 'admin') {
     header("Location: /pages/my-schedule.php");
     exit;
 }
+?>
