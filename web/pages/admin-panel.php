@@ -25,7 +25,7 @@ $totalUsersRow = mysqli_fetch_assoc($totalUsersResult);
 $totalUsers = $totalUsersRow['total'];
 
 // Get users added in last 30 days
-$newUsersQuery = "SELECT COUNT(*) AS recent FROM ms_users WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+$newUsersQuery = "SELECT COUNT(*) AS recent FROM ms_users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
