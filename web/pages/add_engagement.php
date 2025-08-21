@@ -16,15 +16,24 @@ $client_name = $_POST['client_name'] ?? null;
 $budget_hours = $_POST['budget_hours'] ?? null;
 $status = $_POST['status'] ?? null;
 $year = $_POST['year'] ?? date('Y');
+$manager_id = $_POST['manager'] ?? null;
 
-if (!$client_id || !$client_name || !$budget_hours || !$status) {
+if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager_id) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
     exit;
 }
 
-// Insert into engagements
-$stmt = $conn->prepare("INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param('isisi', $client_id, $client_name, $budget_hours, $status, $year);
+// Insert into engagements including manager
+$stmt = $conn->prepare("
+    INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year, manager) 
+    VALUES (?, ?, ?, ?, ?, ?)
+");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+    exit;
+}
+
+$stmt->bind_param('isisii', $client_id, $client_name, $budget_hours, $status, $year, $manager_id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
@@ -34,3 +43,4 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>

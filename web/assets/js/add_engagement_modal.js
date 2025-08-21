@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clientButtons = document.querySelectorAll('[data-bs-target="#addEngagementModal"]');
     const addForm = document.getElementById('addEngagementForm');
 
-    // When modal opens, populate client info
+    // Populate client info when modal opens
     clientButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const clientId = btn.getAttribute('data-client-id');
@@ -28,9 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                // alert('Engagement added successfully!');
                 addEngagementModal.querySelector('.btn-close').click();
-                location.reload(); // Refresh to update counts
+                location.reload(); // Refresh to update list
             } else {
                 alert('Error: ' + result.message);
             }
