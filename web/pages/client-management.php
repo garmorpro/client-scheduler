@@ -340,53 +340,48 @@ if (client.status.toLowerCase() === 'active') {
 
                 
 
-                if (history.length === 0) {
+               if (history.length === 0) {
     historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
 } else {
-    // Helper function: split comma-separated values into stacked <div>s
+    // Helper: return array of <div> elements (not joined into one string)
     function formatListItems(value) {
-        if (!value) return '';
-        return value
-            .split(',')
-            .map(i => `<div>${i.trim()}</div>`)
-            .join('');
+        if (!value) return [];
+        return value.split(',').map(i => `<div>${i.trim()}</div>`);
     }
 
     history.forEach(h => {
-        const managerHtml = formatListItems(h.manager);
-        const seniorHtml = formatListItems(h.senior);
-        const staffHtml = formatListItems(h.staff);
+        const managerHtml = formatListItems(h.manager).join('');
+        const seniorHtml = formatListItems(h.senior).join('');
+        const staffHtml = formatListItems(h.staff).join('');
 
         historyContainer.innerHTML += `
             <div class="card p-2 mb-2">
+                <!-- Year + Status -->
                 <div class="d-flex justify-content-between mb-2">
                     <span>${h.engagement_year}</span>
-                    <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">
+                    <span class="badge d-flex align-items-center" 
+                          style="font-size: 10px; background-color: black !important;">
                         ${h.status || 'Archived'}
                     </span>
                 </div>
+
+                <!-- Hours -->
                 <div class="d-flex justify-content-between mb-1" style="font-size: 10px;">
                     <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
                     <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
                 </div>
 
                 <!-- Table-like layout -->
-                <div class="d-flex justify-content-between fw-semibold border-bottom pb-1 mb-1" style="font-size: 10px;">
+                <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size: 10px;">
                     <div style="flex:1;">Manager</div>
                     <div style="flex:1;">Senior</div>
                     <div style="flex:1;">Staff</div>
                 </div>
-                <div style="font-size: 10px;">
-  <div><span class="text-muted">Manager:</span></div>
-  ${h.manager.split(",").map(m => `<div>${m.trim()}</div>`).join("")}
-
-  <div><span class="text-muted">Senior:</span></div>
-  ${h.senior.split(",").map(s => `<div>${s.trim()}</div>`).join("")}
-
-  <div><span class="text-muted">Staff:</span></div>
-  ${h.staff.split(",").map(st => `<div>${st.trim()}</div>`).join("")}
-</div>
-
+                <div class="d-flex text-muted" style="font-size: 10px;">
+                    <div style="flex:1;" class="d-flex flex-column">${managerHtml}</div>
+                    <div style="flex:1;" class="d-flex flex-column">${seniorHtml}</div>
+                    <div style="flex:1;" class="d-flex flex-column">${staffHtml}</div>
+                </div>
 
                 <hr>
                 <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
@@ -394,6 +389,7 @@ if (client.status.toLowerCase() === 'active') {
         `;
     });
 }
+
 
 
 
