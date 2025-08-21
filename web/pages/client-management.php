@@ -250,27 +250,11 @@ unset($client);
 
 
 
-<!-- Delete Client Modal -->
-
-
-
-
-<script>
-    
-
-</script>
-
-
-
-
-
-
-
-
 <?php include_once '../includes/modals/add_client_modal.php'; ?>
 <?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/edit_client_modal.php'; ?>
 <?php include_once '../includes/modals/import_client_modal.php'; ?>
+<?php include_once '../includes/modals/delete_client_modal.php'; ?>
 <?php include_once '../includes/modals/add_engagement_modal.php'; ?>
 
 
@@ -278,6 +262,7 @@ unset($client);
 <script src="../assets/js/view_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/delete_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
 
 
