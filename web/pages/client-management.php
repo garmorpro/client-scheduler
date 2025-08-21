@@ -85,6 +85,8 @@ unset($client);
         }
         .delete-client-btn:hover {
             background-color: rgb(195,49,66) !important;
+        }
+        .delete-client-btn:hover i {
             color: white !important;
         }
     </style>
