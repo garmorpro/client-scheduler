@@ -280,10 +280,14 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
                                    data-engagement-id="<?php echo $row['engagement_id']; ?>">
                                     <i class="bi bi-pencil text-purple"></i>
                                 </a>
-                                <a href="#" class="delete-engagement-btn text-decoration-none" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-trash text-danger"></i>
-                                </a>
+                                <a href="#" 
+   class="archive-engagement-btn text-decoration-none" 
+   data-engagement-id="<?php echo $row['engagement_id']; ?>"
+   data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+   data-engagement-year="<?php echo htmlspecialchars($row['engagement_year']); ?>"
+   data-status="<?php echo htmlspecialchars($row['status']); ?>">
+    <i class="bi bi-archive text-danger"></i>
+</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -301,6 +305,86 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
     <!-- end engagement table -->
 
 </div>
+
+
+<div class="modal fade" id="archiveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title">Archive Engagement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          Are you sure you want to archive the current engagement for 
+          "<strong id="modalClientName"></strong>"? This will move the engagement to archived status 
+          and it will no longer appear in active lists.
+        </p>
+
+        <div class="small">
+          <div><strong>Client:</strong> <span id="modalClient"></span></div>
+          <div><strong>Year:</strong> <span id="modalYear"></span></div>
+          <div><strong>Status:</strong> <span id="modalStatus"></span></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmArchiveBtn" class="btn btn-danger">Archive Engagement</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let engagementId, clientName, year, status;
+
+    document.querySelectorAll(".archive-engagement-btn").forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            engagementId = this.dataset.engagementId;
+            clientName = this.dataset.clientName;
+            year = this.dataset.engagementYear;
+            status = this.dataset.status;
+
+            // Fill modal fields
+            document.getElementById("modalClientName").textContent = clientName;
+            document.getElementById("modalClient").textContent = clientName;
+            document.getElementById("modalYear").textContent = year;
+            document.getElementById("modalStatus").textContent = status;
+
+            // Show modal
+            let archiveModal = new bootstrap.Modal(document.getElementById("archiveModal"));
+            archiveModal.show();
+        });
+    });
+
+    // Confirm archive button
+    document.getElementById("confirmArchiveBtn").addEventListener("click", function () {
+        fetch("archive_engagement.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `engagement_id=${engagementId}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // refresh page
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error:", err));
+    });
+});
+
+</script>
 
 
 <!-- search, filter, and pagination -->
