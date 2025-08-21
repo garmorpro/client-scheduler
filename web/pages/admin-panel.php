@@ -791,19 +791,19 @@ if ($result && mysqli_num_rows($result) > 0) {
 </div> <!-- end flex-grow -->
 
 <?php include_once '../includes/modals/global_pto_modal.php'; ?>
-<?php include_once '../includes/modals/viewProfileModal.php'; ?>
-<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+<?php //include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php //include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
-<?php include_once '../includes/modals/security_policy_modal.php'; ?>
+<?php //include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 
 <script src="../assets/js/global_pto.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/global_pto_table.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/admin_panel_tabs.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
+<!-- <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script> -->
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
+<!-- <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script> -->
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/buld_delete_users.js?v=<?php echo time(); ?>"></script>
