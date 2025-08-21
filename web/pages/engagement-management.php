@@ -113,7 +113,7 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
                   <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
                 </a>
 
-                <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+                <!-- <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
                    data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
                     <i class="bi bi-upload me-3"></i>Import Engagements
@@ -123,7 +123,7 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
                    style="font-size: .875rem; background-color: rgb(3,2,18);" 
                    data-bs-toggle="modal" data-bs-target="#addEngagementModal">
                     <i class="bi bi-plus-circle me-3"></i>Add Engagement
-                </a>
+                </a> -->
             </div>
         </div>
     <!-- end header -->
