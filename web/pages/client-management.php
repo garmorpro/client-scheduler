@@ -376,19 +376,15 @@ if (client.status.toLowerCase() === 'active') {
                     <div style="flex:1;">Senior</div>
                     <div style="flex:1;">Staff</div>
                 </div>
-                <div class="d-flex justify-content-between" style="font-size: 10px; width: 100%;">
-    <div>
-        <span class="text-muted">Manager:</span><br>
-        ${h.manager ? h.manager.split(",").map(name => name.trim()).join("<br>") : ""}
-    </div>
-    <div>
-        <span class="text-muted">Senior:</span><br>
-        ${h.senior ? h.senior.split(",").map(name => name.trim()).join("<br>") : ""}
-    </div>
-    <div>
-        <span class="text-muted">Staff:</span><br>
-        ${h.staff ? h.staff.split(",").map(name => name.trim()).join("<br>") : ""}
-    </div>
+                <div style="font-size: 10px;">
+  <div><span class="text-muted">Manager:</span></div>
+  ${h.manager.split(",").map(m => `<div>${m.trim()}</div>`).join("")}
+
+  <div><span class="text-muted">Senior:</span></div>
+  ${h.senior.split(",").map(s => `<div>${s.trim()}</div>`).join("")}
+
+  <div><span class="text-muted">Staff:</span></div>
+  ${h.staff.split(",").map(st => `<div>${st.trim()}</div>`).join("")}
 </div>
 
 
