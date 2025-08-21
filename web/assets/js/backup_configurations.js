@@ -1,4 +1,3 @@
-// Open Backup Configuration Modal
 document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
     e.preventDefault();
     const modalEl = document.getElementById('backupConfigModal');
@@ -39,4 +38,36 @@ document.getElementById('runTestBackupBtn').addEventListener('click', async () =
 
     btn.disabled = false;
     btn.textContent = 'Run Test Backup';
+});
+
+// Save Settings via AJAX
+document.getElementById('backupConfigForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const masterKey = 'backup_config';
+    const settings = {
+        enable_automated_backups: document.getElementById('enableAutomatedBackups').checked,
+        backup_frequency: document.getElementById('backupFrequency').value,
+        backup_time: document.getElementById('backupTime').value,
+        retention_period_days: document.getElementById('retentionPeriod').value,
+        local_backup_directory: document.getElementById('localBackupDir').value
+    };
+
+    try {
+        const resp = await fetch('settings_backend.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ setting_master_key: masterKey, settings })
+        });
+
+        const result = await resp.json();
+        if (result.success) {
+            alert('Settings saved successfully!');
+        } else {
+            alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+        }
+
+    } catch (err) {
+        alert('Network error: ' + err.message);
+    }
 });

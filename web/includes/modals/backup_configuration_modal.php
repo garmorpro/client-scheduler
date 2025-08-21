@@ -1,7 +1,7 @@
 <div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigLabel" aria-hidden="true">
   <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
-      <form id="backupConfigForm" action="settings_backend.php" method="POST" novalidate>
+      <form id="backupConfigForm" novalidate>
         <div class="modal-header">
           <h5 class="modal-title" id="backupConfigLabel">
             <i class="bi bi-hdd-stack"></i> Backup Configuration Settings <br>
