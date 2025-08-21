@@ -27,6 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['client_id'])) {
     exit();
 }
 
-header("Location: clients.php");
+header("Location: client-management.php");
 exit();
 ?>
