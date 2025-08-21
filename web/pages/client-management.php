@@ -116,11 +116,14 @@ unset($client);
             <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl position-relative">
     <!-- Delete Button (Top Right) -->
     <button class="btn btn-sm position-absolute top-0 end-0 m-2 delete-client-btn"
-            style="background-color: none !important;"
-            data-client-id="<?php echo $client['client_id']; ?>"
-            title="Delete Client">
-        <i class="bi bi-trash text-danger"></i>
-    </button>
+        data-client-id="<?php echo $client['client_id']; ?>"
+        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+        data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
+        data-total-engagements="<?php echo $client['total_engagements']; ?>"
+        title="Delete Client">
+    <i class="bi bi-trash text-danger"></i>
+</button>
+
 
     <!-- Client Header -->
     <div class="d-flex align-items-center mb-4">
@@ -247,16 +250,73 @@ unset($client);
 
 
 
+<!-- Delete Client Modal -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold text-danger" id="deleteClientModalLabel">
+          <i class="bi bi-exclamation-triangle text-danger me-2"></i> Delete Client
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
+      <div class="modal-body">
+        <p class="mb-3">
+          Are you sure you want to permanently delete <strong id="deleteClientName"></strong>? 
+          This action <span class="text-danger fw-semibold">cannot be undone</span> and will remove all client data, engagement history, and related records.
+        </p>
 
+        <div class="border rounded p-3 bg-light">
+          <strong>Client Details</strong><br>
+          <span>Client Name: <span id="deleteClientNameDetails"></span></span><br>
+          <span>Confirmed Engagements: <span id="deleteClientConfirmed"></span></span><br>
+          <span>Total Engagements: <span id="deleteClientTotal"></span></span>
+        </div>
+      </div>
 
-<!-- View Client Modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteClientForm" method="POST" action="delete_client.php">
+          <input type="hidden" name="client_id" id="deleteClientId">
+          <button type="submit" class="btn btn-danger">Delete Client</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const deleteButtons = document.querySelectorAll(".delete-client-btn");
+    const deleteModal = new bootstrap.Modal(document.getElementById("deleteClientModal"));
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const clientId = button.getAttribute("data-client-id");
+            const clientName = button.getAttribute("data-client-name");
+            const confirmed = button.getAttribute("data-confirmed-engagements");
+            const total = button.getAttribute("data-total-engagements");
+
+            // Fill modal with client data
+            document.getElementById("deleteClientId").value = clientId;
+            document.getElementById("deleteClientName").textContent = `"${clientName}"`;
+            document.getElementById("deleteClientNameDetails").textContent = clientName;
+            document.getElementById("deleteClientConfirmed").textContent = confirmed;
+            document.getElementById("deleteClientTotal").textContent = total;
+
+            deleteModal.show();
+        });
+    });
+});
 
 </script>
+
+
+
+
 
 
 
