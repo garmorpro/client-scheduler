@@ -56,32 +56,32 @@
                 <input type="number" min="1" class="form-control" style="font-size: 14px !important;" id="retentionPeriod" name="retention_period_days" value="<?php    echo htmlspecialchars($settings['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
               </div>
 
-              <hr>
+              <!-- <hr> -->
 
               <!-- Backup Content -->
-              <h6 class="mb-3">Backup Content</h6>
+              <!-- <h6 class="mb-3">Backup Content</h6>
               <div class="row mb-4">
                 <?php
-                $contentKeys = ['backup_users', 'backup_engagements', 'backup_entries', 'backup_settings'];
-                $contentLabels = ['Users', 'Engagements', 'Entries', 'Settings'];
+                // $contentKeys = ['backup_users', 'backup_engagements', 'backup_entries', 'backup_settings'];
+                // $contentLabels = ['Users', 'Engagements', 'Entries', 'Settings'];
 
-                $chunks = array_chunk($contentKeys, 3);
-                $labelChunks = array_chunk($contentLabels, 3);
+                // $chunks = array_chunk($contentKeys, 3);
+                // $labelChunks = array_chunk($contentLabels, 3);
 
-                foreach ($chunks as $colIndex => $chunk):
+                // foreach ($chunks as $colIndex => $chunk):
                 ?>
                   <div class="col-md-4">
-                    <?php foreach ($chunk as $i => $key):
-                      $label = $labelChunks[$colIndex][$i];
+                    <?php //foreach ($chunk as $i => $key):
+                      //$label = $labelChunks[$colIndex][$i];
                     ?>
                       <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" style="font-size: 14px !important;" type="checkbox" id="<?php echo $key; ?>" name="<?php echo $key; ?>"     value="true" <?php if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
-                        <label class="form-check-label" style="font-size: 14px !important;" for="<?php echo $key; ?>"><?php echo $label; ?></label>
+                        <input class="form-check-input" style="font-size: 14px !important;" type="checkbox" id="<?php //echo $key; ?>" name="<?php //echo $key; ?>"     value="true" <?php //if (!empty($settings[$key]) && $settings[$key] === 'true') echo 'checked'; ?>>
+                        <label class="form-check-label" style="font-size: 14px !important;" for="<?php //echo $key; ?>"><?php //echo $label; ?></label>
                       </div>
-                    <?php endforeach; ?>
+                    <?php //endforeach; ?>
                   </div>
-                <?php endforeach; ?>
-              </div>
+                <?php //endforeach; ?>
+              </div> -->
 
               <hr>
 
