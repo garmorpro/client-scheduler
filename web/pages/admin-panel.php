@@ -796,6 +796,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 </div> <!-- end flex-grow -->
 
 <?php include_once '../includes/modals/global_pto_modal.php'; ?>
+<?php include_once '../includes/modals/import_global_pto_modal.php'; ?>
 <?php //include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php //include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
@@ -803,6 +804,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 
+<script src="../assets/js/import_global_pto_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/global_pto.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/global_pto_table.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/admin_panel_tabs.js?v=<?php echo time(); ?>"></script>
