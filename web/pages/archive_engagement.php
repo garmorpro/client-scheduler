@@ -45,7 +45,7 @@ $status          = !empty($eng['status']) ? $eng['status'] : null;
 $entriesQuery = $conn->prepare("
     SELECT DISTINCT u.user_id, u.role, u.full_name
     FROM entries e
-    JOIN users u ON e.user_id = u.user_id
+    JOIN ms_users u ON e.user_id = u.user_id
     WHERE e.engagement_id = ?
 ");
 if (!$entriesQuery) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);
