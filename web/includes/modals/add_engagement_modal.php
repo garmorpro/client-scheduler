@@ -35,7 +35,7 @@
               require '../includes/db.php';
               $managerQuery = $conn->query("SELECT user_id, full_name FROM ms_users WHERE role='manager' ORDER BY full_name ASC");
               while ($row = $managerQuery->fetch_assoc()) {
-                  echo '<option value="' . htmlspecialchars($row['user_id']) . '">' . htmlspecialchars($row['full_name']) . '</option>';
+                  echo '<option value="' . htmlspecialchars($row['full_name']) . '">' . htmlspecialchars($row['full_name']) . '</option>';
               }
               ?>
             </select>

@@ -16,7 +16,7 @@ $client_name = $_POST['client_name'] ?? null;
 $budget_hours = $_POST['budget_hours'] ?? null;
 $status = $_POST['status'] ?? null;
 $year = $_POST['year'] ?? date('Y');
-$manager_id = $_POST['manager'] ?? null;
+$manager = $_POST['manager'] ?? null;
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager_id) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
