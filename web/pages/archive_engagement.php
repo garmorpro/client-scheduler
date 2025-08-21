@@ -60,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
     }
 
     // Convert arrays to comma-separated strings or NULL if empty
-    $managerStr = !empty($managers) ? implode(',', $managers) : null;
-    $seniorStr  = !empty($seniors) ? implode(',', $seniors) : null;
-    $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
+    $managerStr = !empty($managers) ? implode(',', $managers) : '';
+    $seniorStr  = !empty($seniors) ? implode(',', $seniors) : '';
+    $staffStr   = !empty($staffs) ? implode(',', $staffs) : '';
 
     // Insert into client_engagement_history
     $insert = $conn->prepare("
