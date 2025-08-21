@@ -352,7 +352,7 @@ if (client.status.toLowerCase() === 'active') {
     history.forEach(h => {
         const managerHtml = formatListItems(h.manager).join('');
         const seniorHtml = formatListItems(h.senior).join('');
-        const staffHtml = formatListItems(h.staff).join('');
+        const staffHtml = formatListItems(h.staff).join('<br>');
 
         historyContainer.innerHTML += `
             <div class="card p-2 mb-2">
