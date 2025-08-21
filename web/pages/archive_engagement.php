@@ -13,7 +13,6 @@ function send_json($data) {
     exit;
 }
 
-// Validate request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['engagement_id'])) {
     send_json(["success" => false, "message" => "Invalid request"]);
 }
@@ -41,10 +40,10 @@ $budgeted_hours = $eng['budgeted_hours'] ?? 0;
 $notes          = !empty($eng['notes']) ? $eng['notes'] : null;
 $status         = !empty($eng['status']) ? $eng['status'] : null;
 
-// Manager comes directly from the engagement
+// Use manager from engagements table
 $managerStr = !empty($eng['manager']) ? $eng['manager'] : null;
 
-// Get entries to calculate allocated hours, seniors, and staff
+// Get entries for this engagement to calculate allocated_hours, seniors, and staff
 $entriesQuery = $conn->prepare("
     SELECT e.assigned_hours, u.role, u.full_name
     FROM entries e
@@ -62,8 +61,8 @@ $staffs    = [];
 $allocated_hours = 0;
 
 while ($row = $entriesResult->fetch_assoc()) {
-    $role  = strtolower($row['role']);
-    $name  = $row['full_name'];
+    $role = strtolower($row['role']);
+    $name = $row['full_name'];
     $hours = floatval($row['assigned_hours']);
     $allocated_hours += $hours;
 
@@ -74,7 +73,7 @@ while ($row = $entriesResult->fetch_assoc()) {
 $seniorStr  = !empty($seniors) ? implode(',', $seniors) : null;
 $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 
-// Insert into client_engagement_history
+// Insert into history table
 $insert = $conn->prepare("
     INSERT INTO client_engagement_history
     (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date)
