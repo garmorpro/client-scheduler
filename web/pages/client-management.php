@@ -348,8 +348,8 @@ if (client.status.toLowerCase() === 'active') {
         if (!value) return '';
         return value
             .split(',')
-            .map(i => `<div>${i.trim()}<br></div>`)
-            .join('');
+            .map(i => `<div>${i.trim()}</div>`)
+            .join('<br>');
     }
 
     history.forEach(h => {
