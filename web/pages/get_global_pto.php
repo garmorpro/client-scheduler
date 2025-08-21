@@ -9,7 +9,7 @@ header("Content-Type: application/json");
 $sql = "SELECT timeoff_id, timeoff_note, week_start, assigned_hours 
         FROM time_off 
         WHERE is_global_timeoff = 1 
-        ORDER BY timeoff_note, week_start";
+        ORDER BY week_start";
 
 $result = $conn->query($sql);
 
