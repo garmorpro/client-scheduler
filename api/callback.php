@@ -8,6 +8,9 @@ session_start();
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+var_dump($_ENV, getenv('MS_CLIENT_ID'));
+die();
+
 $clientId = $_ENV['MS_CLIENT_ID'] ?? null;
 $clientSecret = $_ENV['MS_CLIENT_SECRET'] ?? null;
 
