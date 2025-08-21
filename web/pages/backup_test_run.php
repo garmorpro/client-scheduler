@@ -16,7 +16,7 @@ $backupFile = "$backupDir/db_backup_$timestamp.sql";
 
 // --- Run mysqldump ---
 $command = sprintf(
-    'mysqldump -h%s -u%s %s %s > %s',
+    'mysqldump -h%s -u%s %s %s > %s 2>&1',
     escapeshellarg($host),
     escapeshellarg($dbUser),
     $dbPass !== '' ? '-p' . escapeshellarg($dbPass) : '',
@@ -27,9 +27,14 @@ $command = sprintf(
 exec($command, $output, $returnVar);
 
 if ($returnVar !== 0) {
-    echo json_encode(['success' => false, 'error' => 'mysqldump failed']);
+    echo json_encode([
+        'success' => false,
+        'error' => 'mysqldump failed',
+        'details' => implode("\n", $output) // <-- capture full error
+    ]);
     exit;
 }
+
 
 // --- Get backup size ---
 $size = filesize($backupFile);
