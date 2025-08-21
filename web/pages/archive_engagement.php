@@ -35,15 +35,14 @@ if ($result->num_rows === 0) {
 }
 
 $eng = $result->fetch_assoc();
-$client_id       = $eng['client_id'] ?? null;
-$budgeted_hours  = $eng['budgeted_hours'] ?? null;
-$allocated_hours = $eng['allocated_hours'] ?? null;
-$notes           = !empty($eng['notes']) ? $eng['notes'] : null;
-$status          = !empty($eng['status']) ? $eng['status'] : null;
+$client_id      = $eng['client_id'] ?? null;
+$budgeted_hours = $eng['budgeted_hours'] ?? 0;
+$notes          = !empty($eng['notes']) ? $eng['notes'] : null;
+$status         = !empty($eng['status']) ? $eng['status'] : null;
 
 // Get entries for this engagement
 $entriesQuery = $conn->prepare("
-    SELECT DISTINCT u.user_id, u.role, u.full_name
+    SELECT e.assigned_hours, u.user_id, u.role, u.full_name
     FROM entries e
     JOIN ms_users u ON e.user_id = u.user_id
     WHERE e.engagement_id = ?
@@ -57,10 +56,14 @@ $entriesResult = $entriesQuery->get_result();
 $managers = [];
 $seniors  = [];
 $staffs   = [];
+$allocated_hours = 0;
 
 while ($row = $entriesResult->fetch_assoc()) {
     $role = strtolower($row['role']);
     $name = $row['full_name'];
+    $hours = floatval($row['assigned_hours']);
+    $allocated_hours += $hours;
+
     if ($role === 'manager' && !in_array($name, $managers)) $managers[] = $name;
     elseif ($role === 'senior' && !in_array($name, $seniors)) $seniors[] = $name;
     elseif ($role === 'staff' && !in_array($name, $staffs)) $staffs[] = $name;
@@ -89,7 +92,7 @@ $insert->bind_param(
     $staffStr,
     $notes,
     $archived_by,
-    $archive_date,
+    $archive_date
 );
 
 if (!$insert->execute()) {
