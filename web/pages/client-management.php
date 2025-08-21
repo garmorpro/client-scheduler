@@ -120,7 +120,7 @@ unset($client);
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
     <div class="header-row">
         <div>
-            <h3 class="mb-0">Client Management<span class="text-muted ms-2" style="font-size: 16px;">(<?php echo $activeClientsCount; ?>)</span></h3>
+            <h3 class="mb-0">Client Management<span class="text-muted ms-2" style="font-size: 18px;">(<?php echo $activeClientsCount; ?>)</span></h3>
             <p class="text-muted mb-0">Manage all onboarded clients and their engagement status</p>
         </div>
         <div class="d-flex align-items-center gap-2">
