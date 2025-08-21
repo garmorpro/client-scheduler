@@ -83,6 +83,10 @@ unset($client);
         .view-btn:hover {
           background-color: rgb(229,229,229) !important;
         }
+        .delete-client-btn:hover {
+            background-color: rgb(195,49,66) !important;
+            color: white !important;
+        }
     </style>
 </head>
 <body class="d-flex">
