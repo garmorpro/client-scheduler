@@ -77,13 +77,13 @@ $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 // Insert into client_engagement_history
 $insert = $conn->prepare("
     INSERT INTO client_engagement_history
-    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 if (!$insert) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);
 
 $insert->bind_param(
-    "isddsssssss",
+    "isddssssss",
     $client_id,
     $engagement_year,
     $budgeted_hours,
@@ -93,8 +93,7 @@ $insert->bind_param(
     $staffStr,
     $notes,
     $archived_by,
-    $archive_date,
-    $status
+    $archive_date
 );
 
 if (!$insert->execute()) {
