@@ -236,12 +236,7 @@ unset($client);
 </script>
 
 
-<?php include_once '../includes/modals/add_engagement_modal.php'; ?>
-<?php include_once '../includes/modals/edit_client_modal.php'; ?>
-<?php include_once '../includes/modals/add_client_modal.php'; ?>
-<script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
+
 
 
 
@@ -386,7 +381,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+<?php include_once '../includes/modals/add_engagement_modal.php'; ?>
+<?php include_once '../includes/modals/edit_client_modal.php'; ?>
+<?php include_once '../includes/modals/add_client_modal.php'; ?>
+<script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
 
 
 <!-- import engagements modal -->
