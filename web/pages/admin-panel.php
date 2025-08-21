@@ -374,6 +374,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <p class="mb-0">Create global time off entries for multiple weeks and days</p>
                     </div>
                     <div>
+                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium" 
+                           style="font-size: .875rem; border: 1px solid rgb(229,229,229);" 
+                           data-bs-toggle="modal" data-bs-target="#importGlobalPtoModal">
+                            <i class="bi bi-upload me-3"></i>Import Global PTO
+                        </a>
                         <a href="#" class="badge text-white p-2 text-decoration-none fw-normal" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addGlobalPtoModal">
                             <i class="bi bi-plus-circle me-3"></i>Add Global PTO
                         </a>
