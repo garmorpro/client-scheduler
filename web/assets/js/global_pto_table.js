@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <strong>${note}</strong><br>
                         <small class="text-muted">Weeks: ${weeks}</small>
                     </div>
-                    <div><span class="badge bg-primary">${totalHours} hrs</span></div>
+                    <div><span class="badge bg-secondary">${totalHours} hrs</span></div>
                 </div>
                 <div id="collapse-${idx}" class="collapse">
                     <div class="card-body">
