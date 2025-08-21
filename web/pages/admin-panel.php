@@ -367,21 +367,20 @@ if ($result && mysqli_num_rows($result) > 0) {
         <!-- end employee management -->
 
         <!-- time off -->
-          <div id="time_off" class="tab-content">
-            <div class="global-pto-header mb-3 d-flex justify-content-between align-items-center">
-              <div class="titles">
-                <p class="text-black mb-0"><strong>Global PTO Management</strong></p>
-                <p class="mb-0">Create global time off entries for multiple weeks and days</p>
-              </div>
-              <div>
-                <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addGlobalPtoModal">
-                    <i class="bi bi-plus-circle me-3"></i>Add Global PTO
-                </a>
-              </div>
-
-              <div id="global-pto-table"></div>
+            <div id="time_off" class="tab-content">
+                <div class="global-pto-header mb-3 d-flex justify-content-between align-items-center">
+                    <div class="titles">
+                        <p class="text-black mb-0"><strong>Global PTO Management</strong></p>
+                        <p class="mb-0">Create global time off entries for multiple weeks and days</p>
+                    </div>
+                    <div>
+                        <a href="#" class="badge text-white p-2 text-decoration-none" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#addGlobalPtoModal">
+                            <i class="bi bi-plus-circle me-3"></i>Add Global PTO
+                        </a>
+                    </div>
+                </div>
+                <div id="global-pto-table"></div>
             </div>
-          </div>
         <!-- end time off -->
 
         <!-- system activty -->
