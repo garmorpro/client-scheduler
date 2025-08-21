@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /");
     exit();
 }
 
@@ -21,6 +21,27 @@ $stmt = $conn->prepare("SELECT * FROM clients ORDER BY client_name ASC");
 $stmt->execute();
 $clients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Count total active clients
+$stmt1 = $conn->prepare("SELECT COUNT(*) AS active_clients FROM clients WHERE status = 'active'");
+$stmt1->execute();
+$result1 = $stmt1->get_result()->fetch_assoc();
+$activeClientsCount = (int)$result1['active_clients'];
+$stmt1->close();
+
+// Count total inactive clients
+$stmt2 = $conn->prepare("SELECT COUNT(*) AS inactive_clients FROM clients WHERE status = 'inactive'");
+$stmt2->execute();
+$result2 = $stmt2->get_result()->fetch_assoc();
+$inactiveClientsCount = (int)$result2['inactive_clients'];
+$stmt2->close();
+
+// Count total clients overall
+$stmt3 = $conn->prepare("SELECT COUNT(*) AS total_clients FROM clients");
+$stmt3->execute();
+$result3 = $stmt3->get_result()->fetch_assoc();
+$totalClientsCount = (int)$result3['total_clients'];
+$stmt3->close();
 
 // Fetch all engagement counts in one query
 $sql = "
@@ -50,6 +71,7 @@ foreach ($clients as &$client) {
 }
 unset($client);
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,7 +120,7 @@ unset($client);
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
     <div class="header-row">
         <div>
-            <h3 class="mb-0">Client Management</h3>
+            <h3 class="mb-0">Client Management<span class="text-muted">(<?php echo $activeClientsCount; ?>)</span></h3>
             <p class="text-muted mb-0">Manage all onboarded clients and their engagement status</p>
         </div>
         <div class="d-flex align-items-center gap-2">
