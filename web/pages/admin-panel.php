@@ -801,7 +801,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="../assets/js/global_pto.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/global_pto_table.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/admin_panel_tabs.js?v=<?php echo time(); ?>"></script>
-<!-- <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script> -->
+<script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
 <!-- <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script> -->
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
