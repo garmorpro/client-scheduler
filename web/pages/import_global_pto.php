@@ -95,7 +95,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
 
         // Check for duplicate entry for same week_start
-        $dupCheck = $conn->prepare("SELECT timeoff_id FROM global_pto WHERE week_start = ?");
+        $dupCheck = $conn->prepare("SELECT timeoff_id FROM time_off WHERE week_start = ?");
         if (!$dupCheck) {
             $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
             continue;
@@ -111,7 +111,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         $dupCheck->close();
 
         // Insert into global_pto
-        $stmt = $conn->prepare("INSERT INTO global_pto (week_start, assigned_hours, timeoff_note, is_global_timeoff) VALUES (?, ?, ?, 1)");
+        $stmt = $conn->prepare("INSERT INTO time_off (week_start, assigned_hours, timeoff_note, is_global_timeoff) VALUES (?, ?, ?, 1)");
         if (!$stmt) {
             $errors[] = ['row' => $rowNum, 'message' => 'Prepare failed: ' . $conn->error];
             continue;
