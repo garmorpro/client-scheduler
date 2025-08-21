@@ -40,9 +40,12 @@ $budgeted_hours = $eng['budgeted_hours'] ?? 0;
 $notes          = !empty($eng['notes']) ? $eng['notes'] : null;
 $status         = !empty($eng['status']) ? $eng['status'] : null;
 
-// Get entries for this engagement
+// Use manager from engagements table
+$managerStr = !empty($eng['manager']) ? $eng['manager'] : null;
+
+// Get entries for this engagement to calculate allocated_hours, seniors, and staff
 $entriesQuery = $conn->prepare("
-    SELECT e.assigned_hours, u.user_id, u.role, u.full_name
+    SELECT e.assigned_hours, u.role, u.full_name
     FROM entries e
     JOIN ms_users u ON e.user_id = u.user_id
     WHERE e.engagement_id = ?
@@ -53,9 +56,8 @@ $entriesQuery->bind_param("i", $engagement_id);
 $entriesQuery->execute();
 $entriesResult = $entriesQuery->get_result();
 
-$managers = [];
-$seniors  = [];
-$staffs   = [];
+$seniors   = [];
+$staffs    = [];
 $allocated_hours = 0;
 
 while ($row = $entriesResult->fetch_assoc()) {
@@ -64,12 +66,10 @@ while ($row = $entriesResult->fetch_assoc()) {
     $hours = floatval($row['assigned_hours']);
     $allocated_hours += $hours;
 
-    if ($role === 'manager' && !in_array($name, $managers)) $managers[] = $name;
-    elseif ($role === 'senior' && !in_array($name, $seniors)) $seniors[] = $name;
+    if ($role === 'senior' && !in_array($name, $seniors)) $seniors[] = $name;
     elseif ($role === 'staff' && !in_array($name, $staffs)) $staffs[] = $name;
 }
 
-$managerStr = !empty($managers) ? implode(',', $managers) : null;
 $seniorStr  = !empty($seniors) ? implode(',', $seniors) : null;
 $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 
@@ -107,3 +107,4 @@ $delete->bind_param("i", $engagement_id);
 $delete->execute();
 
 send_json(["success" => true]);
+?>
