@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission via AJAX
     addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const formData = new FormData(addForm);
 
         try {
