@@ -73,8 +73,8 @@ $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 // Insert into history table
 $insert = $conn->prepare("
     INSERT INTO client_engagement_history
-    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 if (!$insert) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);
 
