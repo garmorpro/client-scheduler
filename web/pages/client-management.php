@@ -115,7 +115,7 @@ unset($client);
         <?php foreach ($clients as $client): ?>
             <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl position-relative">
     <!-- Delete Button (Top Right) -->
-    <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 delete-client-btn"
+    <button class="btn btn-sm position-absolute top-0 end-0 m-2 delete-client-btn"
             style="background-color: none !important;"
             data-client-id="<?php echo $client['client_id']; ?>"
             title="Delete Client">
