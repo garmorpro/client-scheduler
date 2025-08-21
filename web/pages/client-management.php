@@ -357,7 +357,7 @@ if (client.status.toLowerCase() === 'active') {
         historyContainer.innerHTML += `
             <div class="card p-2 mb-2">
                 <!-- Year + Status -->
-                <div class="d-flex justify-content-between mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
                     <span class="me-2">${h.engagement_year}</span>
                     <span class="badge " 
