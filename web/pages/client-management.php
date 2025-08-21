@@ -268,26 +268,44 @@ unset($client);
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Client modal script loaded');
+
     const viewButtons = document.querySelectorAll('.view-btn');
     const modalEl = document.getElementById('viewClientModal');
     const modalBody = document.getElementById('viewClientModalBody');
 
-    if (!modalEl) return;
+    if (!modalEl || !modalBody) {
+        console.error('Modal elements not found:', { modalEl, modalBody });
+        return;
+    }
+
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JS is not loaded!');
+        return;
+    }
 
     const modal = new bootstrap.Modal(modalEl, { keyboard: true });
-    console.log('modalEl:', modalEl);
-console.log('modalBody:', modalBody);
+    console.log('Bootstrap modal initialized:', modal);
 
     viewButtons.forEach(button => {
         button.addEventListener('click', async () => {
             const clientId = button.dataset.clientId;
-            if (!clientId) return;
+            console.log('View button clicked for client ID:', clientId);
+
+            if (!clientId) {
+                console.warn('No client ID found on button');
+                return;
+            }
 
             try {
+                console.log('Fetching client data...');
                 const res = await fetch(`view_client.php?client_id=${clientId}`);
+                console.log('Fetch response status:', res.status);
+
                 if (!res.ok) throw new Error('Network response was not OK');
 
                 const data = await res.json();
+                console.log('Fetched data:', data);
+
                 if (data.error) {
                     alert(data.error);
                     return;
@@ -296,26 +314,15 @@ console.log('modalBody:', modalBody);
                 const client = data.client;
                 const history = data.history || [];
 
-                // Generate initials from client name
-                const initials = client.client_name
-                    .split(' ')
-                    .map(n => n[0].toUpperCase())
-                    .slice(0, 2)
-                    .join('');
+                console.log('Client info:', client);
+                console.log('Engagement history:', history);
 
-                function ucfirst(str) {
-                    if (!str) return '';
-                    return str.charAt(0).toUpperCase() + str.slice(1);
-                }
+                const ucfirst = str => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+                const statusClass = client.status?.toLowerCase() === 'active' ? 'text-success'
+                                  : client.status?.toLowerCase() === 'inactive' ? 'text-warning'
+                                  : 'text-muted';
 
-                // Determine status class
-                let statusClass = '';
-                if (client.status?.toLowerCase() === 'active') statusClass = 'text-success';
-                else if (client.status?.toLowerCase() === 'inactive') statusClass = 'text-warning';
-                else statusClass = 'text-muted';
-
-                // Fill modal content
-                let html = `
+                modalBody.innerHTML = `
 <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
     <div class="justify-content-between d-flex" style="flex-grow: 1;">
         <div id="view_client_name"><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
@@ -333,76 +340,51 @@ console.log('modalBody:', modalBody);
     </div>
 </div>
 <hr>
-<div id="engagementHistoryContainer"></div>
-`;
-                modalBody.innerHTML = html;
+<div id="engagementHistoryContainer"></div>`;
 
                 const historyContainer = document.getElementById('engagementHistoryContainer');
-
                 if (!history || history.length === 0) {
+                    console.log('No engagement history for this client.');
                     historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
                 } else {
-                    // Helpers
-                    const formatListItems = (value) => {
-                        if (!value) return [];
-                        return value.split(',').map(i => `<div>${i.trim()}</div>`);
-                    };
-                    const formatDate = (dateStr) => {
-                        if (!dateStr) return 'N/A';
-                        const d = new Date(dateStr);
-                        if (isNaN(d)) return dateStr;
-                        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                    };
+                    const formatListItems = val => val ? val.split(',').map(i => `<div>${i.trim()}</div>`).join('') : '';
+                    const formatDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
 
-                    history.forEach(h => {
-                        const managerHtml = formatListItems(h.manager).join('');
-                        const seniorHtml = formatListItems(h.senior).join('');
-                        const staffHtml = formatListItems(h.staff).join('');
+                    historyContainer.innerHTML = history.map(h => {
+                        const managerHtml = formatListItems(h.manager);
+                        const seniorHtml = formatListItems(h.senior);
+                        const staffHtml = formatListItems(h.staff);
                         const archiveDate = formatDate(h.archive_date);
 
-                        historyContainer.innerHTML += `
+                        return `
 <div class="card p-2 mb-2">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <span class="me-2">${h.engagement_year}</span>
-            <span class="badge" style="font-size: 10px; background-color: black !important;">
-                ${h.status || 'Archived'}
-            </span>
-        </div>
-        <div style="font-size: 10px;">
-            <span class="me-2"><span class="text-muted">Budgeted:</span> <span class="fw-bold text-black">${h.budgeted_hours}h</span></span>
-            <span class="text-muted">Allocated:</span> <span class="fw-bold text-black">${h.allocated_hours}h</span>
-        </div>
+        <div><span class="me-2">${h.engagement_year}</span><span class="badge" style="font-size:10px;background-color:black !important;">${h.status || 'Archived'}</span></div>
+        <div style="font-size:10px;"><span class="me-2"><span class="text-muted">Budgeted:</span> <span class="fw-bold text-black">${h.budgeted_hours}h</span></span> <span class="text-muted">Allocated:</span> <span class="fw-bold text-black">${h.allocated_hours}h</span></div>
     </div>
-
-    <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size: 10px;">
-        <div style="flex:1;">Manager</div>
-        <div style="flex:1;">Senior</div>
-        <div style="flex:1;">Staff</div>
-    </div>
-    <div class="d-flex text-muted" style="font-size: 10px;">
+    <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size:10px;"><div style="flex:1;">Manager</div><div style="flex:1;">Senior</div><div style="flex:1;">Staff</div></div>
+    <div class="d-flex text-muted" style="font-size:10px;">
         <div style="flex:1;" class="d-flex flex-column">${managerHtml}</div>
         <div style="flex:1;" class="d-flex flex-column">${seniorHtml}</div>
         <div style="flex:1;" class="d-flex flex-column">${staffHtml}</div>
     </div>
-
     <hr>
-    <div style="font-size: 10px;">Archived: ${archiveDate} by ${h.archived_by}</div>
+    <div style="font-size:10px;">Archived: ${archiveDate} by ${h.archived_by}</div>
 </div>`;
-                    });
+                    }).join('');
                 }
 
+                console.log('Showing modal...');
                 modal.show();
             } catch (err) {
-                console.error(err);
+                console.error('Error fetching or rendering client data:', err);
                 alert('Error fetching client details. Check console.');
             }
         });
     });
 });
-
-
 </script>
+
 
 
 
