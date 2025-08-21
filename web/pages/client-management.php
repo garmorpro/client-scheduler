@@ -349,15 +349,28 @@ if (client.status.toLowerCase() === 'active') {
         return value.split(',').map(i => `<div>${i.trim()}</div>`);
     }
 
+    // Helper: format archive_date
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr; // fallback if invalid
+        return d.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
     history.forEach(h => {
         const managerHtml = formatListItems(h.manager).join('');
         const seniorHtml = formatListItems(h.senior).join('');
         const staffHtml = formatListItems(h.staff).join('');
+        const archiveDate = formatDate(h.archive_date);
 
         historyContainer.innerHTML += `
             <div class="card p-2 mb-2">
                 <!-- Year + Status -->
-                <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <span class="me-2">${h.engagement_year}</span>
                     <span class="badge " 
@@ -391,7 +404,7 @@ if (client.status.toLowerCase() === 'active') {
                 </div>
 
                 <hr>
-                <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
+                <div style="font-size: 10px;">Archived: ${archiveDate}</div>
             </div>
         `;
     });
