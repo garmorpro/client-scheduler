@@ -13,6 +13,7 @@ function send_json($data) {
     exit;
 }
 
+// Validate request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['engagement_id'])) {
     send_json(["success" => false, "message" => "Invalid request"]);
 }
@@ -40,10 +41,10 @@ $budgeted_hours = $eng['budgeted_hours'] ?? 0;
 $notes          = !empty($eng['notes']) ? $eng['notes'] : null;
 $status         = !empty($eng['status']) ? $eng['status'] : null;
 
-// Use manager from engagements table
+// Manager comes directly from the engagement
 $managerStr = !empty($eng['manager']) ? $eng['manager'] : null;
 
-// Get entries for this engagement to calculate allocated_hours, seniors, and staff
+// Get entries to calculate allocated hours, seniors, and staff
 $entriesQuery = $conn->prepare("
     SELECT e.assigned_hours, u.role, u.full_name
     FROM entries e
@@ -61,8 +62,8 @@ $staffs    = [];
 $allocated_hours = 0;
 
 while ($row = $entriesResult->fetch_assoc()) {
-    $role = strtolower($row['role']);
-    $name = $row['full_name'];
+    $role  = strtolower($row['role']);
+    $name  = $row['full_name'];
     $hours = floatval($row['assigned_hours']);
     $allocated_hours += $hours;
 
@@ -73,16 +74,16 @@ while ($row = $entriesResult->fetch_assoc()) {
 $seniorStr  = !empty($seniors) ? implode(',', $seniors) : null;
 $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 
-// Insert into history table
+// Insert into client_engagement_history
 $insert = $conn->prepare("
     INSERT INTO client_engagement_history
-    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 if (!$insert) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);
 
 $insert->bind_param(
-    "isddssssss",
+    "isddsssssss",
     $client_id,
     $engagement_year,
     $budgeted_hours,
@@ -92,7 +93,8 @@ $insert->bind_param(
     $staffStr,
     $notes,
     $archived_by,
-    $archive_date
+    $archive_date,
+    $status
 );
 
 if (!$insert->execute()) {
