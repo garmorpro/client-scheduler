@@ -5,7 +5,7 @@ require_once '../api/api_helper.php';
 session_start();
 
 // ---------------- ENVIRONMENT SETUP ---------------------------
-$dotenv = Dotenv\Dotenv::createImmutable('/var/www/client-scheduler');
+$dotenv = Dotenv\Dotenv::createImmutable('/var/www/client-scheduler/');
 $dotenv->load();
 
 // var_dump($_ENV, getenv('MS_CLIENT_ID'));
