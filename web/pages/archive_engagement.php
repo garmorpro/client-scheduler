@@ -93,7 +93,8 @@ $status          = !empty($eng['status']) ? $eng['status'] : '';
 
         echo json_encode(["success" => true]);
     } else {
-        echo json_encode(["success" => false, "message" => "Insert failed: " . $insert->error]);
+        echo json_encode(["success" => false, "message" => "Insert failed"]);
+exit;
     }
 }
 ?>
