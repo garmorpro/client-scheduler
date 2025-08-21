@@ -1,13 +1,15 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 session_start();
-require '../includes/db.php'; // your DB connection
+require '../includes/db.php'; // DB connection
+
+// Force JSON output and hide PHP warnings from breaking JSON
+header('Content-Type: application/json');
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
     $engagement_id   = intval($_POST['engagement_id']);
-    $archived_by     = $_SESSION['full_name'];
+    $archived_by     = $_SESSION['full_name'] ?? 'Unknown';
     $engagement_year = date("Y");
     $archive_date    = date("Y-m-d");
 
@@ -23,17 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
     }
 
     $eng = $result->fetch_assoc();
-
-    // Ensure NULL values for basic fields
-    $budgeted_hours  = $eng['budgeted_hours'] ?? 0;
-$allocated_hours = $eng['allocated_hours'] ?? 0;
-
-$notes           = !empty($eng['notes']) ? $eng['notes'] : '';
-$status          = !empty($eng['status']) ? $eng['status'] : '';
+    $client_id       = $eng['client_id'] ?? null;
+    $budgeted_hours  = $eng['budgeted_hours'] ?? null;
+    $allocated_hours = $eng['allocated_hours'] ?? null;
+    $notes           = !empty($eng['notes']) ? $eng['notes'] : null;
+    $status          = !empty($eng['status']) ? $eng['status'] : null;
 
     // Get all entries for this engagement
     $entriesQuery = $conn->prepare("
-        SELECT e.user_id, u.role, u.full_name
+        SELECT DISTINCT u.user_id, u.role, u.full_name
         FROM entries e
         JOIN users u ON e.user_id = u.user_id
         WHERE e.engagement_id = ?
@@ -60,9 +60,9 @@ $status          = !empty($eng['status']) ? $eng['status'] : '';
     }
 
     // Convert arrays to comma-separated strings or NULL if empty
-    $managerStr = !empty($managers) ? implode(',', $managers) : '';
-    $seniorStr  = !empty($seniors) ? implode(',', $seniors) : '';
-    $staffStr   = !empty($staffs) ? implode(',', $staffs) : '';
+    $managerStr = !empty($managers) ? implode(',', $managers) : null;
+    $seniorStr  = !empty($seniors) ? implode(',', $seniors) : null;
+    $staffStr   = !empty($staffs) ? implode(',', $staffs) : null;
 
     // Insert into client_engagement_history
     $insert = $conn->prepare("
@@ -92,9 +92,13 @@ $status          = !empty($eng['status']) ? $eng['status'] : '';
         $delete->execute();
 
         echo json_encode(["success" => true]);
+        exit;
     } else {
-        echo json_encode(["success" => false, "message" => "Insert failed"]);
-exit;
+        echo json_encode(["success" => false, "message" => "Insert failed: " . $insert->error]);
+        exit;
     }
+} else {
+    echo json_encode(["success" => false, "message" => "Invalid request"]);
+    exit;
 }
 ?>
