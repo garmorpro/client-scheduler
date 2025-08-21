@@ -6,7 +6,7 @@
           <h5 class="modal-title" id="backupConfigLabel">
             <i class="bi bi-hdd-stack"></i> Backup Configuration Settings <br>
             <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important;">
-              Configure automated backup schedule and storage options
+              Configure automated backup schedule and local storage
             </span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -57,61 +57,12 @@
 
           <hr>
 
-          <!-- Storage Location -->
-          <h6 class="mb-3">Storage Location</h6>
-          <select class="form-select mb-3" style="font-size: 14px !important;" id="storageLocation" name="storage_location" required>
-            <?php 
-            $storageOptions = ['local' => 'Local Storage', 'cloud' => 'Cloud Storage', 'network' => 'Network Storage'];
-            foreach ($storageOptions as $val => $label) {
-              $selected = (($settings['storage_location'] ?? '') === $val) ? 'selected' : '';
-              echo "<option value=\"$val\" $selected>$label</option>";
-            }
-            ?>
-          </select>
-
           <!-- Local Storage Directory -->
-          <div id="localStorageSettings" style="display: none;" class="mb-3">
-            <label for="localBackupDir" class="form-label" style="font-size: 14px !important;">Local Backup Directory</label>
-            <input type="text" class="form-control" id="localBackupDir" name="local_backup_directory" placeholder="/path/to/backup/folder" value="<?php echo htmlspecialchars($settings['local_backup_directory'] ?? '', ENT_QUOTES); ?>">
+          <h6 class="mb-3">Local Backup Directory</h6>
+          <div class="mb-3">
+            <label for="localBackupDir" class="form-label" style="font-size: 14px !important;">Directory Path</label>
+            <input type="text" class="form-control" id="localBackupDir" name="local_backup_directory" placeholder="/path/to/backup/folder" value="<?php echo htmlspecialchars($settings['local_backup_directory'] ?? '', ENT_QUOTES); ?>" required>
             <div class="form-text" style="font-size: 12px;">Enter full path on the server where backups should be saved.</div>
-          </div>
-
-          <!-- Cloud Storage Settings -->
-          <div id="cloudStorageSettings" style="display: none;">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="cloudProvider" style="font-size: 14px !important;" class="form-label">Cloud Provider</label>
-                <select class="form-select" style="font-size: 14px !important;" id="cloudProvider" name="cloud_provider">
-                  <?php
-                  $cloudProviders = ['aws' => 'Amazon S3', 'azure' => 'Azure Blob', 'gcp' => 'Google Cloud', 'dropbox' => 'Dropbox'];
-                  foreach ($cloudProviders as $val => $label) {
-                    $selected = (($settings['cloud_provider'] ?? '') === $val) ? 'selected' : '';
-                    echo "<option value=\"$val\" $selected>$label</option>";
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="bucketName" style="font-size: 14px !important;" class="form-label">Bucket/Container Name</label>
-                <input type="text" style="font-size: 14px !important;" class="form-control" id="bucketName" name="bucket_name" value="<?php echo htmlspecialchars($settings['bucket_name'] ?? '', ENT_QUOTES); ?>" placeholder="Enter bucket or container name">
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="accessKey" style="font-size: 14px !important;" class="form-label">Access Key</label>
-                <input type="text" style="font-size: 14px !important;" class="form-control" id="accessKey" name="access_key" value="<?php echo htmlspecialchars($settings['access_key'] ?? '', ENT_QUOTES); ?>" placeholder="Enter access key">
-              </div>
-              <div class="col-md-6">
-                <label for="secretKey" style="font-size: 14px !important;" class="form-label">Secret Key</label>
-                <input type="password" style="font-size: 14px !important;" class="form-control" id="secretKey" name="secret_key" value="<?php echo htmlspecialchars($settings['secret_key'] ?? '', ENT_QUOTES); ?>" placeholder="Enter secret key">
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label for="region" style="font-size: 14px !important;" class="form-label">Region</label>
-              <input type="text" style="font-size: 14px !important;" class="form-control" id="region" name="region" value="<?php echo htmlspecialchars($settings['region'] ?? '', ENT_QUOTES); ?>" placeholder="Enter region">
-            </div>
           </div>
 
           <hr>
