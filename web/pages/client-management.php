@@ -349,7 +349,7 @@ if (client.status.toLowerCase() === 'active') {
         return value
             .split(',')
             .map(i => `<div>${i.trim()}</div>`)
-            .join('<br>');
+            .join('');
     }
 
     history.forEach(h => {
@@ -376,10 +376,10 @@ if (client.status.toLowerCase() === 'active') {
                     <div style="flex:1;">Senior</div>
                     <div style="flex:1;">Staff</div>
                 </div>
-                <div class="d-flex justify-content-between" style="font-size: 10px;">
-                    <div style="flex:1;">${managerHtml}</div>
-                    <div style="flex:1;">${seniorHtml}</div>
-                    <div style="flex:1;">${staffHtml}</div>
+                <div class="d-flex justify-content-between text-muted" style="font-size: 10px;">
+                    <div style="flex:1;" class="d-flex flex-column">${managerHtml}</div>
+                    <div style="flex:1;" class="d-flex flex-column">${seniorHtml}</div>
+                    <div style="flex:1;" class="d-flex flex-column">${staffHtml}</div>
                 </div>
 
                 <hr>
@@ -388,6 +388,7 @@ if (client.status.toLowerCase() === 'active') {
         `;
     });
 }
+
 
 
 
