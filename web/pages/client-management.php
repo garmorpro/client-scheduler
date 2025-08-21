@@ -359,7 +359,7 @@ if (client.status.toLowerCase() === 'active') {
                 <!-- Year + Status -->
                 <div class="d-flex justify-content-between mb-2">
                 <div>
-                    <span>${h.engagement_year}</span>
+                    <span class="me-2">${h.engagement_year}</span>
                     <span class="badge " 
                           style="font-size: 10px; background-color: black !important;">
                         ${h.status || 'Archived'}
