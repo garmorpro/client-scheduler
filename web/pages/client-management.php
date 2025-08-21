@@ -267,41 +267,41 @@ unset($client);
 
 <!-- import engagements modal -->
 
-    <div class="modal fade" id="importEngagementsModal" tabindex="-1" aria-labelledby="importEngagementsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="importClientsModal" tabindex="-1" aria-labelledby="importClientsModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form id="importEngagementsForm" enctype="multipart/form-data">
+          <form id="importClientsForm" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="importEngagementsModalLabel">Import Engagements from CSV</h5>
+              <h5 class="modal-title" id="importClientsModalLabel">Import Clients from CSV</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
               <p>
-                Please use the <a href="../assets/templates/bulk_engagement_template.csv" download>CSV template</a> to ensure correct format.
+                Please use the <a href="../assets/templates/bulk_client_template.csv" download>CSV template</a> to ensure correct format.
               </p>
 
               <div class="mb-3">
-                <label for="engagements_csv_file" class="form-label">Select CSV File</label>
-                <input type="file" class="form-control" id="engagements_csv_file" name="csv_file" accept=".csv" required>
+                <label for="clients_csv_file" class="form-label">Select CSV File</label>
+                <input type="file" class="form-control" id="clients_csv_file" name="csv_file" accept=".csv" required>
               </div>
 
               <div class="alert alert-info small">
                 Only CSV files are supported. Required columns: 
-                <strong>client_name, budgeted_hours, status</strong><br>
-                Allowed status values: <em>confirmed, pending, not_confirmed</em>
+                <strong>client_name and onboarded_date</strong><br>
+                Optional Column: <em>notes</em>
               </div>
 
               <!-- Import Summary Container -->
-              <div id="engagementsImportSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
+              <div id="clientsImportSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
                 <!-- Filled dynamically by JS -->
               </div>
             </div>
 
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary" id="importEngagementsSubmitBtn">Import</button>
-              <button type="button" class="btn btn-success d-none" id="importEngagementsCloseBtn">OK</button>
+              <button type="submit" class="btn btn-primary" id="importClientsSubmitBtn">Import</button>
+              <button type="button" class="btn btn-success d-none" id="importClientsCloseBtn">OK</button>
             </div>
           </form>
         </div>
@@ -315,12 +315,12 @@ unset($client);
 <!-- import engagements csv -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-          const importForm = document.getElementById('importEngagementsForm');
-          const fileInput = document.getElementById('engagements_csv_file');
-          const importSummary = document.getElementById('engagementsImportSummary');
-          const importSubmitBtn = document.getElementById('importEngagementsSubmitBtn');
-          const importCloseBtn = document.getElementById('importEngagementsCloseBtn');
-          const importModal = new bootstrap.Modal(document.getElementById('importEngagementsModal'));
+          const importForm = document.getElementById('importClientsForm');
+          const fileInput = document.getElementById('clients_csv_file');
+          const importSummary = document.getElementById('clientsImportSummary');
+          const importSubmitBtn = document.getElementById('importClientsSubmitBtn');
+          const importCloseBtn = document.getElementById('importClientsCloseBtn');
+          const importModal = new bootstrap.Modal(document.getElementById('importClientsModal'));
 
           importForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -344,7 +344,7 @@ unset($client);
             formData.append('csv_file', file);
         
             try {
-              const response = await fetch('import_engagements.php', {
+              const response = await fetch('import_clients.php', {
                 method: 'POST',
                 body: formData
               });

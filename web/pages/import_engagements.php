@@ -12,32 +12,14 @@ if (!isset($_SESSION['user_id'])) {
 
 // Activity logging function
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
-    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) 
+            VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
     }
-}
-
-// UNIQUE IDNO GENERATOR for engagements
-function generateUniqueIdno($conn) {
-    do {
-        $idno = random_int(100000, 999999); // 6-digit number
-
-        $checkStmt = $conn->prepare("SELECT COUNT(*) FROM engagements WHERE idno = ?");
-        if (!$checkStmt) {
-            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-        }
-        $checkStmt->bind_param("i", $idno);
-        $checkStmt->execute();
-        $checkStmt->bind_result($count);
-        $checkStmt->fetch();
-        $checkStmt->close();
-    } while ($count > 0);
-
-    return $idno;
 }
 
 if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
@@ -52,7 +34,7 @@ $errors = [];
 $successCount = 0;
 
 if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
-    $rowNum = 1; // Header row
+    $rowNum = 1; // header row
 
     $header = fgetcsv($handle, 1000, ",");
     if (!$header) {
@@ -61,8 +43,9 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         exit();
     }
 
-    // Expected columns for engagements import
-    $expectedHeaders = ['client_name', 'total_available_hours', 'status'];
+    // Expected CSV headers
+    $expectedHeaders = ['client_name', 'onboarded_date'];
+    $optionalHeaders = ['notes'];
     $headerLower = array_map('strtolower', $header);
 
     $headerIndexes = [];
@@ -77,8 +60,12 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         $headerIndexes[$colName] = $pos;
     }
 
-    // Allowed statuses
-    $allowedStatuses = ['confirmed', 'pending', 'not_confirmed'];
+    foreach ($optionalHeaders as $colName) {
+        $pos = array_search($colName, $headerLower);
+        if ($pos !== false) {
+            $headerIndexes[$colName] = $pos;
+        }
+    }
 
     $currentUserId = $_SESSION['user_id'];
     $currentUserEmail = $_SESSION['email'] ?? '';
@@ -91,32 +78,32 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             continue; // skip empty rows
         }
 
-        $rowAssoc = [];
-        foreach ($expectedHeaders as $colName) {
-            $rowAssoc[$colName] = isset($data[$headerIndexes[$colName]]) ? trim($data[$headerIndexes[$colName]]) : '';
-        }
+        $clientName = isset($data[$headerIndexes['client_name']]) ? trim($data[$headerIndexes['client_name']]) : '';
+        $onboardedDate = isset($data[$headerIndexes['onboarded_date']]) ? trim($data[$headerIndexes['onboarded_date']]) : '';
+        $notes = isset($headerIndexes['notes']) && isset($data[$headerIndexes['notes']]) 
+                 ? trim($data[$headerIndexes['notes']]) : null;
 
         // Validate required fields
-        if (empty($rowAssoc['client_name']) || empty($rowAssoc['total_available_hours']) || empty($rowAssoc['status'])) {
-            $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields.'];
-            continue;
-        }
-        if (!is_numeric($rowAssoc['total_available_hours']) || $rowAssoc['total_available_hours'] < 0) {
-            $errors[] = ['row' => $rowNum, 'message' => 'Invalid total_available_hours. Must be a positive number.'];
-            continue;
-        }
-        if (!in_array(strtolower($rowAssoc['status']), $allowedStatuses)) {
-            $errors[] = ['row' => $rowNum, 'message' => 'Invalid status. Allowed: confirmed, pending, not_confirmed'];
+        if (empty($clientName) || empty($onboardedDate)) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields (client_name, onboarded_date).'];
             continue;
         }
 
-        // Check for duplicate client_name (optional)
-        $dupCheck = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ?");
+        // Validate date format (YYYY-MM-DD or something PHP can parse)
+        $dateObj = date_create($onboardedDate);
+        if (!$dateObj) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Invalid date format for onboarded_date.'];
+            continue;
+        }
+        $onboardedDate = $dateObj->format('Y-m-d');
+
+        // Check for duplicate client_name
+        $dupCheck = $conn->prepare("SELECT client_id FROM clients WHERE client_name = ?");
         if (!$dupCheck) {
             $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
             continue;
         }
-        $dupCheck->bind_param("s", $rowAssoc['client_name']);
+        $dupCheck->bind_param("s", $clientName);
         $dupCheck->execute();
         $dupCheck->store_result();
         if ($dupCheck->num_rows > 0) {
@@ -126,16 +113,13 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
         $dupCheck->close();
 
-        // Generate unique idno
-        $idno = generateUniqueIdno($conn);
-
-        // Insert engagement with idno
-        $stmt = $conn->prepare("INSERT INTO engagements (idno, client_name, total_available_hours, status) VALUES (?, ?, ?, ?)");
+        // Insert into clients
+        $stmt = $conn->prepare("INSERT INTO clients (client_name, onboarded_date, notes) VALUES (?, ?, ?)");
         if (!$stmt) {
-            $errors[] = ['row' => $rowNum, 'message' => 'Prepare statement failed: ' . $conn->error];
+            $errors[] = ['row' => $rowNum, 'message' => 'Prepare failed: ' . $conn->error];
             continue;
         }
-        $stmt->bind_param("isds", $idno, $rowAssoc['client_name'], $rowAssoc['total_available_hours'], $rowAssoc['status']);
+        $stmt->bind_param("sss", $clientName, $onboardedDate, $notes);
 
         if ($stmt->execute()) {
             $successCount++;
@@ -147,15 +131,14 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
     fclose($handle);
 
     // Log activity
-    $description = "Successfully imported $successCount engagements.";
-
+    $description = "Successfully imported $successCount clients.";
     if (count($errors) > 0) {
-        $description .= " Failed to import " . count($errors) . " engagements.";
-        $eventType = "bulk_engagement_import_failed";
-        $title = "Failed Bulk Engagement Import";
+        $description .= " Failed to import " . count($errors) . " clients.";
+        $eventType = "bulk_client_import_failed";
+        $title = "Failed Bulk Client Import";
     } else {
-        $eventType = "bulk_engagement_import";
-        $title = "Bulk Engagement Import";
+        $eventType = "bulk_client_import";
+        $title = "Bulk Client Import";
     }
 
     logActivity($conn, $eventType, $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
@@ -164,6 +147,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         'successCount' => $successCount,
         'errors' => $errors
     ]);
+
 } else {
     http_response_code(500);
     echo json_encode(['error' => 'Failed to open uploaded file']);
