@@ -62,7 +62,7 @@ document.getElementById('backupConfigForm').addEventListener('submit', async fun
 
         const result = await resp.json();
         if (result.success) {
-            alert('Settings saved successfully!');
+            // alert('Settings saved successfully!');
         } else {
             alert('Failed to save settings: ' + (result.error || 'Unknown error'));
         }
