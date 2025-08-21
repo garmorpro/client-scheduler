@@ -379,7 +379,7 @@ if (client.status.toLowerCase() === 'active') {
                 <div class="d-flex justify-content-between" style="font-size: 10px;">
                     <div style="flex:1;">${managerHtml}</div>
                     <div style="flex:1;">${seniorHtml}</div>
-                    <div style="flex:1;">${staffHtml}</div>
+                    <div style="flex:1;">${staffHtml}<br></div>
                 </div>
 
                 <hr>
