@@ -127,7 +127,7 @@ unset($client);
         data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
         data-total-engagements="<?php echo $client['total_engagements']; ?>"
         title="Delete Client">
-    <i class="bi bi-trash text-danger"></i>
+    <i class="bi bi-trash text-muted"></i>
 </button>
 
 
