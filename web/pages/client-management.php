@@ -142,107 +142,107 @@ unset($client);
     <div id="clientCards" class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: .5rem 1rem;">
         <?php foreach ($clients as $client): ?>
             <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl position-relative">
-    <!-- Delete Button (Top Right) -->
-    <button class="btn btn-sm position-absolute top-0 end-0 m-2 delete-client-btn"
-        data-client-id="<?php echo $client['client_id']; ?>"
-        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-        data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
-        data-total-engagements="<?php echo $client['total_engagements']; ?>"
-        title="Delete Client">
-    <i class="bi bi-trash text-muted"></i>
-</button>
-
-
-    <!-- Client Header -->
-    <div class="d-flex align-items-center mb-4">
-        <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-            <i class="bi bi-building"></i>
-        </div>
-        <div class="fs-6 fw-semibold mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
-    </div>
-
-    <!-- Status and Onboarded Duration -->
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <?php
-            $status = strtolower($client['status']);
-            switch ($status) {
-                case 'active':
-                    $badgeClass = 'badge-confirmed';   
-                    break;
-                case 'inactive':
-                    $badgeClass = 'badge-inactive';     
-                    break;
-                default:
-                    $badgeClass = 'badge-default';    
-                    break;
-            }
-        ?>
-        <span class="badge-status <?php echo $badgeClass; ?>">
-            <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
-        </span>
-        <span class="text-muted mt-1 mt-md-0">
-            <?php
-                $onboarded = new DateTime($client['onboarded_date']);
-                $now = new DateTime();
-                $diff = $now->diff($onboarded);
-
-                if ($diff->y == 0 && $diff->m == 0) {
-                    echo "New client";
-                } elseif ($diff->y == 0) {
-                    echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
-                } else {
-                    echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
-                    if ($diff->m > 0) {
-                        echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
-                    }
-                    echo " onboarded";
-                }
-            ?>
-        </span>
-    </div>
-
-    <!-- Engagements Info -->
-    <div class="d-flex justify-content-between mb-1 flex-wrap">
-        <span class="text-muted"><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
-        <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
-    </div>
-    <div class="d-flex justify-content-between mb-3 flex-wrap">
-        <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
-        <span><?php echo $client['total_engagements'] ?? 0; ?></span>
-    </div>
-
-    <!-- Card Buttons -->
-     <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100" 
-            style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
-            data-bs-toggle="modal" 
-            data-bs-target="#addEngagementModal" 
-            data-client-id="<?php echo $client['client_id']; ?>"
-            data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
-        <i class="bi bi-plus-circle me-2"></i>Add Engagement
-    </button>
-    <div class="card-buttons d-flex flex-wrap gap-2">
-        
-        <button 
-            class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" 
-            style="font-size: .875rem; background-color: white !important; border: 1px solid rgb(229,229,229) !important; outline: none !important;"
-            data-client-id="<?php echo $client['client_id']; ?>"
-        >
-            <i class="bi bi-eye me-2"></i>View
-        </button>
-        <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2 edit-client-btn" 
-                style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"
-                data-bs-toggle="modal" 
-                data-bs-target="#editClientModal"
-                data-client-id="<?php echo $client['client_id']; ?>"
-                data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                data-onboarded-date="<?php echo $client['onboarded_date']; ?>"
-                data-status="<?php echo strtolower($client['status']); ?>"
-                data-notes="<?php echo htmlspecialchars($client['notes'] ?? ''); ?>">
-            <i class="bi bi-pencil-square me-2"></i>Edit
-        </button>
-
-    </div>
-</div>
+                <!-- Delete Button (Top Right) -->
+                <button class="btn btn-sm position-absolute top-0 end-0 m-2 delete-client-btn"
+                    data-client-id="<?php echo $client['client_id']; ?>"
+                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                    data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
+                    data-total-engagements="<?php echo $client['total_engagements']; ?>"
+                    title="Delete Client">
+                <i class="bi bi-trash text-muted"></i>
+            </button>
+                    
+                    
+                <!-- Client Header -->
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="fs-6 fw-semibold mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
+                </div>
+                    
+                <!-- Status and Onboarded Duration -->
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                    <?php
+                        $status = strtolower($client['status']);
+                        switch ($status) {
+                            case 'active':
+                                $badgeClass = 'badge-confirmed';   
+                                break;
+                            case 'inactive':
+                                $badgeClass = 'badge-inactive';     
+                                break;
+                            default:
+                                $badgeClass = 'badge-default';    
+                                break;
+                        }
+                    ?>
+                    <span class="badge-status <?php echo $badgeClass; ?>">
+                        <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
+                    </span>
+                    <span class="text-muted mt-1 mt-md-0">
+                        <?php
+                            $onboarded = new DateTime($client['onboarded_date']);
+                            $now = new DateTime();
+                            $diff = $now->diff($onboarded);
+                    
+                            if ($diff->y == 0 && $diff->m == 0) {
+                                echo "New client";
+                            } elseif ($diff->y == 0) {
+                                echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
+                            } else {
+                                echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+                                if ($diff->m > 0) {
+                                    echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+                                }
+                                echo " onboarded";
+                            }
+                        ?>
+                    </span>
+                </div>
+                        
+                <!-- Engagements Info -->
+                <div class="d-flex justify-content-between mb-1 flex-wrap">
+                    <span class="text-muted"><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
+                    <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 flex-wrap">
+                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
+                    <span><?php echo $client['total_engagements'] ?? 0; ?></span>
+                </div>
+                        
+                <!-- Card Buttons -->
+                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100" 
+                        style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEngagementModal" 
+                        data-client-id="<?php echo $client['client_id']; ?>"
+                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
+                    <i class="bi bi-plus-circle me-2"></i>Add Engagement
+                </button>
+                <div class="card-buttons d-flex flex-wrap gap-2">
+                        
+                    <button 
+                        class="badge text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" 
+                        style="font-size: .875rem; background-color: white !important; border: 1px solid rgb(229,229,229) !important; outline: none !important;"
+                        data-client-id="<?php echo $client['client_id']; ?>"
+                    >
+                        <i class="bi bi-eye me-2"></i>View
+                    </button>
+                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2 edit-client-btn" 
+                            style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editClientModal"
+                            data-client-id="<?php echo $client['client_id']; ?>"
+                            data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                            data-onboarded-date="<?php echo $client['onboarded_date']; ?>"
+                            data-status="<?php echo strtolower($client['status']); ?>"
+                            data-notes="<?php echo htmlspecialchars($client['notes'] ?? ''); ?>">
+                        <i class="bi bi-pencil-square me-2"></i>Edit
+                    </button>
+                        
+                </div>
+            </div>
 
         <?php endforeach; ?>
     </div>
