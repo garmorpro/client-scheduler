@@ -161,6 +161,19 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
+
+    <style>
+        .save-btn-hover:hover {
+            background-color: rgb(64,133,88) !important;
+        }
+        .save-btn-hover:hover i,
+        .delete-btn-hover:hover i {
+            color: white !important;
+        }
+        .delete-btn-hover:hover {
+            background-color: rgb(203,68,74) !important;
+        }
+    </style>
 </head>
 <body class="d-flex">
 

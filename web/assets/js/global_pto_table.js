@@ -71,9 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <input type="text" class="form-control form-control-sm" 
                                                name="timeoff_note" value="${entry.timeoff_note}">
                                     </div>
-                                    <div class="col-md-2 d-flex align-items-end gap-1">
-                                        <button type="submit" class="btn btn-sm btn-success flex-fill">Save</button>
-                                        <button type="button" class="btn btn-sm btn-danger flex-fill delete-entry">Delete</button>
+                                    <div class="col-md-2 d-flex align-items-end align-items-center gap-1">
+                                        <button type="submit" class="btn btn-sm save-btn-hover"><i class="bi bi-floppy text-success"></i></button>
+                                        <button type="button" class="btn btn-sm delete-btn-hover delete-entry"><i class="bi bi-trash"></i></button>
                                     </div>
                                 </div>
                             </form>
