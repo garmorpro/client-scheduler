@@ -5,6 +5,7 @@ require '../includes/db.php'; // your DB connection
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
     $engagement_id = intval($_POST['engagement_id']);
     $archived_by   = $_SESSION['full_name'];
+    $engagement_year = date("Y");
     $archive_date  = date("Y-m-d");
 
     // Get engagement details
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
 
         // Ensure NULL values are properly handled
         $client_id       = $eng['client_id'] ?? null;
-        $engagement_year = $eng['engagement_year'] ?? null;
+        // $engagement_year = $eng['engagement_year'] ?? null;
         $budgeted_hours  = $eng['budgeted_hours'] !== null ? $eng['budgeted_hours'] : null;
         $allocated_hours = $eng['allocated_hours'] !== null ? $eng['allocated_hours'] : null;
         $manager         = !empty($eng['manager']) ? $eng['manager'] : null;
