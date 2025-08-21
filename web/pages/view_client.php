@@ -2,12 +2,11 @@
 header('Content-Type: application/json');
 require_once '../includes/db.php';
 
-if (!isset($_GET['client_id'])) {
-    echo json_encode(['error' => 'No client ID provided']);
+$client_id = intval($_GET['client_id'] ?? 0);
+if ($client_id <= 0) {
+    echo json_encode(['error' => 'Invalid client ID']);
     exit();
 }
-
-$client_id = intval($_GET['client_id']);
 
 // Fetch client info
 $stmt = $conn->prepare("
@@ -20,11 +19,20 @@ $stmt = $conn->prepare("
 $stmt->bind_param("iii", $client_id, $client_id, $client_id);
 $stmt->execute();
 $client = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$client) {
     echo json_encode(['error' => 'Client not found']);
     exit();
 }
+
+// Optional: current manager
+$stmt3 = $conn->prepare("SELECT manager FROM engagements WHERE client_id = ? ORDER BY engagement_id DESC LIMIT 1");
+$stmt3->bind_param("i", $client_id);
+$stmt3->execute();
+$res = $stmt3->get_result()->fetch_assoc();
+$client['current_manager'] = $res['manager'] ?? null;
+$stmt3->close();
 
 // Fetch engagement history
 $stmt2 = $conn->prepare("
@@ -36,11 +44,10 @@ $stmt2 = $conn->prepare("
 $stmt2->bind_param("i", $client_id);
 $stmt2->execute();
 $history = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt2->close();
 
-// If no records, provide an empty array
-if (empty($history)) {
-    $history = [];
-}
-
-echo json_encode(['client' => $client, 'history' => $history]);
+echo json_encode([
+    'client' => $client,
+    'history' => $history ?: []
+]);
 exit();
