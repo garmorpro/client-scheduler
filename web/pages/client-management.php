@@ -270,8 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewButtons = document.querySelectorAll('.view-btn');
     const modalEl = document.getElementById('viewClientModal');
     const modalBody = document.getElementById('viewClientModalBody');
-
-    if (!modalEl) return;
+    if (!modalEl || !modalBody) return;
 
     const modal = new bootstrap.Modal(modalEl, { keyboard: true });
 
@@ -293,101 +292,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 const client = data.client;
                 const history = data.history || [];
 
-                // Generate initials from client name
-                const initials = client.client_name
-                    .split(' ')
-                    .map(n => n[0].toUpperCase())
-                    .slice(0, 2)
-                    .join('');
+                const ucfirst = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+                const statusClass = client.status?.toLowerCase() === 'active' ? 'text-success'
+                                  : client.status?.toLowerCase() === 'inactive' ? 'text-warning'
+                                  : 'text-muted';
 
-                function ucfirst(str) {
-                    if (!str) return '';
-                    return str.charAt(0).toUpperCase() + str.slice(1);
-                }
-
-                // Determine status class
-                let statusClass = '';
-                if (client.status?.toLowerCase() === 'active') statusClass = 'text-success';
-                else if (client.status?.toLowerCase() === 'inactive') statusClass = 'text-warning';
-                else statusClass = 'text-muted';
-
-                // Fill modal content
-                let html = `
+                modalBody.innerHTML = `
 <div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
     <div class="justify-content-between d-flex" style="flex-grow: 1;">
-        <div id="view_client_name"><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
-        <small id="view_onboarded_date" class="text-end">Onboarded<br><span class="text-muted">${client.onboarded_date ? new Date(client.onboarded_date).toLocaleDateString() : 'N/A'}</span></small>
+        <div><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
+        <small class="text-end">Onboarded<br><span class="text-muted">${client.onboarded_date ? new Date(client.onboarded_date).toLocaleDateString() : 'N/A'}</span></small>
     </div>
 </div>
 <div class="d-flex gap-2 mt-2">
-    <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div style="flex:1; background-color:white; border-radius:10px; padding:10px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
         <div class="fw-semibold">${client.total_engagements ?? 0}</div>
-        <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
+        <div class="text-muted" style="font-size:12px;">Total Engagements</div>
     </div>
-    <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div style="flex:1; background-color:white; border-radius:10px; padding:10px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
         <div class="fw-semibold">${client.confirmed_engagements ?? 0}</div>
-        <div class="text-muted" style="font-size: 12px;">Confirmed Engagements</div>
+        <div class="text-muted" style="font-size:12px;">Confirmed Engagements</div>
     </div>
 </div>
 <hr>
-<div id="engagementHistoryContainer"></div>
-`;
-                modalBody.innerHTML = html;
+<div id="engagementHistoryContainer"></div>`;
 
                 const historyContainer = document.getElementById('engagementHistoryContainer');
-
-                if (!history || history.length === 0) {
+                if (!history.length) {
                     historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
                 } else {
-                    // Helpers
-                    const formatListItems = (value) => {
-                        if (!value) return [];
-                        return value.split(',').map(i => `<div>${i.trim()}</div>`);
-                    };
-                    const formatDate = (dateStr) => {
-                        if (!dateStr) return 'N/A';
-                        const d = new Date(dateStr);
-                        if (isNaN(d)) return dateStr;
-                        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                    };
+                    const formatList = val => val ? val.split(',').map(i => `<div>${i.trim()}</div>`).join('') : '';
+                    const formatDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
 
-                    history.forEach(h => {
-                        const managerHtml = formatListItems(h.manager).join('');
-                        const seniorHtml = formatListItems(h.senior).join('');
-                        const staffHtml = formatListItems(h.staff).join('');
-                        const archiveDate = formatDate(h.archive_date);
-
-                        historyContainer.innerHTML += `
+                    historyContainer.innerHTML = history.map(h => `
 <div class="card p-2 mb-2">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <span class="me-2">${h.engagement_year}</span>
-            <span class="badge" style="font-size: 10px; background-color: black !important;">
-                ${h.status || 'Archived'}
-            </span>
-        </div>
-        <div style="font-size: 10px;">
-            <span class="me-2"><span class="text-muted">Budgeted:</span> <span class="fw-bold text-black">${h.budgeted_hours}h</span></span>
-            <span class="text-muted">Allocated:</span> <span class="fw-bold text-black">${h.allocated_hours}h</span>
-        </div>
+        <div><span class="me-2">${h.engagement_year}</span><span class="badge" style="font-size:10px;background-color:black !important;">${h.status || 'Archived'}</span></div>
+        <div style="font-size:10px;"><span class="me-2"><span class="text-muted">Budgeted:</span> <span class="fw-bold text-black">${h.budgeted_hours}h</span></span> <span class="text-muted">Allocated:</span> <span class="fw-bold text-black">${h.allocated_hours}h</span></div>
     </div>
-
-    <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size: 10px;">
-        <div style="flex:1;">Manager</div>
-        <div style="flex:1;">Senior</div>
-        <div style="flex:1;">Staff</div>
+    <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size:10px;"><div style="flex:1;">Manager</div><div style="flex:1;">Senior</div><div style="flex:1;">Staff</div></div>
+    <div class="d-flex text-muted" style="font-size:10px;">
+        <div style="flex:1;" class="d-flex flex-column">${formatList(h.manager)}</div>
+        <div style="flex:1;" class="d-flex flex-column">${formatList(h.senior)}</div>
+        <div style="flex:1;" class="d-flex flex-column">${formatList(h.staff)}</div>
     </div>
-    <div class="d-flex text-muted" style="font-size: 10px;">
-        <div style="flex:1;" class="d-flex flex-column">${managerHtml}</div>
-        <div style="flex:1;" class="d-flex flex-column">${seniorHtml}</div>
-        <div style="flex:1;" class="d-flex flex-column">${staffHtml}</div>
-    </div>
-
     <hr>
-    <div style="font-size: 10px;">Archived: ${archiveDate} by ${h.archived_by}</div>
-</div>`;
-                    });
-                }
+    <div style="font-size:10px;">Archived: ${formatDate(h.archive_date)} by ${h.archived_by}</div>
+</div>`).join('');
 
                 modal.show();
             } catch (err) {
@@ -397,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 
 
 </script>
