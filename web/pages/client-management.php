@@ -320,18 +320,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                   : 'text-muted';
 
                 modalBody.innerHTML = `
-<div class="align-items-center" style="background-color: rgb(245,245,247); border-radius: 15px; display: flex; align-items: center; gap: 10px; padding: 10px; margin-top: -20px;">
-    <div class="justify-content-between d-flex" style="flex-grow: 1;">
-        <div id="view_client_name"><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
-        <small id="view_onboarded_date" class="text-end">Onboarded<br><span class="text-muted">${client.onboarded_date ? new Date(client.onboarded_date).toLocaleDateString() : 'N/A'}</span></small>
+<div style="background-color: rgb(245,245,247); border-radius: 15px; padding: 10px;">
+    <div class="d-flex justify-content-between">
+        <div><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
+        <small class="text-end">Onboarded<br><span class="text-muted">${client.onboarded_date ? new Date(client.onboarded_date).toLocaleDateString() : 'N/A'}</span></small>
     </div>
 </div>
 <div class="d-flex gap-2 mt-2">
-    <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div class="flex-fill bg-white rounded p-2 text-center shadow-sm">
         <div class="fw-semibold">${client.total_engagements ?? 0}</div>
         <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
     </div>
-    <div style="flex:1; background-color: white; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div class="flex-fill bg-white rounded p-2 text-center shadow-sm">
         <div class="fw-semibold">${client.confirmed_engagements ?? 0}</div>
         <div class="text-muted" style="font-size: 12px;">Confirmed Engagements</div>
     </div>
