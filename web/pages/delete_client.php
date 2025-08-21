@@ -3,7 +3,7 @@ require_once '../includes/db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /");
     exit();
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['client_id'])) {
     $stmt->close();
 
     $_SESSION['success_message'] = "Client and all related engagements were deleted successfully.";
-    header("Location: clients.php"); // redirect back to client management page
+    header("Location: client-management.php"); // redirect back to client management page
     exit();
 }
 
