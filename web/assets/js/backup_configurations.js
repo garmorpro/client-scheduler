@@ -1,17 +1,3 @@
-// Show/hide local storage input
-function updateLocalStorageVisibility() {
-    const storageSelect = document.getElementById('storageLocation');
-    const localSettings = document.getElementById('localStorageSettings');
-    if (storageSelect.value === 'local') {
-        localSettings.style.display = 'block';
-    } else {
-        localSettings.style.display = 'none';
-    }
-}
-
-document.getElementById('storageLocation').addEventListener('change', updateLocalStorageVisibility);
-updateLocalStorageVisibility();
-
 // Open Backup Configuration Modal
 document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
     e.preventDefault();
