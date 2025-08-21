@@ -25,6 +25,21 @@
               <option value="not_confirmed">Not Confirmed</option>
             </select>
           </div>
+
+          <!-- Manager dropdown -->
+          <div class="mb-3">
+            <label for="manager" class="form-label">Manager</label>
+            <select class="form-select" id="manager" name="manager" required>
+              <option value="">Select Manager</option>
+              <?php
+              require '../includes/db.php';
+              $managerQuery = $conn->query("SELECT user_id, full_name FROM ms_users WHERE role='manager' ORDER BY full_name ASC");
+              while ($row = $managerQuery->fetch_assoc()) {
+                  echo '<option value="' . htmlspecialchars($row['user_id']) . '">' . htmlspecialchars($row['full_name']) . '</option>';
+              }
+              ?>
+            </select>
+          </div>
         </div>
 
         <div class="modal-footer p-2">
