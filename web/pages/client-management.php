@@ -366,8 +366,8 @@ if (client.status.toLowerCase() === 'active') {
                     </span>
                     </div>
                     <div>
-                      <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
-                      <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
+                      <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}
+                      <span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
                     </div>
                 </div>
 
