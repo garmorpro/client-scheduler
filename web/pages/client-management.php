@@ -255,136 +255,15 @@ unset($client);
 <?php include_once '../includes/modals/add_client_modal.php'; ?>
 <?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/edit_client_modal.php'; ?>
+<?php include_once '../includes/modals/import_client_modal.php'; ?>
 <?php include_once '../includes/modals/add_engagement_modal.php'; ?>
 
 
 <script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/view_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
-
-
-
-<!-- import engagements modal -->
-
-    <div class="modal fade" id="importClientsModal" tabindex="-1" aria-labelledby="importClientsModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form id="importClientsForm" enctype="multipart/form-data">
-            <div class="modal-header">
-              <h5 class="modal-title" id="importClientsModalLabel">Import Clients from CSV</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-              <p>
-                Please use the <a href="../assets/templates/bulk_client_template.csv" download>CSV template</a> to ensure correct format.
-              </p>
-
-              <div class="mb-3">
-                <label for="clients_csv_file" class="form-label">Select CSV File</label>
-                <input type="file" class="form-control" id="clients_csv_file" name="csv_file" accept=".csv" required>
-              </div>
-
-              <div class="alert alert-info small">
-                Only CSV files are supported. Required columns: 
-                <strong>client_name and onboarded_date</strong><br>
-                Optional Column: <em>notes</em>
-              </div>
-
-              <!-- Import Summary Container -->
-              <div id="clientsImportSummary" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none;">
-                <!-- Filled dynamically by JS -->
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary" id="importClientsSubmitBtn">Import</button>
-              <button type="button" class="btn btn-success d-none" id="importClientsCloseBtn">OK</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-
-<!-- end import engagements modal -->
-
-
-<!-- import engagements csv -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          const importForm = document.getElementById('importClientsForm');
-          const fileInput = document.getElementById('clients_csv_file');
-          const importSummary = document.getElementById('clientsImportSummary');
-          const importSubmitBtn = document.getElementById('importClientsSubmitBtn');
-          const importCloseBtn = document.getElementById('importClientsCloseBtn');
-          const importModal = new bootstrap.Modal(document.getElementById('importClientsModal'));
-
-          importForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-        
-            importSummary.style.display = 'none';
-            importSummary.innerHTML = '';
-            importCloseBtn.classList.add('d-none');
-            importSubmitBtn.classList.remove('d-none');
-        
-            const file = fileInput.files[0];
-            if (!file) {
-              alert('Please select a CSV file to upload.');
-              return;
-            }
-            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-              alert('Only CSV files are allowed.');
-              return;
-            }
-        
-            const formData = new FormData();
-            formData.append('csv_file', file);
-        
-            try {
-              const response = await fetch('import_clients.php', {
-                method: 'POST',
-                body: formData
-              });
-              const result = await response.json();
-          
-              importSummary.style.display = 'block';
-          
-              let html = `<p><strong>Import Results:</strong></p>`;
-              html += `<p>Successfully imported: ${result.successCount}</p>`;
-          
-              if (result.errors.length > 0) {
-                html += `<p class="text-danger">Errors (${result.errors.length}):</p><ul>`;
-                result.errors.forEach(err => {
-                  html += `<li>Row ${err.row}: ${err.message}</li>`;
-                });
-                html += `</ul>`;
-              } else {
-                html += `<p class="text-success">No errors found.</p>`;
-              }
-          
-              importSummary.innerHTML = html;
-          
-              importCloseBtn.classList.remove('d-none');
-              importSubmitBtn.classList.add('d-none');
-          
-              fileInput.value = '';
-          
-            } catch (error) {
-              alert('Error processing import: ' + error.message);
-            }
-          });
-      
-          importCloseBtn.addEventListener('click', () => {
-            importModal.hide();
-            location.reload(); // reload page to show new engagements
-          });
-        });
-
-    </script>
-<!-- end import engagements csv -->
 
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
