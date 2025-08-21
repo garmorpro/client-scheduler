@@ -79,7 +79,7 @@ $insert = $conn->prepare("
 if (!$insert) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);
 
 $insert->bind_param(
-    "isddsssssss",
+    "isddssssss",
     $client_id,
     $engagement_year,
     $budgeted_hours,
@@ -90,7 +90,6 @@ $insert->bind_param(
     $notes,
     $archived_by,
     $archive_date,
-    $status
 );
 
 if (!$insert->execute()) {
