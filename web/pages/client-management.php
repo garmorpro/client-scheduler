@@ -343,39 +343,52 @@ if (client.status.toLowerCase() === 'active') {
                 if (history.length === 0) {
     historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
 } else {
-    // Helper function to format comma-separated fields vertically
-    function formatListField(label, value) {
+    // Helper function: split comma-separated values into stacked <div>s
+    function formatListItems(value) {
         if (!value) return '';
-        const items = value.split(',').map(i => i.trim());
-        return `${label}:<br>${items.map(i => i).join('<br>')}`;
+        return value
+            .split(',')
+            .map(i => `<div>${i.trim()}</div>`)
+            .join('');
     }
 
     history.forEach(h => {
-        const managerHtml = formatListField('Manager', h.manager);
-        const seniorHtml = formatListField('Senior', h.senior);
-        const staffHtml = formatListField('Staff', h.staff);
+        const managerHtml = formatListItems(h.manager);
+        const seniorHtml = formatListItems(h.senior);
+        const staffHtml = formatListItems(h.staff);
 
         historyContainer.innerHTML += `
             <div class="card p-2 mb-2">
                 <div class="d-flex justify-content-between mb-2">
                     <span>${h.engagement_year}</span>
-                    <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">${h.status || 'Archived'}</span>
+                    <span class="badge d-flex align-items-center" style="font-size: 10px; background-color: black !important;">
+                        ${h.status || 'Archived'}
+                    </span>
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size: 10px;">
                     <div><span class="text-muted">Budgeted:</span> ${h.budgeted_hours}</div>
                     <div><span class="text-muted">Allocated:</span> ${h.allocated_hours}</div>
                 </div>
-                <div class="d-flex justify-content-between" style="font-size: 10px;">
-                    <span>${managerHtml}</span>
-                    <span>${seniorHtml}</span>
-                    <span>${staffHtml}</span>
+
+                <!-- Table-like layout -->
+                <div class="d-flex justify-content-between fw-semibold border-bottom pb-1 mb-1" style="font-size: 10px;">
+                    <div style="flex:1;">Manager</div>
+                    <div style="flex:1;">Senior</div>
+                    <div style="flex:1;">Staff</div>
                 </div>
+                <div class="d-flex justify-content-between" style="font-size: 10px;">
+                    <div style="flex:1;">${managerHtml}</div>
+                    <div style="flex:1;">${seniorHtml}</div>
+                    <div style="flex:1;">${staffHtml}</div>
+                </div>
+
                 <hr>
                 <div style="font-size: 10px;">Archived: ${h.archive_date || 'N/A'}</div>
             </div>
         `;
     });
 }
+
 
 
                 modal.show();
