@@ -12,6 +12,14 @@ function updateLocalStorageVisibility() {
 document.getElementById('storageLocation').addEventListener('change', updateLocalStorageVisibility);
 updateLocalStorageVisibility();
 
+// Open Backup Configuration Modal
+document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const modalEl = document.getElementById('backupConfigModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+});
+
 // Run Test Backup button
 document.getElementById('runTestBackupBtn').addEventListener('click', async () => {
     const btn = document.getElementById('runTestBackupBtn');
