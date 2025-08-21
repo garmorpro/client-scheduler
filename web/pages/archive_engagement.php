@@ -25,11 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['engagement_id'])) {
     $eng = $result->fetch_assoc();
 
     // Ensure NULL values for basic fields
-    $client_id       = $eng['client_id'] ?? null;
-    $budgeted_hours  = $eng['budgeted_hours'] ?? null;
-    $allocated_hours = $eng['allocated_hours'] ?? null;
-    $notes           = $eng['notes'] ?? null;
-    $status          = $eng['status'] ?? null;
+    $budgeted_hours  = $eng['budgeted_hours'] ?? 0;
+$allocated_hours = $eng['allocated_hours'] ?? 0;
+
+$notes           = !empty($eng['notes']) ? $eng['notes'] : '';
+$status          = !empty($eng['status']) ? $eng['status'] : '';
 
     // Get all entries for this engagement
     $entriesQuery = $conn->prepare("
