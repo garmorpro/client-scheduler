@@ -404,7 +404,7 @@ if (client.status.toLowerCase() === 'active') {
                 </div>
 
                 <hr>
-                <div style="font-size: 10px;">Archived: ${archiveDate}</div>
+                <div style="font-size: 10px;">Archived: ${archiveDate} by ${h.archived_by}</div>
             </div>
         `;
     });

@@ -28,7 +28,7 @@ if (!$client) {
 
 // Fetch engagement history
 $stmt2 = $conn->prepare("
-    SELECT history_id, client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archive_date
+    SELECT history_id, client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date
     FROM client_engagement_history
     WHERE client_id = ?
     ORDER BY engagement_year DESC
