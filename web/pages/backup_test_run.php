@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../includes/db.php'; // MySQLi connection $conn
+require_once '../includes/db.php'; // $conn, $dbUser, $dbPass, $host, $dbName
 
 $input = json_decode(file_get_contents('php://input'), true);
 $backupDir = rtrim($input['local_backup_directory'] ?? '/tmp/db_backups', '/');
@@ -14,16 +14,10 @@ if (!is_dir($backupDir) && !mkdir($backupDir, 0755, true)) {
 $timestamp = date('Y-m-d_His');
 $backupFile = "$backupDir/db_backup_$timestamp.sql";
 
-// --- Get credentials from $conn ---
-$dbName = $conn->query("SELECT DATABASE()")->fetch_row()[0] ?? '';
-$dbUser = $conn->user ?? '';
-$dbPass = $conn->pass ?? '';
-$dbHost = $conn->host_info ?? 'localhost';
-
 // --- Run mysqldump ---
 $command = sprintf(
     'mysqldump -h%s -u%s %s %s > %s',
-    escapeshellarg($dbHost),
+    escapeshellarg($host),
     escapeshellarg($dbUser),
     $dbPass !== '' ? '-p' . escapeshellarg($dbPass) : '',
     escapeshellarg($dbName),
@@ -31,6 +25,7 @@ $command = sprintf(
 );
 
 exec($command, $output, $returnVar);
+
 if ($returnVar !== 0) {
     echo json_encode(['success' => false, 'error' => 'mysqldump failed']);
     exit;
