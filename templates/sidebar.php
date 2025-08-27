@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+$isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 ?>
 
 <div class="d-flex flex-column justify-content-between bg-light border-end fixed-top"
@@ -32,6 +33,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
                     Dashboard
                 </a>
             </li> -->
+            <?php if ($isServiceAccount): ?>
             <?php if ($isAdmin || $isManager): ?>
                 <li class="nav-item mb-2">
                     <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
@@ -63,6 +65,14 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
                     <a href="engagement-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
                         <i class="bi bi-file-earmark-text me-2"></i>
                         Engagements
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php else: ?>
+                <li class="nav-item mb-2">
+                    <a href="service-settings.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                        <i class="bi bi-shield me-2"></i>
+                        Service Dashboard
                     </a>
                 </li>
             <?php endif; ?>
