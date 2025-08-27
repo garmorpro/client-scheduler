@@ -181,7 +181,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
     <h3 class="mb-0">Service Account Dashboard</h3>
-    <p class="text-muted mb-4">System overview and user management for Admin User</p>
+    <p class="text-muted mb-4">User management for service accounts</p>
 
     <div class="container-fluid">
 
