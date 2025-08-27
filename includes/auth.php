@@ -3,11 +3,13 @@ require_once 'db.php';
 session_start();
 
 // LOG ACTIVITY FUNCTION
-function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
+function logActivity($conn, $eventType, $user_id, $account_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("sissss", $eventType, $user_id, $email, $full_name, $title, $description);
+        // For service accounts, email and full_name may not apply, so we'll pass blanks
+        $blank = '';
+        $stmt->bind_param("sissss", $eventType, $user_id, $blank, $blank, $title, $description);
         $stmt->execute();
         $stmt->close();
     }
@@ -16,89 +18,56 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
+    $account_name = trim($_POST['account_name']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT user_id, password, first_name, last_name, role, mfa_enabled, change_password FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+    // Check if service account exists
+    $stmt = $conn->prepare("SELECT user_id, account_name, password, role, status FROM service_accounts WHERE account_name = ?");
+    $stmt->bind_param("s", $account_name);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        $user_id = $user['user_id'];
-        $hashed_password = $user['password'];
-        $first_name = $user['first_name'];
-        $last_name = $user['last_name'];
-        $role = trim(strtolower($user['role']));
-        $mfa_enabled = (int)$user['mfa_enabled'];
-        $change_password = (int)$user['change_password'];
+        $account = $result->fetch_assoc();
+        $user_id = $account['user_id'];
+        $hashed_password = $account['password'];
+        $role = strtolower(trim($account['role']));
+        $status = strtolower(trim($account['status']));
 
-        if (password_verify($password, $hashed_password)) {
-
-            // Force password change on first login
-            if ($change_password === 1) {
-                // Enable MFA automatically
-                $updateMFA = $conn->prepare("UPDATE users SET mfa_enabled = 1 WHERE user_id = ?");
-                $updateMFA->bind_param("i", $user_id);
-                $updateMFA->execute();
-                $updateMFA->close();
-
-                // Store temporary session for password change
-                $_SESSION['force_user_id'] = $user_id;
-                $_SESSION['force_email'] = $email;
-                $_SESSION['force_first_name'] = $first_name;
-                $_SESSION['force_last_name'] = $last_name;
-                $_SESSION['force_role'] = $role;
-
-                header("Location: change-password.php");
-                exit;
-            }
-
-            // MFA logic
-            if ($mfa_enabled === 1) {
-                $mfa_code = random_int(100000, 999999);
-                $updateStmt = $conn->prepare("UPDATE users SET mfa_code = ? WHERE user_id = ?");
-                $updateStmt->bind_param("ii", $mfa_code, $user_id);
-                $updateStmt->execute();
-                $updateStmt->close();
-
-                $_SESSION['mfa_user_id'] = $user_id;
-                header("Location: mfa.php");
-                exit;
-            }
-
-            // Normal login
+        // Check if account is active
+        if ($status !== 'active') {
+            logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Account is inactive");
+            $error = "Account is inactive. Contact administrator.";
+        } elseif (password_verify($password, $hashed_password)) {
+            // Successful login
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['first_name'] = $first_name;
-            $_SESSION['last_name'] = $last_name;
-            $_SESSION['user_role'] = $role;
-            $_SESSION['email'] = $email;
+            $_SESSION['account_name'] = $account_name;
+            $_SESSION['role'] = $role;
 
-            $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
+            // Update last active timestamp
+            $updateStmt = $conn->prepare("UPDATE service_accounts SET last_active = NOW() WHERE user_id = ?");
             $updateStmt->bind_param("i", $user_id);
             $updateStmt->execute();
             $updateStmt->close();
 
-            $full_name = trim($first_name . ' ' . $last_name);
-            logActivity($conn, "successful_login", $user_id, $email, $full_name, "User Login", "Successful login");
+            // Log successful login
+            logActivity($conn, "successful_login", $user_id, $account_name, "Service Account Login", "Successful login");
 
-            if ($role === 'admin' || $role === 'manager') {
+            // Redirect based on role
+            if ($role === 'admin') {
                 header("Location: admin-panel.php");
             } else {
-                header("Location: my-schedule.php");
+                header("Location: dashboard.php");
             }
             exit;
-
         } else {
-            $full_name = trim($first_name . ' ' . $last_name);
-            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
-            $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
+            logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Incorrect password");
+            $error = "Invalid login. Please try again.";
         }
     } else {
-        logActivity($conn, "failed_login", null, $email, "", "Failed Login", "Email not found");
-        $error = "Invalid login. Contact your administrator for account setup/troubleshooting.";
+        logActivity($conn, "failed_login", null, $account_name, "Failed Login", "Account not found");
+        $error = "Invalid login. Please try again.";
     }
 
     $stmt->close();
