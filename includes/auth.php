@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Successful login
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['account_name'] = $account_name;
-            $_SESSION['role'] = $role;
+            $_SESSION['full_name'] = $account_name;
+            $_SESSION['user_role'] = $role;
 
             // Update last active timestamp
             $updateStmt = $conn->prepare("UPDATE service_accounts SET last_active = NOW() WHERE user_id = ?");
