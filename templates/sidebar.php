@@ -33,7 +33,7 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                     Dashboard
                 </a>
             </li> -->
-            <?php if ($isServiceAccount): ?>
+            <?php if (!$isServiceAccount): ?>
             <?php if ($isAdmin || $isManager): ?>
                 <li class="nav-item mb-2">
                     <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
