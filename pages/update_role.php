@@ -17,7 +17,7 @@ if (!$userId || !in_array($newRole, $allowedRoles)) {
 }
 
 // Optional: prevent non-admins from updating roles
-if ($_SESSION['user_role'] !== 'admin' || 'service_account') {
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'service_account') {
     echo json_encode(['success' => false, 'error' => 'Unauthorized.']);
     exit;
 }
