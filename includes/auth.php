@@ -54,12 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Log successful login
             logActivity($conn, "successful_login", $user_id, $account_name, "Service Account Login", "Successful login");
 
-            // Redirect based on role
-            if ($role === 'admin') {
-                header("Location: ../pages/admin-panel.php");
-            } else {
-                header("Location: dashboard.php");
-            }
+            header("Location: ../pages/service-settings");
             exit;
         } else {
             logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Incorrect password");
