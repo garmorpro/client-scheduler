@@ -690,44 +690,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </div>
               </div>
 
-              <div class="row g-3 ps-3 pe-3 mt-2">
-                <div class="col-md-12">
-                  <div class="analytic-card" style="height: 215px !important;">
-                    <div class="user-management-header d-flex justify-content-between align-items-center mb-3">
-                      <div class="titles">
-                        <p class="text-black fs-6 fw-bold mb-1">Advanced Reports</p>
-                        <p class="fs-6 mb-0">Generate detailed system reports</p>
-                      </div>
-                      <div class="user-management-buttons">
-                        <a href="#" class="badge text-black p-2 text-decoration-none fw-medium border fs-6">
-                          <i class="bi bi-download me-3 overlay-red"></i>Export All Data
-                        </a>
-                      </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center pb-2">
-                      <div class="reports-card text-center overlay-red">
-                        <i class="bi bi-graph-up-arrow"></i>
-                        <div class="analytic-title mt-2 fw-semibold">Utilization Report</div>
-                        <div class="analytic-subtitle">Staff and engagement utilization</div>
-                      </div>
-
-                      <div class="reports-card text-center overlay-red">
-                        <i class="bi bi-people"></i>
-                        <div class="analytic-title mt-2 fw-semibold">User Activity Report</div>
-                        <div class="analytic-subtitle">Login and engagement metrics</div>
-                      </div>
-
-                      <div class="reports-card text-center overlay-red">
-                        <i class="bi bi-clock"></i>
-                        <div class="analytic-title mt-2 fw-semibold">Time Tracking Report</div>
-                        <div class="analytic-subtitle">Hours and productivity analysis</div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+              
             </div>
         <!-- end settings tab -->
 
