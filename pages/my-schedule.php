@@ -172,7 +172,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $res = $stmt->get_result();
     $members = [];
     while ($row = $res->fetch_assoc()) {
-        $members[] = $row['first_name'] . ' ' . $row['last_name'] . ' (' . $row['assigned_hours'] . ')';
+        $members[] = $row['full_name'] . ' (' . $row['assigned_hours'] . ')';
     }
     $stmt->close();
     return $members;
