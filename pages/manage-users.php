@@ -27,12 +27,7 @@ if ($userResult) {
 }
 $totalUsers = count($users);
 
-// Pagination setup (example: 10 per page)
-$perPage = 10;
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$start = ($page - 1) * $perPage;
-$usersToShow = array_slice($users, $start, $perPage);
-$lastPage = ceil($totalUsers / $perPage);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -109,7 +104,7 @@ $lastPage = ceil($totalUsers / $perPage);
                 </tr>
             </thead>
             <tbody id="usersTableBody">
-                <?php foreach ($usersToShow as $user): ?>
+                <?php foreach ($users as $user): ?>
                 <tr>
                     <td><input type="checkbox" value="<?= $user['user_id'] ?>"></td>
                     <td class="name-cell">
@@ -141,25 +136,11 @@ $lastPage = ceil($totalUsers / $perPage);
 
     <!-- Pagination & Info -->
     <div class="d-flex justify-content-between align-items-center mt-3">
-        <div class="pagination-info">
-            Showing <?= $start + 1 ?>–<?= min($start + $perPage, $totalUsers) ?> of <?= $totalUsers ?>
-        </div>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
-                </li>
-                <?php for ($p = 1; $p <= $lastPage; $p++): ?>
-                <li class="page-item <?= $page == $p ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $p ?>"><?= $p ?></a>
-                </li>
-                <?php endfor; ?>
-                <li class="page-item <?= $page >= $lastPage ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <div class="pagination-info"></div>
+    <nav>
+        <ul id="pagination" class="pagination pagination-sm mb-0"></ul>
+    </nav>
+</div>
 
 </div>
 
