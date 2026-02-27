@@ -150,6 +150,10 @@ body.dark-mode .sidebar-role {
     color: #abb0c6 !important;
 }
 
+body.dark-mode input::placeholder {
+    color: #abb0c6 !important;
+}
+
 /* Cards */
 body.dark-mode .stat-card,
 body.dark-mode .activity-card,
