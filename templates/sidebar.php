@@ -84,7 +84,7 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
         <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
              style="cursor: pointer; width: 36px; height: 36px;">
             <?php
-            echo $_SESSION['full_name'];
+            var_dump($_SESSION);
             $fullName = $_SESSION['full_name'] ?? ''; // get full name from session
             $initials = '';
                         
