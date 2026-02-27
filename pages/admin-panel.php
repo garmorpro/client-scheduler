@@ -183,6 +183,10 @@ if ($result && mysqli_num_rows($result) > 0) {
     <h3 class="mb-0">Administrative Dashboard</h3>
     <p class="text-muted mb-4">System overview and user management for Admin User</p>
 
+    <button id="themeToggle" class="theme-btn">
+  <span class="theme-icon">🌙</span>
+</button>
+
     <div class="container-fluid">
 
         <!-- Stat cards -->
