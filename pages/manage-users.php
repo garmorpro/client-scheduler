@@ -160,6 +160,16 @@ $totalUsers = count($users);
                  class="form-control"
                  required>
 
+
+                 <div id="csvPreviewContainer" class="mt-3" style="max-height:200px; overflow:auto; display:none;">
+    <h6>Preview:</h6>
+    <p id="csvRowCount"></p>
+    <table class="table table-sm table-bordered" id="csvPreviewTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
         </div>
 
         <div class="modal-footer">
@@ -265,8 +275,10 @@ $totalUsers = count($users);
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
 
+    
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
