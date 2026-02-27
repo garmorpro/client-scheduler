@@ -12,7 +12,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 
 // ✅ FIX: should be OR, not AND
 if ($isAdmin || $isManager) {
-    header("Location: admin-panel.php");
+    header("Location: master-schedule.php");
     exit();
 }
 
