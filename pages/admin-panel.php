@@ -92,10 +92,10 @@ if ($settingResult) {
                 <i class="bi bi-bell"></i>
                 <div>Notifications</div>
             </div>
-            <div class="settings-card">
+            <!-- <div class="settings-card">
                 <i class="bi bi-gear"></i>
                 <div>System Preferences</div>
-            </div>
+            </div> -->
         </div>
 
         <!-- SCHEDULER SETTINGS SECTION -->
