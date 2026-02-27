@@ -143,7 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a href="../assets/templates/bulk_import_user_template.csv" download class="btn btn-sm btn-link p-0 mb-3">
                     Download CSV Template
                 </a>
-                <input type="file" id="csvFileInput" accept=".csv" class="swal2-file" style="width:100%">
+                <div id="fileWrapper" style="border: 2px dashed #d1d5db; border-radius: 6px; padding: 20px; text-align:center; cursor:pointer; color:#6c757d;">
+                    Click or drag CSV file here
+                    <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+                </div>
                 <div id="csvPreview" style="margin-top:15px; max-height:200px; overflow:auto;"></div>
             `,
             showCancelButton: true,
@@ -155,13 +158,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 const popup = Swal.getPopup();
                 const fileInputEl = popup.querySelector('#csvFileInput');
                 const previewEl = popup.querySelector('#csvPreview');
+                const fileWrapper = popup.querySelector('#fileWrapper');
 
+                // Open file dialog on click
+                fileWrapper.addEventListener('click', () => fileInputEl.click());
+
+                // Optional: drag & drop highlight
+                fileWrapper.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileWrapper.style.borderColor = '#0d6efd';
+                    fileWrapper.style.color = '#0d6efd';
+                });
+                fileWrapper.addEventListener('dragleave', () => {
+                    fileWrapper.style.borderColor = '#d1d5db';
+                    fileWrapper.style.color = '#6c757d';
+                });
+                fileWrapper.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileWrapper.style.borderColor = '#d1d5db';
+                    fileWrapper.style.color = '#6c757d';
+                    if (e.dataTransfer.files.length) {
+                        fileInputEl.files = e.dataTransfer.files;
+                        triggerPreview(fileInputEl.files[0]);
+                    }
+                });
+
+                // File selection preview
                 fileInputEl.addEventListener('change', function() {
-                    const file = fileInputEl.files[0];
-                    if (!file) {
+                    if (!fileInputEl.files.length) {
                         previewEl.innerHTML = '';
                         return;
                     }
+                    triggerPreview(fileInputEl.files[0]);
+                });
+
+                function triggerPreview(file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const text = event.target.result;
@@ -189,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         previewEl.innerHTML = previewHtml;
                     };
                     reader.readAsText(file);
-                });
+                }
             },
             preConfirm: () => {
                 const popup = Swal.getPopup();
@@ -202,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('csv_file', fileInputEl.files[0]);
 
-                // Show loading while submitting
                 Swal.showLoading();
 
                 return fetch('../../pages/import_users.php', {
