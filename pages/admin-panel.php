@@ -236,6 +236,76 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div> -->
         <!-- end stats cards -->
 
+
+        <!-- New Sections -->
+
+        <!-- Company Holidays -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Company Holidays</h2>
+      <button class="add-btn">+ Add</button>
+    </div>
+    <div class="holiday">Memorial Day<br><small>Sunday, May 24, 2026 · 8 hours off</small></div>
+    <div class="holiday">Independence Day (Observed)<br><small>Thursday, July 2, 2026 · 8 hours off</small></div>
+    <div class="holiday">Labor Day<br><small>Sunday, September 6, 2026 · 8 hours off</small></div>
+  </div>
+
+  <!-- Active Clients -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Active Clients</h2>
+      <small>13 active clients</small>
+    </div>
+    <div class="client">Horizon Ltd<br><span class="client-tag">HORZ</span></div>
+    <div class="client">Nexus Systems<br><span class="client-tag">NEXS</span></div>
+    <div class="client">Catalyst Co<br><span class="client-tag">CATA</span></div>
+    <div class="client">Vertex Holdings<br><span class="client-tag">VERT</span></div>
+    <div class="client">Sterling Enterprises<br><span class="client-tag">STER</span></div>
+    <div class="client">Meridian Financial<br><span class="client-tag">MERI</span></div>
+    <div class="client">PTO<br><span class="client-tag">PTO</span></div>
+  </div>
+
+  <!-- Role Permissions -->
+  <div class="card">
+    <h2>Role Permissions</h2>
+    <p>Access control and permission levels</p>
+    <div class="role role-admin">
+      <strong>Admin</strong> · Full Access
+      <ul>
+        <li>Edit all schedules</li>
+        <li>Manage holidays</li>
+        <li>Configure settings</li>
+        <li>View all employee details</li>
+      </ul>
+    </div>
+    <div class="role role-manager">
+      <strong>Manager</strong> · Edit Access
+      <ul>
+        <li>Edit schedules</li>
+        <li>Approve PTO requests</li>
+        <li>View employee details</li>
+        <li>No settings access</li>
+      </ul>
+    </div>
+    <div class="role role-staff">
+      <strong>Senior & Staff</strong> · View Only
+      <ul>
+        <li>View own schedule</li>
+        <li>View master schedule</li>
+        <li>No edit access</li>
+        <li>No settings access</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+        <!-- end New Sections -->
+
+
+
+
+
         <!-- Tabs -->
           <div class="custom-tabs">
               <a href="#employees" class=" text-decoration-none <?php if ($isManager) echo 'd-none'; ?> <?php if ($isAdmin) echo 'active'; ?>" data-tab="employees">Employee Management</a>
