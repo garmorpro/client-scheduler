@@ -86,7 +86,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         exit();
     }
 
-    $expectedHeaders = ['first_name', 'last_name', 'email', 'role'];
+    $expectedHeaders = ['email', 'full_name', 'job_title', 'role'];
     $headerLower = array_map('strtolower', $header);
 
     $headerIndexes = [];
@@ -105,7 +105,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
 
     $currentUserId = $_SESSION['user_id'];
     $currentUserEmail = $_SESSION['email'] ?? '';
-    $currentUserFullName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+    $currentUserFullName = $_SESSION['full_name'] ?? '';
 
     $allowedRoles = ['admin', 'manager', 'senior', 'staff'];
 
@@ -133,9 +133,9 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         // ===============================
 
         if (
-            empty($rowAssoc['first_name']) ||
-            empty($rowAssoc['last_name']) ||
             empty($rowAssoc['email']) ||
+            empty($rowAssoc['full_name']) ||
+            empty($rowAssoc['job_title']) ||
             empty($rowAssoc['role'])
         ) {
             $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields.'];
@@ -183,8 +183,8 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
 
         $stmt = $conn->prepare("
             INSERT INTO users 
-            (idno, first_name, last_name, email, role, status, password) 
-            VALUES (?, ?, ?, ?, ?, 'active', ?)
+            (email, full_name, job_title, role, status) 
+            VALUES (?, ?, ?, ?, 'active')
         ");
 
         if (!$stmt) {
@@ -193,13 +193,11 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
 
         $stmt->bind_param(
-            "isssss",
-            $idno,
-            $rowAssoc['first_name'],
-            $rowAssoc['last_name'],
+            "ssss",
             $rowAssoc['email'],
-            $rowAssoc['role'],
-            $defaultPasswordHash
+            $rowAssoc['full_name'],
+            $rowAssoc['job_title'],
+            $rowAssoc['role']
         );
 
         if ($stmt->execute()) {
