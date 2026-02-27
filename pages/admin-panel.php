@@ -59,12 +59,12 @@ if ($settingResult) {
         }
 
         .card-header {
-            display: flex;
-            align-items: center;
-            /* gap: 0.5rem; */
-            margin-right: 5rem;
-            margin-bottom: 0.5rem;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centers both icon + text horizontally */
+    gap: 0.4rem;             /* small space between icon and heading */
+    margin-bottom: 0.5rem;
+}
 
         .card-header i {
             font-size: 1.6rem;
