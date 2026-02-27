@@ -137,7 +137,7 @@ $totalUsers = count($users);
     <div class="modal fade" id="importUsersModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="importUsersForm" enctype="multipart/form-data">
+      <form id="importUsersForm" method="POST" enctype="multipart/form-data">
         
         <div class="modal-header">
           <h5 class="modal-title">Import Users (CSV)</h5>
