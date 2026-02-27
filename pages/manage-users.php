@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a href="../assets/templates/bulk_import_user_template.csv" download class="swal-btn p-0 mb-3">
                     Download CSV Template
                 </a>
+                <div class="mb-3"></div>
                 <div id="fileWrapper" style="border: 2px dashed #d1d5db; border-radius: 6px; padding: 20px; text-align:center; cursor:pointer; color:#6c757d;">
                     Click or drag CSV file here
                     <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
