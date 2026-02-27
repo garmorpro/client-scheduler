@@ -277,70 +277,64 @@ if (data.errors.length) {
 
 
 
-    <!-- Users Table -->
-    <div id="usersGrid" class="mt-3"></div>
+    <!-- Grid.js CSS & JS at the top of <body> or in <head> -->
+<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+<div id="usersGrid" class="mt-3"></div>
 
 <script>
-const usersData = <?= json_encode(array_map(function($user) {
-    return [
-        '<input type="checkbox" class="user-checkbox" value="'. $user["user_id"] .'">',
-        htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
-        htmlspecialchars($user["email"]),
-        htmlspecialchars($user["role"]),
-        htmlspecialchars($user["status"]),
-        date("Y-m-d", strtotime($user["created_at"])),
-        date("Y-m-d", strtotime($user["last_active"])),
-        '<div class="dropdown">' +
-            '<a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                '<i class="bi bi-three-dots-vertical"></i>' +
-            '</a>' +
-            '<ul class="dropdown-menu dropdown-menu-end">' +
-                '<li><a class="dropdown-item" href="#">Edit</a></li>' +
-                '<li><a class="dropdown-item" href="#">Deactivate</a></li>' +
-                '<li><a class="dropdown-item text-danger" href="#">Delete</a></li>' +
-            '</ul>' +
-        '</div>'
-    ];
-}, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+document.addEventListener('DOMContentLoaded', () => {
+    const usersData = <?= json_encode(array_map(function($user) {
+        return [
+            '<input type="checkbox" class="user-checkbox" value="'. $user["user_id"] .'">',
+            htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
+            htmlspecialchars($user["email"]),
+            htmlspecialchars($user["role"]),
+            htmlspecialchars($user["status"]),
+            date("Y-m-d", strtotime($user["created_at"])),
+            date("Y-m-d", strtotime($user["last_active"])),
+            '<div class="dropdown">' +
+                '<a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                    '<i class="bi bi-three-dots-vertical"></i>' +
+                '</a>' +
+                '<ul class="dropdown-menu dropdown-menu-end">' +
+                    '<li><a class="dropdown-item" href="#">Edit</a></li>' +
+                    '<li><a class="dropdown-item" href="#">Deactivate</a></li>' +
+                    '<li><a class="dropdown-item text-danger" href="#">Delete</a></li>' +
+                '</ul>' +
+            '</div>'
+        ];
+    }, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 
-new gridjs.Grid({
-    columns: [
-        { name: "", width: "50px", formatter: (cell) => gridjs.html(cell) }, // checkbox
-        { name: "Name", formatter: (cell) => gridjs.html(cell) },
-        "Email",
-        "Role",
-        "Status",
-        "Added Date",
-        "Last Active",
-        { name: "Actions", formatter: (cell) => gridjs.html(cell) } // dropdown
-    ],
-    data: usersData,
-    search: {
-        selector: (cell, rowIndex, columnIndex) => {
-            // search across Name + Job title
-            return cell.replace(/<[^>]+>/g, "");
-        }
-    },
-    sort: true,
-    pagination: {
-        enabled: true,
-        limit: 10,
-        summary: true
-    },
-    style: {
-        table: { 'width': '100%', 'border-collapse': 'collapse' },
-        th: {
-            'background-color': '#f8f9fa',
-            'color': '#212529',
-            'text-align': 'center',
-            'padding': '8px'
+    new gridjs.Grid({
+        columns: [
+            { name: "", width: "50px", formatter: (cell) => gridjs.html(cell) },
+            { name: "Name", formatter: (cell) => gridjs.html(cell) },
+            "Email",
+            "Role",
+            "Status",
+            "Added Date",
+            "Last Active",
+            { name: "Actions", formatter: (cell) => gridjs.html(cell) }
+        ],
+        data: usersData,
+        search: {
+            selector: (cell) => cell.replace(/<[^>]+>/g, "")
         },
-        td: {
-            'text-align': 'center',
-            'padding': '8px'
+        sort: true,
+        pagination: {
+            enabled: true,
+            limit: 10,
+            summary: true
+        },
+        style: {
+            table: { 'width': '100%', 'border-collapse': 'collapse' },
+            th: { 'background-color': '#f8f9fa', 'text-align': 'center', 'padding': '8px' },
+            td: { 'text-align': 'center', 'padding': '8px' }
         }
-    }
-}).render(document.getElementById("usersGrid"));
+    }).render(document.getElementById("usersGrid"));
+});
 </script>
 
 </div>
@@ -380,9 +374,6 @@ new gridjs.Grid({
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
- <!-- Grid.js -->
-<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     
 
 </body>
