@@ -389,9 +389,9 @@ body.dark-mode .swal2-popup {
 }
 
 body.dark-mode .swal2-popup .swal-btn {
-  background-color: #444;
+  background-color: #444 !important;
   color: #fff !important;
-  border: 1px solid #666;
+  border: 1px solid #666 !important;
 }
 
 body.dark-mode .pop-up-small {
