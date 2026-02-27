@@ -11,6 +11,86 @@ body {
     font-size: 14px !important;
 }
 
+/* =================== New Styles ========================= */
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .add-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .holiday, .client, .role {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #e5e7eb;
+  }
+
+  .client-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background-color: var(--secondary-color);
+    color: #fff;
+    margin-top: 5px;
+  }
+
+  /* Role Cards */
+  .role-admin {
+    border-left: 4px solid var(--purple);
+  }
+  .role-manager {
+    border-left: 4px solid var(--blue);
+  }
+  .role-staff {
+    border-left: 4px solid var(--secondary-color);
+  }
+
+  /* Dark Mode */
+  body.dark-mode {
+    --bg-color: #1e1e2f;
+    --card-bg: #2c2c3c;
+    --text-color: #cfd6f1;
+    --primary-color: #6366f1;
+    --secondary-color: #4b5563;
+    --accent-color: #22c55e;
+    --purple: #a78bfa;
+    --blue: #60a5fa;
+  }
+
+  body.dark-mode .card {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+  }
+
+  body.dark-mode .holiday,
+  body.dark-mode .client,
+  body.dark-mode .role {
+    background-color: #3a3a4a;
+  }
+
+  body.dark-mode .add-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
 
 
 /* ====================== MODERN DARK MODE FULL ====================== */
