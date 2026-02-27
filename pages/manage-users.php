@@ -37,7 +37,29 @@ $totalUsers = count($users);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
-    
+    <script>
+const usersData = <?= json_encode(array_map(function($user) {
+    return [
+        '<input type="checkbox" value="'. $user["user_id"] .'">',
+        htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
+        htmlspecialchars($user["email"]),
+        htmlspecialchars($user["role"]),
+        htmlspecialchars($user["status"]),
+        date("Y-m-d", strtotime($user["created_at"])),
+        date("Y-m-d", strtotime($user["last_active"])),
+        '<div class="dropdown">
+            <a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Edit</a></li>
+                <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+            </ul>
+        </div>'
+    ];
+}, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
     <!-- Grid.js -->
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
