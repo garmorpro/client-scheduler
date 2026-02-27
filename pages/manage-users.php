@@ -127,57 +127,14 @@ $totalUsers = count($users);
     </div>
 
 
-
-    <!-- import modal -->
-<!-- <div class="modal fade" id="importUsersModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="importUsersForm" method="POST" enctype="multipart/form-data">
-
-        <div class="modal-header">
-          <h5 class="modal-title">Import Users (CSV)</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <div class="modal-body">
-
-          <p class="small text-muted">
-            Upload a CSV file using the template format.
-          </p>
-
-          <a href="../assets/templates/bulk_import_user_template.csv" download class="btn btn-sm btn-link p-0 mb-3">
-            Download CSV Template
-          </a>
-
-          <input type="file"
-                 name="csv_file"
-                 accept=".csv"
-                 class="form-control"
-                 required>
-
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary btn-sm">
-            Import Users
-          </button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-</div> -->
-<!-- end import modal -->
-
 <!-- SweetAlert2 Preview & AJAX Script -->
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
     const openBtn = document.getElementById('openImportBtn');
 
     openBtn.addEventListener('click', function() {
-        // Show SweetAlert2 "Import CSV" modal
         Swal.fire({
             title: 'Import Users (CSV)',
             html: `
@@ -192,15 +149,52 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmButtonText: 'Upload',
             cancelButtonText: 'Cancel',
             focusConfirm: false,
+            width: '700px',
+            didOpen: () => {
+                // Attach change listener AFTER popup is in DOM
+                const fileInputEl = document.getElementById('csvFileInput');
+                const previewEl = document.getElementById('csvPreview');
+
+                fileInputEl.addEventListener('change', function() {
+                    const file = fileInputEl.files[0];
+                    if (!file) {
+                        previewEl.innerHTML = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const text = event.target.result;
+                        const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== "");
+                        if (lines.length < 2) return;
+                        const headers = lines[0].split(',');
+                        const rows = lines.slice(1);
+
+                        let previewHtml = `<p><strong>Records found:</strong> ${rows.length}</p>`;
+                        previewHtml += `<table class="table table-sm table-bordered"><thead><tr>`;
+                        headers.forEach(h => previewHtml += `<th>${h.trim()}</th>`);
+                        previewHtml += `</tr></thead><tbody>`;
+                        rows.slice(0, 5).forEach(row => {
+                            const cols = row.split(',');
+                            previewHtml += '<tr>';
+                            cols.forEach(c => previewHtml += `<td>${c.trim()}</td>`);
+                            previewHtml += '</tr>';
+                        });
+                        previewHtml += '</tbody></table>`;
+                        if (rows.length > 5) previewHtml += `<p class="small text-muted">...and ${rows.length - 5} more rows</p>`;
+
+                        previewEl.innerHTML = previewHtml;
+                    };
+                    reader.readAsText(file);
+                });
+            },
             preConfirm: () => {
                 const fileInput = Swal.getPopup().querySelector('#csvFileInput');
                 if (!fileInput.files.length) {
                     Swal.showValidationMessage(`Please select a CSV file`);
                     return false;
                 }
-                return fileInput.files[0]; // return the file
-            },
-            width: '700px'
+                return fileInput.files[0];
+            }
         }).then(result => {
             if (result.isConfirmed) {
                 const file = result.value;
@@ -214,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    // Build result HTML
                     let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
                     if (data.errors.length) {
                         htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
@@ -224,15 +217,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         htmlMsg += `</ul>`;
                     }
 
-                    // Show result in SweetAlert2
                     Swal.fire({
                         title: 'Import Results',
                         html: htmlMsg,
                         icon: data.errors.length ? 'warning' : 'success',
                         confirmButtonText: 'OK'
-                    }).then(() => {
-                        location.reload(); // refresh page after OK
-                    });
+                    }).then(() => location.reload());
                 })
                 .catch(err => {
                     console.error('AJAX Error:', err);
@@ -244,39 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-
-        // Preview CSV after selecting file
-        const fileInputEl = document.getElementById('csvFileInput');
-        fileInputEl.addEventListener('change', function() {
-            const file = fileInputEl.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const text = event.target.result;
-                const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== "");
-                if (lines.length < 2) return;
-                const headers = lines[0].split(',');
-                const rows = lines.slice(1);
-
-                let previewHtml = `<p><strong>Records found:</strong> ${rows.length}</p>`;
-                previewHtml += `<table class="table table-sm table-bordered"><thead><tr>`;
-                headers.forEach(h => previewHtml += `<th>${h.trim()}</th>`);
-                previewHtml += `</tr></thead><tbody>`;
-                rows.slice(0, 5).forEach(row => {
-                    const cols = row.split(',');
-                    previewHtml += '<tr>';
-                    cols.forEach(c => previewHtml += `<td>${c.trim()}</td>`);
-                    previewHtml += '</tr>';
-                });
-                previewHtml += '</tbody></table>`;
-                if (rows.length > 5) previewHtml += `<p class="small text-muted">...and ${rows.length - 5} more rows</p>`;
-
-                document.getElementById('csvPreview').innerHTML = previewHtml;
-            };
-            reader.readAsText(file);
-        });
     });
-
 });
 </script>
 
