@@ -16,7 +16,7 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch settings and data as in your original code
+// Fetch settings
 $settings = [];
 $settingSQL = "SELECT setting_key, setting_value FROM settings";
 $settingResult = $conn->query($settingSQL);
@@ -37,30 +37,49 @@ if ($settingResult) {
     <style>
         .settings-row {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
+
         .settings-card {
             flex: 1 1 22%;
-            min-width: 180px;
-            padding: 1.5rem;
+            min-width: 170px;
+            padding: 1rem;
             border-radius: 0.5rem;
             background-color: #f8f9fa;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.2s ease-in-out;
         }
+
         .settings-card:hover {
             background-color: #e9ecef;
             transform: translateY(-2px);
         }
-        .settings-card i {
-            font-size: 2rem;
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 0.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.6rem;
             color: #495057;
         }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
         .section-title {
             margin-top: 2rem;
             margin-bottom: 1rem;
@@ -81,41 +100,65 @@ if ($settingResult) {
         <h5 class="section-title">System</h5>
         <div class="settings-row">
             <div class="settings-card">
-                <i class="bi bi-people"></i>
-                <div>Manage Users</div>
+                <div class="card-header">
+                    <i class="bi bi-people"></i>
+                    <div class="card-title">Manage Users</div>
+                </div>
+                <div class="card-desc">Add, edit, or remove system users and manage their profiles.</div>
             </div>
             <div class="settings-card">
-                <i class="bi bi-shield-lock"></i>
-                <div>Role Permissions</div>
+                <div class="card-header">
+                    <i class="bi bi-shield-lock"></i>
+                    <div class="card-title">Role Permissions</div>
+                </div>
+                <div class="card-desc">Define what each role can access and modify within the system.</div>
             </div>
             <div class="settings-card">
-                <i class="bi bi-bell"></i>
-                <div>Notifications</div>
+                <div class="card-header">
+                    <i class="bi bi-bell"></i>
+                    <div class="card-title">Notifications</div>
+                </div>
+                <div class="card-desc">Configure email or in-app alerts for important events and updates.</div>
             </div>
-            <!-- <div class="settings-card">
-                <i class="bi bi-gear"></i>
-                <div>System Preferences</div>
-            </div> -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <i class="bi bi-gear"></i>
+                    <div class="card-title">System Preferences</div>
+                </div>
+                <div class="card-desc">Adjust general settings like time zone, theme, and default behaviors.</div>
+            </div>
         </div>
 
         <!-- SCHEDULER SETTINGS SECTION -->
         <h5 class="section-title">Scheduler Settings</h5>
         <div class="settings-row">
             <div class="settings-card">
-                <i class="bi bi-calendar-event"></i>
-                <div>Company Holidays</div>
+                <div class="card-header">
+                    <i class="bi bi-calendar-event"></i>
+                    <div class="card-title">Company Holidays</div>
+                </div>
+                <div class="card-desc">Set official holidays and days off for the entire organization.</div>
             </div>
             <div class="settings-card">
-                <i class="bi bi-file-earmark-text"></i>
-                <div>Reports</div>
+                <div class="card-header">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <div class="card-title">Reports</div>
+                </div>
+                <div class="card-desc">Generate and download scheduling, attendance, and engagement reports.</div>
             </div>
             <div class="settings-card">
-                <i class="bi bi-clock"></i>
-                <div>Time Off Rules</div>
+                <div class="card-header">
+                    <i class="bi bi-clock"></i>
+                    <div class="card-title">Time Off Rules</div>
+                </div>
+                <div class="card-desc">Manage PTO policies, approvals, and rules for time-off requests.</div>
             </div>
             <div class="settings-card">
-                <i class="bi bi-calendar-check"></i>
-                <div>Default Schedules</div>
+                <div class="card-header">
+                    <i class="bi bi-calendar-check"></i>
+                    <div class="card-title">Default Schedules</div>
+                </div>
+                <div class="card-desc">Set up default weekly schedules and templates for employees.</div>
             </div>
         </div>
 
