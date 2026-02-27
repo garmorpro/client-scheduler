@@ -173,6 +173,7 @@ $totalUsers = count($users);
 <!-- end import modal -->
 
 <!-- SweetAlert2 Preview & AJAX Script -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
