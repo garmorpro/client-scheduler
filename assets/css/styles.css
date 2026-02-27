@@ -187,7 +187,7 @@ body.dark-mode #user-table {
 }
 
 /* Make sure all table elements use them */
-body.dark-mode table tr th,
+body.dark-mode table tr,
 body.dark-mode table td {
   background-color: var(--bs-table-bg) !important;
   color: var(--bs-table-color) !important;
