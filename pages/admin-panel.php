@@ -122,13 +122,13 @@ if ($settingResult) {
                 </div>
                 <div class="card-desc">Configure email or in-app alerts for important events and updates.</div>
             </div>
-            <div class="settings-card">
+            <!-- <div class="settings-card">
                 <div class="card-header">
                     <i class="bi bi-gear"></i>
                     <div class="card-title">System Preferences</div>
                 </div>
                 <div class="card-desc">Adjust general settings like time zone, theme, and default behaviors.</div>
-            </div>
+            </div> -->
         </div>
 
         <!-- SCHEDULER SETTINGS SECTION -->
