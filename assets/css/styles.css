@@ -13,7 +13,7 @@ body {
 
 
 
-/* START - Theme Mode Change */
+/* START - Modern Dark Mode */
 
 /* Clickable theme icon */
 .theme-icon {
@@ -28,20 +28,86 @@ body {
   color: #111;
 }
 
+/* Dark mode body */
 body.dark-mode {
-  background-color: #121212; /* your dark background */
-  color: #f5f5f5; /* your dark text color */
+  background-color: #1e1e2f; /* deep navy-gray background instead of black */
+  color: #e0e0e0; /* soft light text */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body.dark-mode .theme-icon {
-  color: #f9f9f9;
+/* Links & general text adjustments */
+body.dark-mode a,
+body.dark-mode .nav-link {
+  color: #cfd6f1; /* soft bluish link color */
+}
+body.dark-mode a:hover,
+body.dark-mode .nav-link:hover {
+  color: #ffffff; /* bright on hover */
 }
 
-body.dark-mode .theme-icon:hover {
+/* Cards */
+body.dark-mode .stat-card,
+body.dark-mode .activity-card,
+body.dark-mode .analytic-card,
+body.dark-mode .reports-card,
+body.dark-mode .settings-card {
+  background-color: #2a2a3d; /* darker card background */
+  border: 1px solid #3a3a50; /* subtle border */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Tables */
+body.dark-mode table,
+body.dark-mode .user-table table {
+  background-color: #2a2a3d;
+  color: #e0e0e0;
+}
+body.dark-mode th,
+body.dark-mode td {
+  border-color: #3a3a50;
+}
+
+/* Inputs and selects */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode .form-select,
+body.dark-mode .form-control,
+body.dark-mode .dropdown-btn {
+  background-color: #2a2a3d;
+  color: #e0e0e0;
+  border: 1px solid #3a3a50;
+}
+
+/* Buttons */
+body.dark-mode button,
+body.dark-mode .btn {
+  background-color: #3a3a50;
+  color: #e0e0e0;
+  border: 1px solid #4a4a60;
+}
+body.dark-mode button:hover,
+body.dark-mode .btn:hover {
+  background-color: #505070;
   color: #fff;
 }
 
-/* END THEME */
+/* Theme icon color */
+body.dark-mode .theme-icon {
+  color: #f5f5f5;
+}
+body.dark-mode .theme-icon:hover {
+  color: #ffffff;
+}
+
+/* Optional: utility bars and progress */
+body.dark-mode .util-bar {
+  background: #3a3a50;
+}
+body.dark-mode .util-bar-fill {
+  background: #cfd6f1;
+}
+
+/* End Dark Mode */
 
 
 .form-select, .form-control { 

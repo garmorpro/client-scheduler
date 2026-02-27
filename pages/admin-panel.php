@@ -838,14 +838,14 @@ if ($result && mysqli_num_rows($result) > 0) {
 const themeIcon = document.getElementById('themeToggle');
 
 themeIcon.addEventListener('click', () => {
-    // Toggle dark mode on body
+    // Toggle dark-mode class
     const isDark = document.body.classList.toggle('dark-mode');
 
     // Toggle icon
     themeIcon.classList.toggle('bi-moon-fill', !isDark);
     themeIcon.classList.toggle('bi-sun-fill', isDark);
 
-    // Save to server via AJAX and update session
+    // Save to server & session
     fetch('save-theme.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -853,9 +853,7 @@ themeIcon.addEventListener('click', () => {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status !== 'success') {
-            console.error('Failed to save theme:', data.message);
-        }
+        if (data.status !== 'success') console.error('Failed to save theme:', data.message);
     })
     .catch(err => console.error('Error saving theme:', err));
 });
