@@ -279,29 +279,20 @@ if (data.errors.length) {
 
 
 
-<div id="usersGrid" class="mt-3"></div>
+<div id="usersGrid"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const usersData = <?= json_encode(array_map(function($user) {
         return [
             '<input type="checkbox" class="user-checkbox" value="'. $user["user_id"] .'">',
-            htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
+            htmlspecialchars($user["full_name"]) + '<div class="job-title">' + htmlspecialchars($user["job_title"]) + '</div>',
             htmlspecialchars($user["email"]),
             htmlspecialchars($user["role"]),
             htmlspecialchars($user["status"]),
-            date("Y-m-d", strtotime($user["created_at"])),
-            date("Y-m-d", strtotime($user["last_active"])),
-            '<div class="dropdown">' +
-                '<a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="bi bi-three-dots-vertical"></i>' +
-                '</a>' +
-                '<ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item" href="#">Edit</a></li>' +
-                    '<li><a class="dropdown-item" href="#">Deactivate</a></li>' +
-                    '<li><a class="dropdown-item text-danger" href="#">Delete</a></li>' +
-                '</ul>' +
-            '</div>'
+            "<?= date('Y-m-d', strtotime($user['created_at'])) ?>",
+            "<?= date('Y-m-d', strtotime($user['last_active'])) ?>",
+            '<i class="bi bi-three-dots-vertical"></i>'
         ];
     }, $users), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 
@@ -317,20 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: "Actions", formatter: (cell) => gridjs.html(cell) }
         ],
         data: usersData,
-        search: {
-            selector: (cell) => cell.replace(/<[^>]+>/g, "")
-        },
+        search: true,        // remove selector for now
         sort: true,
-        pagination: {
-            enabled: true,
-            limit: 10,
-            summary: true
-        },
-        style: {
-            table: { 'width': '100%', 'border-collapse': 'collapse' },
-            th: { 'background-color': '#f8f9fa', 'text-align': 'center', 'padding': '8px' },
-            td: { 'text-align': 'center', 'padding': '8px' }
-        }
+        pagination: { enabled: true, limit: 10 }
     }).render(document.getElementById("usersGrid"));
 });
 </script>
