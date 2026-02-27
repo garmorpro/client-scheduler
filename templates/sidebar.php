@@ -34,14 +34,6 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                 </a>
             </li> -->
             <?php if (!$isServiceAccount): ?>
-            <?php if ($isAdmin || $isManager): ?>
-                <li class="nav-item mb-2">
-                    <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                        <i class="bi bi-shield me-2"></i>
-                        Admin Panel
-                    </a>
-                </li>
-            <?php endif; ?>
             <li class="nav-item mb-2 <?php if ($isAdmin || $isManager) echo 'd-none'; ?>">
                 <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
                     <i class="bi bi-person me-2"></i>
@@ -65,6 +57,14 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                     <a href="engagement-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
                         <i class="bi bi-file-earmark-text me-2"></i>
                         Engagements
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($isAdmin || $isManager): ?>
+                <li class="nav-item mb-2">
+                    <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
+                        <i class="bi bi-shield me-2"></i>
+                        Settings
                     </a>
                 </li>
             <?php endif; ?>
