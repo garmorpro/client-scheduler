@@ -85,7 +85,7 @@ $totalUsers = count($users);
         <div class="right d-flex align-items-center gap-2 flex-nowrap">
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
             <div class="dropdown">
-    <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+    <button class="btn btn-outline-secondary btn-sm"
         id="roleFilterBtn"
         type="button"
         data-bs-toggle="dropdown"
