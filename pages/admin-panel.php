@@ -44,7 +44,7 @@ if ($settingResult) {
 
         .settings-card {
             flex: 1 1 22%;
-            max-width: 170px;
+            min-width: 170px;
             max-height: 150px;
             padding: 1rem;
             border-radius: 0.5rem;
@@ -148,16 +148,7 @@ if ($settingResult) {
                 </div>
                 <div class="card-desc">Generate and download scheduling, attendance, and engagement reports.</div>
             </div>
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-clock"></i>
-                    <div class="card-title">Time Off Rules</div>
-                </div>
-                <div class="card-desc">Manage PTO policies, approvals, and rules for time-off requests.</div>
-            </div>
-            <div class="settings-card" >
-                <div class="card-header"style="display: none;">
-            </div>
+            
         </div>
 
     </div> <!-- container -->
