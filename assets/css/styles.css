@@ -32,12 +32,14 @@ body.dark-mode .nav-link:hover {
 }
 
 body.dark-mode .header-text h3,
-body.dark-mode .side-header-text h5 {
+body.dark-mode .side-header-text h5,
+body.dark-mode .sidebar-fullname {
     color: #ffffff !important;
 }
 
 body.dark-mode .header-text p,
-body.dark-mode .side-header-text small {
+body.dark-mode .side-header-text small,
+body.dark-mode .sidebar-role {
     color: #abb0c6 !important;
 }
 
