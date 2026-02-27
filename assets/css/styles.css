@@ -73,6 +73,7 @@ body.dark-mode #user-table {
   --bs-table-striped-color: #e0e0e0;
   --bs-table-striped-bg: #33334a;
   --bs-table-border-color: #3a3a50;
+  border-radius: 15px !important;
 }
 
 /* Make sure all table elements use them */
