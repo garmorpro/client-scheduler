@@ -169,23 +169,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Optional: drag & drop highlight
                 fileWrapper.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    fileWrapper.style.borderColor = '#0d6efd';
-                    fileWrapper.style.color = '#0d6efd';
-                });
-                fileWrapper.addEventListener('dragleave', () => {
-                    fileWrapper.style.borderColor = '#d1d5db';
-                    fileWrapper.style.color = '#6c757d';
-                });
-                fileWrapper.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    fileWrapper.style.borderColor = '#d1d5db';
-                    fileWrapper.style.color = '#6c757d';
-                    if (e.dataTransfer.files.length) {
-                        fileInputEl.files = e.dataTransfer.files;
-                        triggerPreview(fileInputEl.files[0]);
-                    }
-                });
+    e.preventDefault();
+    fileWrapper.classList.add('drag-over');
+});
+fileWrapper.addEventListener('dragleave', () => {
+    fileWrapper.classList.remove('drag-over');
+});
+fileWrapper.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileWrapper.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+        fileInputEl.files = e.dataTransfer.files;
+        triggerPreview(fileInputEl.files[0]);
+    }
+});
+                // fileWrapper.addEventListener('dragover', (e) => {
+                //     e.preventDefault();
+                //     fileWrapper.style.borderColor = '#0d6efd';
+                //     fileWrapper.style.color = '#0d6efd';
+                // });
+                // fileWrapper.addEventListener('dragleave', () => {
+                //     fileWrapper.style.borderColor = '#d1d5db';
+                //     fileWrapper.style.color = '#6c757d';
+                // });
+                // fileWrapper.addEventListener('drop', (e) => {
+                //     e.preventDefault();
+                //     fileWrapper.style.borderColor = '#d1d5db';
+                //     fileWrapper.style.color = '#6c757d';
+                //     if (e.dataTransfer.files.length) {
+                //         fileInputEl.files = e.dataTransfer.files;
+                //         triggerPreview(fileInputEl.files[0]);
+                //     }
+                // });
 
                 // File selection preview
                 fileInputEl.addEventListener('change', function() {
