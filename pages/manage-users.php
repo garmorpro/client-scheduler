@@ -38,17 +38,16 @@ $totalUsers = count($users);
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <script>
-const usersData = [
-    <?php foreach ($users as $user): ?>
-    [
-        '<input type="checkbox" value="<?= $user["user_id"] ?>">',
-        '<?= htmlspecialchars($user["full_name"]) ?><div class="job-title"><?= htmlspecialchars($user["job_title"]) ?></div>',
-        '<?= htmlspecialchars($user["email"]) ?>',
-        '<?= htmlspecialchars($user["role"]) ?>',
-        '<?= htmlspecialchars($user["status"]) ?>',
-        '<?= date("Y-m-d", strtotime($user["created_at"])) ?>',
-        '<?= date("Y-m-d", strtotime($user["last_active"])) ?>',
-        `<div class="dropdown">
+const usersData = <?= json_encode(array_map(function($user) {
+    return [
+        '<input type="checkbox" value="'. $user["user_id"] .'">',
+        htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
+        htmlspecialchars($user["email"]),
+        htmlspecialchars($user["role"]),
+        htmlspecialchars($user["status"]),
+        date("Y-m-d", strtotime($user["created_at"])),
+        date("Y-m-d", strtotime($user["last_active"])),
+        '<div class="dropdown">
             <a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </a>
@@ -57,10 +56,9 @@ const usersData = [
                 <li><a class="dropdown-item" href="#">Deactivate</a></li>
                 <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
             </ul>
-        </div>`
-    ],
-    <?php endforeach; ?>
-];
+        </div>'
+    ];
+}, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 </script>
 
     <!-- Grid.js -->
@@ -305,14 +303,6 @@ if (data.errors.length) {
 
     <!-- Users Table -->
     <div id="usersGrid" class="mt-3"></div>
-
-    <!-- Pagination & Info -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="pagination-info"></div>
-    <nav>
-        <ul id="pagination" class="pagination pagination-sm mb-0"></ul>
-    </nav>
-</div>
 
 </div>
 
