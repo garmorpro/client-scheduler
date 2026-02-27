@@ -80,7 +80,7 @@ $totalUsers = count($users);
     <!-- Header Bar -->
     <div class="header-bar">
         <div class="left"><?= $totalUsers ?> Users</div>
-        <div class="right d-flex align-items-center gap-2">
+        <div class="right d-flex align-items-center gap-1">
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
             <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-filter"></i></button>
             <button class="btn btn-outline-primary btn-sm">Import</button>
