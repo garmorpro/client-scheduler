@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $account = $result->fetch_assoc();
         $user_id = $account['user_id'];
+        $full_name = $account['full_name'];
         $hashed_password = $account['password'];
         $role = strtolower(trim($account['role']));
         $status = strtolower(trim($account['status']));
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Successful login
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['full_name'] = $email;
+            $_SESSION['full_name'] = $full_name;
             $_SESSION['user_role'] = $role;
 
             // Update last active timestamp
