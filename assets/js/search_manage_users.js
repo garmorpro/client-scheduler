@@ -1,39 +1,58 @@
-document.getElementById('userSearch').addEventListener('input', function () {
-    const searchValue = this.value.toLowerCase();
+let selectedRole = "all";
 
-    // Split by comma and trim spaces
+const roleFilterMenu = document.getElementById('roleFilterMenu');
+const roleFilterBtn = document.getElementById('roleFilterBtn');
+
+roleFilterMenu.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    if (!e.target.dataset.role) return;
+
+    // Remove active from all
+    document.querySelectorAll('#roleFilterMenu .dropdown-item')
+        .forEach(item => item.classList.remove('active'));
+
+    // Add active to selected
+    e.target.classList.add('active');
+
+    selectedRole = e.target.dataset.role;
+    roleFilterBtn.innerText = e.target.innerText;
+
+    currentPage = 1;
+    applyFilters();
+});
+
+function applyFilters() {
+    const searchValue = searchInput.value.toLowerCase();
+
     const searchTerms = searchValue
         .split(',')
         .map(term => term.trim())
         .filter(term => term.length > 0);
 
-    const rows = document.querySelectorAll('#usersTableBody tr');
-    let visibleCount = 0;
+    filteredRows = rows.filter(row => {
+        const text = row.innerText.toLowerCase();
 
-    rows.forEach(row => {
-        const rowText = row.innerText.toLowerCase();
+        const roleCell = row.children[3].innerText.toLowerCase();
 
-        // If no search terms, show all
-        if (searchTerms.length === 0) {
-            row.style.display = '';
-            visibleCount++;
-            return;
-        }
+        // Role filter
+        const roleMatch =
+            selectedRole === "all" ||
+            roleCell.includes(selectedRole);
 
-        // Check if ANY search term matches the row
-        const match = searchTerms.some(term => rowText.includes(term));
+        // Search filter
+        const searchMatch =
+            searchTerms.length === 0 ||
+            searchTerms.some(term => text.includes(term));
 
-        if (match) {
-            row.style.display = '';
-            visibleCount++;
-        } else {
-            row.style.display = 'none';
-        }
+        return roleMatch && searchMatch;
     });
 
-    // Update "Showing X of Y" text
-    const paginationInfo = document.querySelector('.pagination-info');
-    if (paginationInfo) {
-        paginationInfo.innerText = `Showing ${visibleCount} of <?= $totalUsers ?>`;
-    }
+    renderTable();
+}
+
+// Replace your old search listener with this:
+searchInput.addEventListener('input', function () {
+    currentPage = 1;
+    applyFilters();
 });

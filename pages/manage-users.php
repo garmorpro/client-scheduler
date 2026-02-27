@@ -84,7 +84,23 @@ $totalUsers = count($users);
         <div class="left"><?= $totalUsers ?> Users</div>
         <div class="right d-flex align-items-center gap-2 flex-nowrap">
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-filter"></i></button>
+            <div class="dropdown">
+    <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            id="roleFilterBtn">
+        All Roles
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end" id="roleFilterMenu">
+        <li><a class="dropdown-item active" href="#" data-role="all">All Roles</a></li>
+        <li><a class="dropdown-item" href="#" data-role="admin">Admin</a></li>
+        <li><a class="dropdown-item" href="#" data-role="manager">Manager</a></li>
+        <li><a class="dropdown-item" href="#" data-role="senior">Senior</a></li>
+        <li><a class="dropdown-item" href="#" data-role="staff">Staff</a></li>
+    </ul>
+</div>
             <button class="btn btn-outline-primary btn-sm">Import</button>
             <button class="btn btn-primary btn-sm">Invite User</button>
         </div>
