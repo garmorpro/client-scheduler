@@ -382,7 +382,7 @@ body.dark-mode .swal2-popup {
   border: 1px solid #36364d;
 }
 
-body.dark-mode .swal2-popup .btn {
+body.dark-mode .swal-btn {
   background-color: transparent !important;
   color: #f1f1f1;
   border: 1px solid #36364d;
