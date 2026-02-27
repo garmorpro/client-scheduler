@@ -61,13 +61,23 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                 </li>
             <?php endif; ?>
             <?php if ($isAdmin || $isManager): ?>
-                <li class="nav-item mb-2">
-                    <a href="admin-panel.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                        <i class="bi bi-gear me-2"></i>
-                        Settings
-                    </a>
-                </li>
-            <?php endif; ?>
+<li class="nav-item mb-2">
+    <a class="nav-link d-flex align-items-center px-0 text-dark" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="false" aria-controls="settingsDropdown">
+        <i class="bi bi-gear me-2"></i>
+        <span>Settings</span>
+        <i class="bi bi-chevron-down ms-auto"></i> <!-- down arrow -->
+    </a>
+    <div class="collapse" id="settingsDropdown">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
+            <li><a href="manage-users.php" class="nav-link text-dark py-1">Users</a></li>
+            <li><a href="role-permissions.php" class="nav-link text-dark py-1">Permissions</a></li>
+            <li><a href="notifications.php" class="nav-link text-dark py-1">Notifications</a></li>
+            <li><a href="company-holidays.php" class="nav-link text-dark py-1">Company Holidays</a></li>
+            <li><a href="reports.php" class="nav-link text-dark py-1">Reports</a></li>
+        </ul>
+    </div>
+</li>
+<?php endif; ?>
             <?php else: ?>
                 <li class="nav-item mb-2">
                     <a href="service-settings.php" class="nav-link d-flex align-items-center px-0 text-dark">
