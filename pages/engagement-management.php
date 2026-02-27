@@ -88,7 +88,7 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 </head>
-<body class="d-flex">
+<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
@@ -485,5 +485,6 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

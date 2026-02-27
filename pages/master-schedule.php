@@ -162,7 +162,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
     </script>
 </head>
-<body class="d-flex">
+<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
 
@@ -408,6 +408,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

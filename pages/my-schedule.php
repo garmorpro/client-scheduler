@@ -223,7 +223,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     }
   </style>
 </head>
-<body class="d-flex bg-light">
+<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
   <?php include_once '../templates/sidebar.php'; ?>
 
   <div class="flex-grow-1 p-4" style="margin-left: 250px;">
@@ -351,5 +351,6 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

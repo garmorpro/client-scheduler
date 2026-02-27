@@ -831,33 +831,9 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="../assets/js/buld_delete_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-const themeIcon = document.getElementById('themeToggle');
-
-themeIcon.addEventListener('click', () => {
-    // Toggle dark-mode class
-    const isDark = document.body.classList.toggle('dark-mode');
-
-    // Toggle icon
-    themeIcon.classList.toggle('bi-moon-fill', !isDark);
-    themeIcon.classList.toggle('bi-sun-fill', isDark);
-
-    // Save to server & session
-    fetch('save-theme.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({theme: isDark ? 'dark' : 'light'})
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status !== 'success') console.error('Failed to save theme:', data.message);
-    })
-    .catch(err => console.error('Error saving theme:', err));
-});
-</script>
 
 </body>
 </html>
