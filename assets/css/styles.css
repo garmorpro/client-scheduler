@@ -196,7 +196,7 @@ body.dark-mode table thead tr {
 /* Make sure all table elements use them */
 body.dark-mode table tr,
 body.dark-mode table td {
-  background-color: var(--bs-table-bg-header) !important;
+  background-color: var(--bs-table-bg) !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
 }
@@ -204,7 +204,7 @@ body.dark-mode table td small {
   color: var(--bs-table-sub-color) !important;
 }
 body.dark-mode table.table-striped tbody tr:nth-of-type(odd) {
-  background-color: var(--bs-table-bg-header) !important;
+  background-color: var(--bs-table-striped-bg) !important;
   color: var(--bs-table-striped-color) !important;
 }
 
