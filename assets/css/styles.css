@@ -384,12 +384,14 @@ body.dark-mode .swal2-popup {
 
 .swal2-popup .swal-btn {
   color: #212529 !important;
-  border: 1px solid #ced4da;
+  font-size: 14px !important;
+  margin-bottom: 15px !important;
 }
 
 body.dark-mode .swal2-popup .swal-btn {
   color: #fff !important;
   font-size: 14px !important;
+  margin-bottom: 15px !important;
 }
 
 body.dark-mode .pop-up-small {
