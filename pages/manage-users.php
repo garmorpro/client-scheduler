@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             title: 'Import Users (CSV)',
             html: `
-                <p class="small text-muted">Upload a CSV file using the template format.</p>
+                <p class="pop-up-small small text-muted">Upload a CSV file using the template format.</p>
                 <a href="../assets/templates/bulk_import_user_template.csv" download class="btn btn-sm btn-link p-0 mb-3">
                     Download CSV Template
                 </a>
