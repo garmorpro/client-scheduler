@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const openBtn = document.getElementById('openImportBtn');
 
     openBtn.addEventListener('click', function() {
+
         Swal.fire({
             title: 'Import Users (CSV)',
             html: `
@@ -142,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <a href="../assets/templates/bulk_import_user_template.csv" download class="btn btn-sm btn-link p-0 mb-3">
                     Download CSV Template
                 </a>
-                <input type="file" id="csvFileInput" accept=".csv" class="swal2-input" style="width:100%">
+                <input type="file" id="csvFileInput" accept=".csv" class="swal2-file" style="width:100%">
                 <div id="csvPreview" style="margin-top:15px; max-height:200px; overflow:auto;"></div>
             `,
             showCancelButton: true,
@@ -151,9 +152,9 @@ document.addEventListener('DOMContentLoaded', function() {
             focusConfirm: false,
             width: '700px',
             didOpen: () => {
-                // Attach change listener AFTER popup is in DOM
-                const fileInputEl = document.getElementById('csvFileInput');
-                const previewEl = document.getElementById('csvPreview');
+                const popup = Swal.getPopup();
+                const fileInputEl = popup.querySelector('#csvFileInput');
+                const previewEl = popup.querySelector('#csvPreview');
 
                 fileInputEl.addEventListener('change', function() {
                     const file = fileInputEl.files[0];
@@ -165,7 +166,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     reader.onload = function(event) {
                         const text = event.target.result;
                         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== "");
-                        if (lines.length < 2) return;
+                        if (lines.length < 2) {
+                            previewEl.innerHTML = '<p class="text-muted">No data rows found.</p>';
+                            return;
+                        }
                         const headers = lines[0].split(',');
                         const rows = lines.slice(1);
 
@@ -179,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             cols.forEach(c => previewHtml += `<td>${c.trim()}</td>`);
                             previewHtml += '</tr>';
                         });
-                        previewHtml += '</tbody></table>`;
+                        previewHtml += '</tbody></table>';
                         if (rows.length > 5) previewHtml += `<p class="small text-muted">...and ${rows.length - 5} more rows</p>`;
 
                         previewEl.innerHTML = previewHtml;
@@ -188,53 +192,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             },
             preConfirm: () => {
-                const fileInput = Swal.getPopup().querySelector('#csvFileInput');
-                if (!fileInput.files.length) {
-                    Swal.showValidationMessage(`Please select a CSV file`);
+                const popup = Swal.getPopup();
+                const fileInputEl = popup.querySelector('#csvFileInput');
+                if (!fileInputEl.files.length) {
+                    Swal.showValidationMessage('Please select a CSV file');
                     return false;
                 }
-                return fileInput.files[0];
-            }
-        }).then(result => {
-            if (result.isConfirmed) {
-                const file = result.value;
-                const formData = new FormData();
-                formData.append('csv_file', file);
 
-                // AJAX submission
-                fetch('../../pages/import_users.php', {
+                const formData = new FormData();
+                formData.append('csv_file', fileInputEl.files[0]);
+
+                // Show loading while submitting
+                Swal.showLoading();
+
+                return fetch('../../pages/import_users.php', {
                     method: 'POST',
                     body: formData
                 })
                 .then(res => res.json())
-                .then(data => {
-                    let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
-                    if (data.errors.length) {
-                        htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
-                        data.errors.forEach(err => {
-                            htmlMsg += `<li>Row ${err.row}: ${err.message}</li>`;
-                        });
-                        htmlMsg += `</ul>`;
-                    }
-
-                    Swal.fire({
-                        title: 'Import Results',
-                        html: htmlMsg,
-                        icon: data.errors.length ? 'warning' : 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => location.reload());
-                })
                 .catch(err => {
-                    console.error('AJAX Error:', err);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Something went wrong. Check console.',
-                        icon: 'error'
-                    });
+                    Swal.showValidationMessage(`Request failed: ${err}`);
                 });
             }
+        }).then(result => {
+            if (result.isConfirmed) {
+                const data = result.value;
+                let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
+                if (data.errors.length) {
+                    htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
+                    data.errors.forEach(err => {
+                        htmlMsg += `<li>Row ${err.row}: ${err.message}</li>`;
+                    });
+                    htmlMsg += `</ul>`;
+                }
+
+                Swal.fire({
+                    title: 'Import Results',
+                    html: htmlMsg,
+                    icon: data.errors.length ? 'warning' : 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => location.reload());
+            }
         });
+
     });
+
 });
 </script>
 
