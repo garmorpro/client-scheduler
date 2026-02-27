@@ -60,20 +60,29 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                     </a>
                 </li>
             <?php endif; ?>
-            <?php if ($isAdmin || $isManager): ?>
+            <?php
+// Get current page name
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+<?php if ($isAdmin || $isManager): ?>
 <li class="nav-item mb-2">
-    <a class="nav-link d-flex align-items-center px-0 text-dark" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="false" aria-controls="settingsDropdown">
+    <?php
+        // Determine if current page is one of the settings pages
+        $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php'];
+        $isActive = in_array($currentPage, $settingsPages);
+    ?>
+    <a class="nav-link d-flex align-items-center px-0 text-dark <?= $isActive ? '' : 'collapsed' ?>" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
         <i class="bi bi-gear me-2"></i>
         <span>Settings</span>
-        <i class="bi bi-chevron-down ms-auto"></i> <!-- down arrow -->
+        <i class="bi bi-chevron-down ms-auto"></i>
     </a>
-    <div class="collapse" id="settingsDropdown">
+    <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
-            <li><a href="manage-users.php" class="nav-link text-dark py-1">Users</a></li>
-            <li><a href="role-permissions.php" class="nav-link text-dark py-1">Permissions</a></li>
-            <li><a href="notifications.php" class="nav-link text-dark py-1">Notifications</a></li>
-            <li><a href="company-holidays.php" class="nav-link text-dark py-1">Company Holidays</a></li>
-            <li><a href="reports.php" class="nav-link text-dark py-1">Reports</a></li>
+            <li><a href="manage-users.php" class="nav-link text-dark py-1 <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
+            <li><a href="role-permissions.php" class="nav-link text-dark py-1 <?= $currentPage == 'role-permissions.php' ? 'active' : '' ?>">Permissions</a></li>
+            <li><a href="notifications.php" class="nav-link text-dark py-1 <?= $currentPage == 'notifications.php' ? 'active' : '' ?>">Notifications</a></li>
+            <li><a href="company-holidays.php" class="nav-link text-dark py-1 <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
+            <li><a href="reports.php" class="nav-link text-dark py-1 <?= $currentPage == 'reports.php' ? 'active' : '' ?>">Reports</a></li>
         </ul>
     </div>
 </li>
