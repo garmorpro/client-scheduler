@@ -31,7 +31,10 @@ body.dark-mode .nav-link:hover {
     color: #ffffff !important;
 }
 
-body.dark-mode .header-text h3,
+body.dark-mode .header-text h3 {
+    color: #ffffff !important;
+}
+
 body.dark-mode .header-text p {
     color: #cfd6f1 !important;
 }
