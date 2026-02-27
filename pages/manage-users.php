@@ -158,6 +158,7 @@ $totalUsers = count($users);
     <?php endif; ?>
     <script src="../assets/js/filter_role.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search_manage_users.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/pagination_manage_users.js?v=<?php echo time(); ?>"></script>
 
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
