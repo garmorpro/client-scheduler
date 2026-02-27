@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Import Users (CSV)',
             html: `
                 <p class="pop-up-small small text-muted">Upload a CSV file using the template format.</p>
-                <a href="../assets/templates/bulk_import_user_template.csv" download class="btn btn-sm btn-link swal-btn p-0 mb-3">
+                <a href="../assets/templates/bulk_import_user_template.csv" download class="btn-sm btn-link swal-btn p-0 mb-3">
                     Download CSV Template
                 </a>
                 <div id="fileWrapper" style="border: 2px dashed #d1d5db; border-radius: 6px; padding: 20px; text-align:center; cursor:pointer; color:#6c757d;">
