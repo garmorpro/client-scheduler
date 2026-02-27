@@ -248,13 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.isConfirmed) {
                 const data = result.value;
                 let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
-                if (data.errors.length) {
-                    htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
-                    data.errors.forEach(err => {
-                        htmlMsg += `<p>Row ${err.row}: ${err.message}</p>`;
-                    });
-                    htmlMsg += `</ul>`;
-                }
+                // Generic frontend-friendly error message
+if (data.errors.length) {
+    htmlMsg += `<p class="text-warning"><strong>Some rows could not be imported. Please check your CSV format and try again.</strong></p>`;
+}
 
                 Swal.fire({
                     title: 'Import Results',
