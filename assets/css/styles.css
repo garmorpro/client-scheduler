@@ -11,15 +11,7 @@ body {
     font-size: 14px !important;
 }
 
-body.dark-mode {
-  filter: invert(1) hue-rotate(180deg);
-}
 
-/* Optional: prevent images/videos from being inverted */
-body.dark-mode img,
-body.dark-mode video {
-  filter: invert(1) hue-rotate(180deg);
-}
 
  /* =================== Variables ========================= */
   :root {

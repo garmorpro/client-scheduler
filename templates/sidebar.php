@@ -98,8 +98,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </ul>
     </div>
 
-
-
     <?php
     // Assume you fetched from DB: $user_theme = 'light' or 'dark'
 if (!isset($_SESSION['theme'])) {
@@ -111,24 +109,7 @@ $themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
 ?>
 
 <!-- Bootstrap icon -->
-    <i id="dark-mode-toggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
-
-    <script>
-const toggleBtn = document.getElementById('dark-mode-toggle');
-
-toggleBtn.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-
-  // Toggle icon
-  if (document.body.classList.contains('dark-mode')) {
-    toggleBtn.classList.remove('bi-moon-fill');
-    toggleBtn.classList.add('bi-sun-fill');
-  } else {
-    toggleBtn.classList.remove('bi-sun-fill');
-    toggleBtn.classList.add('bi-moon-fill');
-  }
-});
-</script>
+    <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
 
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
