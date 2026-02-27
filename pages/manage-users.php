@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 session_start();
 
@@ -16,15 +15,24 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch settings
-$settings = [];
-$settingSQL = "SELECT setting_key, setting_value FROM settings";
-$settingResult = $conn->query($settingSQL);
-if ($settingResult) {
-    while ($S_row = $settingResult->fetch_assoc()) {
-        $settings[$S_row['setting_key']] = $S_row['setting_value'];
+// Fetch users from database
+$users = [];
+$userSQL = "SELECT user_id, full_name, email, role, status, job_title, created_at, last_active 
+            FROM users ORDER BY full_name ASC";
+$userResult = mysqli_query($conn, $userSQL);
+if ($userResult) {
+    while ($row = mysqli_fetch_assoc($userResult)) {
+        $users[] = $row;
     }
 }
+$totalUsers = count($users);
+
+// Pagination setup (example: 10 per page)
+$perPage = 10;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$start = ($page - 1) * $perPage;
+$usersToShow = array_slice($users, $start, $perPage);
+$lastPage = ceil($totalUsers / $perPage);
 ?>
 <!DOCTYPE html>
 <html>
