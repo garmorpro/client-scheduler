@@ -175,7 +175,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
     </style>
 </head>
-<body class="d-flex <?= $themeClass ?>">
+<body class="d-flex">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
