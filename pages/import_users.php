@@ -192,10 +192,11 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
 
         $stmt->bind_param(
-            "sssss",
+            "ssssss",
             $rowAssoc['email'],
             $rowAssoc['full_name'],
             $rowAssoc['job_title'],
+            $rowAssoc['status'],
             $rowAssoc['role'],
             $defaultPasswordHash
         );
