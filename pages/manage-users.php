@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '</ul>' +
             '</div>'
         ];
-    }, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+    }, $users), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 
     new gridjs.Grid({
         columns: [
