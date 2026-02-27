@@ -33,7 +33,7 @@
         <option value="">Select Manager</option>
         <?php
         require '../includes/db.php';
-        $managerQuery = $conn->query("SELECT full_name FROM ms_users WHERE role='manager' ORDER BY full_name ASC");
+        $managerQuery = $conn->query("SELECT full_name FROM users WHERE role='manager' ORDER BY full_name ASC");
         while ($row = $managerQuery->fetch_assoc()) {
             echo '<option value="' . htmlspecialchars($row['full_name']) . '">' . htmlspecialchars($row['full_name']) . '</option>';
         }
