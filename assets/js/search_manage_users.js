@@ -25,13 +25,7 @@ clearRolesBtn.addEventListener('click', function () {
 });
 
 function updateRoleButtonText() {
-    if (selectedRoles.length === 0) {
-        roleFilterBtn.innerText = "No Roles";
-    } else if (selectedRoles.length === roleCheckboxes.length) {
-        roleFilterBtn.innerText = "All Roles";
-    } else {
-        roleFilterBtn.innerText = `${selectedRoles.length} Roles`;
-    }
+    roleFilterBtn.innerText = "Filter";
 }
 
 function applyFilters() {
