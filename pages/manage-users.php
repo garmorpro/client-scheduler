@@ -133,12 +133,11 @@ $totalUsers = count($users);
 
 
     <!-- import modal -->
-
-    <div class="modal fade" id="importUsersModal" tabindex="-1">
+<div class="modal fade" id="importUsersModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="importUsersForm" method="POST" enctype="multipart/form-data">
-        
+
         <div class="modal-header">
           <h5 class="modal-title">Import Users (CSV)</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -160,16 +159,6 @@ $totalUsers = count($users);
                  class="form-control"
                  required>
 
-
-                 <div id="csvPreviewContainer" class="mt-3" style="max-height:200px; overflow:auto; display:none;">
-    <h6>Preview:</h6>
-    <p id="csvRowCount"></p>
-    <table class="table table-sm table-bordered" id="csvPreviewTable">
-        <thead></thead>
-        <tbody></tbody>
-    </table>
-</div>
-
         </div>
 
         <div class="modal-footer">
@@ -182,9 +171,111 @@ $totalUsers = count($users);
     </div>
   </div>
 </div>
+<!-- end import modal -->
 
+<!-- SweetAlert2 Preview & AJAX Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('importUsersForm');
+    const fileInput = form.querySelector('input[name="csv_file"]');
 
-    <!-- end import modal -->
+    // CSV Preview before upload
+    fileInput.addEventListener('change', function() {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const text = event.target.result;
+            const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== "");
+            if (lines.length < 2) return; // No data
+
+            const headers = lines[0].split(',');
+            const dataRows = lines.slice(1);
+
+            // Build preview HTML (first 5 rows)
+            let html = `<p><strong>Records found:</strong> ${dataRows.length}</p>`;
+            html += `<div style="max-height:250px; overflow:auto;"><table class="table table-sm table-bordered"><thead><tr>`;
+            headers.forEach(h => html += `<th>${h.trim()}</th>`);
+            html += `</tr></thead><tbody>`;
+            dataRows.slice(0, 5).forEach(row => {
+                const cols = row.split(',');
+                html += '<tr>';
+                cols.forEach(c => html += `<td>${c.trim()}</td>`);
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            if (dataRows.length > 5) html += `<p class="small text-muted">...and ${dataRows.length - 5} more rows</p>`;
+
+            // Show SweetAlert2 preview
+            Swal.fire({
+                title: 'CSV Preview',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Upload CSV',
+                cancelButtonText: 'Cancel',
+                focusConfirm: false,
+                scrollbarPadding: false
+            }).then(result => {
+                if (result.isConfirmed) {
+                    // Trigger actual form submission
+                    form.dispatchEvent(new Event('submit', { cancelable: true }));
+                } else {
+                    fileInput.value = ''; // reset file if cancelled
+                }
+            });
+        };
+        reader.readAsText(file);
+    });
+
+    // AJAX submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        // Close bootstrap modal if still open
+        const bsModal = bootstrap.Modal.getInstance(document.getElementById('importUsersModal'));
+        if (bsModal) bsModal.hide();
+
+        fetch('../../pages/import_users.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Build result HTML
+            let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
+            if (data.errors.length) {
+                htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
+                data.errors.forEach(err => {
+                    htmlMsg += `<li>Row ${err.row}: ${err.message}</li>`;
+                });
+                htmlMsg += `</ul>`;
+            }
+
+            // SweetAlert2 results
+            Swal.fire({
+                title: 'Import Results',
+                html: htmlMsg,
+                icon: data.errors.length ? 'warning' : 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                location.reload(); // refresh page on OK
+            });
+        })
+        .catch(err => {
+            console.error('AJAX Error:', err);
+            Swal.fire({
+                title: 'Error',
+                text: 'Something went wrong. Check console.',
+                icon: 'error'
+            });
+        });
+    });
+});
+</script>
 
 
 
