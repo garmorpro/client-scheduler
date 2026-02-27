@@ -147,9 +147,9 @@ $_SESSION['user_role']  = $role;
 // ------------------------------------------------------
 
 // ---------------- REDIRECT ---------------------------
-if ($role === 'admin') {
-    header("Location: /pages/admin-panel.php");
-} else {
-    header("Location: /pages/my-schedule.php");
-}
+// if ($role === 'admin') {
+//     header("Location: /pages/admin-panel.php");
+// } else {
+//     header("Location: /pages/my-schedule.php");
+// }
 exit;
