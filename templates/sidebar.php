@@ -9,7 +9,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 ?>
 
-<div class="d-flex flex-column justify-content-between border-end fixed-top <?= isset($_SESSION['theme']) && $_SESSION['theme'] === 'dark' ? 'dark-mode' : '' ?>"
+<div class="d-flex flex-column justify-content-between border-end fixed-top"
      style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">
 
     <!-- Branding -->
