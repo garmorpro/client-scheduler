@@ -18,12 +18,12 @@ function logActivity($conn, $eventType, $user_id, $account_name, $title, $descri
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $account_name = trim($_POST['account_name']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
     // Check if service account exists
-    $stmt = $conn->prepare("SELECT user_id, account_name, password, role, status FROM service_accounts WHERE account_name = ?");
-    $stmt->bind_param("s", $account_name);
+    $stmt = $conn->prepare("SELECT user_id, email, password, role, status FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -36,32 +36,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check if account is active
         if ($status !== 'active') {
-            logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Account is inactive");
+            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Account is inactive");
             $error = "Account is inactive. Contact administrator.";
         } elseif (password_verify($password, $hashed_password)) {
             // Successful login
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user_id;
-            $_SESSION['full_name'] = $account_name;
+            $_SESSION['full_name'] = $email;
             $_SESSION['user_role'] = $role;
 
             // Update last active timestamp
-            $updateStmt = $conn->prepare("UPDATE service_accounts SET last_active = NOW() WHERE user_id = ?");
+            $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");
             $updateStmt->bind_param("i", $user_id);
             $updateStmt->execute();
             $updateStmt->close();
 
             // Log successful login
-            logActivity($conn, "successful_login", $user_id, $account_name, "Service Account Login", "Successful login");
+            logActivity($conn, "successful_login", $user_id, $email, "Service Account Login", "Successful login");
 
-            header("Location: ../pages/service-settings.php");
+            header("Location: ../pages/dashboard.php");
             exit;
         } else {
-            logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Incorrect password");
+            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Incorrect password");
             $error = "Invalid login. Please try again.";
         }
     } else {
-        logActivity($conn, "failed_login", null, $account_name, "Failed Login", "Account not found");
+        logActivity($conn, "failed_login", null, $email, "Failed Login", "Account not found");
         $error = "Invalid login. Please try again.";
     }
 
