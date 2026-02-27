@@ -363,10 +363,10 @@ body.dark-mode .highlight-today {
 
 /* SweetAlert Styles */
 
-/* body.dark-mode #fileWrapper {
-  border-color: #6c757d;
+body.dark-mode #fileWrapper {
+  border-color: #ff6b9d;
   color: #adb5bd;
-} */
+}
 
 
 /* End Dark Mode */
