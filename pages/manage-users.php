@@ -121,10 +121,66 @@ $totalUsers = count($users);
         <button class="btn btn-sm btn-link p-0" id="clearRoles">Clear All</button>
     </div>
 </div>
-            <button class="btn btn-outline-primary btn-sm">Import</button>
+            <button class="btn btn-outline-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#importUsersModal">
+    Import
+</button>
             <button class="btn btn-primary btn-sm">Invite User</button>
         </div>
     </div>
+
+
+
+    <!-- import modal -->
+
+    <div class="modal fade" id="importUsersModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="importUsersForm" enctype="multipart/form-data">
+        
+        <div class="modal-header">
+          <h5 class="modal-title">Import Users (CSV)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <p class="small text-muted">
+            Upload a CSV file using the template format.
+          </p>
+
+          <a href="download_user_template.php" class="btn btn-sm btn-link p-0 mb-3">
+            Download CSV Template
+          </a>
+
+          <input type="file"
+                 name="csv_file"
+                 accept=".csv"
+                 class="form-control"
+                 required>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-sm">
+            Import Users
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
+    <!-- end import modal -->
+
+
+
+
+
+
 
     <!-- Users Table -->
     <div class="table-responsive">
