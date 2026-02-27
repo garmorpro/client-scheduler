@@ -186,7 +186,7 @@ body.dark-mode #user-table {
     overflow: hidden;           /* clip borders */
 }
 
-body.dark-mode table thead tr {
+body.dark-mode table tr {
   background-color: pink !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
