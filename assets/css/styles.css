@@ -368,6 +368,19 @@ body.dark-mode #fileWrapper {
   color: #adb5bd !important;
 }
 
+.swal2-popup {
+  background-color: #f8f9fa !important; /* Light background */
+  color: #212529;                       /* Text color */
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  border-radius: 10px;                  /* Optional: rounded corners */
+}
+
+/* Optional: Dark mode version */
+body.dark-mode .swal2-popup {
+  background-color: #2c2c2e !important;
+  color: #f1f1f1;
+  border: 1px solid #555;
+}
 
 /* End Dark Mode */
 
