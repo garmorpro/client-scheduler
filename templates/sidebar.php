@@ -19,7 +19,7 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
                  style="width: 40px; height: 40px;">
                 <i class="bi bi-calendar2-week"></i>
             </div>
-            <div>
+            <div class="side-header-text">
                 <h5 class="mb-0 fw-bold">AARC-360</h5>
                 <small class="text-muted">Schedule Manager</small>
             </div>
