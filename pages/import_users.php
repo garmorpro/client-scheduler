@@ -2,18 +2,27 @@
 require_once '../includes/db.php';
 session_start();
 
+// ===============================
+// ERROR REPORTING
+// ===============================
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
+// ===============================
+// AUTH CHECK
+// ===============================
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit();
 }
 
+// ===============================
+// DB CHECK
+// ===============================
 if (!$conn) {
     die("DB CONNECTION FAILED");
 }
@@ -34,29 +43,6 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
         mysqli_stmt_close($stmt);
     }
 }
-
-// ===============================
-// UNIQUE IDNO GENERATOR
-// ===============================
-// function generateUniqueIdno($conn) {
-//     do {
-//         $idno = random_int(100000, 999999);
-
-//         $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE idno = ?");
-//         if (!$checkStmt) {
-//             die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-//         }
-
-//         $checkStmt->bind_param("i", $idno);
-//         $checkStmt->execute();
-//         $checkStmt->bind_result($count);
-//         $checkStmt->fetch();
-//         $checkStmt->close();
-
-//     } while ($count > 0);
-
-//     return $idno;
-// }
 
 // ===============================
 // FILE VALIDATION
@@ -87,15 +73,19 @@ $fileTmpPath = $_FILES['csv_file']['tmp_name'];
 $errors = [];
 $successCount = 0;
 
+// ===============================
+// OPEN CSV
+// ===============================
 if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
 
     $rowNum = 1;
 
     $header = fgetcsv($handle, 1000, ",");
-    echo "<pre>";
-print_r($header);
-exit;
 
+    // Remove BOM if present
+    if (isset($header[0])) {
+        $header[0] = preg_replace('/^\xEF\xBB\xBF/', '', $header[0]);
+    }
 
     if (!$header) {
         http_response_code(400);
@@ -103,16 +93,20 @@ exit;
         exit();
     }
 
+    // DEBUG: show header
+    echo "<pre>CSV HEADER: ";
+    print_r($header);
+    echo "</pre>";
+
     $expectedHeaders = ['email', 'full_name', 'job_title', 'role'];
-    $headerLower = array_map('strtolower', $header);
+    $headerLower = array_map(function($h){ return strtolower(trim($h)); }, $header);
 
     $headerIndexes = [];
     foreach ($expectedHeaders as $colName) {
         $pos = array_search($colName, $headerLower);
         if ($pos === false) {
-            http_response_code(400);
-            echo json_encode(['error' => "CSV missing expected column: $colName"]);
             fclose($handle);
+            echo json_encode(['error' => "CSV missing expected column: $colName"]);
             exit();
         }
         $headerIndexes[$colName] = $pos;
@@ -126,13 +120,19 @@ exit;
 
     $allowedRoles = ['admin', 'manager', 'senior', 'staff'];
 
+    // ===============================
+    // PROCESS EACH ROW
+    // ===============================
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 
         $rowNum++;
 
-        if (count(array_filter($data)) === 0) {
-            continue;
-        }
+        // DEBUG: show raw row
+        echo "<pre>Row $rowNum: ";
+        print_r($data);
+        echo "</pre>";
+
+        if (count(array_filter($data)) === 0) continue;
 
         $rowAssoc = [];
         foreach ($expectedHeaders as $colName) {
@@ -148,13 +148,7 @@ exit;
         // ===============================
         // VALIDATION
         // ===============================
-
-        if (
-            empty($rowAssoc['email']) ||
-            empty($rowAssoc['full_name']) ||
-            empty($rowAssoc['job_title']) ||
-            empty($rowAssoc['role'])
-        ) {
+        if (empty($rowAssoc['email']) || empty($rowAssoc['full_name']) || empty($rowAssoc['job_title']) || empty($rowAssoc['role'])) {
             $errors[] = ['row' => $rowNum, 'message' => 'Missing required fields.'];
             continue;
         }
@@ -165,10 +159,7 @@ exit;
         }
 
         if (!in_array($rowAssoc['role'], $allowedRoles)) {
-            $errors[] = [
-                'row' => $rowNum,
-                'message' => 'Invalid role. Allowed: ' . implode(', ', $allowedRoles)
-            ];
+            $errors[] = ['row' => $rowNum, 'message' => 'Invalid role. Allowed: ' . implode(', ', $allowedRoles)];
             continue;
         }
 
@@ -180,7 +171,6 @@ exit;
             $errors[] = ['row' => $rowNum, 'message' => 'Database error: ' . $conn->error];
             continue;
         }
-
         $dupCheck->bind_param("s", $rowAssoc['email']);
         $dupCheck->execute();
         $dupCheck->store_result();
@@ -190,16 +180,13 @@ exit;
             $dupCheck->close();
             continue;
         }
-
         $dupCheck->close();
 
         // ===============================
         // INSERT USER
         // ===============================
-
         $stmt = $conn->prepare("
-            INSERT INTO users 
-            (email, full_name, job_title, role, password) 
+            INSERT INTO users (email, full_name, job_title, role, password) 
             VALUES (?, ?, ?, ?, ?)
         ");
 
@@ -209,36 +196,30 @@ exit;
         }
 
         $stmt->bind_param(
-    "sssss",
-    $rowAssoc['email'],
-    $rowAssoc['full_name'],
-    $rowAssoc['job_title'],
-    $rowAssoc['role'],
-    $defaultPasswordHash
-);
+            "sssss",
+            $rowAssoc['email'],
+            $rowAssoc['full_name'],
+            $rowAssoc['job_title'],
+            $rowAssoc['role'],
+            $defaultPasswordHash
+        );
 
-if (!$stmt->execute()) {
-    die("EXECUTE FAILED: " . $stmt->error);
-}
+        if (!$stmt->execute()) {
+            $errors[] = ['row' => $rowNum, 'message' => 'Insert failed: ' . $stmt->error];
+            $stmt->close();
+            continue;
+        }
 
-$successCount++;
-
-        // if ($stmt->execute()) {
-        //     $successCount++;
-        // } else {
-        //     $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
-        // }
-
+        $successCount++;
         $stmt->close();
     }
 
     fclose($handle);
 
     // ===============================
-    // ACTIVITY LOG
+    // LOG ACTIVITY
     // ===============================
     $description = "Successfully imported $successCount users.";
-
     if (count($errors) > 0) {
         $description .= " Failed to import " . count($errors) . " users.";
         $eventType = "bulk_user_import_failed";
@@ -248,15 +229,7 @@ $successCount++;
         $title = "Bulk User Import";
     }
 
-    logActivity(
-        $conn,
-        $eventType,
-        $currentUserId,
-        $currentUserEmail,
-        $currentUserFullName,
-        $title,
-        $description
-    );
+    logActivity($conn, $eventType, $currentUserId, $currentUserEmail, $currentUserFullName, $title, $description);
 
     echo json_encode([
         'successCount' => $successCount,
