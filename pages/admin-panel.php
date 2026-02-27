@@ -61,7 +61,7 @@ if ($settingResult) {
         .card-header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            /* gap: 0.5rem; */
             margin-bottom: 0.5rem;
         }
 
