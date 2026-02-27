@@ -175,7 +175,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
     </style>
 </head>
-<body class="d-flex">
+<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
