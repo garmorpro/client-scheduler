@@ -65,6 +65,9 @@ $totalUsers = count($users);
             font-size: 0.9rem;
             color: #6c757d;
         }
+        #userSearch {
+    width: 200px;
+}
     </style>
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
