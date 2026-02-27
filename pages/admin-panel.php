@@ -90,7 +90,7 @@ $notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
 $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
 
-$usersql = "SELECT user_id, full_name, email, role, status, last_active 
+$usersql = "SELECT user_id, full_name, email, role, status, theme_mode last_active 
         FROM users 
         ORDER BY full_name ASC";
 $userresult = mysqli_query($conn, $usersql);
@@ -175,7 +175,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
     </style>
 </head>
-<body class="d-flex">
+<body class="d-flex <?= $themeClass ?>">
 
 <?php include_once '../templates/sidebar.php'; ?>
 
@@ -183,9 +183,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <h3 class="mb-0">Administrative Dashboard</h3>
     <p class="text-muted mb-4">System overview and user management for Admin User</p>
 
-    <button id="themeToggle" class="theme-btn">
-  <span class="theme-icon">🌙</span>
-</button>
+    
 
     <div class="container-fluid">
 
@@ -835,6 +833,25 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const themeIcon = document.getElementById('themeToggle');
+
+themeIcon.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    
+    // Toggle icon
+    themeIcon.classList.toggle('bi-moon-fill', !isDark);
+    themeIcon.classList.toggle('bi-sun-fill', isDark);
+
+    // Optional: save to server via AJAX
+    fetch('save-theme.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({theme: isDark ? 'dark' : 'light'})
+    });
+});
+</script>
 
 </body>
 </html>

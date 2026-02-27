@@ -15,45 +15,30 @@ body {
 
 /* START - Theme Mode Change */
 
-/* Toggle button */
-.theme-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0; /* Light mode bg */
+/* Clickable theme icon */
+.theme-icon {
+  font-size: 20px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 18px;
+  transition: color 0.3s ease, transform 0.2s ease;
   color: #333;
-  position: relative;
 }
 
-/* Hover effect */
-.theme-btn:hover {
-  background-color: #e0e0e0;
-  transform: scale(1.05);
+.theme-icon:hover {
+  transform: scale(1.1);
+  color: #111;
 }
 
-/* Dark mode style */
-body.dark-mode .theme-btn {
-  background-color: #333;
-  border-color: #555;
+body.dark-mode {
+  background-color: #121212; /* your dark background */
+  color: #f5f5f5; /* your dark text color */
+}
+
+body.dark-mode .theme-icon {
   color: #f9f9f9;
 }
 
-/* Optional: shadow for floating button */
-.theme-btn {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Smooth icon transition */
-.theme-icon {
-  display: inline-block;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+body.dark-mode .theme-icon:hover {
+  color: #fff;
 }
 
 /* END THEME */

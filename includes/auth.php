@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Check if service account exists
-    $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role, status FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role, status, theme_mode FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed_password = $account['password'];
         $role = strtolower(trim($account['role']));
         $status = strtolower(trim($account['status']));
+        $theme_mode = strtolower(trim($account['theme_mode']));
 
         // Check if account is active
         if ($status !== 'active') {
@@ -45,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user_id;
             $_SESSION['full_name'] = $full_name;
             $_SESSION['user_role'] = $role;
+            $_SESSION['theme'] = $theme_mode;
 
             // Update last active timestamp
             $updateStmt = $conn->prepare("UPDATE users SET last_active = NOW() WHERE user_id = ?");

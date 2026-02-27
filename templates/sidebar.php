@@ -79,6 +79,19 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
         </ul>
     </div>
 
+    <?php
+    // Assume you fetched from DB: $user_theme = 'light' or 'dark'
+if (!isset($_SESSION['theme'])) {
+    $_SESSION['theme'] = $user_theme ?? 'light';
+}
+
+$themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
+
+?>
+
+<!-- Bootstrap icon -->
+    <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
+
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
         <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
