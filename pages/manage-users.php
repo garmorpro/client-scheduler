@@ -85,7 +85,7 @@ $lastPage = ceil($totalUsers / $perPage);
     <!-- Header Bar -->
     <div class="header-bar">
         <div class="left"><?= $totalUsers ?> Users</div>
-        <div class="right d-flex align-items-center flex-wrap gap-2">
+        <div class="right d-flex align-items-center gap-2">
             <input type="text" class="form-control form-control-sm" placeholder="Search users">
             <button class="btn btn-outline-secondary btn-sm">Filter</button>
             <button class="btn btn-outline-primary btn-sm">Import</button>
