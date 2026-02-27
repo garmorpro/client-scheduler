@@ -80,8 +80,12 @@ setText('full_name_5', fullName);
 setText('view_email', user.email);
 setText('view_user_role', user.role);
 
-setText('view_first_name_detail', fullName); // if you still need a detail field
-setText('view_last_name_detail', ''); // empty since no last_name exists
+const nameParts = fullName.trim().split(/\s+/);
+const firstName = nameParts[0] || '';
+const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
+
+setText('view_first_name_detail', firstName);
+setText('view_last_name_detail', lastName);
 setText('view_email_detail', user.email);
 
 setText('view_status', user.status);
