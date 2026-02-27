@@ -39,9 +39,7 @@ $totalUsers = count($users);
 
    
 
-    <!-- Grid.js -->
-<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+   
 
     <style>
         .header-bar {
@@ -382,7 +380,9 @@ new gridjs.Grid({
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+ <!-- Grid.js -->
+<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     
 
 </body>
