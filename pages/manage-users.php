@@ -105,6 +105,7 @@ $totalUsers = count($users);
             <label class="form-check-label" for="roleManager">Manager</label>
         </div>
 
+
         <div class="form-check">
             <input class="form-check-input role-checkbox" type="checkbox" value="senior" id="roleSenior" checked>
             <label class="form-check-label" for="roleSenior">Senior</label>
