@@ -11,9 +11,8 @@ body {
     font-size: 14px !important;
 }
 
-/* =================== New Styles ========================= */
-
-:root {
+ /* =================== Variables ========================= */
+  :root {
     --bg-color: #f9fafb;
     --card-bg: #ffffff;
     --text-color: #111827;
@@ -24,65 +23,86 @@ body {
     --blue: #60a5fa;
   }
 
-
+  /* =================== Container ========================= */
   .settings-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    height: 100%; /* full height of parent container */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-rows: 1fr 1fr auto; /* top two scrollable, bottom fixed */
+    gap: 20px;
+    height: 100vh; /* full viewport height */
   }
 
+  /* =================== Cards ========================= */
   .card {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
+  }
+
+  /* Scrollable sections */
+  .scrollable {
+    overflow-y: auto;
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
   }
 
-  /* Scrollable sections */
-  .scrollable {
-    max-height: 200px; /* adjust as needed */
-    overflow-y: auto;
+  .card-header h2 {
+    margin: 0;
   }
 
-  .holiday, .client {
-    padding: 0.25rem 0;
-    border-bottom: 1px solid #eee;
+  .card-header small {
+    color: var(--secondary-color);
   }
 
-  .holiday:last-child, .client:last-child {
-    border-bottom: none;
+  .add-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .holiday, .client, .role {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #e5e7eb;
+  }
+
+  .holiday small {
+    color: var(--secondary-color);
+    font-size: 0.85rem;
   }
 
   .client-tag {
-    background: #e0e0e0;
-    border-radius: 0.25rem;
-    padding: 0 0.25rem;
-    font-size: 0.8rem;
-    margin-left: 0.25rem;
-  }
-
-  /* Role Permissions styling */
-  .role {
-    margin-top: 0.5rem;
-  }
-
-  .role strong {
     display: inline-block;
-    margin-bottom: 0.25rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background-color: var(--secondary-color);
+    color: #fff;
+    margin-top: 5px;
   }
+
+  /* Role Cards */
+  .role-admin { border-left: 4px solid var(--purple); }
+  .role-manager { border-left: 4px solid var(--blue); }
+  .role-staff { border-left: 4px solid var(--secondary-color); }
 
   .role ul {
-    margin: 0.25rem 0 0 1rem;
+    margin: 5px 0 0 20px;
     padding: 0;
   }
 
@@ -96,25 +116,26 @@ body {
     --accent-color: #22c55e;
     --purple: #a78bfa;
     --blue: #60a5fa;
-    background-color: var(--bg-color);
-    color: var(--text-color);
   }
 
-  body.dark-mode .card {
-    background-color: var(--card-bg);
-    color: var(--text-color);
-  }
-
+  body.dark-mode .card { background-color: var(--card-bg); color: var(--text-color); }
   body.dark-mode .holiday,
   body.dark-mode .client,
-  body.dark-mode .role {
-    background-color: #3a3a4a;
-  }
+  body.dark-mode .role { background-color: #3a3a4a; }
+  body.dark-mode .add-btn { background-color: var(--primary-color); color: #fff; }
 
-  body.dark-mode .add-btn {
-    background-color: var(--primary-color);
-    color: #fff;
-  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

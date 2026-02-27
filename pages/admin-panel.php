@@ -241,7 +241,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <div class="settings-container">
 
-  <!-- Company Holidays -->
+  <!-- Company Holidays (Top Section) -->
   <div class="card scrollable">
     <div class="card-header">
       <h2>Company Holidays</h2>
@@ -250,10 +250,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="holiday">Memorial Day<br><small>Sunday, May 24, 2026 · 8 hours off</small></div>
     <div class="holiday">Independence Day (Observed)<br><small>Thursday, July 2, 2026 · 8 hours off</small></div>
     <div class="holiday">Labor Day<br><small>Sunday, September 6, 2026 · 8 hours off</small></div>
-    <!-- Add more holidays here -->
   </div>
 
-  <!-- Active Clients -->
+  <!-- Active Clients (Top Section) -->
   <div class="card scrollable">
     <div class="card-header">
       <h2>Active Clients</h2>
@@ -266,10 +265,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="client">Sterling Enterprises<br><span class="client-tag">STER</span></div>
     <div class="client">Meridian Financial<br><span class="client-tag">MERI</span></div>
     <div class="client">PTO<br><span class="client-tag">PTO</span></div>
-    <!-- Add more clients here -->
   </div>
 
-  <!-- Role Permissions -->
+  <!-- Role Permissions (Bottom Section) -->
   <div class="card">
     <h2>Role Permissions</h2>
     <p>Access control and permission levels</p>
