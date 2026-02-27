@@ -25,8 +25,8 @@ require_once '../includes/auth.php';
 
         <form class="p-4" method="POST" action="">
             <div class="mb-3">
-                <label for="account_name" class="form-label">Account name</label>
-                <input type="text" class="form-control" name="account_name" placeholder="Enter your account name" required>
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" name="email" placeholder="Enter your email address" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
