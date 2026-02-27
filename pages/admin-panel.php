@@ -155,12 +155,8 @@ if ($settingResult) {
                 </div>
                 <div class="card-desc">Manage PTO policies, approvals, and rules for time-off requests.</div>
             </div>
-            <div class="settings-card">
+            <div class="settings-card" style="display: none;">
                 <div class="card-header">
-                    <i class="bi bi-calendar-check"></i>
-                    <div class="card-title">Default Schedules</div>
-                </div>
-                <div class="card-desc">Set up default weekly schedules and templates for employees.</div>
             </div>
         </div>
 
