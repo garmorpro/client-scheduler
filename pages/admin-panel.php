@@ -240,6 +240,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         <!-- New Sections -->
 
         <!-- Company Holidays -->
+<div class="settings-container">
   <div class="card">
     <div class="card-header">
       <h2>Company Holidays</h2>
@@ -297,6 +298,7 @@ if ($result && mysqli_num_rows($result) > 0) {
       </ul>
     </div>
   </div>
+</div>
 
 
 
