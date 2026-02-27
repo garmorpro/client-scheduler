@@ -26,25 +26,25 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 // ===============================
 // UNIQUE IDNO GENERATOR
 // ===============================
-function generateUniqueIdno($conn) {
-    do {
-        $idno = random_int(100000, 999999);
+// function generateUniqueIdno($conn) {
+//     do {
+//         $idno = random_int(100000, 999999);
 
-        $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE idno = ?");
-        if (!$checkStmt) {
-            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-        }
+//         $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE idno = ?");
+//         if (!$checkStmt) {
+//             die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+//         }
 
-        $checkStmt->bind_param("i", $idno);
-        $checkStmt->execute();
-        $checkStmt->bind_result($count);
-        $checkStmt->fetch();
-        $checkStmt->close();
+//         $checkStmt->bind_param("i", $idno);
+//         $checkStmt->execute();
+//         $checkStmt->bind_result($count);
+//         $checkStmt->fetch();
+//         $checkStmt->close();
 
-    } while ($count > 0);
+//     } while ($count > 0);
 
-    return $idno;
-}
+//     return $idno;
+// }
 
 // ===============================
 // FILE VALIDATION
@@ -179,12 +179,11 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         // ===============================
         // INSERT USER
         // ===============================
-        $idno = generateUniqueIdno($conn);
 
         $stmt = $conn->prepare("
             INSERT INTO users 
-            (email, full_name, job_title, role, status) 
-            VALUES (?, ?, ?, ?, 'active')
+            (email, full_name, job_title, role, status, password) 
+            VALUES (?, ?, ?, ?, 'active', ?)
         ");
 
         if (!$stmt) {
@@ -193,11 +192,12 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
 
         $stmt->bind_param(
-            "ssss",
+            "sssss",
             $rowAssoc['email'],
             $rowAssoc['full_name'],
             $rowAssoc['job_title'],
-            $rowAssoc['role']
+            $rowAssoc['role'],
+            $defaultPasswordHash
         );
 
         if ($stmt->execute()) {
