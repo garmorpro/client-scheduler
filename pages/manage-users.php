@@ -41,24 +41,45 @@ $totalUsers = count($users);
 const usersData = <?= json_encode(array_map(function($user) {
     return [
         '<input type="checkbox" value="'. $user["user_id"] .'">',
-        htmlspecialchars($user["full_name"]) . '<div class="job-title">' . htmlspecialchars($user["job_title"]) . '</div>',
+        htmlspecialchars($user["full_name"]) + '<div class="job-title">' + htmlspecialchars($user["job_title"]) + '</div>',
         htmlspecialchars($user["email"]),
         htmlspecialchars($user["role"]),
         htmlspecialchars($user["status"]),
         date("Y-m-d", strtotime($user["created_at"])),
         date("Y-m-d", strtotime($user["last_active"])),
-        '<div class="dropdown">
-            <a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Edit</a></li>
-                <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-            </ul>
-        </div>'
+        '<div class="dropdown">' +
+            '<a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                '<i class="bi bi-three-dots-vertical"></i>' +
+            '</a>' +
+            '<ul class="dropdown-menu dropdown-menu-end">' +
+                '<li><a class="dropdown-item" href="#">Edit</a></li>' +
+                '<li><a class="dropdown-item" href="#">Deactivate</a></li>' +
+                '<li><a class="dropdown-item text-danger" href="#">Delete</a></li>' +
+            '</ul>' +
+        '</div>'
     ];
 }, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+
+new gridjs.Grid({
+    columns: [
+        { name: '', html: true },       // Checkbox column
+        { name: 'Name', html: true },   // Name + job title
+        'Email',
+        'Role',
+        'Status',
+        'Added Date',
+        'Last Active',
+        { name: 'Actions', html: true } // Dropdown actions
+    ],
+    data: usersData,
+    search: true,
+    pagination: { limit: 10 },
+    sort: true,
+    style: {
+        table: { 'width': '100%' },
+        th: { 'text-align': 'left' }
+    }
+}).render(document.getElementById('usersGrid'));
 </script>
 
     <!-- Grid.js -->
@@ -342,50 +363,7 @@ if (data.errors.length) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
- <script>
-const usersData = <?= json_encode(array_map(function($user) {
-    return [
-        '<input type="checkbox" value="'. $user["user_id"] .'">',
-        htmlspecialchars($user["full_name"]) + '<div class="job-title">' + htmlspecialchars($user["job_title"]) + '</div>',
-        htmlspecialchars($user["email"]),
-        htmlspecialchars($user["role"]),
-        htmlspecialchars($user["status"]),
-        date("Y-m-d", strtotime($user["created_at"])),
-        date("Y-m-d", strtotime($user["last_active"])),
-        '<div class="dropdown">' +
-            '<a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                '<i class="bi bi-three-dots-vertical"></i>' +
-            '</a>' +
-            '<ul class="dropdown-menu dropdown-menu-end">' +
-                '<li><a class="dropdown-item" href="#">Edit</a></li>' +
-                '<li><a class="dropdown-item" href="#">Deactivate</a></li>' +
-                '<li><a class="dropdown-item text-danger" href="#">Delete</a></li>' +
-            '</ul>' +
-        '</div>'
-    ];
-}, $users), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
-
-new gridjs.Grid({
-    columns: [
-        { name: '', html: true },       // Checkbox column
-        { name: 'Name', html: true },   // Name + job title
-        'Email',
-        'Role',
-        'Status',
-        'Added Date',
-        'Last Active',
-        { name: 'Actions', html: true } // Dropdown actions
-    ],
-    data: usersData,
-    search: true,
-    pagination: { limit: 10 },
-    sort: true,
-    style: {
-        table: { 'width': '100%' },
-        th: { 'text-align': 'left' }
-    }
-}).render(document.getElementById('usersGrid'));
-</script>
+ 
 
 </body>
 </html>
