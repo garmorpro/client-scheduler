@@ -182,8 +182,8 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
 
         $stmt = $conn->prepare("
             INSERT INTO users 
-            (email, full_name, job_title, role, status, password) 
-            VALUES (?, ?, ?, ?, 'active', ?)
+            (email, full_name, job_title, role, password) 
+            VALUES (?, ?, ?, ?, ?)
         ");
 
         if (!$stmt) {
@@ -192,20 +192,25 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
         }
 
         $stmt->bind_param(
-            "ssssss",
-            $rowAssoc['email'],
-            $rowAssoc['full_name'],
-            $rowAssoc['job_title'],
-            $rowAssoc['status'],
-            $rowAssoc['role'],
-            $defaultPasswordHash
-        );
+    "sssss",
+    $rowAssoc['email'],
+    $rowAssoc['full_name'],
+    $rowAssoc['job_title'],
+    $rowAssoc['role'],
+    $defaultPasswordHash
+);
 
-        if ($stmt->execute()) {
-            $successCount++;
-        } else {
-            $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
-        }
+if (!$stmt->execute()) {
+    die("EXECUTE FAILED: " . $stmt->error);
+}
+
+$successCount++;
+
+        // if ($stmt->execute()) {
+        //     $successCount++;
+        // } else {
+        //     $errors[] = ['row' => $rowNum, 'message' => 'Database insert error: ' . $stmt->error];
+        // }
 
         $stmt->close();
     }
