@@ -65,7 +65,7 @@ body.dark-mode .util-bar-fill {
 
 /* Tables */
 body.dark-mode table,
-body.dark-mode .user-table {
+body.dark-mode #user-table {
     background-color: #2a2a3d !important;
     color: #e0e0e0 !important;
 }
