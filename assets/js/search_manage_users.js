@@ -1,5 +1,5 @@
 const roleCheckboxes = document.querySelectorAll('.role-checkbox');
-const roleFilterBtn = document.getElementById('roleFilterBtn');
+// const roleFilterBtn = document.getElementById('roleFilterBtn');
 const clearRolesBtn = document.getElementById('clearRoles');
 
 let selectedRoles = ["admin", "manager", "senior", "staff"];
@@ -19,14 +19,14 @@ roleCheckboxes.forEach(checkbox => {
 clearRolesBtn.addEventListener('click', function () {
     roleCheckboxes.forEach(cb => cb.checked = false);
     selectedRoles = [];
-    updateRoleButtonText();
+    // updateRoleButtonText();
     currentPage = 1;
     applyFilters();
 });
 
-function updateRoleButtonText() {
-    roleFilterBtn.innerText = "Filter";
-}
+// function updateRoleButtonText() {
+//     roleFilterBtn.innerText = "Filter";
+// }
 
 function applyFilters() {
     const searchValue = searchInput.value.toLowerCase();
