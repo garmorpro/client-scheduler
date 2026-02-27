@@ -44,7 +44,7 @@ if ($settingResult) {
 
         .settings-card {
             flex: 1 1 22%;
-            max-width: 300px;
+            max-width: 350px;
             max-height: 150px;
             padding: 1rem;
             border-radius: 0.5rem;
