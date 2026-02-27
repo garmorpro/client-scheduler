@@ -173,6 +173,7 @@ body.dark-mode .util-bar-fill {
 body.dark-mode table,
 body.dark-mode #user-table {
   --bs-table-bg: #2a2a3d !important;
+  --bs-table-bg-header: #3a3a50 !important;
   --bs-table-color: #e0e0e0 !important;
   --bs-table-sub-color: #acacac !important;
   --bs-table-accent-bg: #3a3a50 !important;
@@ -187,7 +188,7 @@ body.dark-mode #user-table {
 }
 
 body.dark-mode table tr {
-  background-color: pink !important;
+  background-color: var(--bs-table-bg-header) !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
 }
@@ -195,7 +196,7 @@ body.dark-mode table tr {
 /* Make sure all table elements use them */
 body.dark-mode table tr,
 body.dark-mode table td {
-  background-color: pink !important;
+  background-color: var(--bs-table-bg) !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
 }
