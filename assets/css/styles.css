@@ -173,7 +173,7 @@ body.dark-mode .dropdown-item:hover {
 body.dark-mode .custom-tabs,
 body.dark-mode .nested-tabs,
 body.dark-mode .custom-tabs-modal {
-    background-color: #2a2a3d !important;
+    /* background-color: #2a2a3d !important; */
 }
 body.dark-mode .custom-tabs a,
 body.dark-mode .nested-tabs a,
@@ -183,7 +183,7 @@ body.dark-mode .custom-tabs-modal button {
 body.dark-mode .custom-tabs a.active,
 body.dark-mode .nested-tabs a.active,
 body.dark-mode .custom-tabs-modal button.active {
-    /* background-color: #505070 !important; */
+    background-color: #505070 !important;
     color: #a3cc38 !important;
 }
 
