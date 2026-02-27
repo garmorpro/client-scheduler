@@ -22,14 +22,13 @@ if (!file_exists($dotenvPath . '/.env')) {
 }
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Composer autoload
-$dotenv = Dotenv::createImmutable($dotenvPath);
+$dotenv = Dotenv::createUnsafeImmutable($dotenvPath);
 $dotenv->safeLoad();
 
-// ---------------- READ ENV VARIABLES -------------------
-$host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?? null;
-$user = $_ENV['DB_USER'] ?? getenv('DB_USER') ?? null;
-$pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?? null;
-$dbname = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?? null;
+$host = getenv('DB_HOST') ?: null;
+$user = getenv('DB_USER') ?: null;
+$pass = getenv('DB_PASSWORD') ?: null;
+$dbname = getenv('DB_NAME') ?: null;
 
 // Validate DB credentials
 if (!$host || !$user || !$pass || !$dbname) {
