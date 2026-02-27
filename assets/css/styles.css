@@ -11,6 +11,16 @@ body {
     font-size: 14px !important;
 }
 
+/* CSS for the inversion */
+body.dark-mode {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Optional: Keep images/videos looking normal */
+body.dark-mode img, body.dark-mode video {
+  filter: invert(1) hue-rotate(180deg);
+}
+
  /* =================== Variables ========================= */
   :root {
     --bg-color: #f9fafb;
