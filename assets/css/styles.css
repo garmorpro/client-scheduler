@@ -382,10 +382,16 @@ body.dark-mode .swal2-popup {
   border: 1px solid #36364d;
 }
 
-body.dark-mode .swal-btn {
-  background-color: transparent !important;
-  color: #f1f1f1;
-  border: 1px solid #36364d;
+.swal2-popup .swal-btn {
+  background-color: #e9ecef;
+  color: #212529 !important;
+  border: 1px solid #ced4da;
+}
+
+body.dark-mode .swal2-popup .swal-btn {
+  background-color: #444;
+  color: #fff !important;
+  border: 1px solid #666;
 }
 
 body.dark-mode .pop-up-small {
