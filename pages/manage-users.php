@@ -84,7 +84,7 @@ $totalUsers = count($users);
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
             <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-filter"></i></button>
             <button class="btn btn-outline-primary btn-sm">Import</button>
-            <button class="btn btn-primary btn-sm d-flex flex-row align-items-center"><i class="bi bi-plus-circle me-1"></i>Invite User</button>
+            <button class="btn btn-primary btn-sm d-flex flex-row align-items-center">Invite User</button>
         </div>
     </div>
 
