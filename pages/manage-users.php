@@ -121,10 +121,7 @@ $totalUsers = count($users);
         <button class="btn btn-sm btn-link p-0" id="clearRoles">Clear All</button>
     </div>
 </div>
-            <button class="btn btn-outline-primary btn-sm"
-        id="openImportBtn">
-    Import
-</button>
+            <button id="openImportBtn" class="btn btn-outline-primary btn-sm">Import</button>
             <button class="btn btn-primary btn-sm">Invite User</button>
         </div>
     </div>
