@@ -25,6 +25,10 @@ require_once __DIR__ . '/../vendor/autoload.php'; // Composer autoload
 $dotenv = Dotenv::createUnsafeImmutable($dotenvPath);
 $dotenv->safeLoad();
 
+var_dump($_ENV);
+var_dump(getenv('DB_HOST'));
+die();
+
 $host = getenv('DB_HOST') ?: null;
 $user = getenv('DB_USER') ?: null;
 $pass = getenv('DB_PASSWORD') ?: null;
