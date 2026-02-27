@@ -195,7 +195,7 @@ body.dark-mode table tr {
 /* Make sure all table elements use them */
 body.dark-mode table tr,
 body.dark-mode table td {
-  background-color: var(--bs-table-bg) !important;
+  background-color: pink !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
 }
