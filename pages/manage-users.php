@@ -78,7 +78,7 @@ $totalUsers = count($users);
 
 <?php include_once '../templates/sidebar.php'; ?>
 
-<div class="flex-grow-1 p-4" style="margin-left: 250px;">
+<div class="header-text flex-grow-1 p-4" style="margin-left: 250px;">
     <!-- Page Title -->
     <h3 class="mb-1">Manage Users</h3>
     <p class="text-muted mb-4">View and manage all users in the system</p>
