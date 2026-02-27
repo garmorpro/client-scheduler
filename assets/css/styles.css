@@ -183,7 +183,7 @@ body.dark-mode .custom-tabs-modal button {
 body.dark-mode .custom-tabs a.active,
 body.dark-mode .nested-tabs a.active,
 body.dark-mode .custom-tabs-modal button.active {
-    background-color: #505070 !important;
+    /* background-color: #505070 !important; */
     color: #a3cc38 !important;
 }
 
