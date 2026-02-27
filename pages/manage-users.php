@@ -37,7 +37,9 @@ $totalUsers = count($users);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
-   
+   <!-- Grid.js CSS & JS at the top of <body> or in <head> -->
+<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
    
 
@@ -276,10 +278,6 @@ if (data.errors.length) {
 
 
 
-
-    <!-- Grid.js CSS & JS at the top of <body> or in <head> -->
-<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
 <div id="usersGrid" class="mt-3"></div>
 
