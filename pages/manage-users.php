@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 session_start();
 
@@ -16,15 +15,24 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch settings
-$settings = [];
-$settingSQL = "SELECT setting_key, setting_value FROM settings";
-$settingResult = $conn->query($settingSQL);
-if ($settingResult) {
-    while ($S_row = $settingResult->fetch_assoc()) {
-        $settings[$S_row['setting_key']] = $S_row['setting_value'];
+// Fetch users from database
+$users = [];
+$userSQL = "SELECT user_id, full_name, email, role, status, job_title, created_at, last_active 
+            FROM users ORDER BY full_name ASC";
+$userResult = mysqli_query($conn, $userSQL);
+if ($userResult) {
+    while ($row = mysqli_fetch_assoc($userResult)) {
+        $users[] = $row;
     }
 }
+$totalUsers = count($users);
+
+// Pagination setup (example: 10 per page)
+$perPage = 10;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$start = ($page - 1) * $perPage;
+$usersToShow = array_slice($users, $start, $perPage);
+$lastPage = ceil($totalUsers / $perPage);
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,59 +40,34 @@ if ($settingResult) {
     <title>Manage Users</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-
     <style>
-        .settings-row {
+        .header-bar {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
+            gap: 0.5rem;
         }
-
-        .settings-card {
-            flex: 1 1 22%;
-            max-width: 350px;
-            max-height: 150px;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background-color: #f8f9fa;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .settings-card:hover {
-            background-color: #e9ecef;
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* centers both icon + text horizontally */
-    gap: 0.4rem;             /* small space between icon and heading */
-    margin-bottom: 0.5rem;
-}
-
-        .card-header i {
-            font-size: 1.6rem;
-            color: #495057;
-        }
-
-        .card-title {
+        .header-bar .left {
             font-weight: 600;
-            font-size: 1rem;
         }
-
-        .card-desc {
+        .header-bar .right .btn {
+            margin-left: 0.5rem;
+        }
+        table th, table td {
+            vertical-align: middle;
+        }
+        .name-cell .job-title {
             font-size: 0.85rem;
             color: #6c757d;
         }
-
-        .section-title {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+        .action-dropdown .dropdown-menu {
+            min-width: 120px;
+        }
+        .pagination-info {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -92,69 +75,92 @@ if ($settingResult) {
 
 <?php include_once '../templates/sidebar.php'; ?>
 
-<div class="header-text flex-grow-1 p-4" style="margin-left: 250px;">
-    <h3 class="mb-0">Manage Users</h3>
-    <p class="text-muted mb-4">Manage user accounts</p>
+<div class="flex-grow-1 p-4" style="margin-left: 250px;">
+    <!-- Page Title -->
+    <h3 class="mb-1">Manage Users</h3>
+    <p class="text-muted mb-4">View and manage all users in the system</p>
 
-    <div class="container-fluid">
-
-        <!-- SYSTEM SECTION -->
-        <h5 class="section-title">System</h5>
-        <div class="settings-row">
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-people"></i>
-                    <div class="card-title">Manage Users</div>
-                </div>
-                <div class="card-desc">Add, edit, or remove system users and manage their profiles.</div>
-            </div>
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-shield-lock"></i>
-                    <div class="card-title">Role Permissions</div>
-                </div>
-                <div class="card-desc">Define what each role can access and modify within the system.</div>
-            </div>
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-bell"></i>
-                    <div class="card-title">Notifications</div>
-                </div>
-                <div class="card-desc">Configure email or in-app alerts for important events and updates.</div>
-            </div>
-            <!-- <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-gear"></i>
-                    <div class="card-title">System Preferences</div>
-                </div>
-                <div class="card-desc">Adjust general settings like time zone, theme, and default behaviors.</div>
-            </div> -->
+    <!-- Header Bar -->
+    <div class="header-bar">
+        <div class="left"><?= $totalUsers ?> Users</div>
+        <div class="right d-flex align-items-center flex-wrap gap-2">
+            <input type="text" class="form-control form-control-sm" placeholder="Search users">
+            <button class="btn btn-outline-secondary btn-sm">Filter</button>
+            <button class="btn btn-outline-primary btn-sm">Import</button>
+            <button class="btn btn-primary btn-sm">Invite</button>
         </div>
+    </div>
 
-        <!-- SCHEDULER SETTINGS SECTION -->
-        <h5 class="section-title">Scheduler Settings</h5>
-        <div class="settings-row">
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-calendar-event"></i>
-                    <div class="card-title">Company Holidays</div>
-                </div>
-                <div class="card-desc">Set official holidays and days off for the entire organization.</div>
-            </div>
-            <div class="settings-card">
-                <div class="card-header">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <div class="card-title">Reports</div>
-                </div>
-                <div class="card-desc">Generate and download scheduling, attendance, and engagement reports.</div>
-            </div>
-            
+    <!-- Users Table -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col"><input type="checkbox"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">User Role</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Added Date</th>
+                    <th scope="col">Last Active</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($usersToShow as $user): ?>
+                <tr>
+                    <td><input type="checkbox" value="<?= $user['user_id'] ?>"></td>
+                    <td class="name-cell">
+                        <?= htmlspecialchars($user['full_name']) ?>
+                        <div class="job-title"><?= htmlspecialchars($user['job_title']) ?></div>
+                    </td>
+                    <td><?= htmlspecialchars($user['email']) ?></td>
+                    <td><?= htmlspecialchars($user['role']) ?></td>
+                    <td><?= htmlspecialchars($user['status']) ?></td>
+                    <td><?= date("Y-m-d", strtotime($user['created_at'])) ?></td>
+                    <td><?= date("Y-m-d", strtotime($user['last_active'])) ?></td>
+                    <td class="action-dropdown">
+                        <div class="dropdown">
+                            <a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination & Info -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="pagination-info">
+            Showing <?= $start + 1 ?>–<?= min($start + $perPage, $totalUsers) ?> of <?= $totalUsers ?>
         </div>
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+                </li>
+                <?php for ($p = 1; $p <= $lastPage; $p++): ?>
+                <li class="page-item <?= $page == $p ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $p ?>"><?= $p ?></a>
+                </li>
+                <?php endfor; ?>
+                <li class="page-item <?= $page >= $lastPage ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
-    </div> <!-- container -->
-</div> <!-- flex-grow -->
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
