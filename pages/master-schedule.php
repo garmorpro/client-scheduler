@@ -354,9 +354,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                 </tbody>
             </table>
         </div>
-        <?php
-        var_dump($_SESSION);
-        ?>
 
 
     <!-- end master schedule table -->
