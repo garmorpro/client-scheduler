@@ -88,18 +88,37 @@ $totalUsers = count($users);
     <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
-            aria-expanded="false"
+            data-bs-auto-close="outside"
             id="roleFilterBtn">
         All Roles
     </button>
 
-    <ul class="dropdown-menu dropdown-menu-end" id="roleFilterMenu">
-        <li><a class="dropdown-item active" href="#" data-role="all">All Roles</a></li>
-        <li><a class="dropdown-item" href="#" data-role="admin">Admin</a></li>
-        <li><a class="dropdown-item" href="#" data-role="manager">Manager</a></li>
-        <li><a class="dropdown-item" href="#" data-role="senior">Senior</a></li>
-        <li><a class="dropdown-item" href="#" data-role="staff">Staff</a></li>
-    </ul>
+    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 200px;">
+        
+        <div class="form-check">
+            <input class="form-check-input role-checkbox" type="checkbox" value="admin" id="roleAdmin" checked>
+            <label class="form-check-label" for="roleAdmin">Admin</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input role-checkbox" type="checkbox" value="manager" id="roleManager" checked>
+            <label class="form-check-label" for="roleManager">Manager</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input role-checkbox" type="checkbox" value="senior" id="roleSenior" checked>
+            <label class="form-check-label" for="roleSenior">Senior</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input role-checkbox" type="checkbox" value="staff" id="roleStaff" checked>
+            <label class="form-check-label" for="roleStaff">Staff</label>
+        </div>
+
+        <hr class="my-2">
+
+        <button class="btn btn-sm btn-link p-0" id="clearRoles">Clear All</button>
+    </div>
 </div>
             <button class="btn btn-outline-primary btn-sm">Import</button>
             <button class="btn btn-primary btn-sm">Invite User</button>

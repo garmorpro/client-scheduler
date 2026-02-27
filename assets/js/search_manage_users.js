@@ -1,26 +1,38 @@
-let selectedRole = "all";
-
-const roleFilterMenu = document.getElementById('roleFilterMenu');
+const roleCheckboxes = document.querySelectorAll('.role-checkbox');
 const roleFilterBtn = document.getElementById('roleFilterBtn');
+const clearRolesBtn = document.getElementById('clearRoles');
 
-roleFilterMenu.addEventListener('click', function (e) {
-    e.preventDefault();
+let selectedRoles = ["admin", "manager", "senior", "staff"];
 
-    if (!e.target.dataset.role) return;
+roleCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        selectedRoles = Array.from(roleCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
 
-    // Remove active from all
-    document.querySelectorAll('#roleFilterMenu .dropdown-item')
-        .forEach(item => item.classList.remove('active'));
+        updateRoleButtonText();
+        currentPage = 1;
+        applyFilters();
+    });
+});
 
-    // Add active to selected
-    e.target.classList.add('active');
-
-    selectedRole = e.target.dataset.role;
-    roleFilterBtn.innerText = e.target.innerText;
-
+clearRolesBtn.addEventListener('click', function () {
+    roleCheckboxes.forEach(cb => cb.checked = false);
+    selectedRoles = [];
+    updateRoleButtonText();
     currentPage = 1;
     applyFilters();
 });
+
+function updateRoleButtonText() {
+    if (selectedRoles.length === 0) {
+        roleFilterBtn.innerText = "No Roles";
+    } else if (selectedRoles.length === roleCheckboxes.length) {
+        roleFilterBtn.innerText = "All Roles";
+    } else {
+        roleFilterBtn.innerText = `${selectedRoles.length} Roles`;
+    }
+}
 
 function applyFilters() {
     const searchValue = searchInput.value.toLowerCase();
@@ -32,15 +44,13 @@ function applyFilters() {
 
     filteredRows = rows.filter(row => {
         const text = row.innerText.toLowerCase();
-
         const roleCell = row.children[3].innerText.toLowerCase();
 
-        // Role filter
         const roleMatch =
-            selectedRole === "all" ||
-            roleCell.includes(selectedRole);
+            selectedRoles.length === 0
+                ? false
+                : selectedRoles.some(role => roleCell.includes(role));
 
-        // Search filter
         const searchMatch =
             searchTerms.length === 0 ||
             searchTerms.some(term => text.includes(term));
@@ -50,9 +60,3 @@ function applyFilters() {
 
     renderTable();
 }
-
-// Replace your old search listener with this:
-searchInput.addEventListener('input', function () {
-    currentPage = 1;
-    applyFilters();
-});
