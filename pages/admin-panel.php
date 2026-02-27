@@ -241,7 +241,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <div class="settings-container">
 
-  <!-- Company Holidays (Top Section) -->
+  <!-- Company Holidays (Left Column) -->
   <div class="card scrollable">
     <div class="card-header">
       <h2>Company Holidays</h2>
@@ -252,7 +252,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="holiday">Labor Day<br><small>Sunday, September 6, 2026 · 8 hours off</small></div>
   </div>
 
-  <!-- Active Clients (Top Section) -->
+  <!-- Active Clients (Right Column) -->
   <div class="card scrollable">
     <div class="card-header">
       <h2>Active Clients</h2>
@@ -267,8 +267,8 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="client">PTO<br><span class="client-tag">PTO</span></div>
   </div>
 
-  <!-- Role Permissions (Bottom Section) -->
-  <div class="card">
+  <!-- Role Permissions (Full Width, Bottom) -->
+  <div class="card role-permissions">
     <h2>Role Permissions</h2>
     <p>Access control and permission levels</p>
     <div class="role role-admin">
