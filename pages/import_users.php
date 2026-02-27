@@ -2,12 +2,24 @@
 require_once '../includes/db.php';
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit();
+}
+
+if (!$conn) {
+    die("DB CONNECTION FAILED");
+}
+
+if ($conn->connect_error) {
+    die("Connection error: " . $conn->connect_error);
 }
 
 // ===============================
@@ -80,6 +92,11 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
     $rowNum = 1;
 
     $header = fgetcsv($handle, 1000, ",");
+    echo "<pre>";
+print_r($header);
+exit;
+
+
     if (!$header) {
         http_response_code(400);
         echo json_encode(['error' => 'Failed to read CSV header']);
