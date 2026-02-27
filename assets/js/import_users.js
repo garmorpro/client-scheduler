@@ -14,19 +14,33 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('AJAX Response:', data);
 
-            // Show success/errors in the modal
-            let msg = `Successfully imported: ${data.successCount}\n`;
+            // Build HTML message
+            let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
+
             if (data.errors.length) {
-                msg += 'Errors:\n';
+                htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
                 data.errors.forEach(err => {
-                    msg += `Row ${err.row}: ${err.message}\n`;
+                    htmlMsg += `<li>Row ${err.row}: ${err.message}</li>`;
                 });
+                htmlMsg += `</ul>`;
             }
-            alert(msg); // you can replace this with a nicer modal display
+
+            // Show SweetAlert2 modal
+            Swal.fire({
+                title: 'Import Results',
+                html: htmlMsg,
+                icon: data.errors.length ? 'warning' : 'success',
+                confirmButtonText: 'OK',
+                width: 500
+            });
         })
         .catch(err => {
             console.error('AJAX Error:', err);
-            alert('Something went wrong. Check console.');
+            Swal.fire({
+                title: 'Error',
+                text: 'Something went wrong. Check console.',
+                icon: 'error'
+            });
         });
     });
 });
