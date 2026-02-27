@@ -82,9 +82,9 @@ $totalUsers = count($users);
         <div class="left"><?= $totalUsers ?> Users</div>
         <div class="right d-flex align-items-center gap-2">
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
-            <button class="btn btn-outline-secondary btn-sm">Filter</button>
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-filter"></i></button>
             <button class="btn btn-outline-primary btn-sm">Import</button>
-            <button class="btn btn-primary btn-sm">Invite</button>
+            <button class="btn btn-primary btn-sm">Invite User</button>
         </div>
     </div>
 
