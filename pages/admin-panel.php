@@ -62,7 +62,7 @@ if ($settingResult) {
             display: flex;
             align-items: center;
             /* gap: 0.5rem; */
-            margin-right: 0.5rem;
+            margin-right: 5rem;
             margin-bottom: 0.5rem;
         }
 
