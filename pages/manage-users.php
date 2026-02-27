@@ -164,7 +164,32 @@ $lastPage = ceil($totalUsers / $perPage);
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+<?php include_once '../includes/modals/user_details.php'; ?>
+    <?php include_once '../includes/modals/viewProfileModal.php'; ?>
+    <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+    
+    <script src="../assets/js/dynamic_cell_input.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/delete_custom_menu.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/timeoff_menu.js?v=<?php echo time(); ?>"></script>
+    <?php if ($isAdmin): ?>
+    <script src="../assets/js/employee_details.js?v=<?php echo time(); ?>"></script>
+    <?php endif; ?>
+    <script src="../assets/js/filter_role.js?v=<?php echo time(); ?>"></script>
+    
+    <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+
+    <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
