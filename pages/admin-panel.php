@@ -155,8 +155,8 @@ if ($settingResult) {
                 </div>
                 <div class="card-desc">Manage PTO policies, approvals, and rules for time-off requests.</div>
             </div>
-            <div class="settings-card" style="display: none;">
-                <div class="card-header">
+            <div class="settings-card" >
+                <div class="card-header"style="display: none;">
             </div>
         </div>
 
