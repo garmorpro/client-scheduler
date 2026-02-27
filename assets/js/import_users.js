@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('importUsersForm');
-    
+    const importModal = document.getElementById('importUsersModal');
+
     form.addEventListener('submit', function(e) {
         e.preventDefault(); // prevent page reload
 
@@ -13,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => res.json())
         .then(data => {
             console.log('AJAX Response:', data);
+
+            // Close the import modal first
+            const modalInstance = bootstrap.Modal.getInstance(importModal);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
 
             // Build HTML message
             let htmlMsg = `<p><strong>Successfully imported:</strong> ${data.successCount}</p>`;
@@ -32,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon: data.errors.length ? 'warning' : 'success',
                 confirmButtonText: 'OK',
                 width: 500
+            }).then(() => {
+                // Refresh the page when user clicks OK
+                window.location.reload();
             });
         })
         .catch(err => {
