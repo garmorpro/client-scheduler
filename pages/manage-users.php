@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 session_start();
 
@@ -15,24 +16,15 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch users from database
-$users = [];
-$userSQL = "SELECT user_id, full_name, email, role, status, job_title, created_at, last_active 
-            FROM users ORDER BY full_name ASC";
-$userResult = mysqli_query($conn, $userSQL);
-if ($userResult) {
-    while ($row = mysqli_fetch_assoc($userResult)) {
-        $users[] = $row;
+// Fetch settings
+$settings = [];
+$settingSQL = "SELECT setting_key, setting_value FROM settings";
+$settingResult = $conn->query($settingSQL);
+if ($settingResult) {
+    while ($S_row = $settingResult->fetch_assoc()) {
+        $settings[$S_row['setting_key']] = $S_row['setting_value'];
     }
 }
-$totalUsers = count($users);
-
-// Pagination setup (example: 10 per page)
-$perPage = 10;
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$start = ($page - 1) * $perPage;
-$usersToShow = array_slice($users, $start, $perPage);
-$lastPage = ceil($totalUsers / $perPage);
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,34 +32,59 @@ $lastPage = ceil($totalUsers / $perPage);
     <title>Manage Users</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+
     <style>
-        .header-bar {
+        .settings-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
-            gap: 0.5rem;
         }
-        .header-bar .left {
+
+        .settings-card {
+            flex: 1 1 22%;
+            max-width: 350px;
+            max-height: 150px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .settings-card:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centers both icon + text horizontally */
+    gap: 0.4rem;             /* small space between icon and heading */
+    margin-bottom: 0.5rem;
+}
+
+        .card-header i {
+            font-size: 1.6rem;
+            color: #495057;
+        }
+
+        .card-title {
             font-weight: 600;
+            font-size: 1rem;
         }
-        .header-bar .right .btn {
-            margin-left: 0.5rem;
-        }
-        table th, table td {
-            vertical-align: middle;
-        }
-        .name-cell .job-title {
+
+        .card-desc {
             font-size: 0.85rem;
             color: #6c757d;
         }
-        .action-dropdown .dropdown-menu {
-            min-width: 120px;
-        }
-        .pagination-info {
-            font-size: 0.9rem;
-            color: #6c757d;
+
+        .section-title {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -161,6 +178,8 @@ $lastPage = ceil($totalUsers / $perPage);
 
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
