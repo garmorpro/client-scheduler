@@ -276,7 +276,7 @@ if (data.errors.length) {
     <!-- Users Table -->
     <div class="table-responsive">
         <table class="table table-hover align-middle">
-            <thead class="table-light">
+            <thead class="table">
                 <tr>
                     <th scope="col"><input type="checkbox"></th>
                     <th scope="col">Name</th>
