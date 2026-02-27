@@ -13,7 +13,19 @@ body {
 
 /* =================== New Styles ========================= */
 
-.settings-container {
+:root {
+    --bg-color: #f9fafb;
+    --card-bg: #ffffff;
+    --text-color: #111827;
+    --primary-color: #6366f1;
+    --secondary-color: #4b5563;
+    --accent-color: #22c55e;
+    --purple: #a78bfa;
+    --blue: #60a5fa;
+  }
+
+
+  .settings-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
@@ -22,17 +34,26 @@ body {
     gap: 20px;
   }
 
-.card {
+  .card {
     background-color: var(--card-bg);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .card-header h2 {
+    margin: 0;
+  }
+
+  .card-header small {
+    color: var(--secondary-color);
   }
 
   .add-btn {
@@ -42,6 +63,7 @@ body {
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
+    font-weight: bold;
   }
 
   .holiday, .client, .role {
@@ -49,6 +71,11 @@ body {
     padding: 12px;
     border-radius: 8px;
     background-color: #e5e7eb;
+  }
+
+  .holiday small {
+    color: var(--secondary-color);
+    font-size: 0.85rem;
   }
 
   .client-tag {
@@ -72,6 +99,11 @@ body {
     border-left: 4px solid var(--secondary-color);
   }
 
+  .role ul {
+    margin: 5px 0 0 20px;
+    padding: 0;
+  }
+
   /* Dark Mode */
   body.dark-mode {
     --bg-color: #1e1e2f;
@@ -82,6 +114,8 @@ body {
     --accent-color: #22c55e;
     --purple: #a78bfa;
     --blue: #60a5fa;
+    background-color: var(--bg-color);
+    color: var(--text-color);
   }
 
   body.dark-mode .card {
