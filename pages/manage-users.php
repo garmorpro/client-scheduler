@@ -43,56 +43,33 @@ $lastPage = ceil($totalUsers / $perPage);
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <style>
-        .settings-row {
+        .header-bar {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
+            gap: 0.5rem;
         }
-
-        .settings-card {
-            flex: 1 1 22%;
-            max-width: 350px;
-            max-height: 150px;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background-color: #f8f9fa;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .settings-card:hover {
-            background-color: #e9ecef;
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* centers both icon + text horizontally */
-    gap: 0.4rem;             /* small space between icon and heading */
-    margin-bottom: 0.5rem;
-}
-
-        .card-header i {
-            font-size: 1.6rem;
-            color: #495057;
-        }
-
-        .card-title {
+        .header-bar .left {
             font-weight: 600;
-            font-size: 1rem;
         }
-
-        .card-desc {
+        .header-bar .right .btn {
+            margin-left: 0.5rem;
+        }
+        table th, table td {
+            vertical-align: middle;
+        }
+        .name-cell .job-title {
             font-size: 0.85rem;
             color: #6c757d;
         }
-
-        .section-title {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+        .action-dropdown .dropdown-menu {
+            min-width: 120px;
+        }
+        .pagination-info {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
