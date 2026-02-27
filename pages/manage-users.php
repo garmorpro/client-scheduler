@@ -86,10 +86,11 @@ $totalUsers = count($users);
             <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users">
             <div class="dropdown">
     <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+        id="roleFilterBtn"
         type="button"
         data-bs-toggle="dropdown"
         data-bs-auto-close="outside">
-    <i class="bi bi-filter"></i> Filter
+    <i class="bi bi-filter"></i>
 </button>
 
     <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 200px;">
