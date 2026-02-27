@@ -150,7 +150,7 @@ $totalUsers = count($users);
             Upload a CSV file using the template format.
           </p>
 
-          <a href="../assets/templates/bulk_user_template.csv" class="btn btn-sm btn-link p-0 mb-3">
+          <a href="../assets/templates/bulk_user_template.csv" download class="btn btn-sm btn-link p-0 mb-3">
             Download CSV Template
           </a>
 
