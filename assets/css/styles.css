@@ -72,7 +72,7 @@ body.dark-mode #user-table {
   --bs-table-accent-bg: #3a3a50;
   --bs-table-striped-color: #e0e0e0;
   --bs-table-striped-bg: #33334a;
-  --bs-table-border-color: #3a3a50;
+  --bs-table-border-color: #555572;
   background-color: var(--bs-table-bg) !important;
     color: var(--bs-table-color) !important;
     border: 1px solid var(--bs-table-border-color);
@@ -86,6 +86,9 @@ body.dark-mode table td {
   background-color: var(--bs-table-bg) !important;
   color: var(--bs-table-color) !important;
   border-color: var(--bs-table-border-color) !important;
+}
+body.dark-mode table td small {
+  color: var(--bs-table-color) !important;
 }
 body.dark-mode table.table-striped tbody tr:nth-of-type(odd) {
   background-color: var(--bs-table-striped-bg) !important;
