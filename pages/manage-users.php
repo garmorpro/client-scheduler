@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.errors.length) {
                     htmlMsg += `<p><strong>Errors:</strong></p><ul>`;
                     data.errors.forEach(err => {
-                        htmlMsg += `<li>Row ${err.row}: ${err.message}</li>`;
+                        htmlMsg += `<p>Row ${err.row}: ${err.message}</p>`;
                     });
                     htmlMsg += `</ul>`;
                 }
