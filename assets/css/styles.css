@@ -24,7 +24,7 @@ body.dark-mode {
 /* Links */
 body.dark-mode a,
 body.dark-mode .nav-link {
-    color: #cfd6f1;
+    color: #cfd6f1 !important;
 }
 body.dark-mode a:hover,
 body.dark-mode .nav-link:hover {
