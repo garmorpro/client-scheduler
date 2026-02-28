@@ -173,6 +173,15 @@ thead th {
   border-bottom: 2px solid var(--bs-border-color);
 }
 
+thead th {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+body.dark-mode thead th {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+
 /* Freeze first column */
 th:first-child,
 td:first-child {
