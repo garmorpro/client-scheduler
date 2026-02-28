@@ -188,6 +188,22 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   z-index: 30;            /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
   border-right: 2px solid rgb(223, 226, 230);
+  border-radius: 15px 0 0 0;
+}
+
+/* Top-right corner — last th in thead */
+.schedule-table thead th:last-child {
+  border-radius: 0 15px 0 0;
+}
+
+/* Bottom-left corner — last row, first cell */
+.schedule-table tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 15px;
+}
+
+/* Bottom-right corner — last row, last cell */
+.schedule-table tbody tr:last-child td:last-child {
+  border-radius: 0 0 15px 0;
 }
 
 /* ========= BADGES ========= */
@@ -221,6 +237,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
   border-radius: 15px !important;
+  border: 1px solid rgb(223, 226, 230);
   width: 100%;
   height: calc(100vh - 260px); /* adjust if your header is taller */
   overflow: auto;              /* allows horizontal + vertical scroll */
