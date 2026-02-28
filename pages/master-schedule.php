@@ -138,10 +138,27 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
-    <style>
-       
-      
-    </style>
+    <script>
+    function updateLastRowRadius() {
+  document.querySelectorAll('.schedule-table tbody tr .employee-name').forEach(td => {
+    td.style.borderRadius = '';
+  });
+  document.querySelectorAll('.schedule-table tbody tr td:last-child').forEach(td => {
+    td.style.borderRadius = '';
+  });
+
+  const rows = [...document.querySelectorAll('.schedule-table tbody tr')];
+  const lastVisible = rows.filter(r => r.style.display !== 'none').pop();
+
+  if (lastVisible) {
+    lastVisible.querySelector('.employee-name').style.borderRadius = '0 0 0 15px';
+    lastVisible.querySelector('td:last-child').style.borderRadius = '0 0 15px 0';
+  }
+}
+
+// Call on page load
+updateLastRowRadius();
+</script>
 
     <script>
       const entries = <?php echo json_encode($entries); ?>;
@@ -397,27 +414,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    function updateLastRowRadius() {
-  document.querySelectorAll('.schedule-table tbody tr .employee-name').forEach(td => {
-    td.style.borderRadius = '';
-  });
-  document.querySelectorAll('.schedule-table tbody tr td:last-child').forEach(td => {
-    td.style.borderRadius = '';
-  });
 
-  const rows = [...document.querySelectorAll('.schedule-table tbody tr')];
-  const lastVisible = rows.filter(r => r.style.display !== 'none').pop();
-
-  if (lastVisible) {
-    lastVisible.querySelector('.employee-name').style.borderRadius = '0 0 0 15px';
-    lastVisible.querySelector('td:last-child').style.borderRadius = '0 0 15px 0';
-  }
-}
-
-// Call on page load
-updateLastRowRadius();
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -432,9 +429,16 @@ updateLastRowRadius();
 </script>
 
 <script>
-document.querySelector('.schedule-table td.addable').addEventListener('mouseenter', function() {
-    console.log('fired, dark?', document.body.classList.contains('dark-mode'));
-    console.log('body classes:', document.body.className);
+document.querySelectorAll('.schedule-table td.addable').forEach(td => {
+    td.addEventListener('mouseenter', function() {
+        const isDark = document.body.classList.contains('dark-mode');
+        this.style.setProperty('background-color', isDark ? '#9595b1' : '#e0f7fa', 'important');
+    });
+    td.addEventListener('mouseleave', function() {
+        const isDark = document.body.classList.contains('dark-mode');
+        // Set back to base color explicitly instead of removing
+        this.style.setProperty('background-color', isDark ? '#2a2a3d' : '#ffffff', 'important');
+    });
 });
 </script>
        
