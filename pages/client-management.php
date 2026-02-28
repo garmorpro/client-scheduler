@@ -152,7 +152,7 @@ unset($client);
                     
                 <!-- Client Header -->
                 <div class="d-flex align-items-center mb-4">
-                    <div class="rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                    <div class="icon-bubble rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                         <i class="bi bi-building"></i>
                     </div>
                     <div class="fs-6 fw-semibold mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
