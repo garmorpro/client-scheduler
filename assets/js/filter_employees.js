@@ -20,6 +20,7 @@ function filterEmployees() {
     // Show only if both match
     row.style.display = (matchesRole && matchesSearch) ? '' : 'none';
   });
+  updateLastRowRadius(); // <-- ADD THIS
 }
 
 // Update table whenever a role checkbox changes
