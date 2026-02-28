@@ -179,11 +179,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ========= TOP-LEFT CORNER ========= */
-.schedule-table thead th:first-child {
-  z-index: 110; /* above header & first column */
+/* .schedule-table thead th:first-child {
+  z-index: 110; 
   border-right: 2px solid rgb(223, 226, 230);
   border-bottom: 2px solid rgb(223, 226, 230);
-}
+} */
 
 /* ========= BADGES ========= */
 .draggable-badge {
