@@ -1417,9 +1417,9 @@ body.dark-mode .client-card {
         }
 
 .sidebar {
-    border: 1.5px solid #e0e0e0;
+    border: 2px solid #e0e0e0;
 }
 
 body.dark-mode .sidebar {
-    border: 1.5px solid #3a3a50 !important;
+    border: 2px solid #3a3a50 !important;
 }   
