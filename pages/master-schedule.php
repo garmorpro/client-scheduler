@@ -321,7 +321,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         }
                     
                         if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
-                            $cellContent = "<i class='bi bi-plus text-muted'></i>";
+                            $cellContent = "<i class='bi bi-plus plus-sign text-muted'></i>";
                         }
                     
                         $tdClass = 'addable';
