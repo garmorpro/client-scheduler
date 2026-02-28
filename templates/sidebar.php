@@ -9,15 +9,7 @@ $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role'])
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 ?>
 
-    <?php
-    // Assume you fetched from DB: $user_theme = 'light' or 'dark'
-if (!isset($_SESSION['theme'])) {
-    $_SESSION['theme'] = $user_theme ?? 'light';
-}
-
-$themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
-
-?>
+    
 
 <div class="sidebar d-flex flex-column justify-content-between fixed-top"
      style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">
@@ -35,6 +27,15 @@ $themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
                 <small class="text-muted">Schedule Manager</small>
             </div>
         </div>
+        <?php
+    // Assume you fetched from DB: $user_theme = 'light' or 'dark'
+if (!isset($_SESSION['theme'])) {
+    $_SESSION['theme'] = $user_theme ?? 'light';
+}
+
+$themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
+
+?>
         <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>" style="cursor:pointer; font-size: 1rem;"></i>
     </div>
 
