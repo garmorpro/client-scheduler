@@ -152,49 +152,47 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
       td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
       td.addable:hover { background: rgba(0,0,0,0.02); }
-      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
-      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
+      /* th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; } */
+      /* .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; } */
       .week { min-width: 200px; }
 
-      /* === Spreadsheet Core === */
+      /* ===========================
+   EXCEL-STYLE GRID
+=========================== */
 
 .table-responsive {
-  overflow: auto;               /* enables both scrollbars */
-  max-height: 75vh;             /* vertical scrolling */
-  border: 1px solid var(--bs-border-color);
+  overflow: auto;
+  max-height: 75vh;
+}
+
+/* Important for sticky to behave correctly */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 /* Freeze header row */
 thead th {
   position: sticky;
   top: 0;
-  z-index: 200;
+  z-index: 20;
   background: var(--bs-body-bg);
   border-bottom: 2px solid var(--bs-border-color);
 }
 
-thead th {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-body.dark-mode thead th {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-}
-
-
 /* Freeze first column */
-th:first-child,
-td:first-child {
+tbody td:first-child,
+thead th:first-child {
   position: sticky;
   left: 0;
-  z-index: 201;
+  z-index: 30;
   background: var(--bs-body-bg);
   border-right: 2px solid var(--bs-border-color);
 }
 
-/* Top-left corner cell (needs highest z-index) */
+/* Top-left cell needs highest */
 thead th:first-child {
-  z-index: 300;
+  z-index: 40;
 }
     </style>
     <script>
