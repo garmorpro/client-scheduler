@@ -158,7 +158,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h3 class="mb-0">Master Schedule</h3>
-                <p class="text-muted mb-0">Complete overview of all client engagements and team assignments</p>
+                <p class="mb-0">Complete overview of all client engagements and team assignments</p>
             </div>
             <div class="header-buttons">
                 <a href="#" 
@@ -237,7 +237,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                         ?>
                         <th class="<?php echo $thClasses; ?>">
                             <?php echo date('M j', $monday); ?><br>
-                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
+                            <small class="">Week of <?php echo date('n/j', $monday); ?></small>
                             <?php if ($isGlobalWeek): ?>
                                 <span class="timeoff-corner"><?php echo $globalHours; ?></span>
                             <?php endif; ?>
@@ -279,7 +279,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                                 </div>
                                 <div>
                                     <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                    <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                                    <div class="text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
                                 </div>
                             </div>
                     </td>
