@@ -209,14 +209,12 @@ unset($client);
                 </div>
                         
                 <!-- Card Buttons -->
-                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100" 
-                        style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#addEngagementModal" 
-                        data-client-id="<?php echo $client['client_id']; ?>"
-                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
-                    <i class="bi bi-plus-circle me-2"></i>Add Engagement
-                </button>
+                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100 add-engagement-btn" 
+    style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
+    data-client-id="<?php echo $client['client_id']; ?>"
+    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
+    <i class="bi bi-plus-circle me-2"></i>Add Engagement
+</button>
                 <div class="card-buttons d-flex flex-wrap gap-2">
                         
                     <button 
@@ -272,6 +270,17 @@ unset($client);
     });
 </script>
 
+<script>
+    const managersList = <?php 
+    $managerQuery = $conn->query("SELECT full_name FROM users WHERE role='manager' ORDER BY full_name ASC");
+    $managers = [];
+    while ($row = $managerQuery->fetch_assoc()) {
+        $managers[] = $row['full_name'];
+    }
+    echo json_encode($managers);
+?>;
+</script>
+
 
 
 
@@ -291,6 +300,7 @@ unset($client);
 <script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/import-clients-modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/swal-modals/add-engagement-modal.js?v=<?php echo time(); ?>"></script>
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
