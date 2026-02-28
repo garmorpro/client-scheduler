@@ -149,7 +149,7 @@ body {
   background-color: rgb(200, 200, 200) !important; 
 }
 
-body.is-admin.dark-mode table td.timeoff-cell:hover { 
+body.is-admin.dark-mode .timeoff-cell:hover { 
   background-color: #525270 !important; 
 }
 
