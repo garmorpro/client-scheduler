@@ -165,25 +165,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   max-height: 75vh;
 }
 
-/* Important for sticky to behave correctly */
 table {
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed;
 }
 
-.week,
-.employee {
-  width: 200px;
-}
-
-/* Freeze header row */
+/* Freeze header */
 thead th {
   position: sticky;
   top: 0;
   z-index: 20;
   background: var(--bs-body-bg);
-  border-bottom: 2px solid var(--bs-border-color);
 }
 
 /* Freeze first column */
@@ -194,10 +186,10 @@ thead th:first-child {
   z-index: 30;
   background: var(--bs-body-bg);
   border-right: 2px solid var(--bs-border-color);
-  min-width: 250px;   /* <-- move it here */
+  min-width: 250px;
 }
 
-/* Top-left cell highest layer */
+/* Top-left cell */
 thead th:first-child {
   z-index: 40;
 }
