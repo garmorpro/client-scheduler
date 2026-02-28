@@ -169,6 +169,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 table {
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
+}
+
+.week {
+  width: 200px;
 }
 
 /* Freeze header row */
