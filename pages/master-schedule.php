@@ -138,89 +138,162 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
     <style>
-      .timeoff-cell { background-color: rgb(217,217,217) !important; }
-      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
-      <?php if ($isAdmin): ?>
-      .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
-      <?php endif; ?>
-      .timeoff-corner { 
-        position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800;
-        color: rgb(50,107,61) !important;
-      }
-      .timeoff-card { border: 2px dashed rgb(209,226, 159) !important; background: rgb(246, 249, 236) !important; }
-      .draggable-badge { cursor: grab; user-select: none; }
-      .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
-      td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
-      td.addable:hover { background: rgba(0,0,0,0.02); }
-      /* th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; } */
-      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
-      .week { min-width: 200px; }
-
-
       /* ============================
-   SHEET CONTAINER (SCROLL ONLY HERE)
+  GENERAL TABLE STYLING
+============================ */
+
+.schedule-table {
+  border-collapse: separate;      /* must be separate for sticky to work */
+  border-spacing: 0;
+  width: max-content;             /* allows horizontal scroll */
+  min-width: 100%;                /* stretch at least full container */
+  table-layout: fixed;            /* ensures cells align */
+  background-clip: padding-box;   /* prevent sticky bleed */
+}
+
+.schedule-table th,
+.schedule-table td {
+  padding: 8px 12px;
+  vertical-align: middle;
+  text-align: center;
+  background-clip: padding-box;
+  border-bottom: 1px solid rgb(223, 226, 230);
+}
+
+/* ============================
+  STICKY HEADER ROW
+============================ */
+
+.schedule-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bs-body-bg, #fff); /* fallback to white */
+  border-bottom: 2px solid rgb(223, 226, 230);
+}
+
+/* ============================
+  STICKY FIRST COLUMN
+============================ */
+
+.schedule-table th:first-child,
+.schedule-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 25;                     /* above body cells but below top-left */
+  min-width: 260px;
+  text-align: left;
+  background: var(--bs-body-bg, #fff);
+  border-right: 2px solid rgb(223, 226, 230);
+}
+
+/* ============================
+  TOP-LEFT CORNER CELL
+============================ */
+
+.schedule-table thead th:first-child {
+  z-index: 35;                     /* above everything */
+  border-right: 2px solid rgb(223, 226, 230);
+  border-bottom: 2px solid rgb(223, 226, 230);
+}
+
+/* ============================
+  WEEK COLUMN MIN-WIDTH
+============================ */
+
+.week {
+  min-width: 200px;
+}
+
+/* ============================
+  TIMEOFF STYLING
+============================ */
+
+.timeoff-cell {
+  background-color: rgb(217,217,217) !important;
+}
+
+.timeoff-current-week {
+  background-color: rgb(217,217,217) !important;
+  outline: 3px solid rgb(169,205,83);
+  outline-offset: -3px;
+}
+
+.timeoff-corner { 
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 8px;
+  font-weight: 800;
+  color: rgb(50,107,61) !important;
+}
+
+.timeoff-card { 
+  border: 2px dashed rgb(209,226,159) !important;
+  background: rgb(246,249,236) !important; 
+}
+
+/* ============================
+  DRAG & DROP BADGES
+============================ */
+
+.draggable-badge { 
+  cursor: grab; 
+  user-select: none; 
+}
+
+.draggable-badge.dragging { 
+  opacity: 0.5; 
+  transform: scale(0.98); 
+}
+
+/* ============================
+  DROPPABLE CELLS
+============================ */
+
+td.drop-target { 
+  outline: 3px dashed rgba(0,123,255,0.15); 
+}
+
+td.addable:hover { 
+  background: rgba(0,0,0,0.02); 
+  cursor: pointer;
+  position: relative;
+}
+
+/* ============================
+  SHEET CONTAINER (SCROLL AREA)
 ============================ */
 
 .sheet-container {
   height: calc(100vh - 260px);
-  overflow: auto;
-  border: 1px solid var(--bs-border-color);
+  overflow: auto;       /* enables scrolling for sticky */
+  border: 1px solid var(--bs-border-color, #ddd);
   border-radius: 10px;
   position: relative;
 }
 
 /* ============================
-   TABLE BEHAVIOR
+  MAIN CONTENT WRAPPER
 ============================ */
-
-.schedule-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: max-content;
-  width: max-content;
-}
-
-/* ============================
-   FREEZE HEADER ROW
-============================ */
-
-/* HEADER ROW */
-.schedule-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: var(--bs-body-bg);
-}
-
-/* FIRST COLUMN */
-.schedule-table th:first-child,
-.schedule-table td:first-child {
-  position: fixed !important;
-  left: 0;
-  z-index: 25;
-  background: var(--bs-body-bg);
-  min-width: 260px;
-  border-right: 2px solid var(--bs-border-color);
-}
-
-/* TOP LEFT CORNER CELL */
-.schedule-table thead th:first-child {
-  z-index: 35;
-}
-
-.schedule-table th,
-.schedule-table td {
-  background-clip: padding-box;
-}
-
 
 .main-content {
   margin-left: 250px; /* match sidebar width */
   height: 100vh;
-  overflow: hidden; /* prevent page scroll */
+  overflow: hidden;   /* page scroll is blocked; scroll inside sheet-container */
   display: flex;
   flex-direction: column;
 }
+
+/* ============================
+  OPTIONAL ADMIN HOVER
+============================ */
+
+<?php if ($isAdmin): ?>
+.timeoff-cell:hover { 
+  background-color: rgb(225, 225, 225) !important; 
+}
+<?php endif; ?>
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
