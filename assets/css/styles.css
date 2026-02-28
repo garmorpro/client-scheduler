@@ -59,8 +59,11 @@ body {
   z-index: 30;            /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
   border-right: 2px solid rgb(223, 226, 230);
-  border-left: .5px solid rgb(223, 226, 230);
   border-radius: 15px 0 0 0;
+}
+
+.schedule-table thead th:first-child {
+  border-left: .5px solid rgb(223, 226, 230);
 }
 
 .schedule-table tbody tr:last-child .employee-name {
