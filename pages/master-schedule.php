@@ -138,17 +138,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
     <style>
-      /* ============================
-  GENERAL TABLE STYLING
+     /* ============================
+GENERAL TABLE STYLING
 ============================ */
 
 .schedule-table {
-  border-collapse: separate;      /* must be separate for sticky to work */
+  border-collapse: separate; /* must be separate for sticky */
   border-spacing: 0;
-  width: max-content;             /* allows horizontal scroll */
-  min-width: 100%;                /* stretch at least full container */
-  table-layout: fixed;            /* ensures cells align */
-  background-clip: padding-box;   /* prevent sticky bleed */
+  width: max-content;        /* allows horizontal scroll */
+  min-width: 100%;
+  table-layout: fixed;       /* ensures cells align */
+  background-clip: padding-box;
 }
 
 .schedule-table th,
@@ -156,49 +156,49 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   padding: 8px 12px;
   vertical-align: middle;
   text-align: center;
-  background-clip: padding-box;
   border-bottom: 1px solid rgb(223, 226, 230);
+  background-clip: padding-box;
 }
 
 /* ============================
-  STICKY HEADER ROW
+STICKY HEADER ROW
 ============================ */
 
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: var(--bs-body-bg, #fff); /* fallback to white */
+  z-index: 100; /* above body cells */
+  background: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
 
 /* ============================
-  STICKY FIRST COLUMN
+STICKY FIRST COLUMN
 ============================ */
 
 .schedule-table th:first-child,
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 25;                     /* above body cells but below top-left */
   min-width: 260px;
   text-align: left;
   background: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
+  z-index: 90; /* above body cells but below top-left corner */
 }
 
 /* ============================
-  TOP-LEFT CORNER CELL
+TOP-LEFT CORNER CELL
 ============================ */
 
 .schedule-table thead th:first-child {
-  z-index: 35;                     /* above everything */
+  z-index: 110; /* above everything */
   border-right: 2px solid rgb(223, 226, 230);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
 
 /* ============================
-  WEEK COLUMN MIN-WIDTH
+WEEK COLUMN MIN-WIDTH
 ============================ */
 
 .week {
@@ -206,7 +206,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ============================
-  TIMEOFF STYLING
+TIMEOFF STYLING
 ============================ */
 
 .timeoff-cell {
@@ -234,12 +234,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ============================
-  DRAG & DROP BADGES
+DRAG & DROP BADGES
 ============================ */
 
 .draggable-badge { 
   cursor: grab; 
-  user-select: none; 
+  user-select: none;
+  position: relative; /* ensure above cells */
+  z-index: 5;
 }
 
 .draggable-badge.dragging { 
@@ -248,7 +250,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ============================
-  DROPPABLE CELLS
+DROPPABLE CELLS
 ============================ */
 
 td.drop-target { 
@@ -262,31 +264,31 @@ td.addable:hover {
 }
 
 /* ============================
-  SHEET CONTAINER (SCROLL AREA)
+SHEET CONTAINER
 ============================ */
 
 .sheet-container {
   height: calc(100vh - 260px);
-  overflow: auto;       /* enables scrolling for sticky */
+  overflow: auto; /* enables scrolling */
   border: 1px solid var(--bs-border-color, #ddd);
   border-radius: 10px;
   position: relative;
 }
 
 /* ============================
-  MAIN CONTENT WRAPPER
+MAIN CONTENT WRAPPER
 ============================ */
 
 .main-content {
   margin-left: 250px; /* match sidebar width */
   height: 100vh;
-  overflow: hidden;   /* page scroll is blocked; scroll inside sheet-container */
+  overflow: hidden; /* page scroll blocked; scroll inside sheet-container */
   display: flex;
   flex-direction: column;
 }
 
 /* ============================
-  OPTIONAL ADMIN HOVER
+OPTIONAL ADMIN HOVER
 ============================ */
 
 <?php if ($isAdmin): ?>
@@ -295,68 +297,19 @@ td.addable:hover {
 }   
 <?php endif; ?>
 
+/* ============================
+HIGHLIGHT CURRENT WEEK
+============================ */
 
-/* === FULL STICKY FIX FOR MASTER SCHEDULE === */
-
-.sheet-container {
-  overflow: auto;
-  position: relative;
-  height: calc(100vh - 260px);
-}
-
-/* Table setup */
-.schedule-table {
-  border-collapse: separate !important; /* must be separate for sticky */
-  border-spacing: 0;
-  width: max-content;
-  min-width: 100%;
-  table-layout: fixed;
-}
-
-/* Sticky header row */
-.schedule-table thead th {
-  position: sticky;
-  top: 0;
-  background: var(--bs-body-bg, #fff);
-  z-index: 100; /* higher than body cells */
-  border-bottom: 2px solid rgb(223, 226, 230);
-}
-
-/* Sticky first column (all rows) */
-.schedule-table th:first-child,
-.schedule-table td:first-child {
-  position: sticky;
-  left: 0;
-  min-width: 260px;
-  text-align: left;
-  background: var(--bs-body-bg, #fff);
-  border-right: 2px solid rgb(223, 226, 230);
-  z-index: 90; /* above body cells but below top-left corner */
-}
-
-/* Top-left corner cell (header + first column) */
-.schedule-table thead th:first-child {
-  z-index: 110; /* above everything */
-}
-
-/* Ensure position-relative on body cells doesn't break sticky */
-.schedule-table td.position-relative {
-  z-index: 1;
-}
-
-/* Optional: Highlight current week */
 .highlight-today {
   outline: 3px solid rgb(169,205,83);
   outline-offset: -3px;
 }
 
-/* Ensure badges don’t cover sticky columns */
-.draggable-badge {
-  position: relative;
-  z-index: 2;
-}
+/* ============================
+SCROLL BEHAVIOR (GRABBING)
+============================ */
 
-/* Scroll behavior: grab */
 .sheet-container.grabbing {
   cursor: grabbing;
   cursor: -webkit-grabbing;
@@ -617,58 +570,7 @@ td.addable:hover {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
-       <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const container = document.querySelector(".sheet-container");
-    const table = container.querySelector(".schedule-table");
-
-    // Clone header
-    const thead = table.querySelector("thead");
-    const clonedHeader = thead.cloneNode(true);
-    const headerWrapper = document.createElement("table");
-    headerWrapper.className = "schedule-table sticky-header";
-    headerWrapper.style.position = "absolute";
-    headerWrapper.style.top = "0";
-    headerWrapper.style.left = "0";
-    headerWrapper.style.width = table.offsetWidth + "px";
-    headerWrapper.style.pointerEvents = "none"; // avoid blocking clicks
-    headerWrapper.appendChild(clonedHeader);
-    container.appendChild(headerWrapper);
-
-    // Clone first column
-    const tbodyRows = table.querySelectorAll("tbody tr");
-    const colWrapper = document.createElement("div");
-    colWrapper.className = "sticky-column";
-    colWrapper.style.position = "absolute";
-    colWrapper.style.top = "0";
-    colWrapper.style.left = "0";
-    colWrapper.style.width = "260px"; // match your first column width
-    colWrapper.style.pointerEvents = "none"; // avoid blocking clicks
-    container.appendChild(colWrapper);
-
-    tbodyRows.forEach((row, i) => {
-        const firstCell = row.querySelector("td:first-child").cloneNode(true);
-        firstCell.style.display = "block";
-        firstCell.style.width = "260px";
-        firstCell.style.background = "var(--bs-body-bg, #fff)";
-        firstCell.style.position = "absolute";
-        firstCell.style.top = row.offsetTop + "px";
-        firstCell.style.left = "0";
-        colWrapper.appendChild(firstCell);
-    });
-
-    // Sync scroll
-    container.addEventListener("scroll", () => {
-        headerWrapper.style.transform = `translateY(${container.scrollTop}px)`;
-        colWrapper.style.transform = `translateX(${container.scrollLeft}px)`;
-    });
-
-    // Optional: handle resize
-    window.addEventListener("resize", () => {
-        headerWrapper.style.width = table.offsetWidth + "px";
-    });
-});
-</script>
+       
     
 </div>
 </body>
