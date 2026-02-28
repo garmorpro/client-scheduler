@@ -169,7 +169,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 25; /* above body but below header */
+  z-index: 51; /* above body but below header */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
   min-width: 260px;
@@ -213,7 +213,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SHEET CONTAINER ========= */
 .sheet-container {
   height: calc(100vh - 260px);
-  overflow: visible; /* sticky works inside scrollable container */
+  overflow: auto; /* sticky works inside scrollable container */
   border: 1px solid var(--bs-border-color, #ddd);
   border-radius: 10px;
   position: relative;
