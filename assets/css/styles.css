@@ -199,6 +199,7 @@ body.dark-mode .schedule-table .badge-status.badge-not-confirmed {
 /* Divider borders */
 body.dark-mode .schedule-table thead th {
   border-bottom-color: #3a3a50 !important;
+  border-bottom: .5px solid rgb(75,75,101) !important;
 }
 
 body.dark-mode .schedule-table th:first-child,
