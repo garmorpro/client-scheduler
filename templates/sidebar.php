@@ -15,7 +15,7 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
     <!-- Branding -->
     <div>
         <div class="d-flex align-items-center mb-5">
-            <div class="bg-dark text-white rounded p-2 me-2 d-flex align-items-center justify-content-center"
+            <div class="icon-bubble rounded p-2 me-2 d-flex align-items-center justify-content-center"
                  style="width: 40px; height: 40px;">
                 <i class="bi bi-calendar2-week"></i>
             </div>
