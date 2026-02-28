@@ -172,7 +172,8 @@ table {
   table-layout: fixed;
 }
 
-.week {
+.week,
+.employee {
   width: 200px;
 }
 
@@ -281,7 +282,7 @@ thead th:first-child {
             <table class="table table-bordered align-middle text-center">
                 <thead>
                     <tr>
-                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                        <th class="text-start employee align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
                             $weekKey = date('Y-m-d', $monday);
                             $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
