@@ -133,6 +133,11 @@ body {
 
       .week { min-width: 200px; }
 
+      .schedule-table td .badge-status {
+  display: block;
+  width: 100%;
+}
+
       /* ========= SCHEDULE TABLE DARK MODE OVERRIDES ========= */
 
 body.dark-mode table tr.timeoff-cell,
