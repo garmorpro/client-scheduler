@@ -237,7 +237,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
   border-radius: 15px !important;
-  border: 1px solid rgb(223, 226, 230);
   width: 100%;
   height: calc(100vh - 260px); /* adjust if your header is taller */
   overflow: auto;              /* allows horizontal + vertical scroll */
