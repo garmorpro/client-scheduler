@@ -45,8 +45,8 @@ if ($result) {
 
     <style>
         .holidays-container {
-            max-width: 860px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
         }
 
         .page-header {
@@ -207,8 +207,8 @@ if ($result) {
                     <i class="bi bi-calendar3"></i>
                 </div>
                 <div>
-                    <h4 class="mb-0 fw-bold">Company Holidays</h4>
-                    <p class="mb-0 text-muted" style="font-size:13px;">Manage firm-wide holidays and closures</p>
+                    <h4 class="mb-0">Company Holidays</h4>
+                    <p class="mb-0" style="font-size:13px;">Manage firm-wide holidays and closures</p>
                 </div>
             </div>
             <?php if ($isAdmin): ?>
