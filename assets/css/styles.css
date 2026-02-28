@@ -46,6 +46,11 @@ body.dark-mode .schedule-table thead th {
   border-top: .5px solid rgb(75,75,101) !important;
 }
 
+body.dark-mode .schedule-table tbody .employee-name,
+body.dark-mode .schedule-table thead th:first-child {
+  border-left: .5px solid rgb(75,75,101) !important;
+}
+
 
 /* ========= STICKY FIRST COLUMN ========= */
 .schedule-table th:first-child,
