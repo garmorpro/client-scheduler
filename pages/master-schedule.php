@@ -169,11 +169,14 @@ body.d-flex {
 }
 
 .table-responsive {
+  height: calc(100vh - 220px); /* adjust if needed */
   overflow: auto;
-  max-height: 75vh;
+  position: relative;
+  border: 1px solid var(--bs-border-color);
 }
 
 table {
+  min-width: max-content;
   border-collapse: separate;
   border-spacing: 0;
 }
