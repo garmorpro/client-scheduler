@@ -140,9 +140,7 @@ body.dark-mode table td.timeoff-cell {
   --bs-table-accent-bg: #2a2a3d !important;
 }
 
-body.dark-mode .plus-sign {
-  --bs-table-color: pink !important;
-}
+
 
 body.dark-mode .schedule-table .timeoff-current-week {
   background-color: #44405a !important;
