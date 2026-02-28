@@ -629,10 +629,10 @@ body.dark-mode .pop-up-small {
 .form-select, .form-control { 
     background-color: #f9fafb; border-radius: 8px; 
 }
-td.addable:hover { 
+/* td.addable:hover { 
     background-color: #e0f7fa; 
     cursor: pointer; 
-}
+} */
 /* Stat cards */
 .stat-card {
     position: relative;
