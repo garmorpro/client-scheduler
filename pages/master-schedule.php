@@ -139,23 +139,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <style>
-         .timeoff-cell { background-color: rgb(217,217,217) !important; }
-      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
-      <?php if ($isAdmin): ?>
+         <?php if ($isAdmin): ?>
       .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
       <?php endif; ?>
-      .timeoff-corner { 
-        position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800;
-        color: rgb(50,107,61) !important;
-      }
-      .timeoff-card { border: 2px dashed rgb(209,226, 159) !important; background: rgb(246, 249, 236) !important; }
-      .draggable-badge { cursor: grab; user-select: none; }
-      .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
-      td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
-      td.addable:hover { background: rgba(0,0,0,0.02); }
-      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; z-index: 101;  }
-      .table-responsive {  }
-      .week { min-width: 200px; }
     </style>
 
     <script>
