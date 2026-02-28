@@ -161,7 +161,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 50;             /* header above cells */
+  z-index: 10;             /* header above cells */
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
@@ -171,7 +171,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 51;             /* above body but below header */
+  z-index: 20;             /* above body but below header */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
   min-width: 260px;
@@ -179,7 +179,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 /* ========= TOP-LEFT CORNER ========= */
 .schedule-table thead th:first-child {
-  z-index: 100;            /* above everything */
+  z-index: 30;            /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
   border-right: 2px solid rgb(223, 226, 230);
 }
