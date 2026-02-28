@@ -192,17 +192,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   border-radius: 15px 0 0 0;
 }
 
-.text-start.employee-name {
-    border-radius: 15px;
-}
-
-body.dark-mode .schedule-table tbody tr:last-child td:first-child {
+.schedule-table tbody tr:last-child td:first-child {
   border-radius: 0 0 0 15px !important;
 }
 
-body.dark-mode .schedule-table tbody tr:last-child td:last-child {
+.schedule-table tbody tr:last-child td:last-child {
   border-radius: 0 0 15px 0 !important;
 }
+
 
 /* ========= BADGES ========= */
 .draggable-badge {
