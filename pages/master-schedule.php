@@ -196,12 +196,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 .schedule-table th:first-child,
 .schedule-table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 30;
-  background: var(--bs-body-bg);
-  border-right: 2px solid var(--bs-border-color);
-  min-width: 260px;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 30 !important;
+  background: var(--bs-body-bg) !important;
+  border-right: 2px solid var(--bs-border-color) !important;
+  min-width: 260px !important;
 }
 
 /* ============================
