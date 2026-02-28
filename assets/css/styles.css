@@ -150,7 +150,7 @@ body {
 }
 
 body.is-admin.dark-mode .timeoff-cell:hover { 
-  background-color: #525270 !important; 
+  background-color: #0000f4 !important; 
 }
 
 body.dark-mode table tr.timeoff-cell,
