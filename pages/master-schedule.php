@@ -617,36 +617,58 @@ td.addable:hover {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const container = document.querySelector('.sheet-container');
+       <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.querySelector(".sheet-container");
+    const table = container.querySelector(".schedule-table");
 
-let isDown = false;
-let startX;
-let scrollLeft;
+    // Clone header
+    const thead = table.querySelector("thead");
+    const clonedHeader = thead.cloneNode(true);
+    const headerWrapper = document.createElement("table");
+    headerWrapper.className = "schedule-table sticky-header";
+    headerWrapper.style.position = "absolute";
+    headerWrapper.style.top = "0";
+    headerWrapper.style.left = "0";
+    headerWrapper.style.width = table.offsetWidth + "px";
+    headerWrapper.style.pointerEvents = "none"; // avoid blocking clicks
+    headerWrapper.appendChild(clonedHeader);
+    container.appendChild(headerWrapper);
 
-container.addEventListener('mousedown', (e) => {
-  isDown = true;
-  container.classList.add('grabbing');
-  startX = e.pageX - container.offsetLeft;
-  scrollLeft = container.scrollLeft;
+    // Clone first column
+    const tbodyRows = table.querySelectorAll("tbody tr");
+    const colWrapper = document.createElement("div");
+    colWrapper.className = "sticky-column";
+    colWrapper.style.position = "absolute";
+    colWrapper.style.top = "0";
+    colWrapper.style.left = "0";
+    colWrapper.style.width = "260px"; // match your first column width
+    colWrapper.style.pointerEvents = "none"; // avoid blocking clicks
+    container.appendChild(colWrapper);
+
+    tbodyRows.forEach((row, i) => {
+        const firstCell = row.querySelector("td:first-child").cloneNode(true);
+        firstCell.style.display = "block";
+        firstCell.style.width = "260px";
+        firstCell.style.background = "var(--bs-body-bg, #fff)";
+        firstCell.style.position = "absolute";
+        firstCell.style.top = row.offsetTop + "px";
+        firstCell.style.left = "0";
+        colWrapper.appendChild(firstCell);
+    });
+
+    // Sync scroll
+    container.addEventListener("scroll", () => {
+        headerWrapper.style.transform = `translateY(${container.scrollTop}px)`;
+        colWrapper.style.transform = `translateX(${container.scrollLeft}px)`;
+    });
+
+    // Optional: handle resize
+    window.addEventListener("resize", () => {
+        headerWrapper.style.width = table.offsetWidth + "px";
+    });
 });
-
-container.addEventListener('mouseleave', () => {
-  isDown = false;
-  container.classList.remove('grabbing');
-});
-
-container.addEventListener('mouseup', () => {
-  isDown = false;
-  container.classList.remove('grabbing');
-});
-
-container.addEventListener('mousemove', (e) => {
-  if (!isDown) return;
-  e.preventDefault();
-  const x = e.pageX - container.offsetLeft;
-  const walk = (x - startX) * 1.5; // scroll speed
-  container.scrollLeft = scrollLeft - walk;
-});
+</script>
     </script>
 </div>
 </body>
