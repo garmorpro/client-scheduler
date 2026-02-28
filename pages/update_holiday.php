@@ -3,20 +3,39 @@ require_once '../includes/db.php';
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false]);
-    exit;
+$data = json_decode(file_get_contents('php://input'), true);
+$originalName = $data['originalName'];
+$newName = $data['newName'];
+$updatedDays = $data['updatedDays'];
+$newDays = $data['newDays'];
+$deletedIds = $data['deletedIds'];
+
+// Update existing days
+foreach ($updatedDays as $day) {
+    $id = intval($day['id']);
+    $date = $day['date'];
+    $hours = intval($day['hours']);
+    $stmt = $conn->prepare("UPDATE time_off SET timeoff_note = ?, week_start = ?, assigned_hours = ? WHERE timeoff_id = ?");
+    $stmt->bind_param('ssii', $newName, $date, $hours, $id);
+    $stmt->execute();
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$id = intval($data['id']);
-$name = $data['name'];
-$date = $data['date'];
-$hours = intval($data['hours']);
+// Insert new days
+foreach ($newDays as $day) {
+    $date = $day['date'];
+    $hours = intval($day['hours']);
+    $stmt = $conn->prepare("INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff) VALUES (?, ?, ?, 1)");
+    $stmt->bind_param('ssi', $newName, $date, $hours);
+    $stmt->execute();
+}
 
-$stmt = $conn->prepare("UPDATE time_off SET timeoff_note = ?, week_start = ?, assigned_hours = ? WHERE timeoff_id = ? AND is_global_timeoff = 1");
-$stmt->bind_param('ssii', $name, $date, $hours, $id);
-$stmt->execute();
+// Delete removed days
+foreach ($deletedIds as $id) {
+    $id = intval($id);
+    $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ?");
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+}
 
 echo json_encode(['success' => true]);
 ?>

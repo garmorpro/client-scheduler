@@ -244,33 +244,39 @@ if ($result) {
             <?php if (empty($holidays)): ?>
                 <div class="text-muted text-center py-5" id="emptyState">No holidays added yet.</div>
             <?php else: ?>
-                <?php foreach ($holidays as $h): ?>
-                <div class="holiday-card" data-id="<?= $h['id'] ?>">
-                    <div class="holiday-card-icon">
-                        <i class="bi bi-calendar3"></i>
-                    </div>
-                    <div class="holiday-card-info">
-                        <div class="holiday-card-name"><?= htmlspecialchars($h['timeoff_note'] ?? 'Holiday') ?></div>
-                        <div class="holiday-card-meta">
-                            <?= date('l, F j, Y', strtotime($h['week_start'])) ?> &bull; <?= $h['assigned_hours'] ?> hours off
-                        </div>
-                    </div>
-                    <div class="holiday-card-actions">
-    <?php if ($isAdmin): ?>
-    <button class="btn btn-sm btn-outline-secondary edit-holiday-btn" 
-        data-id="<?= $h['timeoff_id'] ?>"
-        data-name="<?= htmlspecialchars($h['timeoff_note'] ?? '') ?>"
-        data-date="<?= $h['week_start'] ?>"
-        data-hours="<?= $h['assigned_hours'] ?>">
-        <i class="bi bi-pencil"></i>
-    </button>
-    <button class="btn btn-sm btn-outline-danger delete-holiday-btn" data-id="<?= $h['timeoff_id'] ?>">
-        <i class="bi bi-trash"></i>
-    </button>
-    <?php endif; ?>
+                <?php foreach ($holidays as $holiday): ?>
+<?php 
+    $firstDay = $holiday['days'][0];
+    $dayCount = count($holiday['days']);
+    $daysJson = htmlspecialchars(json_encode($holiday['days']), ENT_QUOTES);
+?>
+<div class="holiday-card">
+    <div class="holiday-card-icon">
+        <i class="bi bi-calendar3"></i>
+    </div>
+    <div class="holiday-card-info">
+        <div class="holiday-card-name"><?= htmlspecialchars($holiday['name']) ?></div>
+        <div class="holiday-card-meta">
+    <?php foreach ($holiday['days'] as $i => $day): ?>
+        <?= date('l, F j, Y', strtotime($day['date'])) ?> &bull; <?= $day['hours'] ?> hrs<?= ($i < count($holiday['days']) - 1) ? '<br>' : '' ?>
+    <?php endforeach; ?>
 </div>
-                </div>
-                <?php endforeach; ?>
+    </div>
+    <div class="holiday-card-actions">
+        <?php if ($isAdmin): ?>
+        <button class="btn btn-sm btn-outline-secondary edit-holiday-btn"
+            data-name="<?= htmlspecialchars($holiday['name']) ?>"
+            data-days="<?= $daysJson ?>">
+            <i class="bi bi-pencil"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger delete-holiday-btn"
+            data-name="<?= htmlspecialchars($holiday['name']) ?>">
+            <i class="bi bi-trash"></i>
+        </button>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
@@ -378,12 +384,12 @@ function addDayRow() {
 // Delete holiday
 document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-        const id = this.dataset.id;
+        const name = this.dataset.name;
         const isDark = document.body.classList.contains('dark-mode');
 
         Swal.fire({
             title: 'Delete Holiday?',
-            text: 'This will remove this holiday day for all employees.',
+            text: `This will remove all days for "${name}".`,
             icon: 'warning',
             background: isDark ? '#2a2a3d' : '#fff',
             color: isDark ? '#e0e0e0' : '#1a1a1a',
@@ -396,24 +402,31 @@ document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
                 fetch('delete_holiday.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
+                    body: JSON.stringify({ name })
                 })
                 .then(res => res.json())
-                .then(data => {
-                    if (data.success) location.reload();
-                });
+                .then(data => { if (data.success) location.reload(); });
             }
         });
     });
 });
 
+// Edit Holiday
 document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-        const id = this.dataset.id;
         const name = this.dataset.name;
-        const date = this.dataset.date;
-        const hours = this.dataset.hours;
+        const days = JSON.parse(this.dataset.days);
         const isDark = document.body.classList.contains('dark-mode');
+
+        const existingDaysHtml = days.map(day => `
+            <div class="day-row" data-id="${day.id}">
+                <input type="date" class="form-control edit-holiday-date" value="${day.date}" style="flex:2;">
+                <input type="number" class="form-control edit-holiday-hours" value="${day.hours}" min="1" max="24" style="flex:1;">
+                <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
+        `).join('');
 
         Swal.fire({
             title: 'Edit Holiday',
@@ -427,11 +440,13 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
                         <input type="text" id="edit-holiday-name" class="form-control" value="${name}">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-semibold">Day Off</label>
-                        <div class="day-row">
-                            <input type="date" id="edit-holiday-date" class="form-control" value="${date}" style="flex:2;">
-                            <input type="number" id="edit-holiday-hours" class="form-control" value="${hours}" min="1" max="24" style="flex:1;">
+                        <label class="form-label fw-semibold">Days Off</label>
+                        <div id="edit-days-container">
+                            ${existingDaysHtml}
                         </div>
+                        <button id="edit-add-day-btn" style="background:none; border:1px dashed #2563eb; color:#2563eb; border-radius:6px; padding:5px 12px; font-size:12px; cursor:pointer; margin-top:4px; width:100%;" onclick="addEditDayRow()">
+                            <i class="bi bi-plus"></i> Add Another Day
+                        </button>
                     </div>
                 </div>
             `,
@@ -442,22 +457,48 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
             cancelButtonColor: isDark ? '#555572' : '#6c757d',
             preConfirm: () => {
                 const newName = document.getElementById('edit-holiday-name').value.trim();
-                const newDate = document.getElementById('edit-holiday-date').value;
-                const newHours = document.getElementById('edit-holiday-hours').value;
-
                 if (!newName) {
                     Swal.showValidationMessage('Please enter a holiday name.');
                     return false;
                 }
-                if (!newDate) {
-                    Swal.showValidationMessage('Please select a date.');
+
+                const rows = document.querySelectorAll('#edit-days-container .day-row');
+                const updatedDays = [];
+                const newDays = [];
+
+                rows.forEach(row => {
+                    const id = row.dataset.id;
+                    const date = row.querySelector('.edit-holiday-date').value;
+                    const hours = row.querySelector('.edit-holiday-hours').value;
+                    if (!date) return;
+                    if (id) {
+                        updatedDays.push({ id, date, hours });
+                    } else {
+                        newDays.push({ date, hours });
+                    }
+                });
+
+                // Find deleted days (original ids not in updatedDays)
+                const updatedIds = updatedDays.map(d => String(d.id));
+                const deletedIds = days
+                    .filter(d => !updatedIds.includes(String(d.id)))
+                    .map(d => d.id);
+
+                if (updatedDays.length + newDays.length === 0) {
+                    Swal.showValidationMessage('Please add at least one day off.');
                     return false;
                 }
 
                 return fetch('update_holiday.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name: newName, date: newDate, hours: newHours })
+                    body: JSON.stringify({ 
+                        originalName: name,
+                        newName, 
+                        updatedDays, 
+                        newDays, 
+                        deletedIds 
+                    })
                 })
                 .then(res => res.json())
                 .catch(err => Swal.showValidationMessage(`Error: ${err}`));
@@ -477,6 +518,21 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
         });
     });
 });
+
+function addEditDayRow() {
+    const container = document.getElementById('edit-days-container');
+    const row = document.createElement('div');
+    row.className = 'day-row';
+    // No data-id since it's a new entry
+    row.innerHTML = `
+        <input type="date" class="form-control edit-holiday-date" style="flex:2;">
+        <input type="number" class="form-control edit-holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
+        <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
+            <i class="bi bi-x-circle"></i>
+        </button>
+    `;
+    container.appendChild(row);
+}
 </script>
 </body>
 </html>
