@@ -616,7 +616,7 @@ td.addable:hover {
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
+
        <script>
 document.addEventListener("DOMContentLoaded", function () {
     const container = document.querySelector(".sheet-container");
@@ -669,7 +669,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-    </script>
+    
 </div>
 </body>
 </html>
