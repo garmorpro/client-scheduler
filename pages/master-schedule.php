@@ -183,7 +183,7 @@ thead th {
 /* Freeze first column */
 tbody td:first-child,
 thead th:first-child {
-    max-width: 250px;
+    width: 250px;
   position: sticky;
   left: 0;
   z-index: 30;
