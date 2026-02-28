@@ -159,7 +159,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 10; /* must be above body cells */
+  z-index: 50; /* above body cells */
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
@@ -169,17 +169,17 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 10; /* above body cells but below top-left */
+  z-index: 25; /* above body but below header */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px; /* your first column width */
+  min-width: 260px;
 }
 
 /* ========= TOP-LEFT CORNER ========= */
 .schedule-table thead th:first-child {
-  z-index: 15; /* above header & first column */
-  border-right: 2px solid rgb(223, 226, 230);
+  z-index: 100; /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
+  border-right: 2px solid rgb(223, 226, 230);
 }
 
 /* ========= BADGES ========= */
@@ -326,7 +326,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
                             if ($isCurrentWeek) $thClasses .= ' highlight-today';
                             if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
                         ?>
-                        <th class="<?php echo $thClasses; ?>" style="position: relative;">
+                        <th class="<?php echo $thClasses; ?>">
                             <?php echo date('M j', $monday); ?><br>
                             <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
                             <?php if ($isGlobalWeek): ?>
