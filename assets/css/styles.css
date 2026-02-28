@@ -161,7 +161,7 @@ body.dark-mode .schedule-table .timeoff-corner {
 body.dark-mode .schedule-table th,
 body.dark-mode .schedule-table td {
   background-color: #2a2a3d !important;
-  border-right: 1px solid pink !important;
+  border-right: .5px solid rgb(137, 137, 137) !important;
 }
 
 /* Timeoff card (dashed border style) */
