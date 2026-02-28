@@ -238,8 +238,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .sheet-container {
   border-radius: 15px !important;
   width: 100%;
-  height: calc(100vh - 260px); /* adjust if your header is taller */
-  overflow: auto;              /* allows horizontal + vertical scroll */
+  height: calc(100vh - 260px);
+  overflow: visible !important;
   position: relative;
 }
 
