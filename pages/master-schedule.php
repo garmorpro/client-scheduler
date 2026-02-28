@@ -159,10 +159,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   vertical-align: middle;
 }
 
-.schedule-table td:first-child {
-  background: red !important;
-}
-
 /* ========= STICKY HEADER ========= */
 .schedule-table thead th {
   position: sticky;
