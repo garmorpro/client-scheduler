@@ -142,8 +142,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   border-collapse: separate;
   border-spacing: 0;
-  width: max-content;
-  min-width: 100%;
+  width: max-content; /* allow table to grow horizontally */
   table-layout: fixed;
 }
 
