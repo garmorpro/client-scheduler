@@ -1415,3 +1415,11 @@ body.dark-mode .client-card {
         .delete-client-btn:hover i {
             color: white !important;
         }
+
+.sidebar {
+    border: 1.5px solid #e0e0e0;
+}
+
+body.dark-mode .sidebar {
+    border: 1.5px solid #3a3a50 !important;
+}   
