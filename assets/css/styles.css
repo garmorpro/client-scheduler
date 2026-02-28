@@ -1367,6 +1367,14 @@ body.dark-mode .view-client-button:hover {
     background-color: #dbdbdb !important;
 }
 
+.icon-bubble {
+    width: 30px;
+    height: 30px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-radius: 6px;
+}
+
 body.dark-mode .icon-bubble {
     background-color: #3a3a50;
     color: #e0e0e0;
