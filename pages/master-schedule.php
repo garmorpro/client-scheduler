@@ -504,7 +504,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 <script>
     function updateLastRowRadius() {
-  // Remove from all first cells first
   document.querySelectorAll('.schedule-table tbody tr .employee-name').forEach(td => {
     td.style.borderRadius = '';
   });
@@ -512,7 +511,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     td.style.borderRadius = '';
   });
 
-  // Find the last VISIBLE row
   const rows = [...document.querySelectorAll('.schedule-table tbody tr')];
   const lastVisible = rows.filter(r => r.style.display !== 'none').pop();
 
@@ -521,6 +519,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     lastVisible.querySelector('td:last-child').style.borderRadius = '0 0 15px 0';
   }
 }
+
+// Call on page load
+updateLastRowRadius();
 </script>
        
     
