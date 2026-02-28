@@ -151,7 +151,7 @@
             width: rect.width + 'px',
             minHeight: '50px',
             background: 'transparent',
-            border: '1px solid #ccc',
+            border: 'transparent',
             borderRadius: '4px',
             padding: '5px',
             zIndex: '10000',
