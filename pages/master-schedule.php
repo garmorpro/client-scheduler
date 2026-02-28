@@ -142,9 +142,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   border-collapse: separate;
   border-spacing: 0;
-  width: max-content;       /* allow horizontal scroll */
   min-width: 100%;
-  table-layout: fixed;      /* maintain column widths */
+  width: max-content; /* allows horizontal scroll */
+  table-layout: fixed;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -214,13 +214,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
-  height: calc(100vh - 260px);  /* full height minus header */
-  overflow: auto;               /* vertical + horizontal scroll */
-  border: 1px solid var(--bs-border-color, #ddd);
-  border-radius: 10px;
+  width: 100%;
+  height: calc(100vh - 260px); /* adjust if your header is taller */
+  overflow: auto;              /* allows horizontal + vertical scroll */
   position: relative;
-  display: block;               /* sticky fixes */
-  scroll-behavior: smooth;      /* optional smooth scrolling */
 }
 
 /* ========= MAIN CONTENT ========= */
