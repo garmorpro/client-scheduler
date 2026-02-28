@@ -176,7 +176,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   border-collapse: separate;
   border-spacing: 0;
-  min-width: max-content; /* forces horizontal scroll */
+  min-width: max-content;
+  width: max-content;
 }
 
 /* ============================
@@ -207,20 +208,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   z-index: 35;
 }
 
-.schedule-table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
 .schedule-table th,
 .schedule-table td {
   background-clip: padding-box;
-}
-
-
-.schedule-table {
-  min-width: max-content;
 }
 
 
@@ -309,7 +299,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
         <div class="sheet-container flex-grow-1">
-            <table class="table align-middle text-center schedule-table">
+            <table class="align-middle text-center schedule-table">
                 <thead>
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
