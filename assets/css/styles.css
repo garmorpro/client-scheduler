@@ -1363,4 +1363,5 @@ body.dark-mode .view-client-button {
 }
 body.dark-mode .view-client-button:hover {
     color: #5b5b5b !important;
+    background-color: #838383 !important;
 }
