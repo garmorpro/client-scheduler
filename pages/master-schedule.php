@@ -188,12 +188,12 @@ thead th:first-child {
   z-index: 30;
   background: var(--bs-body-bg);
   border-right: 2px solid var(--bs-border-color);
+  min-width: 250px;   /* <-- move it here */
 }
 
-/* Top-left cell needs highest */
+/* Top-left cell highest layer */
 thead th:first-child {
   z-index: 40;
-  min-width: 250px;
 }
     </style>
     <script>
