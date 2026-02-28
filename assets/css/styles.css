@@ -20,7 +20,6 @@ body {
   table-layout: fixed;      /* maintain column widths */
   overflow: visible !important;
   border-radius: 15px !important;
-  border-color: #3a3a50 !important;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -40,6 +39,7 @@ body {
   z-index: 10;             /* header above cells */
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
+  border-top: 2px solid rgb(223, 226, 230);
 }
 
 
