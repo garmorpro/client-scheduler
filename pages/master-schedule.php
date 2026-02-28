@@ -226,7 +226,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 <?php include_once '../templates/sidebar.php'; ?>
-<div class="flex-grow-1 p-4" style="margin-left: 250px; ">
+<div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
 
     <!-- header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
