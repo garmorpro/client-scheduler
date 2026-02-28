@@ -111,41 +111,22 @@ $themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
     <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i>
 
     <!-- Bottom User Info -->
-    <div class="d-flex align-items-center mt-4">
-        <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-             style="cursor: pointer; width: 36px; height: 36px;">
-            <?php
-            
-            $fullName = $_SESSION['full_name'] ?? ''; // get full name from session
-            $initials = '';
-                        
-            // Split the full name by spaces
-            $nameParts = explode(' ', $fullName);
-                        
-            // Take the first character of the first two parts (first and last names)
-            if (isset($nameParts[0])) {
-                $initials .= strtoupper($nameParts[0][0]);
-            }
-            if (isset($nameParts[1])) {
-                $initials .= strtoupper($nameParts[1][0]);
-            }
-            
-            // Output the initials
-            echo $initials;
-            ?>
-
-        </div>
-        <div>
-            <div class="sidebar-fullname fw-semibold"><?php echo $_SESSION['full_name']; ?></div>
-            <small class="sidebar-role text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
-        </div>
-        <!-- <a href="logout.php" class="ms-auto text-decoration-none text-muted">
-            <i class="bi bi-box-arrow-right"></i>
-        </a> -->
-        <a href="/auth/logout.php" class="text-decoration-none text-muted d-flex align-items-center justify-content-end mt-2" style="padding-left: 30px;">
-            <i class="bi bi-box-arrow-right"></i>
-        </a>    
+<div class="d-flex align-items-center mt-4">
+    <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+         style="cursor: pointer; width: 36px; height: 36px;">
+        <?php echo $initials; ?>
     </div>
+    <div>
+        <div class="sidebar-fullname fw-semibold"><?php echo $_SESSION['full_name']; ?></div>
+        <small class="sidebar-role text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
+    </div>
+    <div class="ms-auto d-flex align-items-center gap-3">
+        <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>" style="cursor:pointer; font-size: 1rem;"></i>
+        <a href="/auth/logout.php" class="text-decoration-none text-muted">
+            <i class="bi bi-box-arrow-right"></i>
+        </a>
+    </div>
+</div>
 
 
 </div>
