@@ -139,10 +139,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 
     <style>
-         <?php if ($isAdmin): ?>
-  .timeoff-cell:hover { background-color: rgb(200, 200, 200) !important; }
-  body.dark-mode table td.timeoff-cell:hover { background-color: #525270 !important; }
-<?php endif; ?>
+       
       
     </style>
 
@@ -152,7 +149,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
     </script>
 </head>
-<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
+<body class="d-flex <?= $isAdmin ? 'is-admin' : '' ?> <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 <?php include_once '../templates/sidebar.php'; ?>
 <div class="main-content p-4">
 

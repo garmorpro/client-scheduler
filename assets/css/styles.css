@@ -145,6 +145,14 @@ body {
 
       /* ========= SCHEDULE TABLE DARK MODE OVERRIDES ========= */
 
+      body.is-admin .timeoff-cell:hover { 
+  background-color: rgb(200, 200, 200) !important; 
+}
+
+body.is-admin.dark-mode table td.timeoff-cell:hover { 
+  background-color: #525270 !important; 
+}
+
 body.dark-mode table tr.timeoff-cell,
 body.dark-mode table td.timeoff-cell {
   --bs-table-accent-bg: #2a2a3d !important;
