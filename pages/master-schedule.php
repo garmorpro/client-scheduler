@@ -140,50 +140,47 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
      /* ========= GENERAL ========= */
 .schedule-table {
-  border-collapse: separate; /* sticky needs separate */
+  border-collapse: separate;
   border-spacing: 0;
   width: max-content;
   min-width: 100%;
   table-layout: fixed;
-  background-clip: padding-box;
 }
 
 .schedule-table th,
 .schedule-table td {
-  padding: 8px 12px;
-  vertical-align: middle;
-  text-align: center;
-  border-bottom: 1px solid rgb(223, 226, 230);
-  background-clip: padding-box;
+  padding: 8px;
+  background-color: var(--bs-body-bg, #fff); /* ensure background */
+  position: relative;
+  min-width: 150px; /* or whatever fits your badges */
 }
 
 /* ========= STICKY HEADER ========= */
-/* .schedule-table thead th {
+.schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: var(--bs-body-bg, #fff);
+  z-index: 10; /* must be above body cells */
+  background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
-} */
+}
 
 /* ========= STICKY FIRST COLUMN ========= */
-.employee-name,
-.employee {
+.schedule-table th:first-child,
+.schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 10; /* below top-left corner */
-  min-width: 260px;
-  text-align: left;
-  background: var(--bs-body-bg, #fff);
+  z-index: 10; /* above body cells but below top-left */
+  background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
+  min-width: 260px; /* your first column width */
 }
 
 /* ========= TOP-LEFT CORNER ========= */
-/* .schedule-table thead th:first-child {
-  z-index: 110; 
+.schedule-table thead th:first-child {
+  z-index: 15; /* above header & first column */
   border-right: 2px solid rgb(223, 226, 230);
   border-bottom: 2px solid rgb(223, 226, 230);
-} */
+}
 
 /* ========= BADGES ========= */
 .draggable-badge {
@@ -229,6 +226,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+.sheet-container {
+  height: calc(100vh - 260px); /* adjust as needed */
+  overflow: auto;              /* enables vertical & horizontal scrolling */
+  position: relative;          /* required for sticky to work */
+  border: 1px solid #ddd;
+  border-radius: 10px;
 }
     </style>
     <script>
@@ -311,7 +315,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
-                        <th class="text-start employee align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
                             $weekKey = date('Y-m-d', $monday);
                             $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
