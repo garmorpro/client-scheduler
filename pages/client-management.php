@@ -177,7 +177,7 @@ unset($client);
                     <span class="badge-status <?php echo $badgeClass; ?>">
                         <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
                     </span>
-                    <span class="text-muted mt-1 mt-md-0">
+                    <span class="mt-1 mt-md-0">
                         <?php
                             $onboarded = new DateTime($client['onboarded_date']);
                             $now = new DateTime();
@@ -200,11 +200,11 @@ unset($client);
                         
                 <!-- Engagements Info -->
                 <div class="d-flex justify-content-between mb-1 flex-wrap">
-                    <span class="text-muted"><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
+                    <span class=""><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
                     <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-3 flex-wrap">
-                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
+                    <span class=""><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
                     <span><?php echo $client['total_engagements'] ?? 0; ?></span>
                 </div>
                         
