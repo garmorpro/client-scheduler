@@ -229,7 +229,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 .sheet-container {
   height: calc(100vh - 260px); /* adjust as needed */
-  overflow: auto;              /* enables vertical & horizontal scrolling */
   position: relative;          /* required for sticky to work */
   border: 1px solid #ddd;
   border-radius: 10px;
