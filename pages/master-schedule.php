@@ -196,9 +196,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   border-radius: 0 0 0 15px !important;
 }
 
-.employe-name:last-child {
+/* .employe-name:last-child {
     border-radius: 15px !important;
-}
+} */
 
 /* ========= BADGES ========= */
 .draggable-badge {
