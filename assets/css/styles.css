@@ -38,8 +38,8 @@ body {
   top: 0;
   z-index: 10;             /* header above cells */
   background-color: var(--bs-body-bg, #fff);
-  border-bottom: 2px solid rgb(223, 226, 230);
-  border-top: 2px solid rgb(223, 226, 230);
+  border-bottom: .5px solid rgb(223, 226, 230);
+  border-top: .5px solid rgb(223, 226, 230);
 }
 
 
