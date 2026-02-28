@@ -145,6 +145,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   width: max-content;       /* allow horizontal scroll */
   min-width: 100%;
   table-layout: fixed;      /* maintain column widths */
+  overflow: visible !important;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -169,6 +170,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
+
 
 /* ========= STICKY FIRST COLUMN ========= */
 .schedule-table th:first-child,
@@ -230,7 +232,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 /* ========= OPTIONAL STYLING ========= */
