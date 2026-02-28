@@ -178,6 +178,10 @@ thead th {
   background: var(--bs-body-bg);
 }
 
+.week {
+    min-width: 200px;
+}
+
 /* Freeze first column */
 tbody td:first-child,
 thead th:first-child {
@@ -186,7 +190,7 @@ thead th:first-child {
   z-index: 30;
   background: var(--bs-body-bg);
   border-right: 2px solid var(--bs-border-color);
-  min-width: 250px;
+  /* min-width: 250px; */
 }
 
 /* Top-left cell */
