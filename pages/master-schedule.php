@@ -294,7 +294,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="table-responsive" style="overflow-x: auto;">
+        <div class="table-responsive">
             <table class="table align-middle text-center schedule-table">
                 <thead class="table-light">
                     <tr>
