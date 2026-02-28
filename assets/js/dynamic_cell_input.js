@@ -26,9 +26,16 @@
         switch ((status || '').toLowerCase()) {
             case 'confirmed': return 'confirmed';
             case 'pending': return 'pending';
-            case 'not_confirmed': return 'not-confirmed'; // always use hyphen
+            case 'not_confirmed': return 'not-confirmed';
             default: return 'confirmed';
         }
+    }
+
+    function saveScrollAndReload() {
+        const container = document.querySelector('.sheet-container');
+        sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
+        sessionStorage.setItem('scheduleScrollTop', container.scrollTop);
+        location.reload();
     }
 
     // Global dropdown for inline cells
@@ -254,21 +261,7 @@
 
                         const data = await resp.json();
                         if (resp.ok && data.success) {
-                            const span = document.createElement('span');
-                            const statusClass = getBadgeClass(getClientStatus(clientName));
-                            span.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
-                            span.dataset.entryId = data.entry_id;
-                            span.dataset.userId = td.dataset.userId;
-                            span.dataset.weekStart = td.dataset.weekStart;
-                            span.textContent = `${clientName} (${hours})`;
-                            makeBadgeDraggable(span);
-
-                            const plusIcon = td.querySelector('.bi-plus');
-                            if (plusIcon) plusIcon.remove();
-                            td.appendChild(span);
-
-                            const timeOff = td.querySelector('.timeoff-corner');
-                            if (timeOff) td.appendChild(timeOff);
+                            saveScrollAndReload();
                         } else {
                             alert('Failed to add entry: ' + (data.error || 'Server error'));
                         }
@@ -372,12 +365,10 @@
                                 assigned_hours: newHours
                             })
                         });
-                    
+
                         const data = await resp.json();
                         if (resp.ok && data.success) {
-                            badge.textContent = `${newName} (${newHours})`;
-                            const statusClass = getBadgeClass(getClientStatus(newName));
-                            badge.className = `badge badge-status badge-${statusClass} mt-1 draggable-badge`;
+                            saveScrollAndReload();
                         } else {
                             alert('Failed to update entry: ' + (data.error || 'Server error'));
                         }
