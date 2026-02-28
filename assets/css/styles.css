@@ -1328,3 +1328,32 @@ input, select {
   border-color: #ddd;
   pointer-events: none;
 }
+
+
+
+/* client management */
+
+.btn-outline-custom {
+    font-size: .875rem;
+    border: 1px solid rgb(229,229,229);
+    color: #000;
+}
+
+.btn-dark-custom {
+    font-size: .875rem;
+    background-color: rgb(3,2,18);
+    color: #fff;
+}
+
+/* Dark mode */
+body.dark-mode .btn-outline-custom {
+    border-color: #3a3a50;
+    color: #e0e0e0;
+    background-color: #2a2a3d;
+}
+
+body.dark-mode .btn-dark-custom {
+    background-color: #3a3a50;
+    color: #e0e0e0;
+    border: 1px solid #4a4a60;
+}
