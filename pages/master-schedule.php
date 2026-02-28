@@ -167,8 +167,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ========= STICKY FIRST COLUMN ========= */
-.schedule-table th:first-child,
-.schedule-table td:first-child {
+.employee-name,
+.employee {
   position: sticky;
   left: 0;
   z-index: 10; /* below top-left corner */
@@ -311,7 +311,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
-                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                        <th class="text-start employee align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
                             $weekKey = date('Y-m-d', $monday);
                             $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
