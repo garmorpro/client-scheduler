@@ -141,7 +141,7 @@ body.dark-mode table td.timeoff-cell {
 }
 
 body.dark-mode .plus-sign {
-  color: pink !important;
+  --bs-table-color: pink !important;
 }
 
 body.dark-mode .schedule-table .timeoff-current-week {
