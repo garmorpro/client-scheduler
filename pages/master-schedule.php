@@ -183,7 +183,6 @@ thead th {
 /* Freeze first column */
 tbody td:first-child,
 thead th:first-child {
-    width: 250px !important;
   position: sticky;
   left: 0;
   z-index: 30;
@@ -194,6 +193,7 @@ thead th:first-child {
 /* Top-left cell needs highest */
 thead th:first-child {
   z-index: 40;
+  min-width: 250px;
 }
     </style>
     <script>
