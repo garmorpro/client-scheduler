@@ -152,8 +152,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
       td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
       td.addable:hover { background: rgba(0,0,0,0.02); }
-      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
-      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
+      /* th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; } */
+      /* .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; } */
       .week { min-width: 200px; }
     </style>
     <script>
@@ -164,7 +164,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 <?php include_once '../templates/sidebar.php'; ?>
-<div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
+<div class="flex-grow-1 p-4" style="margin-left: 250px;">
 
     <!-- header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -233,7 +233,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
         }
         ?>
         <div class="table-responsive" style="overflow-x: auto;">
-            <table class="table table-bordered align-middle text-center">
+            <table class="table align-middle text-center schedule-table">
                 <thead class="table-light">
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
