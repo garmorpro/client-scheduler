@@ -27,10 +27,11 @@ if ($result) {
             $holidays[$note] = ['name' => $note, 'days' => []];
         }
         $holidays[$note]['days'][] = [
-            'id' => $row['timeoff_id'],
-            'date' => $row['week_start'],
-            'hours' => $row['assigned_hours']
-        ];
+    'id' => $row['timeoff_id'],
+    'date' => $row['holiday_date'] ?? $row['week_start'], // fallback for old records
+    'week_start' => $row['week_start'],
+    'hours' => $row['assigned_hours']
+];
     }
 }
 ?>

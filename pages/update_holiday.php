@@ -13,19 +13,21 @@ $deletedIds = $data['deletedIds'];
 // Update existing days
 foreach ($updatedDays as $day) {
     $id = intval($day['id']);
-    $date = $day['date'];
+    $actualDate = $day['date'];
     $hours = intval($day['hours']);
-    $stmt = $conn->prepare("UPDATE time_off SET timeoff_note = ?, week_start = ?, assigned_hours = ? WHERE timeoff_id = ?");
-    $stmt->bind_param('ssii', $newName, $date, $hours, $id);
+    $monday = date('Y-m-d', strtotime('monday this week', strtotime($actualDate)));
+    $stmt = $conn->prepare("UPDATE time_off SET timeoff_note = ?, week_start = ?, holiday_date = ?, assigned_hours = ? WHERE timeoff_id = ?");
+    $stmt->bind_param('sssii', $newName, $monday, $actualDate, $hours, $id);
     $stmt->execute();
 }
 
 // Insert new days
 foreach ($newDays as $day) {
-    $date = $day['date'];
+    $actualDate = $day['date'];
     $hours = intval($day['hours']);
-    $stmt = $conn->prepare("INSERT INTO time_off (timeoff_note, week_start, assigned_hours, is_global_timeoff) VALUES (?, ?, ?, 1)");
-    $stmt->bind_param('ssi', $newName, $date, $hours);
+    $monday = date('Y-m-d', strtotime('monday this week', strtotime($actualDate)));
+    $stmt = $conn->prepare("INSERT INTO time_off (timeoff_note, week_start, holiday_date, assigned_hours, is_global_timeoff) VALUES (?, ?, ?, ?, 1)");
+    $stmt->bind_param('sssi', $newName, $monday, $actualDate, $hours);
     $stmt->execute();
 }
 
