@@ -150,7 +150,7 @@
             left: rect.left + window.scrollX + 'px',
             width: rect.width + 'px',
             minHeight: '50px',
-            background: 'rgba(255,255,255,0.95)',
+            background: 'transparent',
             border: '1px solid #ccc',
             borderRadius: '4px',
             padding: '5px',
