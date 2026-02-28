@@ -113,8 +113,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 
 
-<!-- Bootstrap icon -->
-    <!-- <i id="themeToggle" class="bi theme-icon <?= //$_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>"></i> -->
 
     <!-- Bottom User Info -->
     <div class="d-flex align-items-center mt-4">
