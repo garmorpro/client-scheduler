@@ -272,7 +272,7 @@ thead th:first-child {
             }
         }
         ?>
-        <div class="table-responsive" style="overflow-x: auto;">
+        <div class="table-responsive">
             <table class="table table-bordered align-middle text-center">
                 <thead>
                     <tr>
