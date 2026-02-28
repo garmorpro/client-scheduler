@@ -430,6 +430,19 @@ updateLastRowRadius();
     sessionStorage.removeItem('scheduleScrollTop');
 });
 </script>
+
+<script>
+    document.querySelectorAll('.schedule-table td.addable').forEach(td => {
+    td.addEventListener('mouseenter', function() {
+        this.style.backgroundColor = document.body.classList.contains('dark-mode') 
+            ? '#9595b1' 
+            : '#e0f7fa';
+    });
+    td.addEventListener('mouseleave', function() {
+        this.style.backgroundColor = '';
+    });
+});
+</script>
        
     
 </div>

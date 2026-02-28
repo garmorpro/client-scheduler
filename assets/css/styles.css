@@ -351,6 +351,7 @@ body.dark-mode #summaryFooter span {
 body.dark-mode {
     background-color: #1e1e2f !important; /* dark navy gray */
     color: #e0e0e0 !important;
+    --addable-hover-bg: #9595b1;
 }
 
 /* Links */
