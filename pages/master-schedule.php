@@ -434,12 +434,13 @@ updateLastRowRadius();
 <script>
 document.querySelectorAll('.schedule-table td.addable').forEach(td => {
     td.addEventListener('mouseenter', function() {
-        this.style.backgroundColor = document.body.classList.contains('dark-mode') 
-            ? '#9595b1' 
-            : '#e0f7fa';
+        console.log('hover triggered');
+        console.log('dark mode?', document.body.classList.contains('dark-mode'));
+        console.log('current bg:', window.getComputedStyle(this).backgroundColor);
+        this.style.setProperty('background-color', '#9595b1', 'important');
     });
     td.addEventListener('mouseleave', function() {
-        this.style.backgroundColor = '';
+        this.style.removeProperty('background-color');
     });
 });
 </script>
