@@ -80,8 +80,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
             <li><a href="manage-users.php" class="nav-link text-dark py-1 <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
             <li><a href="company-holidays.php" class="nav-link text-dark py-1 <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
-            <li><a href="notifications.php" class="nav-link text-dark py-1 <?= $currentPage == 'notifications.php' ? 'active' : '' ?>">Notifications</a></li>
-            <li><a href="reports.php" class="nav-link text-dark py-1 <?= $currentPage == 'reports.php' ? 'active' : '' ?>">Reports</a></li>
+            <!-- <li><a href="notifications.php" class="nav-link text-dark py-1 <?= $currentPage == 'notifications.php' ? 'active' : '' ?>">Notifications</a></li>
+            <li><a href="reports.php" class="nav-link text-dark py-1 <?= $currentPage == 'reports.php' ? 'active' : '' ?>">Reports</a></li> -->
         </ul>
     </div>
 </li>
