@@ -62,7 +62,8 @@ body {
   border-radius: 15px 0 0 0;
 }
 
-.schedule-table thead th:first-child {
+.schedule-table thead th:first-child,
+.schedule-table tbody tr:first-child {
   border-left: .5px solid rgb(223, 226, 230);
 }
 
