@@ -68,6 +68,6 @@ document.getElementById('openPermissionsBtn').addEventListener('click', function
             </div>
         `,
         showConfirmButton: false,
-        showCloseButton: true,
+        // showCloseButton: true,
     });
 });
