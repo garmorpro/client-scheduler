@@ -205,6 +205,7 @@ body.dark-mode .schedule-table thead th {
 body.dark-mode .schedule-table th:first-child,
 body.dark-mode .schedule-table td:first-child {
   border-right-color: #3a3a50 !important;
+  border-right: .5px solid rgb(75,75,101) !important;
 }
 
 /* Sheet container */
