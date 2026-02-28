@@ -419,6 +419,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 // Call on page load
 updateLastRowRadius();
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.sheet-container');
+    const savedLeft = sessionStorage.getItem('scheduleScrollLeft');
+    const savedTop = sessionStorage.getItem('scheduleScrollTop');
+    if (savedLeft !== null) container.scrollLeft = parseInt(savedLeft);
+    if (savedTop !== null) container.scrollTop = parseInt(savedTop);
+    sessionStorage.removeItem('scheduleScrollLeft');
+    sessionStorage.removeItem('scheduleScrollTop');
+});
+</script>
        
     
 </div>

@@ -61,42 +61,49 @@
         }
 
         async function onDrop(e) {
-            e.preventDefault();
-            removeDropTargetHints();
-            const targetTd = this;
-            const targetUserId = targetTd.dataset.userId;
-            const targetWeekStart = targetTd.dataset.weekStart;
+    e.preventDefault();
+    removeDropTargetHints();
+    const targetTd = this;
+    const targetUserId = targetTd.dataset.userId;
+    const targetWeekStart = targetTd.dataset.weekStart;
 
-            const entryId = e.dataTransfer.getData('text/plain');
-            if (!entryId || !draggedElem) return;
-            if (originCell.dataset.userId === targetUserId && originCell.dataset.weekStart === targetWeekStart) return;
+    const entryId = e.dataTransfer.getData('text/plain');
+    if (!entryId || !draggedElem) return;
+    if (originCell.dataset.userId === targetUserId && originCell.dataset.weekStart === targetWeekStart) return;
 
-            // Remove badge from origin
-            draggedElem.remove();
-            updatePlusIcon(originCell);
+    // Remove badge from origin
+    draggedElem.remove();
+    updatePlusIcon(originCell);
 
-            // Add badge to target
-            targetTd.appendChild(draggedElem);
-            draggedElem.style.pointerEvents = '';
-            draggedElem.classList.remove('dragging');
-            updatePlusIcon(targetTd);
+    // Add badge to target
+    targetTd.appendChild(draggedElem);
+    draggedElem.style.pointerEvents = '';
+    draggedElem.classList.remove('dragging');
+    updatePlusIcon(targetTd);
 
-            // Send update to server
-            try {
-                await fetch('update_entry_position.php', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        entry_id: entryId,
-                        target_user_id: targetUserId,
-                        target_week_start: targetWeekStart
-                    })
-                });
-            } catch (err) {
-                console.error('Failed to update server', err);
-            }
-        }
+    // Send update to server
+    try {
+        await fetch('update_entry_position.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                entry_id: entryId,
+                target_user_id: targetUserId,
+                target_week_start: targetWeekStart
+            })
+        });
+
+        // Save scroll position and reload
+        const container = document.querySelector('.sheet-container');
+        sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
+        sessionStorage.setItem('scheduleScrollTop', container.scrollTop);
+        location.reload();
+
+    } catch (err) {
+        console.error('Failed to update server', err);
+    }
+}
 
         setupBadges();
         setupDropTargets();
