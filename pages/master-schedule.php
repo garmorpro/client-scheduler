@@ -197,7 +197,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 .employe-name:last-child {
-    background-color: pink !important;
+    border-radius: 15px !important;
 }
 
 /* ========= BADGES ========= */
