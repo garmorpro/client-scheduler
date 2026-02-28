@@ -43,7 +43,7 @@ body {
 }
 
 body.dark-mode .schedule-table thead th {
-  border-top: .5px solid rgb(275,75,101) !important;
+  border-top: .5px solid rgb(75,75,101) !important;
 }
 
 
