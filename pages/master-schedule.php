@@ -141,7 +141,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
          <?php if ($isAdmin): ?>
       .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
-      body.dark-mode .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
+      body.dark-mode table td.timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
       <?php endif; ?>
       
     </style>
