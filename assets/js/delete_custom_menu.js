@@ -2,19 +2,20 @@
 (function() {
     if (!IS_ADMIN) return; // only for admins
 
-    // Create context menu
-    const contextMenu = document.createElement('div');
-    contextMenu.id = 'badgeContextMenu';
-    contextMenu.style.cssText = `
-        position:absolute;
-        display:none;
-        z-index:9999;
-        background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-        border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-        margin-top: 15px;
-        border-radius:4px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.2);
-    `;
+    const isDark = document.body.classList.contains('dark-mode');
+
+const contextMenu = document.createElement('div');
+contextMenu.id = 'badgeContextMenu';
+contextMenu.style.cssText = `
+    position: absolute;
+    display: none;
+    z-index: 9999;
+    background: ${isDark ? '#2a2a3d' : '#fff'};
+    border: ${isDark ? '1px solid #3a3a50' : '1px solid #ccc'};
+    margin-top: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+`;
     contextMenu.innerHTML = `
         <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
             <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
