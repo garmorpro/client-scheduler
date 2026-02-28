@@ -146,6 +146,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   min-width: 100%;
   table-layout: fixed;      /* maintain column widths */
   overflow: visible !important;
+  border-radius: 15px !important;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -241,10 +242,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   height: calc(100vh - 260px);
   overflow: auto !important;
   position: relative;
-}
-
-.table {
-    border-radius: 15px !important;
 }
 
 /* ========= MAIN CONTENT ========= */
