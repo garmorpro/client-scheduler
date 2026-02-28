@@ -152,8 +152,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
       td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
       td.addable:hover { background: rgba(0,0,0,0.02); }
-      /* th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; } */
-      /* .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; } */
+      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
+      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
       .week { min-width: 200px; }
     </style>
     <script>
