@@ -221,6 +221,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   min-width: max-content;
 }
+
+.main-content {
+  margin-left: 250px; /* match sidebar width */
+  height: 100vh;
+  overflow: hidden; /* prevent page scroll */
+  display: flex;
+  flex-direction: column;
+}
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
