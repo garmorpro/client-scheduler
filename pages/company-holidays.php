@@ -203,13 +203,9 @@ if ($result) {
         <!-- Single clean header -->
         <div class="page-header">
             <div class="page-header-left">
-                <div class="page-icon-bubble">
-                    <i class="bi bi-calendar3"></i>
-                </div>
-                <div>
-                    <h4 class="mb-0">Company Holidays</h4>
-                    <p class="mb-0" style="font-size:13px;">Manage firm-wide holidays and closures</p>
-                </div>
+                <h3 class="mb-1">Company Holidays</h3>
+                <p class="text-muted mb-4">Manage firm-wide holidays and closures</p>
+                
             </div>
             <?php if ($isAdmin): ?>
             <button class="btn-add-holiday" id="addHolidayBtn">
