@@ -334,7 +334,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="sheet-container flex-grow-1">
+        <div class="sheet-container">
             <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
