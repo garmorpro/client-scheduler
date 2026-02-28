@@ -222,6 +222,12 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   min-width: max-content;
 }
 
+.sheet-container {
+  overflow: auto;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 10px;
+}
+
 .main-content {
   margin-left: 250px; /* match sidebar width */
   height: 100vh;
@@ -306,7 +312,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="sheet-container">
+        <div class="sheet-container flex-grow-1">
             <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
