@@ -124,8 +124,7 @@ unset($client);
             <p class="mb-0">Manage all onboarded clients and their engagement status</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" 
-       data-bs-toggle="modal" data-bs-target="#importClientsModal">
+    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" id="importClientsBtn">
         <i class="bi bi-upload me-3"></i>Import Clients
     </a>
     <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" 
@@ -291,8 +290,10 @@ unset($client);
 <script src="../assets/js/delete_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
-
+<script src="../assets/js/swal-modals/import-clients-modal.js?v=<?php echo time(); ?>"></script>
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
