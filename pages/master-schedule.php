@@ -140,10 +140,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
      /* ========= GENERAL TABLE ========= */
 .schedule-table {
-  table-layout: fixed;          /* fixed layout allows sticky columns */
-  min-width: max-content;       /* allows horizontal scroll if needed */
   border-collapse: separate;
   border-spacing: 0;
+  width: max-content;       /* allow horizontal scroll */
+  min-width: 100%;
+  table-layout: fixed;      /* maintain column widths */
 }
 
 /* ========= TABLE CELLS ========= */
@@ -160,7 +161,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 50;             /* header above body cells */
+  z-index: 50;             /* header above cells */
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
@@ -170,15 +171,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 60;                  /* above body cells */
+  z-index: 51;             /* above body but below header */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px;             /* adjust to fit content */
+  min-width: 260px;
 }
 
 /* ========= TOP-LEFT CORNER ========= */
 .schedule-table thead th:first-child {
-  z-index: 101;                 /* above everything */
+  z-index: 100;            /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
   border-right: 2px solid rgb(223, 226, 230);
 }
@@ -214,18 +215,18 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
   width: 100%;
-  height: calc(100vh - 260px);
-  overflow: auto;           /* horizontal + vertical scroll */
-  position: relative;       /* required for sticky positioning */
+  height: calc(100vh - 260px); /* adjust if your header is taller */
+  overflow: auto;              /* allows horizontal + vertical scroll */
+  position: relative;
 }
 
 /* ========= MAIN CONTENT ========= */
 .main-content {
-  margin-left: 250px;
+  margin-left: 250px;           /* sidebar offset */
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: visible;        /* sticky won't work if hidden */
+  overflow: hidden;
 }
 
 /* ========= OPTIONAL STYLING ========= */
