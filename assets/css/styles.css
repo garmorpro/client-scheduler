@@ -1368,14 +1368,14 @@ body.dark-mode .view-client-button:hover {
 }
 
 .icon-bubble {
-    width: 30px;
-    height: 30px;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border-radius: 6px;
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
 }
 
 body.dark-mode .icon-bubble {
-    background-color: #3a3a50;
-    color: #e0e0e0;
+    background-color: #3a3a50 !important;
+    color: #e0e0e0 !important;
 }
