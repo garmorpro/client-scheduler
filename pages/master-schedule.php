@@ -160,6 +160,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
    EXCEL-STYLE GRID
 =========================== */
 
+html, body {
+  height: 100%;
+}
+
+body.d-flex {
+  min-height: 100vh;
+}
+
 .table-responsive {
   overflow: auto;
   max-height: 75vh;
