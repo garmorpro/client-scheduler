@@ -143,7 +143,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   border-collapse: separate;
   border-spacing: 0;
   width: max-content;
-  min-width: 100%;
+  /* min-width: 100%; */
   table-layout: fixed;
 }
 
