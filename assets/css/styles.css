@@ -133,45 +133,62 @@ body {
 
       .week { min-width: 200px; }
 
-      /* Time off cells */
-body.dark-mode .timeoff-cell {
-  background-color: #3a3a50 !important;
+      /* ========= SCHEDULE TABLE DARK MODE OVERRIDES ========= */
+
+/* Timeoff cells - must come AFTER the generic table td rule */
+body.dark-mode .schedule-table .timeoff-cell {
+  background-color: #44405a !important; /* distinct purple-gray, visibly different from regular cells */
 }
 
-body.dark-mode .timeoff-current-week {
-  background-color: #3a3a50 !important;
-  outline: 3px solid rgb(169,205,83);
-  outline-offset: -3px;
-}
-
-body.dark-mode .timeoff-corner {
-  color: rgb(169,205,83) !important;
-}
-
-/* Highlight today column */
-body.dark-mode .highlight-today {
-  background-color: #35403d !important;
-  outline: 3px solid #7fb77e !important;
+body.dark-mode .schedule-table .timeoff-current-week {
+  background-color: #44405a !important;
+  outline: 3px solid rgb(169,205,83) !important;
   outline-offset: -3px !important;
 }
 
-/* Addable cell hover */
-body.dark-mode td.addable:hover {
-  background-color: #33334a !important;
+body.dark-mode .schedule-table .timeoff-corner {
+  color: rgb(169,205,83) !important;
 }
 
-/* Sticky first column background */
+/* Regular cells */
 body.dark-mode .schedule-table th,
 body.dark-mode .schedule-table td {
   background-color: #2a2a3d !important;
 }
 
-/* Sheet container border */
-body.dark-mode .sheet-container {
-  border-color: #3a3a50 !important;
+/* Timeoff card (dashed border style) */
+body.dark-mode .timeoff-card {
+  border: 2px dashed #7fb77e !important;
+  background: #2e3d2e !important;
 }
 
-/* Divider lines */
+/* Addable hover */
+body.dark-mode .schedule-table td.addable:hover {
+  background-color: #33334a !important;
+}
+
+/* Drop target */
+body.dark-mode td.drop-target {
+  outline: 3px dashed rgba(100, 160, 255, 0.3) !important;
+}
+
+/* Engagement badges in dark mode */
+body.dark-mode .schedule-table .badge-status.badge-confirmed {
+  background-color: #1e3d28 !important;
+  color: #7fd99a !important;
+}
+
+body.dark-mode .schedule-table .badge-status.badge-pending {
+  background-color: #2e1f4a !important;
+  color: #c4a0ff !important;
+}
+
+body.dark-mode .schedule-table .badge-status.badge-not-confirmed {
+  background-color: #1a2540 !important;
+  color: #7fa8e0 !important;
+}
+
+/* Divider borders */
 body.dark-mode .schedule-table thead th {
   border-bottom-color: #3a3a50 !important;
 }
@@ -179,6 +196,22 @@ body.dark-mode .schedule-table thead th {
 body.dark-mode .schedule-table th:first-child,
 body.dark-mode .schedule-table td:first-child {
   border-right-color: #3a3a50 !important;
+}
+
+/* Sheet container */
+body.dark-mode .sheet-container {
+  border-color: #3a3a50 !important;
+}
+
+/* Summary footer */
+body.dark-mode #summaryFooter {
+  background: #2a2a3d !important;
+  border-top-color: #3a3a50 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode #summaryFooter span {
+  color: #e0e0e0 !important;
 }
 
  /* =================== Variables ========================= */
