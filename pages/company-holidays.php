@@ -202,7 +202,7 @@ if ($result) {
 
         <!-- Single clean header -->
         <div class="page-header">
-            <div class="page-header-left">
+            <div class="header-text">
                 <h3 class="mb-1">Company Holidays</h3>
                 <p class="text-muted mb-4">Manage firm-wide holidays and closures</p>
                 
