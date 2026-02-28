@@ -207,6 +207,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   z-index: 35;
 }
 
+.schedule-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
 .schedule-table th,
 .schedule-table td {
