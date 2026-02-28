@@ -432,16 +432,16 @@ updateLastRowRadius();
 </script>
 
 <script>
-// document.querySelectorAll('.schedule-table td.addable').forEach(td => {
-//     td.addEventListener('mouseenter', function() {
-//         const isDark = document.body.classList.contains('dark-mode');
-//         const color = isDark ? '#9595b1' : '#e0f7fa';
-//         this.style.setProperty('background-color', color, 'important');
-//     });
-//     td.addEventListener('mouseleave', function() {
-//         this.style.removeProperty('background-color');
-//     });
-// });
+document.querySelectorAll('.schedule-table td.addable').forEach(td => {
+    td.addEventListener('mouseenter', function() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const color = isDark ? '#9595b1' : '#e0f7fa';
+        this.style.setProperty('background-color', color, 'important');
+    });
+    td.addEventListener('mouseleave', function() {
+        this.style.removeProperty('background-color');
+    });
+});
 </script>
        
     
