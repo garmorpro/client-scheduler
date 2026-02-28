@@ -126,6 +126,7 @@ $totalUsers = count($users);
     </div>
 </div>
             <button id="openImportBtn" class="btn btn-outline-primary btn-sm">Import</button>
+            <button id="openPermissionsBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-shield-lock me-1"></i>Permissions</button>
             <button class="btn btn-primary btn-sm">Invite User</button>
         </div>
     </div>
@@ -378,6 +379,7 @@ if (data.errors.length) {
     <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/swal-modals/role-permissions.js?v=<?php echo time(); ?>"></script>
 
     
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
