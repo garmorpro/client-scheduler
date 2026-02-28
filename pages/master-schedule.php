@@ -433,12 +433,10 @@ document.querySelectorAll('.schedule-table td.addable').forEach(td => {
     td.addEventListener('mouseenter', function() {
         const isDark = document.body.classList.contains('dark-mode');
         this.style.setProperty('background-color', isDark ? '#9595b1' : '#e0f7fa', 'important');
-        this.style.setProperty('outline', '3px solid red', 'important');
     });
     td.addEventListener('mouseleave', function() {
         const isDark = document.body.classList.contains('dark-mode');
         this.style.setProperty('background-color', isDark ? '#2a2a3d' : '#ffffff', 'important');
-        this.style.removeProperty('outline');
     });
 });
 </script>
