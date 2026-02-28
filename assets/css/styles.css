@@ -628,7 +628,7 @@ body.dark-mode .pop-up-small {
     background-color: #f9fafb; border-radius: 8px; 
 }
 td.addable:hover { 
-    background-color: #e0f7fa; 
+    background-color: #001a1d; 
     cursor: pointer; 
 }
 /* Stat cards */
