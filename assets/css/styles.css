@@ -184,7 +184,7 @@ body.dark-mode .timeoff-card {
 }
 
 /* Addable hover */
-body.dark-mode .schedule-table td.addable:hover {
+body.dark-mode td.addable:hover {
   background-color: #9595b1 !important;
 }
 
@@ -628,7 +628,7 @@ body.dark-mode .pop-up-small {
     background-color: #f9fafb; border-radius: 8px; 
 }
 td.addable:hover { 
-    background-color: #001a1d; 
+    background-color: #e0f7fa; 
     cursor: pointer; 
 }
 /* Stat cards */
