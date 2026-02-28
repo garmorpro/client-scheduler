@@ -54,7 +54,7 @@
             cell.querySelectorAll('.bi-plus').forEach(icon => icon.remove());
             if (!cell.querySelector('.draggable-badge')) {
                 const plus = document.createElement('i');
-                plus.className = 'bi bi-plus text-muted';
+                plus.className = 'bi bi-plus';
                 plus.style.cursor = 'pointer';
                 cell.appendChild(plus);
             }
