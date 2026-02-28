@@ -42,6 +42,10 @@ body {
   border-top: .5px solid rgb(223, 226, 230);
 }
 
+body.dark-mode .schedule-table thead th {
+  border-top: .5px solid rgb(275,75,101) !important;
+}
+
 
 /* ========= STICKY FIRST COLUMN ========= */
 .schedule-table th:first-child,
