@@ -243,6 +243,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   position: relative;
 }
 
+.table {
+    border-radius: 15px !important;
+}
+
 /* ========= MAIN CONTENT ========= */
 .main-content {
   margin-left: 250px;           /* sidebar offset */
@@ -334,7 +338,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="sheet-container">
+        <div class="sheet-container flex-grow-1">
             <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
