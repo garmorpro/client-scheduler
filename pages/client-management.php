@@ -80,37 +80,7 @@ unset($client);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
     <style>
-        .client-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .client-card .status-badge {
-            text-transform: capitalize;
-            font-size: 0.8rem;
-        }
-        .client-card .card-buttons button {
-            margin-right: 5px;
-        }
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .client-search {
-            margin-bottom: 20px;
-        }
-        .view-btn:hover {
-          background-color: rgb(229,229,229) !important;
-        }
-        .delete-client-btn:hover {
-            background-color: rgb(195,49,66) !important;
-        }
-        .delete-client-btn:hover i {
-            color: white !important;
-        }
+        
     </style>
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
