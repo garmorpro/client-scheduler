@@ -142,41 +142,44 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;           /* full width of container */
-  table-layout: fixed;    /* ensures sticky works */
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
 }
 
 .schedule-table th,
 .schedule-table td {
   padding: 8px;
-  background-color: var(--bs-body-bg, #fff);
-  min-width: 150px;       /* or your preferred width */
-  border: 1px solid #ddd;
+  background-color: var(--bs-body-bg, #fff); /* ensure background */
+  position: relative;
+  min-width: 150px; /* or whatever fits your badges */
 }
 
 /* ========= STICKY HEADER ========= */
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 100;           /* above everything except top-left corner */
-  background-color: #fff;
+  z-index: 50; /* above body cells */
+  background-color: var(--bs-body-bg, #fff);
+  border-bottom: 2px solid rgb(223, 226, 230);
 }
-
 
 /* ========= STICKY FIRST COLUMN ========= */
 .schedule-table th:first-child,
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 50;            /* above body cells but below top-left corner */
-  background-color: #fff;
+  z-index: 51; /* above body but below header */
+  background-color: var(--bs-body-bg, #fff);
+  border-right: 2px solid rgb(223, 226, 230);
+  min-width: 260px;
 }
 
 /* ========= TOP-LEFT CORNER ========= */
 .schedule-table thead th:first-child {
-  top: 0;
-  left: 0;
-  z-index: 101;           /* top-left corner above all */
+  z-index: 100; /* above everything */
+  border-bottom: 2px solid rgb(223, 226, 230);
+  border-right: 2px solid rgb(223, 226, 230);
 }
 
 /* ========= BADGES ========= */
