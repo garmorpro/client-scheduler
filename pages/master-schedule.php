@@ -184,10 +184,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 ============================ */
 
 .schedule-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: var(--bs-body-bg);
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background: var(--bs-body-bg) !important;
 }
 
 /* ============================
