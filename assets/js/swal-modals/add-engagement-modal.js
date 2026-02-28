@@ -56,17 +56,18 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                     return false;
                 }
 
-                return fetch('../../../../pages/add_engagement.php', {
+                return fetch('add_engagement.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        client_id: clientId,
-                        client_name: clientName,
-                        budget_hours: budgetHours,
-                        status: status,
-                        manager: manager,
-                        year: new Date().getFullYear()
-                    })
+                    body: (() => {
+                        const formData = new FormData();
+                        formData.append('client_id', clientId);
+                        formData.append('client_name', clientName);
+                        formData.append('budget_hours', budgetHours);
+                        formData.append('status', status);
+                        formData.append('manager', manager);
+                        formData.append('year', new Date().getFullYear());
+                        return formData;
+                    })()
                 })
                 .then(res => res.json())
                 .catch(err => Swal.showValidationMessage(`Request failed: ${err}`));
