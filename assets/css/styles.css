@@ -188,6 +188,18 @@ body.dark-mode .timeoff-card {
   transition: background-color 0.15s ease;
 } */
 
+body.dark-mode .schedule-table {
+  background-color: transparent !important;
+}
+
+body.dark-mode .schedule-table tbody {
+  background-color: transparent !important;
+}
+
+body.dark-mode .schedule-table tr {
+  background-color: transparent !important;
+}
+
 
 /* Drop target */
 body.dark-mode td.drop-target {
