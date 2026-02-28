@@ -192,19 +192,14 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   border-radius: 15px 0 0 0;
 }
 
-/* Top-right corner — last th in thead */
-.schedule-table thead th:last-child {
-  border-radius: 0 15px 0 0;
+
+
+body.dark-mode .schedule-table tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 15px !important;
 }
 
-/* Bottom-left corner — last row, first cell */
-.schedule-table tr:last-child td:first-child {
-  border-radius: 15px !important;
-}
-
-/* Bottom-right corner — last row, last cell */
-.schedule-table tbody tr:last-child td:last-child {
-  border-radius: 0 0 15px 0;
+body.dark-mode .schedule-table tbody tr:last-child td:last-child {
+  border-radius: 0 0 15px 0 !important;
 }
 
 /* ========= BADGES ========= */
