@@ -137,7 +137,7 @@ body {
 
 /* Timeoff cells - must come AFTER the generic table td rule */
 body.dark-mode .schedule-table .timeoff-cell {
-  background-color: #44405a !important; /* distinct purple-gray, visibly different from regular cells */
+  background-color: #2600ff !important; /* distinct purple-gray, visibly different from regular cells */
 }
 
 body.dark-mode .schedule-table .timeoff-current-week {
