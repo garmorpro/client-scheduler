@@ -183,6 +183,11 @@ body.dark-mode .timeoff-card {
   background: #2e3d2e !important;
 }
 
+body.dark-mode table tr,
+body.dark-mode table td {
+  background-color: #2a2a3d !important;
+}
+
 body.dark-mode table td.addable:hover {
   background-color: #9595b1 !important;
 }
