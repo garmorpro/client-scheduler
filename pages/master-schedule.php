@@ -239,7 +239,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   border-radius: 15px !important;
   width: 100%;
   height: calc(100vh - 260px);
-  overflow: visible !important;
+  overflow: auto !important;
   position: relative;
 }
 
