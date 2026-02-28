@@ -184,7 +184,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <!-- end header -->
 
     <!-- upper search and filter -->
-        <div class="border rounded p-4 mb-4 d-flex justify-content-between align-items-center">
+        <div class="rounded p-4 mb-4 d-flex justify-content-between align-items-center">
             <!-- Search bar on left -->
             <div class="flex-grow-1 me-3">
                 <input type="search" id="searchInput" class="form-control w-50" placeholder="Search employees..." onkeyup="filterEmployees()" />
