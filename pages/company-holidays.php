@@ -24,10 +24,7 @@ if ($result) {
     while ($row = $result->fetch_assoc()) {
         $note = $row['timeoff_note'] ?? 'Holiday';
         if (!isset($holidays[$note])) {
-            $holidays[$note] = [
-                'name' => $note,
-                'days' => []
-            ];
+            $holidays[$note] = ['name' => $note, 'days' => []];
         }
         $holidays[$note]['days'][] = [
             'id' => $row['timeoff_id'],
@@ -52,20 +49,20 @@ if ($result) {
             margin: 0 auto;
         }
 
-        .holidays-header {
+        .page-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 28px;
         }
 
-        .holidays-header-left {
+        .page-header-left {
             display: flex;
             align-items: center;
             gap: 14px;
         }
 
-        .holidays-icon-bubble {
+        .page-icon-bubble {
             width: 44px;
             height: 44px;
             background: #2563eb;
@@ -90,9 +87,7 @@ if ($result) {
             transition: background 0.15s ease;
         }
 
-        .holiday-card:hover {
-            background: #f3f4f6;
-        }
+        .holiday-card:hover { background: #f3f4f6; }
 
         .holiday-card-icon {
             width: 38px;
@@ -107,9 +102,7 @@ if ($result) {
             flex-shrink: 0;
         }
 
-        .holiday-card-info {
-            flex-grow: 1;
-        }
+        .holiday-card-info { flex-grow: 1; }
 
         .holiday-card-name {
             font-weight: 600;
@@ -120,6 +113,7 @@ if ($result) {
         .holiday-card-meta {
             font-size: 12px;
             color: #6b7280;
+            line-height: 1.8;
         }
 
         .holiday-card-actions {
@@ -143,8 +137,19 @@ if ($result) {
             transition: background 0.15s ease;
         }
 
-        .btn-add-holiday:hover {
-            background: #1d4ed8;
+        .btn-add-holiday:hover { background: #1d4ed8; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.4;
         }
 
         /* Dark mode */
@@ -152,31 +157,8 @@ if ($result) {
             background: #2a2a3d;
             border-color: #3a3a50;
         }
-
-        body.dark-mode .holiday-card:hover {
-            background: #33334a;
-        }
-
-        body.dark-mode .holiday-card-meta {
-            color: #9ca3af;
-        }
-
-        /* Day pills inside expanded view */
-        .day-pill {
-            display: inline-block;
-            background: #eff6ff;
-            color: #2563eb;
-            border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 11px;
-            font-weight: 500;
-            margin: 2px 3px 2px 0;
-        }
-
-        body.dark-mode .day-pill {
-            background: #1e3a5f;
-            color: #93c5fd;
-        }
+        body.dark-mode .holiday-card:hover { background: #33334a; }
+        body.dark-mode .holiday-card-meta { color: #9ca3af; }
 
         /* Swal day row */
         .day-row {
@@ -186,10 +168,6 @@ if ($result) {
             margin-bottom: 8px;
         }
 
-        .day-row input {
-            flex: 1;
-        }
-
         .remove-day-btn {
             background: none;
             border: none;
@@ -197,9 +175,10 @@ if ($result) {
             cursor: pointer;
             font-size: 18px;
             padding: 0 4px;
+            flex-shrink: 0;
         }
 
-        #add-day-btn {
+        .add-day-btn-dashed {
             background: none;
             border: 1px dashed #2563eb;
             color: #2563eb;
@@ -211,9 +190,7 @@ if ($result) {
             width: 100%;
         }
 
-        #add-day-btn:hover {
-            background: #eff6ff;
-        }
+        .add-day-btn-dashed:hover { background: #eff6ff; }
     </style>
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
@@ -221,64 +198,69 @@ if ($result) {
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <h3 class="mb-0">Company Holidays</h3>
-    <p class="text-muted mb-4">Manage firm-wide holidays and closures</p>
-
     <div class="holidays-container">
-        <div class="holidays-header">
-            <div class="holidays-header-left">
-                <div class="holidays-icon-bubble">
+
+        <!-- Single clean header -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <div class="page-icon-bubble">
                     <i class="bi bi-calendar3"></i>
                 </div>
                 <div>
-                    <div style="font-weight:700; font-size:16px;">Company Holidays</div>
-                    <div style="font-size:13px; color:#6b7280;">Manage firm-wide holidays and closures</div>
+                    <h4 class="mb-0 fw-bold">Company Holidays</h4>
+                    <p class="mb-0 text-muted" style="font-size:13px;">Manage firm-wide holidays and closures</p>
                 </div>
             </div>
+            <?php if ($isAdmin): ?>
             <button class="btn-add-holiday" id="addHolidayBtn">
                 <i class="bi bi-plus"></i> Add Holiday
             </button>
-        </div>
-
-        <div id="holidaysList">
-            <?php if (empty($holidays)): ?>
-                <div class="text-muted text-center py-5" id="emptyState">No holidays added yet.</div>
-            <?php else: ?>
-                <?php foreach ($holidays as $holiday): ?>
-<?php 
-    $firstDay = $holiday['days'][0];
-    $dayCount = count($holiday['days']);
-    $daysJson = htmlspecialchars(json_encode($holiday['days']), ENT_QUOTES);
-?>
-<div class="holiday-card">
-    <div class="holiday-card-icon">
-        <i class="bi bi-calendar3"></i>
-    </div>
-    <div class="holiday-card-info">
-        <div class="holiday-card-name"><?= htmlspecialchars($holiday['name']) ?></div>
-        <div class="holiday-card-meta">
-    <?php foreach ($holiday['days'] as $i => $day): ?>
-        <?= date('l, F j, Y', strtotime($day['date'])) ?> &bull; <?= $day['hours'] ?> hrs<?= ($i < count($holiday['days']) - 1) ? '<br>' : '' ?>
-    <?php endforeach; ?>
-</div>
-    </div>
-    <div class="holiday-card-actions">
-        <?php if ($isAdmin): ?>
-        <button class="btn btn-sm btn-outline-secondary edit-holiday-btn"
-            data-name="<?= htmlspecialchars($holiday['name']) ?>"
-            data-days="<?= $daysJson ?>">
-            <i class="bi bi-pencil"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-danger delete-holiday-btn"
-            data-name="<?= htmlspecialchars($holiday['name']) ?>">
-            <i class="bi bi-trash"></i>
-        </button>
-        <?php endif; ?>
-    </div>
-</div>
-<?php endforeach; ?>
             <?php endif; ?>
         </div>
+
+        <!-- Holiday list -->
+        <div id="holidaysList">
+            <?php if (empty($holidays)): ?>
+                <div class="empty-state">
+                    <i class="bi bi-calendar-x"></i>
+                    No holidays added yet.
+                </div>
+            <?php else: ?>
+                <?php foreach ($holidays as $holiday): ?>
+                <?php
+                    $daysJson = htmlspecialchars(json_encode($holiday['days']), ENT_QUOTES);
+                    $totalDays = count($holiday['days']);
+                ?>
+                <div class="holiday-card">
+                    <div class="holiday-card-icon">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div class="holiday-card-info">
+                        <div class="holiday-card-name"><?= htmlspecialchars($holiday['name']) ?></div>
+                        <div class="holiday-card-meta">
+                            <?php foreach ($holiday['days'] as $i => $day): ?>
+                                <?= date('l, F j, Y', strtotime($day['date'])) ?> &bull; <?= $day['hours'] ?> hrs off<?= ($i < $totalDays - 1) ? '<br>' : '' ?>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php if ($isAdmin): ?>
+                    <div class="holiday-card-actions">
+                        <button class="btn btn-sm btn-outline-secondary edit-holiday-btn"
+                            data-name="<?= htmlspecialchars($holiday['name']) ?>"
+                            data-days="<?= $daysJson ?>">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-holiday-btn"
+                            data-name="<?= htmlspecialchars($holiday['name']) ?>">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
     </div>
 </div>
 
@@ -287,6 +269,7 @@ if ($result) {
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 
 <script>
+<?php if ($isAdmin): ?>
 document.getElementById('addHolidayBtn').addEventListener('click', function() {
     const isDark = document.body.classList.contains('dark-mode');
 
@@ -296,64 +279,56 @@ document.getElementById('addHolidayBtn').addEventListener('click', function() {
         color: isDark ? '#e0e0e0' : '#1a1a1a',
         width: '520px',
         html: `
-    <div class="text-start">
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Holiday Name</label>
-            <input type="text" id="swal-holiday-name" class="form-control" placeholder="e.g. Labor Day">
-        </div>
-        <div class="mb-2">
-            <label class="form-label fw-semibold">Days Off</label>
-            <div id="days-container">
-                <div class="day-row">
-                    <input type="date" class="form-control holiday-date" style="flex:2;">
-                    <input type="number" class="form-control holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
-                    <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
-                        <i class="bi bi-x-circle"></i>
+            <div class="text-start">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Holiday Name</label>
+                    <input type="text" id="swal-holiday-name" class="form-control" placeholder="e.g. Labor Day">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold">Days Off</label>
+                    <div id="days-container">
+                        <div class="day-row">
+                            <input type="date" class="form-control holiday-date" style="flex:2;">
+                            <input type="number" class="form-control holiday-hours" placeholder="Hrs" value="8" min="1" max="24" style="flex:1;">
+                            <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="add-day-btn-dashed" onclick="addDayRow()">
+                        <i class="bi bi-plus"></i> Add Another Day
                     </button>
                 </div>
             </div>
-            <button id="add-day-btn" onclick="addDayRow()">
-                <i class="bi bi-plus"></i> Add Another Day
-            </button>
-        </div>
-    </div>
-`,
+        `,
         showCancelButton: true,
         confirmButtonText: 'Save Holiday',
         cancelButtonText: 'Cancel',
         confirmButtonColor: '#2563eb',
         cancelButtonColor: isDark ? '#555572' : '#6c757d',
         preConfirm: () => {
-    const name = document.getElementById('swal-holiday-name').value.trim();
-    const dateInputs = document.querySelectorAll('.holiday-date');
-    const hoursInputs = document.querySelectorAll('.holiday-hours');
+            const name = document.getElementById('swal-holiday-name').value.trim();
+            const dateInputs = document.querySelectorAll('.holiday-date');
+            const hoursInputs = document.querySelectorAll('.holiday-hours');
 
-    const days = [];
-    dateInputs.forEach((d, i) => {
-        if (d.value) {
-            days.push({ date: d.value, hours: hoursInputs[i].value || 8 });
+            const days = [];
+            dateInputs.forEach((d, i) => {
+                if (d.value) days.push({ date: d.value, hours: hoursInputs[i].value || 8 });
+            });
+
+            if (!name) { Swal.showValidationMessage('Please enter a holiday name.'); return false; }
+            if (days.length === 0) { Swal.showValidationMessage('Please add at least one day off.'); return false; }
+
+            return fetch('save_holiday.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, days })
+            })
+            .then(res => res.json())
+            .catch(err => Swal.showValidationMessage(`Error: ${err}`));
         }
-    });
-
-    if (!name) {
-        Swal.showValidationMessage('Please enter a holiday name.');
-        return false;
-    }
-    if (days.length === 0) {
-        Swal.showValidationMessage('Please add at least one day off.');
-        return false;
-    }
-
-    return fetch('save_holiday.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, days })
-    })
-    .then(res => res.json())
-    .catch(err => Swal.showValidationMessage(`Error: ${err}`));
-}
     }).then(result => {
-        if (result.isConfirmed && result.value && result.value.success) {
+        if (result.isConfirmed && result.value?.success) {
             Swal.fire({
                 title: 'Holiday Added!',
                 icon: 'success',
@@ -373,7 +348,7 @@ function addDayRow() {
     row.className = 'day-row';
     row.innerHTML = `
         <input type="date" class="form-control holiday-date" style="flex:2;">
-        <input type="number" class="form-control holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
+        <input type="number" class="form-control holiday-hours" placeholder="Hrs" value="8" min="1" max="24" style="flex:1;">
         <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
             <i class="bi bi-x-circle"></i>
         </button>
@@ -381,37 +356,20 @@ function addDayRow() {
     container.appendChild(row);
 }
 
-// Delete holiday
-document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const name = this.dataset.name;
-        const isDark = document.body.classList.contains('dark-mode');
+function addEditDayRow() {
+    const container = document.getElementById('edit-days-container');
+    const row = document.createElement('div');
+    row.className = 'day-row';
+    row.innerHTML = `
+        <input type="date" class="form-control edit-holiday-date" style="flex:2;">
+        <input type="number" class="form-control edit-holiday-hours" placeholder="Hrs" value="8" min="1" max="24" style="flex:1;">
+        <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
+            <i class="bi bi-x-circle"></i>
+        </button>
+    `;
+    container.appendChild(row);
+}
 
-        Swal.fire({
-            title: 'Delete Holiday?',
-            text: `This will remove all days for "${name}".`,
-            icon: 'warning',
-            background: isDark ? '#2a2a3d' : '#fff',
-            color: isDark ? '#e0e0e0' : '#1a1a1a',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: isDark ? '#555572' : '#6c757d',
-            confirmButtonText: 'Yes, delete it'
-        }).then(result => {
-            if (result.isConfirmed) {
-                fetch('delete_holiday.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name })
-                })
-                .then(res => res.json())
-                .then(data => { if (data.success) location.reload(); });
-            }
-        });
-    });
-});
-
-// Edit Holiday
 document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const name = this.dataset.name;
@@ -441,10 +399,8 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold">Days Off</label>
-                        <div id="edit-days-container">
-                            ${existingDaysHtml}
-                        </div>
-                        <button id="edit-add-day-btn" style="background:none; border:1px dashed #2563eb; color:#2563eb; border-radius:6px; padding:5px 12px; font-size:12px; cursor:pointer; margin-top:4px; width:100%;" onclick="addEditDayRow()">
+                        <div id="edit-days-container">${existingDaysHtml}</div>
+                        <button class="add-day-btn-dashed" onclick="addEditDayRow()">
                             <i class="bi bi-plus"></i> Add Another Day
                         </button>
                     </div>
@@ -457,32 +413,22 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
             cancelButtonColor: isDark ? '#555572' : '#6c757d',
             preConfirm: () => {
                 const newName = document.getElementById('edit-holiday-name').value.trim();
-                if (!newName) {
-                    Swal.showValidationMessage('Please enter a holiday name.');
-                    return false;
-                }
+                if (!newName) { Swal.showValidationMessage('Please enter a holiday name.'); return false; }
 
                 const rows = document.querySelectorAll('#edit-days-container .day-row');
-                const updatedDays = [];
-                const newDays = [];
+                const updatedDays = [], newDays = [];
 
                 rows.forEach(row => {
                     const id = row.dataset.id;
                     const date = row.querySelector('.edit-holiday-date').value;
                     const hours = row.querySelector('.edit-holiday-hours').value;
                     if (!date) return;
-                    if (id) {
-                        updatedDays.push({ id, date, hours });
-                    } else {
-                        newDays.push({ date, hours });
-                    }
+                    if (id) updatedDays.push({ id, date, hours });
+                    else newDays.push({ date, hours });
                 });
 
-                // Find deleted days (original ids not in updatedDays)
                 const updatedIds = updatedDays.map(d => String(d.id));
-                const deletedIds = days
-                    .filter(d => !updatedIds.includes(String(d.id)))
-                    .map(d => d.id);
+                const deletedIds = days.filter(d => !updatedIds.includes(String(d.id))).map(d => d.id);
 
                 if (updatedDays.length + newDays.length === 0) {
                     Swal.showValidationMessage('Please add at least one day off.');
@@ -492,19 +438,13 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
                 return fetch('update_holiday.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        originalName: name,
-                        newName, 
-                        updatedDays, 
-                        newDays, 
-                        deletedIds 
-                    })
+                    body: JSON.stringify({ originalName: name, newName, updatedDays, newDays, deletedIds })
                 })
                 .then(res => res.json())
                 .catch(err => Swal.showValidationMessage(`Error: ${err}`));
             }
         }).then(result => {
-            if (result.isConfirmed && result.value && result.value.success) {
+            if (result.isConfirmed && result.value?.success) {
                 Swal.fire({
                     title: 'Updated!',
                     icon: 'success',
@@ -519,20 +459,35 @@ document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
     });
 });
 
-function addEditDayRow() {
-    const container = document.getElementById('edit-days-container');
-    const row = document.createElement('div');
-    row.className = 'day-row';
-    // No data-id since it's a new entry
-    row.innerHTML = `
-        <input type="date" class="form-control edit-holiday-date" style="flex:2;">
-        <input type="number" class="form-control edit-holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
-        <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
-            <i class="bi bi-x-circle"></i>
-        </button>
-    `;
-    container.appendChild(row);
-}
+document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const name = this.dataset.name;
+        const isDark = document.body.classList.contains('dark-mode');
+
+        Swal.fire({
+            title: 'Delete Holiday?',
+            text: `This will remove all days for "${name}".`,
+            icon: 'warning',
+            background: isDark ? '#2a2a3d' : '#fff',
+            color: isDark ? '#e0e0e0' : '#1a1a1a',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: isDark ? '#555572' : '#6c757d',
+            confirmButtonText: 'Yes, delete it'
+        }).then(result => {
+            if (result.isConfirmed) {
+                fetch('delete_holiday.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                })
+                .then(res => res.json())
+                .then(data => { if (data.success) location.reload(); });
+            }
+        });
+    });
+});
+<?php endif; ?>
 </script>
 </body>
 </html>
