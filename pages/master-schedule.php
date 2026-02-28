@@ -155,6 +155,38 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
       .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
       .week { min-width: 200px; }
+
+      /* === Spreadsheet Core === */
+
+.table-responsive {
+  overflow: auto;               /* enables both scrollbars */
+  max-height: 75vh;             /* vertical scrolling */
+  border: 1px solid var(--bs-border-color);
+}
+
+/* Freeze header row */
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--bs-body-bg);
+  border-bottom: 2px solid var(--bs-border-color);
+}
+
+/* Freeze first column */
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 201;
+  background: var(--bs-body-bg);
+  border-right: 2px solid var(--bs-border-color);
+}
+
+/* Top-left corner cell (needs highest z-index) */
+thead th:first-child {
+  z-index: 300;
+}
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
