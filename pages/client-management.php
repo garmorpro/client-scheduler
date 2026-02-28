@@ -129,8 +129,8 @@ unset($client);
                data-bs-toggle="modal" data-bs-target="#importClientsModal">
                 <i class="bi bi-upload me-3"></i>Import Clients
             </a>
-            <a href="#" class="badge text-white p-2 text-decoration-none fw-medium" 
-               style="font-size: .875rem; background-color: rgb(3,2,18);" 
+            <a href="#" class="badge p-2 text-decoration-none fw-medium" 
+               style="font-size: .875rem;" 
                data-bs-toggle="modal" data-bs-target="#addClientModal">
                 <i class="bi bi-person-plus me-3"></i>Add New Client
             </a>
