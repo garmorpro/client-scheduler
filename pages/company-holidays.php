@@ -272,60 +272,62 @@ document.getElementById('addHolidayBtn').addEventListener('click', function() {
         color: isDark ? '#e0e0e0' : '#1a1a1a',
         width: '520px',
         html: `
-            <div class="text-start">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Holiday Name</label>
-                    <input type="text" id="swal-holiday-name" class="form-control" placeholder="e.g. Labor Day">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Hours Off Per Day</label>
-                    <input type="number" id="swal-holiday-hours" class="form-control" value="8" min="1" max="24">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-semibold">Days Off</label>
-                    <div id="days-container">
-                        <div class="day-row">
-                            <input type="date" class="form-control holiday-date">
-                            <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
-                                <i class="bi bi-x-circle"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <button id="add-day-btn" onclick="addDayRow()">
-                        <i class="bi bi-plus"></i> Add Another Day
+    <div class="text-start">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Holiday Name</label>
+            <input type="text" id="swal-holiday-name" class="form-control" placeholder="e.g. Labor Day">
+        </div>
+        <div class="mb-2">
+            <label class="form-label fw-semibold">Days Off</label>
+            <div id="days-container">
+                <div class="day-row">
+                    <input type="date" class="form-control holiday-date" style="flex:2;">
+                    <input type="number" class="form-control holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
+                    <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
+                        <i class="bi bi-x-circle"></i>
                     </button>
                 </div>
             </div>
-        `,
+            <button id="add-day-btn" onclick="addDayRow()">
+                <i class="bi bi-plus"></i> Add Another Day
+            </button>
+        </div>
+    </div>
+`,
         showCancelButton: true,
         confirmButtonText: 'Save Holiday',
         cancelButtonText: 'Cancel',
         confirmButtonColor: '#2563eb',
         cancelButtonColor: isDark ? '#555572' : '#6c757d',
         preConfirm: () => {
-            const name = document.getElementById('swal-holiday-name').value.trim();
-            const hours = document.getElementById('swal-holiday-hours').value;
-            const dates = [...document.querySelectorAll('.holiday-date')]
-                .map(d => d.value)
-                .filter(d => d !== '');
+    const name = document.getElementById('swal-holiday-name').value.trim();
+    const dateInputs = document.querySelectorAll('.holiday-date');
+    const hoursInputs = document.querySelectorAll('.holiday-hours');
 
-            if (!name) {
-                Swal.showValidationMessage('Please enter a holiday name.');
-                return false;
-            }
-            if (dates.length === 0) {
-                Swal.showValidationMessage('Please add at least one day off.');
-                return false;
-            }
-
-            return fetch('save_holiday.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, hours, dates })
-            })
-            .then(res => res.json())
-            .catch(err => Swal.showValidationMessage(`Error: ${err}`));
+    const days = [];
+    dateInputs.forEach((d, i) => {
+        if (d.value) {
+            days.push({ date: d.value, hours: hoursInputs[i].value || 8 });
         }
+    });
+
+    if (!name) {
+        Swal.showValidationMessage('Please enter a holiday name.');
+        return false;
+    }
+    if (days.length === 0) {
+        Swal.showValidationMessage('Please add at least one day off.');
+        return false;
+    }
+
+    return fetch('save_holiday.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, days })
+    })
+    .then(res => res.json())
+    .catch(err => Swal.showValidationMessage(`Error: ${err}`));
+}
     }).then(result => {
         if (result.isConfirmed && result.value && result.value.success) {
             Swal.fire({
@@ -346,7 +348,8 @@ function addDayRow() {
     const row = document.createElement('div');
     row.className = 'day-row';
     row.innerHTML = `
-        <input type="date" class="form-control holiday-date">
+        <input type="date" class="form-control holiday-date" style="flex:2;">
+        <input type="number" class="form-control holiday-hours" placeholder="Hours" value="8" min="1" max="24" style="flex:1;">
         <button class="remove-day-btn" onclick="this.closest('.day-row').remove()">
             <i class="bi bi-x-circle"></i>
         </button>
