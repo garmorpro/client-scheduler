@@ -239,7 +239,7 @@ if ($result) {
                         <i class="bi bi-calendar3"></i>
                     </div>
                     <div class="holiday-card-info">
-                        <div class="holiday-card-name"><?= htmlspecialchars($h['holiday_name'] ?? 'Holiday') ?></div>
+                        <div class="holiday-card-name"><?= htmlspecialchars($h['timeoff_note'] ?? 'Holiday') ?></div>
                         <div class="holiday-card-meta">
                             <?= date('l, F j, Y', strtotime($h['week_start'])) ?> &bull; <?= $h['assigned_hours'] ?> hours off
                         </div>
