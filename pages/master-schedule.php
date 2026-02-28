@@ -372,7 +372,7 @@ td.addable:hover {
         }
         ?>
         <div class="sheet-container flex-grow-1">
-            <table class="table align-middle text-center schedule-table">
+            <table class=" align-middle text-center schedule-table">
                 <thead>
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
