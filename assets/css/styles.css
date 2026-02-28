@@ -133,6 +133,54 @@ body {
 
       .week { min-width: 200px; }
 
+      /* Time off cells */
+body.dark-mode .timeoff-cell {
+  background-color: #3a3a50 !important;
+}
+
+body.dark-mode .timeoff-current-week {
+  background-color: #3a3a50 !important;
+  outline: 3px solid rgb(169,205,83);
+  outline-offset: -3px;
+}
+
+body.dark-mode .timeoff-corner {
+  color: rgb(169,205,83) !important;
+}
+
+/* Highlight today column */
+body.dark-mode .highlight-today {
+  background-color: #35403d !important;
+  outline: 3px solid #7fb77e !important;
+  outline-offset: -3px !important;
+}
+
+/* Addable cell hover */
+body.dark-mode td.addable:hover {
+  background-color: #33334a !important;
+}
+
+/* Sticky first column background */
+body.dark-mode .schedule-table th,
+body.dark-mode .schedule-table td {
+  background-color: #2a2a3d !important;
+}
+
+/* Sheet container border */
+body.dark-mode .sheet-container {
+  border-color: #3a3a50 !important;
+}
+
+/* Divider lines */
+body.dark-mode .schedule-table thead th {
+  border-bottom-color: #3a3a50 !important;
+}
+
+body.dark-mode .schedule-table th:first-child,
+body.dark-mode .schedule-table td:first-child {
+  border-right-color: #3a3a50 !important;
+}
+
  /* =================== Variables ========================= */
   :root {
     --bg-color: #f9fafb;
