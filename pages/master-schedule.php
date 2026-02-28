@@ -220,7 +220,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
-  border-radius: 12px !important;
+  border-radius: 15px !important;
   width: 100%;
   height: calc(100vh - 260px); /* adjust if your header is taller */
   overflow: auto;              /* allows horizontal + vertical scroll */
@@ -230,6 +230,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= MAIN CONTENT ========= */
 .main-content {
   margin-left: 250px;           /* sidebar offset */
+  border-radius: 15px !important;
   height: 100vh;
   display: flex;
   flex-direction: column;
