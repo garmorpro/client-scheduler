@@ -178,7 +178,7 @@ updateLastRowRadius();
             </div>
             <div class="header-buttons">
                 <a href="#" 
-                   onclick="location.reload();" 
+                   onclick="refreshWithScroll(); return false;"
                    class="badge text-black p-2 text-decoration-none fw-medium me-1" 
                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                   <i class="bi bi-arrow-clockwise me-3"></i>Refresh
@@ -440,6 +440,27 @@ document.querySelectorAll('.schedule-table td.addable').forEach(td => {
 });
 </script>
        
+
+<script>
+function refreshWithScroll() {
+    const container = document.querySelector('.sheet-container');
+    if (container) {
+        sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
+        sessionStorage.setItem('scheduleScrollTop', container.scrollTop);
+    }
+    location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.sheet-container');
+    const savedLeft = sessionStorage.getItem('scheduleScrollLeft');
+    const savedTop = sessionStorage.getItem('scheduleScrollTop');
+    if (savedLeft !== null) container.scrollLeft = parseInt(savedLeft);
+    if (savedTop !== null) container.scrollTop = parseInt(savedTop);
+    sessionStorage.removeItem('scheduleScrollLeft');
+    sessionStorage.removeItem('scheduleScrollTop');
+});
+</script>
     
 </div>
 </body>
