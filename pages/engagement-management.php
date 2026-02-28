@@ -99,7 +99,7 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
         <div class="user-management-header d-flex justify-content-between align-items-center">
             <!-- Left -->
             <div class="titles">
-                <p class="text-black mb-0"><strong>Engagement Management</strong></p>
+                <h3 class="mb-0"><strong>Engagement Management</strong></h3>
                 <p class="mb-0">Monitor all client engagements and details</p>
             </div>
 
