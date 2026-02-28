@@ -1,26 +1,14 @@
 <?php
-require '../includes/db.php';
+require_once '../includes/db.php';
+session_start();
+header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(["success" => false, "error" => "Invalid request"]);
-    exit;
-}
+$data = json_decode(file_get_contents('php://input'), true);
+$id = intval($data['id']);
 
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) {
-    echo json_encode(["success" => false, "error" => "Invalid ID"]);
-    exit;
-}
+$stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 1");
+$stmt->bind_param('i', $id);
+$stmt->execute();
 
-$stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id=?");
-if (!$stmt) {
-    echo json_encode(["success" => false, "error" => $conn->error]);
-    exit;
-}
-
-$stmt->bind_param("i", $id);
-$success = $stmt->execute();
-$stmt->close();
-$conn->close();
-
-echo json_encode(["success" => $success]);
+echo json_encode(['success' => true]);
+?>

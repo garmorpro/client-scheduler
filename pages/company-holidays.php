@@ -246,7 +246,7 @@ if ($result) {
                     </div>
                     <?php if ($isAdmin): ?>
                     <div class="holiday-card-actions">
-                        <button class="btn btn-sm btn-outline-danger delete-holiday-btn" data-id="<?= $h['id'] ?>">
+                        <button class="btn btn-sm btn-outline-danger delete-holiday-btn" data-id="<?= $h['timeoff_id'] ?>">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
