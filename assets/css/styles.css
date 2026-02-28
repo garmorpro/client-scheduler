@@ -1357,3 +1357,9 @@ body.dark-mode .btn-dark-custom {
     color: #e0e0e0;
     border: 1px solid #4a4a60;
 }
+
+body.dark-mode .view-client-button {
+    background-color: #3a3a50 !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #4a4a60 !important;
+}
