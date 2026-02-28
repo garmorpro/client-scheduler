@@ -244,13 +244,20 @@ if ($result) {
                             <?= date('l, F j, Y', strtotime($h['week_start'])) ?> &bull; <?= $h['assigned_hours'] ?> hours off
                         </div>
                     </div>
-                    <?php if ($isAdmin): ?>
                     <div class="holiday-card-actions">
-                        <button class="btn btn-sm btn-outline-danger delete-holiday-btn" data-id="<?= $h['timeoff_id'] ?>">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                    <?php endif; ?>
+    <?php if ($isAdmin): ?>
+    <button class="btn btn-sm btn-outline-secondary edit-holiday-btn" 
+        data-id="<?= $h['timeoff_id'] ?>"
+        data-name="<?= htmlspecialchars($h['timeoff_note'] ?? '') ?>"
+        data-date="<?= $h['week_start'] ?>"
+        data-hours="<?= $h['assigned_hours'] ?>">
+        <i class="bi bi-pencil"></i>
+    </button>
+    <button class="btn btn-sm btn-outline-danger delete-holiday-btn" data-id="<?= $h['timeoff_id'] ?>">
+        <i class="bi bi-trash"></i>
+    </button>
+    <?php endif; ?>
+</div>
                 </div>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -384,6 +391,77 @@ document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
                 .then(data => {
                     if (data.success) location.reload();
                 });
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const name = this.dataset.name;
+        const date = this.dataset.date;
+        const hours = this.dataset.hours;
+        const isDark = document.body.classList.contains('dark-mode');
+
+        Swal.fire({
+            title: 'Edit Holiday',
+            background: isDark ? '#2a2a3d' : '#fff',
+            color: isDark ? '#e0e0e0' : '#1a1a1a',
+            width: '520px',
+            html: `
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Holiday Name</label>
+                        <input type="text" id="edit-holiday-name" class="form-control" value="${name}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold">Day Off</label>
+                        <div class="day-row">
+                            <input type="date" id="edit-holiday-date" class="form-control" value="${date}" style="flex:2;">
+                            <input type="number" id="edit-holiday-hours" class="form-control" value="${hours}" min="1" max="24" style="flex:1;">
+                        </div>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: isDark ? '#555572' : '#6c757d',
+            preConfirm: () => {
+                const newName = document.getElementById('edit-holiday-name').value.trim();
+                const newDate = document.getElementById('edit-holiday-date').value;
+                const newHours = document.getElementById('edit-holiday-hours').value;
+
+                if (!newName) {
+                    Swal.showValidationMessage('Please enter a holiday name.');
+                    return false;
+                }
+                if (!newDate) {
+                    Swal.showValidationMessage('Please select a date.');
+                    return false;
+                }
+
+                return fetch('update_holiday.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name: newName, date: newDate, hours: newHours })
+                })
+                .then(res => res.json())
+                .catch(err => Swal.showValidationMessage(`Error: ${err}`));
+            }
+        }).then(result => {
+            if (result.isConfirmed && result.value && result.value.success) {
+                Swal.fire({
+                    title: 'Updated!',
+                    icon: 'success',
+                    background: isDark ? '#2a2a3d' : '#fff',
+                    color: isDark ? '#e0e0e0' : '#1a1a1a',
+                    confirmButtonColor: '#2563eb',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => location.reload());
             }
         });
     });
