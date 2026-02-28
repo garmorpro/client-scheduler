@@ -183,40 +183,36 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
    FREEZE HEADER ROW
 ============================ */
 
+/* HEADER ROW */
 .schedule-table thead th {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 20 !important;
-  background: var(--bs-body-bg) !important;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bs-body-bg);
 }
 
-/* ============================
-   FREEZE FIRST COLUMN
-============================ */
-
+/* FIRST COLUMN */
 .schedule-table th:first-child,
 .schedule-table td:first-child {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 30 !important;
-  background: var(--bs-body-bg) !important;
-  border-right: 2px solid var(--bs-border-color) !important;
-  min-width: 260px !important;
+  position: sticky;
+  left: 0;
+  z-index: 25;
+  background: var(--bs-body-bg);
+  min-width: 260px;
+  border-right: 2px solid var(--bs-border-color);
 }
 
-/* ============================
-   TOP-LEFT CORNER (HIGHEST LAYER)
-============================ */
-
+/* TOP LEFT CORNER CELL */
 .schedule-table thead th:first-child {
-  z-index: 40;
+  z-index: 35;
 }
 
-/* Prevent weird stacking issues */
-.schedule-table tbody td {
-  position: relative;
-  z-index: 1;
+
+.schedule-table th,
+.schedule-table td {
+  background-clip: padding-box;
 }
+
 
 .schedule-table {
   min-width: max-content;
