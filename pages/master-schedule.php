@@ -139,93 +139,67 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
     <style>
      /* ========= GENERAL ========= */
-.schedule-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: max-content;
-  min-width: 100%;
-  table-layout: fixed;
+.schedule-wrapper {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: auto 1fr;
+  height: calc(100vh - 260px);
+  border: 1px solid #ddd;
+  border-radius: 10px;
 }
 
-.schedule-table th,
-.schedule-table td {
-  padding: 8px;
-  background-color: var(--bs-body-bg, #fff); /* ensure background */
-  position: relative;
-  min-width: 150px; /* or whatever fits your badges */
-}
-
-/* ========= STICKY HEADER ========= */
-.schedule-table thead th {
+.schedule-header {
+  display: grid;
+  grid-template-columns: 260px 1fr;
   position: sticky;
   top: 0;
-  z-index: 50; /* above body cells */
-  background-color: var(--bs-body-bg, #fff);
-  border-bottom: 2px solid rgb(223, 226, 230);
+  background: #fff;
+  z-index: 10;
 }
 
-/* ========= STICKY FIRST COLUMN ========= */
-.schedule-table th:first-child,
-.schedule-table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 51; /* above body but below header */
-  background-color: var(--bs-body-bg, #fff);
-  border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px;
+.employee-header {
+  border-right: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
-/* ========= TOP-LEFT CORNER ========= */
-.schedule-table thead th:first-child {
-  z-index: 100; /* above everything */
-  border-bottom: 2px solid rgb(223, 226, 230);
-  border-right: 2px solid rgb(223, 226, 230);
+.weeks-header {
+  display: flex;
+  overflow-x: auto;
 }
 
-/* ========= BADGES ========= */
-.draggable-badge {
-  position: relative; /* make above td */
-  z-index: 5;
-  cursor: grab;
-  user-select: none;
+.schedule-body {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: 100%;
 }
 
-/* ========= TIMEOFF ========= */
-.timeoff-cell {
-  background-color: rgb(217,217,217);
+.employee-column {
+  overflow-y: auto;
+  border-right: 2px solid #ddd;
 }
 
-.timeoff-current-week {
-  background-color: rgb(217,217,217);
-  outline: 3px solid rgb(169,205,83);
-  outline-offset: -3px;
+.weeks-content {
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(26, 150px);
+  gap: 2px;
 }
-
-.timeoff-corner {
-  position: absolute;
-  top: 2px;
-  right: 6px;
-  font-size: 8px;
-  font-weight: 800;
-  color: rgb(50,107,61);
-}
-
-/* ========= SHEET CONTAINER ========= */
-.sheet-container {
-  height: calc(100vh - 260px);
-  overflow: auto; /* sticky works inside scrollable container */
-  border: 1px solid var(--bs-border-color, #ddd);
-  border-radius: 10px;
+.week-cell {
+  border: 1px solid #eee;
+  min-height: 60px;
+  padding: 2px;
   position: relative;
 }
-
-/* ========= MAIN CONTENT ========= */
-.main-content {
-  margin-left: 250px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.badge {
+  display: block;
+  margin: 2px 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: grab;
 }
     </style>
     <script>
@@ -304,128 +278,54 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="sheet-container flex-grow-1">
-            <table class="table align-middle text-center schedule-table">
-                <thead>
-                    <tr>
-                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
-                        <?php foreach ($mondays as $idx => $monday):
-                            $weekKey = date('Y-m-d', $monday);
-                            $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
-                            $isGlobalWeek = $globalHours !== null;
-                            $isCurrentWeek = ($idx === $currentWeekIndex);
-                            $thClasses = 'align-middle week';
-                            if ($isGlobalWeek) $thClasses .= ' timeoff-cell';
-                            if ($isCurrentWeek) $thClasses .= ' highlight-today';
-                            if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
-                        ?>
-                        <th class="<?php echo $thClasses; ?>">
-                            <?php echo date('M j', $monday); ?><br>
-                            <small class="text-muted">Week of <?php echo date('n/j', $monday); ?></small>
-                            <?php if ($isGlobalWeek): ?>
-                                <span class="timeoff-corner"><?php echo $globalHours; ?></span>
-                            <?php endif; ?>
-                        </th>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
-                            
-                <tbody id="employeesTableBody">
-                <?php foreach ($employees as $userId => $employee):
-                    $fullName = htmlspecialchars($employee['full_name']);
-                    $role = htmlspecialchars($employee['role']);
-                ?>
-                <tr data-role="<?php echo strtolower($role); ?>">
-                    <td class="text-start employee-name"
-                        data-user-id="<?php echo $userId; ?>"
-                        data-user-name="<?php echo $fullName; ?>"
-                        data-role="<?php echo strtolower($role); ?>"
-                        data-email="<?php echo htmlspecialchars($employee['email']); ?>">
-                        <div class="d-flex align-items-center">
-                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
-                                     style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;
-                                     background-color: <?php 
-                                         if (strtolower($role) === 'senior') {
-                                             echo 'rgb(230,144,65)';
-                                         } elseif (strtolower($role) === 'staff') {
-                                             echo 'rgb(66,127,194)';
-                                         } else {
-                                             echo '#6c757d'; // default color if neither
-                                         }
-                                     ?>;">
-                                  <?php
-                                  $initials = '';
-                                  foreach (explode(' ', $fullName) as $part) {
-                                      $initials .= strtoupper(substr($part, 0, 1));
-                                  }
-                                  echo $initials;
-                                  ?>
-                                </div>
-                                <div>
-                                    <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                    <div class="text-muted text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
-                                </div>
-                            </div>
-                    </td>
-                              
-                    <?php foreach ($mondays as $idx => $monday):
-                        $weekKey = date('Y-m-d', $monday);
-                        $entriesForWeek = $entries[$userId][$weekKey] ?? [];
-                        $timeOffForWeek = $individualTimeOff[$userId][$weekKey] ?? [];
-                    
-                        $hasPersonalTimeOff = !empty($timeOffForWeek);
-                        $timeOffHours = 0;
-                        $cellContent = '';
-                    
-                        if ($hasPersonalTimeOff) {
-                            foreach ($timeOffForWeek as $to) {
-                                $timeOffHours += floatval($to['assigned_hours']);
-                            }
-                        }
-                    
-                        if (isset($globalTimeOff[$weekKey]) && $hasPersonalTimeOff) {
-                            $timeOffHours += floatval($globalTimeOff[$weekKey]['assigned_hours']);
-                        }
-                    
-                        // Build engagement badges
-                        foreach ($entriesForWeek as $entry) {
-                            $status = strtolower($entry['engagement_status'] ?? 'confirmed');
-                            switch ($status) {
-                                case 'confirmed': $entry_class='badge-confirmed'; break;
-                                case 'pending': $entry_class='badge-pending'; break;
-                                case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
-                                default: $entry_class='badge-confirmed'; break;
-                            }
-                            $clientName = htmlspecialchars($entry['client_name']);
-                            $assignedHours = htmlspecialchars($entry['assigned_hours']);
-                            $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
-                            $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
-                            $badgeId = "badge-entry-{$entry['entry_id']}";
-                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
-                        }
-                    
-                        if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
-                            $cellContent = "<i class='bi bi-plus text-muted'></i>";
-                        }
-                    
-                        $tdClass = 'addable';
-                        if ($hasPersonalTimeOff || isset($globalTimeOff[$weekKey])) $tdClass .= ' position-relative timeoff-cell';
-                    ?>
-                    <td class="<?php echo $tdClass; ?>" 
-                        data-user-id="<?php echo $userId; ?>" 
-                        data-user-name="<?php echo $fullName; ?>" 
-                        data-week-start="<?php echo $weekKey; ?>"
-                        style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
-                        <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
-                        <?php echo $cellContent; ?>
-                    </td>
-                    <?php endforeach; ?>
-                    
-                </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+        <div class="schedule-wrapper">
+  <!-- Header -->
+  <div class="schedule-header">
+    <div class="employee-header">Employee</div>
+    <div class="weeks-header">
+      <?php foreach($mondays as $monday): ?>
+        <div class="week-header" style="min-width:150px">
+          <?= date('M j', $monday) ?><br>
+          <small class="text-muted">Week of <?= date('n/j', $monday) ?></small>
         </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="schedule-body">
+    <!-- Employee column -->
+    <div class="employee-column">
+      <?php foreach($employees as $employee): ?>
+        <div class="employee-name" style="height:60px; display:flex; align-items:center; padding:0 5px;">
+          <?= htmlspecialchars($employee['full_name']) ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+
+    <!-- Week cells -->
+    <div class="weeks-content">
+      <?php foreach($employees as $userId => $employee): ?>
+        <?php foreach($mondays as $monday): 
+          $weekKey = date('Y-m-d', $monday);
+          $entriesForWeek = $entries[$userId][$weekKey] ?? [];
+          $timeOffForWeek = $individualTimeOff[$userId][$weekKey] ?? [];
+        ?>
+          <div class="week-cell">
+            <?php foreach($entriesForWeek as $entry): ?>
+              <span class="badge" style="background:lightblue;">
+                <?= htmlspecialchars($entry['client_name']) ?> (<?= $entry['assigned_hours'] ?>)
+              </span>
+            <?php endforeach; ?>
+            <?php if(!empty($timeOffForWeek)): ?>
+              <span class="timeoff-corner"><?= array_sum(array_column($timeOffForWeek, 'assigned_hours')) ?></span>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</div>
 
 
     <!-- end master schedule table -->
