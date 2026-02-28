@@ -86,7 +86,7 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // Global Time Off
-$globalTimeOffQuery = "SELECT week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ?";
+$globalTimeOffQuery = "SELECT week_start, SUM(assigned_hours) as assigned_hours FROM time_off WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ? GROUP BY week_start";
 $stmt2 = $conn->prepare($globalTimeOffQuery);
 $stmt2->bind_param('ss', $startDate, $endDate);
 $stmt2->execute();
