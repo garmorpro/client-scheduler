@@ -1360,6 +1360,7 @@ body.dark-mode .btn-dark-custom {
 
 body.dark-mode .view-client-button {
     color: #424242 !important;
+    background-color: white;
 }
 body.dark-mode .view-client-button:hover {
     color: #5b5b5b !important;
