@@ -158,13 +158,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* ========= STICKY HEADER ========= */
-.schedule-table thead th {
+/* .schedule-table thead th {
   position: sticky;
   top: 0;
   z-index: 100;
   background: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
-}
+} */
 
 /* ========= STICKY FIRST COLUMN ========= */
 .employee-name,
