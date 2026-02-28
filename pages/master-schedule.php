@@ -409,6 +409,39 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const container = document.querySelector('.table-responsive');
+
+let isDown = false;
+let startX;
+let scrollLeft;
+
+container.addEventListener('mousedown', (e) => {
+  isDown = true;
+  container.classList.add('grabbing');
+  startX = e.pageX - container.offsetLeft;
+  scrollLeft = container.scrollLeft;
+});
+
+container.addEventListener('mouseleave', () => {
+  isDown = false;
+  container.classList.remove('grabbing');
+});
+
+container.addEventListener('mouseup', () => {
+  isDown = false;
+  container.classList.remove('grabbing');
+});
+
+container.addEventListener('mousemove', (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - container.offsetLeft;
+  const walk = (x - startX) * 1.5; // scroll speed
+  container.scrollLeft = scrollLeft - walk;
+});
+    </script>
 </div>
 </body>
 </html>
