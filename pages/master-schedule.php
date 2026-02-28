@@ -232,7 +232,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 
 /* ========= OPTIONAL STYLING ========= */
