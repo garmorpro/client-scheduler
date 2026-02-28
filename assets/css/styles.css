@@ -1366,3 +1366,8 @@ body.dark-mode .view-client-button:hover {
     color: #5b5b5b !important;
     background-color: #dbdbdb !important;
 }
+
+body.dark-mode .icon-bubble {
+    background-color: #3a3a50;
+    color: #e0e0e0;
+}
