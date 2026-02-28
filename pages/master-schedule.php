@@ -162,7 +162,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 ============================ */
 
 .sheet-container {
-  height: calc(100vh - 260px);  /* adjust if needed */
+  height: calc(100vh - 260px);
   overflow: auto;
   border: 1px solid var(--bs-border-color);
   border-radius: 10px;
@@ -222,11 +222,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   min-width: max-content;
 }
 
-.sheet-container {
-  overflow: auto;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 10px;
-}
 
 .main-content {
   margin-left: 250px; /* match sidebar width */
@@ -491,7 +486,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const container = document.querySelector('.table-responsive');
+        const container = document.querySelector('.sheet-container');
 
 let isDown = false;
 let startX;
