@@ -9,8 +9,8 @@
         position:absolute;
         display:none;
         z-index:9999;
-        background:#fff;
-        border:1px solid #ccc;
+        background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
+        border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
         margin-top: 15px;
         border-radius:4px;
         box-shadow:0 2px 6px rgba(0,0,0,0.2);
