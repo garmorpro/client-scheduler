@@ -219,7 +219,7 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
             <table id="engagement-table" class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th style="width: 10px;"><input type="checkbox" id="selectAllEngagements"></th>
+                        <th style="width: 10px !important;"><input type="checkbox" id="selectAllEngagements"></th>
                         <th>Client</th>
                         <th>Budgeted Hours</th>
                         <th>Allocated Hours</th>
