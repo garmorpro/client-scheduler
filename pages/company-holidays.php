@@ -16,13 +16,24 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch holidays grouped by holiday_name
+// Fetch holidays grouped by timeoff_note
 $holidays = [];
 $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start ASC";
 $result = $conn->query($sql);
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $holidays[] = $row;
+        $note = $row['timeoff_note'] ?? 'Holiday';
+        if (!isset($holidays[$note])) {
+            $holidays[$note] = [
+                'name' => $note,
+                'days' => []
+            ];
+        }
+        $holidays[$note]['days'][] = [
+            'id' => $row['timeoff_id'],
+            'date' => $row['week_start'],
+            'hours' => $row['assigned_hours']
+        ];
     }
 }
 ?>
