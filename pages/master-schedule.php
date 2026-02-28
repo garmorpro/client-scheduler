@@ -142,7 +142,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table {
   border-collapse: separate;
   border-spacing: 0;
-  width: max-content; /* allow table to grow horizontally */
+  width: max-content;
+  min-width: 100%;
   table-layout: fixed;
 }
 
@@ -212,7 +213,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SHEET CONTAINER ========= */
 .sheet-container {
   height: calc(100vh - 260px);
-  overflow: auto; /* sticky works inside scrollable container */
+  overflow: visible; /* sticky works inside scrollable container */
   border: 1px solid var(--bs-border-color, #ddd);
   border-radius: 10px;
   position: relative;
@@ -225,12 +226,6 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-.sheet-container {
-  height: calc(100vh - 260px); /* adjust as needed */
-  position: relative;          /* required for sticky to work */
-  border: 1px solid #ddd;
-  border-radius: 10px;
 }
     </style>
     <script>
