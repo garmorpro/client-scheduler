@@ -171,7 +171,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 90; /* below top-left corner */
+  z-index: 10; /* below top-left corner */
   min-width: 260px;
   text-align: left;
   background: var(--bs-body-bg, #fff);
