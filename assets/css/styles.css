@@ -185,7 +185,7 @@ body.dark-mode .timeoff-card {
 
 /* Addable hover */
 body.dark-mode .schedule-table td.addable:hover {
-  background-color: #33334a !important;
+  background-color: #9595b1 !important;
 }
 
 /* Drop target */
