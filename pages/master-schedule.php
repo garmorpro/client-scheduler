@@ -182,6 +182,10 @@ thead th {
     min-width: 200px;
 }
 
+.employee {
+    min-width: 250px;
+}
+
 /* Freeze first column */
 tbody td:first-child,
 thead th:first-child {
