@@ -292,8 +292,75 @@ td.addable:hover {
 <?php if ($isAdmin): ?>
 .timeoff-cell:hover { 
   background-color: rgb(225, 225, 225) !important; 
-}
+}   
 <?php endif; ?>
+
+
+/* === FULL STICKY FIX FOR MASTER SCHEDULE === */
+
+.sheet-container {
+  overflow: auto;
+  position: relative;
+  height: calc(100vh - 260px);
+}
+
+/* Table setup */
+.schedule-table {
+  border-collapse: separate !important; /* must be separate for sticky */
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+/* Sticky header row */
+.schedule-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bs-body-bg, #fff);
+  z-index: 100; /* higher than body cells */
+  border-bottom: 2px solid rgb(223, 226, 230);
+}
+
+/* Sticky first column (all rows) */
+.schedule-table th:first-child,
+.schedule-table td:first-child {
+  position: sticky;
+  left: 0;
+  min-width: 260px;
+  text-align: left;
+  background: var(--bs-body-bg, #fff);
+  border-right: 2px solid rgb(223, 226, 230);
+  z-index: 90; /* above body cells but below top-left corner */
+}
+
+/* Top-left corner cell (header + first column) */
+.schedule-table thead th:first-child {
+  z-index: 110; /* above everything */
+}
+
+/* Ensure position-relative on body cells doesn't break sticky */
+.schedule-table td.position-relative {
+  z-index: 1;
+}
+
+/* Optional: Highlight current week */
+.highlight-today {
+  outline: 3px solid rgb(169,205,83);
+  outline-offset: -3px;
+}
+
+/* Ensure badges don’t cover sticky columns */
+.draggable-badge {
+  position: relative;
+  z-index: 2;
+}
+
+/* Scroll behavior: grab */
+.sheet-container.grabbing {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
@@ -372,7 +439,7 @@ td.addable:hover {
         }
         ?>
         <div class="sheet-container flex-grow-1">
-            <table class=" align-middle text-center schedule-table">
+            <table class="table align-middle text-center schedule-table">
                 <thead>
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
