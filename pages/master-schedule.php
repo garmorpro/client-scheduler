@@ -152,66 +152,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
       .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
       td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
       td.addable:hover { background: rgba(0,0,0,0.02); }
-      /* th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; } */
-      /* .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; } */
+      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
+      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
       .week { min-width: 200px; }
-
-      /* ===========================
-   EXCEL-STYLE GRID
-=========================== */
-
-html, body {
-  height: 100%;
-}
-
-body.d-flex {
-  min-height: 100vh;
-}
-
-.table-responsive {
-  height: calc(100vh - 220px); /* adjust if needed */
-  overflow: auto;
-  position: relative;
-  border: 1px solid var(--bs-border-color);
-}
-
-table {
-  min-width: max-content;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-/* Freeze header */
-thead th {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: var(--bs-body-bg);
-}
-
-.week {
-    min-width: 200px;
-}
-
-.employee {
-    min-width: 250px;
-}
-
-/* Freeze first column */
-tbody td:first-child,
-thead th:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 30;
-  background: var(--bs-body-bg);
-  border-right: 2px solid var(--bs-border-color);
-  /* min-width: 250px; */
-}
-
-/* Top-left cell */
-thead th:first-child {
-  z-index: 40;
-}
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
@@ -221,7 +164,7 @@ thead th:first-child {
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 <?php include_once '../templates/sidebar.php'; ?>
-<div class="flex-grow-1 p-4" style="margin-left: 250px;">
+<div class="flex-grow-1 p-4" style="margin-left: 250px; width: 1200px;">
 
     <!-- header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -289,11 +232,11 @@ thead th:first-child {
             }
         }
         ?>
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-x: auto;">
             <table class="table table-bordered align-middle text-center">
-                <thead>
+                <thead class="table-light">
                     <tr>
-                        <th class="text-start employee align-middle"><i class="bi bi-people me-2"></i>Employee</th>
+                        <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
                             $weekKey = date('Y-m-d', $monday);
                             $globalHours = $globalTimeOff[$weekKey]['assigned_hours'] ?? null;
