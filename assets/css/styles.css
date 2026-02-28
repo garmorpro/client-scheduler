@@ -95,7 +95,7 @@ body {
 
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
-border-color: #3a3a50 !important;
+  border-color: #3a3a50 !important;
   border-radius: 15px !important;
   width: 100%;
   height: calc(100vh - 260px);
