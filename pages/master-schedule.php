@@ -432,11 +432,12 @@ updateLastRowRadius();
 document.querySelectorAll('.schedule-table td.addable').forEach(td => {
     td.addEventListener('mouseenter', function() {
         const isDark = document.body.classList.contains('dark-mode');
+        console.log('mouseenter - isDark:', isDark);
         this.style.setProperty('background-color', isDark ? '#9595b1' : '#e0f7fa', 'important');
+        console.log('after set - computed bg:', window.getComputedStyle(this).backgroundColor);
     });
     td.addEventListener('mouseleave', function() {
         const isDark = document.body.classList.contains('dark-mode');
-        // Set back to base color explicitly instead of removing
         this.style.setProperty('background-color', isDark ? '#2a2a3d' : '#ffffff', 'important');
     });
 });
