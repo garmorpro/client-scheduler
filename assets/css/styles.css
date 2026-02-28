@@ -63,7 +63,7 @@ body {
 }
 
 .schedule-table thead th:first-child,
-.schedule-table tbody tr:first-child {
+.schedule-table tbody .employee-name {
   border-left: .5px solid rgb(223, 226, 230);
 }
 
