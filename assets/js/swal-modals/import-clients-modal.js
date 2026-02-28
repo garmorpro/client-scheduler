@@ -1,4 +1,4 @@
-document.querySelector('[data-bs-target="#importClientsModal"]').addEventListener('click', function(e) {
+document.getElementById('importClientsBtn').addEventListener('click', function(e) {
     e.preventDefault();
     
     const isDark = document.body.classList.contains('dark-mode');
