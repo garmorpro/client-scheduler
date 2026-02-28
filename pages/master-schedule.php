@@ -140,11 +140,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
      /* ========= GENERAL TABLE ========= */
 .schedule-table {
-  border-collapse: separate;
-  border-spacing: 0;
+  table-layout: fixed;
   min-width: 100%;
   width: max-content; /* allows horizontal scroll */
-  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -161,7 +161,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table thead th {
   position: sticky;
   top: 0;
-  z-index: 50;             /* header above cells */
+  z-index: 50;             /* header above body cells */
   background-color: var(--bs-body-bg, #fff);
   border-bottom: 2px solid rgb(223, 226, 230);
 }
@@ -171,13 +171,13 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 51;             /* above body but below header */
+  z-index: 55;             /* above body cells */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px;
+  min-width: 260px;        /* adjust as needed */
 }
 
-/* ========= TOP-LEFT CORNER ========= */
+/* ========= TOP-LEFT CORNER CELL ========= */
 .schedule-table thead th:first-child {
   z-index: 100;            /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
@@ -222,11 +222,11 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 
 /* ========= MAIN CONTENT ========= */
 .main-content {
-  margin-left: 250px;           /* sidebar offset */
+  margin-left: 250px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* <-- CHANGE THIS */
 }
 
 /* ========= OPTIONAL STYLING ========= */
