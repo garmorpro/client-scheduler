@@ -198,8 +198,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* Bottom-left corner — last row, first cell */
-.schedule-table tbody tr:last-child td:first-child {
-  border-radius: 0 0 0 15px;
+.schedule-table tr:last-child td:first-child {
+  border-radius: 15px !important;
 }
 
 /* Bottom-right corner — last row, last cell */
