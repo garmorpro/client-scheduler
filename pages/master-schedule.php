@@ -274,7 +274,7 @@ thead th:first-child {
         ?>
         <div class="table-responsive" style="overflow-x: auto;">
             <table class="table table-bordered align-middle text-center">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
