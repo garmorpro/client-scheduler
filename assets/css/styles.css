@@ -20,6 +20,7 @@ body {
   table-layout: fixed;      /* maintain column widths */
   overflow: visible !important;
   border-radius: 15px !important;
+  border-color: #3a3a50 !important;
 }
 
 /* ========= TABLE CELLS ========= */
@@ -105,7 +106,6 @@ body {
 
 /* ========= MAIN CONTENT ========= */
 .main-content {
-  border-color: #3a3a50 !important;
   margin-left: 250px;           /* sidebar offset */
   border-radius: 15px !important;
   height: 100vh;
