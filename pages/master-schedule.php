@@ -140,7 +140,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
      /* ========= GENERAL TABLE ========= */
 .schedule-table {
-  table-layout: fixed;
+  table-layout: sticky;
   min-width: 100%;
   width: max-content; /* allows horizontal scroll */
   border-collapse: separate;
