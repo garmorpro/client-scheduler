@@ -188,16 +188,10 @@ body.dark-mode .timeoff-card {
   transition: background-color 0.15s ease;
 } */
 
-body.dark-mode .schedule-table {
+body.dark-mode .schedule-table tbody tr {
   background-color: transparent !important;
-}
-
-body.dark-mode .schedule-table tbody {
-  background-color: transparent !important;
-}
-
-body.dark-mode .schedule-table tr {
-  background-color: transparent !important;
+  --bs-table-bg: transparent !important;
+  --bs-table-accent-bg: transparent !important;
 }
 
 
