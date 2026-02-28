@@ -56,7 +56,7 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                     return false;
                 }
 
-                return fetch('add_engagement.php', {
+                return fetch('../../../pages/add_engagement.php', {
                     method: 'POST',
                     body: (() => {
                         const formData = new FormData();
