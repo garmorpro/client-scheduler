@@ -140,9 +140,8 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <style>
      /* ========= GENERAL TABLE ========= */
 .schedule-table {
-  table-layout: sticky;
-  min-width: 100%;
-  width: max-content; /* allows horizontal scroll */
+  table-layout: fixed;          /* fixed layout allows sticky columns */
+  min-width: max-content;       /* allows horizontal scroll if needed */
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -171,15 +170,15 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 .schedule-table td:first-child {
   position: sticky;
   left: 0;
-  z-index: 55;             /* above body cells */
+  z-index: 60;                  /* above body cells */
   background-color: var(--bs-body-bg, #fff);
   border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px;        /* adjust as needed */
+  min-width: 260px;             /* adjust to fit content */
 }
 
-/* ========= TOP-LEFT CORNER CELL ========= */
+/* ========= TOP-LEFT CORNER ========= */
 .schedule-table thead th:first-child {
-  z-index: 100;            /* above everything */
+  z-index: 101;                 /* above everything */
   border-bottom: 2px solid rgb(223, 226, 230);
   border-right: 2px solid rgb(223, 226, 230);
 }
@@ -215,9 +214,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 /* ========= SCROLLABLE CONTAINER ========= */
 .sheet-container {
   width: 100%;
-  height: calc(100vh - 260px); /* adjust if your header is taller */
-  overflow: auto;              /* allows horizontal + vertical scroll */
-  position: relative;
+  height: calc(100vh - 260px);
+  overflow: auto;           /* horizontal + vertical scroll */
+  position: relative;       /* required for sticky positioning */
 }
 
 /* ========= MAIN CONTENT ========= */
@@ -226,7 +225,7 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: visible; /* <-- CHANGE THIS */
+  overflow: visible;        /* sticky won't work if hidden */
 }
 
 /* ========= OPTIONAL STYLING ========= */
