@@ -217,6 +217,10 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
   position: relative;
   z-index: 1;
 }
+
+.schedule-table {
+  min-width: max-content;
+}
     </style>
     <script>
       const entries = <?php echo json_encode($entries); ?>;
@@ -294,9 +298,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
             }
         }
         ?>
-        <div class="table-responsive">
+        <div class="sheet-container">
             <table class="table align-middle text-center schedule-table">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th class="text-start align-middle"><i class="bi bi-people me-2"></i>Employee</th>
                         <?php foreach ($mondays as $idx => $monday):
