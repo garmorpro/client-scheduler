@@ -193,9 +193,9 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
 }
 
 /* FIRST COLUMN */
-.schedule-table thead:first-child,
+.schedule-table th:first-child,
 .schedule-table td:first-child {
-  position: sticky !important;
+  position: fixed !important;
   left: 0;
   z-index: 25;
   background: var(--bs-body-bg);
