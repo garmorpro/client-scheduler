@@ -50,7 +50,7 @@ body {
   left: 0;
   z-index: 20;             /* above body but below header */
   background-color: var(--bs-body-bg, #fff);
-  border-right: 2px solid rgb(223, 226, 230);
+  border-right: .5px solid rgb(223, 226, 230);
   min-width: 260px;
 }
 
