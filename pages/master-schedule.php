@@ -137,113 +137,27 @@ while ($D_row = $dropdownresult->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+
     <style>
-     /* ========= GENERAL TABLE ========= */
-.schedule-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: max-content;       /* allow horizontal scroll */
-  min-width: 100%;
-  table-layout: fixed;      /* maintain column widths */
-  overflow: visible !important;
-  border-radius: 15px !important;
-}
-
-/* ========= TABLE CELLS ========= */
-.schedule-table th,
-.schedule-table td {
-  padding: 8px;
-  background-color: var(--bs-body-bg, #fff);
-  position: relative;
-  min-width: 150px;        /* adjusts badges inside */
-  vertical-align: middle;
-}
-
-/* ========= STICKY HEADER ========= */
-.schedule-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 10;             /* header above cells */
-  background-color: var(--bs-body-bg, #fff);
-  border-bottom: 2px solid rgb(223, 226, 230);
-}
-
-
-/* ========= STICKY FIRST COLUMN ========= */
-.schedule-table th:first-child,
-.schedule-table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 20;             /* above body but below header */
-  background-color: var(--bs-body-bg, #fff);
-  border-right: 2px solid rgb(223, 226, 230);
-  min-width: 260px;
-}
-
-/* ========= TOP-LEFT CORNER ========= */
-.schedule-table thead th:first-child {
-  z-index: 30;            /* above everything */
-  border-bottom: 2px solid rgb(223, 226, 230);
-  border-right: 2px solid rgb(223, 226, 230);
-  border-radius: 15px 0 0 0;
-}
-
-.schedule-table tbody tr:last-child .employee-name {
-  border-radius: 0 0 0 15px !important;
-}
-
-/* ========= BADGES ========= */
-.draggable-badge {
-  position: relative;
-  z-index: 5;
-  cursor: grab;
-  user-select: none;
-}
-
-/* ========= TIMEOFF CELLS ========= */
-.timeoff-cell {
-  background-color: rgb(217,217,217);
-}
-
-.timeoff-current-week {
-  background-color: rgb(217,217,217);
-  outline: 3px solid rgb(169,205,83);
-  outline-offset: -3px;
-}
-
-.timeoff-corner {
-  position: absolute;
-  top: 2px;
-  right: 6px;
-  font-size: 8px;
-  font-weight: 800;
-  color: rgb(50,107,61);
-}
-
-/* ========= SCROLLABLE CONTAINER ========= */
-.sheet-container {
-  border-radius: 15px !important;
-  width: 100%;
-  height: calc(100vh - 260px);
-  overflow: auto !important;
-  position: relative;
-}
-
-/* ========= MAIN CONTENT ========= */
-.main-content {
-  margin-left: 250px;           /* sidebar offset */
-  border-radius: 15px !important;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden !important;
-}
-
-/* ========= OPTIONAL STYLING ========= */
-.addable {
-  cursor: pointer;
-}
+         .timeoff-cell { background-color: rgb(217,217,217) !important; }
+      .timeoff-current-week {background-color: rgb(217,217,217) !important; outline: 3px solid rgb(169,205,83); outline-offset: -3px;}
+      <?php if ($isAdmin): ?>
+      .timeoff-cell:hover { background-color: rgb(225, 225, 225) !important; }
+      <?php endif; ?>
+      .timeoff-corner { 
+        position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800;
+        color: rgb(50,107,61) !important;
+      }
+      .timeoff-card { border: 2px dashed rgb(209,226, 159) !important; background: rgb(246, 249, 236) !important; }
+      .draggable-badge { cursor: grab; user-select: none; }
+      .draggable-badge.dragging { opacity: 0.5; transform: scale(0.98); }
+      td.drop-target { outline: 3px dashed rgba(0,123,255,0.15); }
+      td.addable:hover { background: rgba(0,0,0,0.02); }
+      th:first-child, td:first-child { min-width: 250px; position: sticky !important; left: 0; background-color: #fff; z-index: 101; outline: 2px solid rgb(223, 226, 230); border-left: 2px solid rgb(223, 226, 230); box-sizing: border-box; }
+      .table-responsive { outline: 2px solid rgb(223, 226, 230); outline-offset: -2px; }
+      .week { min-width: 200px; }
     </style>
+
     <script>
       const entries = <?php echo json_encode($entries); ?>;
       const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;

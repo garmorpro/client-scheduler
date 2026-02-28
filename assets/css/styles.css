@@ -11,7 +11,111 @@ body {
     font-size: 14px !important;
 }
 
+/* ========= GENERAL TABLE ========= */
+.schedule-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;       /* allow horizontal scroll */
+  min-width: 100%;
+  table-layout: fixed;      /* maintain column widths */
+  overflow: visible !important;
+  border-radius: 15px !important;
+}
 
+/* ========= TABLE CELLS ========= */
+.schedule-table th,
+.schedule-table td {
+  padding: 8px;
+  background-color: var(--bs-body-bg, #fff);
+  position: relative;
+  min-width: 150px;        /* adjusts badges inside */
+  vertical-align: middle;
+}
+
+/* ========= STICKY HEADER ========= */
+.schedule-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;             /* header above cells */
+  background-color: var(--bs-body-bg, #fff);
+  border-bottom: 2px solid rgb(223, 226, 230);
+}
+
+
+/* ========= STICKY FIRST COLUMN ========= */
+.schedule-table th:first-child,
+.schedule-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;             /* above body but below header */
+  background-color: var(--bs-body-bg, #fff);
+  border-right: 2px solid rgb(223, 226, 230);
+  min-width: 260px;
+}
+
+/* ========= TOP-LEFT CORNER ========= */
+.schedule-table thead th:first-child {
+  z-index: 30;            /* above everything */
+  border-bottom: 2px solid rgb(223, 226, 230);
+  border-right: 2px solid rgb(223, 226, 230);
+  border-radius: 15px 0 0 0;
+}
+
+.schedule-table tbody tr:last-child .employee-name {
+  border-radius: 0 0 0 15px !important;
+}
+
+/* ========= BADGES ========= */
+.draggable-badge {
+  position: relative;
+  z-index: 5;
+  cursor: grab;
+  user-select: none;
+}
+
+/* ========= TIMEOFF CELLS ========= */
+.timeoff-cell {
+  background-color: rgb(217,217,217);
+}
+
+.timeoff-current-week {
+  background-color: rgb(217,217,217);
+  outline: 3px solid rgb(169,205,83);
+  outline-offset: -3px;
+}
+
+.timeoff-corner {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 8px;
+  font-weight: 800;
+  color: rgb(50,107,61);
+}
+
+/* ========= SCROLLABLE CONTAINER ========= */
+.sheet-container {
+  border-radius: 15px !important;
+  width: 100%;
+  height: calc(100vh - 260px);
+  overflow: auto !important;
+  position: relative;
+}
+
+/* ========= MAIN CONTENT ========= */
+.main-content {
+  margin-left: 250px;           /* sidebar offset */
+  border-radius: 15px !important;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+
+/* ========= OPTIONAL STYLING ========= */
+.addable {
+  cursor: pointer;
+}
 
 
 
