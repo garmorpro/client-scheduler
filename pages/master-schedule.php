@@ -30,7 +30,7 @@ $rangeLabel = "Week of " . date('n/j', $firstWeek) . " - Week of " . date('n/j',
 // Employees
 $employees = [];
 $userQuery = "
-    SELECT user_id, full_name, role, email
+    SELECT user_id, full_name, role, job_title, email
     FROM users 
     WHERE status = 'active' AND role IN ('intern', 'staff', 'senior', 'manager')
     ORDER BY CASE 
@@ -46,6 +46,7 @@ if ($userResult) {
         $employees[$userRow['user_id']] = [
             'full_name' => $userRow['full_name'],
             'role' => $userRow['role'],
+            'job_title' => $userRow['job_title'],
             'email' => $userRow['email']
         ];
     }
@@ -304,7 +305,7 @@ updateLastRowRadius();
                                 </div>
                                 <div>
                                     <div class="fw-semibold"><?php echo $fullName; ?></div>
-                                    <div class="text-capitalize" style="font-size: 12px;"><?php echo $role; ?></div>
+                                    <div class="text-capitalize" style="font-size: 12px;"><?php echo htmlspecialchars($employee['job_title']); ?></div>
                                 </div>
                             </div>
                     </td>
