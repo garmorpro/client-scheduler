@@ -32,11 +32,12 @@ $employees = [];
 $userQuery = "
     SELECT user_id, full_name, role, email
     FROM users 
-    WHERE status = 'active' AND role IN ('staff', 'senior', 'manager')
+    WHERE status = 'active' AND role IN ('intern', 'staff', 'senior', 'manager')
     ORDER BY CASE 
                 WHEN role = 'senior' THEN 1 
                 WHEN role = 'staff' THEN 2 
-                WHEN role = 'manager' THEN 3 
+                WHEN role = 'intern' THEN 3 
+                WHEN role = 'manager' THEN 4 
              END, full_name ASC
 ";
 $userResult = $conn->query($userQuery);
@@ -214,6 +215,12 @@ updateLastRowRadius();
                     </li>
                     <li>
                         <div class="form-check">
+                            <input class="form-check-input role-checkbox" type="checkbox" value="intern" id="roleIntern" checked>
+                            <label class="form-check-label" for="roleIntern">Intern</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-check">
                             <input class="form-check-input role-checkbox" type="checkbox" value="manager" id="roleManager">
                             <label class="form-check-label" for="roleManager">Manager</label>
                         </div>
@@ -281,6 +288,8 @@ updateLastRowRadius();
                                              echo 'rgb(230,144,65)';
                                          } elseif (strtolower($role) === 'staff') {
                                              echo 'rgb(66,127,194)';
+                                         } elseif (strtolower($role) === 'intern') {
+                                             echo 'rgb(76,175,80)';
                                          } else {
                                              echo '#6c757d'; // default color if neither
                                          }
