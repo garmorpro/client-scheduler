@@ -18,32 +18,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Passwords do not match.";
     } elseif (strlen($newPassword) < 8) {
         $error = "Password must be at least 8 characters.";
+    } elseif ($newPassword === 'change_me') {
+        $error = "Please choose a password other than the default.";
     } else {
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("UPDATE users SET password = ?, is_verified = 1 WHERE user_id = ?");
+        $stmt = $conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
         $stmt->bind_param("si", $hashed, $user_id);
 
         if ($stmt->execute()) {
             $stmt->close();
 
-            $userStmt = $conn->prepare("SELECT first_name, last_name, full_name, email, role, theme_mode FROM users WHERE user_id = ?");
+            $userStmt = $conn->prepare("SELECT full_name, email, role, theme_mode FROM users WHERE user_id = ?");
             $userStmt->bind_param("i", $user_id);
             $userStmt->execute();
             $user = $userStmt->get_result()->fetch_assoc();
             $userStmt->close();
 
-            $first_name = trim($user['first_name'] ?? '');
-            $last_name = trim($user['last_name'] ?? '');
-
-            if ($first_name === '' && $last_name === '') {
-                $legacyFullName = trim($user['full_name'] ?? '');
-                $nameParts = $legacyFullName === '' ? [] : preg_split('/\s+/', $legacyFullName, 2);
-                $first_name = $nameParts[0] ?? '';
-                $last_name = $nameParts[1] ?? '';
-            }
-
-            $full_name = trim($first_name . ' ' . $last_name);
+            $full_name = trim($user['full_name'] ?? '');
+            $nameParts = $full_name === '' ? ['', ''] : array_pad(preg_split('/\s+/', $full_name, 2), 2, '');
+            $first_name = $nameParts[0];
+            $last_name = $nameParts[1];
             $role = strtolower(trim($user['role'] ?? ''));
             $theme_mode = strtolower(trim($user['theme_mode'] ?? '')) ?: 'light';
 

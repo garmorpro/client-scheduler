@@ -13,7 +13,7 @@ if (isset($_GET['id'])) {
     $engagement = $engagementResult->fetch_assoc();
 
     // Get assigned employees and their hours
-    $employeeQuery = "SELECT u.first_name, u.last_name, SUM(a.assigned_hours) AS total_hours
+    $employeeQuery = "SELECT u.full_name, SUM(a.assigned_hours) AS total_hours
                       FROM entries a
                       JOIN users u ON a.user_id = u.user_id
                       WHERE a.engagement_id = ?
@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
     $employeeResult = $stmt->get_result();
     $assignedEmployees = '';
     while ($employee = $employeeResult->fetch_assoc()) {
-        $name = htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']);
+        $name = htmlspecialchars($employee['full_name'] ?? '');
         $hours = htmlspecialchars($employee['total_hours']);
         $assignedEmployees .= "<p class='mb-1'><strong>{$name}</strong> – {$hours} hrs</p>";
     }

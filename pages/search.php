@@ -25,7 +25,7 @@ if (isset($_GET['query'])) {
     }
 
     // Search for employees
-    $employeeQuery = "SELECT user_id AS id, CONCAT(first_name, ' ', last_name) AS name, 'employee' AS type FROM users WHERE CONCAT(first_name, ' ', last_name) LIKE ? AND status = 'active'";
+    $employeeQuery = "SELECT user_id AS id, full_name AS name, 'employee' AS type FROM users WHERE full_name LIKE ? AND status = 'active'";
     $stmt = $conn->prepare($employeeQuery);
     $stmt->bind_param('s', $query);
     $stmt->execute();

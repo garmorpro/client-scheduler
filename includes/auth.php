@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $stmt = $conn->prepare("SELECT user_id, first_name, last_name, full_name, email, password, role, status, theme_mode, is_verified FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role, status, theme_mode FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -27,23 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $account = $result->fetch_assoc();
         $user_id = $account['user_id'];
-        $first_name = trim($account['first_name'] ?? '');
-        $last_name = trim($account['last_name'] ?? '');
-
-        if ($first_name === '' && $last_name === '') {
-            // Users created via CSV import only have a combined full_name column
-            $legacyFullName = trim($account['full_name'] ?? '');
-            $nameParts = $legacyFullName === '' ? [] : preg_split('/\s+/', $legacyFullName, 2);
-            $first_name = $nameParts[0] ?? '';
-            $last_name = $nameParts[1] ?? '';
-        }
-
-        $full_name = trim($first_name . ' ' . $last_name);
+        $full_name = trim($account['full_name'] ?? '');
+        $nameParts = $full_name === '' ? ['', ''] : array_pad(preg_split('/\s+/', $full_name, 2), 2, '');
+        $first_name = $nameParts[0];
+        $last_name = $nameParts[1];
         $hashed_password = $account['password'];
         $role = strtolower(trim($account['role'] ?? ''));
         $status = strtolower(trim($account['status'] ?? ''));
         $theme_mode = strtolower(trim($account['theme_mode'] ?? '')) ?: 'light';
-        $is_verified = (int) ($account['is_verified'] ?? 0);
 
         // Check if account is active
         if ($status !== 'active') {
@@ -52,8 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (password_verify($password, $hashed_password)) {
             session_regenerate_id(true);
 
-            if (!$is_verified) {
-                // First login with the default password: force a real password before granting access
+            // Accounts are provisioned with a shared default password ("change_me");
+            // there's no dedicated "verified" column, so we detect the default by
+            // checking whether the stored hash still matches it.
+            if (password_verify('change_me', $hashed_password)) {
                 $_SESSION['pending_user_id'] = $user_id;
                 logActivity($conn, "password_change_required", $user_id, $email, $full_name, "Password Change Required", "First login, redirected to set password");
                 header("Location: ../pages/change-password.php");

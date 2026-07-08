@@ -29,25 +29,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Please fill all required fields.");
     }
 
+    $fullName = trim($firstName . ' ' . $lastName);
+
     // Update user query
     $stmt = $conn->prepare("
-        UPDATE users 
-        SET first_name = ?, last_name = ?, email = ?
+        UPDATE users
+        SET full_name = ?, email = ?
         WHERE user_id = ?
     ");
     if (!$stmt) {
         die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
     }
 
-    $stmt->bind_param("sssi", $firstName, $lastName, $email, $userId);
+    $stmt->bind_param("ssi", $fullName, $email, $userId);
 
     if ($stmt->execute()) {
         $stmt->close();
 
-        // ✅ Update session values if the logged-in user is the one being updated
+        // Update session values if the logged-in user is the one being updated
         if ((int)$userId === (int)$_SESSION['user_id']) {
             $_SESSION['first_name'] = $firstName;
             $_SESSION['last_name']  = $lastName;
+            $_SESSION['full_name']  = $fullName;
             $_SESSION['email']      = $email;
         }
 
