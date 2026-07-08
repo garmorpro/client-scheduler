@@ -1,7 +1,7 @@
 <?php
 require_once '../includes/db.php';
 header('Content-Type: application/json'); // set JSON header
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

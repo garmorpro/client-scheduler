@@ -1,7 +1,7 @@
 <!-- sidebar.php -->
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    require_once __DIR__ . '/../includes/session_init.php';
 }
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';

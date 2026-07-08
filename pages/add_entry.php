@@ -1,7 +1,7 @@
 <?php
 ob_start();
 require_once '../includes/db.php';
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 
 
 if (!isset($_SESSION['user_id'])) {

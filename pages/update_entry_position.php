@@ -3,7 +3,7 @@
 // AJAX endpoint to update an entry's user_id and week_start when dragged/dropped.
 
 require_once '../includes/db.php';
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 
 header('Content-Type: application/json; charset=utf-8');
 

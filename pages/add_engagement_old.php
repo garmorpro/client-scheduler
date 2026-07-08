@@ -1,7 +1,7 @@
 <?php
 require_once '../includes/db.php';
 
-session_start();  // START SESSION AT TOP!
+require_once __DIR__ . '/../includes/session_init.php';
 
 // LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {

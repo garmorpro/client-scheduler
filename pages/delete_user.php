@@ -1,6 +1,6 @@
 <?php
 require_once '../includes/db.php';
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("HTTP/1.1 401 Unauthorized");

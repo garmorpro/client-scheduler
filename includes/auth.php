@@ -1,15 +1,13 @@
 <?php
 require_once 'db.php';
-session_start();
+require_once 'session_init.php';
 
 // LOG ACTIVITY FUNCTION
-function logActivity($conn, $eventType, $user_id, $account_name, $title, $description) {
+function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        // For service accounts, email and full_name may not apply, so we'll pass blanks
-        $blank = '';
-        $stmt->bind_param("sissss", $eventType, $user_id, $blank, $blank, $title, $description);
+        $stmt->bind_param("sissss", $eventType, $user_id, $email, $full_name, $title, $description);
         $stmt->execute();
         $stmt->close();
     }
@@ -18,11 +16,10 @@ function logActivity($conn, $eventType, $user_id, $account_name, $title, $descri
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    // Check if service account exists
-    $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role, status, theme_mode FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT user_id, first_name, last_name, full_name, email, password, role, status, theme_mode, is_verified FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -30,21 +27,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $account = $result->fetch_assoc();
         $user_id = $account['user_id'];
-        $full_name = $account['full_name'];
+        $first_name = trim($account['first_name'] ?? '');
+        $last_name = trim($account['last_name'] ?? '');
+
+        if ($first_name === '' && $last_name === '') {
+            // Users created via CSV import only have a combined full_name column
+            $legacyFullName = trim($account['full_name'] ?? '');
+            $nameParts = $legacyFullName === '' ? [] : preg_split('/\s+/', $legacyFullName, 2);
+            $first_name = $nameParts[0] ?? '';
+            $last_name = $nameParts[1] ?? '';
+        }
+
+        $full_name = trim($first_name . ' ' . $last_name);
         $hashed_password = $account['password'];
-        $role = strtolower(trim($account['role']));
-        $status = strtolower(trim($account['status']));
-        $theme_mode = strtolower(trim($account['theme_mode']));
+        $role = strtolower(trim($account['role'] ?? ''));
+        $status = strtolower(trim($account['status'] ?? ''));
+        $theme_mode = strtolower(trim($account['theme_mode'] ?? '')) ?: 'light';
+        $is_verified = (int) ($account['is_verified'] ?? 0);
 
         // Check if account is active
         if ($status !== 'active') {
-            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Account is inactive");
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Account is inactive");
             $error = "Account is inactive. Contact administrator.";
         } elseif (password_verify($password, $hashed_password)) {
-            // Successful login
             session_regenerate_id(true);
+
+            if (!$is_verified) {
+                // First login with the default password: force a real password before granting access
+                $_SESSION['pending_user_id'] = $user_id;
+                logActivity($conn, "password_change_required", $user_id, $email, $full_name, "Password Change Required", "First login, redirected to set password");
+                header("Location: ../pages/change-password.php");
+                exit;
+            }
+
+            // Successful login
             $_SESSION['user_id'] = $user_id;
+            $_SESSION['first_name'] = $first_name;
+            $_SESSION['last_name'] = $last_name;
             $_SESSION['full_name'] = $full_name;
+            $_SESSION['email'] = $account['email'];
             $_SESSION['user_role'] = $role;
             $_SESSION['theme'] = $theme_mode;
 
@@ -55,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt->close();
 
             // Log successful login
-            logActivity($conn, "successful_login", $user_id, $email, "Service Account Login", "Successful login");
+            logActivity($conn, "successful_login", $user_id, $email, $full_name, "Successful Login", "Successful login");
 
             header("Location: ../pages/my-schedule.php");
             exit;
         } else {
-            logActivity($conn, "failed_login", $user_id, $email, "Failed Login", "Incorrect password");
+            logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");
             $error = "Invalid login. Please try again.";
         }
     } else {
-        logActivity($conn, "failed_login", null, $email, "Failed Login", "Account not found");
+        logActivity($conn, "failed_login", null, $email, '', "Failed Login", "Account not found");
         $error = "Invalid login. Please try again.";
     }
 

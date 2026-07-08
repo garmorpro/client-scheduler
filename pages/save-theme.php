@@ -1,6 +1,6 @@
 <?php
 require_once '../includes/db.php';
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 if (!isset($data['theme']) || !in_array($data['theme'], ['light', 'dark'])) {

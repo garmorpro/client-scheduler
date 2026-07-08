@@ -2,7 +2,7 @@
 // START OUTPUT BUFFERING
 ob_start(); 
 
-session_start();
+require_once __DIR__ . '/session_init.php';
 require_once 'db.php';       // Adjust path if needed
 require '../vendor/autoload.php';  // PHPMailer
 

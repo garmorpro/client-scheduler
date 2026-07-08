@@ -38,7 +38,6 @@ require_once '../includes/auth.php';
         </form>
 
         <p class="text-center text-muted">Contact your administrator for account setup.</p>
-        <p class="text-center text-muted" style="font-size: 10px;">This is a demo application. In production, users would be created by administrators.</p>
     </div>
 </div>
 </body>
