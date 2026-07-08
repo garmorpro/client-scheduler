@@ -1,67 +1,86 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();
 }
 
-// LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
+    $stmt = $conn->prepare($sql);
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-    }
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_POST['user_id'] ?? null;
-    $firstName = trim($_POST['first_name'] ?? '');
-    $lastName = trim($_POST['last_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $role = $_POST['role'] ?? '';
-    $status = $_POST['status'] ?? '';  // optional, if you track status in users table
-
-    if (!$userId || $firstName === '' || $lastName === '' || $email === '' || $role === '') {
-        die("Please fill all required fields.");
-    }
-
-    // Update user query
-    $stmt = $conn->prepare("
-        UPDATE users 
-        SET first_name = ?, last_name = ?, email = ?, role = ?, status = ?
-        WHERE user_id = ?
-    ");
-    if (!$stmt) {
-        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-    }
-
-    $stmt->bind_param("sssssi", $firstName, $lastName, $email, $role, $status, $userId);
-
-    if ($stmt->execute()) {
+        $stmt->bind_param("sissss", $eventType, $user_id, $email, $full_name, $title, $description);
+        $stmt->execute();
         $stmt->close();
-
-        // Log activity
-        $adminUserId = $_SESSION['user_id'] ?? null;
-        $adminEmail = $_SESSION['email'] ?? '';
-        $adminName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-        $role_uc = ucfirst($role);
-
-        $title = "User Updated";
-        $description = "Updated account for $firstName $lastName ($role_uc)";
-
-        logActivity($conn, "user_updated", $adminUserId, $adminEmail, $adminName, $title, $description);
-
-        header("Location: admin-panel.php?status=success");
-        exit();
-    } else {
-        die("Error updating user: " . $stmt->error);
     }
-} else {
-    die('Invalid request.');
 }
-?>
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Invalid request']);
+    exit();
+}
+
+$allowedRoles = ['admin', 'manager', 'senior', 'staff', 'intern', 'crm_team'];
+$allowedStatuses = ['active', 'inactive'];
+
+$userId = $_POST['user_id'] ?? null;
+$fullName = trim($_POST['full_name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$jobTitle = trim($_POST['job_title'] ?? '');
+$role = strtolower(trim($_POST['role'] ?? ''));
+$status = strtolower(trim($_POST['status'] ?? ''));
+
+if (!$userId || !is_numeric($userId) || $fullName === '' || $email === '' || $role === '') {
+    echo json_encode(['success' => false, 'error' => 'Full name, email, and role are required.']);
+    exit();
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid email address.']);
+    exit();
+}
+
+if (!in_array($role, $allowedRoles, true)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid role.']);
+    exit();
+}
+
+if (!in_array($status, $allowedStatuses, true)) {
+    $status = 'active';
+}
+
+$userId = (int) $userId;
+
+$stmt = $conn->prepare("UPDATE users SET full_name = ?, email = ?, job_title = ?, role = ?, status = ? WHERE user_id = ?");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Database error']);
+    exit();
+}
+$stmt->bind_param("sssssi", $fullName, $email, $jobTitle, $role, $status, $userId);
+
+if ($stmt->execute()) {
+    $stmt->close();
+
+    // Keep the editor's own session in sync if they edited themselves
+    if ($userId === (int) ($_SESSION['user_id'] ?? 0)) {
+        $_SESSION['full_name'] = $fullName;
+        $_SESSION['email'] = $email;
+        $_SESSION['user_role'] = $role;
+    }
+
+    $adminUserId = $_SESSION['user_id'] ?? null;
+    $adminEmail  = $_SESSION['email'] ?? '';
+    $adminName   = $_SESSION['full_name'] ?? '';
+    $role_uc = ucfirst($role);
+
+    logActivity($conn, "user_updated", $adminUserId, $adminEmail, $adminName, "User Updated", "Updated account for $fullName ($role_uc)");
+
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false, 'error' => 'Error updating user.']);
+}

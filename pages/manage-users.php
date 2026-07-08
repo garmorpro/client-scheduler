@@ -127,7 +127,9 @@ $totalUsers = count($users);
 </div>
             <button id="openImportBtn" class="btn btn-outline-primary btn-sm">Import</button>
             <button id="openPermissionsBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-shield-lock me-1"></i>Permissions</button>
-            <button class="btn btn-primary btn-sm">Invite User</button>
+            <?php if ($isAdmin): ?>
+            <button id="inviteUserBtn" class="btn btn-primary btn-sm">Invite User</button>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -311,7 +313,14 @@ if (data.errors.length) {
             </thead>
             <tbody id="usersTableBody">
                 <?php foreach ($users as $user): ?>
-                <tr>
+                <tr
+                    data-user-id="<?= (int) $user['user_id'] ?>"
+                    data-full-name="<?= htmlspecialchars($user['full_name'] ?? '') ?>"
+                    data-email="<?= htmlspecialchars($user['email'] ?? '') ?>"
+                    data-job-title="<?= htmlspecialchars($user['job_title'] ?? '') ?>"
+                    data-role="<?= htmlspecialchars($user['role'] ?? '') ?>"
+                    data-status="<?= htmlspecialchars($user['status'] ?? '') ?>"
+                >
                     <td><input type="checkbox" value="<?= $user['user_id'] ?>"></td>
                     <td class="name-cell">
                         <?= htmlspecialchars($user['full_name']) ?>
@@ -321,18 +330,20 @@ if (data.errors.length) {
                     <td><?= htmlspecialchars($user['role']) ?></td>
                     <td><?= htmlspecialchars($user['status']) ?></td>
                     <td><?= date("Y-m-d", strtotime($user['created_at'])) ?></td>
-                    <td><?= date("Y-m-d", strtotime($user['last_active'])) ?></td>
+                    <td><?= $user['last_active'] ? date("Y-m-d", strtotime($user['last_active'])) : '—' ?></td>
                     <td class="action-dropdown">
+                        <?php if ($isAdmin): ?>
                         <div class="dropdown">
                             <a href="#" class="text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                <li><a class="dropdown-item edit-user-btn" href="#">Edit</a></li>
+                                <li><a class="dropdown-item toggle-status-btn" href="#"><?= $user['status'] === 'active' ? 'Deactivate' : 'Activate' ?></a></li>
+                                <li><a class="dropdown-item text-danger delete-user-btn" href="#">Delete</a></li>
                             </ul>
                         </div>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -379,6 +390,9 @@ if (data.errors.length) {
     <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
+    <?php if ($isAdmin): ?>
+    <script src="../assets/js/manage_users_crud.js?v=<?php echo time(); ?>"></script>
+    <?php endif; ?>
     <script src="../assets/js/swal-modals/role-permissions.js?v=<?php echo time(); ?>"></script>
 
     

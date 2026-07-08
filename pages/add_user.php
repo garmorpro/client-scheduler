@@ -1,99 +1,85 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();
 }
 
-// LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
+    $stmt = $conn->prepare($sql);
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sissss", $eventType, $user_id, $email, $full_name, $title, $description);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-    }
-}
-
-// Generate unique 6-digit idno
-function generateUniqueIdno($conn) {
-    do {
-        $idno = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE idno = ?");
-        $stmt->bind_param("s", $idno);
+        $stmt->bind_param("sissss", $eventType, $user_id, $email, $full_name, $title, $description);
         $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
         $stmt->close();
-    } while ($count > 0);
-    return $idno;
+    }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = trim($_POST['first_name'] ?? '');
-    $lastName  = trim($_POST['last_name'] ?? '');
-    $email     = trim($_POST['email'] ?? '');
-    $role      = $_POST['role'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Invalid request']);
+    exit();
+}
 
-    if ($firstName === '' || $lastName === '' || $email === '' || $role === '') {
-        die("Please fill all required fields.");
-    }
+$allowedRoles = ['admin', 'manager', 'senior', 'staff', 'intern', 'crm_team'];
 
-    // Generate IDNO
-    $idno = generateUniqueIdno($conn);
+$fullName = trim($_POST['full_name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$jobTitle = trim($_POST['job_title'] ?? '');
+$role = strtolower(trim($_POST['role'] ?? ''));
 
-    // Set default password ("change_me") hashed
-    $defaultPassword = password_hash("change_me", PASSWORD_DEFAULT);
+if ($fullName === '' || $email === '' || $role === '') {
+    echo json_encode(['success' => false, 'error' => 'Full name, email, and role are required.']);
+    exit();
+}
 
-    // Default values for new user
-    $isVerified = 0; // Force verification/change password later
-    $lastActive = NULL; // Not active yet
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid email address.']);
+    exit();
+}
 
-    // Insert user
-    $stmt = $conn->prepare("
-        INSERT INTO users (idno, first_name, last_name, email, password, role, is_verified, last_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    if (!$stmt) {
-        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-    }
+if (!in_array($role, $allowedRoles, true)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid role.']);
+    exit();
+}
 
-    // Bind params: s = string, i = integer, etc.
-    $stmt->bind_param(
-        "ssssssis",
-        $idno,
-        $firstName,
-        $lastName,
-        $email,
-        $defaultPassword,
-        $role,
-        $isVerified,
-        $lastActive,
-    );
+$lowerEmail = strtolower($email);
+$dupCheck = $conn->prepare("SELECT user_id FROM users WHERE LOWER(email) = ?");
+$dupCheck->bind_param("s", $lowerEmail);
+$dupCheck->execute();
+$dupCheck->store_result();
+if ($dupCheck->num_rows > 0) {
+    $dupCheck->close();
+    echo json_encode(['success' => false, 'error' => 'A user with that email already exists.']);
+    exit();
+}
+$dupCheck->close();
 
-    if ($stmt->execute()) {
-        $stmt->close();
+$defaultPassword = password_hash("change_me", PASSWORD_DEFAULT);
 
-        // Log activity
-        $adminUserId = $_SESSION['user_id'] ?? null;
-        $adminEmail  = $_SESSION['email'] ?? '';
-        $adminName   = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-        $role_uc = ucfirst($role);
+$stmt = $conn->prepare("INSERT INTO users (full_name, email, job_title, role, password) VALUES (?, ?, ?, ?, ?)");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Database error']);
+    exit();
+}
+$stmt->bind_param("sssss", $fullName, $email, $jobTitle, $role, $defaultPassword);
 
-        $title = "User Created";
-        $description = "Created account for $firstName $lastName ($role_uc)";
+if ($stmt->execute()) {
+    $newUserId = $stmt->insert_id;
+    $stmt->close();
 
-        logActivity($conn, "user_created", $adminUserId, $adminEmail, $adminName, $title, $description);
+    $adminUserId = $_SESSION['user_id'] ?? null;
+    $adminEmail  = $_SESSION['email'] ?? '';
+    $adminName   = $_SESSION['full_name'] ?? '';
+    $role_uc = ucfirst($role);
 
-        header("Location: admin-panel.php?status=success");
-        exit();
-    } else {
-        die("Error creating user: " . $stmt->error);
-    }
+    logActivity($conn, "user_created", $adminUserId, $adminEmail, $adminName, "User Created", "Created account for $fullName ($role_uc)");
+
+    echo json_encode(['success' => true, 'user_id' => $newUserId]);
 } else {
-    die('Invalid request.');
+    echo json_encode(['success' => false, 'error' => 'Error creating user.']);
 }
-?>
