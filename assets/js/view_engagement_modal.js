@@ -32,6 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isOver = allocated > budgeted;
                 const employees = data.assigned_employees || [];
 
+                const pct = budgeted > 0 ? (allocated / budgeted) * 100 : 0;
+                const barWidth = Math.min(100, pct);
+                const overHours = allocated - budgeted;
+                let utilColor;
+                if (isOver) utilColor = 'red';
+                else if (pct >= 75) utilColor = 'green';
+                else utilColor = 'yellow';
+
                 const empRowsHtml = employees.length > 0
                     ? employees.map(emp => `
                         <div class="eng-vm-emp-row">
@@ -73,6 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="eng-vm-stat-title">Manager</div>
                                 <div class="eng-vm-stat-value text" title="${data.manager || '-'}">${data.manager || '-'}</div>
                             </div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <div class="eng-util-cell">
+                                <div class="eng-util-track">
+                                    <div class="eng-util-fill ${utilColor}" style="width: ${barWidth}%"></div>
+                                </div>
+                                <span class="eng-util-pct ${utilColor}">${Math.round(pct)}%</span>
+                            </div>
+                            ${isOver ? `<div class="eng-util-over">+${overHours}h over</div>` : ''}
                         </div>
                         <div class="eng-vm-section-title">Assigned Employees</div>
                         <div class="eng-vm-emp-list">${empRowsHtml}</div>
