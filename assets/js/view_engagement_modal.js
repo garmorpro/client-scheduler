@@ -69,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="eng-vm-stat-title">Employees</div>
                                 <div class="eng-vm-stat-value">${employees.length}</div>
                             </div>
+                            <div class="eng-vm-stat-card">
+                                <div class="eng-vm-stat-title">Manager</div>
+                                <div class="eng-vm-stat-value text" title="${data.manager || '-'}">${data.manager || '-'}</div>
+                            </div>
                         </div>
                         <div class="eng-vm-section-title">Assigned Employees</div>
                         <div class="eng-vm-emp-list">${empRowsHtml}</div>

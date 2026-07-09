@@ -75,6 +75,7 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
                         <th>Senior</th>
                         <th>Staff</th>
                         <th>Archived</th>
+                        <th class="num">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="archivedTableBody">
@@ -103,10 +104,20 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
                                         <?php echo date('n/j/Y', strtotime($row['archive_date'])); ?> by <?php echo htmlspecialchars($row['archived_by']); ?>
                                     </span>
                                 </td>
+                                <td class="num">
+                                    <div class="client-row-actions">
+                                        <button class="client-icon-btn add unarchive-btn"
+                                            data-history-id="<?php echo $row['history_id']; ?>"
+                                            data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+                                            title="Unarchive">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="8" class="text-center">No archived engagements</td></tr>
+                        <tr><td colspan="9" class="text-center">No archived engagements</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -114,8 +125,59 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
     </div>
 </div>
 
+<div class="modal fade" id="unarchiveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Unarchive Engagement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Restore the archived engagement for "<strong id="unarchiveModalClientName"></strong>" back onto the
+          active Engagement Management list? It will come back with a <strong>Pending</strong> status - you can
+          update it from Edit afterward. This record will be removed from Archived Engagements.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmUnarchiveBtn" class="btn btn-dark">Unarchive</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    let unarchiveHistoryId = null;
+    const unarchiveModal = new bootstrap.Modal(document.getElementById('unarchiveModal'));
+
+    document.querySelectorAll('.unarchive-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            unarchiveHistoryId = btn.dataset.historyId;
+            document.getElementById('unarchiveModalClientName').textContent = btn.dataset.clientName;
+            unarchiveModal.show();
+        });
+    });
+
+    document.getElementById('confirmUnarchiveBtn').addEventListener('click', () => {
+        if (!unarchiveHistoryId) return;
+        fetch('unarchive_engagement.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history_id: unarchiveHistoryId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Could not unarchive engagement.'));
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    });
+
     const archivedSearch = document.getElementById('archivedSearch');
     const archivedRows = Array.from(document.getElementById('archivedTableBody').getElementsByClassName('client-row'));
     const toolbarHint = document.getElementById('archivedToolbarHint');

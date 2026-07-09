@@ -1730,7 +1730,8 @@ body.dark-mode .eng-stat-bar { background: #29302e; }
 .eng-vm-client-row { display: flex; align-items: center; gap: 12px; }
 .eng-vm-tile { width: 42px; height: 42px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
 .eng-vm-client-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-.eng-vm-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.eng-vm-stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.eng-vm-stat-value.text { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .eng-vm-stat-card { background: #f1f4f3; border-radius: 10px; padding: 9px 10px; }
 body.dark-mode .eng-vm-stat-card { background: #232a2c; }
 .eng-vm-stat-title { font-size: 10px; color: #6b7570; font-weight: 600; margin-bottom: 2px; }

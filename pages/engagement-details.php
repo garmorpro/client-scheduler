@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 if (isset($_GET['id'])) {
     $engagementId = $_GET['id'];
 
-    $engagementQuery = "SELECT client_name, status, budgeted_hours, notes FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, status, budgeted_hours, manager, notes FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
@@ -59,6 +59,7 @@ if (isset($_GET['id'])) {
         'status' => $engagement['status'] ?? '',
         'total_hours' => $totalHours,
         'budgeted_hours' => (float)($engagement['budgeted_hours'] ?? 0),
+        'manager' => $engagement['manager'] ?? '',
         'assigned_employees' => $assignedEmployees,
         'notes' => $engagement['notes'] ?? ''
     ]);
