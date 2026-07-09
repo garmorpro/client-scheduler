@@ -216,11 +216,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
                         <?php if ($isAdmin): ?>
-                        <a href="#" id="bulkAssignManagerBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" style="display:none;">
-                          <i class="bi bi-person-badge me-3"></i>Assign Manager (<span id="assignSelectedCount">0</span>)
-                        </a>
-                        <?php endif; ?>
-                        <?php if ($isAdmin): ?>
                         <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
                             <i class="bi bi-shield-lock me-3"></i>Role Permissions
                         </a>
@@ -289,6 +284,18 @@ if ($result && mysqli_num_rows($result) > 0) {
                                            data-user-id="<?php echo $userrow['user_id']; ?>">
                                            <i class="bi bi-eye text-success"></i>
                                         </a>
+
+                                        <?php if (strtolower($userrow['role']) === 'manager'): ?>
+                                        <!-- Direct Reports Button -->
+                                        <a href="#" class="direct-reports-btn text-decoration-none"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#directReportsModal"
+                                           data-manager-id="<?php echo $userrow['user_id']; ?>"
+                                           data-manager-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
+                                           title="Manage Direct Reports">
+                                           <i class="bi bi-diagram-2 text-primary"></i>
+                                        </a>
+                                        <?php endif; ?>
 
                                         <!-- Promote/Role Dropdown -->
                                         <div class="dropdown d-inline">
@@ -403,7 +410,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
-<?php include_once '../includes/modals/assign_manager_modal.php'; ?>
+<?php include_once '../includes/modals/direct_reports_modal.php'; ?>
 <?php if ($isAdmin): ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
@@ -416,7 +423,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/assign_manager_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/direct_reports_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>

@@ -2083,54 +2083,62 @@ body.dark-mode #importUsersModal .eng-edit-btn-save { background: var(--secondar
 #addUserModal .eng-edit-btn-save:disabled,
 #importUsersModal .eng-edit-btn-save:disabled { opacity: .5; cursor: not-allowed; }
 
-/* ========= ASSIGN MANAGER MODAL ========= */
-.am-employee-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-.am-chip {
-    display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 20px;
-    background: #f1f4f3; color: #16211f; font-size: 12.5px; font-weight: 600;
-}
-body.dark-mode .am-chip { background: #232a2c; color: #edf1ee; }
-#assignManagerModal .eng-edit-hero {
+/* ========= DIRECT REPORTS MODAL ========= */
+#directReportsModal .eng-edit-hero {
     padding: 18px 20px 14px;
     background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
     border-bottom: 1px solid #e3e7e5;
 }
-body.dark-mode #assignManagerModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
-#assignManagerModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
-body.dark-mode #assignManagerModal .eng-edit-title { color: #edf1ee; }
-#assignManagerModal .eng-edit-body { padding: 16px 20px; }
-#assignManagerModal .eng-edit-field { margin-bottom: 14px; }
-#assignManagerModal .eng-edit-field label {
-    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
-    color: #9aa39d; margin-bottom: 6px;
-}
-body.dark-mode #assignManagerModal .eng-edit-field label { color: #6e7975; }
-#assignManagerModal .eng-edit-input {
+body.dark-mode #directReportsModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#directReportsModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #directReportsModal .eng-edit-title { color: #edf1ee; }
+#directReportsModal .eng-edit-body { padding: 16px 20px; }
+#directReportsModal .eng-edit-input {
     box-sizing: border-box;
-    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    width: 100%; height: 40px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
     background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
-    -webkit-appearance: none; appearance: none;
+    -webkit-appearance: none; appearance: none; margin-bottom: 12px;
 }
-#assignManagerModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
-body.dark-mode #assignManagerModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
-body.dark-mode #assignManagerModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
-#assignManagerModal .eng-edit-footer {
-    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+#directReportsModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #directReportsModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #directReportsModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+.dr-list { max-height: 320px; overflow-y: auto; border: 1px solid #e3e7e5; border-radius: 10px; margin-bottom: 16px; }
+body.dark-mode .dr-list { border-color: #29302e; }
+.dr-row {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border-bottom: 1px solid #e3e7e5; cursor: pointer; margin: 0;
 }
-body.dark-mode #assignManagerModal .eng-edit-footer { border-color: #29302e; }
-#assignManagerModal .eng-edit-btn-cancel {
+.dr-row:last-child { border-bottom: none; }
+.dr-row:hover { background: #f1f4f3; }
+body.dark-mode .dr-row { border-color: #29302e; }
+body.dark-mode .dr-row:hover { background: #232a2c; }
+.dr-row input[type="checkbox"] { flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--primary-color); cursor: pointer; }
+.dr-row-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.dr-row-name { font-size: 13px; font-weight: 600; color: #16211f; }
+body.dark-mode .dr-row-name { color: #edf1ee; }
+.dr-row-role { font-size: 11px; color: #9aa39d; }
+body.dark-mode .dr-row-role { color: #6e7975; }
+.dr-row-elsewhere { font-size: 11px; color: #b8863a; font-weight: 600; text-align: right; flex-shrink: 0; max-width: 140px; }
+body.dark-mode .dr-row-elsewhere { color: #d9a75c; }
+#directReportsModal .eng-edit-footer {
+    display: flex; align-items: center; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #directReportsModal .eng-edit-footer { border-color: #29302e; }
+.dr-selected-count { font-size: 12px; color: #9aa39d; margin-right: auto; }
+body.dark-mode .dr-selected-count { color: #6e7975; }
+#directReportsModal .eng-edit-btn-cancel {
     padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
     font-size: 13px; font-weight: 600; cursor: pointer;
 }
-#assignManagerModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
-body.dark-mode #assignManagerModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
-body.dark-mode #assignManagerModal .eng-edit-btn-cancel:hover { background: #232a2c; }
-#assignManagerModal .eng-edit-btn-save {
+#directReportsModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #directReportsModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #directReportsModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#directReportsModal .eng-edit-btn-save {
     padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
     font-size: 13px; font-weight: 600; cursor: pointer;
 }
-#assignManagerModal .eng-edit-btn-save:hover { opacity: .9; }
-body.dark-mode #assignManagerModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+#directReportsModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #directReportsModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
 /* Import Users specifics */
 #importUsersModal .iu-dropzone {
