@@ -4,15 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
 
       function updateBulkDeleteVisibility() {
-        const anyChecked = Array.from(userCheckboxes).some(cb => cb.checked);
-        bulkDeleteBtn.style.display = anyChecked ? 'inline-block' : 'none';
-      }
-
-      function updateBulkDeleteVisibility() {
         const checkedCheckboxes = Array.from(userCheckboxes).filter(cb => cb.checked);
         const count = checkedCheckboxes.length;
         bulkDeleteBtn.style.display = count > 0 ? 'inline-block' : 'none';
-          
+
         // Update the number displayed
         const selectedCountSpan = document.getElementById('selectedCount');
         if (selectedCountSpan) {
@@ -36,18 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      bulkDeleteBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const selectedIds = Array.from(userCheckboxes)
-          .filter(cb => cb.checked)
-          .map(cb => cb.getAttribute('data-user-id'));
-
-        if (selectedIds.length === 0) return;
-
-        if (!confirm(`Are you sure you want to delete ${selectedIds.length} user(s)? This action cannot be undone.`)) {
-          return;
-        }
-
+      async function runBulkDelete(selectedIds) {
         try {
           const response = await fetch('bulk_delete_users.php', {
             method: 'POST',
@@ -59,14 +43,42 @@ document.addEventListener('DOMContentLoaded', () => {
           const result = await response.json();
 
           if (result.success) {
-            // alert(`Deleted ${result.deletedCount} user(s) successfully.`);
-            // Optionally reload page or remove deleted rows from table
             location.reload();
           } else {
-            alert('Error deleting users: ' + (result.error || 'Unknown error'));
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({ icon: 'error', title: 'Could not delete employees', text: result.error || 'Unknown error' });
+            } else {
+              alert('Error deleting users: ' + (result.error || 'Unknown error'));
+            }
           }
         } catch (error) {
-          alert('Network or server error: ' + error.message);
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'error', title: 'Request failed', text: error.message });
+          } else {
+            alert('Network or server error: ' + error.message);
+          }
+        }
+      }
+
+      bulkDeleteBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const selectedIds = Array.from(userCheckboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.getAttribute('data-user-id'));
+
+        if (selectedIds.length === 0) return;
+
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'warning',
+            title: `Delete ${selectedIds.length} employee${selectedIds.length === 1 ? '' : 's'}?`,
+            text: 'This action cannot be undone.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete',
+            confirmButtonColor: '#c0392b'
+          }).then(result => { if (result.isConfirmed) runBulkDelete(selectedIds); });
+        } else if (confirm(`Are you sure you want to delete ${selectedIds.length} user(s)? This action cannot be undone.`)) {
+          runBulkDelete(selectedIds);
         }
       });
     });

@@ -181,7 +181,7 @@ while ($mrow = mysqli_fetch_assoc($managerresult)) {
                                     </div>
 
                                     <!-- Delete Button -->
-                                    <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>">
+                                    <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>">
                                         <i class="bi bi-trash text-danger"></i>
                                     </a>
                                 </td>
@@ -213,6 +213,7 @@ while ($mrow = mysqli_fetch_assoc($managerresult)) {
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/direct_reports_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/delete_user.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
