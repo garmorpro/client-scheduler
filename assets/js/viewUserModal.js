@@ -1,172 +1,249 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const viewUserModal = document.getElementById('viewUserModal');
+  if (!viewUserModal) return;
 
-  if (!viewUserModal) {
-    console.warn("Modal element #viewUserModal not found.");
-    return;
+  let currentUserId = null;
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = (text && text.toString().trim()) ? text : '-';
   }
 
-  viewUserModal.addEventListener('show.bs.modal', async (event) => {
-    const button = event.relatedTarget;
-    const userId = button?.getAttribute('data-user-id');
-    if (!userId) return;
+  function formatDate(dateString) {
+    if (!dateString) return '-';
+    const d = new Date(dateString);
+    if (isNaN(d)) return '-';
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+  }
 
+  function timeSince(dateString) {
+    if (!dateString) return '-';
+    const now = new Date();
+    const past = new Date(dateString);
+    if (isNaN(past.getTime())) return '-';
+
+    let seconds = Math.floor((now - past) / 1000);
+    if (seconds < 0) seconds = 0;
+
+    if (seconds < 5) return 'just now';
+    if (seconds < 60) return `${seconds}s ago`;
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+
+    return formatDate(dateString);
+  }
+
+  function getAccessLevel(role) {
+    switch ((role || '').toLowerCase()) {
+      case 'admin': return 'Full Access';
+      case 'manager': return 'High Access';
+      case 'senior':
+      case 'staff':
+      case 'intern': return 'Restricted Access';
+      default: return 'Unknown Access';
+    }
+  }
+
+  function statusLabel(status) {
+    if (status === 'not_confirmed') return 'Not Confirmed';
+    return status ? status.charAt(0).toUpperCase() + status.slice(1) : '';
+  }
+
+  // Tabs
+  viewUserModal.querySelectorAll('.ud-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      viewUserModal.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
+      viewUserModal.querySelectorAll('.ud-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`ud_panel_${tab.dataset.udTab}`).classList.add('active');
+    });
+  });
+
+  function renderEngagements(engagements) {
+    const list = document.getElementById('ud_eng_list');
+    const totalHours = engagements.reduce((sum, e) => sum + e.total_hours, 0);
+
+    setText('ud_stat_eng_count', engagements.length);
+    setText('ud_stat_hours', totalHours);
+    setText('ud_tab_eng_count', engagements.length);
+    setText('ud_eng_hint', `${engagements.length} active assignment${engagements.length === 1 ? '' : 's'}`);
+
+    const unassignAllBtn = document.getElementById('ud_unassign_all_btn');
+    unassignAllBtn.disabled = engagements.length === 0;
+
+    list.innerHTML = '';
+    if (engagements.length === 0) {
+      list.innerHTML = '<div class="eng-empty">No engagements assigned</div>';
+      return;
+    }
+
+    engagements.forEach(eng => {
+      const row = document.createElement('div');
+      row.className = `eng-row status-${eng.status}`;
+      row.innerHTML = `
+        <div class="eng-dot"></div>
+        <div class="eng-name">${eng.client_name}</div>
+        <div class="eng-hours">${eng.total_hours}h</div>
+        <button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}">
+          <i class="bi bi-trash"></i>
+        </button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  async function loadUserEngagements(userId) {
+    try {
+      const res = await fetch(`get_user_engagements.php?user_id=${encodeURIComponent(userId)}`);
+      const data = await res.json();
+      renderEngagements(data.engagements || []);
+    } catch (err) {
+      console.error('Failed to load user engagements', err);
+      renderEngagements([]);
+    }
+  }
+
+  async function loadUser(userId) {
     try {
       const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const user = await response.json();
 
-      // Utility: Set element text or fallback to '-'
-      function setText(id, text) {
-        const el = document.getElementById(id);
-        if (!el) {
-          console.warn(`Element with ID "${id}" not found.`);
-          return;
-        }
-        el.textContent = (text && text.toString().trim()) ? text : '-';
-      }
-
-      // Utility: Format a date to MM/DD/YYYY
-      function formatDate(dateString) {
-        if (!dateString) return '-';
-        const d = new Date(dateString);
-        if (isNaN(d)) return '-';
-        return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
-      }
-
-      // Utility: Return relative time or fallback to formatted date
-      function timeSince(dateString) {
-        if (!dateString) return '-';
-        const now = new Date();
-        const past = new Date(dateString);
-        if (isNaN(past.getTime())) return '-';
-
-        let seconds = Math.floor((now - past) / 1000);
-        if (seconds < 0) seconds = 0;
-
-        if (seconds < 5) return 'just now';
-        if (seconds < 60) return `${seconds}s ago`;
-
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes}m ago`;
-
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours}h ago`;
-
-        const days = Math.floor(hours / 24);
-        if (days < 7) return `${days}d ago`;
-
-        return formatDate(dateString);
-      }
-
-      // Utility: Access level mapping
-      function getAccessLevel(role) {
-        switch ((role || '').toLowerCase()) {
-          case 'admin': return 'Full Access';
-          case 'manager': return 'High Access';
-          case 'senior':
-          case 'staff':
-          case 'intern': return 'Restricted Access';
-          default: return 'Unknown Access';
-        }
-      }
-
-      // Utility: Boolean to Enabled/Disabled
-      function boolToEnabledDisabled(value) {
-        return value == 1 ? 'Enabled' : 'Disabled';
-      }
-
-      // Fill user details
-
       const fullName = user.full_name || '-';
-      // Split full name into first and last
-const nameParts = fullName.trim().split(' ');
-const firstName = nameParts[0] || '-';
-const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '-';
-const initials = fullName
-    .split(' ')
-    .map(name => name.charAt(0).toUpperCase())
-    .slice(0, 2) // get at most first two initials
-    .join('');
+      const initials = fullName
+        .split(' ')
+        .map(name => name.charAt(0).toUpperCase())
+        .slice(0, 2)
+        .join('');
 
-setText('view_user_initials2', initials);
+      setText('ud_avatar', initials);
+      setText('ud_name', fullName);
+      setText('ud_email', user.email);
+      setText('ud_role_pill', user.role);
+      setText('ud_status_text', user.status);
+      setText('ud_stat_last_active', user.last_active ? formatDate(user.last_active) : 'Never');
 
-setText('view_user_fullname2', fullName);
-setText('view_user_fullname_intro2', fullName);
-setText('full_name_1', fullName);
-setText('view_first_name_detail2', firstName);
-setText('view_last_name_detail2', lastName);
-setText('view_email2', user.email);
-setText('view_user_role2', user.role);
+      setText('ud_detail_fullname', fullName);
+      setText('ud_detail_email', user.email);
+      setText('ud_detail_created', formatDate(user.created_at));
+      setText('ud_detail_role', user.role);
+      setText('ud_detail_access_level', getAccessLevel(user.role));
+      setText('ud_detail_status', user.status);
 
-setText('view_first_name_detail', fullName); // if you still need a detail field
-setText('view_email_detail2', user.email);
+      const statusPill = document.getElementById('ud_status_pill');
+      statusPill.classList.remove('active', 'inactive');
+      statusPill.classList.add((user.status || '').toLowerCase() === 'active' ? 'active' : 'inactive');
 
-setText('view_status2', user.status);
-setText('view_acct_status2', user.status);
-setText('view_acct_created2', formatDate(user.created_at));
-setText('view_acct_last_active2', formatDate(user.last_active));
-
-
-
-
-      setText('view_acct_role2', user.role);
-      setText('view_acct_access_level2', getAccessLevel(user.role));
-
-      const mfaEl = document.getElementById('view_acct_mfa2');
-      if (mfaEl) {
-        const statusText = boolToEnabledDisabled(user.mfa_enabled);
-        mfaEl.textContent = statusText;
-        mfaEl.classList.remove('text-success', 'text-danger');
-        mfaEl.classList.add(statusText === 'Enabled' ? 'text-success' : 'text-danger');
-      }
-
-      // Recent activities
-      const activityList = document.getElementById('view_recent_activity2');
-      if (activityList) {
-        activityList.innerHTML = '';
-        if (Array.isArray(user.recent_activities) && user.recent_activities.length > 0) {
-          user.recent_activities.forEach(act => {
-            const card = document.createElement('div');
-            card.className = 'activity-card';
-
-            const desc = document.createElement('div');
-            desc.className = 'activity-description';
-            desc.title = act.description || '';
-            desc.textContent = act.description || '(no description)';
-
-            const time = document.createElement('div');
-            time.className = 'activity-time';
-            time.textContent = timeSince(act.created_at);
-
-            card.appendChild(desc);
-            card.appendChild(time);
-            activityList.appendChild(card);
-          });
-        } else {
-          const empty = document.createElement('div');
-          empty.className = 'text-muted px-3';
-          empty.textContent = 'No recent activity found.';
-          activityList.appendChild(empty);
-        }
+      const activityList = document.getElementById('ud_activity_list');
+      activityList.innerHTML = '';
+      if (Array.isArray(user.recent_activities) && user.recent_activities.length > 0) {
+        user.recent_activities.forEach(act => {
+          const row = document.createElement('div');
+          row.className = 'activity-row';
+          row.innerHTML = `
+            <span>${act.description || '(no description)'}</span>
+            <span class="activity-time">${timeSince(act.created_at)}</span>
+          `;
+          activityList.appendChild(row);
+        });
       } else {
-        console.warn("Element with id 'view_recent_activity' not found in DOM.");
+        activityList.innerHTML = '<div class="activity-empty">No recent activity found.</div>';
       }
-
-      // Update status badge
-      const statusEl = document.getElementById('view_status2');
-      if (statusEl) {
-        statusEl.classList.remove('active', 'inactive');
-        if ((user.status || '').toLowerCase() === 'active') {
-          statusEl.classList.add('active');
-        } else {
-          statusEl.classList.add('inactive');
-        }
-      }
-
     } catch (error) {
       console.error('Failed to load user data:', error);
     }
+  }
+
+  function confirmAndUnassign({ title, text, url, body, onSuccess }) {
+    if (typeof Swal === 'undefined') {
+      if (!confirm(text)) return;
+      doUnassign(url, body, onSuccess);
+      return;
+    }
+    Swal.fire({
+      icon: 'warning',
+      title,
+      text,
+      showCancelButton: true,
+      confirmButtonText: 'Unassign',
+      confirmButtonColor: '#c0392b'
+    }).then(result => {
+      if (result.isConfirmed) doUnassign(url, body, onSuccess);
+    });
+  }
+
+  async function doUnassign(url, body, onSuccess) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || !data.success) {
+        const errMsg = (data && data.error) || 'Please try again.';
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({ icon: 'error', title: 'Could not unassign', text: errMsg });
+        } else {
+          alert(errMsg);
+        }
+        return;
+      }
+      onSuccess();
+    } catch (err) {
+      console.error('Failed to unassign', err);
+    }
+  }
+
+  // Individual unassign (event delegation, list is rebuilt on every load)
+  document.getElementById('ud_eng_list').addEventListener('click', (e) => {
+    const btn = e.target.closest('.eng-unassign-btn');
+    if (!btn || !currentUserId) return;
+    const engagementId = btn.dataset.engagementId;
+    const clientName = btn.dataset.clientName;
+    confirmAndUnassign({
+      title: 'Unassign engagement?',
+      text: `Remove all of this employee's assigned hours for ${clientName}.`,
+      url: 'unassign_user_engagement.php',
+      body: { user_id: currentUserId, engagement_id: engagementId },
+      onSuccess: () => loadUserEngagements(currentUserId)
+    });
+  });
+
+  // Unassign all
+  document.getElementById('ud_unassign_all_btn').addEventListener('click', () => {
+    if (!currentUserId) return;
+    confirmAndUnassign({
+      title: 'Unassign all engagements?',
+      text: 'This removes every assigned hour for this employee across all engagements.',
+      url: 'unassign_all_user_engagements.php',
+      body: { user_id: currentUserId },
+      onSuccess: () => loadUserEngagements(currentUserId)
+    });
+  });
+
+  viewUserModal.addEventListener('show.bs.modal', (event) => {
+    const button = event.relatedTarget;
+    const userId = button?.getAttribute('data-user-id');
+    if (!userId) return;
+    currentUserId = userId;
+
+    // Reset to Overview tab on every open
+    viewUserModal.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
+    viewUserModal.querySelectorAll('.ud-panel').forEach(p => p.classList.remove('active'));
+    viewUserModal.querySelector('.ud-tab[data-ud-tab="overview"]').classList.add('active');
+    document.getElementById('ud_panel_overview').classList.add('active');
+
+    loadUser(userId);
+    loadUserEngagements(userId);
   });
 });
