@@ -20,7 +20,7 @@ if (!$canManageEmployees) {
 
 // System/service accounts (email contains "admin") are excluded from the
 // employee roster - they're not real employees to manage day-to-day.
-$usersql = "SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.last_active,
+$usersql = "SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.last_active, u.job_title,
                    u.manager_id, m.full_name AS manager_name
         FROM users u
         LEFT JOIN users m ON u.manager_id = m.user_id
@@ -140,7 +140,12 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                             </span>
                                         <?php endif; ?>
                                     </span><br>
-                                    <small class="text-muted"><?php echo htmlspecialchars($userrow['email']); ?></small>
+                                    <small class="text-muted">
+                                        <?php echo htmlspecialchars($userrow['email']); ?>
+                                        <?php if (!empty($userrow['job_title'])): ?>
+                                            &middot; <?php echo htmlspecialchars($userrow['job_title']); ?>
+                                        <?php endif; ?>
+                                    </small>
                                 </td>
                                 <td>
                                     <span class="badge-role">

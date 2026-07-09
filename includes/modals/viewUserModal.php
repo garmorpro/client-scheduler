@@ -55,6 +55,7 @@
             <div class="detail-section-title">Personal Information</div>
             <div class="detail-row"><span class="detail-label">Full Name</span><span class="detail-value" id="ud_detail_fullname"></span></div>
             <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="ud_detail_email"></span></div>
+            <div class="detail-row" id="ud_detail_jobtitle_row" style="display:none;"><span class="detail-label">Job Title</span><span class="detail-value" id="ud_detail_jobtitle"></span></div>
             <div class="detail-row"><span class="detail-label">Created</span><span class="detail-value" id="ud_detail_created"></span></div>
 
             <div class="detail-section-title">Access &amp; Permissions</div>

@@ -21,7 +21,7 @@ $user_id = (int)$_GET['user_id'];
 
 // Fetch user info
 $stmt = $conn->prepare("
-    SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.created_at, u.last_active,
+    SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.created_at, u.last_active, u.job_title,
            m.full_name AS manager_name
     FROM users u
     LEFT JOIN users m ON u.manager_id = m.user_id

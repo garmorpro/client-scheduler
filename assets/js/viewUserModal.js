@@ -353,6 +353,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       setText('ud_detail_fullname', fullName);
       setText('ud_detail_email', user.email);
+
+      const jobTitleRow = document.getElementById('ud_detail_jobtitle_row');
+      if (user.job_title && user.job_title.trim()) {
+        jobTitleRow.style.display = '';
+        setText('ud_detail_jobtitle', user.job_title);
+      } else {
+        jobTitleRow.style.display = 'none';
+      }
+
       setText('ud_detail_created', formatDate(user.created_at));
       setText('ud_detail_role', roleLabel(user.role));
       setText('ud_detail_access_level', getAccessLevel(user.role));
