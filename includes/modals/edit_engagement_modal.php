@@ -1,5 +1,5 @@
 <div class="modal fade" id="editEngagementModal" tabindex="-1" aria-labelledby="editEngagementModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 560px;">
     <div class="modal-content">
       <form id="editEngagementForm">
         <div class="modal-body position-relative p-0">
@@ -17,18 +17,20 @@
               <input type="text" class="eng-edit-input" id="edit_eng_client_name" disabled>
             </div>
 
-            <div class="eng-edit-field">
-              <label for="edit_eng_budgeted_hours">Budgeted Hours</label>
-              <input type="number" min="0" class="eng-edit-input" id="edit_eng_budgeted_hours" name="budgeted_hours" required>
-            </div>
+            <div class="eng-edit-row">
+              <div class="eng-edit-field">
+                <label for="edit_eng_budgeted_hours">Budgeted Hours</label>
+                <input type="number" min="0" class="eng-edit-input" id="edit_eng_budgeted_hours" name="budgeted_hours" required>
+              </div>
 
-            <div class="eng-edit-field">
-              <label for="edit_eng_status">Status</label>
-              <select class="eng-edit-input" id="edit_eng_status" name="status" required>
-                <option value="confirmed">Confirmed</option>
-                <option value="pending">Pending</option>
-                <option value="not_confirmed">Not Confirmed</option>
-              </select>
+              <div class="eng-edit-field">
+                <label for="edit_eng_status">Status</label>
+                <select class="eng-edit-input" id="edit_eng_status" name="status" required>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="not_confirmed">Not Confirmed</option>
+                </select>
+              </div>
             </div>
 
             <div class="eng-edit-field">
@@ -47,7 +49,7 @@
 
             <div class="eng-edit-field">
               <label for="edit_eng_notes">Notes</label>
-              <textarea class="eng-edit-input" id="edit_eng_notes" name="notes" rows="2"></textarea>
+              <textarea class="eng-edit-input" id="edit_eng_notes" name="notes" rows="3"></textarea>
             </div>
           </div>
 
