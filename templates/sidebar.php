@@ -15,13 +15,27 @@ if ($isAdmin || $isManager) {
     if (!isset($conn)) {
         require_once __DIR__ . '/../includes/db.php';
     }
-    $pendingCountResult = $conn->query("
-        SELECT COUNT(DISTINCT COALESCE(request_group, CONCAT('single-', timeoff_id))) AS cnt
-        FROM time_off
-        WHERE is_global_timeoff = 0 AND status = 'pending'
-    ");
-    if ($pendingCountResult) {
-        $pendingTimeOffCount = (int) $pendingCountResult->fetch_assoc()['cnt'];
+    // Managers only see pending counts for staff/seniors assigned to them; admins see everything.
+    if ($isManager) {
+        $pendingCountStmt = $conn->prepare("
+            SELECT COUNT(DISTINCT COALESCE(t.request_group, CONCAT('single-', t.timeoff_id))) AS cnt
+            FROM time_off t
+            JOIN users u ON t.user_id = u.user_id
+            WHERE t.is_global_timeoff = 0 AND t.status = 'pending' AND u.manager_id = ?
+        ");
+        $pendingCountStmt->bind_param('i', $_SESSION['user_id']);
+        $pendingCountStmt->execute();
+        $pendingTimeOffCount = (int) $pendingCountStmt->get_result()->fetch_assoc()['cnt'];
+        $pendingCountStmt->close();
+    } else {
+        $pendingCountResult = $conn->query("
+            SELECT COUNT(DISTINCT COALESCE(request_group, CONCAT('single-', timeoff_id))) AS cnt
+            FROM time_off
+            WHERE is_global_timeoff = 0 AND status = 'pending'
+        ");
+        if ($pendingCountResult) {
+            $pendingTimeOffCount = (int) $pendingCountResult->fetch_assoc()['cnt'];
+        }
     }
 }
 ?>

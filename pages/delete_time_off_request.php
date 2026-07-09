@@ -31,12 +31,23 @@ $isSingle = strpos($requestGroup, 'single-') === 0;
 $timeoffId = $isSingle ? intval(substr($requestGroup, 7)) : 0;
 
 if ($isReviewer) {
+    // Managers may only remove requests from staff/seniors assigned to them; admins can remove anyone's.
+    $managerScope = $userRole === 'manager' ? " AND user_id IN (SELECT user_id FROM users WHERE manager_id = ?)" : '';
+
     if ($isSingle) {
-        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0");
-        $stmt->bind_param('i', $timeoffId);
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0" . $managerScope);
+        if ($userRole === 'manager') {
+            $stmt->bind_param('ii', $timeoffId, $currentUserId);
+        } else {
+            $stmt->bind_param('i', $timeoffId);
+        }
     } else {
-        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0");
-        $stmt->bind_param('s', $requestGroup);
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0" . $managerScope);
+        if ($userRole === 'manager') {
+            $stmt->bind_param('si', $requestGroup, $currentUserId);
+        } else {
+            $stmt->bind_param('s', $requestGroup);
+        }
     }
 } else {
     // Non-reviewers can only withdraw their own request while it's still pending.

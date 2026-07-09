@@ -234,6 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('ud_detail_access_level', getAccessLevel(user.role));
       setText('ud_detail_status', user.status);
 
+      const managerRow = document.getElementById('ud_detail_manager_row');
+      if (['staff', 'senior'].includes((user.role || '').toLowerCase())) {
+          managerRow.style.display = '';
+          setText('ud_detail_manager', user.manager_name || 'Unassigned');
+      } else {
+          managerRow.style.display = 'none';
+      }
+
       const statusPill = document.getElementById('ud_status_pill');
       statusPill.classList.remove('active', 'inactive');
       statusPill.classList.add((user.status || '').toLowerCase() === 'active' ? 'active' : 'inactive');

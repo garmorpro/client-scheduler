@@ -90,11 +90,19 @@ $notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
 $totalNotAssigned = $notAssignedRow['total_not_assigned'];
 
 
-$usersql = "SELECT user_id, full_name, email, role, status, last_active 
-        -- FROM ms_users
-        FROM users 
-        ORDER BY full_name ASC";
+$usersql = "SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.last_active,
+                   u.manager_id, m.full_name AS manager_name
+        FROM users u
+        LEFT JOIN users m ON u.manager_id = m.user_id
+        ORDER BY u.full_name ASC";
 $userresult = mysqli_query($conn, $usersql);
+
+$managersql = "SELECT user_id, full_name FROM users WHERE role = 'manager' ORDER BY full_name ASC";
+$managerresult = mysqli_query($conn, $managersql);
+$availableManagers = [];
+while ($mrow = mysqli_fetch_assoc($managerresult)) {
+    $availableManagers[] = $mrow;
+}
 
 $engagementSQL = "
   SELECT 
@@ -228,6 +236,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <th><input type="checkbox" id="selectAllUsers"></th>
                                 <th>Employee Name</th>
                                 <th>Role</th>
+                                <th>Manager</th>
                                 <th>Status</th>
                                 <th>Last Active</th>
                                 <th>Actions</th>
@@ -246,6 +255,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <span class="badge-role">
                                             <?php echo ucfirst(htmlspecialchars($userrow['role'])); ?>
                                         </span>
+                                    </td>
+                                    <td>
+                                        <?php if (in_array(strtolower($userrow['role']), ['staff', 'senior'], true)): ?>
+                                            <?php echo $userrow['manager_name'] ? htmlspecialchars($userrow['manager_name']) : '<span class="text-muted">&mdash;</span>'; ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">&mdash;</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <span class="badge-status <?php echo strtolower($userrow['status']) === 'active' ? 'active' : 'inactive'; ?>">
@@ -270,7 +286,18 @@ if ($result && mysqli_num_rows($result) > 0) {
                                            <i class="bi bi-eye text-success"></i>
                                         </a>
 
-                                        
+                                        <?php if (in_array(strtolower($userrow['role']), ['staff', 'senior'], true)): ?>
+                                        <!-- Assign Manager Button -->
+                                        <a href="#" class="assign-manager-btn text-decoration-none"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#assignManagerModal"
+                                           data-user-id="<?php echo $userrow['user_id']; ?>"
+                                           data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
+                                           data-manager-id="<?php echo $userrow['manager_id'] ?? ''; ?>"
+                                           title="Assign Manager">
+                                           <i class="bi bi-person-badge text-primary"></i>
+                                        </a>
+                                        <?php endif; ?>
 
                                         <!-- Promote/Role Dropdown -->
                                         <div class="dropdown d-inline">
@@ -314,7 +341,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" class="text-center">No users found</td></tr>
+                            <tr><td colspan="6" class="text-center">No users found</td></tr>
                         <?php endif; ?>
                         </tbody>
                     </table>
@@ -385,6 +412,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+<?php include_once '../includes/modals/assign_manager_modal.php'; ?>
 <?php if ($isAdmin): ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
@@ -397,6 +425,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/assign_manager_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>

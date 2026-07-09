@@ -61,6 +61,7 @@
             <div class="detail-row"><span class="detail-label">Role</span><span class="detail-value text-capitalize" id="ud_detail_role"></span></div>
             <div class="detail-row"><span class="detail-label">Access Level</span><span class="detail-value" id="ud_detail_access_level"></span></div>
             <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value text-capitalize" id="ud_detail_status"></span></div>
+            <div class="detail-row" id="ud_detail_manager_row" style="display:none;"><span class="detail-label">Manager</span><span class="detail-value" id="ud_detail_manager"></span></div>
           </div>
 
           <!-- Engagements -->

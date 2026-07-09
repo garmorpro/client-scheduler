@@ -20,7 +20,13 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 $user_id = (int)$_GET['user_id'];
 
 // Fetch user info
-$stmt = $conn->prepare("SELECT user_id, full_name, email, role, status, created_at, last_active FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("
+    SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.created_at, u.last_active,
+           m.full_name AS manager_name
+    FROM users u
+    LEFT JOIN users m ON u.manager_id = m.user_id
+    WHERE u.user_id = ?
+");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();

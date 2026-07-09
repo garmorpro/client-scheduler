@@ -10,7 +10,11 @@ if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'man
     exit;
 }
 
-$stmt = $conn->prepare("
+// Managers only review time off for staff/seniors assigned to them; admins see everything.
+$scopeToManager = $userRole === 'manager';
+$reviewerId = $_SESSION['user_id'];
+
+$sql = "
     SELECT t.timeoff_id, t.request_group, t.user_id, u.full_name, u.role,
            t.category, t.holiday_date, t.week_start, t.assigned_hours, t.timeoff_note,
            t.status, t.reviewer_comment, t.reviewed_by, t.reviewed_at, t.created,
@@ -19,8 +23,16 @@ $stmt = $conn->prepare("
     JOIN users u ON t.user_id = u.user_id
     LEFT JOIN users r ON t.reviewed_by = r.user_id
     WHERE t.is_global_timeoff = 0
-    ORDER BY COALESCE(t.holiday_date, t.week_start) ASC
-");
+";
+if ($scopeToManager) {
+    $sql .= " AND u.manager_id = ?";
+}
+$sql .= " ORDER BY COALESCE(t.holiday_date, t.week_start) ASC";
+
+$stmt = $conn->prepare($sql);
+if ($scopeToManager) {
+    $stmt->bind_param('i', $reviewerId);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 
