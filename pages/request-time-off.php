@@ -27,7 +27,7 @@ if (!isset($_SESSION['user_id'])) {
             <p class="mb-0">Submit a request and track its approval status</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a href="#" id="newTimeOffRequestBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#requestTimeOffModal">
+            <a href="#" id="newTimeOffRequestBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom">
                 <i class="bi bi-plus-lg me-3"></i>New Request
             </a>
         </div>

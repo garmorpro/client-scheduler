@@ -1,17 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('requestTimeOffForm');
     const modalEl = document.getElementById('requestTimeOffModal');
+    const modal = new bootstrap.Modal(modalEl);
+    const modalTitle = document.getElementById('requestTimeOffModalTitle');
+    const submitBtn = form.querySelector('.eng-edit-btn-save');
     const tableBody = document.getElementById('myRequestsTableBody');
     const hintEl = document.getElementById('myRequestsHint');
     const daysContainer = document.getElementById('torDaysContainer');
     const addDayBtn = document.getElementById('torAddDayBtn');
 
+    let editingRequestGroup = null;
+
     function statusPillClass(status) {
         if (status === 'approved') return 'confirmed';
         if (status === 'denied') return 'denied';
+        if (status === 'changes_requested') return 'not-confirmed';
         return 'pending';
     }
     function statusLabel(status) {
+        if (status === 'changes_requested') return 'Changes Requested';
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
     function categoryLabel(category) {
@@ -37,13 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- New Request modal: dynamic day rows ---
-    function dayRowTemplate() {
+    // --- New/Edit Request modal: dynamic day rows ---
+    function dayRowTemplate(date, hours) {
         const row = document.createElement('div');
         row.className = 'hol-day-row';
         row.innerHTML = `
-            <input type="date" class="eng-edit-input date-input" required>
-            <input type="number" min="1" max="24" step="0.5" class="eng-edit-input hours-input" value="8" required>
+            <input type="date" class="eng-edit-input date-input" value="${date || ''}" required>
+            <input type="number" min="1" max="24" step="0.5" class="eng-edit-input hours-input" value="${hours || 8}" required>
             <button type="button" class="hol-day-remove" title="Remove"><i class="bi bi-x-lg"></i></button>
         `;
         row.querySelector('.hol-day-remove').addEventListener('click', () => {
@@ -59,6 +66,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addDayBtn.addEventListener('click', () => daysContainer.appendChild(dayRowTemplate()));
     resetDayRows();
+
+    function openNewRequestModal() {
+        editingRequestGroup = null;
+        modalTitle.textContent = 'Request Time Off';
+        submitBtn.textContent = 'Submit Request';
+        form.reset();
+        resetDayRows();
+        modal.show();
+    }
+
+    function openEditRequestModal(r) {
+        editingRequestGroup = r.request_group;
+        modalTitle.textContent = 'Edit Request';
+        submitBtn.textContent = 'Resubmit for Approval';
+        document.getElementById('tor_category').value = r.category;
+        document.getElementById('tor_reason').value = r.reason || '';
+        daysContainer.innerHTML = '';
+        [...r.days].sort((a, b) => a.date.localeCompare(b.date)).forEach(d => {
+            daysContainer.appendChild(dayRowTemplate(d.date, d.hours));
+        });
+        modal.show();
+    }
+
+    document.getElementById('newTimeOffRequestBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        openNewRequestModal();
+    });
 
     // --- My Requests table ---
     async function loadMyRequests() {
@@ -78,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.innerHTML = '';
             requests.forEach(r => {
                 const tr = document.createElement('tr');
+                const needsAction = r.status === 'changes_requested';
                 tr.innerHTML = `
                     <td><span class="client-name">${formatDateRange(r.days)}</span></td>
                     <td><span class="category-pill ${r.category}">${categoryLabel(r.category)}</span></td>
@@ -87,17 +122,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="eng-status-pill ${statusPillClass(r.status)}">
                             <span class="dot"></span>${statusLabel(r.status)}
                         </span>
-                        ${r.reviewer_comment ? `<div class="text-muted" style="font-size:11px; margin-top:3px;" title="${r.reviewer_comment}"><i class="bi bi-chat-left-text"></i> ${r.reviewer_comment}</div>` : ''}
+                        ${r.reviewer_comment ? `<div class="${needsAction ? '' : 'text-muted'}" style="font-size:11px; margin-top:3px; ${needsAction ? 'color:#285a80; font-weight:600;' : ''}"><i class="bi bi-chat-left-text"></i> ${r.reviewer_comment}</div>` : ''}
                     </td>
                     <td><span class="client-onboarded-text">${formatDate(r.created)}</span></td>
                     <td class="num">
-                        ${r.status === 'pending' ? `
-                            <div class="client-row-actions">
+                        <div class="client-row-actions">
+                            ${needsAction ? `
+                                <button type="button" class="client-icon-btn edit" title="Edit &amp; Resubmit" data-edit-group="${r.request_group}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            ` : ''}
+                            ${r.status === 'pending' || needsAction ? `
                                 <button type="button" class="timeoff-cancel-btn" title="Cancel request" data-request-group="${r.request_group}">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
-                            </div>
-                        ` : ''}
+                            ` : ''}
+                        </div>
                     </td>
                 `;
                 tableBody.appendChild(tr);
@@ -105,6 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tableBody.querySelectorAll('.timeoff-cancel-btn').forEach(btn => {
                 btn.addEventListener('click', () => cancelRequest(btn.dataset.requestGroup));
+            });
+            tableBody.querySelectorAll('[data-edit-group]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const r = requests.find(req => req.request_group === btn.dataset.editGroup);
+                    if (r) openEditRequestModal(r);
+                });
             });
         } catch (err) {
             console.error('Failed to load time off requests', err);
@@ -154,21 +200,21 @@ document.addEventListener('DOMContentLoaded', () => {
             days
         };
 
+        const isEdit = !!editingRequestGroup;
+        if (isEdit) payload.request_group = editingRequestGroup;
+
         try {
-            const res = await fetch('request_time_off.php', {
+            const res = await fetch(isEdit ? 'update_time_off_request.php' : 'request_time_off.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
             if (data.success) {
-                const modalInstance = bootstrap.Modal.getInstance(modalEl);
-                if (modalInstance) modalInstance.hide();
-                form.reset();
-                resetDayRows();
+                modal.hide();
                 loadMyRequests();
             } else {
-                notify('error', 'Could not submit request', data.error || 'Please try again.');
+                notify('error', isEdit ? 'Could not resubmit request' : 'Could not submit request', data.error || 'Please try again.');
             }
         } catch (err) {
             console.error('Failed to submit time off request', err);
@@ -176,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modalEl.addEventListener('hidden.bs.modal', () => {
+        editingRequestGroup = null;
         form.reset();
         resetDayRows();
     });

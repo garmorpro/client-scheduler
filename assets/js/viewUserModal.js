@@ -156,7 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function timeoffStatusPillClass(status) {
     if (status === 'approved') return 'confirmed';
     if (status === 'denied') return 'denied';
+    if (status === 'changes_requested') return 'not-confirmed';
     return 'pending';
+  }
+  function timeoffStatusLabel(status) {
+    if (status === 'changes_requested') return 'Changes Requested';
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
   function formatDateRange(days) {
@@ -183,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="category-pill ${r.category}" style="margin-right:8px;">${r.category.charAt(0).toUpperCase() + r.category.slice(1)}</span>
         <div class="eng-name">${formatDateRange(r.days)}${r.reason ? ' &middot; ' + r.reason : ''}</div>
         <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="margin-right:8px;">
-          <span class="dot"></span>${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+          <span class="dot"></span>${timeoffStatusLabel(r.status)}
         </span>
         <div class="eng-hours">${r.total_hours}h</div>
       `;

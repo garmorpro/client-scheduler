@@ -2191,7 +2191,7 @@ body.dark-mode #reviewTimeOffModal .eng-edit-footer { border-color: #29302e; }
 #reviewTimeOffModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
 body.dark-mode #reviewTimeOffModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
 body.dark-mode #reviewTimeOffModal .eng-edit-btn-cancel:hover { background: #232a2c; }
-.rto-btn-approve, .rto-btn-deny {
+.rto-btn-approve, .rto-btn-deny, .rto-btn-changes {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 16px; border-radius: 9px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;
 }
@@ -2199,8 +2199,12 @@ body.dark-mode #reviewTimeOffModal .eng-edit-btn-cancel:hover { background: #232
 .rto-btn-approve:hover { opacity: .9; }
 .rto-btn-deny { background: #fbe8e6; color: #c0392b; }
 .rto-btn-deny:hover { background: #f6d5d1; }
+.rto-btn-changes { background: #e2eef6; color: #285a80; }
+.rto-btn-changes:hover { background: #cfe2f0; }
 body.dark-mode .rto-btn-approve { background: #4fbd7a; color: #0d1a11; }
 body.dark-mode .rto-btn-deny { background: #3a2320; color: #e0685a; }
+body.dark-mode .rto-btn-changes { background: #1a2540; color: #7fa8e0; }
+body.dark-mode .rto-btn-changes:hover { background: #223058; }
 body.dark-mode .rto-btn-deny:hover { background: #48281f; }
 
 /* ========= PROFILE DETAILS MODAL (tabbed, shares .ud-* with User Details) ========= */

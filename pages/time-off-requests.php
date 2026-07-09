@@ -105,8 +105,8 @@ if (!$isAdmin && !$isManager) {
           <p id="rtoReason" style="font-size:13px; margin-bottom:16px;"></p>
 
           <div class="eng-edit-field" id="rtoCommentField">
-            <label for="rtoComment">Comment (optional)</label>
-            <textarea class="eng-edit-input" id="rtoComment" rows="2" placeholder="Add a note for the employee..."></textarea>
+            <label for="rtoComment">Comment</label>
+            <textarea class="eng-edit-input" id="rtoComment" rows="2" placeholder="Add a note for the employee... (required to Request Changes)"></textarea>
           </div>
 
           <div id="rtoPastCommentWrap" style="display:none;">
@@ -115,8 +115,11 @@ if (!$isAdmin && !$isManager) {
           </div>
         </div>
 
-        <div class="eng-edit-footer" id="rtoFooter">
+        <div class="eng-edit-footer" id="rtoFooter" style="flex-wrap: wrap;">
           <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="rto-btn-changes" id="rtoChangesBtn" title="Request Changes">
+            <i class="bi bi-arrow-repeat"></i> Request Changes
+          </button>
           <button type="button" class="rto-btn-deny" id="rtoDenyBtn" title="Deny">
             <i class="bi bi-x-lg"></i> Deny
           </button>

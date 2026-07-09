@@ -18,9 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function statusPillClass(status) {
         if (status === 'approved') return 'confirmed';
         if (status === 'denied') return 'denied';
+        if (status === 'changes_requested') return 'not-confirmed';
         return 'pending';
     }
     function statusLabel(status) {
+        if (status === 'changes_requested') return 'Changes Requested';
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
     function categoryLabel(category) {
@@ -153,10 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
             pastCommentWrap.style.display = 'none';
             footer.querySelector('#rtoApproveBtn').style.display = '';
             footer.querySelector('#rtoDenyBtn').style.display = '';
+            footer.querySelector('#rtoChangesBtn').style.display = '';
         } else {
             commentField.style.display = 'none';
             footer.querySelector('#rtoApproveBtn').style.display = 'none';
             footer.querySelector('#rtoDenyBtn').style.display = 'none';
+            footer.querySelector('#rtoChangesBtn').style.display = 'none';
             if (r.reviewer_comment) {
                 pastCommentWrap.style.display = '';
                 document.getElementById('rtoPastComment').textContent = r.reviewer_comment;
@@ -171,6 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function submitReview(action) {
         if (!activeRequest) return;
         const comment = document.getElementById('rtoComment').value.trim();
+
+        if (action === 'request_changes' && !comment) {
+            notify('warning', 'Comment required', 'Please explain what needs to change before sending this back.');
+            return;
+        }
+
         const run = async () => {
             try {
                 const res = await fetch('review_time_off_request.php', {
@@ -190,13 +200,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
+        const copy = {
+            approve: { icon: 'question', title: 'Approve this request?', confirmText: 'Approve', color: '#2f9e57' },
+            deny: { icon: 'warning', title: 'Deny this request?', confirmText: 'Deny', color: '#c0392b' },
+            request_changes: { icon: 'question', title: 'Send this back to the employee?', confirmText: 'Send Back', color: '#3f83b8' }
+        }[action];
+
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                icon: action === 'approve' ? 'question' : 'warning',
-                title: action === 'approve' ? 'Approve this request?' : 'Deny this request?',
+                icon: copy.icon,
+                title: copy.title,
                 showCancelButton: true,
-                confirmButtonText: action === 'approve' ? 'Approve' : 'Deny',
-                confirmButtonColor: action === 'approve' ? '#2f9e57' : '#c0392b'
+                confirmButtonText: copy.confirmText,
+                confirmButtonColor: copy.color
             }).then(result => { if (result.isConfirmed) run(); });
         } else {
             run();
@@ -205,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('rtoApproveBtn').addEventListener('click', () => submitReview('approve'));
     document.getElementById('rtoDenyBtn').addEventListener('click', () => submitReview('deny'));
+    document.getElementById('rtoChangesBtn').addEventListener('click', () => submitReview('request_changes'));
 
     function deleteRequest(requestGroup) {
         const run = async () => {

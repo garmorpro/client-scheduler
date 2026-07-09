@@ -22,12 +22,18 @@ $requestGroup = trim($data['request_group'] ?? '');
 $action = $data['action'] ?? '';
 $comment = trim($data['comment'] ?? '');
 
-if (!$requestGroup || !in_array($action, ['approve', 'deny'], true)) {
+if (!$requestGroup || !in_array($action, ['approve', 'deny', 'request_changes'], true)) {
     echo json_encode(['success' => false, 'error' => 'Invalid request']);
     exit;
 }
 
-$status = $action === 'approve' ? 'approved' : 'denied';
+if ($action === 'request_changes' && $comment === '') {
+    echo json_encode(['success' => false, 'error' => 'Please add a comment explaining what needs to change.']);
+    exit;
+}
+
+$statusMap = ['approve' => 'approved', 'deny' => 'denied', 'request_changes' => 'changes_requested'];
+$status = $statusMap[$action];
 $reviewerId = $_SESSION['user_id'];
 
 if (strpos($requestGroup, 'single-') === 0) {
