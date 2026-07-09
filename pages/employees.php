@@ -187,24 +187,24 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                        <i class="bi bi-pencil-square text-primary"></i>
                                     </a>
 
-                                    <?php if (strtolower($userrow['role']) === 'manager'): ?>
-                                    <!-- Direct Reports Button -->
-                                    <a href="#" class="action-icon-btn direct-reports-btn text-decoration-none"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#directReportsModal"
-                                       data-manager-id="<?php echo $userrow['user_id']; ?>"
-                                       data-manager-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
-                                       title="Manage Direct Reports">
-                                       <i class="bi bi-diagram-2 text-primary"></i>
-                                    </a>
-                                    <?php endif; ?>
-
-                                    <!-- Promote/Role Dropdown -->
+                                    <!-- More Actions (Direct Reports / Promote-Demote / Delete) -->
                                     <div class="dropdown">
-                                        <a href="#" class="action-icon-btn text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" title="Change Role">
-                                            <i class="bi bi-person-up text-primary"></i>
+                                        <a href="#" class="action-icon-btn text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" title="More">
+                                            <i class="bi bi-three-dots-vertical"></i>
                                         </a>
-                                        <ul class="dropdown-menu">
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if (strtolower($userrow['role']) === 'manager'): ?>
+                                            <li>
+                                                <a class="dropdown-item direct-reports-btn" href="#"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#directReportsModal"
+                                                   data-manager-id="<?php echo $userrow['user_id']; ?>"
+                                                   data-manager-name="<?php echo htmlspecialchars($userrow['full_name']); ?>">
+                                                   <i class="bi bi-diagram-2 me-2"></i>Direct Reports
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <?php endif; ?>
                                             <?php
                                             $role = strtolower($userrow['role']);
                                             switch ($role) {
@@ -230,13 +230,16 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                                     break;
                                             }
                                             ?>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger delete-user-btn" href="#"
+                                                   data-user-id="<?php echo $userrow['user_id']; ?>"
+                                                   data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>">
+                                                   <i class="bi bi-trash me-2"></i>Delete
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
-
-                                    <!-- Delete Button -->
-                                    <a href="#" class="action-icon-btn delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>" title="Delete Employee">
-                                        <i class="bi bi-trash text-danger"></i>
-                                    </a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
