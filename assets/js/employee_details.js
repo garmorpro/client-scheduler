@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="emp-entry-dot"></div>
                         <div class="emp-entry-label">
                             <span class="emp-entry-name">${r.name}</span>
-                            ${r.status ? `<span class="badge badge-status badge-${r.status}">${statusLabel(r.status)}</span>` : ''}
+                            ${r.status ? `<span class="emp-status-pill status-${r.status}">${statusLabel(r.status)}</span>` : ''}
                         </div>
                         <div class="emp-entry-weeks">${weekChips}</div>
                         <div class="emp-entry-hours ${isOver ? 'over' : ''}">${r.total}h</div>

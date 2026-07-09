@@ -1547,13 +1547,25 @@ body.dark-mode .emp-entry-row.emp-timeoff { background: #232a1e; }
 body.dark-mode .emp-entry-row.emp-timeoff:hover { background: #2a3224; }
 
 .emp-entry-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.emp-entry-row.status-confirmed .emp-entry-dot { background: rgb(50,107,61); }
-.emp-entry-row.status-pending .emp-entry-dot { background: #6f42c1; }
-.emp-entry-row.status-not-confirmed .emp-entry-dot { background: rgb(50,71,107); }
-.emp-entry-row.emp-timeoff .emp-entry-dot { background: var(--secondary-color); }
-body.dark-mode .emp-entry-row.status-confirmed .emp-entry-dot { background: #7fd99a; }
-body.dark-mode .emp-entry-row.status-pending .emp-entry-dot { background: #c4a0ff; }
-body.dark-mode .emp-entry-row.status-not-confirmed .emp-entry-dot { background: #7fa8e0; }
+.emp-entry-row.status-confirmed .emp-entry-dot { background: #2f9e57; }
+.emp-entry-row.status-pending .emp-entry-dot { background: #d99a2b; }
+.emp-entry-row.status-not-confirmed .emp-entry-dot { background: #3f83b8; }
+.emp-entry-row.emp-timeoff .emp-entry-dot { background: #8fae35; }
+body.dark-mode .emp-entry-row.status-confirmed .emp-entry-dot { background: #4fbd7a; }
+body.dark-mode .emp-entry-row.status-pending .emp-entry-dot { background: #d99a2b; }
+body.dark-mode .emp-entry-row.status-not-confirmed .emp-entry-dot { background: #5c8fc9; }
+body.dark-mode .emp-entry-row.emp-timeoff .emp-entry-dot { background: #8fae35; }
+
+.emp-status-pill {
+    flex-shrink: 0; padding: 1.5px 8px; border-radius: 20px;
+    font-size: 10.5px; font-weight: 700;
+}
+.emp-status-pill.status-confirmed { background: #e4f3e6; color: #1f6b3a; }
+.emp-status-pill.status-pending { background: #fbeed9; color: #92600f; }
+.emp-status-pill.status-not-confirmed { background: #e2eef6; color: #285a80; }
+body.dark-mode .emp-status-pill.status-confirmed { background: #1e3d28; color: #7fd99a; }
+body.dark-mode .emp-status-pill.status-pending { background: #3d2f16; color: #e0b566; }
+body.dark-mode .emp-status-pill.status-not-confirmed { background: #1a2540; color: #7fa8e0; }
 
 .emp-entry-label { flex: 1; min-width: 120px; display: flex; align-items: center; gap: 7px; }
 .emp-entry-name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
