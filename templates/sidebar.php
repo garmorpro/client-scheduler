@@ -73,7 +73,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <?php
-                    $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php', 'service-settings.php'];
+                    $settingsPages = ['company-holidays.php', 'service-settings.php'];
                     $isActive = in_array($currentPage, $settingsPages);
                 ?>
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
@@ -83,7 +83,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
-                        <li><a href="manage-users.php" class="sidebar-sublink <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
                         <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
                     </ul>
