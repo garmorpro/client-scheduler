@@ -25,6 +25,14 @@ contextMenu.style.cssText = `
 
     let selectedBadge = null;
 
+    function notifyError(title, text) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'error', title, text });
+        } else {
+            alert(`${title}: ${text}`);
+        }
+    }
+
     // Show context menu on right-click
     document.addEventListener('contextmenu', function(e) {
         if (e.target.classList.contains('draggable-badge')) {
@@ -50,10 +58,27 @@ contextMenu.style.cssText = `
     // Use event delegation for the delete button
     contextMenu.addEventListener('click', async function(e) {
         if (e.target.id === 'deleteBadge' && selectedBadge) {
-            // if (!confirm('Are you sure you want to delete this entry?')) return;
+            contextMenu.style.display = 'none';
 
-            const entryId = selectedBadge.dataset.entryId;
-            const parentCell = selectedBadge.parentElement;
+            const badgeToDelete = selectedBadge;
+            selectedBadge = null;
+            const badgeLabel = badgeToDelete.textContent.trim();
+
+            const confirmResult = typeof Swal !== 'undefined'
+                ? await Swal.fire({
+                    icon: 'warning',
+                    title: 'Delete this entry?',
+                    text: `This removes "${badgeLabel}" from the schedule. This cannot be undone.`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: '#dc3545',
+                })
+                : { isConfirmed: confirm(`Delete "${badgeLabel}"? This cannot be undone.`) };
+
+            if (!confirmResult.isConfirmed) return;
+
+            const entryId = badgeToDelete.dataset.entryId;
+            const parentCell = badgeToDelete.parentElement;
 
             try {
                 const resp = await fetch('delete_entry_new.php', {
@@ -70,8 +95,7 @@ contextMenu.style.cssText = `
 
                 if (resp.ok && data.success) {
                     // Remove the badge
-                    selectedBadge.remove();
-                    selectedBadge = null;
+                    badgeToDelete.remove();
 
                     // Check if there are any other badges left
                     const hasOtherBadges = parentCell.querySelector('.draggable-badge');
@@ -86,14 +110,12 @@ contextMenu.style.cssText = `
                         }
                     }
                 } else {
-                    alert('Failed to delete entry: ' + (data.error || 'Server error'));
+                    notifyError('Failed to delete entry', data.error || 'Server error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Network error while deleting entry.');
+                notifyError('Network error', 'Could not delete entry. Please try again.');
             }
-
-            contextMenu.style.display = 'none';
         }
     });
 

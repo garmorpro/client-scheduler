@@ -60,6 +60,14 @@
             }
         }
 
+        function notifyDragError(title, text) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title, text });
+            } else {
+                alert(`${title}: ${text}`);
+            }
+        }
+
         async function onDrop(e) {
     e.preventDefault();
     removeDropTargetHints();
@@ -71,19 +79,29 @@
     if (!entryId || !draggedElem) return;
     if (originCell.dataset.userId === targetUserId && originCell.dataset.weekStart === targetWeekStart) return;
 
+    const movedElem = draggedElem;
+    const sourceCell = originCell;
+
+    function revertMove() {
+        movedElem.remove();
+        updatePlusIcon(targetTd);
+        sourceCell.appendChild(movedElem);
+        updatePlusIcon(sourceCell);
+    }
+
     // Remove badge from origin
-    draggedElem.remove();
-    updatePlusIcon(originCell);
+    movedElem.remove();
+    updatePlusIcon(sourceCell);
 
     // Add badge to target
-    targetTd.appendChild(draggedElem);
-    draggedElem.style.pointerEvents = '';
-    draggedElem.classList.remove('dragging');
+    targetTd.appendChild(movedElem);
+    movedElem.style.pointerEvents = '';
+    movedElem.classList.remove('dragging');
     updatePlusIcon(targetTd);
 
     // Send update to server
     try {
-        await fetch('update_entry_position.php', {
+        const resp = await fetch('update_entry_position.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
@@ -94,6 +112,14 @@
             })
         });
 
+        const data = await resp.json().catch(() => null);
+
+        if (!resp.ok || !data || !data.success) {
+            revertMove();
+            notifyDragError('Could not move entry', (data && data.error) || 'Please try again.');
+            return;
+        }
+
         // Save scroll position and reload
         const container = document.querySelector('.sheet-container');
         sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
@@ -102,6 +128,8 @@
 
     } catch (err) {
         console.error('Failed to update server', err);
+        revertMove();
+        notifyDragError('Network error', 'Could not move entry. Please try again.');
     }
 }
 
@@ -109,7 +137,7 @@
         setupDropTargets();
         document.querySelectorAll('td.addable').forEach(cell => updatePlusIcon(cell));
 
-        const table = document.querySelector('.table-responsive');
+        const table = document.querySelector('.sheet-container');
         if (table) {
             new MutationObserver(mutations => {
                 mutations.forEach(m => {

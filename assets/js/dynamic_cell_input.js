@@ -5,6 +5,14 @@
     let activeTd = null;
     let activeOverlay = null;
 
+    function notify(icon, title, text) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon, title, text });
+        } else {
+            alert(text ? `${title}: ${text}` : title);
+        }
+    }
+
     // Fetch clients
     fetch('get_clients.php')
         .then(res => res.json())
@@ -235,7 +243,7 @@
                     const hours = parseFloat(hoursInput.value);
 
                     if (!clientName || !hours || hours <= 0) {
-                        alert('Please enter valid client and hours.');
+                        notify('warning', 'Missing information', 'Please enter a valid client and hours.');
                         return;
                     }
 
@@ -263,11 +271,11 @@
                         if (resp.ok && data.success) {
                             saveScrollAndReload();
                         } else {
-                            alert('Failed to add entry: ' + (data.error || 'Server error'));
+                            notify('error', 'Failed to add entry', data.error || 'Server error');
                         }
                     } catch (err) {
                         console.error(err);
-                        alert('Network error while adding entry.');
+                        notify('error', 'Network error', 'Could not add entry. Please try again.');
                     }
                 } else if (e.key === 'Escape') {
                     closeActiveInputs();
@@ -345,7 +353,7 @@
                     const newHours = parseFloat(hoursInput.value);
 
                     if (!newName || !newHours || newHours <= 0) {
-                        alert('Please enter valid client and hours.');
+                        notify('warning', 'Missing information', 'Please enter a valid client and hours.');
                         return;
                     }
 
@@ -370,11 +378,11 @@
                         if (resp.ok && data.success) {
                             saveScrollAndReload();
                         } else {
-                            alert('Failed to update entry: ' + (data.error || 'Server error'));
+                            notify('error', 'Failed to update entry', data.error || 'Server error');
                         }
                     } catch (err) {
                         console.error(err);
-                        alert('Network error while updating entry.');
+                        notify('error', 'Network error', 'Could not update entry. Please try again.');
                     }
                 } else if (ev.key === 'Escape') {
                     closeActiveInputs();

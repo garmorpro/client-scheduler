@@ -3,6 +3,14 @@
 
     let activeInput = null;
 
+    function notifyError(title, text) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'error', title, text });
+        } else {
+            alert(text ? `${title}: ${text}` : title);
+        }
+    }
+
     function renderTimeOff(td, timeOffValue, timeoffId) {
         td.style.position = 'relative';
         td.classList.add('timeoff-cell');
@@ -148,7 +156,7 @@
                         }
                         console.log('Deleted personal time off for cell:', td);
                     } else {
-                        alert('Failed to delete time off.');
+                        notifyError('Failed to delete time off', del.data?.error || 'Please try again.');
                     }
                 } else if (personalValue > 0) {
                     const totalHours = personalValue + globalHours;
@@ -164,7 +172,7 @@
                         if (update.ok && update.data?.success) {
                             renderTimeOff(td, totalHours, timeoffId);
                         } else {
-                            alert('Failed to update time off.');
+                            notifyError('Failed to update time off', update.data?.error || 'Please try again.');
                         }
                     } else {
                         // ADD new entry
@@ -182,13 +190,13 @@
                         if (add.ok && add.data?.success && add.data.timeoff_id) {
                             renderTimeOff(td, totalHours, add.data.timeoff_id);
                         } else {
-                            alert('Failed to add time off.');
+                            notifyError('Failed to add time off', add.data?.error || 'Please try again.');
                         }
                     }
                 }
             } catch (err) {
                 console.error('Network error while saving time off:', err);
-                alert('Network error while saving time off.');
+                notifyError('Network error', 'Could not save time off. Please try again.');
             } finally {
                 if (input) input.remove();
                 activeInput = null;

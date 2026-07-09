@@ -193,7 +193,7 @@ updateLastRowRadius();
         <div class="rounded p-4 mb-4 d-flex justify-content-between align-items-center">
             <!-- Search bar on left -->
             <div class="flex-grow-1 me-3">
-                <input type="search" id="searchInput" class="form-control w-50" placeholder="Search employees..." onkeyup="filterEmployees()" />
+                <input type="search" id="searchInput" class="form-control w-50" placeholder="Search employees..." />
             </div>
 
             <!-- Role filter dropdown on right -->
@@ -407,11 +407,9 @@ updateLastRowRadius();
     <?php if ($isAdmin): ?>
     <script src="../assets/js/employee_details.js?v=<?php echo time(); ?>"></script>
     <?php endif; ?>
-    <script src="../assets/js/filter_role.js?v=<?php echo time(); ?>"></script>
-    
+
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
@@ -422,33 +420,9 @@ updateLastRowRadius();
 
     <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.sheet-container');
-    const savedLeft = sessionStorage.getItem('scheduleScrollLeft');
-    const savedTop = sessionStorage.getItem('scheduleScrollTop');
-    if (savedLeft !== null) container.scrollLeft = parseInt(savedLeft);
-    if (savedTop !== null) container.scrollTop = parseInt(savedTop);
-    sessionStorage.removeItem('scheduleScrollLeft');
-    sessionStorage.removeItem('scheduleScrollTop');
-});
-</script>
-
-<script>
-document.querySelectorAll('.schedule-table td.addable').forEach(td => {
-    td.addEventListener('mouseenter', function() {
-        const isDark = document.body.classList.contains('dark-mode');
-        this.style.setProperty('background-color', isDark ? '#9595b1' : '#e0f7fa', 'important');
-    });
-    td.addEventListener('mouseleave', function() {
-        this.style.removeProperty('background-color');
-    });
-});
-</script>
-       
 
 <script>
 function refreshWithScroll() {
@@ -462,15 +436,42 @@ function refreshWithScroll() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.sheet-container');
+    if (!container) return;
+
     const savedLeft = sessionStorage.getItem('scheduleScrollLeft');
     const savedTop = sessionStorage.getItem('scheduleScrollTop');
-    if (savedLeft !== null) container.scrollLeft = parseInt(savedLeft);
-    if (savedTop !== null) container.scrollTop = parseInt(savedTop);
-    sessionStorage.removeItem('scheduleScrollLeft');
-    sessionStorage.removeItem('scheduleScrollTop');
+
+    if (savedLeft !== null || savedTop !== null) {
+        if (savedLeft !== null) container.scrollLeft = parseInt(savedLeft);
+        if (savedTop !== null) container.scrollTop = parseInt(savedTop);
+        sessionStorage.removeItem('scheduleScrollLeft');
+        sessionStorage.removeItem('scheduleScrollTop');
+    } else {
+        // First visit this session: scroll so the current week is in view
+        // instead of leaving the table sitting 2 weeks in the past.
+        const currentWeekTh = document.querySelector('.schedule-table thead th.highlight-today');
+        if (currentWeekTh) {
+            const containerRect = container.getBoundingClientRect();
+            const thRect = currentWeekTh.getBoundingClientRect();
+            const offset = (thRect.left - containerRect.left) + container.scrollLeft;
+            // Leave room for the sticky employee-name column (~260px) plus
+            // one prior week of context (~200px).
+            container.scrollLeft = Math.max(0, offset - 460);
+        }
+    }
+
+    document.querySelectorAll('.schedule-table td.addable').forEach(td => {
+        td.addEventListener('mouseenter', function() {
+            const isDark = document.body.classList.contains('dark-mode');
+            this.style.setProperty('background-color', isDark ? '#9595b1' : '#e0f7fa', 'important');
+        });
+        td.addEventListener('mouseleave', function() {
+            this.style.removeProperty('background-color');
+        });
+    });
 });
 </script>
-    
+
 </div>
 </body>
 </html>
