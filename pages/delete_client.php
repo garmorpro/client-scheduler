@@ -2,7 +2,8 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 
-if (!isset($_SESSION['user_id'])) {
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
     header("Location: /");
     exit();
 }

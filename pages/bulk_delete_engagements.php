@@ -16,8 +16,9 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
 }
 
 // Authentication check
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();
 }
