@@ -68,6 +68,39 @@
             }
         }
 
+        function showUndoToast(message, onUndo, onSettle) {
+            if (typeof Swal === 'undefined') {
+                onSettle();
+                return;
+            }
+            let undoRequested = false;
+            Swal.fire({
+                toast: true,
+                position: 'bottom-end',
+                icon: 'success',
+                title: message,
+                html: '<button type="button" id="undoActionBtn" style="margin-top:6px;padding:4px 12px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-size:12px;font-weight:600;">Undo</button>',
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 6000,
+                timerProgressBar: true,
+                didOpen: (toastEl) => {
+                    const btn = toastEl.querySelector('#undoActionBtn');
+                    if (btn) {
+                        btn.addEventListener('click', async () => {
+                            undoRequested = true;
+                            Swal.close();
+                            await onUndo();
+                            onSettle();
+                        });
+                    }
+                },
+                willClose: () => {
+                    if (!undoRequested) onSettle();
+                }
+            });
+        }
+
         async function onDrop(e) {
     e.preventDefault();
     removeDropTargetHints();
@@ -120,11 +153,39 @@
             return;
         }
 
-        // Save scroll position and reload
+        // Save scroll position for when we reload
         const container = document.querySelector('.sheet-container');
-        sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
-        sessionStorage.setItem('scheduleScrollTop', container.scrollTop);
-        location.reload();
+        if (container) {
+            sessionStorage.setItem('scheduleScrollLeft', container.scrollLeft);
+            sessionStorage.setItem('scheduleScrollTop', container.scrollTop);
+        }
+
+        const originUserId = sourceCell.dataset.userId;
+        const originWeekStart = sourceCell.dataset.weekStart;
+
+        showUndoToast('Entry moved', async () => {
+            try {
+                const undoResp = await fetch('update_entry_position.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entry_id: entryId,
+                        target_user_id: originUserId,
+                        target_week_start: originWeekStart
+                    })
+                });
+                const undoData = await undoResp.json().catch(() => null);
+                if (!undoResp.ok || !undoData || !undoData.success) {
+                    notifyDragError('Could not undo move', (undoData && undoData.error) || 'Please try again.');
+                }
+            } catch (err) {
+                console.error('Failed to undo move', err);
+                notifyDragError('Network error', 'Could not undo move.');
+            }
+        }, () => {
+            location.reload();
+        });
 
     } catch (err) {
         console.error('Failed to update server', err);

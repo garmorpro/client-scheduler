@@ -2,6 +2,9 @@ function filterEmployees() {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
   const activeRoles = Array.from(document.querySelectorAll('.role-checkbox:checked'))
                            .map(cb => cb.value.toLowerCase());
+  const selectedClients = Array.from(document.querySelectorAll('.client-checkbox:checked'))
+                                .map(cb => cb.value)
+                                .filter(v => v !== '');
 
   // Split query by commas and trim spaces
   const terms = query ? query.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
@@ -17,8 +20,15 @@ function filterEmployees() {
     // Name match
     const matchesSearch = terms.length === 0 || terms.some(term => nameText.includes(term));
 
-    // Show only if both match
-    row.style.display = (matchesRole && matchesSearch) ? '' : 'none';
+    // Client match: row must have at least one entry badge for a selected client
+    let matchesClient = true;
+    if (selectedClients.length > 0) {
+      const badges = row.querySelectorAll('[data-client-name]');
+      matchesClient = Array.from(badges).some(b => selectedClients.includes(b.dataset.clientName));
+    }
+
+    // Show only if all match
+    row.style.display = (matchesRole && matchesSearch && matchesClient) ? '' : 'none';
   });
   updateLastRowRadius(); // <-- ADD THIS
 }
@@ -37,9 +47,41 @@ searchInput.addEventListener('search', () => {
   filterEmployees();
 });
 
+// Client filter: "All Clients" is mutually exclusive with picking specific clients
+function setupClientFilter() {
+  const allClientsCb = document.getElementById('clientAll');
+  if (!allClientsCb) return; // this page doesn't have a client filter
+
+  const specificClientCbs = Array.from(document.querySelectorAll('.client-checkbox'))
+                                  .filter(cb => cb !== allClientsCb);
+
+  allClientsCb.addEventListener('change', () => {
+    if (allClientsCb.checked) {
+      specificClientCbs.forEach(cb => cb.checked = false);
+    } else if (specificClientCbs.every(cb => !cb.checked)) {
+      // Don't allow leaving every client checkbox unchecked
+      allClientsCb.checked = true;
+      return;
+    }
+    filterEmployees();
+  });
+
+  specificClientCbs.forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        allClientsCb.checked = false;
+      } else if (specificClientCbs.every(c => !c.checked)) {
+        allClientsCb.checked = true;
+      }
+      filterEmployees();
+    });
+  });
+}
+
 // Initial filter on page load
 document.addEventListener('DOMContentLoaded', () => {
   // Make sure manager is unchecked by default
   document.getElementById('roleManager').checked = false;
+  setupClientFilter();
   filterEmployees();
 });

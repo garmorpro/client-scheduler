@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $today = strtotime('today');
+$OVERALLOCATION_THRESHOLD = 40; // hours/week considered a full standard week
 
 // Calculate Mondays
 $currentMonday = strtotime('monday this week', $today);
@@ -52,8 +53,8 @@ if ($userResult) {
     }
 }
 
-// Clients
-$clientQuery = "SELECT engagement_id, client_name FROM engagements";
+// Clients (deduped by name for the client filter dropdown -- a client can have multiple engagements)
+$clientQuery = "SELECT DISTINCT client_name FROM engagements WHERE client_name IS NOT NULL AND client_name != '' ORDER BY client_name";
 $clientResult = $conn->query($clientQuery);
 $activeClients = [];
 while ($clientRow = $clientResult->fetch_assoc()) {
@@ -179,9 +180,21 @@ updateLastRowRadius();
                 <p class="mb-0">Complete overview of all client engagements and team assignments</p>
             </div>
             <div class="header-buttons">
-                <a href="#" 
+                <a href="#"
+                   id="jumpToTodayBtn"
+                   class="badge text-black p-2 text-decoration-none fw-medium me-1"
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                  <i class="bi bi-calendar-check me-3"></i>Today
+                </a>
+                <a href="#"
+                   id="exportScheduleBtn"
+                   class="badge text-black p-2 text-decoration-none fw-medium me-1"
+                   style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
+                  <i class="bi bi-download me-3"></i>Export
+                </a>
+                <a href="#"
                    onclick="refreshWithScroll(); return false;"
-                   class="badge text-black p-2 text-decoration-none fw-medium me-1" 
+                   class="badge text-black p-2 text-decoration-none fw-medium me-1"
                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                   <i class="bi bi-arrow-clockwise me-3"></i>Refresh
                 </a>
@@ -196,9 +209,33 @@ updateLastRowRadius();
                 <input type="search" id="searchInput" class="form-control w-50" placeholder="Search employees..." />
             </div>
 
+            <!-- Client filter dropdown -->
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="clientFilterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                    Filter Client
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="clientFilterDropdown" style="min-width: 220px; max-height: 320px; overflow-y: auto;">
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input client-checkbox" type="checkbox" value="" id="clientAll" checked>
+                            <label class="form-check-label" for="clientAll"><strong>All Clients</strong></label>
+                        </div>
+                        <hr class="my-2">
+                    </li>
+                    <?php foreach ($activeClients as $c): $clientId = 'client-' . preg_replace('/[^a-zA-Z0-9]/', '', $c['client_name']); ?>
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input client-checkbox" type="checkbox" value="<?= htmlspecialchars($c['client_name']) ?>" id="<?= $clientId ?>">
+                            <label class="form-check-label" for="<?= $clientId ?>"><?= htmlspecialchars($c['client_name']) ?></label>
+                        </div>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
             <!-- Role filter dropdown on right -->
             <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="roleFilterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     Filter Roles
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="roleFilterDropdown" style="min-width: 200px;">
@@ -318,17 +355,18 @@ updateLastRowRadius();
                         $hasPersonalTimeOff = !empty($timeOffForWeek);
                         $timeOffHours = 0;
                         $cellContent = '';
-                    
+                        $totalAssignedHours = 0;
+
                         if ($hasPersonalTimeOff) {
                             foreach ($timeOffForWeek as $to) {
                                 $timeOffHours += floatval($to['assigned_hours']);
                             }
                         }
-                    
+
                         if (isset($globalTimeOff[$weekKey]) && $hasPersonalTimeOff) {
                             $timeOffHours += floatval($globalTimeOff[$weekKey]['assigned_hours']);
                         }
-                    
+
                         // Build engagement badges
                         foreach ($entriesForWeek as $entry) {
                             $status = strtolower($entry['engagement_status'] ?? 'confirmed');
@@ -343,22 +381,29 @@ updateLastRowRadius();
                             $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
                             $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
                             $badgeId = "badge-entry-{$entry['entry_id']}";
-                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
+                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
+                            $totalAssignedHours += floatval($entry['assigned_hours']);
                         }
-                    
+
                         if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
                             $cellContent = "<i class='bi bi-plus '></i>";
                         }
-                    
+
+                        $isOverallocated = $totalAssignedHours > $OVERALLOCATION_THRESHOLD;
+
                         $tdClass = 'addable';
                         if ($hasPersonalTimeOff || isset($globalTimeOff[$weekKey])) $tdClass .= ' position-relative timeoff-cell';
+                        if ($isOverallocated) $tdClass .= ' position-relative overallocated-cell';
                     ?>
-                    <td class="<?php echo $tdClass; ?>" 
-                        data-user-id="<?php echo $userId; ?>" 
-                        data-user-name="<?php echo $fullName; ?>" 
+                    <td class="<?php echo $tdClass; ?>"
+                        data-user-id="<?php echo $userId; ?>"
+                        data-user-name="<?php echo $fullName; ?>"
                         data-week-start="<?php echo $weekKey; ?>"
                         style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
                         <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
+                        <?php if ($isOverallocated): ?>
+                            <span class="overallocated-flag" title="<?= $totalAssignedHours ?> hours assigned this week (over <?= $OVERALLOCATION_THRESHOLD ?>)"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                        <?php endif; ?>
                         <?php echo $cellContent; ?>
                     </td>
                     <?php endforeach; ?>
@@ -409,6 +454,7 @@ updateLastRowRadius();
     <?php endif; ?>
 
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/export_schedule.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
@@ -434,6 +480,25 @@ function refreshWithScroll() {
     location.reload();
 }
 
+function scrollToCurrentWeek(smooth) {
+    const container = document.querySelector('.sheet-container');
+    const currentWeekTh = document.querySelector('.schedule-table thead th.highlight-today');
+    if (!container || !currentWeekTh) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const thRect = currentWeekTh.getBoundingClientRect();
+    const offset = (thRect.left - containerRect.left) + container.scrollLeft;
+    // Leave room for the sticky employee-name column (~260px) plus
+    // one prior week of context (~200px).
+    const target = Math.max(0, offset - 460);
+
+    if (smooth) {
+        container.scrollTo({ left: target, behavior: 'smooth' });
+    } else {
+        container.scrollLeft = target;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.sheet-container');
     if (!container) return;
@@ -449,15 +514,15 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         // First visit this session: scroll so the current week is in view
         // instead of leaving the table sitting 2 weeks in the past.
-        const currentWeekTh = document.querySelector('.schedule-table thead th.highlight-today');
-        if (currentWeekTh) {
-            const containerRect = container.getBoundingClientRect();
-            const thRect = currentWeekTh.getBoundingClientRect();
-            const offset = (thRect.left - containerRect.left) + container.scrollLeft;
-            // Leave room for the sticky employee-name column (~260px) plus
-            // one prior week of context (~200px).
-            container.scrollLeft = Math.max(0, offset - 460);
-        }
+        scrollToCurrentWeek(false);
+    }
+
+    const jumpToTodayBtn = document.getElementById('jumpToTodayBtn');
+    if (jumpToTodayBtn) {
+        jumpToTodayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            scrollToCurrentWeek(true);
+        });
     }
 
     document.querySelectorAll('.schedule-table td.addable').forEach(td => {
