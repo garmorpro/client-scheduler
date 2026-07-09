@@ -12,29 +12,31 @@ if (!isset($_SESSION['user_id'])) {
 if (isset($_GET['id'])) {
     $engagementId = $_GET['id'];
 
-    // Get engagement name and total assigned hours
-    $engagementQuery = "SELECT client_name, total_available_hours, notes FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, status, budgeted_hours, notes FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
     $engagementResult = $stmt->get_result();
     $engagement = $engagementResult->fetch_assoc();
 
-    // Get assigned employees and their hours
-    $employeeQuery = "SELECT u.full_name, SUM(a.assigned_hours) AS total_hours
+    // Assigned employees + their hours + role, for the View Engagement modal
+    $employeeQuery = "SELECT u.full_name, u.role, SUM(a.assigned_hours) AS total_hours
                       FROM entries a
                       JOIN users u ON a.user_id = u.user_id
                       WHERE a.engagement_id = ?
-                      GROUP BY a.user_id";
+                      GROUP BY a.user_id, u.full_name, u.role
+                      ORDER BY total_hours DESC";
     $stmt = $conn->prepare($employeeQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
     $employeeResult = $stmt->get_result();
-    $assignedEmployees = '';
+    $assignedEmployees = [];
     while ($employee = $employeeResult->fetch_assoc()) {
-        $name = htmlspecialchars($employee['full_name'] ?? '');
-        $hours = htmlspecialchars($employee['total_hours']);
-        $assignedEmployees .= "<p class='mb-1'><strong>{$name}</strong> – {$hours} hrs</p>";
+        $assignedEmployees[] = [
+            'name' => $employee['full_name'] ?? '',
+            'role' => $employee['role'] ?? '',
+            'hours' => (float)$employee['total_hours']
+        ];
     }
 
     // Total assigned hours
@@ -43,16 +45,14 @@ if (isset($_GET['id'])) {
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
     $totalHoursResult = $stmt->get_result();
-    $totalHours = $totalHoursResult->fetch_assoc()['total_hours'];
+    $totalHours = (float)($totalHoursResult->fetch_assoc()['total_hours'] ?? 0);
 
-    // Return data as JSON
     echo json_encode([
-        'client_name' => $engagement['client_name'],
+        'client_name' => $engagement['client_name'] ?? '',
+        'status' => $engagement['status'] ?? '',
         'total_hours' => $totalHours,
-        'max_hours' => $engagement['total_available_hours'],
+        'budgeted_hours' => (float)($engagement['budgeted_hours'] ?? 0),
         'assigned_employees' => $assignedEmployees,
         'notes' => $engagement['notes'] ?? ''
     ]);
-
 }
-?>

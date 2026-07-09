@@ -2,6 +2,7 @@
 date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -16,9 +17,9 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
-// Fetch engagements
+// Fetch engagements (single query — reused for the table and every stat below)
 $engagementQuery = "
-    SELECT 
+    SELECT
         e.engagement_id,
         c.client_name,
         e.status,
@@ -30,54 +31,43 @@ $engagementQuery = "
     GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours
     ORDER BY c.client_name ASC
 ";
-
 $engagementResult = mysqli_query($conn, $engagementQuery);
+$engagementRows = mysqli_fetch_all($engagementResult, MYSQLI_ASSOC);
 
-// Total engagements
-$totalEngagementsQuery = "SELECT COUNT(*) AS total FROM engagements";
-$totalResult = mysqli_query($conn, $totalEngagementsQuery);
-$totalRow = mysqli_fetch_assoc($totalResult);
-$totalEngagements = $totalRow['total'];
+$statusCounts = ['confirmed' => 0, 'pending' => 0, 'not_confirmed' => 0];
+$totalBudgetedHours = 0;
+$totalAllocatedHours = 0;
+$overBudgetList = [];
+$unassignedCount = 0;
 
-// New engagements in last 30 days
-$newEngagementsQuery = "SELECT COUNT(*) AS recent FROM engagements WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-$newEngagementsResult = mysqli_query($conn, $newEngagementsQuery);
-$newEngagmentRow = mysqli_fetch_assoc($newEngagementsResult);
-$newEngagments = $newEngagmentRow['recent'];
+foreach ($engagementRows as $row) {
+    $status = strtolower($row['status']);
+    if (isset($statusCounts[$status])) {
+        $statusCounts[$status]++;
+    }
 
-// Total assigned
-$assignedEngagementsQuery = "
-    SELECT COUNT(DISTINCT e.engagement_id) AS total_assigned
-    FROM engagements e
-    JOIN entries a ON e.engagement_id = a.engagement_id
-";
-$assignedResult = mysqli_query($conn, $assignedEngagementsQuery);
-$assignedRow = mysqli_fetch_assoc($assignedResult);
-$totalAssigned = $assignedRow['total_assigned'];
+    $budgeted = (float)$row['budgeted_hours'];
+    $allocated = (float)$row['total_assigned_hours'];
+    $totalBudgetedHours += $budgeted;
+    $totalAllocatedHours += $allocated;
 
-// Total not assigned
-$notAssignedEngagementsQuery = "
-    SELECT COUNT(*) AS total_not_assigned
-    FROM engagements e
-    LEFT JOIN entries a ON e.engagement_id = a.engagement_id
-    WHERE a.engagement_id IS NULL
-";
-$notAssignedResult = mysqli_query($conn, $notAssignedEngagementsQuery);
-$notAssignedRow = mysqli_fetch_assoc($notAssignedResult);
-$totalNotAssigned = $notAssignedRow['total_not_assigned'];
+    if ($allocated > $budgeted) {
+        $overBudgetList[] = [
+            'client_name' => $row['client_name'],
+            'budgeted_hours' => $budgeted,
+            'allocated_hours' => $allocated,
+            'over_hours' => $allocated - $budgeted
+        ];
+    }
 
-// Average engagements per assigned employee (only include users assigned to at least one engagement)
-$avgEngagementsPerUserQuery = "
-    SELECT ROUND(AVG(user_engagement_count), 2) AS avg_engagements_per_user
-    FROM (
-        SELECT en.user_id, COUNT(DISTINCT en.engagement_id) AS user_engagement_count
-        FROM entries en
-        GROUP BY en.user_id
-    ) AS user_counts
-";
-$avgResult = mysqli_query($conn, $avgEngagementsPerUserQuery);
-$avgRow = mysqli_fetch_assoc($avgResult);
-$avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
+    if ($allocated == 0) {
+        $unassignedCount++;
+    }
+}
+
+$totalEngagements = count($engagementRows);
+$overBudgetCount = count($overBudgetList);
+$utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $totalBudgetedHours) * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -117,180 +107,190 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
     <!-- end header -->
 
     <!-- Stat cards -->
-<div class="row g-3">
-    <!-- Total Engagements -->
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="card-icon"><i class="bi bi-file-earmark-text"></i></div>
-            <div class="stat-title">Total Engagements</div>
-            <div class="stat-value"><?php echo $totalEngagements; ?></div>
-            <div class="stat-sub">+<?php echo $newEngagments; ?> this month</div>
-        </div>
-    </div>
-
-    <!-- Average Engagements per Employee -->
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="card-icon"><i class="bi bi-people"></i></div>
-            <div class="stat-title">Avg Engagements per Employee</div>
-            <div class="stat-value"><?php echo $avgEngagementsPerUser; ?></div>
-            <div class="stat-sub">
-                Based on employees assigned to at least one engagement
+    <div class="eng-stat-row">
+        <div class="eng-stat-card">
+            <div class="eng-stat-icon"><i class="bi bi-check-circle"></i></div>
+            <div class="eng-stat-title">Status Breakdown</div>
+            <div class="eng-stat-value"><?php echo $totalEngagements; ?></div>
+            <div class="eng-stat-breakdown">
+                <span class="client-mini-pill confirmed <?php echo $statusCounts['confirmed'] == 0 ? 'zero' : ''; ?>"><?php echo $statusCounts['confirmed']; ?> Conf.</span>
+                <span class="client-mini-pill pending <?php echo $statusCounts['pending'] == 0 ? 'zero' : ''; ?>"><?php echo $statusCounts['pending']; ?> Pend.</span>
+                <span class="client-mini-pill not-confirmed <?php echo $statusCounts['not_confirmed'] == 0 ? 'zero' : ''; ?>"><?php echo $statusCounts['not_confirmed']; ?> N/C</span>
             </div>
         </div>
-    </div>
 
-    <!-- Unassigned Engagements -->
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="card-icon"><i class="bi bi-exclamation-triangle"></i></div>
-            <div class="stat-title">Unassigned Engagements</div>
-            <div class="stat-value"><?php echo $totalNotAssigned; ?></div>
-            <div class="stat-sub"><?php echo $totalAssigned; ?> assigned</div>
+        <div class="eng-stat-card">
+            <div class="eng-stat-icon"><i class="bi bi-bullseye"></i></div>
+            <div class="eng-stat-title">Budget Utilization</div>
+            <div class="eng-stat-value"><?php echo $utilizationPct; ?>%</div>
+            <div class="eng-stat-bar"><div class="eng-stat-bar-fill" style="width: <?php echo min(100, $utilizationPct); ?>%"></div></div>
+            <div class="eng-stat-sub"><?php echo number_format($totalAllocatedHours); ?> of <?php echo number_format($totalBudgetedHours); ?> hrs allocated</div>
+        </div>
+
+        <div class="eng-stat-card <?php echo $overBudgetCount > 0 ? 'clickable' : ''; ?>" id="overBudgetCard">
+            <div class="eng-stat-icon danger"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="eng-stat-title">Over-Budget</div>
+            <div class="eng-stat-value"><?php echo $overBudgetCount; ?></div>
+            <div class="eng-stat-sub">Allocated exceeds budgeted</div>
+            <?php if ($overBudgetCount > 0): ?>
+                <div class="eng-stat-hint"><i class="bi bi-eye"></i> Click to view</div>
+            <?php endif; ?>
+        </div>
+
+        <div class="eng-stat-card">
+            <div class="eng-stat-icon warn"><i class="bi bi-slash-circle"></i></div>
+            <div class="eng-stat-title">Unassigned</div>
+            <div class="eng-stat-value"><?php echo $unassignedCount; ?></div>
+            <div class="eng-stat-sub">No hours assigned yet</div>
         </div>
     </div>
-
-    <!-- Assignment Rate -->
-    <?php
-    // Ensure totalEngagements is not zero to avoid division by zero
-    if ($totalEngagements > 0) {
-        $percentageAssigned = round(($totalAssigned / $totalEngagements) * 100);
-    } else {
-        $percentageAssigned = 0;
-    }
-    ?>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="card-icon"><i class="bi bi-bullseye"></i></div>
-            <div class="stat-title">Assignment Rate</div>
-            <div class="stat-value"><?php echo $percentageAssigned; ?>%</div>
-            <div class="util-bar mt-2">
-                <div class="util-bar-fill bg-primary" style="width: <?php echo $percentageAssigned; ?>%"></div>
-            </div>
-            <div class="stat-sub mt-2">
-                Engagements assigned to employees
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end stats cards -->
-
-
+    <!-- end stats cards -->
 
     <!-- search bar and filter dropdown -->
-        <div class="flex-grow-1 mt-3 d-flex align-items-start gap-3">
-            <!-- Search -->
-            <div class="user-search w-100">
-                <input type="text" id="engagementSearch" class="form-control form-control-sm" placeholder="Search engagements..." minlength="3">
-            </div>
-
-            <!-- Status Filter Dropdown -->
-            <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filter Status
-                </button>
-                <ul class="dropdown-menu p-3" aria-labelledby="statusDropdown" style="min-width: 200px;">
-                    <li>
-                        <label class="form-check d-flex align-items-center">
-                            <input type="checkbox" class="form-check-input status-filter me-2" value="confirmed" checked>
-                            Confirmed
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-check d-flex align-items-center">
-                            <input type="checkbox" class="form-check-input status-filter me-2" value="pending" checked>
-                            Pending
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-check d-flex align-items-center">
-                            <input type="checkbox" class="form-check-input status-filter me-2" value="not_confirmed" checked>
-                            Not Confirmed
-                        </label>
-                    </li>
-                </ul>
-            </div>
+    <div class="eng-toolbar">
+        <div class="client-search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="engagementSearch" class="client-search-input" placeholder="Search engagements..." minlength="3">
         </div>
-    <!-- end earch bar and filter dropdown -->
+
+        <!-- Status Filter Dropdown -->
+        <div class="dropdown ms-auto">
+            <button class="eng-filter-btn dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter Status
+            </button>
+            <ul class="dropdown-menu p-3" aria-labelledby="statusDropdown" style="min-width: 200px;">
+                <li>
+                    <label class="form-check d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input status-filter me-2" value="confirmed" checked>
+                        Confirmed
+                    </label>
+                </li>
+                <li>
+                    <label class="form-check d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input status-filter me-2" value="pending" checked>
+                        Pending
+                    </label>
+                </li>
+                <li>
+                    <label class="form-check d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input status-filter me-2" value="not_confirmed" checked>
+                        Not Confirmed
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- end search bar and filter dropdown -->
 
 
     <!-- Engagements Table -->
-        <div class="user-table mt-3">
-            <table id="engagement-table" class="table table-hover mb-0">
+        <div class="client-table-shell mt-3">
+          <div class="client-table-scroll">
+            <table id="engagement-table" class="client-table mb-0">
                 <thead>
                     <tr>
-                        <th style="max-width: 1px !important;"><input type="checkbox" id="selectAllEngagements"></th>
+                        <th class="check"><input type="checkbox" id="selectAllEngagements"></th>
                         <th>Client</th>
-                        <th>Budgeted Hours</th>
-                        <th>Allocated Hours</th>
+                        <th class="num">Budgeted Hrs</th>
+                        <th class="num">Allocated Hrs</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th class="num">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php if (mysqli_num_rows($engagementResult) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($engagementResult)): ?>
-                        <tr data-status="<?php echo strtolower($row['status']); ?>">
+                <?php if (count($engagementRows) > 0): ?>
+                    <?php foreach ($engagementRows as $row): ?>
+                        <?php
+                            $status = strtolower($row['status']);
+                            $statusClass = str_replace('_', '-', $status);
+                            $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
+                            $avatarColor = avatar_color($row['client_name']);
+                            $initials = avatar_initials($row['client_name']);
+                        ?>
+                        <tr data-status="<?php echo $status; ?>" class="client-row">
                             <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
-                            <td><?php echo htmlspecialchars($row['client_name']); ?></td>
-                            <td><?php echo $row['budgeted_hours']; ?></td>
-                            <td><?php echo $row['total_assigned_hours']; ?></td>
                             <td>
-                                <?php
-                                $status = strtolower($row['status']);
-                                switch ($status) {
-                                    case 'confirmed':
-                                        $badgeClass = 'badge-confirmed';   
-                                        break;
-                                    case 'pending':
-                                        $badgeClass = 'badge-pending';     
-                                        break;
-                                    case 'not_confirmed':
-                                        $badgeClass = 'badge-not-confirmed'; 
-                                        break;
-                                    default:
-                                        $badgeClass = 'badge-default';    
-                                        break;
-                                }
-                                ?>
-                                <span class="badge-status <?php echo $badgeClass; ?>">
-                                    <?php echo ucfirst($row['status']); ?>
+                                <div class="client-cell">
+                                    <div class="client-tile" style="background-color: <?php echo $avatarColor; ?>;"><?php echo htmlspecialchars($initials); ?></div>
+                                    <span class="client-name"><?php echo htmlspecialchars($row['client_name']); ?></span>
+                                </div>
+                            </td>
+                            <td class="num"><span class="hours-value"><?php echo $row['budgeted_hours']; ?></span></td>
+                            <td class="num"><span class="hours-value"><?php echo $row['total_assigned_hours']; ?></span></td>
+                            <td>
+                                <span class="eng-status-pill <?php echo $statusClass; ?>">
+                                    <span class="dot"></span><?php echo $statusLabel; ?>
                                 </span>
                             </td>
-                            <td class="table-actions">
-                                <a href="#" class="view-engagement-btn text-decoration-none" 
-                                   data-bs-toggle="modal" data-bs-target="#viewEngagementModal" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-eye text-success"></i>
-                                </a>
-                                <a href="#" class="edit-engagement-btn text-decoration-none" 
-                                   data-bs-toggle="modal" data-bs-target="#editEngagementModal" 
-                                   data-engagement-id="<?php echo $row['engagement_id']; ?>">
-                                    <i class="bi bi-pencil text-purple"></i>
-                                </a>
-                                <a href="#" 
-   class="archive-engagement-btn text-decoration-none" 
-   data-engagement-id="<?php echo $row['engagement_id']; ?>"
-   data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
-   data-engagement-year="<?php echo htmlspecialchars($row['engagement_year']); ?>"
-   data-status="<?php echo htmlspecialchars($row['status']); ?>">
-    <i class="bi bi-archive text-danger"></i>
-</a>
+                            <td class="num">
+                                <div class="client-row-actions">
+                                    <button class="client-icon-btn view-engagement-btn"
+                                        data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                        data-avatar-color="<?php echo $avatarColor; ?>"
+                                        data-initials="<?php echo htmlspecialchars($initials); ?>"
+                                        title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="client-icon-btn edit edit-engagement-btn"
+                                        data-bs-toggle="modal" data-bs-target="#editEngagementModal"
+                                        data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                        title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="client-icon-btn danger archive-engagement-btn"
+                                        data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                        data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+                                        data-engagement-year="<?php echo htmlspecialchars($row['engagement_year'] ?? ''); ?>"
+                                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                                        title="Archive">
+                                        <i class="bi bi-archive"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="7" class="text-center">No engagements found</td></tr>
+                    <tr><td colspan="6" class="text-center">No engagements found</td></tr>
                 <?php endif; ?>
                 </tbody>
             </table>
+          </div>
         </div>
-                
+
         <!-- Pagination Controls -->
         <nav>
             <ul id="pagination-engagements" class="pagination justify-content-center mt-3"></ul>
         </nav>
     <!-- end engagement table -->
+
+    <!-- Over-Budget Engagements modal (server-rendered from the same engagement fetch above) -->
+    <div class="modal fade" id="overBudgetModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content">
+          <div class="modal-body position-relative" style="max-height: 70vh !important; overflow-y: auto !important;">
+            <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="eng-vm-header">
+                <div class="eng-vm-client-name">Over-Budget Engagements</div>
+                <span class="eng-stat-sub">Allocated hours exceed the budget</span>
+            </div>
+            <div class="eng-vm-emp-list">
+                <?php if (count($overBudgetList) > 0): ?>
+                    <?php foreach ($overBudgetList as $ob): ?>
+                        <div class="eng-ob-row">
+                            <div class="client-tile" style="background-color: <?php echo avatar_color($ob['client_name']); ?>; width:26px; height:26px; font-size:10px;"><?php echo htmlspecialchars(avatar_initials($ob['client_name'])); ?></div>
+                            <div class="eng-ob-client"><?php echo htmlspecialchars($ob['client_name']); ?></div>
+                            <div class="eng-ob-hours"><?php echo $ob['allocated_hours']; ?> of <?php echo $ob['budgeted_hours']; ?>h</div>
+                            <div class="eng-ob-over">+<?php echo $ob['over_hours']; ?>h</div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="eng-ob-row"><div class="eng-ob-client text-muted">No engagements are over budget</div></div>
+                <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 </div>
 
@@ -483,8 +483,21 @@ $avgEngagementsPerUser = $avgRow['avg_engagements_per_user'];
     </script>
 <!-- end search, filter, and pagination -->
 
-<script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
+<?php include_once '../includes/modals/view_engagement_modal.php'; ?>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/view_engagement_modal.js?v=<?php echo time(); ?>"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const overBudgetCard = document.getElementById('overBudgetCard');
+        if (overBudgetCard && overBudgetCard.classList.contains('clickable')) {
+            overBudgetCard.addEventListener('click', () => {
+                new bootstrap.Modal(document.getElementById('overBudgetModal')).show();
+            });
+        }
+    });
+</script>
+<script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

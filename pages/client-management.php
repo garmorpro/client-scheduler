@@ -2,6 +2,7 @@
 date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -76,21 +77,6 @@ foreach ($clients as &$client) {
     $client['not_confirmed_engagements'] = $engagementCounts[$clientId]['not_confirmed_engagements'] ?? 0;
 }
 unset($client);
-
-// Deterministic avatar color per client (varied palette, not brand-tied)
-$avatarPalette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
-function client_avatar_color($name, $palette) {
-    $hash = crc32($name);
-    return $palette[$hash % count($palette)];
-}
-function client_initials($name) {
-    $words = preg_split('/\s+/', trim($name));
-    $initials = '';
-    foreach (array_slice($words, 0, 2) as $w) {
-        if ($w !== '') $initials .= strtoupper($w[0]);
-    }
-    return $initials !== '' ? $initials : '?';
-}
 ?>
 
 <!DOCTYPE html>
@@ -151,8 +137,8 @@ function client_initials($name) {
                         <?php
                             $status = strtolower($client['status']);
                             $statusPillClass = $status === 'active' ? 'active' : 'inactive';
-                            $avatarColor = client_avatar_color($client['client_name'], $avatarPalette);
-                            $initials = client_initials($client['client_name']);
+                            $avatarColor = avatar_color($client['client_name']);
+                            $initials = avatar_initials($client['client_name']);
 
                             $onboarded = new DateTime($client['onboarded_date']);
                             $now = new DateTime();
