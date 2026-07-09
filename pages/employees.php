@@ -31,6 +31,24 @@ $availableManagers = [];
 while ($mrow = mysqli_fetch_assoc($managerresult)) {
     $availableManagers[] = $mrow;
 }
+
+$roleOrder = ['admin', 'manager', 'senior', 'staff', 'intern', 'crm_team'];
+$roleIcons = [
+    'admin' => 'bi-shield-lock-fill',
+    'manager' => 'bi-person-badge-fill',
+    'senior' => 'bi-person-check-fill',
+    'staff' => 'bi-person-fill',
+    'intern' => 'bi-mortarboard-fill',
+    'crm_team' => 'bi-headset',
+];
+$roleCounts = array_fill_keys($roleOrder, 0);
+$totalEmployees = 0;
+$roleCountResult = mysqli_query($conn, "SELECT role, COUNT(*) AS cnt FROM users GROUP BY role");
+while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
+    $roleKey = strtolower($rcRow['role']);
+    $roleCounts[$roleKey] = (int) $rcRow['cnt'];
+    $totalEmployees += (int) $rcRow['cnt'];
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,6 +65,21 @@ while ($mrow = mysqli_fetch_assoc($managerresult)) {
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
     <h3 class="mb-0">Employees</h3>
     <p class="text-muted mb-4">Manage employee accounts, roles, and permissions</p>
+
+    <div class="emp-stat-row">
+        <div class="eng-stat-card">
+            <div class="eng-stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="eng-stat-title">Total Employees</div>
+            <div class="eng-stat-value"><?php echo $totalEmployees; ?></div>
+        </div>
+        <?php foreach ($roleOrder as $roleKey): ?>
+        <div class="eng-stat-card">
+            <div class="eng-stat-icon"><i class="bi <?php echo $roleIcons[$roleKey]; ?>"></i></div>
+            <div class="eng-stat-title"><?php echo htmlspecialchars(role_label($roleKey)); ?></div>
+            <div class="eng-stat-value"><?php echo $roleCounts[$roleKey]; ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
 
     <div class="container-fluid">
         <div id="employees" class="tab-content">

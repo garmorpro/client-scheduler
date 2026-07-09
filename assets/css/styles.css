@@ -1770,6 +1770,10 @@ body.dark-mode .eng-util-pct.red { color: #e0685a; }
 body.dark-mode .eng-util-over { color: #e0685a; }
 
 .eng-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+.emp-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.emp-stat-row .eng-stat-card { padding: 12px 14px; }
+.emp-stat-row .eng-stat-value { font-size: 20px; margin: 3px 0 0; }
+.emp-stat-row .eng-stat-title { padding-right: 34px; }
 .eng-stat-card { position: relative; background: #ffffff; border: 1px solid #e3e7e5; border-radius: 12px; padding: 14px 16px; }
 body.dark-mode .eng-stat-card { background: #1b2022; border-color: #29302e; }
 .eng-stat-icon {
