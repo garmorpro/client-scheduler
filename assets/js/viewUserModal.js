@@ -67,25 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  function renderEngagements(engagements) {
+  const ENG_ROWS_PER_PAGE = 10;
+  let allEngagements = [];
+  let currentEngPage = 1;
+
+  function renderEngagementsPage(page) {
+    currentEngPage = page;
     const list = document.getElementById('ud_eng_list');
-    const totalHours = engagements.reduce((sum, e) => sum + e.total_hours, 0);
-
-    setText('ud_stat_eng_count', engagements.length);
-    setText('ud_stat_hours', totalHours);
-    setText('ud_tab_eng_count', engagements.length);
-    setText('ud_eng_hint', `${engagements.length} active assignment${engagements.length === 1 ? '' : 's'}`);
-
-    const unassignAllBtn = document.getElementById('ud_unassign_all_btn');
-    unassignAllBtn.disabled = engagements.length === 0;
+    const paginationEl = document.getElementById('ud_eng_pagination');
 
     list.innerHTML = '';
-    if (engagements.length === 0) {
+    if (allEngagements.length === 0) {
       list.innerHTML = '<div class="eng-empty">No engagements assigned</div>';
+      paginationEl.style.display = 'none';
       return;
     }
 
-    engagements.forEach(eng => {
+    const totalPages = Math.ceil(allEngagements.length / ENG_ROWS_PER_PAGE);
+    const start = (page - 1) * ENG_ROWS_PER_PAGE;
+    const pageItems = allEngagements.slice(start, start + ENG_ROWS_PER_PAGE);
+
+    pageItems.forEach(eng => {
       const row = document.createElement('div');
       row.className = `eng-row status-${eng.status}`;
       row.innerHTML = `
@@ -98,6 +100,46 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       list.appendChild(row);
     });
+
+    if (totalPages <= 1) {
+      paginationEl.style.display = 'none';
+      return;
+    }
+
+    paginationEl.style.display = 'flex';
+    paginationEl.innerHTML = '';
+
+    function addPageItem(label, disabled, active, onClick) {
+      const li = document.createElement('li');
+      li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = '#';
+      a.textContent = label;
+      if (!disabled) a.addEventListener('click', e => { e.preventDefault(); onClick(); });
+      li.appendChild(a);
+      paginationEl.appendChild(li);
+    }
+
+    addPageItem('Prev', page === 1, false, () => renderEngagementsPage(page - 1));
+    for (let i = 1; i <= totalPages; i++) {
+      addPageItem(i, false, i === page, () => renderEngagementsPage(i));
+    }
+    addPageItem('Next', page === totalPages, false, () => renderEngagementsPage(page + 1));
+  }
+
+  function renderEngagements(engagements) {
+    allEngagements = engagements;
+    const totalHours = engagements.reduce((sum, e) => sum + e.total_hours, 0);
+
+    setText('ud_stat_eng_count', engagements.length);
+    setText('ud_stat_hours', totalHours);
+    setText('ud_tab_eng_count', engagements.length);
+    setText('ud_eng_hint', `${engagements.length} active assignment${engagements.length === 1 ? '' : 's'}`);
+
+    document.getElementById('ud_unassign_all_btn').disabled = engagements.length === 0;
+
+    renderEngagementsPage(1);
   }
 
   async function loadUserEngagements(userId) {
