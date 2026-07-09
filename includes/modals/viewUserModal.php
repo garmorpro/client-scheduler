@@ -80,6 +80,9 @@
           <div class="ud-panel" id="ud_panel_timeoff">
             <div class="eng-panel-header">
               <span class="eng-panel-hint" id="ud_timeoff_hint"></span>
+              <span class="eng-panel-hint" id="ud_timeoff_click_hint">
+                <i class="bi bi-cursor me-1"></i>Click a request for details
+              </span>
             </div>
             <div class="eng-list" id="ud_timeoff_list"></div>
           </div>

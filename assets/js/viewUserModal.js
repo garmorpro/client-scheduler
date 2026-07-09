@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = document.getElementById('ud_timeoff_list');
     setText('ud_tab_timeoff_count', requests.length);
     setText('ud_timeoff_hint', `${requests.length} request${requests.length === 1 ? '' : 's'}`);
+    document.getElementById('ud_timeoff_click_hint').style.display = requests.length > 0 ? '' : 'none';
 
     list.innerHTML = '';
     if (requests.length === 0) {
