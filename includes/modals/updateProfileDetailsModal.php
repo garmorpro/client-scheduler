@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../csrf.php'; ?>
 <div class="modal fade" id="updateProfileDetailsModal" tabindex="-1" aria-labelledby="updateProfileDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <form id="updateProfileForm" action="update_profile.php" method="POST" class="modal-content">
@@ -8,9 +9,10 @@
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
+
           <div class="modal-body">
 
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
             <input type="hidden" id="update_user_id" name="user_id">
 
             <div class="mb-3">

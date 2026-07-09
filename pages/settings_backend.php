@@ -8,11 +8,19 @@ error_reporting(E_ALL);
 
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
     ob_clean();
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
+if (!csrf_valid()) {
+    ob_clean();
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
     exit;
 }
 

@@ -4,12 +4,19 @@
 
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 // Basic auth check - only admins can move entries
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
     exit;
 }
 

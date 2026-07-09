@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 $userRole = strtolower($_SESSION['user_role'] ?? '');
 if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
@@ -9,6 +10,11 @@ if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'man
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['client_id'])) {
+    if (!csrf_valid()) {
+        header("Location: client-management.php");
+        exit();
+    }
+
     $clientId = intval($_POST['client_id']);
 
     // First, delete engagements tied to the client

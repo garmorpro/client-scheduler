@@ -1,6 +1,7 @@
 <?php
 require '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 $userRole = strtolower($_SESSION['user_role'] ?? '');
 if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
@@ -10,6 +11,11 @@ if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'man
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die("Invalid request");
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    die("Invalid CSRF token");
 }
 
 $entries = $_POST['entries'] ?? [];

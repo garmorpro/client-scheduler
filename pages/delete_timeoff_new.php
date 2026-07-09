@@ -1,11 +1,19 @@
 <?php
 require_once '../includes/db.php'; // adjust path as needed
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
+header('Content-Type: application/json');
 
 // Only allow admin users to delete entries
 if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit();
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Invalid CSRF token']);
     exit();
 }
 

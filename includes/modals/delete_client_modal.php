@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../csrf.php'; ?>
 <div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
@@ -25,6 +26,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <form id="deleteClientForm" method="POST" action="delete_client.php">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
           <input type="hidden" name="client_id" id="deleteClientId">
           <button type="submit" class="btn btn-danger">Delete Client</button>
         </form>

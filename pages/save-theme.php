@@ -1,6 +1,13 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+    exit;
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
 if (!isset($data['theme']) || !in_array($data['theme'], ['light', 'dark'])) {

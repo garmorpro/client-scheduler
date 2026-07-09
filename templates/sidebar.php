@@ -3,13 +3,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     require_once __DIR__ . '/../includes/session_init.php';
 }
+require_once __DIR__ . '/../includes/csrf.php';
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 ?>
+<script>window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;</script>
+<script src="../assets/js/csrf_fetch.js"></script>
 
-    
+
 
 <div class="sidebar d-flex flex-column justify-content-between fixed-top"
      style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">

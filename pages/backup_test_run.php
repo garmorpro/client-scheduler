@@ -2,10 +2,17 @@
 header('Content-Type: application/json');
 require_once '../includes/db.php'; // defines $host, $user, $pass, $dbname, $conn
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
     exit;
 }
 

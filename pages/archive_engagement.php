@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 require '../includes/db.php';
 
 header('Content-Type: application/json');
@@ -17,6 +18,11 @@ $userRole = strtolower($_SESSION['user_role'] ?? '');
 if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
     http_response_code(403);
     send_json(["success" => false, "message" => "Unauthorized"]);
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    send_json(["success" => false, "message" => "Invalid CSRF token"]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['engagement_id'])) {

@@ -1,10 +1,16 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_valid()) {
+    http_response_code(403);
+    die("Invalid CSRF token.");
 }
 
 // LOG ACTIVITY FUNCTION

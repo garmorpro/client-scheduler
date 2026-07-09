@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once '../includes/session_init.php';
+require_once '../includes/csrf.php';
 
 if (!isset($_SESSION['pending_user_id'])) {
     header("Location: ../auth/login.php");
@@ -11,6 +12,9 @@ $user_id = $_SESSION['pending_user_id'];
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid()) {
+        $error = "Your session expired. Please try again.";
+    } else {
     $newPassword = trim($_POST['new_password'] ?? '');
     $confirmPassword = trim($_POST['confirm_password'] ?? '');
 
@@ -73,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
         }
     }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -96,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form class="p-4" method="POST" action="">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
             <div class="mb-3">
                 <label for="new_password" class="form-label">New Password</label>
                 <input type="password" class="form-control" name="new_password" placeholder="Enter new password" minlength="8" required>
