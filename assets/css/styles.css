@@ -776,17 +776,11 @@ body.dark-mode .pop-up-small {
 #user-table thead th { padding: 12px 16px; font-size: 12px; }
 #user-table tbody td { padding: 13px 16px; }
 #user-table tbody tr:last-child td { border-bottom: none; }
-#user-table .table-actions { display: flex; align-items: center; gap: 6px; }
+#user-table .table-actions { display: flex; align-items: center; gap: 12px; }
 #user-table .table-actions .dropdown { display: inline-flex; }
-#user-table .action-icon-btn {
-    width: 28px; height: 28px; border-radius: 8px; border: 1px solid #e3e7e5;
-    background: #ffffff; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-}
-#user-table .action-icon-btn i { margin: 0 !important; font-size: 13px; }
-#user-table .action-icon-btn:hover { background: #f1f4f3; }
-body.dark-mode #user-table .action-icon-btn { background: #1b2022; border-color: #29302e; }
-body.dark-mode #user-table .action-icon-btn:hover { background: #232a2c; }
+#user-table .action-icon-btn { display: inline-flex; cursor: pointer; opacity: .8; transition: opacity .15s ease; }
+#user-table .action-icon-btn i { margin: 0 !important; font-size: 15px; }
+#user-table .action-icon-btn:hover { opacity: 1; }
 /* Role badge style */
 .badge-role {
     background-color: white;
