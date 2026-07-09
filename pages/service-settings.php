@@ -241,7 +241,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <th><input type="checkbox" id="selectAllUsers"></th>
                                 <th>Employee Name</th>
                                 <th>Role</th>
-                                <th>Manager</th>
                                 <th>Status</th>
                                 <th>Last Active</th>
                                 <th>Actions</th>
@@ -253,20 +252,20 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <tr>
                                     <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td>
                                     <td>
-                                        <?php echo htmlspecialchars($userrow['full_name']); ?><br>
+                                        <span class="emp-name-wrap">
+                                            <?php echo htmlspecialchars($userrow['full_name']); ?>
+                                            <?php if (in_array(strtolower($userrow['role']), ['staff', 'senior'], true) && $userrow['manager_name']): ?>
+                                                <span class="reports-to-hint" data-tooltip="Reports to <?php echo htmlspecialchars($userrow['manager_name']); ?>">
+                                                    <i class="bi bi-diagram-2"></i>
+                                                </span>
+                                            <?php endif; ?>
+                                        </span><br>
                                         <small class="text-muted"><?php echo htmlspecialchars($userrow['email']); ?></small>
                                     </td>
                                     <td>
                                         <span class="badge-role">
                                             <?php echo ucfirst(htmlspecialchars($userrow['role'])); ?>
                                         </span>
-                                    </td>
-                                    <td>
-                                        <?php if (in_array(strtolower($userrow['role']), ['staff', 'senior'], true)): ?>
-                                            <?php echo $userrow['manager_name'] ? htmlspecialchars($userrow['manager_name']) : '<span class="text-muted">&mdash;</span>'; ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">&mdash;</span>
-                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <span class="badge-status <?php echo strtolower($userrow['status']) === 'active' ? 'active' : 'inactive'; ?>">

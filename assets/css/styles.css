@@ -786,6 +786,34 @@ body.dark-mode .pop-up-small {
     min-width: 60px;
     text-align: center;
 }
+
+.emp-name-wrap { display: inline-flex; align-items: center; gap: 6px; }
+.reports-to-hint {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #f1f4f3; color: #6b7570; font-size: 10.5px; cursor: default;
+}
+body.dark-mode .reports-to-hint { background: #232a2c; color: #9aa8a2; }
+.reports-to-hint::after {
+    content: attr(data-tooltip);
+    position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%) translateY(4px);
+    background: #16211f; color: #ffffff; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+    padding: 6px 10px; border-radius: 7px; box-shadow: 0 6px 16px rgba(0,0,0,.18);
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .12s ease, transform .12s ease;
+    z-index: 20;
+}
+.reports-to-hint::before {
+    content: '';
+    position: absolute; left: 50%; bottom: calc(100% + 4px); transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #16211f;
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .12s ease;
+    z-index: 20;
+}
+.reports-to-hint:hover::after,
+.reports-to-hint:hover::before { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+body.dark-mode .reports-to-hint::after { background: #edf1ee; color: #16211f; }
+body.dark-mode .reports-to-hint::before { border-top-color: #edf1ee; }
 /* - badge */
 .badge-status {
     padding: 4px 10px;
