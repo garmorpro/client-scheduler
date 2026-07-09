@@ -1655,6 +1655,7 @@ body.dark-mode .client-mini-pill.not-confirmed { background: #1a2540; color: #7f
 
 .client-total-value { font-weight: 700; font-variant-numeric: tabular-nums; }
 body.dark-mode .client-total-value { color: #edf1ee; }
+.hours-value { font-variant-numeric: tabular-nums; }
 
 .client-row-actions { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
 .client-icon-btn {
@@ -1822,6 +1823,94 @@ body.dark-mode #editEngagementModal .eng-edit-btn-cancel:hover { background: #23
 }
 #editEngagementModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #editEngagementModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+/* ========= COMPANY HOLIDAYS ========= */
+.holiday-cell { display: flex; align-items: center; gap: 10px; padding-top: 2px; }
+.holiday-tile {
+    width: 32px; height: 32px; border-radius: 9px; background: var(--primary-color); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px;
+}
+body.dark-mode .holiday-tile { background: var(--secondary-color); color: #10160f; }
+.holiday-name { font-weight: 700; font-size: 13.5px; }
+
+.date-list { display: flex; flex-direction: column; gap: 2px; max-width: 340px; }
+.date-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px 3px 0; border-radius: 6px; font-size: 12.5px; }
+.date-row:hover { background: #f1f4f3; }
+body.dark-mode .date-row:hover { background: #232a2c; }
+.date-row .d { flex: 1; }
+.date-row .hrs { color: #9aa39d; font-variant-numeric: tabular-nums; }
+body.dark-mode .date-row .hrs { color: #6e7975; }
+.date-row .chip-del {
+    width: 18px; height: 18px; border-radius: 5px; border: none; background: transparent;
+    color: #9aa39d; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    opacity: 0; flex-shrink: 0; font-size: 10px;
+}
+.date-row:hover .chip-del { opacity: 1; }
+.date-row .chip-del:hover { background: #fbe8e6; color: #c0392b; }
+body.dark-mode .date-row .chip-del { color: #6e7975; }
+body.dark-mode .date-row .chip-del:hover { background: #3a2320; color: #e0685a; }
+
+#holidayModal .hol-days-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+#holidayModal .hol-days-label span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; }
+body.dark-mode #holidayModal .hol-days-label span { color: #6e7975; }
+#holidayModal .hol-add-day {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700;
+    color: var(--primary-color); background: none; border: none; cursor: pointer;
+}
+body.dark-mode #holidayModal .hol-add-day { color: var(--secondary-color); }
+#holidayModal .hol-day-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+#holidayModal .hol-day-row .eng-edit-input { height: 40px; }
+#holidayModal .hol-day-row .date-input { flex: 1.4; }
+#holidayModal .hol-day-row .hours-input { flex: .8; }
+#holidayModal .hol-day-remove {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e3e7e5; background: #ffffff;
+    color: #9aa39d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 11px;
+}
+#holidayModal .hol-day-remove:hover { color: #c0392b; border-color: #c0392b; background: #fbe8e6; }
+body.dark-mode #holidayModal .hol-day-remove { background: #1b2022; border-color: #29302e; color: #6e7975; }
+body.dark-mode #holidayModal .hol-day-remove:hover { color: #e0685a; border-color: #e0685a; background: #3a2320; }
+
+/* Reuse the same hero/field/footer/button language as #editEngagementModal */
+#holidayModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #holidayModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#holidayModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #holidayModal .eng-edit-title { color: #edf1ee; }
+#holidayModal .eng-edit-body { padding: 16px 20px; }
+#holidayModal .eng-edit-field { margin-bottom: 14px; }
+#holidayModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #holidayModal .eng-edit-field label { color: #6e7975; }
+#holidayModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#holidayModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #holidayModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #holidayModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+#holidayModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #holidayModal .eng-edit-footer { border-color: #29302e; }
+#holidayModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#holidayModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #holidayModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #holidayModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#holidayModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#holidayModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #holidayModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
 /* ========= USER DETAILS MODAL (tabbed) ========= */
 #viewUserModal .ud-hero {
