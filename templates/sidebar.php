@@ -8,152 +8,126 @@ require_once __DIR__ . '/../includes/csrf.php';
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <script>window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;</script>
 <script src="../assets/js/csrf_fetch.js"></script>
 
+<div class="sidebar fixed-top" style="width: 250px; height: 100vh; padding: 20px 14px; overflow-y: auto;">
 
-
-<div class="sidebar d-flex flex-column justify-content-between fixed-top"
-     style="width: 250px; height: 100vh; padding: 1.5rem; overflow-y: auto;">
-
-    <!-- Branding -->
-<div>
-    <div class="d-flex align-items-center justify-content-between mb-5">
-        <div class="d-flex align-items-center">
-            <div class="icon-bubble rounded p-2 me-2 d-flex align-items-center justify-content-center"
-                 style="width: 40px; height: 40px;">
-                <i class="bi bi-calendar2-week"></i>
+    <div>
+        <!-- Branding -->
+        <div class="d-flex align-items-center justify-content-between" style="padding: 2px 6px 22px;">
+            <div class="d-flex align-items-center">
+                <div class="icon-bubble rounded d-flex align-items-center justify-content-center me-2">
+                    <i class="bi bi-calendar2-week"></i>
+                </div>
+                <div class="side-header-text">
+                    <h5 class="mb-0 fw-bold" style="font-size: 14.5px; letter-spacing: -0.01em;">AARC-360</h5>
+                    <small class="text-muted" style="font-size: 11px;">Schedule Manager</small>
+                </div>
             </div>
-            <div class="side-header-text">
-                <h5 class="mb-0 fw-bold">AARC-360</h5>
-                <small class="text-muted">Schedule Manager</small>
+            <?php
+            if (!isset($_SESSION['theme'])) {
+                $_SESSION['theme'] = $user_theme ?? 'light';
+            }
+            $themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
+            ?>
+            <div class="sidebar-theme-toggle">
+                <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>" style="cursor:pointer; font-size: 15px;"></i>
             </div>
         </div>
-        <?php
-    // Assume you fetched from DB: $user_theme = 'light' or 'dark'
-if (!isset($_SESSION['theme'])) {
-    $_SESSION['theme'] = $user_theme ?? 'light';
-}
-
-$themeClass = $_SESSION['theme'] === 'dark' ? 'dark-mode' : '';
-
-?>
-        <i id="themeToggle" class="bi theme-icon <?= $_SESSION['theme'] === 'dark' ? 'bi-sun-fill' : 'bi-moon-fill' ?>" style="cursor:pointer; font-size: 1rem;"></i>
-    </div>
 
         <!-- Nav Links -->
-        <ul class="nav flex-column">
-            <!-- <li class="nav-item mb-2">
-                <a href="dashboard.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                    <i class="bi bi-layout-wtf me-2"></i>
-                    Dashboard
-                </a>
-            </li> -->
-            <?php if (!$isServiceAccount): ?>
-            <li class="nav-item mb-2 <?php if ($isAdmin || $isManager) echo 'd-none'; ?>">
-                <a href="my-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                    <i class="bi bi-person me-2"></i>
+        <?php if (!$isServiceAccount): ?>
+        <ul class="sidebar-nav-group">
+            <li class="nav-item <?php if ($isAdmin || $isManager) echo 'd-none'; ?>">
+                <a href="my-schedule.php" class="sidebar-link <?= $currentPage == 'my-schedule.php' ? 'active' : '' ?>">
+                    <i class="bi bi-person"></i>
                     My Schedule
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a href="master-schedule.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                    <i class="bi bi-calendar-range me-2"></i>
+            <li class="nav-item">
+                <a href="master-schedule.php" class="sidebar-link <?= $currentPage == 'master-schedule.php' ? 'active' : '' ?>">
+                    <i class="bi bi-calendar-range"></i>
                     Master Schedule
                 </a>
             </li>
             <?php if ($isAdmin || $isManager): ?>
-                <li class="nav-item mb-2">
-                    <a href="client-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                        <i class="bi bi-building-gear me-2"></i>
-                        Clients
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="engagement-management.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                        <i class="bi bi-file-earmark-text me-2"></i>
-                        Engagements
-                    </a>
-                </li>
-            <?php endif; ?>
-            <?php
-// Get current page name
-$currentPage = basename($_SERVER['PHP_SELF']);
-?>
-<?php if ($isAdmin || $isManager): ?>
-<li class="nav-item mb-2">
-    <?php
-        // Determine if current page is one of the settings pages
-        $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php', 'service-settings.php'];
-        $isActive = in_array($currentPage, $settingsPages);
-    ?>
-    <a class="nav-link d-flex align-items-center px-0 text-dark <?= $isActive ? '' : 'collapsed' ?>" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
-        <i class="bi bi-gear me-2"></i>
-        <span>Settings</span>
-        <i class="bi bi-chevron-down ms-auto"></i>
-    </a>
-    <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
-            <li><a href="manage-users.php" class="nav-link text-dark py-1 <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
-            <li><a href="company-holidays.php" class="nav-link text-dark py-1 <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
-            <li><a href="service-settings.php" class="nav-link text-dark py-1 <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
-            <!-- <li><a href="notifications.php" class="nav-link text-dark py-1 <?= $currentPage == 'notifications.php' ? 'active' : '' ?>">Notifications</a></li>
-            <li><a href="reports.php" class="nav-link text-dark py-1 <?= $currentPage == 'reports.php' ? 'active' : '' ?>">Reports</a></li> -->
-        </ul>
-    </div>
-</li>
-<?php endif; ?>
-            <?php else: ?>
-                <li class="nav-item mb-2">
-                    <a href="service-settings.php" class="nav-link d-flex align-items-center px-0 text-dark">
-                        <i class="bi bi-shield me-2"></i>
-                        Service Dashboard
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a href="client-management.php" class="sidebar-link <?= $currentPage == 'client-management.php' ? 'active' : '' ?>">
+                    <i class="bi bi-building-gear"></i>
+                    Clients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="engagement-management.php" class="sidebar-link <?= $currentPage == 'engagement-management.php' ? 'active' : '' ?>">
+                    <i class="bi bi-file-earmark-text"></i>
+                    Engagements
+                </a>
+            </li>
             <?php endif; ?>
         </ul>
+
+        <?php if ($isAdmin || $isManager): ?>
+        <ul class="sidebar-nav-group">
+            <li class="nav-item">
+                <?php
+                    $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php', 'service-settings.php'];
+                    $isActive = in_array($currentPage, $settingsPages);
+                ?>
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                    <i class="bi bi-chevron-down chevron"></i>
+                </a>
+                <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
+                    <ul class="sidebar-submenu">
+                        <li><a href="manage-users.php" class="sidebar-sublink <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
+                        <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
+                        <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <?php endif; ?>
+        <?php else: ?>
+        <ul class="sidebar-nav-group">
+            <li class="nav-item">
+                <a href="service-settings.php" class="sidebar-link <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">
+                    <i class="bi bi-shield"></i>
+                    Service Dashboard
+                </a>
+            </li>
+        </ul>
+        <?php endif; ?>
     </div>
-
-
-
 
     <!-- Bottom User Info -->
-    <div class="d-flex align-items-center mt-4">
-        <div data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>" class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-             style="cursor: pointer; width: 36px; height: 36px;">
-            <?php
-            
-            $fullName = $_SESSION['full_name'] ?? ''; // get full name from session
-            $initials = '';
-                        
-            // Split the full name by spaces
-            $nameParts = explode(' ', $fullName);
-                        
-            // Take the first character of the first two parts (first and last names)
-            if (isset($nameParts[0])) {
-                $initials .= strtoupper($nameParts[0][0]);
-            }
-            if (isset($nameParts[1])) {
-                $initials .= strtoupper($nameParts[1][0]);
-            }
-            
-            // Output the initials
-            echo $initials;
-            ?>
-
+    <div class="sidebar-footer">
+        <div class="sidebar-account" data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>">
+            <div class="sidebar-avatar">
+                <?php
+                $fullName = $_SESSION['full_name'] ?? '';
+                $initials = '';
+                $nameParts = explode(' ', $fullName);
+                if (isset($nameParts[0])) {
+                    $initials .= strtoupper($nameParts[0][0]);
+                }
+                if (isset($nameParts[1])) {
+                    $initials .= strtoupper($nameParts[1][0]);
+                }
+                echo $initials;
+                ?>
+            </div>
+            <div class="sidebar-account-meta">
+                <div class="sidebar-fullname fw-semibold" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $_SESSION['full_name']; ?></div>
+                <small class="sidebar-role text-muted text-capitalize" style="font-size: 11px;"><?php echo $_SESSION['user_role']; ?></small>
+            </div>
+            <a href="/auth/logout.php" class="sidebar-logout" aria-label="Log out" onclick="event.stopPropagation();">
+                <i class="bi bi-box-arrow-right"></i>
+            </a>
         </div>
-        <div>
-            <div class="sidebar-fullname fw-semibold"><?php echo $_SESSION['full_name']; ?></div>
-            <small class="sidebar-role text-muted text-capitalize"><?php echo $_SESSION['user_role']; ?></small>
-        </div>
-        <!-- <a href="logout.php" class="ms-auto text-decoration-none text-muted">
-            <i class="bi bi-box-arrow-right"></i>
-        </a> -->
-        <a href="/auth/logout.php" class="text-decoration-none text-muted d-flex align-items-center justify-content-end mt-2" style="padding-left: 30px;">
-            <i class="bi bi-box-arrow-right"></i>
-        </a>    
     </div>
-
 
 </div>
