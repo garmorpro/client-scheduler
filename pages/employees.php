@@ -165,15 +165,16 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                 </td>
                                 <td class="table-actions">
                                     <!-- View Button -->
-                                    <a href="#" class="view-user-btn text-decoration-none"
+                                    <a href="#" class="action-icon-btn view-user-btn text-decoration-none"
                                        data-bs-toggle="modal"
                                        data-bs-target="#viewUserModal"
-                                       data-user-id="<?php echo $userrow['user_id']; ?>">
+                                       data-user-id="<?php echo $userrow['user_id']; ?>"
+                                       title="View Details">
                                        <i class="bi bi-eye text-success"></i>
                                     </a>
 
                                     <!-- Edit Button -->
-                                    <a href="#" class="edit-user-btn text-decoration-none"
+                                    <a href="#" class="action-icon-btn edit-user-btn text-decoration-none"
                                        data-bs-toggle="modal"
                                        data-bs-target="#editUserModal"
                                        data-user-id="<?php echo $userrow['user_id']; ?>"
@@ -188,7 +189,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 
                                     <?php if (strtolower($userrow['role']) === 'manager'): ?>
                                     <!-- Direct Reports Button -->
-                                    <a href="#" class="direct-reports-btn text-decoration-none"
+                                    <a href="#" class="action-icon-btn direct-reports-btn text-decoration-none"
                                        data-bs-toggle="modal"
                                        data-bs-target="#directReportsModal"
                                        data-manager-id="<?php echo $userrow['user_id']; ?>"
@@ -199,8 +200,8 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                     <?php endif; ?>
 
                                     <!-- Promote/Role Dropdown -->
-                                    <div class="dropdown d-inline">
-                                        <a href="#" class="text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="dropdown">
+                                        <a href="#" class="action-icon-btn text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" title="Change Role">
                                             <i class="bi bi-person-up text-primary"></i>
                                         </a>
                                         <ul class="dropdown-menu">
@@ -233,7 +234,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                     </div>
 
                                     <!-- Delete Button -->
-                                    <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>">
+                                    <a href="#" class="action-icon-btn delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>" title="Delete Employee">
                                         <i class="bi bi-trash text-danger"></i>
                                     </a>
                                 </td>
