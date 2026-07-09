@@ -163,14 +163,55 @@ document.addEventListener('DOMContentLoaded', () => {
     if (status === 'changes_requested') return 'Changes Requested';
     return status.charAt(0).toUpperCase() + status.slice(1);
   }
+  function categoryLabel(category) {
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  }
 
   function formatDateRange(days) {
     if (days.length === 1) return formatDate(days[0].date);
     const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
     return `${formatDate(sorted[0].date)} &ndash; ${formatDate(sorted[sorted.length - 1].date)} (${days.length}d)`;
   }
+  function formatDateTime(dateString) {
+    if (!dateString) return '-';
+    const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString.replace(' ', 'T'));
+    if (isNaN(d)) return '-';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+      ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+  function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  function formatDayLong(dateString) {
+    if (!dateString) return '-';
+    const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString);
+    if (isNaN(d)) return '-';
+    const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
+    const month = d.toLocaleDateString('en-US', { month: 'long' });
+    return `${weekday}, ${month} ${ordinal(d.getDate())}, ${d.getFullYear()}`;
+  }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+  const timeoffPalette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
+  function hashColor(name) {
+    let hash = 0;
+    for (let i = 0; i < (name || '').length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+    return timeoffPalette[hash % timeoffPalette.length];
+  }
+  function initialsOf(name) {
+    return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+
+  let allTimeOffRequests = [];
+  const timeOffDetailModal = new bootstrap.Modal(document.getElementById('udTimeOffDetailModal'));
 
   function renderTimeOff(requests) {
+    allTimeOffRequests = requests;
     const list = document.getElementById('ud_timeoff_list');
     setText('ud_tab_timeoff_count', requests.length);
     setText('ud_timeoff_hint', `${requests.length} request${requests.length === 1 ? '' : 's'}`);
@@ -183,10 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     requests.forEach(r => {
       const row = document.createElement('div');
-      row.className = 'eng-row';
+      row.className = 'eng-row clickable';
+      row.dataset.requestGroup = r.request_group;
       row.innerHTML = `
-        <span class="category-pill ${r.category}" style="margin-right:8px;">${r.category.charAt(0).toUpperCase() + r.category.slice(1)}</span>
-        <div class="eng-name">${formatDateRange(r.days)}${r.reason ? ' &middot; ' + r.reason : ''}</div>
+        <span class="category-pill ${r.category}" style="margin-right:8px;">${categoryLabel(r.category)}</span>
+        <div class="eng-name">${formatDateRange(r.days)}</div>
         <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="margin-right:8px;">
           <span class="dot"></span>${timeoffStatusLabel(r.status)}
         </span>
@@ -194,6 +236,80 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       list.appendChild(row);
     });
+  }
+
+  document.getElementById('ud_timeoff_list').addEventListener('click', (e) => {
+    const row = e.target.closest('.eng-row[data-request-group]');
+    if (!row) return;
+    const r = allTimeOffRequests.find(req => req.request_group === row.dataset.requestGroup);
+    if (r) openTimeOffDetail(r);
+  });
+
+  async function loadCommentHistory(r) {
+    const wrap = document.getElementById('udtoHistoryWrap');
+    const list = document.getElementById('udtoCommentHistory');
+    wrap.style.display = '';
+    list.innerHTML = '<div class="text-muted" style="font-size:12px;">Loading...</div>';
+
+    const entries = [];
+    if (r.reason) {
+      entries.push({ full_name: document.getElementById('ud_name').textContent, comment: r.reason, created: r.created });
+    }
+
+    try {
+      const res = await fetch(`get_time_off_comments.php?request_group=${encodeURIComponent(r.request_group)}`);
+      const data = await res.json();
+      if (data.success) entries.push(...data.comments);
+    } catch (err) {
+      console.error('Failed to load comment history', err);
+    }
+
+    if (entries.length === 0) {
+      wrap.style.display = 'none';
+      list.innerHTML = '';
+      return;
+    }
+
+    list.innerHTML = entries.map(e => `
+      <div class="timeoff-comment-item">
+        <div class="timeoff-comment-avatar" style="background-color:${hashColor(e.full_name)};">${initialsOf(e.full_name)}</div>
+        <div class="timeoff-comment-body">
+          <div class="timeoff-comment-meta">
+            <span class="timeoff-comment-name">${e.full_name}</span>
+            <span class="timeoff-comment-time">${formatDateTime(e.created)}</span>
+          </div>
+          <p class="timeoff-comment-text">${escapeHtml(e.comment)}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openTimeOffDetail(r) {
+    document.getElementById('udtoTitle').textContent = `${categoryLabel(r.category)} Request`;
+    const catEl = document.getElementById('udtoCategory');
+    catEl.className = `category-pill ${r.category}`;
+    catEl.textContent = categoryLabel(r.category);
+
+    const statusEl = document.getElementById('udtoStatus');
+    statusEl.className = `eng-status-pill ${timeoffStatusPillClass(r.status)}`;
+    document.getElementById('udtoStatusText').textContent = timeoffStatusLabel(r.status);
+
+    document.getElementById('udtoTotalHours').textContent = `${r.total_hours}h`;
+    document.getElementById('udtoRequested').textContent = formatDate(r.created);
+
+    const daysList = document.getElementById('udtoDaysList');
+    daysList.innerHTML = [...r.days].sort((a, b) => a.date.localeCompare(b.date)).map(d => `
+      <div class="eng-vm-emp-row">
+        <div class="eng-vm-emp-info">
+          <div class="eng-vm-emp-name">${formatDayLong(d.date)}</div>
+        </div>
+        <div class="eng-vm-emp-hours">${d.hours}h</div>
+      </div>
+    `).join('');
+
+    loadCommentHistory(r);
+
+    timeOffDetailModal.show();
   }
 
   async function loadUserTimeOff(userId) {

@@ -93,3 +93,51 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="udTimeOffDetailModal" tabindex="-1" aria-labelledby="udtoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="ud-hero" style="padding-bottom: 18px;">
+          <div class="ud-header" style="margin-bottom: 0;">
+            <div class="ud-avatar" id="udtoIcon"><i class="bi bi-airplane"></i></div>
+            <div>
+              <div class="ud-name" id="udtoTitle">Time Off Request</div>
+              <div class="ud-pills" style="margin-top: 4px;">
+                <span class="category-pill" id="udtoCategory"></span>
+                <span class="eng-status-pill" id="udtoStatus"><span class="dot"></span><span id="udtoStatusText"></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="eng-edit-body">
+          <div class="stat-row" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="stat-card">
+              <div class="stat-title">Total Hours</div>
+              <div class="stat-value" id="udtoTotalHours"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Requested</div>
+              <div class="stat-value" id="udtoRequested" style="font-size:13px;"></div>
+            </div>
+          </div>
+
+          <div class="detail-section-title">Days</div>
+          <div class="eng-vm-emp-list" id="udtoDaysList" style="margin-bottom:16px;"></div>
+
+          <div id="udtoHistoryWrap" style="display:none;">
+            <div class="detail-section-title">Notes</div>
+            <div class="timeoff-comment-thread" id="udtoCommentHistory"></div>
+          </div>
+        </div>
+
+        <div class="eng-edit-footer">
+          <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

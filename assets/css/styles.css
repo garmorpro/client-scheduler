@@ -2306,6 +2306,18 @@ body.dark-mode .timeoff-comment-time { color: #9aa8a2; }
 }
 body.dark-mode .timeoff-comment-text { background: #202726; color: #c7d1cd; }
 
+/* ========= USER DETAILS: TIME OFF REQUEST DETAIL MODAL ========= */
+#udTimeOffDetailModal .eng-edit-body { padding: 16px 20px; }
+#udTimeOffDetailModal .eng-edit-footer { display: flex; align-items: center; justify-content: flex-end; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #udTimeOffDetailModal .eng-edit-footer { border-color: #29302e; }
+#udTimeOffDetailModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#udTimeOffDetailModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #udTimeOffDetailModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #udTimeOffDetailModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+
 /* ========= VIEW MY TIME OFF MODAL ========= */
 #viewMyTimeOffModal .eng-edit-body { padding: 16px 20px; }
 #viewMyTimeOffModal .eng-edit-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; flex-wrap: wrap; }
@@ -2439,6 +2451,7 @@ body.dark-mode .eng-list { border-color: #29302e; }
 body.dark-mode .eng-row { border-color: #29302e; }
 .eng-row:last-child { border-bottom: none; }
 .eng-row:hover { background: #f1f4f3; }
+.eng-row.clickable { cursor: pointer; }
 body.dark-mode .eng-row:hover { background: #232a2c; }
 .eng-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .eng-row.status-confirmed .eng-dot { background: #2f9e57; }
