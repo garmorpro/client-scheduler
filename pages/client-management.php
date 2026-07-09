@@ -47,7 +47,9 @@ $stmt3->close();
 $sql = "
     SELECT client_id,
            COUNT(*) AS total_engagements,
-           SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed_engagements
+           SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed_engagements,
+           SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending_engagements,
+           SUM(CASE WHEN status = 'not_confirmed' THEN 1 ELSE 0 END) AS not_confirmed_engagements
     FROM engagements
     GROUP BY client_id
 ";
@@ -58,7 +60,9 @@ if ($result) {
     while ($row = $result->fetch_assoc()) {
         $engagementCounts[$row['client_id']] = [
             'total_engagements' => (int)$row['total_engagements'],
-            'confirmed_engagements' => (int)$row['confirmed_engagements']
+            'confirmed_engagements' => (int)$row['confirmed_engagements'],
+            'pending_engagements' => (int)$row['pending_engagements'],
+            'not_confirmed_engagements' => (int)$row['not_confirmed_engagements']
         ];
     }
 }
@@ -68,8 +72,25 @@ foreach ($clients as &$client) {
     $clientId = $client['client_id'];
     $client['total_engagements'] = $engagementCounts[$clientId]['total_engagements'] ?? 0;
     $client['confirmed_engagements'] = $engagementCounts[$clientId]['confirmed_engagements'] ?? 0;
+    $client['pending_engagements'] = $engagementCounts[$clientId]['pending_engagements'] ?? 0;
+    $client['not_confirmed_engagements'] = $engagementCounts[$clientId]['not_confirmed_engagements'] ?? 0;
 }
 unset($client);
+
+// Deterministic avatar color per client (varied palette, not brand-tied)
+$avatarPalette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
+function client_avatar_color($name, $palette) {
+    $hash = crc32($name);
+    return $palette[$hash % count($palette)];
+}
+function client_initials($name) {
+    $words = preg_split('/\s+/', trim($name));
+    $initials = '';
+    foreach (array_slice($words, 0, 2) as $w) {
+        if ($w !== '') $initials .= strtoupper($w[0]);
+    }
+    return $initials !== '' ? $initials : '?';
+}
 ?>
 
 <!DOCTYPE html>
@@ -104,112 +125,110 @@ unset($client);
 </div>
     </div>
 
-    <input type="text" id="searchInput" class="form-control client-search" placeholder="Search clients by name...">
+    <div class="client-toolbar">
+        <div class="client-search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" class="client-search-input" placeholder="Search clients by name...">
+        </div>
+        <span class="client-toolbar-hint" id="clientToolbarHint"></span>
+    </div>
 
-    <div id="clientCards" class="client-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: .5rem 1rem;">
-        <?php foreach ($clients as $client): ?>
-            <div class="client-card p-4 bg-card text-card-foreground flex flex-col gap-2 rounded-xl position-relative">
-                <!-- Delete Button (Top Right) -->
-                <button class="btn btn-sm position-absolute top-0 end-0 m-2 delete-client-btn"
-                    data-client-id="<?php echo $client['client_id']; ?>"
-                    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                    data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
-                    data-total-engagements="<?php echo $client['total_engagements']; ?>"
-                    title="Delete Client">
-                <i class="bi bi-trash text-danger"></i>
-            </button>
-                    
-                    
-                <!-- Client Header -->
-                <div class="d-flex align-items-center mb-4">
-                    <div class="icon-bubble rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <div class="fs-6 fw-semibold mb-0 client-name"><?php echo htmlspecialchars($client['client_name']); ?></div>
-                </div>
-                    
-                <!-- Status and Onboarded Duration -->
-                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-                    <?php
-                        $status = strtolower($client['status']);
-                        switch ($status) {
-                            case 'active':
-                                $badgeClass = 'badge-confirmed';   
-                                break;
-                            case 'inactive':
-                                $badgeClass = 'badge-inactive';     
-                                break;
-                            default:
-                                $badgeClass = 'badge-default';    
-                                break;
-                        }
-                    ?>
-                    <span class="badge-status <?php echo $badgeClass; ?>">
-                        <?php echo ucfirst(htmlspecialchars($client['status'])); ?>
-                    </span>
-                    <span class="mt-1 mt-md-0">
+    <div class="client-table-shell">
+        <div class="client-table-scroll">
+            <table class="client-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Status</th>
+                        <th>Onboarded</th>
+                        <th>Engagements</th>
+                        <th class="num">Total</th>
+                        <th class="num">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientCards">
+                    <?php foreach ($clients as $client): ?>
                         <?php
+                            $status = strtolower($client['status']);
+                            $statusPillClass = $status === 'active' ? 'active' : 'inactive';
+                            $avatarColor = client_avatar_color($client['client_name'], $avatarPalette);
+                            $initials = client_initials($client['client_name']);
+
                             $onboarded = new DateTime($client['onboarded_date']);
                             $now = new DateTime();
                             $diff = $now->diff($onboarded);
-                    
                             if ($diff->y == 0 && $diff->m == 0) {
-                                echo "New client";
+                                $onboardedText = "New client";
                             } elseif ($diff->y == 0) {
-                                echo $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
+                                $onboardedText = $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " onboarded";
                             } else {
-                                echo $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+                                $onboardedText = $diff->y . " year" . ($diff->y > 1 ? "s" : "");
                                 if ($diff->m > 0) {
-                                    echo " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+                                    $onboardedText .= " " . $diff->m . " month" . ($diff->m > 1 ? "s" : "");
                                 }
-                                echo " onboarded";
+                                $onboardedText .= " onboarded";
                             }
                         ?>
-                    </span>
-                </div>
-                        
-                <!-- Engagements Info -->
-                <div class="d-flex justify-content-between mb-1 flex-wrap">
-                    <span class=""><i class="bi bi-check-circle me-2"></i> Confirmed engagements</span>
-                    <span><?php echo $client['confirmed_engagements'] ?? 0; ?></span>
-                </div>
-                <div class="d-flex justify-content-between mb-3 flex-wrap">
-                    <span class=""><i class="bi bi-calendar-event me-2"></i> Total engagements</span>
-                    <span><?php echo $client['total_engagements'] ?? 0; ?></span>
-                </div>
-                        
-                <!-- Card Buttons -->
-                 <button class="badge text-white btn-sm flex-grow-1 fw-normal p-2 mb-2 w-100 add-engagement-btn" 
-    style="font-size: .875rem; background-color: rgb(3,2,18); border: none !important;"
-    data-client-id="<?php echo $client['client_id']; ?>"
-    data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>">
-    <i class="bi bi-plus-circle me-2"></i>Add Engagement
-</button>
-                <div class="card-buttons d-flex flex-wrap gap-2">
-                        
-                    <button 
-                        class="badge view-client-button text-black btn-sm fw-medium flex-grow-1 me-0 p-2 view-btn" 
-                        style="font-size: .875rem; background-color: white; border: 1px solid rgb(229,229,229) !important; outline: none !important;"
-                        data-client-id="<?php echo $client['client_id']; ?>"
-                    >
-                        <i class="bi bi-eye me-2"></i>View
-                    </button>
-                    <button class="badge text-black btn-sm flex-grow-1 fw-medium p-2 edit-client-btn" 
-                            style="font-size: .875rem; background-color: rgb(229,229,229); border: none !important;"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editClientModal"
-                            data-client-id="<?php echo $client['client_id']; ?>"
-                            data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
-                            data-onboarded-date="<?php echo $client['onboarded_date']; ?>"
-                            data-status="<?php echo strtolower($client['status']); ?>"
-                            data-notes="<?php echo htmlspecialchars($client['notes'] ?? ''); ?>">
-                        <i class="bi bi-pencil-square me-2"></i>Edit
-                    </button>
-                        
-                </div>
-            </div>
-
-        <?php endforeach; ?>
+                        <tr class="client-row">
+                            <td>
+                                <div class="client-cell">
+                                    <div class="client-tile" style="background-color: <?php echo $avatarColor; ?>;"><?php echo htmlspecialchars($initials); ?></div>
+                                    <span class="client-name"><?php echo htmlspecialchars($client['client_name']); ?></span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="client-status-pill <?php echo $statusPillClass; ?>">
+                                    <span class="dot"></span><?php echo ucfirst(htmlspecialchars($client['status'])); ?>
+                                </span>
+                            </td>
+                            <td><span class="client-onboarded-text"><?php echo $onboardedText; ?></span></td>
+                            <td>
+                                <div class="client-engagement-breakdown">
+                                    <span class="client-mini-pill confirmed <?php echo $client['confirmed_engagements'] == 0 ? 'zero' : ''; ?>"><?php echo $client['confirmed_engagements']; ?> Conf.</span>
+                                    <span class="client-mini-pill pending <?php echo $client['pending_engagements'] == 0 ? 'zero' : ''; ?>"><?php echo $client['pending_engagements']; ?> Pend.</span>
+                                    <span class="client-mini-pill not-confirmed <?php echo $client['not_confirmed_engagements'] == 0 ? 'zero' : ''; ?>"><?php echo $client['not_confirmed_engagements']; ?> N/C</span>
+                                </div>
+                            </td>
+                            <td class="num"><span class="client-total-value"><?php echo $client['total_engagements'] ?? 0; ?></span></td>
+                            <td class="num">
+                                <div class="client-row-actions">
+                                    <button class="client-icon-btn add add-engagement-btn"
+                                        data-client-id="<?php echo $client['client_id']; ?>"
+                                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                                        title="Add Engagement">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    <button class="client-icon-btn view-client-button view-btn"
+                                        data-client-id="<?php echo $client['client_id']; ?>"
+                                        title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="client-icon-btn edit-client-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editClientModal"
+                                        data-client-id="<?php echo $client['client_id']; ?>"
+                                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                                        data-onboarded-date="<?php echo $client['onboarded_date']; ?>"
+                                        data-status="<?php echo strtolower($client['status']); ?>"
+                                        data-notes="<?php echo htmlspecialchars($client['notes'] ?? ''); ?>"
+                                        title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="client-icon-btn danger delete-client-btn"
+                                        data-client-id="<?php echo $client['client_id']; ?>"
+                                        data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
+                                        data-confirmed-engagements="<?php echo $client['confirmed_engagements']; ?>"
+                                        data-total-engagements="<?php echo $client['total_engagements']; ?>"
+                                        title="Delete Client">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -217,7 +236,15 @@ unset($client);
 <script>
     const searchInput = document.getElementById('searchInput');
     const clientCards = document.getElementById('clientCards');
-    const cards = Array.from(clientCards.getElementsByClassName('client-card'));
+    const cards = Array.from(clientCards.getElementsByClassName('client-row'));
+    const toolbarHint = document.getElementById('clientToolbarHint');
+
+    function updateToolbarHint(visibleCount) {
+        if (!toolbarHint) return;
+        toolbarHint.textContent = visibleCount === cards.length
+            ? `Showing all ${cards.length}`
+            : `Showing ${visibleCount} of ${cards.length}`;
+    }
 
     searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase();
@@ -228,16 +255,21 @@ unset($client);
             .map(term => term.trim())
             .filter(term => term.length >= 3);
 
+        let visibleCount = 0;
         cards.forEach(card => {
             const name = card.querySelector('.client-name').innerText.toLowerCase();
 
             if (searchTerms.length === 0 || searchTerms.some(term => name.includes(term))) {
                 card.style.display = '';
+                visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
+        updateToolbarHint(visibleCount);
     });
+
+    updateToolbarHint(cards.length);
 </script>
 
 <script>
