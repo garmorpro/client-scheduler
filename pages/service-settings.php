@@ -216,6 +216,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
                         <?php if ($isAdmin): ?>
+                        <a href="#" id="bulkAssignManagerBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" style="display:none;">
+                          <i class="bi bi-person-badge me-3"></i>Assign Manager (<span id="assignSelectedCount">0</span>)
+                        </a>
+                        <?php endif; ?>
+                        <?php if ($isAdmin): ?>
                         <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
                             <i class="bi bi-shield-lock me-3"></i>Role Permissions
                         </a>
@@ -246,7 +251,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <?php if (mysqli_num_rows($userresult) > 0): ?>
                             <?php while ($userrow = mysqli_fetch_assoc($userresult)): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>"></td>
+                                    <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td>
                                     <td>
                                         <?php echo htmlspecialchars($userrow['full_name']); ?><br>
                                         <small class="text-muted"><?php echo htmlspecialchars($userrow['email']); ?></small>
@@ -285,19 +290,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                            data-user-id="<?php echo $userrow['user_id']; ?>">
                                            <i class="bi bi-eye text-success"></i>
                                         </a>
-
-                                        <?php if (in_array(strtolower($userrow['role']), ['staff', 'senior'], true)): ?>
-                                        <!-- Assign Manager Button -->
-                                        <a href="#" class="assign-manager-btn text-decoration-none"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#assignManagerModal"
-                                           data-user-id="<?php echo $userrow['user_id']; ?>"
-                                           data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
-                                           data-manager-id="<?php echo $userrow['manager_id'] ?? ''; ?>"
-                                           title="Assign Manager">
-                                           <i class="bi bi-person-badge text-primary"></i>
-                                        </a>
-                                        <?php endif; ?>
 
                                         <!-- Promote/Role Dropdown -->
                                         <div class="dropdown d-inline">
