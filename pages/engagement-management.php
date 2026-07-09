@@ -24,11 +24,13 @@ $engagementQuery = "
         c.client_name,
         e.status,
         e.budgeted_hours,
+        e.manager,
+        e.notes,
         COALESCE(SUM(en.assigned_hours), 0) AS total_assigned_hours
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours
+    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -98,7 +100,10 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
 
             <!-- Right -->
             <div class="user-management-buttons d-flex align-items-center gap-2">
-                <a href="#" id="bulkDeleteEngagementsBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                <a href="archived-engagements.php" class="badge p-2 text-decoration-none fw-medium btn-outline-custom">
+                    <i class="bi bi-archive me-3"></i>View Archived
+                </a>
+                <a href="#" id="bulkDeleteEngagementsBtn" class="badge text-white p-2 text-decoration-none fw-medium"
                    style="font-size: .875rem; background-color: darkred; display:none;">
                   <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedEngagementCount">0</span>)
                 </a>
@@ -234,17 +239,37 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                     <button class="client-icon-btn edit edit-engagement-btn"
                                         data-bs-toggle="modal" data-bs-target="#editEngagementModal"
                                         data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                        data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+                                        data-budgeted-hours="<?php echo $row['budgeted_hours']; ?>"
+                                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                                        data-manager="<?php echo htmlspecialchars($row['manager'] ?? ''); ?>"
+                                        data-notes="<?php echo htmlspecialchars($row['notes'] ?? ''); ?>"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="client-icon-btn danger archive-engagement-btn"
-                                        data-engagement-id="<?php echo $row['engagement_id']; ?>"
-                                        data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
-                                        data-engagement-year="<?php echo htmlspecialchars($row['engagement_year'] ?? ''); ?>"
-                                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
-                                        title="Archive">
-                                        <i class="bi bi-archive"></i>
-                                    </button>
+                                    <div class="dropdown">
+                                        <button class="client-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" title="More">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item archive-engagement-btn" href="#"
+                                                    data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                                    data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+                                                    data-engagement-year="<?php echo date('Y'); ?>"
+                                                    data-status="<?php echo htmlspecialchars($row['status']); ?>">
+                                                    <i class="bi bi-archive me-2"></i>Archive
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger delete-engagement-btn" href="#"
+                                                    data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                                                    data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>">
+                                                    <i class="bi bi-trash me-2"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -322,12 +347,32 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" id="confirmArchiveBtn" class="btn btn-danger">Archive Engagement</button>
       </div>
-      
+
     </div>
   </div>
 </div>
 
-
+<div class="modal fade" id="deleteEngagementModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Engagement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to permanently delete the engagement for
+          "<strong id="deleteModalClientName"></strong>"? This removes it and all assigned
+          hours immediately - unlike Archive, <strong>no record is kept</strong> and this cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmDeleteEngagementBtn" class="btn btn-danger">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -366,6 +411,35 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                 location.reload(); // refresh page
             } else {
                 alert("Error: " + data.message);
+            }
+        })
+        .catch(err => console.error("Error:", err));
+    });
+
+    // Delete (permanent) flow
+    let deleteEngagementId, deleteClientName;
+    document.querySelectorAll(".delete-engagement-btn").forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            deleteEngagementId = this.dataset.engagementId;
+            deleteClientName = this.dataset.clientName;
+            document.getElementById("deleteModalClientName").textContent = deleteClientName;
+            new bootstrap.Modal(document.getElementById("deleteEngagementModal")).show();
+        });
+    });
+
+    document.getElementById("confirmDeleteEngagementBtn").addEventListener("click", function () {
+        fetch("delete_engagement_permanent.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ engagement_id: deleteEngagementId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Error: " + (data.message || "Could not delete engagement."));
             }
         })
         .catch(err => console.error("Error:", err));
@@ -484,9 +558,11 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
 <!-- end search, filter, and pagination -->
 
 <?php include_once '../includes/modals/view_engagement_modal.php'; ?>
+<?php include_once '../includes/modals/edit_engagement_modal.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/view_engagement_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/edit_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const overBudgetCard = document.getElementById('overBudgetCard');
