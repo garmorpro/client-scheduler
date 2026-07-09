@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewProfileModal = document.getElementById('viewProfileModal');
   if (!viewProfileModal) return;
 
+  const canUnassign = !!document.getElementById('pf_unassign_all_btn');
+  let currentUserId = null;
+  let allEngagements = [];
+  let currentEngPage = 1;
+  const ENG_ROWS_PER_PAGE = 10;
+
   function setText(id, text) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -44,10 +50,168 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Tabs
+  viewProfileModal.querySelectorAll('.ud-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      viewProfileModal.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
+      viewProfileModal.querySelectorAll('.ud-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`pf_panel_${tab.dataset.pfTab}`).classList.add('active');
+    });
+  });
+
+  function renderEngagementsPage(page) {
+    currentEngPage = page;
+    const list = document.getElementById('pf_eng_list');
+    const paginationEl = document.getElementById('pf_eng_pagination');
+
+    list.innerHTML = '';
+    if (allEngagements.length === 0) {
+      list.innerHTML = '<div class="eng-empty">No engagements assigned</div>';
+      paginationEl.style.display = 'none';
+      return;
+    }
+
+    const totalPages = Math.ceil(allEngagements.length / ENG_ROWS_PER_PAGE);
+    const start = (page - 1) * ENG_ROWS_PER_PAGE;
+    const pageItems = allEngagements.slice(start, start + ENG_ROWS_PER_PAGE);
+
+    pageItems.forEach(eng => {
+      const row = document.createElement('div');
+      row.className = `eng-row status-${eng.status}`;
+      row.innerHTML = `
+        <div class="eng-dot"></div>
+        <div class="eng-name">${eng.client_name}</div>
+        <div class="eng-hours">${eng.total_hours}h</div>
+        ${canUnassign ? `<button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}"><i class="bi bi-trash"></i></button>` : ''}
+      `;
+      list.appendChild(row);
+    });
+
+    if (totalPages <= 1) {
+      paginationEl.style.display = 'none';
+      return;
+    }
+
+    paginationEl.style.display = 'flex';
+    paginationEl.innerHTML = '';
+
+    function addPageItem(label, disabled, active, onClick) {
+      const li = document.createElement('li');
+      li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = '#';
+      a.textContent = label;
+      if (!disabled) a.addEventListener('click', e => { e.preventDefault(); onClick(); });
+      li.appendChild(a);
+      paginationEl.appendChild(li);
+    }
+
+    addPageItem('Prev', page === 1, false, () => renderEngagementsPage(page - 1));
+    for (let i = 1; i <= totalPages; i++) {
+      addPageItem(i, false, i === page, () => renderEngagementsPage(i));
+    }
+    addPageItem('Next', page === totalPages, false, () => renderEngagementsPage(page + 1));
+  }
+
+  function renderEngagements(engagements) {
+    allEngagements = engagements;
+    const totalHours = engagements.reduce((sum, e) => sum + e.total_hours, 0);
+
+    setText('pf_stat_eng_count', engagements.length);
+    setText('pf_stat_hours', totalHours);
+    setText('pf_tab_eng_count', engagements.length);
+    setText('pf_eng_hint', `${engagements.length} active assignment${engagements.length === 1 ? '' : 's'}`);
+
+    const unassignAllBtn = document.getElementById('pf_unassign_all_btn');
+    if (unassignAllBtn) unassignAllBtn.disabled = engagements.length === 0;
+
+    renderEngagementsPage(1);
+  }
+
+  async function loadEngagements(userId) {
+    try {
+      const res = await fetch(`get_user_engagements.php?user_id=${encodeURIComponent(userId)}`);
+      const data = await res.json();
+      renderEngagements(data.engagements || []);
+    } catch (err) {
+      console.error('Failed to load engagements', err);
+      renderEngagements([]);
+    }
+  }
+
+  function notify(title, text) {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ icon: 'error', title, text });
+    } else {
+      alert(`${title}: ${text}`);
+    }
+  }
+
+  async function doUnassign(url, body) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || !data.success) {
+        notify('Could not unassign', (data && data.error) || 'Please try again.');
+        return;
+      }
+      loadEngagements(currentUserId);
+    } catch (err) {
+      console.error('Failed to unassign', err);
+    }
+  }
+
+  if (canUnassign) {
+    document.getElementById('pf_eng_list').addEventListener('click', (e) => {
+      const btn = e.target.closest('.eng-unassign-btn');
+      if (!btn || !currentUserId) return;
+      const engagementId = btn.dataset.engagementId;
+      const clientName = btn.dataset.clientName;
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning', title: 'Unassign engagement?',
+          text: `Remove all assigned hours for ${clientName}.`,
+          showCancelButton: true, confirmButtonText: 'Unassign', confirmButtonColor: '#c0392b'
+        }).then(result => { if (result.isConfirmed) doUnassign('unassign_user_engagement.php', { user_id: currentUserId, engagement_id: engagementId }); });
+      } else if (confirm(`Unassign ${clientName}?`)) {
+        doUnassign('unassign_user_engagement.php', { user_id: currentUserId, engagement_id: engagementId });
+      }
+    });
+
+    document.getElementById('pf_unassign_all_btn').addEventListener('click', () => {
+      if (!currentUserId) return;
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning', title: 'Unassign all engagements?',
+          text: 'This removes every assigned hour across all engagements.',
+          showCancelButton: true, confirmButtonText: 'Unassign All', confirmButtonColor: '#c0392b'
+        }).then(result => { if (result.isConfirmed) doUnassign('unassign_all_user_engagements.php', { user_id: currentUserId }); });
+      } else if (confirm('Unassign all engagements?')) {
+        doUnassign('unassign_all_user_engagements.php', { user_id: currentUserId });
+      }
+    });
+  }
+
   viewProfileModal.addEventListener('show.bs.modal', async (event) => {
     const button = event.relatedTarget;
     const userId = button ? button.getAttribute('data-user-id') : null;
     if (!userId) return;
+    currentUserId = userId;
+
+    // Reset to Overview tab on every open
+    viewProfileModal.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
+    viewProfileModal.querySelectorAll('.ud-panel').forEach(p => p.classList.remove('active'));
+    viewProfileModal.querySelector('.ud-tab[data-pf-tab="overview"]').classList.add('active');
+    document.getElementById('pf_panel_overview').classList.add('active');
+
+    loadEngagements(userId);
 
     try {
       const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
@@ -60,41 +224,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
 
-      setText('pd_avatar', initials);
-      setText('pd_name', fullName);
-      setText('pd_email', user.email);
-      setText('pd_role_pill', user.role);
-      setText('pd_status_text', user.status);
+      setText('pf_avatar', initials);
+      setText('pf_name', fullName);
+      setText('pf_email', user.email);
+      setText('pf_role_pill', user.role);
+      setText('pf_status_text', user.status);
+      setText('pf_stat_last_active', user.last_active ? formatDate(user.last_active) : 'Never');
 
-      setText('pd_first_name', firstName);
-      setText('pd_last_name', lastName);
-      setText('pd_email_detail', user.email);
+      setText('pf_first_name', firstName);
+      setText('pf_last_name', lastName);
+      setText('pf_email_detail', user.email);
 
-      setText('pd_created', formatDate(user.created_at));
-      setText('pd_last_active', formatDate(user.last_active));
-      setText('pd_status_detail', user.status);
+      setText('pf_created', formatDate(user.created_at));
+      setText('pf_status_detail', user.status);
 
-      setText('pd_role_detail', user.role);
-      setText('pd_access_level', getAccessLevel(user.role));
+      setText('pf_role_detail', user.role);
+      setText('pf_access_level', getAccessLevel(user.role));
 
-      const statusPill = document.getElementById('pd_status_pill');
+      const statusPill = document.getElementById('pf_status_pill');
       statusPill.classList.remove('active', 'inactive');
       statusPill.classList.add((user.status || '').toLowerCase() === 'active' ? 'active' : 'inactive');
 
-      const activityList = document.getElementById('pd_activity_list');
+      const activityList = document.getElementById('pf_activity_list');
       activityList.innerHTML = '';
       if (Array.isArray(user.recent_activities) && user.recent_activities.length > 0) {
         user.recent_activities.forEach(act => {
           const row = document.createElement('div');
-          row.className = 'pd-activity-row';
+          row.className = 'activity-row';
           row.innerHTML = `
             <span>${act.description || '(no description)'}</span>
-            <span class="pd-activity-time">${timeSince(act.created_at)}</span>
+            <span class="activity-time">${timeSince(act.created_at)}</span>
           `;
           activityList.appendChild(row);
         });
       } else {
-        activityList.innerHTML = '<div class="pd-activity-empty">No recent activity found.</div>';
+        activityList.innerHTML = '<div class="activity-empty">No recent activity found.</div>';
       }
     } catch (error) {
       console.error('Failed to load user data:', error);
