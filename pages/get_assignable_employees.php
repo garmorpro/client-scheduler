@@ -1,9 +1,10 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_employees')) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
     exit;

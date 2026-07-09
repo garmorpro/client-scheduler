@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require '../includes/db.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 header('Content-Type: application/json');
 
@@ -14,8 +15,7 @@ function send_json($data) {
     exit;
 }
 
-$userRole = strtolower($_SESSION['user_role'] ?? '');
-if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
     http_response_code(403);
     send_json(["success" => false, "message" => "Unauthorized"]);
 }

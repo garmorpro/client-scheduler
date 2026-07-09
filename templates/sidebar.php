@@ -5,19 +5,25 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
+if (!isset($conn)) {
+    require_once __DIR__ . '/../includes/db.php';
+}
+require_once __DIR__ . '/../includes/permissions.php';
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
-$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 $currentPage = basename($_SERVER['PHP_SELF']);
 
+$canManageEmployees = user_has_permission($conn, 'manage_employees');
+$canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
+$canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
+$canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
+$canSeeSettingsMenu = $canManageEmployees || $canApproveTimeOff || $canAccessSystemSettings;
+
 $pendingTimeOffCount = 0;
-if ($isAdmin || $isManager) {
-    if (!isset($conn)) {
-        require_once __DIR__ . '/../includes/db.php';
-    }
-    // Managers only see pending counts for staff/seniors assigned to them; admins see everything.
-    if ($isManager) {
+if ($canApproveTimeOff) {
+    // Non-admin reviewers only see pending counts for staff/seniors assigned to them; admins see everything.
+    if (!$isAdmin) {
         $pendingCountStmt = $conn->prepare("
             SELECT COUNT(DISTINCT COALESCE(t.request_group, CONCAT('single-', t.timeoff_id))) AS cnt
             FROM time_off t
@@ -71,7 +77,7 @@ if ($isAdmin || $isManager) {
         <!-- Nav Links -->
         <?php if (!$isServiceAccount): ?>
         <ul class="sidebar-nav-group">
-            <li class="nav-item <?php if ($isAdmin || $isManager) echo 'd-none'; ?>">
+            <li class="nav-item <?php if ($canManageClientsEngagements || $canApproveTimeOff || $canManageEmployees) echo 'd-none'; ?>">
                 <a href="my-schedule.php" class="sidebar-link <?= $currentPage == 'my-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-person"></i>
                     My Schedule
@@ -89,7 +95,7 @@ if ($isAdmin || $isManager) {
                     Request Time Off
                 </a>
             </li>
-            <?php if ($isAdmin || $isManager): ?>
+            <?php if ($canManageClientsEngagements): ?>
             <li class="nav-item">
                 <a href="client-management.php" class="sidebar-link <?= $currentPage == 'client-management.php' ? 'active' : '' ?>">
                     <i class="bi bi-building-gear"></i>
@@ -105,7 +111,7 @@ if ($isAdmin || $isManager) {
             <?php endif; ?>
         </ul>
 
-        <?php if ($isAdmin || $isManager): ?>
+        <?php if ($canSeeSettingsMenu): ?>
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <?php
@@ -119,20 +125,25 @@ if ($isAdmin || $isManager) {
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
+                        <?php if ($canApproveTimeOff): ?>
                         <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">
                             Time Off Requests
                             <?php if ($pendingTimeOffCount > 0): ?>
                                 <span class="sidebar-badge"><?= $pendingTimeOffCount ?></span>
                             <?php endif; ?>
                         </a></li>
+                        <?php endif; ?>
                         <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
+                        <?php if ($canManageEmployees || $canAccessSystemSettings): ?>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </li>
         </ul>
         <?php endif; ?>
-        <?php else: ?>
+        <?php endif; // !$isServiceAccount ?>
+        <?php if ($isServiceAccount): ?>
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <a href="service-settings.php" class="sidebar-link <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">

@@ -5,6 +5,7 @@ ob_start();
 require_once __DIR__ . '/session_init.php';
 require_once __DIR__ . '/csrf.php';
 require_once 'db.php';       // Adjust path if needed
+require_once __DIR__ . '/permissions.php';
 require '../vendor/autoload.php';  // PHPMailer
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -17,9 +18,7 @@ ini_set('display_errors', 0);
 // ALWAYS RETURN JSON
 header('Content-Type: application/json');
 
-// Only allow admin/manager
-$role = strtolower($_SESSION['user_role'] ?? '');
-if (!in_array($role, ['admin','manager'])) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'access_system_settings')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit();

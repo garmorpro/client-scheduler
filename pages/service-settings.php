@@ -3,6 +3,7 @@ date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -11,8 +12,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+$canManageEmployees = user_has_permission($conn, 'manage_employees');
+$canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
 
-if (!$isAdmin && !$isManager) {
+if (!$canManageEmployees && !$canAccessSystemSettings) {
     header("Location: my-schedule.php");
     exit();
 }
@@ -196,6 +199,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="container-fluid">
 
         <!-- employee management -->
+        <?php if ($canManageEmployees): ?>
             <div id="employees" class="tab-content">
                 <div class="user-management-header d-flex justify-content-between align-items-center">
                     <!-- Left -->
@@ -220,6 +224,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
                             <i class="bi bi-shield-lock me-3"></i>Role Permissions
                         </a>
+                        <?php endif; ?>
+                        <?php if ($canManageEmployees): ?>
                         <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#importUsersModal">
                             <i class="bi bi-upload me-3"></i>Import Users
                         </a>
@@ -286,6 +292,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                            <i class="bi bi-eye text-success"></i>
                                         </a>
 
+                                        <?php if ($canManageEmployees): ?>
                                         <?php if (strtolower($userrow['role']) === 'manager'): ?>
                                         <!-- Direct Reports Button -->
                                         <a href="#" class="direct-reports-btn text-decoration-none"
@@ -331,11 +338,12 @@ if ($result && mysqli_num_rows($result) > 0) {
                                                 ?>
                                             </ul>
                                         </div>
-                                              
+
                                         <!-- Delete Button -->
                                         <a href="#" class="delete-user-btn text-decoration-none" data-user-id="<?php echo $userrow['user_id']; ?>">
                                             <i class="bi bi-trash text-danger"></i>
                                         </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -355,9 +363,10 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <ul id="pagination-users" class="pagination justify-content-center mt-3"></ul>
                 </nav>
             </div>
+        <?php endif; ?>
         <!-- end employee management -->
 
-        <?php if ($isAdmin): ?>
+        <?php if ($canAccessSystemSettings): ?>
         <!-- system settings -->
         <div id="system-settings" class="mt-5">
             <div class="titles mb-3">
@@ -412,12 +421,16 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php include_once '../includes/modals/direct_reports_modal.php'; ?>
-<?php if ($isAdmin): ?>
+<?php if ($canAccessSystemSettings): ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
+<?php endif; ?>
+<?php if ($canManageEmployees): ?>
 <?php include_once '../includes/modals/add_user_modal.php'; ?>
 <?php include_once '../includes/modals/import_users_modal.php'; ?>
+<?php endif; ?>
+<?php if ($isAdmin): ?>
 <?php include_once '../includes/modals/role_permissions_modal.php'; ?>
 <?php endif; ?>
 
@@ -429,13 +442,18 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
-<?php if ($isAdmin): ?>
+<?php if ($canAccessSystemSettings): ?>
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
+<?php if ($canManageEmployees): ?>
 <script src="../assets/js/add_user_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
+<?php if ($isAdmin): ?>
+<script src="../assets/js/role_permissions.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

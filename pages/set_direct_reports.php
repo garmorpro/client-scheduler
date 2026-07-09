@@ -2,6 +2,7 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
@@ -14,7 +15,7 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
-if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_employees')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit();

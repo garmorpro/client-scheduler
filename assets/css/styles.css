@@ -2164,28 +2164,24 @@ body.dark-mode #importUsersModal #csvPreviewTable td { border-color: #29302e; co
 
 /* Role Permissions specifics */
 #rolePermissionsModal .rp-body { padding: 16px 20px; }
-#rolePermissionsModal .rp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-#rolePermissionsModal .rp-card { border: 1px solid #e3e7e5; border-radius: 12px; padding: 14px; }
-body.dark-mode #rolePermissionsModal .rp-card { border-color: #29302e; }
-#rolePermissionsModal .rp-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-#rolePermissionsModal .rp-role-name { font-size: 13.5px; font-weight: 700; }
-#rolePermissionsModal .rp-access-pill {
-    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: auto;
+.rp-table-shell { border: 1px solid #e3e7e5; border-radius: 12px; overflow: hidden; }
+body.dark-mode .rp-table-shell { border-color: #29302e; }
+.rp-table { width: 100%; border-collapse: collapse; }
+.rp-table th {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+    color: #9aa39d; text-align: center; padding: 10px 8px; background: #f8f9f8; line-height: 1.3;
 }
-#rolePermissionsModal .rp-access-pill.full { background: #e4f3e6; color: #1f6b3a; }
-#rolePermissionsModal .rp-access-pill.edit { background: #e2eef6; color: #285a80; }
-#rolePermissionsModal .rp-access-pill.view { background: #f1f1ee; color: #6b6b60; }
-body.dark-mode #rolePermissionsModal .rp-access-pill.full { background: #1e3d28; color: #7fd99a; }
-body.dark-mode #rolePermissionsModal .rp-access-pill.edit { background: #1a2540; color: #7fa8e0; }
-body.dark-mode #rolePermissionsModal .rp-access-pill.view { background: #262b26; color: #9aa39a; }
-#rolePermissionsModal .rp-list { list-style: none; margin: 8px 0 0; padding: 0; }
-#rolePermissionsModal .rp-list li { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: #6b7570; padding: 4px 0; }
-body.dark-mode #rolePermissionsModal .rp-list li { color: #9aa8a2; }
-#rolePermissionsModal .rp-list li i { font-size: 12px; margin-top: 2px; flex-shrink: 0; }
-#rolePermissionsModal .rp-list li.yes i { color: #2f9e57; }
-#rolePermissionsModal .rp-list li.no i { color: #9aa39d; }
-body.dark-mode #rolePermissionsModal .rp-list li.yes i { color: #4fbd7a; }
-body.dark-mode #rolePermissionsModal .rp-list li.no i { color: #6e7975; }
+.rp-table th:first-child { text-align: left; }
+body.dark-mode .rp-table th { color: #6e7975; background: #1b2022; }
+.rp-table td { padding: 10px 8px; border-top: 1px solid #e3e7e5; text-align: center; }
+body.dark-mode .rp-table td { border-color: #29302e; }
+.rp-table td:first-child { text-align: left; }
+.rp-role-name { font-size: 13px; font-weight: 700; color: #16211f; }
+body.dark-mode .rp-role-name { color: #edf1ee; }
+.rp-full-access { font-size: 12px; color: #9aa39d; font-style: italic; }
+body.dark-mode .rp-full-access { color: #6e7975; }
+.rp-checkbox { width: 17px; height: 17px; accent-color: var(--primary-color); cursor: pointer; }
+body.dark-mode .rp-checkbox { accent-color: var(--secondary-color); }
 
 /* ========= TIME OFF CATEGORY PILLS ========= */
 .category-pill {

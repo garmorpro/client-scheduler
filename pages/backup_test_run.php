@@ -3,8 +3,9 @@ header('Content-Type: application/json');
 require_once '../includes/db.php'; // defines $host, $user, $pass, $dbname, $conn
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
-if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'access_system_settings')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;

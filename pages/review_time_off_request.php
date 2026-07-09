@@ -2,10 +2,11 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 $userRole = strtolower($_SESSION['user_role'] ?? '');
-if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'approve_time_off')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
@@ -36,8 +37,10 @@ $statusMap = ['approve' => 'approved', 'deny' => 'denied', 'request_changes' => 
 $status = $statusMap[$action];
 $reviewerId = $_SESSION['user_id'];
 
-// Managers may only review requests from staff/seniors assigned to them; admins can review anyone.
-$managerScope = $userRole === 'manager' ? " AND user_id IN (SELECT user_id FROM users WHERE manager_id = ?)" : '';
+// Non-admin reviewers may only act on requests from staff/seniors assigned to
+// them; admins can review anyone.
+$scopeToManager = $userRole !== 'admin';
+$managerScope = $scopeToManager ? " AND user_id IN (SELECT user_id FROM users WHERE manager_id = ?)" : '';
 
 if (strpos($requestGroup, 'single-') === 0) {
     $timeoffId = intval(substr($requestGroup, 7));
@@ -45,7 +48,7 @@ if (strpos($requestGroup, 'single-') === 0) {
         UPDATE time_off SET status = ?, reviewer_comment = ?, reviewed_by = ?, reviewed_at = NOW()
         WHERE timeoff_id = ? AND is_global_timeoff = 0" . $managerScope . "
     ");
-    if ($userRole === 'manager') {
+    if ($scopeToManager) {
         $stmt->bind_param('ssiii', $status, $comment, $reviewerId, $timeoffId, $reviewerId);
     } else {
         $stmt->bind_param('ssii', $status, $comment, $reviewerId, $timeoffId);
@@ -55,7 +58,7 @@ if (strpos($requestGroup, 'single-') === 0) {
         UPDATE time_off SET status = ?, reviewer_comment = ?, reviewed_by = ?, reviewed_at = NOW()
         WHERE request_group = ? AND is_global_timeoff = 0" . $managerScope . "
     ");
-    if ($userRole === 'manager') {
+    if ($scopeToManager) {
         $stmt->bind_param('ssisi', $status, $comment, $reviewerId, $requestGroup, $reviewerId);
     } else {
         $stmt->bind_param('ssis', $status, $comment, $reviewerId, $requestGroup);

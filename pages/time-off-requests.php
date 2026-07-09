@@ -2,16 +2,14 @@
 date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
     exit();
 }
 
-$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
-$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
-
-if (!$isAdmin && !$isManager) {
+if (!user_has_permission($conn, 'approve_time_off')) {
     header("Location: my-schedule.php");
     exit();
 }

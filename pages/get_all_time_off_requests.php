@@ -1,17 +1,19 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 $userRole = strtolower($_SESSION['user_role'] ?? '');
-if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'approve_time_off')) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
 
-// Managers only review time off for staff/seniors assigned to them; admins see everything.
-$scopeToManager = $userRole === 'manager';
+// Non-admin reviewers only see time off for staff/seniors assigned to them
+// (via users.manager_id); admins see everything regardless of role.
+$scopeToManager = $userRole !== 'admin';
 $reviewerId = $_SESSION['user_id'];
 
 $sql = "
