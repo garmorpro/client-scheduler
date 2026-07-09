@@ -73,12 +73,12 @@ if (!$isAdmin && !$isManager) {
       <div class="modal-body position-relative p-0">
         <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
-        <div class="eng-vm-header">
-          <div class="eng-vm-client-row">
-            <div class="eng-vm-tile" id="rtoAvatar"></div>
+        <div class="ud-hero" style="padding-bottom: 18px;">
+          <div class="ud-header" style="margin-bottom: 0;">
+            <div class="ud-avatar" id="rtoAvatar"></div>
             <div>
-              <div class="eng-vm-client-name" id="rtoName"></div>
-              <div style="display:flex; gap:6px; margin-top:2px;">
+              <div class="ud-name" id="rtoName"></div>
+              <div class="ud-pills" style="margin-top: 4px;">
                 <span class="category-pill" id="rtoCategory"></span>
                 <span class="eng-status-pill" id="rtoStatus"><span class="dot"></span><span id="rtoStatusText"></span></span>
               </div>
@@ -86,22 +86,22 @@ if (!$isAdmin && !$isManager) {
           </div>
         </div>
 
-        <div class="eng-vm-body">
-          <div class="eng-vm-stat-row" style="grid-template-columns: repeat(2, 1fr);">
-            <div class="eng-vm-stat-card">
-              <div class="eng-vm-stat-title">Total Hours</div>
-              <div class="eng-vm-stat-value" id="rtoTotalHours"></div>
+        <div class="eng-edit-body">
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="stat-title">Total Hours</div>
+              <div class="stat-value" id="rtoTotalHours"></div>
             </div>
-            <div class="eng-vm-stat-card">
-              <div class="eng-vm-stat-title">Requested</div>
-              <div class="eng-vm-stat-value text" id="rtoRequested"></div>
+            <div class="stat-card">
+              <div class="stat-title">Requested</div>
+              <div class="stat-value" id="rtoRequested" style="font-size:13px;"></div>
             </div>
           </div>
 
-          <div class="eng-vm-section-title">Days</div>
+          <div class="detail-section-title">Days</div>
           <div class="eng-vm-emp-list" id="rtoDaysList" style="margin-bottom:16px;"></div>
 
-          <div class="eng-vm-section-title">Employee's Reason</div>
+          <div class="detail-section-title">Employee's Reason</div>
           <p id="rtoReason" style="font-size:13px; margin-bottom:16px;"></p>
 
           <div class="eng-edit-field" id="rtoCommentField">
@@ -110,7 +110,7 @@ if (!$isAdmin && !$isManager) {
           </div>
 
           <div id="rtoPastCommentWrap" style="display:none;">
-            <div class="eng-vm-section-title">Reviewer Comment</div>
+            <div class="detail-section-title">Reviewer Comment</div>
             <p id="rtoPastComment" style="font-size:13px;"></p>
           </div>
         </div>
