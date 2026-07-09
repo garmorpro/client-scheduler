@@ -50,6 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function roleLabel(role) {
+    const r = (role || '').toLowerCase();
+    if (r === 'crm_team') return 'CRM Team';
+    if (!r) return '';
+    return r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
   // Tabs
   viewProfileModal.querySelectorAll('.ud-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -227,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('pf_avatar', initials);
       setText('pf_name', fullName);
       setText('pf_email', user.email);
-      setText('pf_role_pill', user.role);
+      setText('pf_role_pill', roleLabel(user.role));
       setText('pf_status_text', user.status);
       setText('pf_stat_last_active', user.last_active ? formatDate(user.last_active) : 'Never');
 
@@ -238,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('pf_created', formatDate(user.created_at));
       setText('pf_status_detail', user.status);
 
-      setText('pf_role_detail', user.role);
+      setText('pf_role_detail', roleLabel(user.role));
       setText('pf_access_level', getAccessLevel(user.role));
 
       const statusPill = document.getElementById('pf_status_pill');

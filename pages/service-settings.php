@@ -2,6 +2,7 @@
 date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -259,7 +260,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     </td>
                                     <td>
                                         <span class="badge-role">
-                                            <?php echo ucfirst(htmlspecialchars($userrow['role'])); ?>
+                                            <?php echo htmlspecialchars(role_label($userrow['role'])); ?>
                                         </span>
                                     </td>
                                     <td>

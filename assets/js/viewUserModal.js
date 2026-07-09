@@ -52,6 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function roleLabel(role) {
+    const r = (role || '').toLowerCase();
+    if (r === 'crm_team') return 'CRM Team';
+    if (!r) return '';
+    return r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
   function statusLabel(status) {
     if (status === 'not_confirmed') return 'Not Confirmed';
     return status ? status.charAt(0).toUpperCase() + status.slice(1) : '';
@@ -340,14 +347,14 @@ document.addEventListener('DOMContentLoaded', () => {
       setText('ud_avatar', initials);
       setText('ud_name', fullName);
       setText('ud_email', user.email);
-      setText('ud_role_pill', user.role);
+      setText('ud_role_pill', roleLabel(user.role));
       setText('ud_status_text', user.status);
       setText('ud_stat_last_active', user.last_active ? formatDate(user.last_active) : 'Never');
 
       setText('ud_detail_fullname', fullName);
       setText('ud_detail_email', user.email);
       setText('ud_detail_created', formatDate(user.created_at));
-      setText('ud_detail_role', user.role);
+      setText('ud_detail_role', roleLabel(user.role));
       setText('ud_detail_access_level', getAccessLevel(user.role));
       setText('ud_detail_status', user.status);
 

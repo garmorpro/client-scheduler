@@ -18,3 +18,11 @@ function avatar_initials($name) {
     }
     return $initials !== '' ? $initials : '?';
 }
+
+// Display label for a role string, e.g. "crm_team" -> "CRM Team".
+function role_label($role) {
+    $role = strtolower(trim($role ?? ''));
+    if ($role === 'crm_team') return 'CRM Team';
+    if ($role === '') return '';
+    return ucwords(str_replace('_', ' ', $role));
+}

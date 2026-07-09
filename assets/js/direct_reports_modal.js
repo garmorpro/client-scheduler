@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentManagerId = null;
     let employees = [];
 
+    function roleLabel(role) {
+        const r = (role || '').toLowerCase();
+        if (r === 'crm_team') return 'CRM Team';
+        if (!r) return '';
+        return r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
     function updateSelectedCount() {
         const count = listEl.querySelectorAll('input[type="checkbox"]:checked').length;
         selectedCountEl.textContent = `${count} selected`;
@@ -34,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="checkbox" value="${e.user_id}" ${isMine ? 'checked' : ''}>
                     <span class="dr-row-info">
                         <span class="dr-row-name">${e.full_name}</span>
-                        <span class="dr-row-role text-capitalize">${e.role}</span>
+                        <span class="dr-row-role">${roleLabel(e.role)}</span>
                     </span>
                     ${elsewhere ? `<span class="dr-row-elsewhere">${elsewhere}</span>` : ''}
                 </label>

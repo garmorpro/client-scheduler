@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
     const modalContent = document.getElementById('employeeModalContent');
 
+    function roleLabel(role) {
+        const r = (role || '').toLowerCase();
+        if (r === 'crm_team') return 'CRM Team';
+        if (!r) return '';
+        return r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
     // Utility: parse YYYY-MM-DD safely as local date
     function parseDateOnly(yyyyMmDd) {
         const [y, m, d] = yyyyMmDd.split('-').map(Number);
@@ -183,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="emp-avatar" style="background-color:${avatarColor};">${initials}</div>
                     <div>
                         <div class="emp-name">${userName}</div>
-                        <div class="emp-meta text-capitalize">${role}<span class="emp-meta-dot"></span><span class="text-lowercase">${email}</span></div>
+                        <div class="emp-meta">${roleLabel(role)}<span class="emp-meta-dot"></span><span class="text-lowercase">${email}</span></div>
                     </div>
                 </div>
 

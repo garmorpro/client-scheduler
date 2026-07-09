@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     require_once __DIR__ . '/../includes/session_init.php';
 }
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
@@ -162,7 +163,7 @@ if ($isAdmin || $isManager) {
             </div>
             <div class="sidebar-account-meta">
                 <div class="sidebar-fullname fw-semibold" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $_SESSION['full_name']; ?></div>
-                <small class="sidebar-role text-muted text-capitalize" style="font-size: 11px;"><?php echo $_SESSION['user_role']; ?></small>
+                <small class="sidebar-role text-muted" style="font-size: 11px;"><?php echo htmlspecialchars(role_label($_SESSION['user_role'] ?? '')); ?></small>
             </div>
             <a href="/auth/logout.php" class="sidebar-logout" aria-label="Log out" onclick="event.stopPropagation();">
                 <i class="bi bi-box-arrow-right"></i>
