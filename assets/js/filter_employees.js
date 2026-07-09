@@ -98,11 +98,12 @@ function setupClientSearch() {
   searchBox.addEventListener('keydown', e => e.stopPropagation());
 
   searchBox.addEventListener('input', () => {
-    const term = searchBox.value.trim().toLowerCase();
+    const query = searchBox.value.trim().toLowerCase();
+    const terms = query ? query.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
     let visibleCount = 0;
 
     items.forEach(li => {
-      const matches = !term || li.dataset.clientSearch.includes(term);
+      const matches = terms.length === 0 || terms.some(term => li.dataset.clientSearch.includes(term));
       li.classList.toggle('d-none', !matches);
       if (matches) visibleCount++;
     });
