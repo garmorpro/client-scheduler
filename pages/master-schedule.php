@@ -413,7 +413,6 @@ updateLastRowRadius();
     <script src="../assets/js/search.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/client_dropdown.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/show_entries.js?v=<?php echo time(); ?>"></script>
-    <script src="../assets/js/delete_entry.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/view_entry_modal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/filter_employees.js?v=<?php echo time(); ?>"></script>
