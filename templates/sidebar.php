@@ -85,7 +85,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <li class="nav-item mb-2">
     <?php
         // Determine if current page is one of the settings pages
-        $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php'];
+        $settingsPages = ['manage-users.php', 'role-permissions.php', 'notifications.php', 'company-holidays.php', 'reports.php', 'service-settings.php'];
         $isActive = in_array($currentPage, $settingsPages);
     ?>
     <a class="nav-link d-flex align-items-center px-0 text-dark <?= $isActive ? '' : 'collapsed' ?>" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
@@ -97,6 +97,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-4">
             <li><a href="manage-users.php" class="nav-link text-dark py-1 <?= $currentPage == 'manage-users.php' ? 'active' : '' ?>">Users</a></li>
             <li><a href="company-holidays.php" class="nav-link text-dark py-1 <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
+            <li><a href="service-settings.php" class="nav-link text-dark py-1 <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
             <!-- <li><a href="notifications.php" class="nav-link text-dark py-1 <?= $currentPage == 'notifications.php' ? 'active' : '' ?>">Notifications</a></li>
             <li><a href="reports.php" class="nav-link text-dark py-1 <?= $currentPage == 'reports.php' ? 'active' : '' ?>">Reports</a></li> -->
         </ul>

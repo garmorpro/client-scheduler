@@ -154,7 +154,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Service Dashboard</title>
+    <title>System Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -181,8 +181,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <h3 class="mb-0">Service Account Dashboard</h3>
-    <p class="text-muted mb-4">User management for service accounts</p>
+    <h3 class="mb-0">System Settings</h3>
+    <p class="text-muted mb-4">Employee management and system configuration</p>
 
     <div class="container-fluid">
 
