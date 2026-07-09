@@ -52,10 +52,24 @@ if (strpos($requestGroup, 'single-') === 0) {
 }
 
 if ($stmt->execute()) {
+    $stmt->close();
+
+    // Keep a permanent, attributed record of this note so multiple review
+    // rounds (e.g. two "Request Changes" cycles) don't overwrite each other.
+    if ($comment !== '') {
+        $logStmt = $conn->prepare("
+            INSERT INTO time_off_comments (request_group, user_id, comment)
+            VALUES (?, ?, ?)
+        ");
+        $logStmt->bind_param('sis', $requestGroup, $reviewerId, $comment);
+        $logStmt->execute();
+        $logStmt->close();
+    }
+
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'error' => $stmt->error]);
+    $stmt->close();
 }
 
-$stmt->close();
 $conn->close();

@@ -39,6 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
         return `${formatDate(sorted[0].date)} &ndash; ${formatDate(sorted[sorted.length - 1].date)} <span class="text-muted">(${days.length} days)</span>`;
     }
+    function formatDateTime(dateString) {
+        if (!dateString) return '-';
+        const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString.replace(' ', 'T'));
+        if (isNaN(d)) return '-';
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+            ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+    }
 
     function notify(icon, title, text) {
         if (typeof Swal !== 'undefined') {
@@ -114,6 +126,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function loadCommentHistory(r) {
+        const wrap = document.getElementById('rtoHistoryWrap');
+        const list = document.getElementById('rtoCommentHistory');
+        wrap.style.display = '';
+        list.innerHTML = '<div class="text-muted" style="font-size:12px;">Loading...</div>';
+
+        const entries = [];
+        if (r.reason) {
+            entries.push({ full_name: r.full_name, comment: r.reason, created: r.created });
+        }
+
+        try {
+            const res = await fetch(`get_time_off_comments.php?request_group=${encodeURIComponent(r.request_group)}`);
+            const data = await res.json();
+            if (data.success) entries.push(...data.comments);
+        } catch (err) {
+            console.error('Failed to load comment history', err);
+        }
+
+        if (entries.length === 0) {
+            wrap.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+
+        list.innerHTML = entries.map(e => `
+            <div class="timeoff-comment-item">
+                <div class="timeoff-comment-avatar" style="background-color:${hashColor(e.full_name)};">${initials(e.full_name)}</div>
+                <div class="timeoff-comment-body">
+                    <div class="timeoff-comment-meta">
+                        <span class="timeoff-comment-name">${e.full_name}</span>
+                        <span class="timeoff-comment-time">${formatDateTime(e.created)}</span>
+                    </div>
+                    <p class="timeoff-comment-text">${escapeHtml(e.comment)}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function openReview(requestGroup) {
         const r = allRequests.find(req => req.request_group === requestGroup);
         if (!r) return;
@@ -146,13 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const commentField = document.getElementById('rtoCommentField');
         const commentInput = document.getElementById('rtoComment');
-        const pastCommentWrap = document.getElementById('rtoPastCommentWrap');
         const footer = document.getElementById('rtoFooter');
 
         if (r.status === 'pending') {
             commentField.style.display = '';
             commentInput.value = '';
-            pastCommentWrap.style.display = 'none';
             footer.querySelector('#rtoApproveBtn').style.display = '';
             footer.querySelector('#rtoDenyBtn').style.display = '';
             footer.querySelector('#rtoChangesBtn').style.display = '';
@@ -161,13 +210,9 @@ document.addEventListener('DOMContentLoaded', () => {
             footer.querySelector('#rtoApproveBtn').style.display = 'none';
             footer.querySelector('#rtoDenyBtn').style.display = 'none';
             footer.querySelector('#rtoChangesBtn').style.display = 'none';
-            if (r.reviewer_comment) {
-                pastCommentWrap.style.display = '';
-                document.getElementById('rtoPastComment').textContent = r.reviewer_comment;
-            } else {
-                pastCommentWrap.style.display = 'none';
-            }
         }
+
+        loadCommentHistory(r);
 
         reviewModal.show();
     }

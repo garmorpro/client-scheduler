@@ -104,14 +104,14 @@ if (!$isAdmin && !$isManager) {
           <div class="detail-section-title">Employee's Reason</div>
           <p id="rtoReason" style="font-size:13px; margin-bottom:16px;"></p>
 
+          <div id="rtoHistoryWrap" style="display:none;">
+            <div class="detail-section-title">Notes</div>
+            <div class="timeoff-comment-thread" id="rtoCommentHistory" style="margin-bottom:16px;"></div>
+          </div>
+
           <div class="eng-edit-field" id="rtoCommentField">
             <label for="rtoComment">Comment</label>
             <textarea class="eng-edit-input" id="rtoComment" rows="2" placeholder="Add a note for the employee... (required to Request Changes)"></textarea>
-          </div>
-
-          <div id="rtoPastCommentWrap" style="display:none;">
-            <div class="detail-section-title">Reviewer Comment</div>
-            <p id="rtoPastComment" style="font-size:13px;"></p>
           </div>
         </div>
 

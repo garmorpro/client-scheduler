@@ -51,6 +51,11 @@ if ($isReviewer) {
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
+        $cleanup = $conn->prepare("DELETE FROM time_off_comments WHERE request_group = ?");
+        $cleanup->bind_param('s', $requestGroup);
+        $cleanup->execute();
+        $cleanup->close();
+
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false, 'error' => 'Request not found or cannot be removed.']);

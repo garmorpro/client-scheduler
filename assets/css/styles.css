@@ -2224,6 +2224,26 @@ body.dark-mode .rto-btn-changes { background: #1a2540; color: #7fa8e0; }
 body.dark-mode .rto-btn-changes:hover { background: #223058; }
 body.dark-mode .rto-btn-deny:hover { background: #48281f; }
 
+/* ========= TIME OFF COMMENT THREAD (shared: review + view-my-request modals) ========= */
+.timeoff-comment-thread { display: flex; flex-direction: column; gap: 10px; }
+.timeoff-comment-item { display: flex; gap: 9px; }
+.timeoff-comment-avatar {
+    flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #ffffff; font-size: 11px; font-weight: 700;
+}
+.timeoff-comment-body { flex: 1 1 auto; min-width: 0; }
+.timeoff-comment-meta { display: flex; align-items: baseline; gap: 7px; margin-bottom: 2px; }
+.timeoff-comment-name { font-size: 12.5px; font-weight: 700; color: #16211f; }
+body.dark-mode .timeoff-comment-name { color: #edf1ee; }
+.timeoff-comment-time { font-size: 11px; color: #6b7570; }
+body.dark-mode .timeoff-comment-time { color: #9aa8a2; }
+.timeoff-comment-text {
+    font-size: 13px; color: #3a4441; background: #f1f4f3; border-radius: 10px;
+    padding: 8px 11px; margin: 0; white-space: pre-wrap; word-break: break-word;
+}
+body.dark-mode .timeoff-comment-text { background: #202726; color: #c7d1cd; }
+
 /* ========= VIEW MY TIME OFF MODAL ========= */
 #viewMyTimeOffModal .eng-edit-body { padding: 16px 20px; }
 #viewMyTimeOffModal .eng-edit-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; flex-wrap: wrap; }

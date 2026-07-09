@@ -40,6 +40,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
         return `${formatDate(sorted[0].date)} &ndash; ${formatDate(sorted[sorted.length - 1].date)} <span class="text-muted">(${days.length} days)</span>`;
     }
+    function formatDateTime(dateString) {
+        if (!dateString) return '-';
+        const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString.replace(' ', 'T'));
+        if (isNaN(d)) return '-';
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+            ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+    }
+    const palette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
+    function hashColor(name) {
+        let hash = 0;
+        for (let i = 0; i < (name || '').length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+        return palette[hash % palette.length];
+    }
+    function initials(name) {
+        return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+    }
 
     function notify(icon, title, text) {
         if (typeof Swal !== 'undefined') {
@@ -100,6 +121,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- View modal ---
+    async function loadCommentHistory(r) {
+        const wrap = document.getElementById('vmtoCommentWrap');
+        const list = document.getElementById('vmtoCommentHistory');
+        wrap.style.display = '';
+        list.innerHTML = '<div class="text-muted" style="font-size:12px;">Loading...</div>';
+
+        const entries = [];
+        if (r.reason) {
+            entries.push({ full_name: window.CURRENT_USER_NAME || 'You', comment: r.reason, created: r.created });
+        }
+
+        try {
+            const res = await fetch(`get_time_off_comments.php?request_group=${encodeURIComponent(r.request_group)}`);
+            const data = await res.json();
+            if (data.success) entries.push(...data.comments);
+        } catch (err) {
+            console.error('Failed to load comment history', err);
+        }
+
+        if (entries.length === 0) {
+            wrap.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+
+        list.innerHTML = entries.map(e => `
+            <div class="timeoff-comment-item">
+                <div class="timeoff-comment-avatar" style="background-color:${hashColor(e.full_name)};">${initials(e.full_name)}</div>
+                <div class="timeoff-comment-body">
+                    <div class="timeoff-comment-meta">
+                        <span class="timeoff-comment-name">${e.full_name}</span>
+                        <span class="timeoff-comment-time">${formatDateTime(e.created)}</span>
+                    </div>
+                    <p class="timeoff-comment-text">${escapeHtml(e.comment)}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function openViewModal(r) {
         activeViewRequest = r;
 
@@ -126,13 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        const commentWrap = document.getElementById('vmtoCommentWrap');
-        if (r.reviewer_comment) {
-            commentWrap.style.display = '';
-            document.getElementById('vmtoComment').textContent = r.reviewer_comment;
-        } else {
-            commentWrap.style.display = 'none';
-        }
+        loadCommentHistory(r);
 
         const cancelBtn = document.getElementById('vmtoCancelBtn');
         const editBtn = document.getElementById('vmtoEditBtn');

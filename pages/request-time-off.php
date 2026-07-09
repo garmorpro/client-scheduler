@@ -142,8 +142,8 @@ if (!isset($_SESSION['user_id'])) {
           <p id="vmtoReason" style="font-size:13px; margin-bottom:16px;"></p>
 
           <div id="vmtoCommentWrap" style="display:none;">
-            <div class="detail-section-title">Reviewer Comment</div>
-            <p id="vmtoComment" style="font-size:13px;"></p>
+            <div class="detail-section-title">Notes</div>
+            <div class="timeoff-comment-thread" id="vmtoCommentHistory"></div>
           </div>
         </div>
 
@@ -164,6 +164,7 @@ if (!isset($_SESSION['user_id'])) {
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
+<script>window.CURRENT_USER_NAME = <?= json_encode($_SESSION['full_name'] ?? 'You') ?>;</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../assets/js/request_time_off.js?v=<?php echo time(); ?>"></script>
