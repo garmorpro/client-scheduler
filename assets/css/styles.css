@@ -1702,6 +1702,24 @@ body.dark-mode .eng-status-pill.confirmed { background: #1e3d28; color: #7fd99a;
 body.dark-mode .eng-status-pill.pending { background: #3d2f16; color: #e0b566; }
 body.dark-mode .eng-status-pill.not-confirmed { background: #1a2540; color: #7fa8e0; }
 
+.eng-util-cell { display: flex; align-items: center; gap: 8px; min-width: 110px; }
+.eng-util-track { flex: 1; height: 6px; border-radius: 4px; background: #e3e7e5; overflow: hidden; }
+body.dark-mode .eng-util-track { background: #29302e; }
+.eng-util-fill { height: 100%; border-radius: 4px; }
+.eng-util-fill.green { background: #2f9e57; }
+.eng-util-fill.yellow { background: #d99a2b; }
+.eng-util-fill.red { background: #c0392b; }
+body.dark-mode .eng-util-fill.green { background: #4fbd7a; }
+body.dark-mode .eng-util-fill.yellow { background: #e0b566; }
+body.dark-mode .eng-util-fill.red { background: #e0685a; }
+.eng-util-pct { font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; width: 34px; text-align: right; flex-shrink: 0; }
+.eng-util-pct.green { color: #2f9e57; }
+.eng-util-pct.yellow { color: #92600f; }
+.eng-util-pct.red { color: #c0392b; }
+body.dark-mode .eng-util-pct.green { color: #4fbd7a; }
+body.dark-mode .eng-util-pct.yellow { color: #e0b566; }
+body.dark-mode .eng-util-pct.red { color: #e0685a; }
+
 .eng-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
 .eng-stat-card { position: relative; background: #ffffff; border: 1px solid #e3e7e5; border-radius: 12px; padding: 14px 16px; }
 body.dark-mode .eng-stat-card { background: #1b2022; border-color: #29302e; }

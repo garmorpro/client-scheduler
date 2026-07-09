@@ -198,6 +198,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                         <th>Client</th>
                         <th class="num">Budgeted Hrs</th>
                         <th class="num">Allocated Hrs</th>
+                        <th>Utilization</th>
                         <th>Status</th>
                         <th class="num">Actions</th>
                     </tr>
@@ -211,6 +212,18 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
                             $avatarColor = avatar_color($row['client_name']);
                             $initials = avatar_initials($row['client_name']);
+
+                            $rowBudgeted = (float)$row['budgeted_hours'];
+                            $rowAllocated = (float)$row['total_assigned_hours'];
+                            $rowPct = $rowBudgeted > 0 ? ($rowAllocated / $rowBudgeted) * 100 : 0;
+                            $rowBarWidth = min(100, $rowPct);
+                            if ($rowAllocated > $rowBudgeted) {
+                                $rowUtilColor = 'red';
+                            } elseif ($rowPct >= 75) {
+                                $rowUtilColor = 'yellow';
+                            } else {
+                                $rowUtilColor = 'green';
+                            }
                         ?>
                         <tr data-status="<?php echo $status; ?>" class="client-row">
                             <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
@@ -222,6 +235,14 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             </td>
                             <td class="num"><span class="hours-value"><?php echo $row['budgeted_hours']; ?></span></td>
                             <td class="num"><span class="hours-value"><?php echo $row['total_assigned_hours']; ?></span></td>
+                            <td>
+                                <div class="eng-util-cell">
+                                    <div class="eng-util-track">
+                                        <div class="eng-util-fill <?php echo $rowUtilColor; ?>" style="width: <?php echo $rowBarWidth; ?>%"></div>
+                                    </div>
+                                    <span class="eng-util-pct <?php echo $rowUtilColor; ?>"><?php echo round($rowPct); ?>%</span>
+                                </div>
+                            </td>
                             <td>
                                 <span class="eng-status-pill <?php echo $statusClass; ?>">
                                     <span class="dot"></span><?php echo $statusLabel; ?>
@@ -275,7 +296,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="6" class="text-center">No engagements found</td></tr>
+                    <tr><td colspan="7" class="text-center">No engagements found</td></tr>
                 <?php endif; ?>
                 </tbody>
             </table>
