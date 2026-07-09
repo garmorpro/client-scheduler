@@ -372,6 +372,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
+<?php include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php if ($isAdmin): ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>

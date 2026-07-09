@@ -278,9 +278,13 @@ unset($client);
 <?php include_once '../includes/modals/import_client_modal.php'; ?>
 <?php include_once '../includes/modals/delete_client_modal.php'; ?>
 <?php include_once '../includes/modals/add_engagement_modal.php'; ?>
+<?php include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 
 <script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/view_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>

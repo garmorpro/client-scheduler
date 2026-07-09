@@ -125,6 +125,9 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
     </div>
 </div>
 
+<?php include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+
 <div class="modal fade" id="unarchiveModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -206,6 +209,8 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
     updateHint(archivedRows.length);
 </script>
 
+<script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 </body>
