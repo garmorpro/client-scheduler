@@ -7,13 +7,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const formData = new FormData(form);
 
-        fetch('../../pages/import_users.php', {
+        fetch('import_users.php', {
             method: 'POST',
             body: formData
         })
         .then(res => res.json())
         .then(data => {
             console.log('AJAX Response:', data);
+
+            if (data.error || data.success === false) {
+                Swal.fire({ title: 'Import failed', text: data.error || 'Please try again.', icon: 'error' });
+                return;
+            }
 
             // Close the import modal first
             const modalInstance = bootstrap.Modal.getInstance(importModal);

@@ -1,15 +1,22 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/csrf.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
+    exit();
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid CSRF token']);
     exit();
 }
 
@@ -75,7 +82,7 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
     $currentUserId = $_SESSION['user_id'];
     $currentUserEmail = $_SESSION['email'] ?? '';
     $currentUserFullName = $_SESSION['full_name'] ?? '';
-    $allowedRoles = ['admin', 'manager', 'senior', 'staff'];
+    $allowedRoles = ['admin', 'manager', 'senior', 'staff', 'intern', 'crm_team'];
 
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         if (count(array_filter($data)) === 0) continue;

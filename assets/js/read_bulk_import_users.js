@@ -4,9 +4,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewTable = document.getElementById('csvPreviewTable');
     const rowCountText = document.getElementById('csvRowCount');
 
+    const dropzoneLabel = document.querySelector('label[for="' + fileInput.id + '"]');
+
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
+
+        if (dropzoneLabel) {
+            dropzoneLabel.innerHTML = `<i class="bi bi-file-earmark-spreadsheet" style="font-size:20px; display:block; margin-bottom:4px;"></i>${file.name}`;
+        }
 
         const reader = new FileReader();
         reader.onload = function(event) {

@@ -1916,6 +1916,140 @@ body.dark-mode #holidayModal .eng-edit-btn-cancel:hover { background: #232a2c; }
 #holidayModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #holidayModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= ADD USER / IMPORT USERS / ROLE PERMISSIONS MODALS ========= */
+/* Reuse the same hero/field/footer/button language as #editEngagementModal */
+#addUserModal .eng-edit-hero,
+#importUsersModal .eng-edit-hero,
+#rolePermissionsModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #addUserModal .eng-edit-hero,
+body.dark-mode #importUsersModal .eng-edit-hero,
+body.dark-mode #rolePermissionsModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#addUserModal .eng-edit-title,
+#importUsersModal .eng-edit-title,
+#rolePermissionsModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #addUserModal .eng-edit-title,
+body.dark-mode #importUsersModal .eng-edit-title,
+body.dark-mode #rolePermissionsModal .eng-edit-title { color: #edf1ee; }
+#addUserModal .eng-edit-body,
+#importUsersModal .eng-edit-body { padding: 16px 20px; }
+#addUserModal .eng-edit-row,
+#importUsersModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#addUserModal .eng-edit-field,
+#importUsersModal .eng-edit-field { margin-bottom: 14px; }
+#addUserModal .eng-edit-field label,
+#importUsersModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #addUserModal .eng-edit-field label,
+body.dark-mode #importUsersModal .eng-edit-field label { color: #6e7975; }
+#addUserModal .eng-edit-input,
+#importUsersModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7570' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 14px;
+    padding-right: 34px;
+}
+#addUserModal .eng-edit-input:focus,
+#importUsersModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #addUserModal .eng-edit-input,
+body.dark-mode #importUsersModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #addUserModal .eng-edit-input:focus,
+body.dark-mode #importUsersModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+body.dark-mode select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+#addUserModal .eng-edit-footer,
+#importUsersModal .eng-edit-footer,
+#rolePermissionsModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #addUserModal .eng-edit-footer,
+body.dark-mode #importUsersModal .eng-edit-footer,
+body.dark-mode #rolePermissionsModal .eng-edit-footer { border-color: #29302e; }
+#addUserModal .eng-edit-btn-cancel,
+#importUsersModal .eng-edit-btn-cancel,
+#rolePermissionsModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addUserModal .eng-edit-btn-cancel:hover,
+#importUsersModal .eng-edit-btn-cancel:hover,
+#rolePermissionsModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #addUserModal .eng-edit-btn-cancel,
+body.dark-mode #importUsersModal .eng-edit-btn-cancel,
+body.dark-mode #rolePermissionsModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #addUserModal .eng-edit-btn-cancel:hover,
+body.dark-mode #importUsersModal .eng-edit-btn-cancel:hover,
+body.dark-mode #rolePermissionsModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#addUserModal .eng-edit-btn-save,
+#importUsersModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addUserModal .eng-edit-btn-save:hover,
+#importUsersModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #addUserModal .eng-edit-btn-save,
+body.dark-mode #importUsersModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+#addUserModal .eng-edit-btn-save:disabled,
+#importUsersModal .eng-edit-btn-save:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Import Users specifics */
+#importUsersModal .iu-dropzone {
+    border: 1.5px dashed #e3e7e5; border-radius: 12px; padding: 18px; text-align: center; cursor: pointer;
+    color: #6b7570; font-size: 12.5px;
+}
+#importUsersModal .iu-dropzone:hover { border-color: var(--primary-color); background: #f1f4f3; }
+body.dark-mode #importUsersModal .iu-dropzone { border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #importUsersModal .iu-dropzone:hover { border-color: var(--secondary-color); background: #232a2c; }
+#importUsersModal .iu-template-link { font-size: 11.5px; color: var(--primary-color); text-decoration: none; font-weight: 600; }
+body.dark-mode #importUsersModal .iu-template-link { color: var(--secondary-color); }
+#importUsersModal .iu-preview-wrap { margin-top: 14px; }
+#importUsersModal .iu-preview-hint { font-size: 11px; color: #9aa39d; margin-bottom: 6px; }
+body.dark-mode #importUsersModal .iu-preview-hint { color: #6e7975; }
+#importUsersModal #csvPreviewTable { width: 100%; font-size: 11.5px; border-collapse: collapse; }
+#importUsersModal #csvPreviewTable th {
+    text-align: left; text-transform: uppercase; letter-spacing: .03em; font-size: 10px; color: #9aa39d;
+    background: #f1f4f3; padding: 6px 8px; border-bottom: 1px solid #e3e7e5;
+}
+#importUsersModal #csvPreviewTable td { padding: 6px 8px; border-bottom: 1px solid #e3e7e5; color: #16211f; }
+body.dark-mode #importUsersModal #csvPreviewTable th { background: #232a2c; color: #6e7975; border-color: #29302e; }
+body.dark-mode #importUsersModal #csvPreviewTable td { border-color: #29302e; color: #edf1ee; }
+
+/* Role Permissions specifics */
+#rolePermissionsModal .rp-body { padding: 16px 20px; }
+#rolePermissionsModal .rp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+#rolePermissionsModal .rp-card { border: 1px solid #e3e7e5; border-radius: 12px; padding: 14px; }
+body.dark-mode #rolePermissionsModal .rp-card { border-color: #29302e; }
+#rolePermissionsModal .rp-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+#rolePermissionsModal .rp-role-name { font-size: 13.5px; font-weight: 700; }
+#rolePermissionsModal .rp-access-pill {
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: auto;
+}
+#rolePermissionsModal .rp-access-pill.full { background: #e4f3e6; color: #1f6b3a; }
+#rolePermissionsModal .rp-access-pill.edit { background: #e2eef6; color: #285a80; }
+#rolePermissionsModal .rp-access-pill.view { background: #f1f1ee; color: #6b6b60; }
+body.dark-mode #rolePermissionsModal .rp-access-pill.full { background: #1e3d28; color: #7fd99a; }
+body.dark-mode #rolePermissionsModal .rp-access-pill.edit { background: #1a2540; color: #7fa8e0; }
+body.dark-mode #rolePermissionsModal .rp-access-pill.view { background: #262b26; color: #9aa39a; }
+#rolePermissionsModal .rp-list { list-style: none; margin: 8px 0 0; padding: 0; }
+#rolePermissionsModal .rp-list li { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: #6b7570; padding: 4px 0; }
+body.dark-mode #rolePermissionsModal .rp-list li { color: #9aa8a2; }
+#rolePermissionsModal .rp-list li i { font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+#rolePermissionsModal .rp-list li.yes i { color: #2f9e57; }
+#rolePermissionsModal .rp-list li.no i { color: #9aa39d; }
+body.dark-mode #rolePermissionsModal .rp-list li.yes i { color: #4fbd7a; }
+body.dark-mode #rolePermissionsModal .rp-list li.no i { color: #6e7975; }
+
 /* ========= PROFILE DETAILS MODAL (tabbed, shares .ud-* with User Details) ========= */
 #viewProfileModal .pd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
 body.dark-mode #viewProfileModal .pd-footer { border-color: #29302e; }

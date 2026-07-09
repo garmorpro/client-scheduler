@@ -203,10 +203,21 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                     <!-- Right -->
                     <div class="user-management-buttons d-flex align-items-center gap-2">
-                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium" 
+                        <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium"
                            style="font-size: .875rem; background-color: darkred; display:none;">
                           <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
                         </a>
+                        <?php if ($isAdmin): ?>
+                        <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
+                            <i class="bi bi-shield-lock me-3"></i>Role Permissions
+                        </a>
+                        <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#importUsersModal">
+                            <i class="bi bi-upload me-3"></i>Import Users
+                        </a>
+                        <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus me-3"></i>Add User
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -378,6 +389,9 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
+<?php include_once '../includes/modals/add_user_modal.php'; ?>
+<?php include_once '../includes/modals/import_users_modal.php'; ?>
+<?php include_once '../includes/modals/role_permissions_modal.php'; ?>
 <?php endif; ?>
 
 
@@ -391,9 +405,13 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/add_user_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>
