@@ -1765,6 +1765,53 @@ body.dark-mode .eng-ob-hours { color: #9aa8a2; }
 .eng-ob-over { font-size: 13px; font-weight: 700; color: #c0392b; }
 body.dark-mode .eng-ob-over { color: #e0685a; }
 
+/* ========= EDIT ENGAGEMENT MODAL ========= */
+#editEngagementModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #editEngagementModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#editEngagementModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #editEngagementModal .eng-edit-title { color: #edf1ee; }
+
+#editEngagementModal .eng-edit-body { padding: 16px 20px; }
+#editEngagementModal .eng-edit-field { margin-bottom: 14px; }
+#editEngagementModal .eng-edit-field:last-child { margin-bottom: 0; }
+#editEngagementModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #editEngagementModal .eng-edit-field label { color: #6e7975; }
+#editEngagementModal .eng-edit-input {
+    width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#editEngagementModal .eng-edit-input:focus { border-color: var(--primary-color); background: #ffffff; }
+#editEngagementModal .eng-edit-input:disabled { color: #6b7570; cursor: not-allowed; }
+#editEngagementModal textarea.eng-edit-input { resize: vertical; min-height: 44px; }
+body.dark-mode #editEngagementModal .eng-edit-input { background: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #editEngagementModal .eng-edit-input:focus { border-color: var(--secondary-color); background: #1b2022; }
+body.dark-mode #editEngagementModal .eng-edit-input:disabled { color: #9aa8a2; }
+
+#editEngagementModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #editEngagementModal .eng-edit-footer { border-color: #29302e; }
+#editEngagementModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#editEngagementModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #editEngagementModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #editEngagementModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#editEngagementModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#editEngagementModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #editEngagementModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
 /* ========= USER DETAILS MODAL (tabbed) ========= */
 #viewUserModal .ud-hero {
     padding: 18px 20px 0;
