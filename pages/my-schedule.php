@@ -1,17 +1,16 @@
 <?php
 require_once __DIR__ . '/../includes/session_init.php';
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
     exit();
 }
 
-$isAdmin   = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
-$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 
-// ✅ FIX: should be OR, not AND
-if ($isAdmin || $isManager) {
+if ($isAdmin) {
     header("Location: master-schedule.php");
     exit();
 }
@@ -74,11 +73,12 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // ------------------------------------------------------
-// Get time off
+// Get time off (approved individual time off only - matches how Master Schedule
+// filters, so a still-pending request doesn't visually read as scheduled time off)
 $sqlTimeOff = "
     SELECT week_start, assigned_hours
     FROM time_off
-    WHERE user_id = ?
+    WHERE user_id = ? AND is_global_timeoff = 0 AND status = 'approved'
       AND week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($sqlTimeOff);
@@ -93,7 +93,7 @@ $timeOffHours = [];
 while ($row = $resTO->fetch_assoc()) {
     $week = $row['week_start'];
     if (!isset($timeOffHours[$week])) $timeOffHours[$week] = 0;
-    $timeOffHours[$week] += floatval($row['hours']);
+    $timeOffHours[$week] += floatval($row['assigned_hours']);
 }
 $stmt->close();
 
@@ -123,11 +123,12 @@ while ($row = $weekResult->fetch_assoc()) {
 $stmt->close();
 
 // ------------------------------------------------------
-// Time off for selected week
+// Time off for selected week - grouped by request_group so a multi-day
+// request shows as one row instead of one card per day.
 $sqlWeekTO = "
-    SELECT timeoff_id, assigned_hours
+    SELECT timeoff_id, request_group, category, holiday_date, assigned_hours
     FROM time_off
-    WHERE user_id = ?
+    WHERE user_id = ? AND is_global_timeoff = 0 AND status = 'approved'
       AND week_start = ?
 ";
 $stmt = $conn->prepare($sqlWeekTO);
@@ -138,17 +139,23 @@ $stmt->bind_param('is', $userId, $weekStartDate);
 $stmt->execute();
 $weekTORes = $stmt->get_result();
 
-$timeOffs     = [];
-$timeOffTotal = 0;
+$timeOffGroups = [];
+$timeOffTotal  = 0;
 while ($row = $weekTORes->fetch_assoc()) {
-    $timeOffs[] = [
-        'id'             => $row['timeoff_id'],
-        'assigned_hours' => $row['assigned_hours'],
-        'client_name'    => 'Time Off'
-    ];
+    $groupKey = $row['request_group'] ?: ('single-' . $row['timeoff_id']);
+    if (!isset($timeOffGroups[$groupKey])) {
+        $timeOffGroups[$groupKey] = [
+            'category' => $row['category'] ?: 'vacation',
+            'days' => [],
+            'total_hours' => 0,
+        ];
+    }
+    $timeOffGroups[$groupKey]['days'][] = $row['holiday_date'];
+    $timeOffGroups[$groupKey]['total_hours'] += floatval($row['assigned_hours']);
     $timeOffTotal += floatval($row['assigned_hours']);
 }
 $stmt->close();
+$timeOffs = array_values($timeOffGroups);
 
 $netHours = $totalHours;
 
@@ -212,10 +219,17 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $stmt->close();
     return $members;
 }
+
+$greetingHour = (int) date('G');
+if ($greetingHour < 12) {
+    $greeting = 'Good morning';
+} elseif ($greetingHour < 18) {
+    $greeting = 'Good afternoon';
+} else {
+    $greeting = 'Good evening';
+}
+$firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,187 +239,161 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
-  <style>
-    .card { min-width: 200px; margin-bottom: 15px; border-radius: 12px; }
-    .timeoff-card { 
-      border: 2px dashed #d1e29f;
-      background: #f6f9ec;
-    }
-    .week-card {
-      flex: 1 1 calc(12.5% - 10px);
-      background: #fff;
-      border: 1px solid #eaeaea;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      min-width: 120px;
-    }
-    .week-card.current {
-      border: 2px solid #0d6efd;
-      background: #f0f7ff;
-    }
-    .text-confirmed { color: #198754; }
-    .text-pending { color: #ffc107; }
-    .text-not-confirmed { color: #dc3545; }
-    .current_week {
-      display: inline-block;
-      background: #0d6efd;
-      color: #fff;
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 6px;
-      margin-bottom: 5px;
-    }
-  </style>
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
   <?php include_once '../templates/sidebar.php'; ?>
 
   <div class="flex-grow-1 p-4" style="margin-left: 250px;">
+
     <!-- Page header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h3 class="mb-0 fw-bold">My Schedule</h3>
-        <p class="text-muted mb-0">Your personal schedule and time allocation</p>
+    <div class="ms-header">
+      <div class="ms-who">
+        <div class="ms-avatar"><?php echo htmlspecialchars(avatar_initials($_SESSION['full_name'] ?? '')); ?></div>
+        <div>
+          <h3><?php echo htmlspecialchars($greeting); ?>, <?php echo htmlspecialchars($firstName); ?></h3>
+          <p class="ms-role-line">
+            Your personal schedule and time allocation
+            <span class="ms-role-chip"><?php echo htmlspecialchars(role_label($_SESSION['user_role'] ?? '')); ?></span>
+          </p>
+        </div>
       </div>
-      <div>
-        <a href="#" onclick="location.reload();" class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-arrow-clockwise me-2"></i> Refresh
+      <a href="#" onclick="location.reload(); return false;" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-clockwise me-2"></i> Refresh
+      </a>
+    </div>
+
+    <!-- Time Off Stats -->
+    <div class="ms-stat-row">
+      <a href="request-time-off.php" class="ms-stat-card">
+        <div class="ms-stat-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="ms-stat-title">Pending Time Off</div>
+        <div class="ms-stat-value"><?php echo $pendingTimeOffCount; ?></div>
+        <div class="ms-stat-sub"><?php echo $pendingTimeOffCount > 0 ? ($pendingTimeOffCount === 1 ? 'request needs your attention' : 'requests need your attention') : 'nothing awaiting action'; ?></div>
+      </a>
+      <a href="request-time-off.php" class="ms-stat-card accent">
+        <div class="ms-stat-icon"><i class="bi bi-airplane-fill"></i></div>
+        <div class="ms-stat-title">Upcoming Time Off</div>
+        <div class="ms-stat-value"><?php echo $upcomingTimeOffDate ? date('M j', strtotime($upcomingTimeOffDate)) : 'None'; ?></div>
+        <div class="ms-stat-sub <?php echo $upcomingTimeOffDate ? 'link' : ''; ?>"><?php echo $upcomingTimeOffDate ? 'next approved day off →' : 'no approved time off scheduled'; ?></div>
+      </a>
+      <a href="request-time-off.php" class="ms-stat-card">
+        <div class="ms-stat-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+        <div class="ms-stat-title">Taken This Year</div>
+        <div class="ms-stat-value"><?php echo $yearTimeOffHours; ?> hrs</div>
+        <div class="ms-stat-sub">approved &amp; taken in <?php echo date('Y'); ?></div>
+      </a>
+    </div>
+
+    <!-- 8-Week Overview + navigator, merged -->
+    <div class="ms-week-card">
+      <div class="ms-week-head">
+        <h6>8-Week Overview</h6>
+        <div class="ms-week-legend">
+          <span class="ms-legend-item"><span class="ms-legend-dot" style="background:var(--primary-color);"></span>Work</span>
+          <span class="ms-legend-item"><span class="ms-legend-dot" style="background:var(--secondary-color);"></span>Time off</span>
+          <?php if ($selectedMonday != $currentMonday): ?>
+          <a href="?week_start=<?php echo date('Y-m-d', $currentMonday); ?>" class="ms-today-btn">
+            <i class="bi bi-calendar-event"></i> Jump to current week
+          </a>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="ms-week-strip">
+        <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="ms-week-nav-arrow" aria-label="Previous">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+        <div class="ms-week-tiles">
+          <?php foreach ($mondays as $monday):
+              $weekKey = date('Y-m-d', $monday);
+              $assigned = $totalAssignedHours[$weekKey] ?? 0;
+              $timeOff = $timeOffHours[$weekKey] ?? 0;
+              $total = $assigned + $timeOff;
+              $isSelected = ($monday == $selectedMonday);
+              $isToday = ($monday == $currentMonday);
+              $workPct = $total > 0 ? ($assigned / $total) * 100 : 0;
+              $offPct = $total > 0 ? ($timeOff / $total) * 100 : 0;
+          ?>
+            <a href="?week_start=<?php echo $weekKey; ?>"
+               class="ms-week-tile <?php echo $isSelected ? 'selected' : ''; ?> <?php echo $isToday ? 'today-marker' : ''; ?> <?php echo $total > 0 ? 'has-hours' : ''; ?>">
+              <div class="ms-wk-label">Week of <?php echo date('n/j', $monday); ?></div>
+              <div class="ms-wk-hours"><?php echo $total; ?>h</div>
+              <div class="ms-wk-bar-track">
+                <div class="ms-wk-bar-work" style="width:<?php echo $workPct; ?>%"></div>
+                <div class="ms-wk-bar-off" style="width:<?php echo $offPct; ?>%"></div>
+              </div>
+            </a>
+          <?php endforeach; ?>
+        </div>
+        <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="ms-week-nav-arrow" aria-label="Next">
+          <i class="bi bi-chevron-right"></i>
         </a>
       </div>
     </div>
 
-    <!-- Time Off Stats -->
-    <div class="stat-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
-      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
-        <div class="stat-title">Pending Time Off</div>
-        <div class="stat-value"><?php echo $pendingTimeOffCount; ?></div>
-        <?php if ($pendingTimeOffCount > 0): ?>
-          <small class="text-muted"><?php echo $pendingTimeOffCount === 1 ? 'request needs your attention' : 'requests need your attention'; ?></small>
-        <?php else: ?>
-          <small class="text-muted">nothing awaiting action</small>
+    <!-- Selected Week -->
+    <div class="ms-detail-head">
+      <div class="ms-title-group">
+        <h5>Week of <?php echo date('n/j', $selectedMonday); ?></h5>
+        <span class="ms-date-range"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></span>
+        <?php if ($selectedMonday == $currentMonday): ?>
+          <span class="ms-current-pill"><i class="bi bi-circle-fill" style="font-size:6px;"></i> Current Week</span>
         <?php endif; ?>
-      </a>
-      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
-        <div class="stat-title">Upcoming Time Off</div>
-        <div class="stat-value" style="<?php echo $upcomingTimeOffDate ? 'font-size:20px;' : ''; ?>">
-          <?php echo $upcomingTimeOffDate ? date('M j', strtotime($upcomingTimeOffDate)) : 'None'; ?>
-        </div>
-        <small class="text-muted"><?php echo $upcomingTimeOffDate ? 'next approved day off' : 'no approved time off scheduled'; ?></small>
-      </a>
-      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
-        <div class="stat-title">Time Off Taken This Year</div>
-        <div class="stat-value"><?php echo $yearTimeOffHours; ?> hrs</div>
-        <small class="text-muted">approved &amp; taken in <?php echo date('Y'); ?></small>
-      </a>
-    </div>
-
-    <!-- 8-Week Overview -->
-    <div class="mb-3">
-      <div class="fw-semibold fs-6 mb-2">8-Week Overview</div>
-      <div class="d-flex flex-wrap gap-2">
-        <?php foreach ($mondays as $monday): 
-            $weekKey = date('Y-m-d', $monday);
-            $assigned = $totalAssignedHours[$weekKey] ?? 0;
-            $timeOff = $timeOffHours[$weekKey] ?? 0;
-            $net = $assigned;
-            $isCurrent = ($monday == $currentMonday);
-        ?>
-          <div class="week-card text-center <?php echo $isCurrent ? 'current' : ''; ?>">
-            <div class="fw-semibold small">Week of <?php echo date('n/j', $monday); ?></div>
-            <div class="fw-bold fs-4"><?php echo $net; ?> hrs</div>
-            <?php if ($timeOff > 0): ?>
-              <small class="fw-bold text-success d-block"><?php echo $timeOff; ?> hrs off</small>
-            <?php endif; ?>
-          </div>
-        <?php endforeach; ?>
+      </div>
+      <div class="ms-summary-inline">
+        <?php echo count($engagements); ?> engagement<?php echo count($engagements) === 1 ? '' : 's'; ?>
+        <?php if (!empty($timeOffs)): ?>
+          · <?php echo count($timeOffs); ?> time off request<?php echo count($timeOffs) === 1 ? '' : 's'; ?>
+        <?php endif; ?>
+        · <b><?php echo $netHours + $timeOffTotal; ?> hrs</b> total
       </div>
     </div>
 
-    <!-- Selected Week Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white shadow-sm rounded">
-      <a href="?week_start=<?php echo $prevWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-chevron-left me-1"></i> Previous
-      </a>
-      <div class="text-center">
-        <div class="current_week" style="visibility: <?php echo ($selectedMonday == $currentMonday) ? 'visible' : 'hidden'; ?>;">
-          Current Week
-        </div>
-        <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?></div>
-        <small class="text-muted"><?php echo date('M j', $selectedMonday) . " - " . date('M j', strtotime($weekEndDate)); ?></small>
+    <?php if (empty($engagements) && empty($timeOffs)): ?>
+      <div class="ms-empty-week">
+        <i class="bi bi-calendar2-check"></i>
+        <div class="t">Nothing scheduled this week</div>
+        <div>You have a clear schedule.</div>
       </div>
-      <a href="?week_start=<?php echo $nextWeekMonday; ?>" class="btn btn-outline-secondary btn-sm">
-        Next <i class="bi bi-chevron-right ms-1"></i>
-      </a>
-    </div>
-
-    <!-- Week Entries -->
-    <div class="mb-4">
-      <?php if (empty($engagements) && empty($timeOffs)): ?>
-        <div class="card p-4 text-center shadow-sm">
-          <i class="bi bi-calendar2-check fs-1 text-success mb-2"></i>
-          <div class="fw-semibold fs-5">No engagements this week</div>
-          <small class="text-muted">You have a clear schedule.</small>
-        </div>
-      <?php else: ?>
-        <?php foreach ($engagements as $eng): 
+    <?php else: ?>
+      <div class="ms-entry-list">
+        <?php foreach ($engagements as $eng):
           $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
+          $clientName = $eng['client_name'] ?? 'Unknown';
+          $status = strtolower($eng['status'] ?? 'confirmed');
+          $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';
+          $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
         ?>
-          <div class="card p-3 mb-3 shadow-sm">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <div class="fw-semibold fs-5"><?php echo htmlspecialchars($eng['client_name']); ?></div>
-                <small class="text-muted">
-                  <strong>Team:</strong> 
-                  <?php echo !empty($teamMembers) ? implode(', ', $teamMembers) : 'Just you'; ?>
-                </small>
-              </div>
-              <div class="text-end">
-                <div class="fw-semibold fs-5"><?php echo $eng['assigned_hours']; ?> hrs</div>
-                <?php
-                  $status = strtolower($eng['status'] ?? 'confirmed');
-                  switch ($status) {
-                    case 'confirmed': $status_class = 'text-confirmed'; $status_label = 'Confirmed'; break;
-                    case 'pending': $status_class = 'text-pending'; $status_label = 'Pending'; break;
-                    case 'not_confirmed': $status_class = 'text-not-confirmed'; $status_label = 'Not Confirmed'; break;
-                    default: $status_class = 'text-danger'; $status_label = 'Error'; break;
-                  }
-                ?>
-                <small class="<?php echo $status_class; ?>"><?php echo $status_label; ?></small>
-              </div>
+          <div class="ms-entry-row">
+            <div class="ms-entry-avatar" style="background-color:<?php echo avatar_color($clientName); ?>;"><?php echo htmlspecialchars(avatar_initials($clientName)); ?></div>
+            <div class="ms-entry-main">
+              <div class="ms-entry-name"><?php echo htmlspecialchars($clientName); ?></div>
+              <div class="ms-entry-team">Team: <b><?php echo !empty($teamMembers) ? htmlspecialchars(implode(', ', $teamMembers)) : 'Just you'; ?></b></div>
             </div>
+            <span class="eng-status-pill <?php echo $statusClass; ?>"><span class="dot"></span><?php echo htmlspecialchars($statusLabel); ?></span>
+            <div class="ms-entry-hours"><?php echo $eng['assigned_hours']; ?>h</div>
           </div>
         <?php endforeach; ?>
 
-        <?php foreach ($timeOffs as $off): ?>
-          <div class="card p-3 mb-3 shadow-sm timeoff-card">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="fw-semibold fs-5"><?php echo htmlspecialchars($off['client_name']); ?></div>
-                <small class="text-muted">Approved time off</small>
-              </div>
-              <div class="fw-semibold fs-5 text-success">
-                <?php echo $off['assigned_hours']; ?> hrs
-              </div>
+        <?php foreach ($timeOffs as $off):
+          sort($off['days']);
+          $dayCount = count($off['days']);
+          $dayLabel = $dayCount === 1
+            ? date('D M j', strtotime($off['days'][0]))
+            : date('D M j', strtotime($off['days'][0])) . ' – ' . date('D M j', strtotime(end($off['days'])));
+        ?>
+          <div class="ms-entry-row timeoff">
+            <div class="ms-entry-avatar"><i class="bi bi-airplane-fill"></i></div>
+            <div class="ms-entry-main">
+              <div class="ms-entry-name">Time Off</div>
+              <div class="ms-entry-team"><?php echo htmlspecialchars(ucfirst($off['category'])); ?> · <?php echo htmlspecialchars($dayLabel); ?> · <b>Approved</b></div>
             </div>
+            <span class="eng-status-pill timeoff"><span class="dot"></span><?php echo $dayCount; ?> day<?php echo $dayCount === 1 ? '' : 's'; ?></span>
+            <div class="ms-entry-hours"><?php echo $off['total_hours']; ?>h</div>
           </div>
         <?php endforeach; ?>
-      <?php endif; ?>
-    </div>
+      </div>
+    <?php endif; ?>
 
-    <!-- Week Summary -->
-    <div class="d-flex justify-content-between align-items-center p-3 bg-white shadow-sm rounded">
-      <div>
-        <div class="fw-semibold fs-5">Week of <?php echo date('n/j', $selectedMonday); ?> Summary</div>
-        <small class="text-muted">
-          <?php echo count($engagements); ?> engagement(s) • <?php echo $timeOffTotal; ?> hrs off
-        </small>
-      </div>
-      <div class="text-end">
-        <div class="fw-semibold fs-5"><?php echo $netHours; ?> hrs</div>
-        <small class="text-muted">Net Hours</small>
-      </div>
-    </div>
   </div>
 
   <?php include_once '../includes/modals/viewProfileModal.php'; ?>

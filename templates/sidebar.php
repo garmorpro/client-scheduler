@@ -77,7 +77,7 @@ if ($canApproveTimeOff) {
         <!-- Nav Links -->
         <?php if (!$isServiceAccount): ?>
         <ul class="sidebar-nav-group">
-            <li class="nav-item <?php if ($canManageClientsEngagements || $canApproveTimeOff || $canManageEmployees) echo 'd-none'; ?>">
+            <li class="nav-item <?php if ($isAdmin) echo 'd-none'; ?>">
                 <a href="my-schedule.php" class="sidebar-link <?= $currentPage == 'my-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-person"></i>
                     My Schedule

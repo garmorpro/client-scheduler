@@ -2661,5 +2661,152 @@ body.dark-mode .activity-row { border-color: #29302e; }
 .activity-time { color: #9aa39d; white-space: nowrap; font-size: 11.5px; }
 body.dark-mode .activity-time { color: #6e7975; }
 .activity-empty { padding: 24px 12px; text-align: center; font-size: 12.5px; color: #9aa39d; }
+
+/* ========= MY SCHEDULE (redesign) ========= */
+.ms-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.ms-who { display: flex; align-items: center; gap: 14px; }
+.ms-avatar {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--primary-color), #0a5a66);
+    color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;
+}
+.ms-header h3 { font-size: 21px; font-weight: 800; margin: 0 0 3px; letter-spacing: -.01em; }
+.ms-role-line { margin: 0; color: #6b7570; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+body.dark-mode .ms-role-line { color: #9aa8a2; }
+.ms-role-chip {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+    background: #f1f4f3; color: #6b7570; padding: 2px 9px; border-radius: 20px;
+}
+body.dark-mode .ms-role-chip { background: #232a2c; color: #9aa8a2; }
+
+.ms-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+.ms-stat-card {
+    background: #ffffff; border: 1px solid #e3e7e5; border-radius: 16px; padding: 16px 18px;
+    position: relative; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,22,.04);
+    text-decoration: none !important; color: inherit; display: block;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+.ms-stat-card:hover { box-shadow: 0 8px 24px -12px rgba(16,24,22,.18); transform: translateY(-1px); }
+body.dark-mode .ms-stat-card { background: #1b2022; border-color: #29302e; }
+.ms-stat-icon {
+    position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; background: #f1f4f3; color: #6b7570; font-size: 15px;
+}
+body.dark-mode .ms-stat-icon { background: #232a2c; color: #9aa8a2; }
+.ms-stat-card.accent .ms-stat-icon { background: rgba(163,204,56,.16); color: #5a7a12; }
+body.dark-mode .ms-stat-card.accent .ms-stat-icon { color: var(--secondary-color); background: rgba(163,204,56,.14); }
+.ms-stat-title { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; padding-right: 40px; }
+body.dark-mode .ms-stat-title { color: #6e7975; }
+.ms-stat-value { font-size: 24px; font-weight: 800; margin: 5px 0 3px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; color: #16211f; }
+body.dark-mode .ms-stat-value { color: #edf1ee; }
+.ms-stat-sub { font-size: 12px; color: #6b7570; }
+body.dark-mode .ms-stat-sub { color: #9aa8a2; }
+.ms-stat-sub.link { color: var(--primary-color); font-weight: 600; }
+body.dark-mode .ms-stat-sub.link { color: var(--secondary-color); }
+
+.ms-week-card { background: #ffffff; border: 1px solid #e3e7e5; border-radius: 16px; padding: 16px 16px 14px; margin-bottom: 22px; box-shadow: 0 1px 2px rgba(16,24,22,.04); }
+body.dark-mode .ms-week-card { background: #1b2022; border-color: #29302e; }
+.ms-week-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+.ms-week-head h6 { font-size: 13px; font-weight: 700; margin: 0; color: #16211f; }
+body.dark-mode .ms-week-head h6 { color: #edf1ee; }
+.ms-week-legend { display: flex; align-items: center; gap: 14px; }
+.ms-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #6b7570; font-weight: 600; }
+body.dark-mode .ms-legend-item { color: #9aa8a2; }
+.ms-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+.ms-today-btn {
+    font-size: 12px; font-weight: 600; color: var(--primary-color); background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; text-decoration: none;
+}
+body.dark-mode .ms-today-btn { color: var(--secondary-color); }
+.ms-week-strip { display: flex; align-items: stretch; gap: 8px; }
+.ms-week-nav-arrow {
+    flex: 0 0 auto; width: 34px; border-radius: 10px; border: 1px solid #e3e7e5; background: #ffffff;
+    color: #6b7570; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none;
+}
+.ms-week-nav-arrow:hover { background: #f1f4f3; color: #16211f; }
+body.dark-mode .ms-week-nav-arrow { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .ms-week-nav-arrow:hover { background: #232a2c; color: #edf1ee; }
+.ms-week-tiles { flex: 1; display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+.ms-week-tile {
+    border-radius: 12px; border: 1px solid #e3e7e5; background: #f1f4f3; padding: 10px 8px; text-align: center;
+    text-decoration: none !important; display: block; position: relative;
+    transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.ms-week-tile:hover { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 1px 2px rgba(16,24,22,.04); }
+body.dark-mode .ms-week-tile { background: #202726; border-color: #29302e; }
+.ms-wk-label { font-size: 10.5px; color: #9aa39d; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+body.dark-mode .ms-wk-label { color: #6e7975; }
+.ms-wk-hours { font-size: 16px; font-weight: 800; margin: 4px 0 6px; font-variant-numeric: tabular-nums; color: #16211f; }
+body.dark-mode .ms-wk-hours { color: #edf1ee; }
+.ms-wk-bar-track { height: 5px; border-radius: 4px; background: #e3e7e5; overflow: hidden; display: flex; }
+body.dark-mode .ms-wk-bar-track { background: #29302e; }
+.ms-wk-bar-work { height: 100%; background: #9aa39d; }
+.ms-wk-bar-off { height: 100%; background: var(--secondary-color); }
+.ms-week-tile.has-hours .ms-wk-bar-work { background: var(--primary-color); }
+body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #4a7d86; }
+.ms-week-tile.selected { background: var(--primary-color); border-color: var(--primary-color); }
+.ms-week-tile.selected .ms-wk-label { color: rgba(255,255,255,.72); }
+.ms-week-tile.selected .ms-wk-hours { color: #ffffff; }
+.ms-week-tile.selected .ms-wk-bar-track { background: rgba(255,255,255,.22); }
+.ms-week-tile.selected .ms-wk-bar-work { background: rgba(255,255,255,.55); }
+.ms-week-tile.selected .ms-wk-bar-off { background: var(--secondary-color); }
+.ms-week-tile.today-marker::after { content: ''; position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--secondary-color); }
+
+.ms-detail-head { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 0 12px; flex-wrap: wrap; gap: 6px; }
+.ms-title-group { display: flex; align-items: baseline; gap: 10px; }
+.ms-title-group h5 { font-size: 17px; font-weight: 800; margin: 0; letter-spacing: -.01em; color: #16211f; }
+body.dark-mode .ms-title-group h5 { color: #edf1ee; }
+.ms-date-range { font-size: 13px; color: #6b7570; }
+body.dark-mode .ms-date-range { color: #9aa8a2; }
+.ms-summary-inline { font-size: 13px; color: #6b7570; }
+body.dark-mode .ms-summary-inline { color: #9aa8a2; }
+.ms-summary-inline b { color: #16211f; font-variant-numeric: tabular-nums; }
+body.dark-mode .ms-summary-inline b { color: #edf1ee; }
+.ms-current-pill {
+    display: inline-flex; align-items: center; gap: 4px; background: rgba(163,204,56,.18); color: #4c6b0f;
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+}
+body.dark-mode .ms-current-pill { background: rgba(163,204,56,.16); color: var(--secondary-color); }
+
+.ms-entry-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+.ms-entry-row {
+    display: flex; align-items: center; gap: 14px; background: #ffffff; border: 1px solid #e3e7e5;
+    border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 2px rgba(16,24,22,.04);
+    transition: box-shadow .15s ease, border-color .15s ease;
+}
+.ms-entry-row:hover { box-shadow: 0 8px 24px -12px rgba(16,24,22,.18); border-color: #9aa39d; }
+body.dark-mode .ms-entry-row { background: #1b2022; border-color: #29302e; }
+.ms-entry-avatar {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto; color: #ffffff; font-weight: 700; font-size: 13px;
+}
+.ms-entry-main { flex: 1; min-width: 0; }
+.ms-entry-name { font-size: 14.5px; font-weight: 700; margin-bottom: 2px; color: #16211f; }
+body.dark-mode .ms-entry-name { color: #edf1ee; }
+.ms-entry-team { font-size: 12px; color: #6b7570; }
+body.dark-mode .ms-entry-team { color: #9aa8a2; }
+.ms-entry-team b { color: #16211f; font-weight: 600; }
+body.dark-mode .ms-entry-team b { color: #edf1ee; }
+.ms-entry-hours { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; min-width: 62px; color: #16211f; }
+body.dark-mode .ms-entry-hours { color: #edf1ee; }
+.ms-entry-row.timeoff { border-style: dashed; background: rgba(163,204,56,.05); }
+body.dark-mode .ms-entry-row.timeoff { background: rgba(163,204,56,.04); }
+.ms-entry-row.timeoff .ms-entry-avatar { background: rgba(163,204,56,.2); color: #4c6b0f; }
+body.dark-mode .ms-entry-row.timeoff .ms-entry-avatar { color: var(--secondary-color); background: rgba(163,204,56,.16); }
+.eng-status-pill.timeoff { background: rgba(163,204,56,.18); color: #4c6b0f; }
+body.dark-mode .eng-status-pill.timeoff { background: rgba(163,204,56,.14); color: var(--secondary-color); }
+
+.ms-empty-week {
+    text-align: center; padding: 40px 20px; border-radius: 16px; border: 1px dashed #e3e7e5; background: #ffffff; color: #6b7570;
+}
+body.dark-mode .ms-empty-week { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+.ms-empty-week i { font-size: 32px; color: var(--secondary-color); margin-bottom: 8px; display: inline-block; }
+.ms-empty-week .t { font-weight: 700; color: #16211f; font-size: 14.5px; margin-bottom: 3px; }
+body.dark-mode .ms-empty-week .t { color: #edf1ee; }
+
+@media (max-width: 900px) {
+    .ms-stat-row { grid-template-columns: 1fr; }
+    .ms-week-tiles { grid-template-columns: repeat(4, 1fr); row-gap: 8px; }
+}
 body.dark-mode .activity-empty { color: #6e7975; }
 body.dark-mode .sidebar-logout:hover { background: #3a2228; color: #ff9a8f !important; }
