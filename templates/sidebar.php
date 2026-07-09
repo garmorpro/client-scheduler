@@ -115,7 +115,7 @@ if ($canApproveTimeOff) {
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <?php
-                    $settingsPages = ['company-holidays.php', 'service-settings.php', 'time-off-requests.php'];
+                    $settingsPages = ['company-holidays.php', 'service-settings.php', 'time-off-requests.php', 'employees.php'];
                     $isActive = in_array($currentPage, $settingsPages);
                 ?>
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
@@ -125,6 +125,9 @@ if ($canApproveTimeOff) {
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
+                        <?php if ($canManageEmployees): ?>
+                        <li><a href="employees.php" class="sidebar-sublink <?= $currentPage == 'employees.php' ? 'active' : '' ?>">Employees</a></li>
+                        <?php endif; ?>
                         <?php if ($canApproveTimeOff): ?>
                         <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">
                             Time Off Requests
@@ -134,7 +137,7 @@ if ($canApproveTimeOff) {
                         </a></li>
                         <?php endif; ?>
                         <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
-                        <?php if ($canManageEmployees || $canAccessSystemSettings): ?>
+                        <?php if ($canAccessSystemSettings || $isAdmin): ?>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
                         <?php endif; ?>
                     </ul>
