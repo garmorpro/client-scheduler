@@ -9,6 +9,13 @@ error_reporting(E_ALL);
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    ob_clean();
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
 // Decode JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 

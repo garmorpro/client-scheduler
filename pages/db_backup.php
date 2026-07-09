@@ -1,6 +1,12 @@
 <?php
 require_once '../includes/db.php'; // your DB connection
 
+// This script is meant to run from a cron job, not be requested over HTTP.
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit("Forbidden: this script may only be run from the command line (e.g. via cron).\n");
+}
+
 // --- Fetch backup settings ---
 $settings = [];
 $res = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_master_key='backup'");
@@ -54,11 +60,13 @@ if (!is_dir($backupDir)) mkdir($backupDir, 0755, true);
 $timestamp = date('Y-m-d_His');
 $backupFile = "$backupDir/db_backup_$timestamp.sql";
 
-// --- Extract credentials from existing $conn ---
-$dbHost = $conn->host_info ?? 'localhost';
-$dbUser = $conn->user ?? 'root';
-$dbPass = $conn->pass ?? '';
-$dbName = $conn->query("SELECT DATABASE()")->fetch_row()[0] ?? 'client_scheduler';
+// --- Use the same credentials db.php loaded from .env ---
+// (mysqli's $conn object doesn't expose the password, so pulling it from
+// $conn directly always produced an empty password here)
+$dbHost = $host;
+$dbUser = $user;
+$dbPass = $pass;
+$dbName = $dbname;
 
 // --- Run mysqldump using the current credentials ---
 $command = sprintf(

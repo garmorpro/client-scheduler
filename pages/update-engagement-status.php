@@ -1,11 +1,19 @@
 <?php
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
 
 header('Content-Type: application/json');
 
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Debugging: Log the raw POST request data

@@ -1,6 +1,13 @@
 <?php
 require_once '../includes/db.php'; // assumes $conn is mysqli connection
+require_once __DIR__ . '/../includes/session_init.php';
 header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
 
 // Read JSON input
 $data = json_decode(file_get_contents('php://input'), true);
@@ -12,18 +19,16 @@ if (!$user_id || !$week_start) {
     exit;
 }
 
-// Escape input
-$user_id = $conn->real_escape_string($user_id);
-$week_start = $conn->real_escape_string($week_start);
-
-$sql = "SELECT timeoff_id, assigned_hours 
-        FROM time_off 
-        WHERE user_id = '$user_id' 
-          AND week_start = '$week_start' 
+$sql = "SELECT timeoff_id, assigned_hours
+        FROM time_off
+        WHERE user_id = ?
+          AND week_start = ?
           AND is_global_timeoff = 0
         LIMIT 1";
-
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('is', $user_id, $week_start);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result) {
     if ($row = $result->fetch_assoc()) {

@@ -4,7 +4,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
 header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
 
 if (!isset($_GET['id'])) {
     echo json_encode(['error' => 'Missing employee ID']);

@@ -1,5 +1,12 @@
 <?php
 require '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
+
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
+    die("Unauthorized");
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die("Invalid request");

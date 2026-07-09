@@ -3,7 +3,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
 
+header('Content-Type: application/json');
+
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
 
 // Check if $conn (MySQLi) is defined
 if (!isset($conn)) {

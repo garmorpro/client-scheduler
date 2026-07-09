@@ -13,6 +13,12 @@ function send_json($data) {
     exit;
 }
 
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
+    send_json(["success" => false, "message" => "Unauthorized"]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['engagement_id'])) {
     send_json(["success" => false, "message" => "Invalid request"]);
 }
@@ -47,7 +53,7 @@ $managerStr = !empty($eng['manager']) ? $eng['manager'] : null;
 $entriesQuery = $conn->prepare("
     SELECT e.assigned_hours, u.role, u.full_name
     FROM entries e
-    JOIN ms_users u ON e.user_id = u.user_id
+    JOIN users u ON e.user_id = u.user_id
     WHERE e.engagement_id = ?
 ");
 if (!$entriesQuery) send_json(["success" => false, "message" => "Prepare failed: " . $conn->error]);

@@ -1,6 +1,14 @@
 <?php
 header('Content-Type: application/json');
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
+
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if (!isset($_SESSION['user_id']) || ($userRole !== 'admin' && $userRole !== 'manager')) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
+}
 
 $client_id = intval($_GET['client_id'] ?? 0);
 if ($client_id <= 0) {

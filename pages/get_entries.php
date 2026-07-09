@@ -1,7 +1,14 @@
 <?php
 require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
 
 header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
 
 $user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 $week_start = $_GET['week_start'] ?? '';
