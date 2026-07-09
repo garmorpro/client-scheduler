@@ -13,7 +13,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <script>window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;</script>
 <script src="../assets/js/csrf_fetch.js"></script>
 
-<div class="sidebar fixed-top" style="width: 250px; height: 100vh; padding: 20px 14px; overflow-y: auto;">
+<div class="sidebar" style="width: 250px; height: 100vh; padding: 20px 14px; overflow-y: auto;">
 
     <div>
         <!-- Branding -->
