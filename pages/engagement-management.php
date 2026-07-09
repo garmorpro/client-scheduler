@@ -217,12 +217,13 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             $rowAllocated = (float)$row['total_assigned_hours'];
                             $rowPct = $rowBudgeted > 0 ? ($rowAllocated / $rowBudgeted) * 100 : 0;
                             $rowBarWidth = min(100, $rowPct);
+                            $rowOverHours = $rowAllocated - $rowBudgeted;
                             if ($rowAllocated > $rowBudgeted) {
                                 $rowUtilColor = 'red';
                             } elseif ($rowPct >= 75) {
-                                $rowUtilColor = 'yellow';
-                            } else {
                                 $rowUtilColor = 'green';
+                            } else {
+                                $rowUtilColor = 'yellow';
                             }
                         ?>
                         <tr data-status="<?php echo $status; ?>" class="client-row">
@@ -242,6 +243,9 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                     </div>
                                     <span class="eng-util-pct <?php echo $rowUtilColor; ?>"><?php echo round($rowPct); ?>%</span>
                                 </div>
+                                <?php if ($rowUtilColor === 'red'): ?>
+                                    <div class="eng-util-over">+<?php echo $rowOverHours; ?>h over</div>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <span class="eng-status-pill <?php echo $statusClass; ?>">
