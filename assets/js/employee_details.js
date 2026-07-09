@@ -122,112 +122,102 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[a.clientName].status = a.status;
             });
 
-            const avgHoursPerWeek = allAssignments.length > 0 ? (totalHours / allAssignments.length).toFixed(1) : 0;
+            const OVERALLOCATION_THRESHOLD = 40;
 
-            // Build modal HTML
-            let html = `<div class="d-flex align-items-center mb-3">
-                <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
-                     style="width:50px;height:50px;font-size:18px;font-weight:500;
-                     background-color:${role.toLowerCase() === 'senior' ? 'rgb(230,144,65)' :
-                        role.toLowerCase() === 'staff' ? 'rgb(66,127,194)' : '#6c757d'};">
-                    ${initials}
-                </div>
-                <div>
-                    <div class="fw-semibold">${userName}</div>
-                    <div class="text-muted text-capitalize">${role} <i class="bi bi-dot ms-1 me-1"></i>
-                        <span class="text-lowercase">${email}</span>
+            const roleColors = {
+                senior: 'rgb(230,144,65)',
+                staff: 'rgb(66,127,194)',
+                intern: 'rgb(76,175,80)'
+            };
+            const avatarColor = roleColors[role.toLowerCase()] || '#6c757d';
+
+            const formatShort = d => parseDateOnly(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            let windowLabel = '';
+            if (weekTds.length > 0) {
+                const sortedWeeks = weekTds.map(td => td.dataset.weekStart).sort();
+                windowLabel = `${formatShort(sortedWeeks[0])} – ${formatShort(sortedWeeks[sortedWeeks.length - 1])}`;
+            }
+
+            const engagementRows = Object.entries(clientsMap)
+                .filter(([, info]) => info.weeks.length > 0)
+                .map(([clientName, info]) => ({
+                    name: clientName,
+                    status: info.status,
+                    total: info.total,
+                    weeks: info.weeks,
+                    timeoff: false
+                }));
+
+            const rows = [];
+            if (timeOffWeeks.length > 0) {
+                rows.push({ name: 'Time Off', status: null, total: totalTimeOffHours, weeks: timeOffWeeks, timeoff: true });
+            }
+            rows.push(...engagementRows);
+
+            const statusLabel = status => status === 'not-confirmed' ? 'Not Confirmed' : (status.charAt(0).toUpperCase() + status.slice(1));
+
+            const rowsHtml = rows.map(r => {
+                const statusClass = r.timeoff ? 'emp-timeoff' : `status-${r.status}`;
+                const maxWeekHours = Math.max(...r.weeks.map(w => w.hours));
+                const isOver = !r.timeoff && maxWeekHours > OVERALLOCATION_THRESHOLD;
+                const weekChips = r.weeks
+                    .slice()
+                    .sort((a, b) => parseDateOnly(a.week) - parseDateOnly(b.week))
+                    .map(w => `
+                        <div class="emp-week-chip ${w.hours > OVERALLOCATION_THRESHOLD ? 'emp-over-week' : ''}">
+                            <span class="emp-week-date">${formatShort(w.week)}</span>
+                            <span class="emp-week-hours">${w.hours}h</span>
+                        </div>
+                    `).join('');
+
+                return `
+                    <div class="emp-entry-row ${statusClass}">
+                        <div class="emp-entry-dot"></div>
+                        <div class="emp-entry-label">
+                            <span class="emp-entry-name">${r.name}</span>
+                            ${r.status ? `<span class="badge badge-status badge-${r.status}">${statusLabel(r.status)}</span>` : ''}
+                        </div>
+                        <div class="emp-entry-weeks">${weekChips}</div>
+                        <div class="emp-entry-hours ${isOver ? 'over' : ''}">${r.total}h</div>
+                    </div>
+                `;
+            }).join('');
+
+            const html = `
+                <div class="emp-header-block">
+                    <div class="emp-avatar" style="background-color:${avatarColor};">${initials}</div>
+                    <div>
+                        <div class="emp-name">${userName}</div>
+                        <div class="emp-meta text-capitalize">${role}<span class="emp-meta-dot"></span><span class="text-lowercase">${email}</span></div>
+                        ${windowLabel ? `<div class="emp-window-pill"><i class="bi bi-calendar3"></i>${windowLabel}</div>` : ''}
                     </div>
                 </div>
-            </div>
 
-            <div class="mb-3 d-flex gap-3">
-                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(68,125,252);">
-                    <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Total Engagements</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(68,125,252);">${uniqueEngagements.size}</div>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(222,234,253);">
-                            <i class="bi bi-building" style="color: rgb(68,125,252);"></i>
-                        </div>
+                <div class="emp-stat-row">
+                    <div class="emp-stat-card">
+                        <div class="emp-stat-title">Engagements</div>
+                        <div class="emp-stat-value">${uniqueEngagements.size}</div>
+                    </div>
+                    <div class="emp-stat-card">
+                        <div class="emp-stat-title">Assigned Hrs</div>
+                        <div class="emp-stat-value">${totalHours}</div>
+                    </div>
+                    <div class="emp-stat-card">
+                        <div class="emp-stat-title">Time Off</div>
+                        <div class="emp-stat-value">${totalTimeOffHours}</div>
                     </div>
                 </div>
 
-                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(79,197,95);">
-                    <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Total Hours</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(79,197,95);">${totalHours}</div>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(226,251,232);">
-                            <i class="bi bi-people" style="color: rgb(79,197,95)"></i>
-                        </div>
-                    </div>
+                <div class="emp-section-title-row">
+                    <div class="emp-section-title">Breakdown</div>
+                    <div class="emp-section-hint">${rows.length} ${rows.length === 1 ? 'row' : 'rows'}</div>
                 </div>
 
-                <div class="card flex-fill d-flex" style="border-left: 4px solid rgb(161,77,253);">
-                    <div class="card-body w-100 d-flex justify-content-between align-items-center p-3">
-                        <div>
-                            <small class="text-muted" style="font-size: 14px !important;">Avg Hours/Engagement</small>
-                            <div class="fw-semibold fs-4" style="color: rgb(161,77,253);">${avgHoursPerWeek}</div>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height:40px; background-color: rgb(241,232,253);">
-                            <i class="bi bi-people" style="color: rgb(161,77,253);"></i>
-                        </div>
-                    </div>
+                <div class="emp-entry-list">
+                    ${rowsHtml || '<div class="emp-entry-row"><div class="emp-entry-label"><span class="emp-entry-name text-muted">No assignments in this window</span></div></div>'}
                 </div>
-            </div>`;
+            `;
 
-            html += `<div class="border rounded p-3 mb-3">
-                <ul class="list-group">
-                    <li class="list-group-item d-flex fw-semibold text-muted bg-light">
-                        <div class="col-6">Client Name</div>
-                        <div class="col-2 text-center">Total Hours</div>
-                        <div class="col-4">Week Assignments / Time Off</div>
-                    </li>`;
-
-            html += `
-                <li class="list-group-item d-flex align-items-center text-truncate" style="background-color: rgb(246, 249, 236); border: 2px dashed rgb(209,226,159);">
-                    <div class="col-6 fs-6 fw-semibold text-black">Time Off</div>
-                    <div class="col-2 text-center">
-                        <span class="fs-5 fw-semibold text-black">${totalTimeOffHours}</span><br>
-                        <span class="text-muted" style="font-size: 10px;">hours</span>
-                    </div>
-                    <div class="col-4 d-flex flex-wrap gap-1">
-                        ${timeOffWeeks.map(w => `
-                            <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                ${parseDateOnly(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
-                                <span class="fw-semibold text-black">${w.hours}h</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </li>`;
-
-            Object.entries(clientsMap).forEach(([clientName, info]) => {
-                html += `
-                    <li class="list-group-item d-flex align-items-center text-truncate">
-                        <div class="col-6 text-truncate">
-                            <span class="fs-6 fw-semibold text-black">${clientName}</span> 
-                            <span class="badge badge-status badge-${info.status} ms-1 text-capitalize">
-                                ${info.status === 'not-confirmed' ? 'not confirmed' : info.status}
-                            </span>
-                        </div>
-                        <div class="col-2 text-center">
-                            <span class="fs-5 fw-semibold text-black">${info.total}</span><br>
-                            <span class="text-muted" style="font-size: 10px;">hours</span>
-                        </div>
-                        <div class="col-4 d-flex flex-wrap gap-1">
-                            ${info.weeks.map(w => `
-                                <div style="background-color:#f5f5f5; padding:4px; min-width:50px; text-align:center; border-radius:4px; font-size:12px;">
-                                    ${parseDateOnly(w.week).toLocaleDateString('en-US', {month:'short', day:'numeric'})}<br>
-                                    <span class="fw-semibold text-black">${w.hours}h</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </li>`;
-            });
-
-            html += `</ul></div>`;
             modalContent.innerHTML = html;
             modal.show();
         });
