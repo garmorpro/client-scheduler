@@ -1,5 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Works out how many rows fit in the visible viewport below the table,
+  // so a tall monitor shows more rows per page than a laptop screen instead
+  // of everyone getting the same fixed count regardless of window size.
+  function calcRowsPerPage(table, options = {}) {
+    const minRows = options.minRows ?? 5;
+    const maxRows = options.maxRows ?? 25;
+    const reserved = options.reserved ?? 140; // space for pagination controls + page padding below the table
+
+    const sampleRow = table.querySelector('tbody tr');
+    const rowHeight = sampleRow && sampleRow.getBoundingClientRect().height > 0
+      ? sampleRow.getBoundingClientRect().height
+      : 53;
+
+    const tableTop = table.getBoundingClientRect().top;
+    const available = window.innerHeight - tableTop - reserved;
+    const rows = Math.floor(available / rowHeight);
+
+    return Math.max(minRows, Math.min(maxRows, rows));
+  }
+
   // Helper: create pagination controls (Prev, pages, Next)
   function createPaginationControls(totalPages, currentPage, onPageChange) {
     const ul = document.createElement('ul');
@@ -55,28 +75,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return ul;
   }
 
-  // User Management pagination (5 rows per page)
+  // User Management pagination (rows per page sized to fit the viewport)
   function initUserPagination() {
-    const rowsPerPage = 5;
     const table = document.getElementById('user-table');
     if (!table) return;
     const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const allRows = Array.from(tbody.querySelectorAll('tr'));
     const paginationContainer = document.getElementById('pagination-users');
 
     let currentPage = 1;
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let rowsPerPage = calcRowsPerPage(table);
+    let filteredRows = [...allRows];
 
     function renderTablePage(page) {
-      currentPage = page;
-      rows.forEach(row => (row.style.display = 'none'));
-      const start = (page - 1) * rowsPerPage;
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+      currentPage = Math.min(page, totalPages);
+      allRows.forEach(row => (row.style.display = 'none'));
+      const start = (currentPage - 1) * rowsPerPage;
       const end = start + rowsPerPage;
-      rows.slice(start, end).forEach(row => (row.style.display = ''));
-      renderPagination();
+      filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
+      renderPagination(totalPages);
     }
 
-    function renderPagination() {
+    function renderPagination(totalPages) {
       paginationContainer.innerHTML = '';
       if (totalPages <= 1) {
         paginationContainer.style.display = 'none';
@@ -95,22 +116,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) {
       searchInput.addEventListener('input', function () {
         const value = this.value.trim().toLowerCase();
-        const filteredRows = rows.filter(row => row.innerText.toLowerCase().includes(value));
-        rows.forEach(row => (row.style.display = 'none'));
-        filteredRows.forEach((row, index) => {
-          if (index < rowsPerPage) row.style.display = '';
-        });
-        currentPage = 1;
-        renderPagination();
+        filteredRows = value
+          ? allRows.filter(row => row.innerText.toLowerCase().includes(value))
+          : [...allRows];
+        renderTablePage(1);
       });
     }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const newRowsPerPage = calcRowsPerPage(table);
+        if (newRowsPerPage !== rowsPerPage) {
+          rowsPerPage = newRowsPerPage;
+          renderTablePage(1);
+        }
+      }, 200);
+    });
 
     renderTablePage(1);
   }
 
-  // Engagement Management pagination (5 rows per page)
+  // Engagement Management pagination (rows per page sized to fit the viewport)
   function initEngagementPagination() {
-    const rowsPerPage = 5;
     const table = document.querySelector('#engagements table');
     if (!table) return;
     const tbody = table.querySelector('tbody');
@@ -118,13 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const paginationContainer = document.getElementById('pagination-engagements');
 
     let currentPage = 1;
+    let rowsPerPage = calcRowsPerPage(table);
     let filteredRows = [...allRows];
 
     function renderTablePage(page) {
-        currentPage = page;
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        filteredRows.forEach(row => (row.style.display = 'none'));
-        const start = (page - 1) * rowsPerPage;
+        const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+        currentPage = Math.min(page, totalPages);
+        allRows.forEach(row => (row.style.display = 'none'));
+        const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
         filteredRows.slice(start, end).forEach(row => (row.style.display = ''));
         renderPagination(totalPages);
@@ -156,6 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTablePage(1);
         });
     }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const newRowsPerPage = calcRowsPerPage(table);
+            if (newRowsPerPage !== rowsPerPage) {
+                rowsPerPage = newRowsPerPage;
+                renderTablePage(1);
+            }
+        }, 200);
+    });
 
     renderTablePage(1);
 }
