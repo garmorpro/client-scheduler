@@ -6,7 +6,7 @@
           <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
           <div class="eng-edit-hero">
-            <div class="eng-edit-title" id="addUserModalTitle">Add User</div>
+            <div class="eng-edit-title" id="addUserModalTitle">Add Employee</div>
           </div>
 
           <div class="eng-edit-body">
@@ -46,7 +46,7 @@
 
           <div class="eng-edit-footer">
             <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="eng-edit-btn-save">Add User</button>
+            <button type="submit" class="eng-edit-btn-save">Add Employee</button>
           </div>
         </div>
       </form>

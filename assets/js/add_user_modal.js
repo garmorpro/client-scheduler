@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 location.reload();
             } else {
                 if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Could not add user', text: result.error || 'Please try again.' });
+                    Swal.fire({ icon: 'error', title: 'Could not add employee', text: result.error || 'Please try again.' });
                 } else {
-                    alert('Error: ' + (result.error || 'Could not add user.'));
+                    alert('Error: ' + (result.error || 'Could not add employee.'));
                 }
             }
         } catch (error) {

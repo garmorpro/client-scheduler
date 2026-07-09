@@ -109,7 +109,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                         <i class="bi bi-upload me-3"></i>Import Users
                     </a>
                     <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus me-3"></i>Add User
+                        <i class="bi bi-person-plus me-3"></i>Add Employee
                     </a>
                 </div>
             </div>
@@ -170,6 +170,20 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                        data-bs-target="#viewUserModal"
                                        data-user-id="<?php echo $userrow['user_id']; ?>">
                                        <i class="bi bi-eye text-success"></i>
+                                    </a>
+
+                                    <!-- Edit Button -->
+                                    <a href="#" class="edit-user-btn text-decoration-none"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#editUserModal"
+                                       data-user-id="<?php echo $userrow['user_id']; ?>"
+                                       data-full-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
+                                       data-email="<?php echo htmlspecialchars($userrow['email']); ?>"
+                                       data-role="<?php echo strtolower($userrow['role']); ?>"
+                                       data-job-title="<?php echo htmlspecialchars($userrow['job_title'] ?? ''); ?>"
+                                       data-status="<?php echo strtolower($userrow['status']); ?>"
+                                       title="Edit Employee">
+                                       <i class="bi bi-pencil-square text-primary"></i>
                                     </a>
 
                                     <?php if (strtolower($userrow['role']) === 'manager'): ?>
@@ -245,6 +259,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php include_once '../includes/modals/direct_reports_modal.php'; ?>
 <?php include_once '../includes/modals/add_user_modal.php'; ?>
+<?php include_once '../includes/modals/edit_user_modal.php'; ?>
 <?php include_once '../includes/modals/import_users_modal.php'; ?>
 
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
@@ -256,6 +271,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/add_user_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/edit_user_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
