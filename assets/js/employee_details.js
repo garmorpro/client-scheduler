@@ -129,7 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientsMap[a.clientName].status = a.status;
             });
 
-            const OVERALLOCATION_THRESHOLD = 40;
+            const STD_THRESHOLD = typeof STANDARD_THRESHOLD !== 'undefined' ? STANDARD_THRESHOLD : 40;
+            const BUSY_THRESHOLD = typeof BUSY_SEASON_THRESHOLD !== 'undefined' ? BUSY_SEASON_THRESHOLD : 50;
+            const BUSY_START = typeof BUSY_SEASON_START !== 'undefined' ? BUSY_SEASON_START : null;
+            const BUSY_END = typeof BUSY_SEASON_END !== 'undefined' ? BUSY_SEASON_END : null;
+            function thresholdForWeek(weekDate) {
+                if (BUSY_START && BUSY_END && weekDate >= BUSY_START && weekDate <= BUSY_END) return BUSY_THRESHOLD;
+                return STD_THRESHOLD;
+            }
 
             const roleColors = {
                 senior: 'rgb(230,144,65)',
@@ -160,13 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rowsHtml = rows.map(r => {
                 const statusClass = r.timeoff ? 'emp-timeoff' : `status-${r.status}`;
-                const maxWeekHours = Math.max(...r.weeks.map(w => w.hours));
-                const isOver = !r.timeoff && maxWeekHours > OVERALLOCATION_THRESHOLD;
+                const isOver = !r.timeoff && r.weeks.some(w => w.hours > thresholdForWeek(w.week));
                 const weekChips = r.weeks
                     .slice()
                     .sort((a, b) => parseDateOnly(a.week) - parseDateOnly(b.week))
                     .map(w => `
-                        <div class="emp-week-chip ${w.hours > OVERALLOCATION_THRESHOLD ? 'emp-over-week' : ''}">
+                        <div class="emp-week-chip ${w.hours > thresholdForWeek(w.week) ? 'emp-over-week' : ''}">
                             <span class="emp-week-date">${formatShort(w.week)}</span>
                             <span class="emp-week-hours">${w.hours}h</span>
                         </div>

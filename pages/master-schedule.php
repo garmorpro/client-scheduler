@@ -11,7 +11,23 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $today = strtotime('today');
-$OVERALLOCATION_THRESHOLD = 40; // hours/week considered a full standard week
+$STANDARD_THRESHOLD = 40; // hours/week considered a full standard week
+$BUSY_SEASON_THRESHOLD = 50; // hours/week allowance during a configured busy season
+
+$busySeasonStart = null;
+$busySeasonEnd = null;
+$busySeasonResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'busy_season'");
+if ($busySeasonResult) {
+    while ($bsRow = $busySeasonResult->fetch_assoc()) {
+        if ($bsRow['setting_key'] === 'start_date') $busySeasonStart = $bsRow['setting_value'];
+        if ($bsRow['setting_key'] === 'end_date') $busySeasonEnd = $bsRow['setting_value'];
+    }
+}
+
+function isBusySeasonWeek($weekKey, $busySeasonStart, $busySeasonEnd) {
+    if (!$busySeasonStart || !$busySeasonEnd) return false;
+    return $weekKey >= $busySeasonStart && $weekKey <= $busySeasonEnd;
+}
 
 // Calculate Mondays
 $currentMonday = strtotime('monday this week', $today);
@@ -167,6 +183,10 @@ updateLastRowRadius();
       const entries = <?php echo json_encode($entries); ?>;
       const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
       const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
+      const BUSY_SEASON_START = <?php echo json_encode($busySeasonStart); ?>;
+      const BUSY_SEASON_END = <?php echo json_encode($busySeasonEnd); ?>;
+      const STANDARD_THRESHOLD = <?php echo json_encode($STANDARD_THRESHOLD); ?>;
+      const BUSY_SEASON_THRESHOLD = <?php echo json_encode($BUSY_SEASON_THRESHOLD); ?>;
     </script>
 </head>
 <body class="d-flex <?= $isAdmin ? 'is-admin' : '' ?> <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
@@ -395,7 +415,8 @@ updateLastRowRadius();
                             $cellContent = "<i class='bi bi-plus '></i>";
                         }
 
-                        $isOverallocated = $totalAssignedHours > $OVERALLOCATION_THRESHOLD;
+                        $weekThreshold = isBusySeasonWeek($weekKey, $busySeasonStart, $busySeasonEnd) ? $BUSY_SEASON_THRESHOLD : $STANDARD_THRESHOLD;
+                        $isOverallocated = $totalAssignedHours > $weekThreshold;
 
                         $tdClass = 'addable';
                         if ($hasPersonalTimeOff || isset($globalTimeOff[$weekKey])) $tdClass .= ' position-relative timeoff-cell';
@@ -408,7 +429,7 @@ updateLastRowRadius();
                         style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
                         <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
                         <?php if ($isOverallocated): ?>
-                            <span class="overallocated-flag" title="<?= $totalAssignedHours ?> hours assigned this week (over <?= $OVERALLOCATION_THRESHOLD ?>)"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                            <span class="overallocated-flag" title="<?= $totalAssignedHours ?> hours assigned this week (over <?= $weekThreshold ?><?= $weekThreshold === $BUSY_SEASON_THRESHOLD ? ' — busy season' : '' ?>)"><i class="bi bi-exclamation-triangle-fill"></i></span>
                         <?php endif; ?>
                         <?php echo $cellContent; ?>
                     </td>

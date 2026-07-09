@@ -16,6 +16,16 @@ if (!$canAccessSystemSettings && !$isAdmin) {
     header("Location: my-schedule.php");
     exit();
 }
+
+$busySeasonSettings = [];
+if ($canAccessSystemSettings) {
+    $busySeasonResult = $conn->query("SELECT setting_key, setting_value FROM settings WHERE setting_master_key = 'busy_season'");
+    if ($busySeasonResult) {
+        while ($bsRow = $busySeasonResult->fetch_assoc()) {
+            $busySeasonSettings[$bsRow['setting_key']] = $bsRow['setting_value'];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -82,6 +92,23 @@ if (!$canAccessSystemSettings && !$isAdmin) {
                     </a>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <h6><i class="bi bi-sun me-2"></i>Busy Season</h6>
+                        <p class="text-muted" style="font-size: 13px;">
+                            <?php if (!empty($busySeasonSettings['start_date']) && !empty($busySeasonSettings['end_date'])): ?>
+                                Active <?php echo date('M j, Y', strtotime($busySeasonSettings['start_date'])); ?> &ndash; <?php echo date('M j, Y', strtotime($busySeasonSettings['end_date'])); ?> (50 hrs/week allowance).
+                            <?php else: ?>
+                                Raise the weekly hour allowance from 40 to 50 during a set date range.
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                    <a href="#" id="configureBusySeasonBtn" class="badge text-white p-2 text-decoration-none fw-medium align-self-start" style="font-size: .875rem; background-color: rgb(3,2,18);" data-bs-toggle="modal" data-bs-target="#busySeasonModal">
+                        <i class="bi bi-gear me-2"></i>Configure
+                    </a>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
     </div>
@@ -96,6 +123,7 @@ if (!$canAccessSystemSettings && !$isAdmin) {
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
+<?php include_once '../includes/modals/busy_season_modal.php'; ?>
 <?php endif; ?>
 
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
@@ -109,6 +137,7 @@ if (!$canAccessSystemSettings && !$isAdmin) {
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/busy_season.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
