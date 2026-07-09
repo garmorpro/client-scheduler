@@ -37,11 +37,11 @@ if (!$isAdmin && !$isManager) {
     </div>
 
     <div class="tor-tabs">
-        <div class="tor-tab active" data-tor-tab="all">
-            All Requests <span class="count-chip" id="torAllCount">0</span>
-        </div>
-        <div class="tor-tab" data-tor-tab="pending">
+        <div class="tor-tab active" data-tor-tab="pending">
             Awaiting Approval <span class="count-chip" id="torPendingCount">0</span>
+        </div>
+        <div class="tor-tab" data-tor-tab="all">
+            All Requests <span class="count-chip" id="torAllCount">0</span>
         </div>
     </div>
 

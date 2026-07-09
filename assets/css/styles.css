@@ -2182,6 +2182,19 @@ body.dark-mode .tor-tab .count-chip { background: #232a2c; color: #9aa8a2; }
 .tor-tab.active .count-chip { background: var(--primary-color); color: #fff; }
 body.dark-mode .tor-tab.active .count-chip { background: var(--secondary-color); color: #10160f; }
 
+.tor-empty-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 24px; }
+.tor-empty-icon {
+    width: 52px; height: 52px; border-radius: 50%; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,63,71,.10), rgba(163,204,56,.14));
+    color: var(--primary-color); font-size: 24px;
+}
+body.dark-mode .tor-empty-icon { background: linear-gradient(135deg, rgba(163,204,56,.14), rgba(0,63,71,.22)); color: var(--secondary-color); }
+.tor-empty-title { font-size: 14.5px; font-weight: 700; color: #16211f; margin-bottom: 4px; }
+body.dark-mode .tor-empty-title { color: #edf1ee; }
+.tor-empty-sub { font-size: 12.5px; color: #9aa39d; }
+body.dark-mode .tor-empty-sub { color: #6e7975; }
+
 /* ========= REQUEST TIME OFF MODAL (reuses the eng-edit-* field language) ========= */
 #requestTimeOffModal .eng-edit-hero {
     padding: 18px 20px 14px;

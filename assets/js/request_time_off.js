@@ -47,6 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
             ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
+    function ordinal(n) {
+        const s = ['th', 'st', 'nd', 'rd'];
+        const v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+    function formatDayLong(dateString) {
+        if (!dateString) return '-';
+        const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString);
+        if (isNaN(d)) return '-';
+        const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
+        const month = d.toLocaleDateString('en-US', { month: 'long' });
+        return `${weekday}, ${month} ${ordinal(d.getDate())}, ${d.getFullYear()}`;
+    }
     function escapeHtml(str) {
         const div = document.createElement('div');
         div.textContent = str || '';
@@ -180,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         daysList.innerHTML = [...r.days].sort((a, b) => a.date.localeCompare(b.date)).map(d => `
             <div class="eng-vm-emp-row">
                 <div class="eng-vm-emp-info">
-                    <div class="eng-vm-emp-name">${formatDate(d.date)}</div>
+                    <div class="eng-vm-emp-name">${formatDayLong(d.date)}</div>
                 </div>
                 <div class="eng-vm-emp-hours">${d.hours}h</div>
             </div>

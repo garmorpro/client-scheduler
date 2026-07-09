@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewModalEl = document.getElementById('reviewTimeOffModal');
     const reviewModal = new bootstrap.Modal(reviewModalEl);
     let allRequests = [];
-    let activeTab = 'all';
+    let activeTab = 'pending';
     let activeRequest = null;
 
     function initials(name) {
@@ -46,6 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
             ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
+    function ordinal(n) {
+        const s = ['th', 'st', 'nd', 'rd'];
+        const v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+    function formatDayLong(dateString) {
+        if (!dateString) return '-';
+        const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString);
+        if (isNaN(d)) return '-';
+        const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
+        const month = d.toLocaleDateString('en-US', { month: 'long' });
+        return `${weekday}, ${month} ${ordinal(d.getDate())}, ${d.getFullYear()}`;
+    }
     function escapeHtml(str) {
         const div = document.createElement('div');
         div.textContent = str || '';
@@ -68,7 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = activeTab === 'pending' ? allRequests.filter(r => r.status === 'pending') : allRequests;
 
         if (rows.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center">${activeTab === 'pending' ? 'Nothing awaiting approval' : 'No time off requests'}</td></tr>`;
+            const emptyMarkup = activeTab === 'pending'
+                ? `<div class="tor-empty-icon"><i class="bi bi-check2-circle"></i></div>
+                   <div class="tor-empty-title">No time off requests awaiting approval</div>
+                   <div class="tor-empty-sub">You're all caught up. New requests will show up here.</div>`
+                : `<div class="tor-empty-icon"><i class="bi bi-calendar2-week"></i></div>
+                   <div class="tor-empty-title">No time off requests yet</div>
+                   <div class="tor-empty-sub">Requests submitted by employees will appear here.</div>`;
+            tableBody.innerHTML = `<tr><td colspan="7"><div class="tor-empty-state">${emptyMarkup}</div></td></tr>`;
             return;
         }
 
@@ -189,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         daysList.innerHTML = [...r.days].sort((a, b) => a.date.localeCompare(b.date)).map(d => `
             <div class="eng-vm-emp-row">
                 <div class="eng-vm-emp-info">
-                    <div class="eng-vm-emp-name">${formatDate(d.date)}</div>
+                    <div class="eng-vm-emp-name">${formatDayLong(d.date)}</div>
                 </div>
                 <div class="eng-vm-emp-hours">${d.hours}h</div>
             </div>
