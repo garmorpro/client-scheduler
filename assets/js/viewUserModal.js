@@ -230,10 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
       row.innerHTML = `
         <span class="category-pill ${r.category}" style="margin-right:8px;">${categoryLabel(r.category)}</span>
         <div class="eng-name">${formatDateRange(r.days)}</div>
-        <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="margin-right:8px;">
+        <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="min-width:118px; justify-content:center; margin-right:8px;">
           <span class="dot"></span>${timeoffStatusLabel(r.status)}
         </span>
-        <div class="eng-hours">${r.total_hours}h</div>
+        <div class="eng-hours" style="min-width:36px; text-align:right;">${r.total_hours}h</div>
       `;
       list.appendChild(row);
     });
