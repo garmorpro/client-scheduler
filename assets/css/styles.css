@@ -1499,10 +1499,10 @@ body.dark-mode .sidebar-avatar { background: var(--secondary-color); color: #101
     position: absolute; top: 14px; right: 14px; z-index: 2;
     width: 28px; height: 28px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    background: #ffffff; border: 1px solid #e3e7e5;
+    background-color: #ffffff; border: 1px solid #e3e7e5;
     opacity: 1;
 }
-body.dark-mode .emp-modal-close { background: #1b2022; border-color: #29302e; filter: invert(1) grayscale(1); }
+body.dark-mode .emp-modal-close { background-color: #1b2022; border-color: #29302e; filter: invert(1) grayscale(1); }
 
 .emp-header-block { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; padding-right: 30px; }
 .emp-avatar {

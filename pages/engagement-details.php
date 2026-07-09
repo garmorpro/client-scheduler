@@ -19,13 +19,20 @@ if (isset($_GET['id'])) {
     $engagementResult = $stmt->get_result();
     $engagement = $engagementResult->fetch_assoc();
 
-    // Assigned employees + their hours + role, for the View Engagement modal
+    // Assigned employees + their hours + role, for the View Engagement modal.
+    // Ordered by role seniority (manager > senior > staff > intern), not hours.
     $employeeQuery = "SELECT u.full_name, u.role, SUM(a.assigned_hours) AS total_hours
                       FROM entries a
                       JOIN users u ON a.user_id = u.user_id
                       WHERE a.engagement_id = ?
                       GROUP BY a.user_id, u.full_name, u.role
-                      ORDER BY total_hours DESC";
+                      ORDER BY CASE u.role
+                          WHEN 'manager' THEN 1
+                          WHEN 'senior' THEN 2
+                          WHEN 'staff' THEN 3
+                          WHEN 'intern' THEN 4
+                          ELSE 5
+                      END, u.full_name ASC";
     $stmt = $conn->prepare($employeeQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
