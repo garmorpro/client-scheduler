@@ -428,11 +428,8 @@ updateLastRowRadius();
         <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg " style="overflow-y: initial !important">
             <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="employeeModalLabel">Employee Info</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body" style="max-height: 70vh !important; overflow-y: auto !important;">
+              <div class="modal-body position-relative" style="max-height: 70vh !important; overflow-y: auto !important;">
+                <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div id="employeeModalContent">
                   <!-- Dynamic content goes here -->
                 </div>
