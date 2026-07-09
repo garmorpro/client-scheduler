@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Date(y, m - 1, d);
     }
 
+    // Earliest week to include in the modal: last week onward (drops any
+    // older history the master schedule happens to have loaded).
+    function getCutoffWeekStart() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const day = today.getDay(); // 0 = Sunday ... 6 = Saturday
+        const diffToMonday = (day === 0 ? -6 : 1) - day;
+        const thisMonday = new Date(today);
+        thisMonday.setDate(thisMonday.getDate() + diffToMonday);
+        const lastMonday = new Date(thisMonday);
+        lastMonday.setDate(lastMonday.getDate() - 7);
+        return lastMonday;
+    }
+
     // Master list of all clients
     const allClients = Array.from(document.querySelectorAll('td[data-client]'))
         .map(td => td.dataset.client)
@@ -48,7 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetchGlobalTimeOff();
 
             const row = td.closest('tr');
-            const weekTds = Array.from(row.querySelectorAll('td.addable'));
+            const cutoff = getCutoffWeekStart();
+            const weekTds = Array.from(row.querySelectorAll('td.addable'))
+                .filter(weekTd => parseDateOnly(weekTd.dataset.weekStart) >= cutoff);
             let allAssignments = [];
             let totalHours = 0;
             const uniqueEngagements = new Set();
