@@ -1504,14 +1504,8 @@ body.dark-mode .sidebar-avatar { background: var(--secondary-color); color: #101
 .emp-name { font-size: 16px; font-weight: 700; margin: 0 0 2px; }
 .emp-meta { font-size: 12px; color: #6b7570; display: flex; align-items: center; gap: 6px; }
 .emp-meta .emp-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #9aa39d; flex-shrink: 0; }
-.emp-window-pill {
-    margin-top: 6px; display: inline-flex; align-items: center; gap: 5px;
-    background: #f1f4f3; border-radius: 20px; padding: 3px 9px;
-    font-size: 10.5px; color: #6b7570; font-weight: 600;
-}
 body.dark-mode .emp-meta { color: #9aa8a2; }
 body.dark-mode .emp-meta .emp-meta-dot { background: #6e7975; }
-body.dark-mode .emp-window-pill { background: #232a2c; color: #9aa8a2; }
 
 .emp-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
 .emp-stat-card { background: #f1f4f3; border-radius: 10px; padding: 9px 10px; }

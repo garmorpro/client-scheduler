@@ -132,11 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const avatarColor = roleColors[role.toLowerCase()] || '#6c757d';
 
             const formatShort = d => parseDateOnly(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            let windowLabel = '';
-            if (weekTds.length > 0) {
-                const sortedWeeks = weekTds.map(td => td.dataset.weekStart).sort();
-                windowLabel = `${formatShort(sortedWeeks[0])} – ${formatShort(sortedWeeks[sortedWeeks.length - 1])}`;
-            }
 
             const engagementRows = Object.entries(clientsMap)
                 .filter(([, info]) => info.weeks.length > 0)
@@ -189,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div>
                         <div class="emp-name">${userName}</div>
                         <div class="emp-meta text-capitalize">${role}<span class="emp-meta-dot"></span><span class="text-lowercase">${email}</span></div>
-                        ${windowLabel ? `<div class="emp-window-pill"><i class="bi bi-calendar3"></i>${windowLabel}</div>` : ''}
                     </div>
                 </div>
 
