@@ -139,13 +139,10 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                                 <i class="bi bi-diagram-2"></i>
                                             </span>
                                         <?php endif; ?>
-                                    </span><br>
-                                    <small class="text-muted">
-                                        <?php echo htmlspecialchars($userrow['email']); ?>
-                                        <?php if (!empty($userrow['job_title'])): ?>
-                                            &middot; <?php echo htmlspecialchars($userrow['job_title']); ?>
-                                        <?php endif; ?>
-                                    </small>
+                                    </span>
+                                    <?php if (!empty($userrow['job_title'])): ?>
+                                        <br><small class="text-muted"><?php echo htmlspecialchars($userrow['job_title']); ?></small>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="badge-role">
