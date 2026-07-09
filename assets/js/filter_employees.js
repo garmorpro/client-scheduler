@@ -30,6 +30,12 @@ function filterEmployees() {
     // Show only if all match
     row.style.display = (matchesRole && matchesSearch && matchesClient) ? '' : 'none';
   });
+
+  const countEl = document.getElementById('clientFilterCount');
+  if (countEl) {
+    countEl.textContent = selectedClients.length > 0 ? ` (${selectedClients.length})` : '';
+  }
+
   updateLastRowRadius(); // <-- ADD THIS
 }
 
@@ -78,10 +84,38 @@ function setupClientFilter() {
   });
 }
 
+// Client search box: narrows the checkbox list itself, separate from
+// filterEmployees() which acts on the schedule table.
+function setupClientSearch() {
+  const searchBox = document.getElementById('clientFilterSearch');
+  const list = document.getElementById('clientCheckboxList');
+  if (!searchBox || !list) return;
+
+  const items = Array.from(list.querySelectorAll('li[data-client-search]'));
+  const noResults = document.getElementById('clientFilterNoResults');
+
+  searchBox.addEventListener('click', e => e.stopPropagation());
+  searchBox.addEventListener('keydown', e => e.stopPropagation());
+
+  searchBox.addEventListener('input', () => {
+    const term = searchBox.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    items.forEach(li => {
+      const matches = !term || li.dataset.clientSearch.includes(term);
+      li.classList.toggle('d-none', !matches);
+      if (matches) visibleCount++;
+    });
+
+    if (noResults) noResults.classList.toggle('d-none', visibleCount > 0);
+  });
+}
+
 // Initial filter on page load
 document.addEventListener('DOMContentLoaded', () => {
   // Make sure manager is unchecked by default
   document.getElementById('roleManager').checked = false;
   setupClientFilter();
+  setupClientSearch();
   filterEmployees();
 });

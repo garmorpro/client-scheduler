@@ -212,25 +212,31 @@ updateLastRowRadius();
             <!-- Client filter dropdown -->
             <div class="dropdown me-2">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="clientFilterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                    Filter Client
+                    Filter Client<span id="clientFilterCount"></span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="clientFilterDropdown" style="min-width: 220px; max-height: 320px; overflow-y: auto;">
-                    <li>
+                <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="clientFilterDropdown" style="min-width: 240px;">
+                    <div class="px-1 pb-2">
+                        <input type="text" id="clientFilterSearch" class="form-control form-control-sm" placeholder="Search clients..." autocomplete="off">
+                    </div>
+                    <div class="px-1 pb-2">
                         <div class="form-check">
                             <input class="form-check-input client-checkbox" type="checkbox" value="" id="clientAll" checked>
                             <label class="form-check-label" for="clientAll"><strong>All Clients</strong></label>
                         </div>
-                        <hr class="my-2">
-                    </li>
-                    <?php foreach ($activeClients as $c): $clientId = 'client-' . preg_replace('/[^a-zA-Z0-9]/', '', $c['client_name']); ?>
-                    <li>
-                        <div class="form-check">
-                            <input class="form-check-input client-checkbox" type="checkbox" value="<?= htmlspecialchars($c['client_name']) ?>" id="<?= $clientId ?>">
-                            <label class="form-check-label" for="<?= $clientId ?>"><?= htmlspecialchars($c['client_name']) ?></label>
-                        </div>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                    </div>
+                    <hr class="my-1">
+                    <ul class="list-unstyled mb-0" id="clientCheckboxList" style="max-height: 260px; overflow-y: auto;">
+                        <?php foreach ($activeClients as $c): $clientId = 'client-' . preg_replace('/[^a-zA-Z0-9]/', '', $c['client_name']); ?>
+                        <li data-client-search="<?= strtolower(htmlspecialchars($c['client_name'])) ?>">
+                            <div class="form-check px-2">
+                                <input class="form-check-input client-checkbox" type="checkbox" value="<?= htmlspecialchars($c['client_name']) ?>" id="<?= $clientId ?>">
+                                <label class="form-check-label" for="<?= $clientId ?>"><?= htmlspecialchars($c['client_name']) ?></label>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                        <li id="clientFilterNoResults" class="text-muted small px-2 py-1 d-none">No clients match your search.</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Role filter dropdown on right -->
