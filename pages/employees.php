@@ -18,10 +18,13 @@ if (!$canManageEmployees) {
     exit();
 }
 
+// System/service accounts (email contains "admin") are excluded from the
+// employee roster - they're not real employees to manage day-to-day.
 $usersql = "SELECT u.user_id, u.full_name, u.email, u.role, u.status, u.last_active,
                    u.manager_id, m.full_name AS manager_name
         FROM users u
         LEFT JOIN users m ON u.manager_id = m.user_id
+        WHERE u.email NOT LIKE '%admin%'
         ORDER BY u.full_name ASC";
 $userresult = mysqli_query($conn, $usersql);
 
@@ -43,7 +46,7 @@ $roleIcons = [
 ];
 $roleCounts = array_fill_keys($roleOrder, 0);
 $totalEmployees = 0;
-$roleCountResult = mysqli_query($conn, "SELECT role, COUNT(*) AS cnt FROM users GROUP BY role");
+$roleCountResult = mysqli_query($conn, "SELECT role, COUNT(*) AS cnt FROM users WHERE email NOT LIKE '%admin%' GROUP BY role");
 while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
     $roleKey = strtolower($rcRow['role']);
     $roleCounts[$roleKey] = (int) $rcRow['cnt'];
