@@ -164,6 +164,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                     ?>
                                 </td>
                                 <td class="table-actions">
+                                    <div class="table-actions-inner">
                                     <!-- View Button -->
                                     <a href="#" class="action-icon-btn view-user-btn text-decoration-none"
                                        data-bs-toggle="modal"
@@ -239,6 +240,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                                 </a>
                                             </li>
                                         </ul>
+                                    </div>
                                     </div>
                                 </td>
                             </tr>

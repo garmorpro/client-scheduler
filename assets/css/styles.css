@@ -777,8 +777,11 @@ body.dark-mode .pop-up-small {
 #user-table thead th { padding: 12px 16px; font-size: 12px; }
 #user-table tbody td { padding: 13px 16px; line-height: 1.35; }
 #user-table tbody tr:last-child td { border-bottom: none; }
-#user-table .table-actions { display: flex; align-items: center; gap: 12px; height: 20px; line-height: 1; white-space: nowrap; }
-#user-table .table-actions .dropdown { display: inline-flex; align-items: center; }
+/* .table-actions stays a normal table-cell (display:flex on a <td> breaks it out
+   of table layout, decoupling it from the row's height/border) - the flex layout
+   lives on this inner wrapper instead. */
+#user-table .table-actions-inner { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+#user-table .table-actions-inner .dropdown { display: inline-flex; align-items: center; }
 #user-table .action-icon-btn { display: inline-flex; align-items: center; cursor: pointer; opacity: .8; transition: opacity .15s ease; }
 #user-table .action-icon-btn i { margin: 0 !important; font-size: 15px; line-height: 1; }
 #user-table .action-icon-btn:hover { opacity: 1; }
