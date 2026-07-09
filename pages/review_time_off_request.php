@@ -18,10 +18,11 @@ if (!csrf_valid()) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$timeoffId = intval($data['timeoff_id'] ?? 0);
+$requestGroup = trim($data['request_group'] ?? '');
 $action = $data['action'] ?? '';
+$comment = trim($data['comment'] ?? '');
 
-if (!$timeoffId || !in_array($action, ['approve', 'deny'], true)) {
+if (!$requestGroup || !in_array($action, ['approve', 'deny'], true)) {
     echo json_encode(['success' => false, 'error' => 'Invalid request']);
     exit;
 }
@@ -29,12 +30,20 @@ if (!$timeoffId || !in_array($action, ['approve', 'deny'], true)) {
 $status = $action === 'approve' ? 'approved' : 'denied';
 $reviewerId = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("
-    UPDATE time_off
-    SET status = ?, reviewed_by = ?, reviewed_at = NOW()
-    WHERE timeoff_id = ? AND is_global_timeoff = 0
-");
-$stmt->bind_param('sii', $status, $reviewerId, $timeoffId);
+if (strpos($requestGroup, 'single-') === 0) {
+    $timeoffId = intval(substr($requestGroup, 7));
+    $stmt = $conn->prepare("
+        UPDATE time_off SET status = ?, reviewer_comment = ?, reviewed_by = ?, reviewed_at = NOW()
+        WHERE timeoff_id = ? AND is_global_timeoff = 0
+    ");
+    $stmt->bind_param('ssii', $status, $comment, $reviewerId, $timeoffId);
+} else {
+    $stmt = $conn->prepare("
+        UPDATE time_off SET status = ?, reviewer_comment = ?, reviewed_by = ?, reviewed_at = NOW()
+        WHERE request_group = ? AND is_global_timeoff = 0
+    ");
+    $stmt->bind_param('ssis', $status, $comment, $reviewerId, $requestGroup);
+}
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

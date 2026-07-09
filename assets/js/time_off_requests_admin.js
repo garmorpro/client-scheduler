@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('torTableBody');
+    const reviewModalEl = document.getElementById('reviewTimeOffModal');
+    const reviewModal = new bootstrap.Modal(reviewModalEl);
     let allRequests = [];
     let activeTab = 'all';
+    let activeRequest = null;
 
     function initials(name) {
         return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
@@ -20,11 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function statusLabel(status) {
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
+    function categoryLabel(category) {
+        return category.charAt(0).toUpperCase() + category.slice(1);
+    }
     function formatDate(dateString) {
         if (!dateString) return '-';
         const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString);
         if (isNaN(d)) return '-';
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function formatDateRange(days) {
+        if (days.length === 1) return formatDate(days[0].date);
+        const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
+        return `${formatDate(sorted[0].date)} &ndash; ${formatDate(sorted[sorted.length - 1].date)} <span class="text-muted">(${days.length} days)</span>`;
     }
 
     function notify(icon, title, text) {
@@ -57,9 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="client-name">${r.full_name}</span>
                     </div>
                 </td>
-                <td>${formatDate(r.date)}</td>
-                <td class="num"><span class="hours-value">${r.hours}h</span></td>
-                <td>${r.reason ? r.reason : '<span class="text-muted">-</span>'}</td>
+                <td>${formatDateRange(r.days)}</td>
+                <td><span class="category-pill ${r.category}">${categoryLabel(r.category)}</span></td>
+                <td class="num"><span class="hours-value">${r.total_hours}h</span></td>
                 <td>
                     <span class="eng-status-pill ${statusPillClass(r.status)}">
                         <span class="dot"></span>${statusLabel(r.status)}
@@ -68,15 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="client-onboarded-text">${formatDate(r.created)}</span></td>
                 <td class="num">
                     <div class="client-row-actions">
-                        ${r.status === 'pending' ? `
-                            <button type="button" class="client-icon-btn timeoff-approve-btn" title="Approve" data-timeoff-id="${r.timeoff_id}" data-action="approve">
-                                <i class="bi bi-check-lg"></i>
-                            </button>
-                            <button type="button" class="client-icon-btn timeoff-deny-btn" title="Deny" data-timeoff-id="${r.timeoff_id}" data-action="deny">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        ` : ''}
-                        <button type="button" class="client-icon-btn danger" title="Remove" data-timeoff-id="${r.timeoff_id}" data-action="delete">
+                        <button type="button" class="client-icon-btn" title="Review" data-request-group="${r.request_group}">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button type="button" class="client-icon-btn danger" title="Remove" data-delete-group="${r.request_group}">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -85,11 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(tr);
         });
 
-        tableBody.querySelectorAll('[data-action="approve"], [data-action="deny"]').forEach(btn => {
-            btn.addEventListener('click', () => reviewRequest(btn.dataset.timeoffId, btn.dataset.action));
+        tableBody.querySelectorAll('[data-request-group]').forEach(btn => {
+            btn.addEventListener('click', () => openReview(btn.dataset.requestGroup));
         });
-        tableBody.querySelectorAll('[data-action="delete"]').forEach(btn => {
-            btn.addEventListener('click', () => deleteRequest(btn.dataset.timeoffId));
+        tableBody.querySelectorAll('[data-delete-group]').forEach(btn => {
+            btn.addEventListener('click', () => deleteRequest(btn.dataset.deleteGroup));
         });
     }
 
@@ -106,16 +112,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function reviewRequest(timeoffId, action) {
+    function openReview(requestGroup) {
+        const r = allRequests.find(req => req.request_group === requestGroup);
+        if (!r) return;
+        activeRequest = r;
+
+        document.getElementById('rtoAvatar').style.backgroundColor = hashColor(r.full_name);
+        document.getElementById('rtoAvatar').textContent = initials(r.full_name);
+        document.getElementById('rtoName').textContent = r.full_name;
+        const catEl = document.getElementById('rtoCategory');
+        catEl.className = `category-pill ${r.category}`;
+        catEl.textContent = categoryLabel(r.category);
+
+        const statusEl = document.getElementById('rtoStatus');
+        statusEl.className = `eng-status-pill ${statusPillClass(r.status)}`;
+        document.getElementById('rtoStatusText').textContent = statusLabel(r.status);
+
+        document.getElementById('rtoTotalHours').textContent = `${r.total_hours}h`;
+        document.getElementById('rtoRequested').textContent = formatDate(r.created);
+        document.getElementById('rtoReason').textContent = r.reason || 'No reason provided.';
+
+        const daysList = document.getElementById('rtoDaysList');
+        daysList.innerHTML = [...r.days].sort((a, b) => a.date.localeCompare(b.date)).map(d => `
+            <div class="eng-vm-emp-row">
+                <div class="eng-vm-emp-info">
+                    <div class="eng-vm-emp-name">${formatDate(d.date)}</div>
+                </div>
+                <div class="eng-vm-emp-hours">${d.hours}h</div>
+            </div>
+        `).join('');
+
+        const commentField = document.getElementById('rtoCommentField');
+        const commentInput = document.getElementById('rtoComment');
+        const pastCommentWrap = document.getElementById('rtoPastCommentWrap');
+        const footer = document.getElementById('rtoFooter');
+
+        if (r.status === 'pending') {
+            commentField.style.display = '';
+            commentInput.value = '';
+            pastCommentWrap.style.display = 'none';
+            footer.querySelector('#rtoApproveBtn').style.display = '';
+            footer.querySelector('#rtoDenyBtn').style.display = '';
+        } else {
+            commentField.style.display = 'none';
+            footer.querySelector('#rtoApproveBtn').style.display = 'none';
+            footer.querySelector('#rtoDenyBtn').style.display = 'none';
+            if (r.reviewer_comment) {
+                pastCommentWrap.style.display = '';
+                document.getElementById('rtoPastComment').textContent = r.reviewer_comment;
+            } else {
+                pastCommentWrap.style.display = 'none';
+            }
+        }
+
+        reviewModal.show();
+    }
+
+    function submitReview(action) {
+        if (!activeRequest) return;
+        const comment = document.getElementById('rtoComment').value.trim();
         const run = async () => {
             try {
                 const res = await fetch('review_time_off_request.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ timeoff_id: timeoffId, action })
+                    body: JSON.stringify({ request_group: activeRequest.request_group, action, comment })
                 });
                 const data = await res.json();
                 if (data.success) {
+                    reviewModal.hide();
                     loadRequests();
                 } else {
                     notify('error', 'Could not update request', data.error || 'Please try again.');
@@ -138,13 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function deleteRequest(timeoffId) {
+    document.getElementById('rtoApproveBtn').addEventListener('click', () => submitReview('approve'));
+    document.getElementById('rtoDenyBtn').addEventListener('click', () => submitReview('deny'));
+
+    function deleteRequest(requestGroup) {
         const run = async () => {
             try {
                 const res = await fetch('delete_time_off_request.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ timeoff_id: timeoffId })
+                    body: JSON.stringify({ request_group: requestGroup })
                 });
                 const data = await res.json();
                 if (data.success) {

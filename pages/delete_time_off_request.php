@@ -17,8 +17,8 @@ if (!csrf_valid()) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$timeoffId = intval($data['timeoff_id'] ?? 0);
-if (!$timeoffId) {
+$requestGroup = trim($data['request_group'] ?? '');
+if (!$requestGroup) {
     echo json_encode(['success' => false, 'error' => 'Invalid request']);
     exit;
 }
@@ -27,14 +27,26 @@ $userRole = strtolower($_SESSION['user_role'] ?? '');
 $isReviewer = $userRole === 'admin' || $userRole === 'manager';
 $currentUserId = $_SESSION['user_id'];
 
-// A reviewer can remove any individual time-off request; anyone else can only
-// withdraw their own request while it's still pending.
+$isSingle = strpos($requestGroup, 'single-') === 0;
+$timeoffId = $isSingle ? intval(substr($requestGroup, 7)) : 0;
+
 if ($isReviewer) {
-    $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0");
-    $stmt->bind_param('i', $timeoffId);
+    if ($isSingle) {
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0");
+        $stmt->bind_param('i', $timeoffId);
+    } else {
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0");
+        $stmt->bind_param('s', $requestGroup);
+    }
 } else {
-    $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0 AND user_id = ? AND status = 'pending'");
-    $stmt->bind_param('ii', $timeoffId, $currentUserId);
+    // Non-reviewers can only withdraw their own request while it's still pending.
+    if ($isSingle) {
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0 AND user_id = ? AND status = 'pending'");
+        $stmt->bind_param('ii', $timeoffId, $currentUserId);
+    } else {
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0 AND user_id = ? AND status = 'pending'");
+        $stmt->bind_param('si', $requestGroup, $currentUserId);
+    }
 }
 
 if ($stmt->execute()) {

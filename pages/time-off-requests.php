@@ -51,9 +51,9 @@ if (!$isAdmin && !$isManager) {
                 <thead>
                     <tr>
                         <th>Employee</th>
-                        <th>Date</th>
+                        <th>Dates</th>
+                        <th>Category</th>
                         <th class="num">Hours</th>
-                        <th>Reason</th>
                         <th>Status</th>
                         <th>Requested</th>
                         <th class="num">Actions</th>
@@ -65,6 +65,68 @@ if (!$isAdmin && !$isManager) {
             </table>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="reviewTimeOffModal" tabindex="-1" aria-labelledby="reviewTimeOffModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="eng-vm-header">
+          <div class="eng-vm-client-row">
+            <div class="eng-vm-tile" id="rtoAvatar"></div>
+            <div>
+              <div class="eng-vm-client-name" id="rtoName"></div>
+              <div style="display:flex; gap:6px; margin-top:2px;">
+                <span class="category-pill" id="rtoCategory"></span>
+                <span class="eng-status-pill" id="rtoStatus"><span class="dot"></span><span id="rtoStatusText"></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="eng-vm-body">
+          <div class="eng-vm-stat-row" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="eng-vm-stat-card">
+              <div class="eng-vm-stat-title">Total Hours</div>
+              <div class="eng-vm-stat-value" id="rtoTotalHours"></div>
+            </div>
+            <div class="eng-vm-stat-card">
+              <div class="eng-vm-stat-title">Requested</div>
+              <div class="eng-vm-stat-value text" id="rtoRequested"></div>
+            </div>
+          </div>
+
+          <div class="eng-vm-section-title">Days</div>
+          <div class="eng-vm-emp-list" id="rtoDaysList" style="margin-bottom:16px;"></div>
+
+          <div class="eng-vm-section-title">Employee's Reason</div>
+          <p id="rtoReason" style="font-size:13px; margin-bottom:16px;"></p>
+
+          <div class="eng-edit-field" id="rtoCommentField">
+            <label for="rtoComment">Comment (optional)</label>
+            <textarea class="eng-edit-input" id="rtoComment" rows="2" placeholder="Add a note for the employee..."></textarea>
+          </div>
+
+          <div id="rtoPastCommentWrap" style="display:none;">
+            <div class="eng-vm-section-title">Reviewer Comment</div>
+            <p id="rtoPastComment" style="font-size:13px;"></p>
+          </div>
+        </div>
+
+        <div class="eng-edit-footer" id="rtoFooter">
+          <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="rto-btn-deny" id="rtoDenyBtn" title="Deny">
+            <i class="bi bi-x-lg"></i> Deny
+          </button>
+          <button type="button" class="rto-btn-approve" id="rtoApproveBtn">
+            <i class="bi bi-check-lg"></i> Approve
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>

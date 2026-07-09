@@ -159,6 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'pending';
   }
 
+  function formatDateRange(days) {
+    if (days.length === 1) return formatDate(days[0].date);
+    const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
+    return `${formatDate(sorted[0].date)} &ndash; ${formatDate(sorted[sorted.length - 1].date)} (${days.length}d)`;
+  }
+
   function renderTimeOff(requests) {
     const list = document.getElementById('ud_timeoff_list');
     setText('ud_tab_timeoff_count', requests.length);
@@ -174,11 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('div');
       row.className = 'eng-row';
       row.innerHTML = `
-        <div class="eng-name">${formatDate(r.date)}${r.reason ? ' &middot; ' + r.reason : ''}</div>
+        <span class="category-pill ${r.category}" style="margin-right:8px;">${r.category.charAt(0).toUpperCase() + r.category.slice(1)}</span>
+        <div class="eng-name">${formatDateRange(r.days)}${r.reason ? ' &middot; ' + r.reason : ''}</div>
         <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="margin-right:8px;">
           <span class="dot"></span>${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
         </span>
-        <div class="eng-hours">${r.hours}h</div>
+        <div class="eng-hours">${r.total_hours}h</div>
       `;
       list.appendChild(row);
     });

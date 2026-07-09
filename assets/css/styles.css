@@ -1876,25 +1876,38 @@ body.dark-mode .date-row .hrs { color: #6e7975; }
 body.dark-mode .date-row .chip-del { color: #6e7975; }
 body.dark-mode .date-row .chip-del:hover { background: #3a2320; color: #e0685a; }
 
-#holidayModal .hol-days-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-#holidayModal .hol-days-label span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; }
-body.dark-mode #holidayModal .hol-days-label span { color: #6e7975; }
-#holidayModal .hol-add-day {
+#holidayModal .hol-days-label,
+#requestTimeOffModal .hol-days-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+#holidayModal .hol-days-label span,
+#requestTimeOffModal .hol-days-label span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; }
+body.dark-mode #holidayModal .hol-days-label span,
+body.dark-mode #requestTimeOffModal .hol-days-label span { color: #6e7975; }
+#holidayModal .hol-add-day,
+#requestTimeOffModal .hol-add-day {
     display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700;
     color: var(--primary-color); background: none; border: none; cursor: pointer;
 }
-body.dark-mode #holidayModal .hol-add-day { color: var(--secondary-color); }
-#holidayModal .hol-day-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-#holidayModal .hol-day-row .eng-edit-input { height: 40px; }
-#holidayModal .hol-day-row .date-input { flex: 1.4; }
-#holidayModal .hol-day-row .hours-input { flex: .8; }
-#holidayModal .hol-day-remove {
+body.dark-mode #holidayModal .hol-add-day,
+body.dark-mode #requestTimeOffModal .hol-add-day { color: var(--secondary-color); }
+#holidayModal .hol-day-row,
+#requestTimeOffModal .hol-day-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+#holidayModal .hol-day-row .eng-edit-input,
+#requestTimeOffModal .hol-day-row .eng-edit-input { height: 40px; }
+#holidayModal .hol-day-row .date-input,
+#requestTimeOffModal .hol-day-row .date-input { flex: 1.4; }
+#holidayModal .hol-day-row .hours-input,
+#requestTimeOffModal .hol-day-row .hours-input { flex: .8; }
+#holidayModal .hol-day-remove,
+#requestTimeOffModal .hol-day-remove {
     width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e3e7e5; background: #ffffff;
     color: #9aa39d; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 11px;
 }
-#holidayModal .hol-day-remove:hover { color: #c0392b; border-color: #c0392b; background: #fbe8e6; }
-body.dark-mode #holidayModal .hol-day-remove { background: #1b2022; border-color: #29302e; color: #6e7975; }
-body.dark-mode #holidayModal .hol-day-remove:hover { color: #e0685a; border-color: #e0685a; background: #3a2320; }
+#holidayModal .hol-day-remove:hover,
+#requestTimeOffModal .hol-day-remove:hover { color: #c0392b; border-color: #c0392b; background: #fbe8e6; }
+body.dark-mode #holidayModal .hol-day-remove,
+body.dark-mode #requestTimeOffModal .hol-day-remove { background: #1b2022; border-color: #29302e; color: #6e7975; }
+body.dark-mode #holidayModal .hol-day-remove:hover,
+body.dark-mode #requestTimeOffModal .hol-day-remove:hover { color: #e0685a; border-color: #e0685a; background: #3a2320; }
 
 /* Reuse the same hero/field/footer/button language as #editEngagementModal */
 #holidayModal .eng-edit-hero {
@@ -2072,6 +2085,19 @@ body.dark-mode #rolePermissionsModal .rp-list li { color: #9aa8a2; }
 body.dark-mode #rolePermissionsModal .rp-list li.yes i { color: #4fbd7a; }
 body.dark-mode #rolePermissionsModal .rp-list li.no i { color: #6e7975; }
 
+/* ========= TIME OFF CATEGORY PILLS ========= */
+.category-pill {
+    display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.category-pill.vacation { background: #e2eef6; color: #285a80; }
+.category-pill.sick { background: #fbe8e6; color: #c0392b; }
+.category-pill.parental { background: #ece1ff; color: #6f42c1; }
+.category-pill.volunteer { background: #e4f3e6; color: #1f6b3a; }
+body.dark-mode .category-pill.vacation { background: #1a2540; color: #7fa8e0; }
+body.dark-mode .category-pill.sick { background: #3a2320; color: #e0685a; }
+body.dark-mode .category-pill.parental { background: #2e1f4a; color: #c4a0ff; }
+body.dark-mode .category-pill.volunteer { background: #1e3d28; color: #7fd99a; }
+
 /* ========= TIME OFF REQUESTS (admin page tabs) ========= */
 .tor-tabs { display: flex; gap: 4px; margin: 20px 0 16px; border-bottom: 1px solid #e3e7e5; }
 body.dark-mode .tor-tabs { border-color: #29302e; }
@@ -2140,10 +2166,41 @@ body.dark-mode #requestTimeOffModal .eng-edit-btn-save { background: var(--secon
 .timeoff-cancel-btn:hover { color: #c0392b; border-color: #c0392b; background: #fbe8e6; }
 body.dark-mode .timeoff-cancel-btn { background: #1b2022; border-color: #29302e; color: #6e7975; }
 body.dark-mode .timeoff-cancel-btn:hover { color: #e0685a; border-color: #e0685a; background: #3a2320; }
-.timeoff-approve-btn:hover { color: #2f9e57 !important; border-color: #2f9e57 !important; }
-.timeoff-deny-btn:hover { color: #c0392b !important; border-color: #c0392b !important; }
-body.dark-mode .timeoff-approve-btn:hover { color: #4fbd7a !important; border-color: #4fbd7a !important; }
-body.dark-mode .timeoff-deny-btn:hover { color: #e0685a !important; border-color: #e0685a !important; }
+
+/* ========= REVIEW TIME OFF MODAL ========= */
+#reviewTimeOffModal .eng-edit-field { margin-bottom: 0; }
+#reviewTimeOffModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #reviewTimeOffModal .eng-edit-field label { color: #6e7975; }
+#reviewTimeOffModal .eng-edit-input {
+    box-sizing: border-box; width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none; resize: vertical;
+}
+#reviewTimeOffModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #reviewTimeOffModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #reviewTimeOffModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+#reviewTimeOffModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #reviewTimeOffModal .eng-edit-footer { border-color: #29302e; }
+#reviewTimeOffModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer; margin-right: auto;
+}
+#reviewTimeOffModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #reviewTimeOffModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #reviewTimeOffModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+.rto-btn-approve, .rto-btn-deny {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 9px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.rto-btn-approve { background: #2f9e57; color: #ffffff; }
+.rto-btn-approve:hover { opacity: .9; }
+.rto-btn-deny { background: #fbe8e6; color: #c0392b; }
+.rto-btn-deny:hover { background: #f6d5d1; }
+body.dark-mode .rto-btn-approve { background: #4fbd7a; color: #0d1a11; }
+body.dark-mode .rto-btn-deny { background: #3a2320; color: #e0685a; }
+body.dark-mode .rto-btn-deny:hover { background: #48281f; }
 
 /* ========= PROFILE DETAILS MODAL (tabbed, shares .ud-* with User Details) ========= */
 #viewProfileModal .pd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }

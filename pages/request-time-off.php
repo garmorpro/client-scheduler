@@ -42,7 +42,8 @@ if (!isset($_SESSION['user_id'])) {
             <table class="client-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
+                        <th>Dates</th>
+                        <th>Category</th>
                         <th class="num">Hours</th>
                         <th>Reason</th>
                         <th>Status</th>
@@ -51,7 +52,7 @@ if (!isset($_SESSION['user_id'])) {
                     </tr>
                 </thead>
                 <tbody id="myRequestsTableBody">
-                    <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                    <tr><td colspan="7" class="text-center">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -70,17 +71,25 @@ if (!isset($_SESSION['user_id'])) {
           </div>
 
           <div class="eng-edit-body">
-            <div class="eng-edit-row">
-              <div class="eng-edit-field">
-                <label for="tor_date">Date</label>
-                <input type="date" class="eng-edit-input" id="tor_date" name="date" required>
-              </div>
-              <div class="eng-edit-field">
-                <label for="tor_hours">Hours</label>
-                <input type="number" min="1" max="24" step="0.5" class="eng-edit-input" id="tor_hours" name="hours" value="8" required>
-              </div>
-            </div>
             <div class="eng-edit-field">
+              <label for="tor_category">Category</label>
+              <select class="eng-edit-input" id="tor_category" name="category" required>
+                <option value="vacation">Vacation</option>
+                <option value="sick">Sick</option>
+                <option value="parental">Parental</option>
+                <option value="volunteer">Volunteer</option>
+              </select>
+            </div>
+
+            <div class="hol-days-label">
+              <span>Days</span>
+              <button type="button" class="hol-add-day" id="torAddDayBtn">
+                <i class="bi bi-plus"></i> Add Another Day
+              </button>
+            </div>
+            <div id="torDaysContainer"></div>
+
+            <div class="eng-edit-field" style="margin-top:14px;">
               <label for="tor_reason">Reason</label>
               <textarea class="eng-edit-input" id="tor_reason" name="reason" rows="3" placeholder="e.g. Personal day, appointment, vacation..."></textarea>
             </div>

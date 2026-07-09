@@ -16,35 +16,60 @@ if (!csrf_valid()) {
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$date = trim($data['date'] ?? '');
-$hours = $data['hours'] ?? '';
-$reason = trim($data['reason'] ?? '');
+$allowedCategories = ['vacation', 'sick', 'parental', 'volunteer'];
 
-if (!$date || !is_numeric($hours) || (float)$hours <= 0) {
-    echo json_encode(['success' => false, 'error' => 'A date and a positive number of hours are required.']);
+$data = json_decode(file_get_contents('php://input'), true);
+$category = strtolower(trim($data['category'] ?? ''));
+$reason = trim($data['reason'] ?? '');
+$days = $data['days'] ?? [];
+
+if (!in_array($category, $allowedCategories, true)) {
+    echo json_encode(['success' => false, 'error' => 'Please choose a valid category.']);
     exit;
 }
 
-$parsedDate = DateTime::createFromFormat('Y-m-d', $date);
-if (!$parsedDate) {
-    echo json_encode(['success' => false, 'error' => 'Invalid date.']);
+if (!is_array($days) || count($days) === 0) {
+    echo json_encode(['success' => false, 'error' => 'Please add at least one day.']);
     exit;
+}
+
+$cleanDays = [];
+foreach ($days as $day) {
+    $date = trim($day['date'] ?? '');
+    $hours = $day['hours'] ?? '';
+    if (!$date || !is_numeric($hours) || (float)$hours <= 0) {
+        echo json_encode(['success' => false, 'error' => 'Each day needs a valid date and a positive number of hours.']);
+        exit;
+    }
+    if (!DateTime::createFromFormat('Y-m-d', $date)) {
+        echo json_encode(['success' => false, 'error' => "Invalid date: $date"]);
+        exit;
+    }
+    $cleanDays[] = ['date' => $date, 'hours' => (float)$hours];
 }
 
 $userId = $_SESSION['user_id'];
-$weekStart = date('Y-m-d', strtotime('monday this week', strtotime($date)));
+$requestGroup = bin2hex(random_bytes(16));
 
 $stmt = $conn->prepare("
-    INSERT INTO time_off (user_id, timeoff_note, week_start, holiday_date, assigned_hours, is_global_timeoff, status)
-    VALUES (?, ?, ?, ?, ?, 0, 'pending')
+    INSERT INTO time_off (user_id, request_group, category, timeoff_note, week_start, holiday_date, assigned_hours, is_global_timeoff, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'pending')
 ");
-$stmt->bind_param('isssd', $userId, $reason, $weekStart, $date, $hours);
 
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'timeoff_id' => $stmt->insert_id]);
-} else {
-    echo json_encode(['success' => false, 'error' => $stmt->error]);
+$conn->begin_transaction();
+try {
+    foreach ($cleanDays as $day) {
+        $weekStart = date('Y-m-d', strtotime('monday this week', strtotime($day['date'])));
+        $stmt->bind_param('isssssd', $userId, $requestGroup, $category, $reason, $weekStart, $day['date'], $day['hours']);
+        if (!$stmt->execute()) {
+            throw new Exception($stmt->error);
+        }
+    }
+    $conn->commit();
+    echo json_encode(['success' => true, 'request_group' => $requestGroup]);
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(['success' => false, 'error' => 'Could not save request: ' . $e->getMessage()]);
 }
 
 $stmt->close();
