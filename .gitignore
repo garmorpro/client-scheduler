@@ -1,12 +1,8 @@
 .env
 web/.env
 
-# Composer dependencies
+# Composer dependencies (composer.json and composer.lock ARE tracked)
 vendor/
-
-# Composer lock file (optional: you usually keep it)
-composer.lock
-composer.json
 
 # OS / Editor files
 .DS_Store
