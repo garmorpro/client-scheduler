@@ -1427,7 +1427,9 @@ body.dark-mode .sidebar-link.active i { color: #10160f; }
 body.dark-mode .sidebar-submenu::before { background: #29302e; }
 .sidebar-submenu li + li { margin-top: 1px; }
 .sidebar-sublink {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 7px 10px;
     border-radius: 7px;
     font-size: 13px;
@@ -1439,6 +1441,21 @@ body.dark-mode .sidebar-submenu::before { background: #29302e; }
 body.dark-mode .sidebar-sublink { color: #9aa8a2 !important; }
 body.dark-mode .sidebar-sublink:hover { background: #202726; color: #edf1ee !important; }
 body.dark-mode .sidebar-sublink.active { color: var(--secondary-color) !important; }
+
+.sidebar-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #c0392b;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
 
 .sidebar-footer {
     padding-top: 12px;

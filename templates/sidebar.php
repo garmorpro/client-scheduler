@@ -9,6 +9,21 @@ $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) =
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'service_account';
 $currentPage = basename($_SERVER['PHP_SELF']);
+
+$pendingTimeOffCount = 0;
+if ($isAdmin || $isManager) {
+    if (!isset($conn)) {
+        require_once __DIR__ . '/../includes/db.php';
+    }
+    $pendingCountResult = $conn->query("
+        SELECT COUNT(DISTINCT COALESCE(request_group, CONCAT('single-', timeoff_id))) AS cnt
+        FROM time_off
+        WHERE is_global_timeoff = 0 AND status = 'pending'
+    ");
+    if ($pendingCountResult) {
+        $pendingTimeOffCount = (int) $pendingCountResult->fetch_assoc()['cnt'];
+    }
+}
 ?>
 <script>window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;</script>
 <script src="../assets/js/csrf_fetch.js"></script>
@@ -89,7 +104,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
-                        <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">Time Off Requests</a></li>
+                        <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">
+                            Time Off Requests
+                            <?php if ($pendingTimeOffCount > 0): ?>
+                                <span class="sidebar-badge"><?= $pendingTimeOffCount ?></span>
+                            <?php endif; ?>
+                        </a></li>
                         <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
                     </ul>

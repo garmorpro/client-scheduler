@@ -153,6 +153,41 @@ $stmt->close();
 $netHours = $totalHours;
 
 // ------------------------------------------------------
+// Time off stats for dashboard tiles
+$sqlPendingTO = "
+    SELECT COUNT(DISTINCT COALESCE(request_group, CONCAT('single-', timeoff_id))) AS cnt
+    FROM time_off
+    WHERE user_id = ? AND is_global_timeoff = 0 AND status IN ('pending', 'changes_requested')
+";
+$stmt = $conn->prepare($sqlPendingTO);
+$stmt->bind_param('i', $userId);
+$stmt->execute();
+$pendingTimeOffCount = (int) $stmt->get_result()->fetch_assoc()['cnt'];
+$stmt->close();
+
+$sqlUpcomingTO = "
+    SELECT MIN(holiday_date) AS next_date
+    FROM time_off
+    WHERE user_id = ? AND is_global_timeoff = 0 AND status = 'approved' AND holiday_date >= CURDATE()
+";
+$stmt = $conn->prepare($sqlUpcomingTO);
+$stmt->bind_param('i', $userId);
+$stmt->execute();
+$upcomingTimeOffDate = $stmt->get_result()->fetch_assoc()['next_date'];
+$stmt->close();
+
+$sqlYearTO = "
+    SELECT COALESCE(SUM(assigned_hours), 0) AS total_hours
+    FROM time_off
+    WHERE user_id = ? AND is_global_timeoff = 0 AND status = 'approved' AND YEAR(holiday_date) = YEAR(CURDATE())
+";
+$stmt = $conn->prepare($sqlYearTO);
+$stmt->bind_param('i', $userId);
+$stmt->execute();
+$yearTimeOffHours = floatval($stmt->get_result()->fetch_assoc()['total_hours']);
+$stmt->close();
+
+// ------------------------------------------------------
 // Fetch team members
 function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $sql = "
@@ -238,6 +273,31 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
           <i class="bi bi-arrow-clockwise me-2"></i> Refresh
         </a>
       </div>
+    </div>
+
+    <!-- Time Off Stats -->
+    <div class="stat-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
+        <div class="stat-title">Pending Time Off</div>
+        <div class="stat-value"><?php echo $pendingTimeOffCount; ?></div>
+        <?php if ($pendingTimeOffCount > 0): ?>
+          <small class="text-muted"><?php echo $pendingTimeOffCount === 1 ? 'request needs your attention' : 'requests need your attention'; ?></small>
+        <?php else: ?>
+          <small class="text-muted">nothing awaiting action</small>
+        <?php endif; ?>
+      </a>
+      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
+        <div class="stat-title">Upcoming Time Off</div>
+        <div class="stat-value" style="<?php echo $upcomingTimeOffDate ? 'font-size:20px;' : ''; ?>">
+          <?php echo $upcomingTimeOffDate ? date('M j', strtotime($upcomingTimeOffDate)) : 'None'; ?>
+        </div>
+        <small class="text-muted"><?php echo $upcomingTimeOffDate ? 'next approved day off' : 'no approved time off scheduled'; ?></small>
+      </a>
+      <a href="request-time-off.php" class="stat-card" style="text-decoration: none; color: inherit;">
+        <div class="stat-title">Time Off Taken This Year</div>
+        <div class="stat-value"><?php echo $yearTimeOffHours; ?> hrs</div>
+        <small class="text-muted">approved &amp; taken in <?php echo date('Y'); ?></small>
+      </a>
     </div>
 
     <!-- 8-Week Overview -->
