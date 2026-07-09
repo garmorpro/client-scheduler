@@ -104,7 +104,7 @@ while ($row = $result2->fetch_assoc()) {
 $stmt2->close();
 
 // Individual Time Off
-$individualTimeOffQuery = "SELECT user_id, week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 0 AND week_start BETWEEN ? AND ?";
+$individualTimeOffQuery = "SELECT user_id, week_start, assigned_hours FROM time_off WHERE is_global_timeoff = 0 AND status = 'approved' AND week_start BETWEEN ? AND ?";
 $stmt3 = $conn->prepare($individualTimeOffQuery);
 $stmt3->bind_param('ss', $startDate, $endDate);
 $stmt3->execute();

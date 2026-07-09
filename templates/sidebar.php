@@ -53,6 +53,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     Master Schedule
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="request-time-off.php" class="sidebar-link <?= $currentPage == 'request-time-off.php' ? 'active' : '' ?>">
+                    <i class="bi bi-airplane"></i>
+                    Request Time Off
+                </a>
+            </li>
             <?php if ($isAdmin || $isManager): ?>
             <li class="nav-item">
                 <a href="client-management.php" class="sidebar-link <?= $currentPage == 'client-management.php' ? 'active' : '' ?>">
@@ -73,7 +79,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <?php
-                    $settingsPages = ['company-holidays.php', 'service-settings.php'];
+                    $settingsPages = ['company-holidays.php', 'service-settings.php', 'time-off-requests.php'];
                     $isActive = in_array($currentPage, $settingsPages);
                 ?>
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
@@ -83,6 +89,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
+                        <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">Time Off Requests</a></li>
                         <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
                     </ul>

@@ -24,6 +24,10 @@
               <i class="bi bi-calendar3"></i> Engagements
               <span class="count-chip" id="ud_tab_eng_count">0</span>
             </div>
+            <div class="ud-tab" data-ud-tab="timeoff">
+              <i class="bi bi-airplane"></i> Time Off
+              <span class="count-chip" id="ud_tab_timeoff_count">0</span>
+            </div>
             <div class="ud-tab" data-ud-tab="activity">
               <i class="bi bi-clock-history"></i> Activity
             </div>
@@ -69,6 +73,14 @@
             </div>
             <div class="eng-list" id="ud_eng_list"></div>
             <ul id="ud_eng_pagination" class="pagination pagination-sm justify-content-center mt-2" style="display:none;"></ul>
+          </div>
+
+          <!-- Time Off -->
+          <div class="ud-panel" id="ud_panel_timeoff">
+            <div class="eng-panel-header">
+              <span class="eng-panel-hint" id="ud_timeoff_hint"></span>
+            </div>
+            <div class="eng-list" id="ud_timeoff_list"></div>
           </div>
 
           <!-- Activity -->

@@ -1698,9 +1698,11 @@ body.dark-mode .eng-filter-btn { background: #1b2022; border-color: #29302e; col
 .eng-status-pill.confirmed { background: #e4f3e6; color: #1f6b3a; }
 .eng-status-pill.pending { background: #fbeed9; color: #92600f; }
 .eng-status-pill.not-confirmed { background: #e2eef6; color: #285a80; }
+.eng-status-pill.denied { background: #fbe8e6; color: #c0392b; }
 body.dark-mode .eng-status-pill.confirmed { background: #1e3d28; color: #7fd99a; }
 body.dark-mode .eng-status-pill.pending { background: #3d2f16; color: #e0b566; }
 body.dark-mode .eng-status-pill.not-confirmed { background: #1a2540; color: #7fa8e0; }
+body.dark-mode .eng-status-pill.denied { background: #3a2320; color: #e0685a; }
 
 .eng-util-cell { display: flex; align-items: center; gap: 8px; min-width: 110px; }
 .eng-util-track { flex: 1; height: 6px; border-radius: 4px; background: #e3e7e5; overflow: hidden; }
@@ -2069,6 +2071,79 @@ body.dark-mode #rolePermissionsModal .rp-list li { color: #9aa8a2; }
 #rolePermissionsModal .rp-list li.no i { color: #9aa39d; }
 body.dark-mode #rolePermissionsModal .rp-list li.yes i { color: #4fbd7a; }
 body.dark-mode #rolePermissionsModal .rp-list li.no i { color: #6e7975; }
+
+/* ========= TIME OFF REQUESTS (admin page tabs) ========= */
+.tor-tabs { display: flex; gap: 4px; margin: 20px 0 16px; border-bottom: 1px solid #e3e7e5; }
+body.dark-mode .tor-tabs { border-color: #29302e; }
+.tor-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 14px; font-size: 13px; font-weight: 700; color: #9aa39d; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+body.dark-mode .tor-tab { color: #6e7975; }
+.tor-tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+body.dark-mode .tor-tab.active { color: var(--secondary-color); border-bottom-color: var(--secondary-color); }
+.tor-tab .count-chip {
+    background: #f1f4f3; color: #6b7570; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+}
+body.dark-mode .tor-tab .count-chip { background: #232a2c; color: #9aa8a2; }
+.tor-tab.active .count-chip { background: var(--primary-color); color: #fff; }
+body.dark-mode .tor-tab.active .count-chip { background: var(--secondary-color); color: #10160f; }
+
+/* ========= REQUEST TIME OFF MODAL (reuses the eng-edit-* field language) ========= */
+#requestTimeOffModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #requestTimeOffModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#requestTimeOffModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #requestTimeOffModal .eng-edit-title { color: #edf1ee; }
+#requestTimeOffModal .eng-edit-body { padding: 16px 20px; }
+#requestTimeOffModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#requestTimeOffModal .eng-edit-field { margin-bottom: 14px; }
+#requestTimeOffModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #requestTimeOffModal .eng-edit-field label { color: #6e7975; }
+#requestTimeOffModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#requestTimeOffModal textarea.eng-edit-input { height: auto; resize: vertical; min-height: 60px; }
+#requestTimeOffModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #requestTimeOffModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #requestTimeOffModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+#requestTimeOffModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #requestTimeOffModal .eng-edit-footer { border-color: #29302e; }
+#requestTimeOffModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#requestTimeOffModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #requestTimeOffModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #requestTimeOffModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#requestTimeOffModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#requestTimeOffModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #requestTimeOffModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+/* Time-off request table action icons */
+.timeoff-cancel-btn {
+    width: 28px; height: 28px; border-radius: 8px; border: 1px solid #e3e7e5; background: #ffffff;
+    color: #9aa39d; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.timeoff-cancel-btn:hover { color: #c0392b; border-color: #c0392b; background: #fbe8e6; }
+body.dark-mode .timeoff-cancel-btn { background: #1b2022; border-color: #29302e; color: #6e7975; }
+body.dark-mode .timeoff-cancel-btn:hover { color: #e0685a; border-color: #e0685a; background: #3a2320; }
+.timeoff-approve-btn:hover { color: #2f9e57 !important; border-color: #2f9e57 !important; }
+.timeoff-deny-btn:hover { color: #c0392b !important; border-color: #c0392b !important; }
+body.dark-mode .timeoff-approve-btn:hover { color: #4fbd7a !important; border-color: #4fbd7a !important; }
+body.dark-mode .timeoff-deny-btn:hover { color: #e0685a !important; border-color: #e0685a !important; }
 
 /* ========= PROFILE DETAILS MODAL (tabbed, shares .ud-* with User Details) ========= */
 #viewProfileModal .pd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }

@@ -31,6 +31,7 @@ $sql = "SELECT timeoff_id, assigned_hours
         WHERE user_id = ?
           AND week_start = ?
           AND is_global_timeoff = 0
+          AND status = 'approved'
         LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('is', $user_id, $week_start);

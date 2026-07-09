@@ -153,6 +153,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function timeoffStatusPillClass(status) {
+    if (status === 'approved') return 'confirmed';
+    if (status === 'denied') return 'denied';
+    return 'pending';
+  }
+
+  function renderTimeOff(requests) {
+    const list = document.getElementById('ud_timeoff_list');
+    setText('ud_tab_timeoff_count', requests.length);
+    setText('ud_timeoff_hint', `${requests.length} request${requests.length === 1 ? '' : 's'}`);
+
+    list.innerHTML = '';
+    if (requests.length === 0) {
+      list.innerHTML = '<div class="eng-empty">No time off requests</div>';
+      return;
+    }
+
+    requests.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'eng-row';
+      row.innerHTML = `
+        <div class="eng-name">${formatDate(r.date)}${r.reason ? ' &middot; ' + r.reason : ''}</div>
+        <span class="eng-status-pill ${timeoffStatusPillClass(r.status)}" style="margin-right:8px;">
+          <span class="dot"></span>${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+        </span>
+        <div class="eng-hours">${r.hours}h</div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  async function loadUserTimeOff(userId) {
+    try {
+      const res = await fetch(`get_user_time_off.php?user_id=${encodeURIComponent(userId)}`);
+      const data = await res.json();
+      renderTimeOff(data.requests || []);
+    } catch (err) {
+      console.error('Failed to load user time off', err);
+      renderTimeOff([]);
+    }
+  }
+
   async function loadUser(userId) {
     try {
       const response = await fetch(`get_user.php?user_id=${encodeURIComponent(userId)}`);
@@ -287,5 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadUser(userId);
     loadUserEngagements(userId);
+    loadUserTimeOff(userId);
   });
 });
