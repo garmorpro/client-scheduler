@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const daysContainer = document.getElementById('torDaysContainer');
     const addDayBtn = document.getElementById('torAddDayBtn');
 
+    const viewModalEl = document.getElementById('viewMyTimeOffModal');
+    const viewModal = new bootstrap.Modal(viewModalEl);
+
     let editingRequestGroup = null;
+    let myRequests = [];
+    let activeViewRequest = null;
 
     function statusPillClass(status) {
         if (status === 'approved') return 'confirmed';
@@ -94,71 +99,116 @@ document.addEventListener('DOMContentLoaded', () => {
         openNewRequestModal();
     });
 
+    // --- View modal ---
+    function openViewModal(r) {
+        activeViewRequest = r;
+
+        document.getElementById('vmtoTitle').textContent = `${categoryLabel(r.category)} Request`;
+        const catEl = document.getElementById('vmtoCategory');
+        catEl.className = `category-pill ${r.category}`;
+        catEl.textContent = categoryLabel(r.category);
+
+        const statusEl = document.getElementById('vmtoStatus');
+        statusEl.className = `eng-status-pill ${statusPillClass(r.status)}`;
+        document.getElementById('vmtoStatusText').textContent = statusLabel(r.status);
+
+        document.getElementById('vmtoTotalHours').textContent = `${r.total_hours}h`;
+        document.getElementById('vmtoSubmitted').textContent = formatDate(r.created);
+        document.getElementById('vmtoReason').textContent = r.reason || 'No reason provided.';
+
+        const daysList = document.getElementById('vmtoDaysList');
+        daysList.innerHTML = [...r.days].sort((a, b) => a.date.localeCompare(b.date)).map(d => `
+            <div class="eng-vm-emp-row">
+                <div class="eng-vm-emp-info">
+                    <div class="eng-vm-emp-name">${formatDate(d.date)}</div>
+                </div>
+                <div class="eng-vm-emp-hours">${d.hours}h</div>
+            </div>
+        `).join('');
+
+        const commentWrap = document.getElementById('vmtoCommentWrap');
+        if (r.reviewer_comment) {
+            commentWrap.style.display = '';
+            document.getElementById('vmtoComment').textContent = r.reviewer_comment;
+        } else {
+            commentWrap.style.display = 'none';
+        }
+
+        const cancelBtn = document.getElementById('vmtoCancelBtn');
+        const editBtn = document.getElementById('vmtoEditBtn');
+        const canCancel = r.status === 'pending' || r.status === 'changes_requested';
+        cancelBtn.style.display = canCancel ? '' : 'none';
+        editBtn.style.display = r.status === 'changes_requested' ? '' : 'none';
+
+        viewModal.show();
+    }
+
+    document.getElementById('vmtoEditBtn').addEventListener('click', () => {
+        if (!activeViewRequest) return;
+        viewModal.hide();
+        openEditRequestModal(activeViewRequest);
+    });
+
+    document.getElementById('vmtoCancelBtn').addEventListener('click', () => {
+        if (!activeViewRequest) return;
+        cancelRequest(activeViewRequest.request_group, () => viewModal.hide());
+    });
+
     // --- My Requests table ---
     async function loadMyRequests() {
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Loading...</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading...</td></tr>';
         try {
             const res = await fetch('get_my_time_off_requests.php');
             const data = await res.json();
-            const requests = data.requests || [];
+            myRequests = data.requests || [];
 
-            hintEl.textContent = `${requests.length} request${requests.length === 1 ? '' : 's'}`;
+            hintEl.textContent = `${myRequests.length} request${myRequests.length === 1 ? '' : 's'}`;
 
-            if (requests.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No time off requests yet</td></tr>';
+            if (myRequests.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No time off requests yet</td></tr>';
                 return;
             }
 
             tableBody.innerHTML = '';
-            requests.forEach(r => {
-                const tr = document.createElement('tr');
+            myRequests.forEach(r => {
                 const needsAction = r.status === 'changes_requested';
+                const tr = document.createElement('tr');
+                if (needsAction) tr.style.background = 'var(--surface-hover, #f1f4f3)';
                 tr.innerHTML = `
                     <td><span class="client-name">${formatDateRange(r.days)}</span></td>
                     <td><span class="category-pill ${r.category}">${categoryLabel(r.category)}</span></td>
                     <td class="num"><span class="hours-value">${r.total_hours}h</span></td>
-                    <td>${r.reason ? r.reason : '<span class="text-muted">-</span>'}</td>
                     <td>
                         <span class="eng-status-pill ${statusPillClass(r.status)}">
                             <span class="dot"></span>${statusLabel(r.status)}
                         </span>
-                        ${r.reviewer_comment ? `<div class="${needsAction ? '' : 'text-muted'}" style="font-size:11px; margin-top:3px; ${needsAction ? 'color:#285a80; font-weight:600;' : ''}"><i class="bi bi-chat-left-text"></i> ${r.reviewer_comment}</div>` : ''}
+                        ${needsAction ? `<div style="font-size:11px; margin-top:3px; color:#285a80; font-weight:600;"><i class="bi bi-arrow-repeat"></i> Action needed</div>` : ''}
                     </td>
                     <td><span class="client-onboarded-text">${formatDate(r.created)}</span></td>
                     <td class="num">
                         <div class="client-row-actions">
-                            ${needsAction ? `
-                                <button type="button" class="client-icon-btn edit" title="Edit &amp; Resubmit" data-edit-group="${r.request_group}">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                            ` : ''}
-                            ${r.status === 'pending' || needsAction ? `
-                                <button type="button" class="timeoff-cancel-btn" title="Cancel request" data-request-group="${r.request_group}">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            ` : ''}
+                            <button type="button" class="client-icon-btn" title="View" data-view-group="${r.request_group}">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
 
-            tableBody.querySelectorAll('.timeoff-cancel-btn').forEach(btn => {
-                btn.addEventListener('click', () => cancelRequest(btn.dataset.requestGroup));
-            });
-            tableBody.querySelectorAll('[data-edit-group]').forEach(btn => {
+            tableBody.querySelectorAll('[data-view-group]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const r = requests.find(req => req.request_group === btn.dataset.editGroup);
-                    if (r) openEditRequestModal(r);
+                    const r = myRequests.find(req => req.request_group === btn.dataset.viewGroup);
+                    if (r) openViewModal(r);
                 });
             });
         } catch (err) {
             console.error('Failed to load time off requests', err);
-            tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Could not load requests</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Could not load requests</td></tr>';
         }
     }
 
-    function cancelRequest(requestGroup) {
+    function cancelRequest(requestGroup, onSuccess) {
         const run = async () => {
             try {
                 const res = await fetch('delete_time_off_request.php', {
@@ -168,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await res.json();
                 if (data.success) {
+                    if (onSuccess) onSuccess();
                     loadMyRequests();
                 } else {
                     notify('error', 'Could not cancel request', data.error || 'Please try again.');

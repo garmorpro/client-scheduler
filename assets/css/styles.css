@@ -2207,6 +2207,32 @@ body.dark-mode .rto-btn-changes { background: #1a2540; color: #7fa8e0; }
 body.dark-mode .rto-btn-changes:hover { background: #223058; }
 body.dark-mode .rto-btn-deny:hover { background: #48281f; }
 
+/* ========= VIEW MY TIME OFF MODAL ========= */
+#viewMyTimeOffModal .eng-edit-body { padding: 16px 20px; }
+#viewMyTimeOffModal .eng-edit-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; flex-wrap: wrap; }
+body.dark-mode #viewMyTimeOffModal .eng-edit-footer { border-color: #29302e; }
+#viewMyTimeOffModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer; margin-right: auto;
+}
+#viewMyTimeOffModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #viewMyTimeOffModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #viewMyTimeOffModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#viewMyTimeOffModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#viewMyTimeOffModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #viewMyTimeOffModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+.timeoff-cancel-inline-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 9px; border: none; background: #fbe8e6; color: #c0392b;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.timeoff-cancel-inline-btn:hover { background: #f6d5d1; }
+body.dark-mode .timeoff-cancel-inline-btn { background: #3a2320; color: #e0685a; }
+body.dark-mode .timeoff-cancel-inline-btn:hover { background: #48281f; }
+
 /* ========= PROFILE DETAILS MODAL (tabbed, shares .ud-* with User Details) ========= */
 #viewProfileModal .pd-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
 body.dark-mode #viewProfileModal .pd-footer { border-color: #29302e; }

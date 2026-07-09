@@ -45,14 +45,13 @@ if (!isset($_SESSION['user_id'])) {
                         <th>Dates</th>
                         <th>Category</th>
                         <th class="num">Hours</th>
-                        <th>Reason</th>
                         <th>Status</th>
                         <th>Submitted</th>
                         <th class="num">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="myRequestsTableBody">
-                    <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                    <tr><td colspan="6" class="text-center">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -101,6 +100,63 @@ if (!isset($_SESSION['user_id'])) {
           </div>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewMyTimeOffModal" tabindex="-1" aria-labelledby="vmtoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="ud-hero" style="padding-bottom: 18px;">
+          <div class="ud-header" style="margin-bottom: 0;">
+            <div class="ud-avatar" id="vmtoIcon"><i class="bi bi-airplane"></i></div>
+            <div>
+              <div class="ud-name" id="vmtoTitle">Time Off Request</div>
+              <div class="ud-pills" style="margin-top: 4px;">
+                <span class="category-pill" id="vmtoCategory"></span>
+                <span class="eng-status-pill" id="vmtoStatus"><span class="dot"></span><span id="vmtoStatusText"></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="eng-edit-body">
+          <div class="stat-row" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="stat-card">
+              <div class="stat-title">Total Hours</div>
+              <div class="stat-value" id="vmtoTotalHours"></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Submitted</div>
+              <div class="stat-value" id="vmtoSubmitted" style="font-size:13px;"></div>
+            </div>
+          </div>
+
+          <div class="detail-section-title">Days</div>
+          <div class="eng-vm-emp-list" id="vmtoDaysList" style="margin-bottom:16px;"></div>
+
+          <div class="detail-section-title">Your Reason</div>
+          <p id="vmtoReason" style="font-size:13px; margin-bottom:16px;"></p>
+
+          <div id="vmtoCommentWrap" style="display:none;">
+            <div class="detail-section-title">Reviewer Comment</div>
+            <p id="vmtoComment" style="font-size:13px;"></p>
+          </div>
+        </div>
+
+        <div class="eng-edit-footer" id="vmtoFooter">
+          <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="timeoff-cancel-inline-btn" id="vmtoCancelBtn">
+            <i class="bi bi-x-lg"></i> Cancel Request
+          </button>
+          <button type="button" class="eng-edit-btn-save" id="vmtoEditBtn">
+            <i class="bi bi-pencil-square"></i> Edit &amp; Resubmit
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
