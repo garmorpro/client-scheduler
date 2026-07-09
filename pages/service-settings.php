@@ -11,33 +11,33 @@ if (!isset($_SESSION['user_id'])) {
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 
-// if (!$isAdmin && !$isManager) {
-//     header("Location: my-schedule.php");
-//     exit();
-// }
+if (!$isAdmin && !$isManager) {
+    header("Location: my-schedule.php");
+    exit();
+}
 
 
 
 // Get total users
-$totalUsersQuery = "SELECT COUNT(*) AS total FROM ms_users";
+$totalUsersQuery = "SELECT COUNT(*) AS total FROM users";
 $totalUsersResult = mysqli_query($conn, $totalUsersQuery);
 $totalUsersRow = mysqli_fetch_assoc($totalUsersResult);
 $totalUsers = $totalUsersRow['total'];
 
 // Get users added in last 30 days
-$newUsersQuery = "SELECT COUNT(*) AS recent FROM ms_users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+$newUsersQuery = "SELECT COUNT(*) AS recent FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 $newUsersResult = mysqli_query($conn, $newUsersQuery);
 $newUsersRow = mysqli_fetch_assoc($newUsersResult);
 $newUsers = $newUsersRow['recent'];
 
 // Get total active users
-$totalActiveUsersQuery = "SELECT COUNT(*) AS total FROM ms_users WHERE status = 'active'";
+$totalActiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'active'";
 $totalActiveUsersResult = mysqli_query($conn, $totalActiveUsersQuery);
 $totalActiveUsersRow = mysqli_fetch_assoc($totalActiveUsersResult);
 $totalActiveUsers = $totalActiveUsersRow['total'];
 
 // Get total inactive users
-$totalInactiveUsersQuery = "SELECT COUNT(*) AS total FROM ms_users WHERE status = 'inactive'";
+$totalInactiveUsersQuery = "SELECT COUNT(*) AS total FROM users WHERE status = 'inactive'";
 $totalInactiveUsersResult = mysqli_query($conn, $totalInactiveUsersQuery);
 $totalInactiveUsersRow = mysqli_fetch_assoc($totalInactiveUsersResult);
 $totalInactiveUsers = $totalInactiveUsersRow['total'];
@@ -129,7 +129,7 @@ $sql = "
     SELECT t.timeoff_id, t.user_id, t.week_start, t.assigned_hours, t.timeoff_note, t.created, t.last_updated,
            u.full_name, u.email
     FROM time_off t
-    INNER JOIN ms_users u ON t.user_id = u.user_id
+    INNER JOIN users u ON t.user_id = u.user_id
     WHERE t.is_global_timeoff = 0
     ORDER BY t.week_start DESC
 ";
@@ -320,23 +320,76 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
         <!-- end employee management -->
 
-        
+        <?php if ($isAdmin): ?>
+        <!-- system settings -->
+        <div id="system-settings" class="mt-5">
+            <div class="titles mb-3">
+                <p class="text-black mb-0"><strong>System Settings</strong></p>
+                <p class="mb-0">Configure backups, security policy, and email notifications</p>
+            </div>
 
-        
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6><i class="bi bi-hdd-stack me-2"></i>Backup Configuration</h6>
+                            <p class="text-muted" style="font-size: 13px;">Automated backup schedule and local storage location.</p>
+                        </div>
+                        <a href="#" id="configureBackupBtn" class="badge text-white p-2 text-decoration-none fw-medium align-self-start" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                            <i class="bi bi-gear me-2"></i>Configure
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6><i class="bi bi-shield-lock me-2"></i>Security Policy</h6>
+                            <p class="text-muted" style="font-size: 13px;">Password rules, login attempts, session timeout, 2FA.</p>
+                        </div>
+                        <a href="#" id="configureSecurityBtn" class="badge text-white p-2 text-decoration-none fw-medium align-self-start" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                            <i class="bi bi-gear me-2"></i>Configure
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6><i class="bi bi-envelope me-2"></i>Email Notifications</h6>
+                            <p class="text-muted" style="font-size: 13px;">SMTP configuration and notification frequency.</p>
+                        </div>
+                        <a href="#" id="configureEmailBtn" class="badge text-white p-2 text-decoration-none fw-medium align-self-start" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                            <i class="bi bi-gear me-2"></i>Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end system settings -->
+        <?php endif; ?>
 
     </div> <!-- end container -->
 </div> <!-- end flex-grow -->
 
 
 <?php include_once '../includes/modals/viewUserModal.php'; ?>
+<?php if ($isAdmin): ?>
+<?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
+<?php include_once '../includes/modals/security_policy_modal.php'; ?>
+<?php include_once '../includes/modals/email_configuration_modal.php'; ?>
+<?php endif; ?>
 
 
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/buld_delete_users.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+<?php if ($isAdmin): ?>
+<script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

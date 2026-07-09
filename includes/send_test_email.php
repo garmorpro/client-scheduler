@@ -3,6 +3,7 @@
 ob_start(); 
 
 require_once __DIR__ . '/session_init.php';
+require_once __DIR__ . '/csrf.php';
 require_once 'db.php';       // Adjust path if needed
 require '../vendor/autoload.php';  // PHPMailer
 
@@ -21,6 +22,12 @@ $role = strtolower($_SESSION['user_role'] ?? '');
 if (!in_array($role, ['admin','manager'])) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit();
+}
+
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Invalid CSRF token']);
     exit();
 }
 
