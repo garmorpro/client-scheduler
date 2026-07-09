@@ -1785,15 +1785,25 @@ body.dark-mode #editEngagementModal .eng-edit-title { color: #edf1ee; }
 }
 body.dark-mode #editEngagementModal .eng-edit-field label { color: #6e7975; }
 #editEngagementModal .eng-edit-input {
-    width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
     background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
 }
-#editEngagementModal .eng-edit-input:focus { border-color: var(--primary-color); background: #ffffff; }
+select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7570' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 14px;
+    padding-right: 34px;
+}
+#editEngagementModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
 #editEngagementModal .eng-edit-input:disabled { color: #6b7570; cursor: not-allowed; }
-#editEngagementModal textarea.eng-edit-input { resize: vertical; min-height: 44px; }
-body.dark-mode #editEngagementModal .eng-edit-input { background: #232a2c; border-color: #29302e; color: #edf1ee; }
-body.dark-mode #editEngagementModal .eng-edit-input:focus { border-color: var(--secondary-color); background: #1b2022; }
+#editEngagementModal textarea.eng-edit-input { height: auto; resize: vertical; min-height: 44px; }
+body.dark-mode #editEngagementModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #editEngagementModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
 body.dark-mode #editEngagementModal .eng-edit-input:disabled { color: #9aa8a2; }
+body.dark-mode select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
 
 #editEngagementModal .eng-edit-footer {
     display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
