@@ -14,7 +14,7 @@ $canManagePolicies = user_has_permission($conn, 'access_system_settings');
 
 $policies = [];
 $result = $conn->query("
-    SELECT p.policy_id, p.title, p.doc_type, p.effective_date, p.memo_from, p.updated_at, u.full_name AS updated_by_name
+    SELECT p.policy_id, p.title, p.doc_type, p.source_type, p.effective_date, p.memo_from, p.updated_at, u.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users u ON p.updated_by = u.user_id
     ORDER BY p.title ASC
@@ -28,6 +28,7 @@ if ($result) {
             'policy_id' => (int)$row['policy_id'],
             'title' => $row['title'],
             'doc_type' => $row['doc_type'],
+            'source_type' => $row['source_type'],
             'effective_date' => $row['effective_date'],
             'memo_from' => $row['memo_from'],
             'updated_at' => $row['updated_at'],
@@ -76,13 +77,15 @@ if ($result) {
     <?php else: ?>
         <div class="indexWrap">
             <?php foreach ($policies as $policy): ?>
-                <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="indexRow <?php echo $policy['doc_type']; ?>">
+                <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="indexRow <?php echo $policy['source_type'] === 'pdf' ? 'pdf' : $policy['doc_type']; ?>">
                     <div class="indexNum"><?php echo str_pad($policy['num'], 2, '0', STR_PAD_LEFT); ?></div>
-                    <div class="indexIcon"><i class="bi <?php echo $policy['doc_type'] === 'memo' ? 'bi-file-earmark-text' : 'bi-journal-text'; ?>"></i></div>
+                    <div class="indexIcon"><i class="bi <?php echo $policy['source_type'] === 'pdf' ? 'bi-file-earmark-pdf' : ($policy['doc_type'] === 'memo' ? 'bi-file-earmark-text' : 'bi-journal-text'); ?>"></i></div>
                     <div class="indexMain">
                         <div class="indexTitle"><?php echo htmlspecialchars($policy['title']); ?></div>
                         <div class="indexSub">
-                            <?php if ($policy['doc_type'] === 'memo'): ?>
+                            <?php if ($policy['source_type'] === 'pdf'): ?>
+                                Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
+                            <?php elseif ($policy['doc_type'] === 'memo'): ?>
                                 <?php if (!empty($policy['memo_from'])): ?>From <?php echo htmlspecialchars($policy['memo_from']); ?> · <?php endif; ?>Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
                             <?php elseif (!empty($policy['effective_date'])): ?>
                                 Effective <?php echo date('M j, Y', strtotime($policy['effective_date'])); ?>
@@ -91,7 +94,7 @@ if ($result) {
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="indexType"><?php echo $policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'; ?></div>
+                    <div class="indexType"><?php echo $policy['source_type'] === 'pdf' ? 'PDF' : ($policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'); ?></div>
                     <div class="indexArrow"><i class="bi bi-chevron-right"></i></div>
                 </a>
             <?php endforeach; ?>

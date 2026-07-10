@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!modalEl) return;
   const modal = new bootstrap.Modal(modalEl);
   const form = document.getElementById('policyForm');
+  const sourceToggle = document.getElementById('policySourceToggle');
+  const sourceTypeInput = document.getElementById('policy_source_type');
+  const editorFields = document.getElementById('policyEditorFields');
+  const pdfFields = document.getElementById('policyPdfFields');
+  const docTypeField = document.getElementById('policy_doc_type_field');
   const docTypeSelect = document.getElementById('policy_doc_type');
   const titleInput = document.getElementById('policy_title');
   const titleLabel = document.getElementById('policy_title_label');
@@ -11,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const memoFieldsRow = document.getElementById('policy_memo_fields');
   const memoToInput = document.getElementById('policy_memo_to');
   const memoFromInput = document.getElementById('policy_memo_from');
+  const pdfFileInput = document.getElementById('policy_pdf_file');
+  const pdfCurrentWrap = document.getElementById('policyPdfCurrent');
+  const pdfCurrentName = document.getElementById('policyPdfCurrentName');
   const idInput = document.getElementById('policy_id');
   const modalTitleEl = document.getElementById('policyModalTitle');
   const saveBtn = document.getElementById('policySaveBtn');
@@ -26,6 +34,31 @@ document.addEventListener('DOMContentLoaded', () => {
         ['clean']
       ]
     }
+  });
+
+  function applySourceType(type) {
+    sourceTypeInput.value = type;
+    sourceToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.source === type));
+
+    if (type === 'pdf') {
+      editorFields.style.display = 'none';
+      pdfFields.style.display = 'block';
+      docTypeField.style.display = 'none';
+      effectiveDateField.style.display = 'none';
+      memoFieldsRow.style.display = 'none';
+      titleLabel.textContent = 'Title';
+    } else {
+      editorFields.style.display = '';
+      pdfFields.style.display = 'none';
+      docTypeField.style.display = '';
+      applyDocType(docTypeSelect.value);
+    }
+  }
+
+  sourceToggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    applySourceType(btn.dataset.source);
   });
 
   function applyDocType(type) {
@@ -48,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     quill.setText('');
     idInput.value = '';
+    pdfCurrentWrap.style.display = 'none';
+    pdfFileInput.required = false;
 
     if (mode === 'edit') {
       modalTitleEl.textContent = 'Edit Document';
@@ -57,13 +92,21 @@ document.addEventListener('DOMContentLoaded', () => {
       docTypeSelect.value = data.docType || 'policy';
       memoToInput.value = data.memoTo || '';
       memoFromInput.value = data.memoFrom || '';
-      quill.clipboard.dangerouslyPasteHTML(data.content || '');
+
+      if (data.sourceType === 'pdf') {
+        pdfCurrentWrap.style.display = 'flex';
+        pdfCurrentName.textContent = data.pdfOriginalName || 'Current file';
+      } else {
+        quill.clipboard.dangerouslyPasteHTML(data.content || '');
+      }
+
+      applySourceType(data.sourceType || 'editor');
     } else {
       modalTitleEl.textContent = 'New Document';
       docTypeSelect.value = 'policy';
+      applySourceType('editor');
     }
 
-    applyDocType(docTypeSelect.value);
     modal.show();
   }
 
@@ -87,6 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         docType: editBtn.dataset.policyDocType,
         memoTo: editBtn.dataset.policyMemoTo,
         memoFrom: editBtn.dataset.policyMemoFrom,
+        sourceType: editBtn.dataset.policySourceType,
+        pdfOriginalName: editBtn.dataset.policyPdfName,
         content: seedEl ? seedEl.innerHTML : ''
       });
     });
@@ -104,10 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     const title = titleInput.value.trim();
-    const content = quill.root.innerHTML;
-    const isEmpty = quill.getText().trim().length === 0;
-    if (!title || isEmpty) {
-      notify('warning', 'Missing information', 'Please add a title/subject and some content.');
+    const isPdf = sourceTypeInput.value === 'pdf';
+    const isCreate = !idInput.value;
+
+    if (!title) {
+      notify('warning', 'Missing information', 'Please add a title.');
+      return;
+    }
+    if (isPdf) {
+      if (isCreate && !pdfFileInput.files.length) {
+        notify('warning', 'Missing file', 'Please choose a PDF to upload.');
+        return;
+      }
+    } else if (quill.getText().trim().length === 0) {
+      notify('warning', 'Missing information', 'Please add some content.');
       return;
     }
 
@@ -116,19 +171,24 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.textContent = 'Saving...';
 
     try {
-      const res = await fetch('save_policy.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          policy_id: idInput.value || null,
-          title,
-          doc_type: docTypeSelect.value,
-          effective_date: effectiveDateInput.value || null,
-          memo_to: memoToInput.value.trim() || null,
-          memo_from: memoFromInput.value.trim() || null,
-          content
-        })
-      });
+      const formData = new FormData();
+      formData.append('policy_id', idInput.value || '');
+      formData.append('title', title);
+      formData.append('source_type', sourceTypeInput.value);
+
+      if (isPdf) {
+        if (pdfFileInput.files.length) {
+          formData.append('pdf_file', pdfFileInput.files[0]);
+        }
+      } else {
+        formData.append('doc_type', docTypeSelect.value);
+        formData.append('effective_date', effectiveDateInput.value || '');
+        formData.append('memo_to', memoToInput.value.trim());
+        formData.append('memo_from', memoFromInput.value.trim());
+        formData.append('content', quill.root.innerHTML);
+      }
+
+      const res = await fetch('save_policy.php', { method: 'POST', body: formData });
       const data = await res.json().catch(() => null);
 
       if (!res.ok || !data || !data.success) {

@@ -19,7 +19,8 @@ if (!$policyId) {
 }
 
 $stmt = $conn->prepare("
-    SELECT p.policy_id, p.title, p.doc_type, p.effective_date, p.memo_to, p.memo_from, p.content, p.created_at, p.updated_at,
+    SELECT p.policy_id, p.title, p.doc_type, p.source_type, p.effective_date, p.memo_to, p.memo_from,
+           p.content, p.pdf_path, p.pdf_original_name, p.created_at, p.updated_at,
            cu.full_name AS created_by_name, uu.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users cu ON p.created_by = cu.user_id
@@ -35,6 +36,9 @@ if (!$policy) {
     header("Location: policies.php");
     exit();
 }
+
+$isPdf = $policy['source_type'] === 'pdf';
+$pdfUrl = $isPdf ? '../assets/uploads/policies/' . rawurlencode($policy['pdf_path']) : null;
 ?>
 <!DOCTYPE html>
 <html>
@@ -50,6 +54,7 @@ if (!$policy) {
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 
+<?php if (!$isPdf): ?>
 <div class="policy-print-only">
     <div class="policy-letterhead">
         <div class="policy-letterhead-info">
@@ -81,58 +86,77 @@ if (!$policy) {
 
     <div class="policy-print-content"><?php echo $policy['content']; ?></div>
 </div>
+<?php endif; ?>
 
 <div class="policy-screen-only d-flex w-100">
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <div class="policy-doc-card">
-        <div class="policy-banner">
-            <a href="policies.php" class="policy-banner-back"><i class="bi bi-arrow-left"></i> All Policies</a>
+    <div class="policy-doc-card <?php echo $isPdf ? 'is-pdf' : ''; ?>">
+        <div class="policy-head">
+            <a href="policies.php" class="policy-head-back"><i class="bi bi-arrow-left"></i> All Policies</a>
 
-            <div class="policy-banner-actions">
-                <button type="button" id="downloadPolicyPdfBtn" class="policy-banner-btn">
-                    <i class="bi bi-download me-2"></i>Download PDF
-                </button>
-                <?php if ($canManagePolicies): ?>
-                <button type="button" id="editPolicyBtn" class="policy-banner-btn"
-                    data-policy-id="<?php echo $policy['policy_id']; ?>"
-                    data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
-                    data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>"
-                    data-policy-doc-type="<?php echo htmlspecialchars($policy['doc_type']); ?>"
-                    data-policy-memo-to="<?php echo htmlspecialchars($policy['memo_to'] ?? ''); ?>"
-                    data-policy-memo-from="<?php echo htmlspecialchars($policy['memo_from'] ?? ''); ?>">
-                    <i class="bi bi-pencil-square me-2"></i>Edit
-                </button>
-                <button type="button" id="deletePolicyBtn" class="policy-banner-btn danger"
-                    data-policy-id="<?php echo $policy['policy_id']; ?>">
-                    <i class="bi bi-trash me-2"></i>Delete
-                </button>
-                <?php endif; ?>
-            </div>
+            <div class="policy-head-top">
+                <div>
+                    <span class="policy-head-chip"><?php echo $isPdf ? 'PDF' : ($policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'); ?></span>
+                    <h1 class="policy-head-title"><?php echo htmlspecialchars($policy['title']); ?></h1>
 
-            <span class="policy-banner-chip"><?php echo $policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'; ?></span>
-            <h1 class="policy-banner-title"><?php echo htmlspecialchars($policy['title']); ?></h1>
-
-            <?php if ($policy['doc_type'] === 'memo'): ?>
-                <div class="policy-banner-meta">
-                    To: <strong><?php echo htmlspecialchars($policy['memo_to'] ?: 'AARC-360 Employees'); ?></strong>
-                    &nbsp;·&nbsp; From: <strong><?php echo htmlspecialchars($policy['memo_from'] ?: '-'); ?></strong>
+                    <?php if (!$isPdf && $policy['doc_type'] === 'memo'): ?>
+                        <div class="policy-head-meta">
+                            To: <strong><?php echo htmlspecialchars($policy['memo_to'] ?: 'AARC-360 Employees'); ?></strong>
+                            &nbsp;·&nbsp; From: <strong><?php echo htmlspecialchars($policy['memo_from'] ?: '-'); ?></strong>
+                        </div>
+                    <?php elseif (!$isPdf && !empty($policy['effective_date'])): ?>
+                        <div class="policy-head-meta">Effective <strong><?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></strong></div>
+                    <?php endif; ?>
+                    <div class="policy-head-meta muted">
+                        Last updated <?php echo date('F j, Y', strtotime($policy['updated_at'])); ?>
+                        <?php if (!empty($policy['updated_by_name'])): ?>
+                            by <?php echo htmlspecialchars($policy['updated_by_name']); ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            <?php elseif (!empty($policy['effective_date'])): ?>
-                <div class="policy-banner-meta">Effective <strong><?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></strong></div>
-            <?php endif; ?>
-            <div class="policy-banner-meta">
-                Last updated <?php echo date('F j, Y', strtotime($policy['updated_at'])); ?>
-                <?php if (!empty($policy['updated_by_name'])): ?>
-                    by <?php echo htmlspecialchars($policy['updated_by_name']); ?>
-                <?php endif; ?>
+
+                <div class="policy-head-actions">
+                    <?php if ($isPdf): ?>
+                        <a href="<?php echo $pdfUrl; ?>" download="<?php echo htmlspecialchars($policy['pdf_original_name']); ?>" class="policy-head-btn">
+                            <i class="bi bi-download me-2"></i>Download PDF
+                        </a>
+                    <?php else: ?>
+                        <button type="button" id="downloadPolicyPdfBtn" class="policy-head-btn">
+                            <i class="bi bi-download me-2"></i>Download PDF
+                        </button>
+                    <?php endif; ?>
+                    <?php if ($canManagePolicies): ?>
+                    <button type="button" id="editPolicyBtn" class="policy-head-btn"
+                        data-policy-id="<?php echo $policy['policy_id']; ?>"
+                        data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
+                        data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>"
+                        data-policy-doc-type="<?php echo htmlspecialchars($policy['doc_type']); ?>"
+                        data-policy-memo-to="<?php echo htmlspecialchars($policy['memo_to'] ?? ''); ?>"
+                        data-policy-memo-from="<?php echo htmlspecialchars($policy['memo_from'] ?? ''); ?>"
+                        data-policy-source-type="<?php echo htmlspecialchars($policy['source_type']); ?>"
+                        data-policy-pdf-name="<?php echo htmlspecialchars($policy['pdf_original_name'] ?? ''); ?>">
+                        <i class="bi bi-pencil-square me-2"></i>Edit
+                    </button>
+                    <button type="button" id="deletePolicyBtn" class="policy-head-btn danger"
+                        data-policy-id="<?php echo $policy['policy_id']; ?>">
+                        <i class="bi bi-trash me-2"></i>Delete
+                    </button>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
-        <div class="policy-detail-body">
-            <?php echo $policy['content']; ?>
-        </div>
+        <?php if ($isPdf): ?>
+            <div class="policy-pdf-viewer">
+                <iframe src="<?php echo $pdfUrl; ?>" title="<?php echo htmlspecialchars($policy['title']); ?>"></iframe>
+            </div>
+        <?php else: ?>
+            <div class="policy-detail-body">
+                <?php echo $policy['content']; ?>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 </div>

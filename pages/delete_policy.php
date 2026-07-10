@@ -31,9 +31,21 @@ if (!$policyId) {
     exit;
 }
 
+$pdfStmt = $conn->prepare("SELECT pdf_path FROM policies WHERE policy_id = ?");
+$pdfStmt->bind_param('i', $policyId);
+$pdfStmt->execute();
+$pdfRow = $pdfStmt->get_result()->fetch_assoc();
+$pdfStmt->close();
+
 $stmt = $conn->prepare("DELETE FROM policies WHERE policy_id = ?");
 $stmt->bind_param('i', $policyId);
 if ($stmt->execute()) {
+    if (!empty($pdfRow['pdf_path'])) {
+        $pdfFile = __DIR__ . '/../assets/uploads/policies/' . $pdfRow['pdf_path'];
+        if (file_exists($pdfFile)) {
+            unlink($pdfFile);
+        }
+    }
     echo json_encode(['success' => true]);
 } else {
     http_response_code(500);

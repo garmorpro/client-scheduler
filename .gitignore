@@ -12,3 +12,7 @@ Thumbs.db
 # PHPStorm / VSCode
 .idea/
 .vscode/
+
+# User-uploaded policy PDFs (not source-controlled)
+assets/uploads/policies/*
+!assets/uploads/policies/.gitkeep
