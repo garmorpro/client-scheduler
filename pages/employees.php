@@ -69,14 +69,14 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
     <h3 class="mb-0">Employees</h3>
     <p class="text-muted mb-4">Manage employee accounts, roles, and permissions</p>
 
-    <div class="emp-stat-row">
-        <div class="eng-stat-card">
+    <div class="emp-stat-row" id="empStatRow">
+        <div class="eng-stat-card role-filter-tile active" data-role-filter="all">
             <div class="eng-stat-icon"><i class="bi bi-people-fill"></i></div>
             <div class="eng-stat-title">Total Employees</div>
             <div class="eng-stat-value"><?php echo $totalEmployees; ?></div>
         </div>
         <?php foreach ($roleOrder as $roleKey): ?>
-        <div class="eng-stat-card">
+        <div class="eng-stat-card role-filter-tile" data-role-filter="<?php echo $roleKey; ?>">
             <div class="eng-stat-icon"><i class="bi <?php echo $roleIcons[$roleKey]; ?>"></i></div>
             <div class="eng-stat-title"><?php echo htmlspecialchars(role_label($roleKey)); ?></div>
             <div class="eng-stat-value"><?php echo $roleCounts[$roleKey]; ?></div>
@@ -129,7 +129,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                     <tbody>
                     <?php if (mysqli_num_rows($userresult) > 0): ?>
                         <?php while ($userrow = mysqli_fetch_assoc($userresult)): ?>
-                            <tr>
+                            <tr data-role="<?php echo strtolower($userrow['role']); ?>">
                                 <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td>
                                 <td>
                                     <span class="emp-name-wrap">

@@ -111,21 +111,37 @@ document.addEventListener('DOMContentLoaded', () => {
       paginationContainer.appendChild(paginationControls);
     }
 
-    // Optional: filter by search input - comma-separated terms match with OR,
-    // same convention as the other search bars in the app.
+    // Search (comma-separated terms match with OR) combined with the role
+    // filter tiles above the table - both narrow the same row set.
     const searchInput = document.getElementById('userSearch');
-    if (searchInput) {
-      searchInput.addEventListener('input', function () {
-        const terms = this.value.trim().toLowerCase().split(',').map(t => t.trim()).filter(t => t.length > 0);
-        filteredRows = terms.length
-          ? allRows.filter(row => {
-              const text = row.innerText.toLowerCase();
-              return terms.some(term => text.includes(term));
-            })
-          : [...allRows];
-        renderTablePage(1);
+    let activeRoleFilter = 'all';
+
+    function applyFilters() {
+      const terms = searchInput
+        ? searchInput.value.trim().toLowerCase().split(',').map(t => t.trim()).filter(t => t.length > 0)
+        : [];
+
+      filteredRows = allRows.filter(row => {
+        const matchesRole = activeRoleFilter === 'all' || row.dataset.role === activeRoleFilter;
+        const text = row.innerText.toLowerCase();
+        const matchesSearch = terms.length === 0 || terms.some(term => text.includes(term));
+        return matchesRole && matchesSearch;
       });
+      renderTablePage(1);
     }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
+
+    document.querySelectorAll('.role-filter-tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        activeRoleFilter = tile.dataset.roleFilter;
+        document.querySelectorAll('.role-filter-tile').forEach(t => t.classList.remove('active'));
+        tile.classList.add('active');
+        applyFilters();
+      });
+    });
 
     let resizeTimer;
     window.addEventListener('resize', () => {
