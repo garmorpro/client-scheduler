@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function formatDate(dateString) {
     if (!dateString) return '-';
-    const d = new Date(dateString);
+    const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString);
     if (isNaN(d)) return '-';
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
   }
