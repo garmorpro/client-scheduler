@@ -199,11 +199,13 @@ if ($canApproveTimeOff) {
 
 <?php if (isset($_GET['welcome'])): ?>
 <div class="app-welcome-overlay show" id="appWelcomeOverlay">
+    <div class="app-welcome-avatar"><?php echo htmlspecialchars(avatar_initials($_SESSION['full_name'] ?? '')); ?></div>
     <div class="app-welcome-text">Welcome back, <?php
         $welcomeFirst = $_SESSION['first_name'] ?? '';
         $welcomeLastInitial = !empty($_SESSION['last_name']) ? strtoupper($_SESSION['last_name'][0]) . '.' : '';
         echo htmlspecialchars(trim($welcomeFirst . ' ' . $welcomeLastInitial));
     ?></div>
+    <div class="app-welcome-spinner"></div>
 </div>
 <script>
     (function () {
