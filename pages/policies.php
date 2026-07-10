@@ -14,22 +14,22 @@ $canManagePolicies = user_has_permission($conn, 'access_system_settings');
 
 $policies = [];
 $result = $conn->query("
-    SELECT p.policy_id, p.title, p.doc_type, p.content, p.updated_at, u.full_name AS updated_by_name
+    SELECT p.policy_id, p.title, p.doc_type, p.effective_date, p.memo_from, p.updated_at, u.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users u ON p.updated_by = u.user_id
     ORDER BY p.title ASC
 ");
 if ($result) {
+    $i = 0;
     while ($row = $result->fetch_assoc()) {
-        $snippet = trim(strip_tags($row['content']));
-        if (strlen($snippet) > 140) {
-            $snippet = substr($snippet, 0, 140) . '…';
-        }
+        $i++;
         $policies[] = [
+            'num' => $i,
             'policy_id' => (int)$row['policy_id'],
             'title' => $row['title'],
             'doc_type' => $row['doc_type'],
-            'snippet' => $snippet,
+            'effective_date' => $row['effective_date'],
+            'memo_from' => $row['memo_from'],
             'updated_at' => $row['updated_at'],
             'updated_by_name' => $row['updated_by_name'],
         ];
@@ -74,21 +74,25 @@ if ($result) {
             <div><?php echo $canManagePolicies ? 'Click "New Policy" to publish the first one.' : 'Check back later.'; ?></div>
         </div>
     <?php else: ?>
-        <div class="policy-grid">
+        <div class="indexWrap">
             <?php foreach ($policies as $policy): ?>
-                <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="policy-card">
-                    <div class="policy-card-icon"><i class="bi <?php echo $policy['doc_type'] === 'memo' ? 'bi-file-earmark-text' : 'bi-journal-text'; ?>"></i></div>
-                    <?php if ($policy['doc_type'] === 'memo'): ?>
-                        <span class="policy-memo-tag">Memo</span>
-                    <?php endif; ?>
-                    <div class="policy-card-title"><?php echo htmlspecialchars($policy['title']); ?></div>
-                    <div class="policy-card-snippet"><?php echo htmlspecialchars($policy['snippet']); ?></div>
-                    <div class="policy-card-meta">
-                        Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
-                        <?php if (!empty($policy['updated_by_name'])): ?>
-                            by <?php echo htmlspecialchars($policy['updated_by_name']); ?>
-                        <?php endif; ?>
+                <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="indexRow <?php echo $policy['doc_type']; ?>">
+                    <div class="indexNum"><?php echo str_pad($policy['num'], 2, '0', STR_PAD_LEFT); ?></div>
+                    <div class="indexIcon"><i class="bi <?php echo $policy['doc_type'] === 'memo' ? 'bi-file-earmark-text' : 'bi-journal-text'; ?>"></i></div>
+                    <div class="indexMain">
+                        <div class="indexTitle"><?php echo htmlspecialchars($policy['title']); ?></div>
+                        <div class="indexSub">
+                            <?php if ($policy['doc_type'] === 'memo'): ?>
+                                <?php if (!empty($policy['memo_from'])): ?>From <?php echo htmlspecialchars($policy['memo_from']); ?> · <?php endif; ?>Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
+                            <?php elseif (!empty($policy['effective_date'])): ?>
+                                Effective <?php echo date('M j, Y', strtotime($policy['effective_date'])); ?>
+                            <?php else: ?>
+                                Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
+                    <div class="indexType"><?php echo $policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'; ?></div>
+                    <div class="indexArrow"><i class="bi bi-chevron-right"></i></div>
                 </a>
             <?php endforeach; ?>
         </div>

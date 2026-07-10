@@ -86,53 +86,53 @@ if (!$policy) {
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px;">
-    <a href="policies.php" class="policy-back-link"><i class="bi bi-arrow-left"></i> All Policies</a>
+    <div class="policy-doc-card">
+        <div class="policy-banner">
+            <a href="policies.php" class="policy-banner-back"><i class="bi bi-arrow-left"></i> All Policies</a>
 
-    <div class="policy-detail-head">
-        <div>
+            <div class="policy-banner-actions">
+                <button type="button" id="downloadPolicyPdfBtn" class="policy-banner-btn">
+                    <i class="bi bi-download me-2"></i>Download PDF
+                </button>
+                <?php if ($canManagePolicies): ?>
+                <button type="button" id="editPolicyBtn" class="policy-banner-btn"
+                    data-policy-id="<?php echo $policy['policy_id']; ?>"
+                    data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
+                    data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>"
+                    data-policy-doc-type="<?php echo htmlspecialchars($policy['doc_type']); ?>"
+                    data-policy-memo-to="<?php echo htmlspecialchars($policy['memo_to'] ?? ''); ?>"
+                    data-policy-memo-from="<?php echo htmlspecialchars($policy['memo_from'] ?? ''); ?>">
+                    <i class="bi bi-pencil-square me-2"></i>Edit
+                </button>
+                <button type="button" id="deletePolicyBtn" class="policy-banner-btn danger"
+                    data-policy-id="<?php echo $policy['policy_id']; ?>">
+                    <i class="bi bi-trash me-2"></i>Delete
+                </button>
+                <?php endif; ?>
+            </div>
+
+            <span class="policy-banner-chip"><?php echo $policy['doc_type'] === 'memo' ? 'Memo' : 'Policy'; ?></span>
+            <h1 class="policy-banner-title"><?php echo htmlspecialchars($policy['title']); ?></h1>
+
             <?php if ($policy['doc_type'] === 'memo'): ?>
-                <span class="policy-memo-tag">Memo</span>
-            <?php endif; ?>
-            <h3 class="mb-1"><?php echo htmlspecialchars($policy['title']); ?></h3>
-            <?php if ($policy['doc_type'] === 'memo'): ?>
-                <p class="mb-1" style="font-size: 13px;">
+                <div class="policy-banner-meta">
                     To: <strong><?php echo htmlspecialchars($policy['memo_to'] ?: 'AARC-360 Employees'); ?></strong>
                     &nbsp;·&nbsp; From: <strong><?php echo htmlspecialchars($policy['memo_from'] ?: '-'); ?></strong>
-                </p>
+                </div>
             <?php elseif (!empty($policy['effective_date'])): ?>
-                <p class="mb-1 fw-semibold" style="font-size: 13px;">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></p>
+                <div class="policy-banner-meta">Effective <strong><?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></strong></div>
             <?php endif; ?>
-            <p class="mb-0 text-muted" style="font-size: 12.5px;">
+            <div class="policy-banner-meta">
                 Last updated <?php echo date('F j, Y', strtotime($policy['updated_at'])); ?>
                 <?php if (!empty($policy['updated_by_name'])): ?>
                     by <?php echo htmlspecialchars($policy['updated_by_name']); ?>
                 <?php endif; ?>
-            </p>
+            </div>
         </div>
-        <div class="d-flex align-items-center gap-2">
-            <button type="button" id="downloadPolicyPdfBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-custom">
-                <i class="bi bi-download me-2"></i>Download PDF
-            </button>
-            <?php if ($canManagePolicies): ?>
-            <button type="button" id="editPolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-custom"
-                data-policy-id="<?php echo $policy['policy_id']; ?>"
-                data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
-                data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>"
-                data-policy-doc-type="<?php echo htmlspecialchars($policy['doc_type']); ?>"
-                data-policy-memo-to="<?php echo htmlspecialchars($policy['memo_to'] ?? ''); ?>"
-                data-policy-memo-from="<?php echo htmlspecialchars($policy['memo_from'] ?? ''); ?>">
-                <i class="bi bi-pencil-square me-2"></i>Edit
-            </button>
-            <button type="button" id="deletePolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-danger-custom"
-                data-policy-id="<?php echo $policy['policy_id']; ?>">
-                <i class="bi bi-trash me-2"></i>Delete
-            </button>
-            <?php endif; ?>
-        </div>
-    </div>
 
-    <div class="policy-detail-body">
-        <?php echo $policy['content']; ?>
+        <div class="policy-detail-body">
+            <?php echo $policy['content']; ?>
+        </div>
     </div>
 </div>
 </div>
