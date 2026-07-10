@@ -2748,7 +2748,7 @@ body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #4a7d86; }
 .ms-week-tile.selected .ms-wk-label { color: rgba(255,255,255,.72); }
 .ms-week-tile.selected .ms-wk-hours { color: #ffffff; }
 .ms-week-tile.selected .ms-wk-bar-track { background: rgba(255,255,255,.22); }
-.ms-week-tile.selected .ms-wk-bar-work { background: rgba(255,255,255,.55); }
+.ms-week-tile.selected .ms-wk-bar-work { background: var(--primary-color); }
 .ms-week-tile.selected .ms-wk-bar-off { background: var(--secondary-color); }
 .ms-week-tile.today-marker::after { content: ''; position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--secondary-color); }
 
