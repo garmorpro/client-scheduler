@@ -95,6 +95,12 @@ if ($canApproveTimeOff) {
                     Request Time Off
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="policies.php" class="sidebar-link <?= in_array($currentPage, ['policies.php', 'policy.php']) ? 'active' : '' ?>">
+                    <i class="bi bi-journal-text"></i>
+                    Policies
+                </a>
+            </li>
             <?php if ($canManageClientsEngagements): ?>
             <li class="nav-item">
                 <a href="client-management.php" class="sidebar-link <?= $currentPage == 'client-management.php' ? 'active' : '' ?>">

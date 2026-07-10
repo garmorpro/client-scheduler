@@ -1,0 +1,111 @@
+<?php
+date_default_timezone_set('America/Chicago');
+require_once '../includes/db.php';
+require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/avatar_helpers.php';
+require_once __DIR__ . '/../includes/permissions.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /");
+    exit();
+}
+
+$canManagePolicies = user_has_permission($conn, 'access_system_settings');
+
+$policies = [];
+$result = $conn->query("
+    SELECT p.policy_id, p.title, p.content, p.updated_at, u.full_name AS updated_by_name
+    FROM policies p
+    LEFT JOIN users u ON p.updated_by = u.user_id
+    ORDER BY p.title ASC
+");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $snippet = trim(strip_tags($row['content']));
+        if (strlen($snippet) > 140) {
+            $snippet = substr($snippet, 0, 140) . '…';
+        }
+        $policies[] = [
+            'policy_id' => (int)$row['policy_id'],
+            'title' => $row['title'],
+            'snippet' => $snippet,
+            'updated_at' => $row['updated_at'],
+            'updated_by_name' => $row['updated_by_name'],
+        ];
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Policies</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
+    <?php if ($canManagePolicies): ?>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <?php endif; ?>
+</head>
+<body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
+
+<?php include_once '../templates/sidebar.php'; ?>
+
+<div class="flex-grow-1 p-4" style="margin-left: 250px;">
+    <div class="header-row">
+        <div>
+            <h3 class="mb-0">Policies</h3>
+            <p class="mb-0">Company policies, procedures, and reference documents</p>
+        </div>
+        <?php if ($canManagePolicies): ?>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" id="newPolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom">
+                <i class="bi bi-plus-lg me-3"></i>New Policy
+            </a>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <?php if (empty($policies)): ?>
+        <div class="policy-empty">
+            <i class="bi bi-journal-text"></i>
+            <div class="t">No policies yet</div>
+            <div><?php echo $canManagePolicies ? 'Click "New Policy" to publish the first one.' : 'Check back later.'; ?></div>
+        </div>
+    <?php else: ?>
+        <div class="policy-grid">
+            <?php foreach ($policies as $policy): ?>
+                <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="policy-card">
+                    <div class="policy-card-icon"><i class="bi bi-journal-text"></i></div>
+                    <div class="policy-card-title"><?php echo htmlspecialchars($policy['title']); ?></div>
+                    <div class="policy-card-snippet"><?php echo htmlspecialchars($policy['snippet']); ?></div>
+                    <div class="policy-card-meta">
+                        Updated <?php echo date('M j, Y', strtotime($policy['updated_at'])); ?>
+                        <?php if (!empty($policy['updated_by_name'])): ?>
+                            by <?php echo htmlspecialchars($policy['updated_by_name']); ?>
+                        <?php endif; ?>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php if ($canManagePolicies): ?>
+<?php include_once '../includes/modals/policy_modal.php'; ?>
+<?php endif; ?>
+<?php include_once '../includes/modals/viewProfileModal.php'; ?>
+<?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<?php if ($canManagePolicies): ?>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/policy_modal.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
+<script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+</body>
+</html>
