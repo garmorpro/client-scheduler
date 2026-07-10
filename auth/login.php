@@ -222,6 +222,75 @@ require_once '../includes/auth.php';
             .login-brand { display: none; }
             .login-form-panel { padding: 40px 32px; }
         }
+
+        /* -------- Full-page sign-in loading overlay -------- */
+        .signin-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(155deg, #003f47 0%, #06555f 55%, #0b6b73 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+        }
+        .signin-overlay.show { opacity: 1; pointer-events: all; }
+        .signin-overlay-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: transform .35s ease .1s, opacity .35s ease .1s;
+        }
+        .signin-overlay.show .signin-overlay-card { transform: translateY(0); opacity: 1; }
+        .signin-overlay-logo {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px 22px;
+            box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.5);
+        }
+        .signin-overlay-logo img { width: 150px; display: block; }
+        .signin-overlay-spinner {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.22);
+            border-top-color: var(--secondary-color);
+            animation: signin-spin .7s linear infinite;
+        }
+        @keyframes signin-spin { to { transform: rotate(360deg); } }
+        .signin-overlay-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: .01em;
+        }
+        .signin-overlay-sub {
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: -12px;
+        }
+        .signin-overlay-track {
+            width: 200px;
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            overflow: hidden;
+        }
+        .signin-overlay-fill {
+            height: 100%;
+            width: 30%;
+            border-radius: 999px;
+            background: var(--secondary-color);
+            animation: signin-progress 1.1s ease-in-out infinite;
+        }
+        @keyframes signin-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(330%); }
+        }
     </style>
 </head>
 <body>
@@ -280,6 +349,18 @@ require_once '../includes/auth.php';
     </div>
 </div>
 
+<div class="signin-overlay" id="signinOverlay">
+    <div class="signin-overlay-card">
+        <div class="signin-overlay-logo">
+            <img src="../assets/images/aarc-360-logo-1.webp" alt="AARC-360">
+        </div>
+        <div class="signin-overlay-spinner"></div>
+        <div class="signin-overlay-text">Signing you in&hellip;</div>
+        <div class="signin-overlay-sub">Loading your schedule and workspace</div>
+        <div class="signin-overlay-track"><div class="signin-overlay-fill"></div></div>
+    </div>
+</div>
+
 <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
         const input = document.getElementById('password');
@@ -290,11 +371,16 @@ require_once '../includes/auth.php';
         this.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
     });
 
-    document.getElementById('loginForm').addEventListener('submit', function () {
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        if (!email || !password) return;
+
         const btn = document.getElementById('loginSubmitBtn');
         btn.disabled = true;
         document.getElementById('loginSubmitLabel').innerHTML =
             '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
+        document.getElementById('signinOverlay').classList.add('show');
     });
 </script>
 </body>
