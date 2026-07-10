@@ -1,9 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const downloadBtn = document.getElementById('downloadPolicyPdfBtn');
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', () => window.print());
-  }
-
   const deleteBtn = document.getElementById('deletePolicyBtn');
   if (!deleteBtn) return;
 
