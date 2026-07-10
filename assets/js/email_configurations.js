@@ -20,16 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Enable/disable Send Test Email button
     testEmailInput.addEventListener('input', () => {
-      const email = testEmailInput.value.trim();
-      if (email.length > 0) {
-        sendTestEmailBtn.classList.remove('disabled');
-        sendTestEmailBtn.style.pointerEvents = 'auto';
-        sendTestEmailBtn.style.opacity = '1';
-      } else {
-        sendTestEmailBtn.classList.add('disabled');
-        sendTestEmailBtn.style.pointerEvents = 'none';
-        sendTestEmailBtn.style.opacity = '0.5';
-      }
+      sendTestEmailBtn.disabled = testEmailInput.value.trim().length === 0;
       testEmailStatus.classList.add('d-none');
       testEmailStatus.textContent = '';
     });

@@ -3186,47 +3186,160 @@ body.dark-mode #backupConfigModal .eng-edit-btn-cancel:hover { background: #232a
 #backupConfigModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #backupConfigModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
-#backupConfigModal .bkp-status-banner {
+/* ========= SHARED SETTINGS-MODAL PARTS (Backup / Security / Email) ========= */
+.settings-status-banner {
     display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 16px;
     border-radius: 10px; background: #f1f4f3; border: 1px solid #e3e7e5;
     font-size: 12.5px; color: #6b7570;
 }
-#backupConfigModal .bkp-status-banner i { font-size: 15px; color: #2f9e57; }
-#backupConfigModal .bkp-status-banner strong { color: #16211f; font-weight: 700; }
-body.dark-mode #backupConfigModal .bkp-status-banner { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
-body.dark-mode #backupConfigModal .bkp-status-banner strong { color: #edf1ee; }
-body.dark-mode #backupConfigModal .bkp-status-banner i { color: #4fbd7a; }
+.settings-status-banner i { font-size: 15px; color: #2f9e57; }
+.settings-status-banner strong { color: #16211f; font-weight: 700; }
+body.dark-mode .settings-status-banner { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .settings-status-banner strong { color: #edf1ee; }
+body.dark-mode .settings-status-banner i { color: #4fbd7a; }
 
-#backupConfigModal .bkp-toggle-row {
+.settings-toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 12px 14px; margin-bottom: 14px; border-radius: 10px; background: #f1f4f3; border: 1px solid #e3e7e5;
 }
-body.dark-mode #backupConfigModal .bkp-toggle-row { background: #232a2c; border-color: #29302e; }
-#backupConfigModal .bkp-toggle-label { font-size: 13px; font-weight: 700; color: #16211f; }
-body.dark-mode #backupConfigModal .bkp-toggle-label { color: #edf1ee; }
-#backupConfigModal .bkp-toggle-sub { font-size: 11.5px; color: #9aa39d; margin-top: 2px; }
-body.dark-mode #backupConfigModal .bkp-toggle-sub { color: #6e7975; }
+body.dark-mode .settings-toggle-row { background: #232a2c; border-color: #29302e; }
+.settings-toggle-row.compact { padding: 10px 12px; margin-bottom: 0; }
+.settings-toggle-label { font-size: 13px; font-weight: 700; color: #16211f; }
+body.dark-mode .settings-toggle-label { color: #edf1ee; }
+.settings-toggle-sub { font-size: 11.5px; color: #9aa39d; margin-top: 2px; }
+body.dark-mode .settings-toggle-sub { color: #6e7975; }
 
-#backupConfigModal .bkp-hint { font-size: 11.5px; color: #9aa39d; margin-top: 6px; }
-body.dark-mode #backupConfigModal .bkp-hint { color: #6e7975; }
+.settings-hint { font-size: 11.5px; color: #9aa39d; margin-top: 6px; }
+body.dark-mode .settings-hint { color: #6e7975; }
 
-#backupConfigModal .bkp-divider { height: 1px; background: #e3e7e5; margin: 18px 0; }
-body.dark-mode #backupConfigModal .bkp-divider { background: #29302e; }
+.settings-divider { height: 1px; background: #e3e7e5; margin: 18px 0; }
+body.dark-mode .settings-divider { background: #29302e; }
 
-#backupConfigModal .bkp-test-btn {
+.settings-action-btn {
     display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 9px; border: none;
     background: var(--primary-color); color: #ffffff; font-size: 13px; font-weight: 600; cursor: pointer;
 }
-#backupConfigModal .bkp-test-btn:hover { opacity: .9; }
-#backupConfigModal .bkp-test-btn:disabled { opacity: .55; cursor: not-allowed; }
-body.dark-mode #backupConfigModal .bkp-test-btn { background: var(--secondary-color); color: #10160f; }
+.settings-action-btn:hover { opacity: .9; }
+.settings-action-btn:disabled { opacity: .55; cursor: not-allowed; }
+body.dark-mode .settings-action-btn { background: var(--secondary-color); color: #10160f; }
 
-#backupConfigModal .bkp-history-empty { padding: 12px; font-size: 12.5px; color: #9aa39d; text-align: center; }
-body.dark-mode #backupConfigModal .bkp-history-empty { color: #6e7975; }
-#backupConfigModal .bkp-download-btn {
+.settings-empty-row { padding: 12px; font-size: 12.5px; color: #9aa39d; text-align: center; }
+body.dark-mode .settings-empty-row { color: #6e7975; }
+.settings-icon-btn {
     display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px;
     border: 1px solid #e3e7e5; color: #6b7570; flex-shrink: 0; transition: background-color .1s ease;
 }
-#backupConfigModal .bkp-download-btn:hover { background: #f1f4f3; }
-body.dark-mode #backupConfigModal .bkp-download-btn { border-color: #29302e; color: #9aa8a2; }
-body.dark-mode #backupConfigModal .bkp-download-btn:hover { background: #1b2022; }
+.settings-icon-btn:hover { background: #f1f4f3; }
+body.dark-mode .settings-icon-btn { border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .settings-icon-btn:hover { background: #1b2022; }
+
+.settings-status-msg { font-size: 12px; font-weight: 600; margin-top: 8px; }
+.settings-status-msg.text-success { color: #2f9e57 !important; }
+.settings-status-msg.text-danger { color: #c0392b !important; }
+.settings-status-msg.text-info { color: #3f83b8 !important; }
+body.dark-mode .settings-status-msg.text-success { color: #4fbd7a !important; }
+body.dark-mode .settings-status-msg.text-danger { color: #e0685a !important; }
+body.dark-mode .settings-status-msg.text-info { color: #6fb3e0 !important; }
+
+/* ========= SECURITY POLICY MODAL ========= */
+#securityPolicyConfigModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #securityPolicyConfigModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#securityPolicyConfigModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-title { color: #edf1ee; }
+
+#securityPolicyConfigModal .eng-edit-body { padding: 16px 20px; }
+#securityPolicyConfigModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+#securityPolicyConfigModal .eng-edit-field { margin-bottom: 14px; }
+#securityPolicyConfigModal .eng-edit-field:last-child { margin-bottom: 0; }
+#securityPolicyConfigModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #securityPolicyConfigModal .eng-edit-field label { color: #6e7975; }
+#securityPolicyConfigModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+#securityPolicyConfigModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+
+#securityPolicyConfigModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #securityPolicyConfigModal .eng-edit-footer { border-color: #29302e; }
+#securityPolicyConfigModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#securityPolicyConfigModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#securityPolicyConfigModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#securityPolicyConfigModal .eng-edit-btn-save:hover { opacity: .9; }
+#securityPolicyConfigModal .eng-edit-btn-save:disabled { opacity: .6; cursor: not-allowed; }
+body.dark-mode #securityPolicyConfigModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+/* ========= EMAIL NOTIFICATION MODAL ========= */
+#emailNotifConfigModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #emailNotifConfigModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#emailNotifConfigModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #emailNotifConfigModal .eng-edit-title { color: #edf1ee; }
+
+#emailNotifConfigModal .eng-edit-body { padding: 16px 20px; }
+#emailNotifConfigModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#emailNotifConfigModal .eng-edit-field { margin-bottom: 14px; }
+#emailNotifConfigModal .eng-edit-field:last-child { margin-bottom: 0; }
+#emailNotifConfigModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #emailNotifConfigModal .eng-edit-field label { color: #6e7975; }
+#emailNotifConfigModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+#emailNotifConfigModal select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7570' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 14px;
+    padding-right: 34px;
+}
+#emailNotifConfigModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #emailNotifConfigModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #emailNotifConfigModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+body.dark-mode #emailNotifConfigModal select.eng-edit-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+#emailNotifConfigModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #emailNotifConfigModal .eng-edit-footer { border-color: #29302e; }
+#emailNotifConfigModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#emailNotifConfigModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #emailNotifConfigModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #emailNotifConfigModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#emailNotifConfigModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#emailNotifConfigModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #emailNotifConfigModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }

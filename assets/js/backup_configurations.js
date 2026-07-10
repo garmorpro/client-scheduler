@@ -1,18 +1,18 @@
 async function loadBackupHistory() {
     const listEl = document.getElementById('backupHistoryList');
     if (!listEl) return;
-    listEl.innerHTML = '<div class="bkp-history-empty">Loading...</div>';
+    listEl.innerHTML = '<div class="settings-empty-row">Loading...</div>';
 
     try {
         const resp = await fetch('list_backups.php');
         const result = await resp.json();
 
         if (!result.success) {
-            listEl.innerHTML = `<div class="bkp-history-empty text-danger">${result.error || 'Could not load backups.'}</div>`;
+            listEl.innerHTML = `<div class="settings-empty-row text-danger">${result.error || 'Could not load backups.'}</div>`;
             return;
         }
         if (!result.backups.length) {
-            listEl.innerHTML = '<div class="bkp-history-empty">No backups yet.</div>';
+            listEl.innerHTML = '<div class="settings-empty-row">No backups yet.</div>';
             return;
         }
 
@@ -22,13 +22,13 @@ async function loadBackupHistory() {
                     <div class="eng-vm-emp-name">${b.created}</div>
                     <div class="eng-vm-emp-role">${b.size}</div>
                 </div>
-                <a href="download_backup.php?file=${encodeURIComponent(b.name)}" class="bkp-download-btn" title="Download">
+                <a href="download_backup.php?file=${encodeURIComponent(b.name)}" class="settings-icon-btn" title="Download">
                     <i class="bi bi-download"></i>
                 </a>
             </div>
         `).join('');
     } catch (err) {
-        listEl.innerHTML = '<div class="bkp-history-empty text-danger">Network error loading backups.</div>';
+        listEl.innerHTML = '<div class="settings-empty-row text-danger">Network error loading backups.</div>';
     }
 }
 

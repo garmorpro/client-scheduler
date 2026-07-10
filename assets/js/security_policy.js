@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Network error: ' + err.message);
           } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="bi bi-save me-3"></i>Save Settings';
+            submitBtn.innerHTML = '<i class="bi bi-save me-2"></i>Save Settings';
           }
         });
       });

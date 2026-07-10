@@ -12,7 +12,7 @@
 
           <div class="eng-edit-body">
             <!-- Last Backup Info -->
-            <div class="bkp-status-banner">
+            <div class="settings-status-banner">
               <i class="bi bi-check2-circle"></i>
               <span>Last backup: <strong><?php echo htmlspecialchars($settings['last_backup_datetime'] ?? 'Never'); ?></strong>
                 &nbsp;(<?php echo htmlspecialchars($settings['last_backup_size'] ?? '0 GB'); ?>)</span>
@@ -21,10 +21,10 @@
             <!-- Backup Schedule -->
             <div class="detail-section-title">Backup Schedule</div>
 
-            <div class="bkp-toggle-row">
+            <div class="settings-toggle-row">
               <div>
-                <div class="bkp-toggle-label">Enable Automated Backups</div>
-                <div class="bkp-toggle-sub">Master switch for automated backups</div>
+                <div class="settings-toggle-label">Enable Automated Backups</div>
+                <div class="settings-toggle-sub">Master switch for automated backups</div>
               </div>
               <label class="rp-toggle">
                 <input type="checkbox" class="rp-toggle-input" id="enableAutomatedBackups" name="enable_automated_backups" value="true" <?php if (!empty($settings['enable_automated_backups']) && $settings['enable_automated_backups'] === 'true') echo 'checked'; ?>>
@@ -53,28 +53,28 @@
               <input type="number" min="1" class="eng-edit-input" id="retentionPeriod" name="retention_period_days" value="<?php echo htmlspecialchars($settings['retention_period_days'] ?? '', ENT_QUOTES); ?>" required>
             </div>
 
-            <div class="bkp-divider"></div>
+            <div class="settings-divider"></div>
 
             <!-- Local Storage Directory -->
             <div class="detail-section-title">Local Backup Directory</div>
             <div class="eng-edit-field">
               <label for="localBackupDir">Directory Path</label>
               <input type="text" class="eng-edit-input" id="localBackupDir" name="local_backup_directory" placeholder="/path/to/backup/folder" value="<?php echo htmlspecialchars($settings['local_backup_directory'] ?? '', ENT_QUOTES); ?>" required>
-              <div class="bkp-hint">Enter full path on the server where backups should be saved.</div>
+              <div class="settings-hint">Enter full path on the server where backups should be saved.</div>
             </div>
 
-            <div class="bkp-divider"></div>
+            <div class="settings-divider"></div>
 
             <!-- Test Configuration -->
             <div class="detail-section-title">Test Configuration</div>
-            <button type="button" id="runTestBackupBtn" class="bkp-test-btn"><i class="bi bi-play-fill"></i> Run Test Backup</button>
+            <button type="button" id="runTestBackupBtn" class="settings-action-btn"><i class="bi bi-play-fill"></i> Run Test Backup</button>
 
-            <div class="bkp-divider"></div>
+            <div class="settings-divider"></div>
 
             <!-- Recent Backups -->
             <div class="detail-section-title">Recent Backups</div>
             <div id="backupHistoryList" class="eng-vm-emp-list">
-              <div class="bkp-history-empty">Loading...</div>
+              <div class="settings-empty-row">Loading...</div>
             </div>
           </div>
 
