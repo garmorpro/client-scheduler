@@ -221,6 +221,39 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelRequest(activeViewRequest.request_group, () => viewModal.hide());
     });
 
+    // --- Stat tiles ---
+    function refreshStats() {
+        const pendingEl = document.getElementById('statPendingValue');
+        if (!pendingEl) return;
+
+        const pendingCount = myRequests.filter(r => r.status === 'pending' || r.status === 'changes_requested').length;
+        pendingEl.textContent = pendingCount;
+        document.getElementById('statPendingSub').textContent = pendingCount > 0
+            ? `${pendingCount === 1 ? 'request' : 'requests'} need${pendingCount === 1 ? 's' : ''} your attention`
+            : 'nothing awaiting action';
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const currentYear = new Date().getFullYear();
+        let upcomingDate = null;
+        let yearHours = 0;
+        myRequests.forEach(r => {
+            if (r.status !== 'approved') return;
+            r.days.forEach(d => {
+                if (!d.date) return;
+                if (d.date >= todayStr && (upcomingDate === null || d.date < upcomingDate)) {
+                    upcomingDate = d.date;
+                }
+                if (d.date.slice(0, 4) === String(currentYear)) {
+                    yearHours += Number(d.hours) || 0;
+                }
+            });
+        });
+
+        document.getElementById('statUpcomingValue').textContent = upcomingDate ? formatDate(upcomingDate) : 'None';
+        document.getElementById('statUpcomingSub').textContent = upcomingDate ? 'next approved day off' : 'no approved time off scheduled';
+        document.getElementById('statYearValue').textContent = `${yearHours} hrs`;
+    }
+
     // --- My Requests table ---
     async function loadMyRequests() {
         tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading...</td></tr>';
@@ -230,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             myRequests = data.requests || [];
 
             hintEl.textContent = `${myRequests.length} request${myRequests.length === 1 ? '' : 's'}`;
+            refreshStats();
 
             if (myRequests.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No time off requests yet</td></tr>';

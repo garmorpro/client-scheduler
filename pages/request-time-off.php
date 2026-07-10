@@ -74,20 +74,20 @@ $stmt->close();
         <div class="ms-stat-card">
             <div class="ms-stat-icon"><i class="bi bi-hourglass-split"></i></div>
             <div class="ms-stat-title">Pending Time Off</div>
-            <div class="ms-stat-value"><?php echo $pendingTimeOffCount; ?></div>
-            <div class="ms-stat-sub"><?php echo $pendingTimeOffCount > 0 ? ($pendingTimeOffCount === 1 ? 'request needs your attention' : 'requests need your attention') : 'nothing awaiting action'; ?></div>
+            <div class="ms-stat-value" id="statPendingValue"><?php echo $pendingTimeOffCount; ?></div>
+            <div class="ms-stat-sub" id="statPendingSub"><?php echo $pendingTimeOffCount > 0 ? ($pendingTimeOffCount === 1 ? 'request needs your attention' : 'requests need your attention') : 'nothing awaiting action'; ?></div>
         </div>
         <div class="ms-stat-card accent">
             <div class="ms-stat-icon"><i class="bi bi-airplane-fill"></i></div>
             <div class="ms-stat-title">Upcoming Time Off</div>
-            <div class="ms-stat-value"><?php echo $upcomingTimeOffDate ? date('M j', strtotime($upcomingTimeOffDate)) : 'None'; ?></div>
-            <div class="ms-stat-sub"><?php echo $upcomingTimeOffDate ? 'next approved day off' : 'no approved time off scheduled'; ?></div>
+            <div class="ms-stat-value" id="statUpcomingValue"><?php echo $upcomingTimeOffDate ? date('M j', strtotime($upcomingTimeOffDate)) : 'None'; ?></div>
+            <div class="ms-stat-sub" id="statUpcomingSub"><?php echo $upcomingTimeOffDate ? 'next approved day off' : 'no approved time off scheduled'; ?></div>
         </div>
         <div class="ms-stat-card">
             <div class="ms-stat-icon"><i class="bi bi-calendar2-check-fill"></i></div>
             <div class="ms-stat-title">Taken This Year</div>
-            <div class="ms-stat-value"><?php echo $yearTimeOffHours; ?> hrs</div>
-            <div class="ms-stat-sub">approved &amp; taken in <?php echo date('Y'); ?></div>
+            <div class="ms-stat-value" id="statYearValue"><?php echo $yearTimeOffHours; ?> hrs</div>
+            <div class="ms-stat-sub" id="statYearSub">approved &amp; taken in <?php echo date('Y'); ?></div>
         </div>
     </div>
 
