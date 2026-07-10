@@ -111,13 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
       paginationContainer.appendChild(paginationControls);
     }
 
-    // Optional: filter by search input
+    // Optional: filter by search input - comma-separated terms match with OR,
+    // same convention as the other search bars in the app.
     const searchInput = document.getElementById('userSearch');
     if (searchInput) {
       searchInput.addEventListener('input', function () {
-        const value = this.value.trim().toLowerCase();
-        filteredRows = value
-          ? allRows.filter(row => row.innerText.toLowerCase().includes(value))
+        const terms = this.value.trim().toLowerCase().split(',').map(t => t.trim()).filter(t => t.length > 0);
+        filteredRows = terms.length
+          ? allRows.filter(row => {
+              const text = row.innerText.toLowerCase();
+              return terms.some(term => text.includes(term));
+            })
           : [...allRows];
         renderTablePage(1);
       });
@@ -173,16 +177,18 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationContainer.appendChild(paginationControls);
     }
 
-    // Search input
+    // Search input - comma-separated terms match with OR, same convention
+    // as the other search bars in the app.
     const searchInput = document.getElementById('engagementSearch');
     if (searchInput) {
         searchInput.addEventListener('input', function () {
-            const value = this.value.trim().toLowerCase();
-            if (value.length >= 3) {
-                filteredRows = allRows.filter(row => row.innerText.toLowerCase().includes(value));
-            } else {
-                filteredRows = [...allRows];
-            }
+            const terms = this.value.trim().toLowerCase().split(',').map(t => t.trim()).filter(t => t.length >= 3);
+            filteredRows = terms.length
+                ? allRows.filter(row => {
+                    const text = row.innerText.toLowerCase();
+                    return terms.some(term => text.includes(term));
+                  })
+                : [...allRows];
             renderTablePage(1);
         });
     }
