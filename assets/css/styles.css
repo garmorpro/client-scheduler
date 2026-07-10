@@ -2742,13 +2742,13 @@ body.dark-mode .ms-wk-hours { color: #edf1ee; }
 body.dark-mode .ms-wk-bar-track { background: #29302e; }
 .ms-wk-bar-work { height: 100%; background: #9aa39d; }
 .ms-wk-bar-off { height: 100%; background: var(--secondary-color); }
-.ms-week-tile.has-hours .ms-wk-bar-work { background: #4f8ef7; }
-body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #5a9bff; }
+.ms-week-tile.has-hours .ms-wk-bar-work { background: #2f9e57; }
+body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #4fbd7a; }
 .ms-week-tile.selected { background: var(--primary-color); border-color: var(--primary-color); }
 .ms-week-tile.selected .ms-wk-label { color: rgba(255,255,255,.72); }
 .ms-week-tile.selected .ms-wk-hours { color: #ffffff; }
 .ms-week-tile.selected .ms-wk-bar-track { background: rgba(255,255,255,.22); }
-.ms-week-tile.selected .ms-wk-bar-work { background: #7fb1ff; }
+.ms-week-tile.selected .ms-wk-bar-work { background: #6ec98d; }
 .ms-week-tile.selected .ms-wk-bar-off { background: var(--secondary-color); }
 .ms-week-tile.today-marker::after { content: ''; position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--secondary-color); }
 
