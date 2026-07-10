@@ -43,61 +43,73 @@ if ($canAccessSystemSettings) {
     <h3 class="mb-0">System Settings</h3>
     <p class="text-muted mb-4">Permissions, backups, security policy, and email notifications</p>
 
-    <div class="settings-grid">
+    <div class="settings-list-shell">
         <?php if ($isAdmin): ?>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-shield-lock"></i></div>
-            <div class="settings-card-title">Role Permissions</div>
-            <p class="settings-card-desc">Choose what each role is allowed to do across the app.</p>
-            <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-shield-lock"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Role Permissions</div>
+                <div class="settings-row-desc">Choose what each role is allowed to do across the app.</div>
+            </div>
+            <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn" data-bs-toggle="modal" data-bs-target="#rolePermissionsModal">
                 <i class="bi bi-gear me-2"></i>Manage
             </a>
         </div>
         <?php endif; ?>
         <?php if ($canAccessSystemSettings): ?>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-calendar2-week"></i></div>
-            <div class="settings-card-title">Company Holidays</div>
-            <p class="settings-card-desc">Manage firm-wide holidays and closures.</p>
-            <a href="company-holidays.php" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-calendar2-week"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Company Holidays</div>
+                <div class="settings-row-desc">Manage firm-wide holidays and closures.</div>
+            </div>
+            <a href="company-holidays.php" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn">
                 <i class="bi bi-gear me-2"></i>Manage
             </a>
         </div>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-hdd-stack"></i></div>
-            <div class="settings-card-title">Backup Configuration</div>
-            <p class="settings-card-desc">Automated backup schedule and local storage location.</p>
-            <a href="#" id="configureBackupBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-hdd-stack"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Backup Configuration</div>
+                <div class="settings-row-desc">Automated backup schedule and local storage location.</div>
+            </div>
+            <a href="#" id="configureBackupBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn">
                 <i class="bi bi-gear me-2"></i>Configure
             </a>
         </div>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-shield-lock"></i></div>
-            <div class="settings-card-title">Security Policy</div>
-            <p class="settings-card-desc">Password rules, login attempts, session timeout, 2FA.</p>
-            <a href="#" id="configureSecurityBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-shield-lock"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Security Policy</div>
+                <div class="settings-row-desc">Password rules, login attempts, session timeout, 2FA.</div>
+            </div>
+            <a href="#" id="configureSecurityBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn">
                 <i class="bi bi-gear me-2"></i>Configure
             </a>
         </div>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-envelope"></i></div>
-            <div class="settings-card-title">Email Notifications</div>
-            <p class="settings-card-desc">SMTP configuration and notification frequency.</p>
-            <a href="#" id="configureEmailBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-envelope"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Email Notifications</div>
+                <div class="settings-row-desc">SMTP configuration and notification frequency.</div>
+            </div>
+            <a href="#" id="configureEmailBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn">
                 <i class="bi bi-gear me-2"></i>Configure
             </a>
         </div>
-        <div class="settings-card">
-            <div class="settings-card-icon"><i class="bi bi-sun"></i></div>
-            <div class="settings-card-title">Busy Season</div>
-            <p class="settings-card-desc">
-                <?php if (!empty($busySeasonSettings['start_date']) && !empty($busySeasonSettings['end_date'])): ?>
-                    Active <?php echo date('M j, Y', strtotime($busySeasonSettings['start_date'])); ?> &ndash; <?php echo date('M j, Y', strtotime($busySeasonSettings['end_date'])); ?> (50 hrs/week allowance).
-                <?php else: ?>
-                    Raise the weekly hour allowance from 40 to 50 during a set date range.
-                <?php endif; ?>
-            </p>
-            <a href="#" id="configureBusySeasonBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-card-btn" data-bs-toggle="modal" data-bs-target="#busySeasonModal">
+        <div class="settings-row">
+            <div class="settings-row-icon"><i class="bi bi-sun"></i></div>
+            <div class="settings-row-info">
+                <div class="settings-row-title">Busy Season</div>
+                <div class="settings-row-desc">
+                    <?php if (!empty($busySeasonSettings['start_date']) && !empty($busySeasonSettings['end_date'])): ?>
+                        Active <?php echo date('M j, Y', strtotime($busySeasonSettings['start_date'])); ?> &ndash; <?php echo date('M j, Y', strtotime($busySeasonSettings['end_date'])); ?> (50 hrs/week allowance).
+                    <?php else: ?>
+                        Raise the weekly hour allowance from 40 to 50 during a set date range.
+                    <?php endif; ?>
+                </div>
+            </div>
+            <a href="#" id="configureBusySeasonBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom settings-row-btn" data-bs-toggle="modal" data-bs-target="#busySeasonModal">
                 <i class="bi bi-gear me-2"></i>Configure
             </a>
         </div>
