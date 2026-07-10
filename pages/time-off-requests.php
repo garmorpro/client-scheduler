@@ -9,7 +9,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!user_has_permission($conn, 'approve_time_off')) {
+$canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
+$canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
+
+if (!$canViewTimeOffRequests) {
     header("Location: my-schedule.php");
     exit();
 }
@@ -135,6 +138,7 @@ if (!user_has_permission($conn, 'approve_time_off')) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>window.CAN_APPROVE_TIME_OFF = <?php echo $canApproveTimeOff ? 'true' : 'false'; ?>;</script>
 <script src="../assets/js/time_off_requests_admin.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>

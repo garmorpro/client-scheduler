@@ -19,13 +19,16 @@ $canViewEmployees = user_has_permission($conn, 'view_employees');
 $canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
 $canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
 $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
+$canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
-$canSeeSettingsMenu = $canViewEmployees || $canApproveTimeOff || $canAccessSystemSettings;
+$canSeeSettingsMenu = $canViewEmployees || $canViewTimeOffRequests || $canAccessSystemSettings;
 
 $pendingTimeOffCount = 0;
 if ($canApproveTimeOff) {
-    // Non-admin reviewers only see pending counts for staff/seniors assigned to them; admins see everything.
-    if (!$isAdmin) {
+    // Managers only see pending counts for staff/seniors assigned to them directly;
+    // admins and any other approver role (not literally a manager) see everything.
+    $userRoleLower = strtolower($_SESSION['user_role'] ?? '');
+    if ($userRoleLower === 'manager') {
         $pendingCountStmt = $conn->prepare("
             SELECT COUNT(DISTINCT COALESCE(t.request_group, CONCAT('single-', t.timeoff_id))) AS cnt
             FROM time_off t
@@ -136,7 +139,7 @@ if ($canApproveTimeOff) {
                         <?php if ($canViewEmployees): ?>
                         <li><a href="employees.php" class="sidebar-sublink <?= $currentPage == 'employees.php' ? 'active' : '' ?>">Employees</a></li>
                         <?php endif; ?>
-                        <?php if ($canApproveTimeOff): ?>
+                        <?php if ($canViewTimeOffRequests): ?>
                         <li><a href="time-off-requests.php" class="sidebar-sublink <?= $currentPage == 'time-off-requests.php' ? 'active' : '' ?>">
                             Time Off Requests
                             <?php if ($pendingTimeOffCount > 0): ?>

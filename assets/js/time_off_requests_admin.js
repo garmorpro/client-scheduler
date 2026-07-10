@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const canApprove = window.CAN_APPROVE_TIME_OFF === true;
     const tableBody = document.getElementById('torTableBody');
     const reviewModalEl = document.getElementById('reviewTimeOffModal');
     const reviewModal = new bootstrap.Modal(reviewModalEl);
@@ -116,9 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" class="client-icon-btn" title="Review" data-request-group="${r.request_group}">
                             <i class="bi bi-eye"></i>
                         </button>
+                        ${canApprove ? `
                         <button type="button" class="client-icon-btn danger" title="Remove" data-delete-group="${r.request_group}">
                             <i class="bi bi-trash"></i>
-                        </button>
+                        </button>` : ''}
                     </div>
                 </td>
             `;
@@ -219,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const commentInput = document.getElementById('rtoComment');
         const footer = document.getElementById('rtoFooter');
 
-        if (r.status === 'pending') {
+        if (r.status === 'pending' && canApprove) {
             commentField.style.display = '';
             commentInput.value = '';
             footer.querySelector('#rtoApproveBtn').style.display = '';

@@ -32,8 +32,9 @@ $isSingle = strpos($requestGroup, 'single-') === 0;
 $timeoffId = $isSingle ? intval(substr($requestGroup, 7)) : 0;
 
 if ($isReviewer) {
-    // Non-admin reviewers may only remove requests from staff/seniors assigned to them; admins can remove anyone's.
-    $scopeToManager = $userRole !== 'admin';
+    // Managers may only remove requests from staff/seniors assigned to them
+    // directly; admins and any other approver role can remove anyone's.
+    $scopeToManager = $userRole === 'manager';
     $managerScope = $scopeToManager ? " AND user_id IN (SELECT user_id FROM users WHERE manager_id = ?)" : '';
 
     if ($isSingle) {

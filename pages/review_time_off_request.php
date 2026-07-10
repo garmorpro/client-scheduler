@@ -37,9 +37,10 @@ $statusMap = ['approve' => 'approved', 'deny' => 'denied', 'request_changes' => 
 $status = $statusMap[$action];
 $reviewerId = $_SESSION['user_id'];
 
-// Non-admin reviewers may only act on requests from staff/seniors assigned to
-// them; admins can review anyone.
-$scopeToManager = $userRole !== 'admin';
+// Managers may only act on requests from staff/seniors assigned to them
+// directly; admins and any other approver role (not literally a manager)
+// can review anyone.
+$scopeToManager = $userRole === 'manager';
 $managerScope = $scopeToManager ? " AND user_id IN (SELECT user_id FROM users WHERE manager_id = ?)" : '';
 
 if (strpos($requestGroup, 'single-') === 0) {

@@ -5,15 +5,18 @@ require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 $userRole = strtolower($_SESSION['user_role'] ?? '');
-if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'approve_time_off')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'view_time_off_requests')) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
 
-// Non-admin reviewers only see time off for staff/seniors assigned to them
-// (via users.manager_id); admins see everything regardless of role.
-$scopeToManager = $userRole !== 'admin';
+// Managers only see time off for staff/seniors assigned to them directly
+// (via users.manager_id) - that's the "my team's requests" reviewer view.
+// Admins and any other role granted view/approve access (e.g. CRM Team,
+// who aren't anyone's manager) see the full list, since scoping them to
+// manager_id would just show them nothing.
+$scopeToManager = $userRole === 'manager';
 $reviewerId = $_SESSION['user_id'];
 
 $sql = "

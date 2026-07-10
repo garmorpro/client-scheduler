@@ -20,7 +20,7 @@ if (!csrf_valid()) {
 }
 
 $editableRoles = ['manager', 'senior', 'staff', 'intern', 'crm_team'];
-$permissionKeys = ['manage_employees', 'view_employees', 'manage_clients_engagements', 'view_clients_engagements', 'approve_time_off', 'access_system_settings'];
+$permissionKeys = ['manage_employees', 'view_employees', 'manage_clients_engagements', 'view_clients_engagements', 'approve_time_off', 'view_time_off_requests', 'access_system_settings'];
 
 $input = json_decode(file_get_contents('php://input'), true);
 $permissions = $input['permissions'] ?? [];
@@ -34,7 +34,7 @@ $conn->begin_transaction();
 try {
     $stmt = $conn->prepare("
         UPDATE role_permissions
-        SET manage_employees = ?, view_employees = ?, manage_clients_engagements = ?, view_clients_engagements = ?, approve_time_off = ?, access_system_settings = ?
+        SET manage_employees = ?, view_employees = ?, manage_clients_engagements = ?, view_clients_engagements = ?, approve_time_off = ?, view_time_off_requests = ?, access_system_settings = ?
         WHERE role = ?
     ");
     foreach ($permissions as $entry) {
@@ -45,7 +45,7 @@ try {
         foreach ($permissionKeys as $key) {
             $values[] = !empty($entry[$key]) ? 1 : 0;
         }
-        $stmt->bind_param('iiiiiis', $values[0], $values[1], $values[2], $values[3], $values[4], $values[5], $role);
+        $stmt->bind_param('iiiiiiis', $values[0], $values[1], $values[2], $values[3], $values[4], $values[5], $values[6], $role);
         $stmt->execute();
     }
     $stmt->close();
