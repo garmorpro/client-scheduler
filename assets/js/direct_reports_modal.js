@@ -23,9 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderList(filterText) {
-        const term = (filterText || '').trim().toLowerCase();
-        const filtered = term
-            ? employees.filter(e => e.full_name.toLowerCase().includes(term))
+        const terms = (filterText || '').trim().toLowerCase().split(',').map(t => t.trim()).filter(t => t.length > 0);
+        const filtered = terms.length
+            ? employees.filter(e => {
+                const name = e.full_name.toLowerCase();
+                return terms.some(term => name.includes(term));
+            })
             : employees;
 
         if (filtered.length === 0) {
