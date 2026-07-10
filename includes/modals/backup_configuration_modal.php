@@ -71,6 +71,14 @@
           <h6 class="mb-3">Test Configuration</h6>
           <button type="button" style="font-size: 14px !important;" id="runTestBackupBtn" class="btn btn-primary mb-3">Run Test Backup</button>
 
+          <hr>
+
+          <!-- Recent Backups -->
+          <h6 class="mb-3">Recent Backups</h6>
+          <div id="backupHistoryList" style="font-size: 13px;">
+            <div class="text-muted">Loading...</div>
+          </div>
+
         </div>
 
         <div class="modal-footer">

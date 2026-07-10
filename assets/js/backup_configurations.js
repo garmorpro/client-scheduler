@@ -1,8 +1,43 @@
+async function loadBackupHistory() {
+    const listEl = document.getElementById('backupHistoryList');
+    if (!listEl) return;
+    listEl.innerHTML = '<div class="text-muted">Loading...</div>';
+
+    try {
+        const resp = await fetch('list_backups.php');
+        const result = await resp.json();
+
+        if (!result.success) {
+            listEl.innerHTML = `<div class="text-danger">${result.error || 'Could not load backups.'}</div>`;
+            return;
+        }
+        if (!result.backups.length) {
+            listEl.innerHTML = '<div class="text-muted">No backups yet.</div>';
+            return;
+        }
+
+        listEl.innerHTML = result.backups.map(b => `
+            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <div>
+                    <div>${b.created}</div>
+                    <div class="text-muted" style="font-size: 11px;">${b.size}</div>
+                </div>
+                <a href="download_backup.php?file=${encodeURIComponent(b.name)}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-download"></i> Download
+                </a>
+            </div>
+        `).join('');
+    } catch (err) {
+        listEl.innerHTML = '<div class="text-danger">Network error loading backups.</div>';
+    }
+}
+
 document.getElementById('configureBackupBtn').addEventListener('click', function(e) {
     e.preventDefault();
     const modalEl = document.getElementById('backupConfigModal');
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    loadBackupHistory();
 });
 
 // Run Test Backup button
@@ -29,6 +64,7 @@ document.getElementById('runTestBackupBtn').addEventListener('click', async () =
         const result = await resp.json();
         if (result.success) {
             alert(`Backup successful:\n${result.file}\nSize: ${result.size}`);
+            loadBackupHistory();
         } else {
             alert('Backup failed: ' + (result.error || 'Unknown error'));
         }

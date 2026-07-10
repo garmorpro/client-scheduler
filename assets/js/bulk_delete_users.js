@@ -43,7 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const result = await response.json();
 
           if (result.success) {
-            location.reload();
+            const skippedCount = (result.skippedSelf ? 1 : 0) + (result.skippedWithData ? result.skippedWithData.length : 0);
+            if (skippedCount > 0 && typeof Swal !== 'undefined') {
+              const reasons = [];
+              if (result.skippedSelf) reasons.push('you can\'t delete your own account');
+              if (result.skippedWithData && result.skippedWithData.length) reasons.push(`${result.skippedWithData.length} user(s) have scheduled hours or time off`);
+              Swal.fire({
+                icon: 'info',
+                title: `Deleted ${result.deletedCount}, skipped ${skippedCount}`,
+                text: `Skipped because ${reasons.join(' and ')}.`
+              }).then(() => location.reload());
+            } else {
+              location.reload();
+            }
           } else {
             if (typeof Swal !== 'undefined') {
               Swal.fire({ icon: 'error', title: 'Could not delete employees', text: result.error || 'Unknown error' });

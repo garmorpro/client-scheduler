@@ -4,7 +4,8 @@ require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+if ($userRole !== 'admin' && $userRole !== 'manager') {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;

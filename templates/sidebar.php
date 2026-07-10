@@ -83,7 +83,7 @@ if ($canApproveTimeOff) {
                     My Schedule
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item <?php if (!$canManageClientsEngagements) echo 'd-none'; ?>">
                 <a href="master-schedule.php" class="sidebar-link <?= $currentPage == 'master-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-calendar-range"></i>
                     Master Schedule

@@ -21,6 +21,10 @@
           <span>Confirmed Engagements: <span class="text-muted" id="deleteClientConfirmed"></span></span><br>
           <span>Total Engagements: <span class="text-muted" id="deleteClientTotal"></span></span>
         </div>
+
+        <div class="alert alert-warning mt-3 mb-0 d-none" id="deleteClientBlocked">
+          This client still has engagements. Remove or reassign them before deleting the client.
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -28,7 +32,7 @@
         <form id="deleteClientForm" method="POST" action="delete_client.php">
           <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
           <input type="hidden" name="client_id" id="deleteClientId">
-          <button type="submit" class="btn btn-danger">Delete Client</button>
+          <button type="submit" class="btn btn-danger" id="deleteClientSubmitBtn">Delete Client</button>
         </form>
       </div>
     </div>

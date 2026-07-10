@@ -2,10 +2,10 @@
 require_once '../includes/db.php'; // adjust path as needed
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
-// Only allow admin users to delete entries
-if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit();

@@ -47,7 +47,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param('isisss', $client_id, $client_name, $budget_hours, $status, $year, $manager);
+$stmt->bind_param('isssss', $client_id, $client_name, $budget_hours, $status, $year, $manager);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

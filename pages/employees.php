@@ -208,26 +208,32 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                             <?php endif; ?>
                                             <?php
                                             $role = strtolower($userrow['role']);
+                                            // Escaped once here since it's reused across every case below - the
+                                            // raw full_name was previously interpolated straight into these
+                                            // data-* attributes, letting a quote character in a name (e.g. from
+                                            // CSV import) break out and inject arbitrary HTML/JS.
+                                            $safeName = htmlspecialchars($userrow['full_name']);
+                                            $safeId = (int)$userrow['user_id'];
                                             switch ($role) {
                                                 case 'staff':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Senior</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
                                                     break;
                                                 case 'senior':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
                                                     break;
                                                 case 'manager':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
                                                     break;
                                                 case 'admin':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$userrow['user_id'].'" data-user-name="'.$userrow['full_name'].'" data-new-role="manager"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Manager</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
+                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Manager</a></li>';
                                                     break;
                                             }
                                             ?>

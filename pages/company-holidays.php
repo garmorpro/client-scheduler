@@ -17,6 +17,11 @@ if (!$isAdmin && !$isManager) {
     exit();
 }
 
+// Backend authorizes both admin and manager for holiday CRUD - the UI below
+// used to only show it to admins, leaving managers with no way to use the
+// access they already had.
+$canEditHolidays = $isAdmin || $isManager;
+
 // Fetch holidays grouped by timeoff_note
 $holidays = [];
 $sql = "SELECT * FROM time_off WHERE is_global_timeoff = 1 ORDER BY week_start ASC";
@@ -55,7 +60,7 @@ if ($result) {
             <h3 class="mb-0">Company Holidays</h3>
             <p class="mb-0">Manage firm-wide holidays and closures</p>
         </div>
-        <?php if ($isAdmin): ?>
+        <?php if ($canEditHolidays): ?>
         <div class="d-flex align-items-center gap-2">
             <a href="#" id="addHolidayBtn" class="badge p-2 text-decoration-none fw-medium btn-dark-custom">
                 <i class="bi bi-plus-lg me-3"></i>Add Holiday
@@ -80,7 +85,7 @@ if ($result) {
                         <th>Holiday</th>
                         <th>Dates</th>
                         <th class="num">Total Hours</th>
-                        <?php if ($isAdmin): ?><th class="num">Actions</th><?php endif; ?>
+                        <?php if ($canEditHolidays): ?><th class="num">Actions</th><?php endif; ?>
                     </tr>
                 </thead>
                 <tbody id="holidaysTableBody">
@@ -105,7 +110,7 @@ if ($result) {
                                             <div class="date-row">
                                                 <span class="d"><?php echo date('D, M j, Y', strtotime($day['date'])); ?></span>
                                                 <span class="hrs"><?php echo $day['hours']; ?>h</span>
-                                                <?php if ($isAdmin): ?>
+                                                <?php if ($canEditHolidays): ?>
                                                     <button type="button" class="chip-del" title="Remove this date" data-id="<?php echo $day['id']; ?>">
                                                         <i class="bi bi-x-lg"></i>
                                                     </button>
@@ -115,7 +120,7 @@ if ($result) {
                                     </div>
                                 </td>
                                 <td class="num"><span class="client-total-value"><?php echo $totalHours; ?>h</span></td>
-                                <?php if ($isAdmin): ?>
+                                <?php if ($canEditHolidays): ?>
                                 <td class="num">
                                     <div class="client-row-actions">
                                         <button class="client-icon-btn edit-holiday-btn"
@@ -141,7 +146,7 @@ if ($result) {
     </div>
 </div>
 
-<?php if ($isAdmin): ?>
+<?php if ($canEditHolidays): ?>
 <?php include_once '../includes/modals/holiday_modal.php'; ?>
 <?php endif; ?>
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
@@ -149,7 +154,7 @@ if ($result) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<?php if ($isAdmin): ?>
+<?php if ($canEditHolidays): ?>
 <script src="../assets/js/holiday_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>

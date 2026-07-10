@@ -1,5 +1,6 @@
 <?php
 require_once '../includes/db.php'; // your DB connection
+require_once __DIR__ . '/../includes/backup_helpers.php';
 
 // This script is meant to run from a cron job, not be requested over HTTP.
 if (php_sapi_name() !== 'cli') {
@@ -21,7 +22,7 @@ if (empty($settings['enable_automated_backups']) || $settings['enable_automated_
 
 // --- Backup settings ---
 $backupFrequency = $settings['backup_frequency'] ?? 'daily';
-$backupDir = rtrim($settings['local_backup_directory'] ?? '/tmp/db_backups', '/');
+$backupDir = backup_resolve_dir($settings['local_backup_directory'] ?? null);
 $retentionDays = (int)($settings['retention_period_days'] ?? 7);
 
 // --- Check if we should run this backup now ---

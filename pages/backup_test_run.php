@@ -4,6 +4,7 @@ require_once '../includes/db.php'; // defines $host, $user, $pass, $dbname, $con
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/backup_helpers.php';
 
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'access_system_settings')) {
     http_response_code(403);
@@ -18,13 +19,7 @@ if (!csrf_valid()) {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$backupDir = rtrim($input['local_backup_directory'] ?? '/tmp/db_backups', '/');
-
-// Ensure backup directory exists
-if (!is_dir($backupDir) && !mkdir($backupDir, 0755, true)) {
-    echo json_encode(['success' => false, 'error' => 'Failed to create backup directory']);
-    exit;
-}
+$backupDir = backup_resolve_dir($input['local_backup_directory'] ?? null);
 
 // Generate timestamped filename
 $timestamp = date('Y-m-d_His');

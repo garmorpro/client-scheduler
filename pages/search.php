@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -12,15 +13,20 @@ if (!isset($_SESSION['user_id'])) {
 if (isset($_GET['query'])) {
     $query = '%' . $_GET['query'] . '%';
 
-    // Search for clients (engagements)
-    $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ?";
-    $stmt = $conn->prepare($clientQuery);
-    $stmt->bind_param('s', $query);
-    $stmt->execute();
-    $clientResult = $stmt->get_result();
+    // Client/engagement results are only included for users who could
+    // actually reach the Clients/Engagements pages - otherwise the search
+    // box would leak client names to roles that page-level gating hides
+    // this data from.
     $clients = [];
-    while ($row = $clientResult->fetch_assoc()) {
-        $clients[] = $row;
+    if (user_has_permission($conn, 'manage_clients_engagements')) {
+        $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ?";
+        $stmt = $conn->prepare($clientQuery);
+        $stmt->bind_param('s', $query);
+        $stmt->execute();
+        $clientResult = $stmt->get_result();
+        while ($row = $clientResult->fetch_assoc()) {
+            $clients[] = $row;
+        }
     }
 
     // Check if clients (engagements) were found

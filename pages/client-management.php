@@ -15,6 +15,10 @@ if (!user_has_permission($conn, 'manage_clients_engagements')) {
     exit();
 }
 
+$flashSuccess = $_SESSION['success_message'] ?? null;
+$flashError = $_SESSION['error_message'] ?? null;
+unset($_SESSION['success_message'], $_SESSION['error_message']);
+
 // Fetch all clients
 $stmt = $conn->prepare("SELECT * FROM clients ORDER BY client_name ASC");
 $stmt->execute();
@@ -295,5 +299,11 @@ unset($client);
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php if ($flashSuccess): ?>
+<script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon: 'success', title: <?php echo json_encode($flashSuccess); ?>, timer: 2500, showConfirmButton: false }));</script>
+<?php endif; ?>
+<?php if ($flashError): ?>
+<script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon: 'error', title: 'Could not delete client', text: <?php echo json_encode($flashError); ?> }));</script>
+<?php endif; ?>
 </body>
 </html>

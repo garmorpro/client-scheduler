@@ -39,6 +39,24 @@ if ($deleteUserId === (int) $_SESSION['user_id']) {
     exit();
 }
 
+// Refuse to delete a user who still has scheduled hours or time-off history -
+// deleting them would either orphan those rows or fail on a foreign key,
+// depending on the schema. Deactivating (status = inactive) is the safer path.
+$depStmt = $conn->prepare("
+    SELECT
+        (SELECT COUNT(*) FROM entries WHERE user_id = ?) AS entry_count,
+        (SELECT COUNT(*) FROM time_off WHERE user_id = ?) AS timeoff_count
+");
+$depStmt->bind_param('ii', $deleteUserId, $deleteUserId);
+$depStmt->execute();
+$depRow = $depStmt->get_result()->fetch_assoc();
+$depStmt->close();
+
+if ($depRow && ((int)$depRow['entry_count'] > 0 || (int)$depRow['timeoff_count'] > 0)) {
+    echo json_encode(['success' => false, 'error' => 'This user has scheduled hours or time-off history and can\'t be deleted. Set their status to Inactive instead, or remove their schedule entries and time off first.']);
+    exit();
+}
+
 $detailsStmt = $conn->prepare("SELECT full_name, email FROM users WHERE user_id = ?");
 if (!$detailsStmt) {
     echo json_encode(['success' => false, 'error' => 'Database error']);

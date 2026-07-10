@@ -5,11 +5,11 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Basic auth check - only admins can move entries
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) !== 'admin') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }

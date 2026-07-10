@@ -1,12 +1,22 @@
 <?php
-require_once '../includes/db.php'; 
+require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
+    exit();
+}
+
+// Master Schedule shows every employee's full schedule across every client -
+// restrict it to the same permission that governs staffing/engagements,
+// rather than every logged-in role.
+$canEditSchedule = user_has_permission($conn, 'manage_clients_engagements');
+if (!$canEditSchedule) {
+    header("Location: my-schedule.php");
     exit();
 }
 
@@ -181,7 +191,7 @@ updateLastRowRadius();
 
     <script>
       const entries = <?php echo json_encode($entries); ?>;
-      const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
+      const IS_ADMIN = <?php echo $canEditSchedule ? 'true' : 'false'; ?>;
       const GLOBAL_TIMEOFF = <?php echo json_encode($globalTimeOff); ?>;
       const BUSY_SEASON_START = <?php echo json_encode($busySeasonStart); ?>;
       const BUSY_SEASON_END = <?php echo json_encode($busySeasonEnd); ?>;
@@ -405,13 +415,13 @@ updateLastRowRadius();
                             $clientName = htmlspecialchars($entry['client_name']);
                             $assignedHours = htmlspecialchars($entry['assigned_hours']);
                             $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
-                            $draggableAttr = $isAdmin ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
+                            $draggableAttr = $canEditSchedule ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
                             $badgeId = "badge-entry-{$entry['entry_id']}";
                             $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
                             $totalAssignedHours += floatval($entry['assigned_hours']);
                         }
 
-                        if ($isAdmin && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
+                        if ($canEditSchedule && empty($cellContent) && !isset($globalTimeOff[$weekKey])) {
                             $cellContent = "<i class='bi bi-plus '></i>";
                         }
 
@@ -426,7 +436,7 @@ updateLastRowRadius();
                         data-user-id="<?php echo $userId; ?>"
                         data-user-name="<?php echo $fullName; ?>"
                         data-week-start="<?php echo $weekKey; ?>"
-                        style="cursor: <?php echo $isAdmin ? 'pointer' : 'default'; ?>; vertical-align: middle;">
+                        style="cursor: <?php echo $canEditSchedule ? 'pointer' : 'default'; ?>; vertical-align: middle;">
                         <?php if ($hasPersonalTimeOff) echo "<span class='timeoff-corner'>{$timeOffHours}</span>"; ?>
                         <?php if ($isOverallocated): ?>
                             <span class="overallocated-flag" title="<?= $totalAssignedHours ?> hours assigned this week (over <?= $weekThreshold ?><?= $weekThreshold === $BUSY_SEASON_THRESHOLD ? ' — busy season' : '' ?>)"><i class="bi bi-exclamation-triangle-fill"></i></span>

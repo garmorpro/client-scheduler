@@ -16,3 +16,7 @@ Thumbs.db
 # User-uploaded policy PDFs (not source-controlled)
 assets/uploads/policies/*
 !assets/uploads/policies/.gitkeep
+
+# Local DB backups (not source-controlled)
+storage/backups/*
+!storage/backups/.gitkeep
