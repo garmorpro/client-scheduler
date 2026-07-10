@@ -53,12 +53,13 @@ if ($isReviewer) {
         }
     }
 } else {
-    // Non-reviewers can only withdraw their own request while it's still pending.
+    // Non-reviewers can withdraw their own request any time before it's
+    // denied - including one that's already approved, since plans change.
     if ($isSingle) {
-        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0 AND user_id = ? AND status = 'pending'");
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE timeoff_id = ? AND is_global_timeoff = 0 AND user_id = ? AND status IN ('pending', 'changes_requested', 'approved')");
         $stmt->bind_param('ii', $timeoffId, $currentUserId);
     } else {
-        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0 AND user_id = ? AND status = 'pending'");
+        $stmt = $conn->prepare("DELETE FROM time_off WHERE request_group = ? AND is_global_timeoff = 0 AND user_id = ? AND status IN ('pending', 'changes_requested', 'approved')");
         $stmt->bind_param('si', $requestGroup, $currentUserId);
     }
 }

@@ -203,9 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const cancelBtn = document.getElementById('vmtoCancelBtn');
         const editBtn = document.getElementById('vmtoEditBtn');
-        const canCancel = r.status === 'pending' || r.status === 'changes_requested';
-        cancelBtn.style.display = canCancel ? '' : 'none';
-        editBtn.style.display = r.status === 'changes_requested' ? '' : 'none';
+        const editableStatuses = ['pending', 'changes_requested', 'approved'];
+        const canActOn = editableStatuses.includes(r.status);
+        cancelBtn.style.display = canActOn ? '' : 'none';
+        editBtn.style.display = canActOn ? '' : 'none';
+        editBtn.innerHTML = r.status === 'approved'
+            ? '<i class="bi bi-arrow-repeat"></i> Edit &amp; Resend'
+            : '<i class="bi bi-pencil-square"></i> Edit &amp; Resubmit';
 
         viewModal.show();
     }

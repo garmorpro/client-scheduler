@@ -55,9 +55,11 @@ foreach ($days as $day) {
     $cleanDays[] = ['date' => $date, 'hours' => (float)$hours];
 }
 
-// Only the requester can edit, and only while the request is in
-// "changes_requested" status - i.e. a reviewer explicitly sent it back.
-$check = $conn->prepare("SELECT COUNT(*) AS cnt FROM time_off WHERE request_group = ? AND user_id = ? AND status = 'changes_requested'");
+// Only the requester can edit - and editing resubmits it for approval, so
+// this is allowed from pending, changes_requested, or even an already
+// approved request (plans change). A denied request is terminal; the
+// employee submits a fresh request instead of resurrecting that one.
+$check = $conn->prepare("SELECT COUNT(*) AS cnt FROM time_off WHERE request_group = ? AND user_id = ? AND status IN ('pending', 'changes_requested', 'approved')");
 $check->bind_param('si', $requestGroup, $userId);
 $check->execute();
 $owns = $check->get_result()->fetch_assoc()['cnt'] > 0;
