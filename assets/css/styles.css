@@ -2742,8 +2742,8 @@ body.dark-mode .ms-wk-hours { color: #edf1ee; }
 body.dark-mode .ms-wk-bar-track { background: #29302e; }
 .ms-wk-bar-work { height: 100%; background: #9aa39d; }
 .ms-wk-bar-off { height: 100%; background: var(--secondary-color); }
-.ms-week-tile.has-hours .ms-wk-bar-work { background: #2f9e57; }
-body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #4fbd7a; }
+.ms-week-tile.has-hours .ms-wk-bar-work { background: var(--primary-color); }
+body.dark-mode .ms-week-tile.has-hours .ms-wk-bar-work { background: #4a7d86; }
 .ms-week-tile.selected { background: var(--primary-color); border-color: var(--primary-color); }
 .ms-week-tile.selected .ms-wk-label { color: rgba(255,255,255,.72); }
 .ms-week-tile.selected .ms-wk-hours { color: #ffffff; }

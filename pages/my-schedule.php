@@ -289,7 +289,7 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
       <div class="ms-week-head">
         <h6>8-Week Overview</h6>
         <div class="ms-week-legend">
-          <span class="ms-legend-item"><span class="ms-legend-dot" style="background:#2f9e57;"></span>Work</span>
+          <span class="ms-legend-item"><span class="ms-legend-dot" style="background:var(--primary-color);"></span>Work</span>
           <span class="ms-legend-item"><span class="ms-legend-dot" style="background:var(--secondary-color);"></span>Time off</span>
           <?php if ($selectedMonday != $currentMonday): ?>
           <a href="?week_start=<?php echo date('Y-m-d', $currentMonday); ?>" class="ms-today-btn">
