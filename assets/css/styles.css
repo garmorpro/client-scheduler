@@ -2947,6 +2947,24 @@ body.dark-mode .app-logout-text { color: #edf1ee; }
 body.dark-mode .sidebar-logout:hover { background: #3a2228; color: #ff9a8f !important; }
 
 /* ========= POLICIES HUB (index list) ========= */
+.policy-filter-bar { display: flex; gap: 14px; margin-top: 18px; }
+.policy-filter-field { display: flex; flex-direction: column; gap: 5px; }
+.policy-filter-field label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; }
+body.dark-mode .policy-filter-field label { color: #6e7975; }
+.policy-filter-select {
+    min-width: 170px; height: 36px; font-size: 12.5px; font-weight: 500; padding: 6px 30px 6px 10px;
+    border: 1px solid #e3e7e5; border-radius: 9px; background-color: #ffffff; color: #16211f;
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7570' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center; background-size: 13px;
+}
+.policy-filter-select:focus { outline: none; border-color: var(--primary-color); }
+body.dark-mode .policy-filter-select {
+    background-color: #232a2c; border-color: #29302e; color: #edf1ee;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+body.dark-mode .policy-filter-select:focus { border-color: var(--secondary-color); }
+
 .indexWrap { background: #ffffff; border: 1px solid #e3e7e5; border-radius: 14px; overflow: hidden; margin-top: 18px; }
 body.dark-mode .indexWrap { background: #1b2022; border-color: #29302e; }
 .indexRow {

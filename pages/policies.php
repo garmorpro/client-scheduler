@@ -12,12 +12,36 @@ if (!isset($_SESSION['user_id'])) {
 
 $canManagePolicies = user_has_permission($conn, 'access_system_settings');
 
+$sortOptions = [
+    'upload'     => 'p.created_at ASC',
+    'newest'     => 'p.created_at DESC',
+    'updated'    => 'p.updated_at DESC',
+    'title_asc'  => 'p.title ASC',
+    'title_desc' => 'p.title DESC',
+];
+$sort = isset($_GET['sort']) && isset($sortOptions[$_GET['sort']]) ? $_GET['sort'] : 'upload';
+
+$typeOptions = ['all', 'policy', 'memo', 'pdf'];
+$type = isset($_GET['type']) && in_array($_GET['type'], $typeOptions, true) ? $_GET['type'] : 'all';
+
+$where = '';
+if ($type === 'pdf') {
+    $where = "WHERE p.source_type = 'pdf'";
+} elseif ($type === 'policy') {
+    $where = "WHERE p.source_type != 'pdf' AND p.doc_type = 'policy'";
+} elseif ($type === 'memo') {
+    $where = "WHERE p.source_type != 'pdf' AND p.doc_type = 'memo'";
+}
+
+$anyPoliciesExist = (int) $conn->query("SELECT COUNT(*) AS cnt FROM policies")->fetch_assoc()['cnt'] > 0;
+
 $policies = [];
 $result = $conn->query("
     SELECT p.policy_id, p.title, p.doc_type, p.source_type, p.effective_date, p.memo_from, p.updated_at, u.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users u ON p.updated_by = u.user_id
-    ORDER BY p.title ASC
+    $where
+    ORDER BY {$sortOptions[$sort]}
 ");
 if ($result) {
     $i = 0;
@@ -68,11 +92,40 @@ if ($result) {
         <?php endif; ?>
     </div>
 
+    <?php if ($anyPoliciesExist): ?>
+    <form method="GET" class="policy-filter-bar" id="policyFilterForm">
+        <div class="policy-filter-field">
+            <label for="policySortSelect">Sort by</label>
+            <select class="policy-filter-select" id="policySortSelect" name="sort" onchange="this.form.submit()">
+                <option value="upload" <?php echo $sort === 'upload' ? 'selected' : ''; ?>>Upload order</option>
+                <option value="newest" <?php echo $sort === 'newest' ? 'selected' : ''; ?>>Newest first</option>
+                <option value="updated" <?php echo $sort === 'updated' ? 'selected' : ''; ?>>Recently updated</option>
+                <option value="title_asc" <?php echo $sort === 'title_asc' ? 'selected' : ''; ?>>Title A–Z</option>
+                <option value="title_desc" <?php echo $sort === 'title_desc' ? 'selected' : ''; ?>>Title Z–A</option>
+            </select>
+        </div>
+        <div class="policy-filter-field">
+            <label for="policyTypeSelect">Type</label>
+            <select class="policy-filter-select" id="policyTypeSelect" name="type" onchange="this.form.submit()">
+                <option value="all" <?php echo $type === 'all' ? 'selected' : ''; ?>>All types</option>
+                <option value="policy" <?php echo $type === 'policy' ? 'selected' : ''; ?>>Policy</option>
+                <option value="memo" <?php echo $type === 'memo' ? 'selected' : ''; ?>>Memo</option>
+                <option value="pdf" <?php echo $type === 'pdf' ? 'selected' : ''; ?>>PDF</option>
+            </select>
+        </div>
+    </form>
+    <?php endif; ?>
+
     <?php if (empty($policies)): ?>
         <div class="policy-empty">
             <i class="bi bi-journal-text"></i>
-            <div class="t">No policies yet</div>
-            <div><?php echo $canManagePolicies ? 'Click "New Policy" to publish the first one.' : 'Check back later.'; ?></div>
+            <?php if ($anyPoliciesExist): ?>
+                <div class="t">No documents match this filter</div>
+                <div>Try a different type filter above.</div>
+            <?php else: ?>
+                <div class="t">No policies yet</div>
+                <div><?php echo $canManagePolicies ? 'Click "New Policy" to publish the first one.' : 'Check back later.'; ?></div>
+            <?php endif; ?>
         </div>
     <?php else: ?>
         <div class="indexWrap">
