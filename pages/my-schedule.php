@@ -124,11 +124,14 @@ $stmt->close();
 
 // ------------------------------------------------------
 // Time off for selected week - grouped by request_group so a multi-day
-// request shows as one row instead of one card per day.
+// request shows as one row instead of one card per day. Includes
+// pending/changes_requested too (not just approved) so a submitted
+// request shows up here right away instead of only after review.
 $sqlWeekTO = "
-    SELECT timeoff_id, request_group, category, holiday_date, assigned_hours
+    SELECT timeoff_id, request_group, category, holiday_date, assigned_hours, status
     FROM time_off
-    WHERE user_id = ? AND is_global_timeoff = 0 AND status = 'approved'
+    WHERE user_id = ? AND is_global_timeoff = 0
+      AND status IN ('approved', 'pending', 'changes_requested')
       AND week_start = ?
 ";
 $stmt = $conn->prepare($sqlWeekTO);
@@ -146,6 +149,7 @@ while ($row = $weekTORes->fetch_assoc()) {
     if (!isset($timeOffGroups[$groupKey])) {
         $timeOffGroups[$groupKey] = [
             'category' => $row['category'] ?: 'vacation',
+            'status' => $row['status'],
             'days' => [],
             'total_hours' => 0,
         ];
@@ -374,20 +378,28 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
           </div>
         <?php endforeach; ?>
 
+        <?php
+          $offStatusMap = [
+            'approved' => ['confirmed', 'Approved'],
+            'pending' => ['pending', 'Pending'],
+            'changes_requested' => ['not-confirmed', 'Changes Requested'],
+          ];
+        ?>
         <?php foreach ($timeOffs as $off):
           sort($off['days']);
           $dayCount = count($off['days']);
           $dayLabel = $dayCount === 1
             ? date('D M j', strtotime($off['days'][0]))
             : date('D M j', strtotime($off['days'][0])) . ' – ' . date('D M j', strtotime(end($off['days'])));
+          [$offStatusClass, $offStatusLabel] = $offStatusMap[$off['status']] ?? ['pending', 'Pending'];
         ?>
           <div class="ms-entry-row timeoff">
             <div class="ms-entry-avatar"><i class="bi bi-airplane-fill"></i></div>
             <div class="ms-entry-main">
-              <div class="ms-entry-name">Time Off</div>
-              <div class="ms-entry-team"><?php echo htmlspecialchars(ucfirst($off['category'])); ?> · <?php echo htmlspecialchars($dayLabel); ?> · <b>Approved</b></div>
+              <div class="ms-entry-name">Time Off <span class="text-muted" style="font-weight:500;">· <?php echo $dayCount; ?> day<?php echo $dayCount === 1 ? '' : 's'; ?></span></div>
+              <div class="ms-entry-team"><?php echo htmlspecialchars(ucfirst($off['category'])); ?> · <?php echo htmlspecialchars($dayLabel); ?></div>
             </div>
-            <span class="eng-status-pill timeoff"><span class="dot"></span><?php echo $dayCount; ?> day<?php echo $dayCount === 1 ? '' : 's'; ?></span>
+            <span class="eng-status-pill <?php echo $offStatusClass; ?>"><span class="dot"></span><?php echo $offStatusLabel; ?></span>
             <div class="ms-entry-hours"><?php echo $off['total_hours']; ?>h</div>
           </div>
         <?php endforeach; ?>
