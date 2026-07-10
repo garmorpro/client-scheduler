@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const engagementId = btn.dataset.engagementId;
             const avatarColor = btn.dataset.avatarColor || '#4f8ef7';
             const initials = btn.dataset.initials || '?';
+            const restrictFinancials = btn.dataset.restrictFinancials === '1';
             if (!engagementId) return;
 
             modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="eng-vm-body">
                         <div class="eng-vm-stat-row">
+                            ${restrictFinancials ? '' : `
                             <div class="eng-vm-stat-card">
                                 <div class="eng-vm-stat-title">Budgeted</div>
                                 <div class="eng-vm-stat-value">${budgeted}h</div>
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="eng-vm-stat-card">
                                 <div class="eng-vm-stat-title">Allocated</div>
                                 <div class="eng-vm-stat-value ${isOver ? 'over' : ''}">${allocated}h</div>
-                            </div>
+                            </div>`}
                             <div class="eng-vm-stat-card">
                                 <div class="eng-vm-stat-title">Employees</div>
                                 <div class="eng-vm-stat-value">${employees.length}</div>
@@ -88,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="eng-vm-stat-value text" title="${data.manager || '-'}">${data.manager || '-'}</div>
                             </div>
                         </div>
+                        ${restrictFinancials ? '' : `
                         <div style="margin-bottom: 16px;">
                             <div class="eng-util-cell">
                                 <div class="eng-util-track">
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="eng-util-pct ${utilColor}">${Math.round(pct)}%</span>
                             </div>
                             ${isOver ? `<div class="eng-util-over">+${overHours}h over</div>` : ''}
-                        </div>
+                        </div>`}
                         <div class="eng-vm-section-title">Assigned Employees</div>
                         <div class="eng-vm-emp-list">${empRowsHtml}</div>
                     </div>

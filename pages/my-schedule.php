@@ -15,6 +15,9 @@ if ($isAdmin) {
     exit();
 }
 
+$userRole = strtolower($_SESSION['user_role'] ?? '');
+$restrictEngagementFinancials = in_array($userRole, ['staff', 'senior'], true);
+
 $userId = $_SESSION['user_id'];
 
 // ------------------------------------------------------
@@ -313,7 +316,8 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
           <div class="ms-entry-row view-engagement-btn" role="button" tabindex="0"
                data-engagement-id="<?php echo $eng['engagement_id']; ?>"
                data-avatar-color="<?php echo avatar_color($clientName); ?>"
-               data-initials="<?php echo htmlspecialchars(avatar_initials($clientName)); ?>">
+               data-initials="<?php echo htmlspecialchars(avatar_initials($clientName)); ?>"
+               data-restrict-financials="<?php echo $restrictEngagementFinancials ? '1' : '0'; ?>">
             <div class="ms-entry-avatar" style="background-color:<?php echo avatar_color($clientName); ?>;"><?php echo htmlspecialchars(avatar_initials($clientName)); ?></div>
             <div class="ms-entry-main">
               <div class="ms-entry-name"><?php echo htmlspecialchars($clientName); ?></div>
