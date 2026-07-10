@@ -14,7 +14,7 @@ $canManagePolicies = user_has_permission($conn, 'access_system_settings');
 
 $policies = [];
 $result = $conn->query("
-    SELECT p.policy_id, p.title, p.content, p.updated_at, u.full_name AS updated_by_name
+    SELECT p.policy_id, p.title, p.doc_type, p.content, p.updated_at, u.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users u ON p.updated_by = u.user_id
     ORDER BY p.title ASC
@@ -28,6 +28,7 @@ if ($result) {
         $policies[] = [
             'policy_id' => (int)$row['policy_id'],
             'title' => $row['title'],
+            'doc_type' => $row['doc_type'],
             'snippet' => $snippet,
             'updated_at' => $row['updated_at'],
             'updated_by_name' => $row['updated_by_name'],
@@ -76,7 +77,10 @@ if ($result) {
         <div class="policy-grid">
             <?php foreach ($policies as $policy): ?>
                 <a href="policy.php?id=<?php echo $policy['policy_id']; ?>" class="policy-card">
-                    <div class="policy-card-icon"><i class="bi bi-journal-text"></i></div>
+                    <div class="policy-card-icon"><i class="bi <?php echo $policy['doc_type'] === 'memo' ? 'bi-file-earmark-text' : 'bi-journal-text'; ?>"></i></div>
+                    <?php if ($policy['doc_type'] === 'memo'): ?>
+                        <span class="policy-memo-tag">Memo</span>
+                    <?php endif; ?>
                     <div class="policy-card-title"><?php echo htmlspecialchars($policy['title']); ?></div>
                     <div class="policy-card-snippet"><?php echo htmlspecialchars($policy['snippet']); ?></div>
                     <div class="policy-card-meta">

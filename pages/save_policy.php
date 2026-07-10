@@ -29,8 +29,15 @@ $title = trim($data['title'] ?? '');
 $content = $data['content'] ?? '';
 $userId = $_SESSION['user_id'];
 
+$docType = ($data['doc_type'] ?? '') === 'memo' ? 'memo' : 'policy';
+
 $effectiveDate = trim($data['effective_date'] ?? '');
 $effectiveDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $effectiveDate) ? $effectiveDate : null;
+
+$memoTo = $docType === 'memo' ? trim($data['memo_to'] ?? '') : '';
+$memoFrom = $docType === 'memo' ? trim($data['memo_from'] ?? '') : '';
+$memoTo = $memoTo !== '' ? $memoTo : null;
+$memoFrom = $memoFrom !== '' ? $memoFrom : null;
 
 if ($title === '' || trim(strip_tags($content)) === '') {
     echo json_encode(['success' => false, 'error' => 'Please add a title and some content.']);
@@ -38,8 +45,8 @@ if ($title === '' || trim(strip_tags($content)) === '') {
 }
 
 if ($policyId) {
-    $stmt = $conn->prepare("UPDATE policies SET title = ?, effective_date = ?, content = ?, updated_by = ? WHERE policy_id = ?");
-    $stmt->bind_param('sssii', $title, $effectiveDate, $content, $userId, $policyId);
+    $stmt = $conn->prepare("UPDATE policies SET title = ?, doc_type = ?, effective_date = ?, memo_to = ?, memo_from = ?, content = ?, updated_by = ? WHERE policy_id = ?");
+    $stmt->bind_param('ssssssii', $title, $docType, $effectiveDate, $memoTo, $memoFrom, $content, $userId, $policyId);
     if (!$stmt->execute()) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => $stmt->error]);
@@ -47,8 +54,8 @@ if ($policyId) {
     }
     $stmt->close();
 } else {
-    $stmt = $conn->prepare("INSERT INTO policies (title, effective_date, content, created_by, updated_by) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param('sssii', $title, $effectiveDate, $content, $userId, $userId);
+    $stmt = $conn->prepare("INSERT INTO policies (title, doc_type, effective_date, memo_to, memo_from, content, created_by, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('ssssssii', $title, $docType, $effectiveDate, $memoTo, $memoFrom, $content, $userId, $userId);
     if (!$stmt->execute()) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => $stmt->error]);

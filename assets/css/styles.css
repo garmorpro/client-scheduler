@@ -3057,14 +3057,25 @@ body.dark-mode #policyModal .ql-editor.ql-blank::before { color: #6e7975; }
 
 /* ========= PRINT (Download PDF) ========= */
 .policy-print-only { display: none; }
-.policy-letterhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
-.policy-letterhead-info { font-size: 11px; line-height: 1.6; color: #003f47; }
+.policy-letterhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; width: 100%; }
+.policy-letterhead-info { font-size: 11px; line-height: 1.6; color: #003f47; min-width: 0; flex-shrink: 1; }
 .policy-letterhead-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-.policy-letterhead-logo { height: 60px; width: auto; }
+.policy-letterhead-logo { height: 55px; width: auto; max-width: 150px; min-width: 0; flex-shrink: 0; object-fit: contain; }
 .policy-letterhead-rule { height: 2.5px; background: #003f47; margin: 10px 0 26px; }
 .policy-print-title-block { text-align: center; margin-bottom: 22px; }
 .policy-print-title-block h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
 .policy-print-effective { font-size: 13px; font-weight: 700; }
+
+.policy-memo-tag {
+    display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    padding: 3px 9px; border-radius: 20px; background: #e2eef6; color: #285a80; margin-bottom: 6px;
+}
+body.dark-mode .policy-memo-tag { background: #1a2540; color: #7fa8e0; }
+.policy-memo-block { margin-bottom: 6px; }
+.policy-memo-heading { font-weight: 700; font-size: 14px; letter-spacing: .04em; margin-bottom: 16px; }
+.policy-memo-row { display: flex; gap: 10px; font-size: 13px; margin-bottom: 8px; }
+.policy-memo-row span:first-child { width: 70px; flex-shrink: 0; }
+.policy-memo-rule { border-top: 1.5px solid #000; margin: 18px 0 22px; }
 @media print {
     body * { visibility: hidden; }
     .policy-screen-only { display: none !important; }

@@ -19,7 +19,7 @@ if (!$policyId) {
 }
 
 $stmt = $conn->prepare("
-    SELECT p.policy_id, p.title, p.effective_date, p.content, p.created_at, p.updated_at,
+    SELECT p.policy_id, p.title, p.doc_type, p.effective_date, p.memo_to, p.memo_from, p.content, p.created_at, p.updated_at,
            cu.full_name AS created_by_name, uu.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users cu ON p.created_by = cu.user_id
@@ -62,12 +62,22 @@ if (!$policy) {
     </div>
     <div class="policy-letterhead-rule"></div>
 
-    <div class="policy-print-title-block">
-        <h1><?php echo htmlspecialchars($policy['title']); ?></h1>
-        <?php if (!empty($policy['effective_date'])): ?>
-            <div class="policy-print-effective">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></div>
-        <?php endif; ?>
-    </div>
+    <?php if ($policy['doc_type'] === 'memo'): ?>
+        <div class="policy-memo-block">
+            <div class="policy-memo-heading">MEMORANDUM</div>
+            <div class="policy-memo-row"><span>To:</span><span><?php echo htmlspecialchars($policy['memo_to'] ?: 'AARC-360 Employees'); ?></span></div>
+            <div class="policy-memo-row"><span>From:</span><span><?php echo htmlspecialchars($policy['memo_from'] ?: ''); ?></span></div>
+            <div class="policy-memo-row"><span>Subject:</span><span><?php echo htmlspecialchars($policy['title']); ?></span></div>
+        </div>
+        <div class="policy-memo-rule"></div>
+    <?php else: ?>
+        <div class="policy-print-title-block">
+            <h1><?php echo htmlspecialchars($policy['title']); ?></h1>
+            <?php if (!empty($policy['effective_date'])): ?>
+                <div class="policy-print-effective">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
     <div class="policy-print-content"><?php echo $policy['content']; ?></div>
 </div>
@@ -80,8 +90,16 @@ if (!$policy) {
 
     <div class="policy-detail-head">
         <div>
+            <?php if ($policy['doc_type'] === 'memo'): ?>
+                <span class="policy-memo-tag">Memo</span>
+            <?php endif; ?>
             <h3 class="mb-1"><?php echo htmlspecialchars($policy['title']); ?></h3>
-            <?php if (!empty($policy['effective_date'])): ?>
+            <?php if ($policy['doc_type'] === 'memo'): ?>
+                <p class="mb-1" style="font-size: 13px;">
+                    To: <strong><?php echo htmlspecialchars($policy['memo_to'] ?: 'AARC-360 Employees'); ?></strong>
+                    &nbsp;·&nbsp; From: <strong><?php echo htmlspecialchars($policy['memo_from'] ?: '-'); ?></strong>
+                </p>
+            <?php elseif (!empty($policy['effective_date'])): ?>
                 <p class="mb-1 fw-semibold" style="font-size: 13px;">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></p>
             <?php endif; ?>
             <p class="mb-0 text-muted" style="font-size: 12.5px;">
@@ -99,7 +117,10 @@ if (!$policy) {
             <button type="button" id="editPolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-custom"
                 data-policy-id="<?php echo $policy['policy_id']; ?>"
                 data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
-                data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>">
+                data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>"
+                data-policy-doc-type="<?php echo htmlspecialchars($policy['doc_type']); ?>"
+                data-policy-memo-to="<?php echo htmlspecialchars($policy['memo_to'] ?? ''); ?>"
+                data-policy-memo-from="<?php echo htmlspecialchars($policy['memo_from'] ?? ''); ?>">
                 <i class="bi bi-pencil-square me-2"></i>Edit
             </button>
             <button type="button" id="deletePolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-danger-custom"

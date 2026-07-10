@@ -3,8 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!modalEl) return;
   const modal = new bootstrap.Modal(modalEl);
   const form = document.getElementById('policyForm');
+  const docTypeSelect = document.getElementById('policy_doc_type');
   const titleInput = document.getElementById('policy_title');
+  const titleLabel = document.getElementById('policy_title_label');
+  const effectiveDateField = document.getElementById('policy_effective_date_field');
   const effectiveDateInput = document.getElementById('policy_effective_date');
+  const memoFieldsRow = document.getElementById('policy_memo_fields');
+  const memoToInput = document.getElementById('policy_memo_to');
+  const memoFromInput = document.getElementById('policy_memo_from');
   const idInput = document.getElementById('policy_id');
   const modalTitleEl = document.getElementById('policyModalTitle');
   const saveBtn = document.getElementById('policySaveBtn');
@@ -22,21 +28,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function applyDocType(type) {
+    if (type === 'memo') {
+      titleLabel.textContent = 'Subject';
+      titleInput.placeholder = 'e.g. 2026 Holiday Observances and Paid Time Off Policy';
+      effectiveDateField.style.display = 'none';
+      memoFieldsRow.style.display = 'grid';
+    } else {
+      titleLabel.textContent = 'Title';
+      titleInput.placeholder = 'e.g. Remote Work Policy';
+      effectiveDateField.style.display = '';
+      memoFieldsRow.style.display = 'none';
+    }
+  }
+
+  docTypeSelect.addEventListener('change', () => applyDocType(docTypeSelect.value));
+
   function openModal(mode, data) {
     form.reset();
     quill.setText('');
     idInput.value = '';
 
     if (mode === 'edit') {
-      modalTitleEl.textContent = 'Edit Policy';
+      modalTitleEl.textContent = 'Edit Document';
       idInput.value = data.policyId;
       titleInput.value = data.title;
       effectiveDateInput.value = data.effectiveDate || '';
+      docTypeSelect.value = data.docType || 'policy';
+      memoToInput.value = data.memoTo || '';
+      memoFromInput.value = data.memoFrom || '';
       quill.clipboard.dangerouslyPasteHTML(data.content || '');
     } else {
-      modalTitleEl.textContent = 'New Policy';
+      modalTitleEl.textContent = 'New Document';
+      docTypeSelect.value = 'policy';
     }
 
+    applyDocType(docTypeSelect.value);
     modal.show();
   }
 
@@ -57,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
         policyId: editBtn.dataset.policyId,
         title: editBtn.dataset.policyTitle,
         effectiveDate: editBtn.dataset.policyEffectiveDate,
+        docType: editBtn.dataset.policyDocType,
+        memoTo: editBtn.dataset.policyMemoTo,
+        memoFrom: editBtn.dataset.policyMemoFrom,
         content: seedEl ? seedEl.innerHTML : ''
       });
     });
@@ -77,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = quill.root.innerHTML;
     const isEmpty = quill.getText().trim().length === 0;
     if (!title || isEmpty) {
-      notify('warning', 'Missing information', 'Please add a title and some content.');
+      notify('warning', 'Missing information', 'Please add a title/subject and some content.');
       return;
     }
 
@@ -92,7 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({
           policy_id: idInput.value || null,
           title,
+          doc_type: docTypeSelect.value,
           effective_date: effectiveDateInput.value || null,
+          memo_to: memoToInput.value.trim() || null,
+          memo_from: memoFromInput.value.trim() || null,
           content
         })
       });
