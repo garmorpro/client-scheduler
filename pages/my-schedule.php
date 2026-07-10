@@ -200,7 +200,7 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $sql = "
         SELECT u.full_name, e.assigned_hours
         FROM entries e
-        JOIN ms_users u ON e.user_id = u.user_id
+        JOIN users u ON e.user_id = u.user_id
         WHERE e.engagement_id = ?
           AND e.week_start = ?
           AND e.user_id != ?
