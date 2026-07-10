@@ -2775,6 +2775,8 @@ body.dark-mode .ms-current-pill { background: rgba(163,204,56,.16); color: var(-
     transition: box-shadow .15s ease, border-color .15s ease;
 }
 .ms-entry-row:hover { box-shadow: 0 8px 24px -12px rgba(16,24,22,.18); border-color: #9aa39d; }
+.ms-entry-row.view-engagement-btn { cursor: pointer; }
+.ms-entry-row.view-engagement-btn:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }
 body.dark-mode .ms-entry-row { background: #1b2022; border-color: #29302e; }
 .ms-entry-avatar {
     width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;

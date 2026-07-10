@@ -310,7 +310,10 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
           $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';
           $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
         ?>
-          <div class="ms-entry-row">
+          <div class="ms-entry-row view-engagement-btn" role="button" tabindex="0"
+               data-engagement-id="<?php echo $eng['engagement_id']; ?>"
+               data-avatar-color="<?php echo avatar_color($clientName); ?>"
+               data-initials="<?php echo htmlspecialchars(avatar_initials($clientName)); ?>">
             <div class="ms-entry-avatar" style="background-color:<?php echo avatar_color($clientName); ?>;"><?php echo htmlspecialchars(avatar_initials($clientName)); ?></div>
             <div class="ms-entry-main">
               <div class="ms-entry-name"><?php echo htmlspecialchars($clientName); ?></div>
@@ -353,6 +356,7 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
 
   <?php include_once '../includes/modals/viewProfileModal.php'; ?>
   <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+  <?php include_once '../includes/modals/view_engagement_modal.php'; ?>
 
   <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
@@ -360,5 +364,6 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
   <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
   <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
   <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
+  <script src="../assets/js/view_engagement_modal.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

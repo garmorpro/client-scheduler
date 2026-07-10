@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.querySelectorAll('.view-engagement-btn').forEach(btn => {
+        btn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                btn.click();
+            }
+        });
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
             const engagementId = btn.dataset.engagementId;
