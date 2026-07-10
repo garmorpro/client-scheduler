@@ -62,6 +62,17 @@ if ($canAccessSystemSettings) {
             <div class="col-md-4">
                 <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
                     <div>
+                        <h6><i class="bi bi-calendar2-week me-2"></i>Company Holidays</h6>
+                        <p class="text-muted" style="font-size: 13px;">Manage firm-wide holidays and closures.</p>
+                    </div>
+                    <a href="company-holidays.php" class="badge text-white p-2 text-decoration-none fw-medium align-self-start" style="font-size: .875rem; background-color: rgb(3,2,18);">
+                        <i class="bi bi-gear me-2"></i>Manage
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
                         <h6><i class="bi bi-hdd-stack me-2"></i>Backup Configuration</h6>
                         <p class="text-muted" style="font-size: 13px;">Automated backup schedule and local storage location.</p>
                     </div>

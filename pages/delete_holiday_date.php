@@ -2,10 +2,10 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
-$userRole = strtolower($_SESSION['user_role'] ?? '');
-if ($userRole !== 'admin' && $userRole !== 'manager') {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'access_system_settings')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;

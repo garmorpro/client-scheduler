@@ -144,7 +144,6 @@ if ($canApproveTimeOff) {
                             <?php endif; ?>
                         </a></li>
                         <?php endif; ?>
-                        <li><a href="company-holidays.php" class="sidebar-sublink <?= $currentPage == 'company-holidays.php' ? 'active' : '' ?>">Company Holidays</a></li>
                         <?php if ($canAccessSystemSettings || $isAdmin): ?>
                         <li><a href="service-settings.php" class="sidebar-sublink <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">System Settings</a></li>
                         <?php endif; ?>

@@ -3,24 +3,22 @@ date_default_timezone_set('America/Chicago');
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
     exit();
 }
 
-$isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
-$isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
+// Company Holidays lives under the System Settings permission - it's a
+// firm-wide setting, not a per-role carve-out, so access/edit rights both
+// key off access_system_settings (admin always passes this).
+$canEditHolidays = user_has_permission($conn, 'access_system_settings');
 
-if (!$isAdmin && !$isManager) {
+if (!$canEditHolidays) {
     header("Location: my-schedule.php");
     exit();
 }
-
-// Backend authorizes both admin and manager for holiday CRUD - the UI below
-// used to only show it to admins, leaving managers with no way to use the
-// access they already had.
-$canEditHolidays = $isAdmin || $isManager;
 
 // Fetch holidays grouped by timeoff_note
 $holidays = [];
