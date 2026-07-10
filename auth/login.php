@@ -372,15 +372,25 @@ require_once '../includes/auth.php';
     });
 
     document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const form = this;
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         if (!email || !password) return;
+        if (form.dataset.submitting === '1') { e.preventDefault(); return; }
+
+        // Defer the real submission until after the overlay has painted -
+        // a plain form POST can start navigating in the same tick this
+        // handler runs, before the browser ever renders the overlay.
+        e.preventDefault();
+        form.dataset.submitting = '1';
 
         const btn = document.getElementById('loginSubmitBtn');
         btn.disabled = true;
         document.getElementById('loginSubmitLabel').innerHTML =
             '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
         document.getElementById('signinOverlay').classList.add('show');
+
+        requestAnimationFrame(() => requestAnimationFrame(() => form.submit()));
     });
 </script>
 </body>
