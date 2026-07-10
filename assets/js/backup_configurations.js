@@ -1,34 +1,34 @@
 async function loadBackupHistory() {
     const listEl = document.getElementById('backupHistoryList');
     if (!listEl) return;
-    listEl.innerHTML = '<div class="text-muted">Loading...</div>';
+    listEl.innerHTML = '<div class="bkp-history-empty">Loading...</div>';
 
     try {
         const resp = await fetch('list_backups.php');
         const result = await resp.json();
 
         if (!result.success) {
-            listEl.innerHTML = `<div class="text-danger">${result.error || 'Could not load backups.'}</div>`;
+            listEl.innerHTML = `<div class="bkp-history-empty text-danger">${result.error || 'Could not load backups.'}</div>`;
             return;
         }
         if (!result.backups.length) {
-            listEl.innerHTML = '<div class="text-muted">No backups yet.</div>';
+            listEl.innerHTML = '<div class="bkp-history-empty">No backups yet.</div>';
             return;
         }
 
         listEl.innerHTML = result.backups.map(b => `
-            <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                <div>
-                    <div>${b.created}</div>
-                    <div class="text-muted" style="font-size: 11px;">${b.size}</div>
+            <div class="eng-vm-emp-row">
+                <div class="eng-vm-emp-info">
+                    <div class="eng-vm-emp-name">${b.created}</div>
+                    <div class="eng-vm-emp-role">${b.size}</div>
                 </div>
-                <a href="download_backup.php?file=${encodeURIComponent(b.name)}" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-download"></i> Download
+                <a href="download_backup.php?file=${encodeURIComponent(b.name)}" class="bkp-download-btn" title="Download">
+                    <i class="bi bi-download"></i>
                 </a>
             </div>
         `).join('');
     } catch (err) {
-        listEl.innerHTML = '<div class="text-danger">Network error loading backups.</div>';
+        listEl.innerHTML = '<div class="bkp-history-empty text-danger">Network error loading backups.</div>';
     }
 }
 
