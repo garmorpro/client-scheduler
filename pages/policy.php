@@ -19,7 +19,7 @@ if (!$policyId) {
 }
 
 $stmt = $conn->prepare("
-    SELECT p.policy_id, p.title, p.content, p.created_at, p.updated_at,
+    SELECT p.policy_id, p.title, p.effective_date, p.content, p.created_at, p.updated_at,
            cu.full_name AS created_by_name, uu.full_name AS updated_by_name
     FROM policies p
     LEFT JOIN users cu ON p.created_by = cu.user_id
@@ -51,8 +51,24 @@ if (!$policy) {
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
 
 <div class="policy-print-only">
-    <h1><?php echo htmlspecialchars($policy['title']); ?></h1>
-    <div class="policy-print-meta">Last updated <?php echo date('F j, Y', strtotime($policy['updated_at'])); ?><?php echo !empty($policy['updated_by_name']) ? ' by ' . htmlspecialchars($policy['updated_by_name']) : ''; ?></div>
+    <div class="policy-letterhead">
+        <div class="policy-letterhead-info">
+            <div class="policy-letterhead-name">AARC-360</div>
+            <div>8000 Avalon Boulevard, Suite 100, Alpharetta, GA 30009</div>
+            <div>Tel: +1 866 576 4414</div>
+            <div>www.AARC-360.com</div>
+        </div>
+        <img src="../assets/images/aarc-360-logo-1.webp" alt="AARC-360" class="policy-letterhead-logo">
+    </div>
+    <div class="policy-letterhead-rule"></div>
+
+    <div class="policy-print-title-block">
+        <h1><?php echo htmlspecialchars($policy['title']); ?></h1>
+        <?php if (!empty($policy['effective_date'])): ?>
+            <div class="policy-print-effective">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></div>
+        <?php endif; ?>
+    </div>
+
     <div class="policy-print-content"><?php echo $policy['content']; ?></div>
 </div>
 
@@ -65,6 +81,9 @@ if (!$policy) {
     <div class="policy-detail-head">
         <div>
             <h3 class="mb-1"><?php echo htmlspecialchars($policy['title']); ?></h3>
+            <?php if (!empty($policy['effective_date'])): ?>
+                <p class="mb-1 fw-semibold" style="font-size: 13px;">Effective <?php echo date('F j, Y', strtotime($policy['effective_date'])); ?></p>
+            <?php endif; ?>
             <p class="mb-0 text-muted" style="font-size: 12.5px;">
                 Last updated <?php echo date('F j, Y', strtotime($policy['updated_at'])); ?>
                 <?php if (!empty($policy['updated_by_name'])): ?>
@@ -79,7 +98,8 @@ if (!$policy) {
             <?php if ($canManagePolicies): ?>
             <button type="button" id="editPolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-custom"
                 data-policy-id="<?php echo $policy['policy_id']; ?>"
-                data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>">
+                data-policy-title="<?php echo htmlspecialchars($policy['title']); ?>"
+                data-policy-effective-date="<?php echo htmlspecialchars($policy['effective_date'] ?? ''); ?>">
                 <i class="bi bi-pencil-square me-2"></i>Edit
             </button>
             <button type="button" id="deletePolicyBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-danger-custom"

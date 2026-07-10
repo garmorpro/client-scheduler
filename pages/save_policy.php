@@ -29,14 +29,17 @@ $title = trim($data['title'] ?? '');
 $content = $data['content'] ?? '';
 $userId = $_SESSION['user_id'];
 
+$effectiveDate = trim($data['effective_date'] ?? '');
+$effectiveDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $effectiveDate) ? $effectiveDate : null;
+
 if ($title === '' || trim(strip_tags($content)) === '') {
     echo json_encode(['success' => false, 'error' => 'Please add a title and some content.']);
     exit;
 }
 
 if ($policyId) {
-    $stmt = $conn->prepare("UPDATE policies SET title = ?, content = ?, updated_by = ? WHERE policy_id = ?");
-    $stmt->bind_param('ssii', $title, $content, $userId, $policyId);
+    $stmt = $conn->prepare("UPDATE policies SET title = ?, effective_date = ?, content = ?, updated_by = ? WHERE policy_id = ?");
+    $stmt->bind_param('sssii', $title, $effectiveDate, $content, $userId, $policyId);
     if (!$stmt->execute()) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => $stmt->error]);
@@ -44,8 +47,8 @@ if ($policyId) {
     }
     $stmt->close();
 } else {
-    $stmt = $conn->prepare("INSERT INTO policies (title, content, created_by, updated_by) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param('ssii', $title, $content, $userId, $userId);
+    $stmt = $conn->prepare("INSERT INTO policies (title, effective_date, content, created_by, updated_by) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssii', $title, $effectiveDate, $content, $userId, $userId);
     if (!$stmt->execute()) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => $stmt->error]);

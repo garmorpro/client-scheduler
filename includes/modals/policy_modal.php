@@ -12,9 +12,15 @@
           <div class="eng-edit-body">
             <input type="hidden" id="policy_id" name="policy_id">
 
-            <div class="eng-edit-field">
-              <label for="policy_title">Title</label>
-              <input type="text" class="eng-edit-input" id="policy_title" name="title" placeholder="e.g. Remote Work Policy" required>
+            <div class="eng-edit-row">
+              <div class="eng-edit-field">
+                <label for="policy_title">Title</label>
+                <input type="text" class="eng-edit-input" id="policy_title" name="title" placeholder="e.g. Remote Work Policy" required>
+              </div>
+              <div class="eng-edit-field">
+                <label for="policy_effective_date">Effective Date</label>
+                <input type="date" class="eng-edit-input" id="policy_effective_date" name="effective_date">
+              </div>
             </div>
 
             <div class="eng-edit-field">

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = new bootstrap.Modal(modalEl);
   const form = document.getElementById('policyForm');
   const titleInput = document.getElementById('policy_title');
+  const effectiveDateInput = document.getElementById('policy_effective_date');
   const idInput = document.getElementById('policy_id');
   const modalTitleEl = document.getElementById('policyModalTitle');
   const saveBtn = document.getElementById('policySaveBtn');
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modalTitleEl.textContent = 'Edit Policy';
       idInput.value = data.policyId;
       titleInput.value = data.title;
+      effectiveDateInput.value = data.effectiveDate || '';
       quill.clipboard.dangerouslyPasteHTML(data.content || '');
     } else {
       modalTitleEl.textContent = 'New Policy';
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       openModal('edit', {
         policyId: editBtn.dataset.policyId,
         title: editBtn.dataset.policyTitle,
+        effectiveDate: editBtn.dataset.policyEffectiveDate,
         content: seedEl ? seedEl.innerHTML : ''
       });
     });
@@ -89,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({
           policy_id: idInput.value || null,
           title,
+          effective_date: effectiveDateInput.value || null,
           content
         })
       });

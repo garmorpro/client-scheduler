@@ -3009,6 +3009,7 @@ body.dark-mode #policyModal .eng-edit-hero { background: linear-gradient(135deg,
 body.dark-mode #policyModal .eng-edit-title { color: #edf1ee; }
 
 #policyModal .eng-edit-body { padding: 16px 20px; }
+#policyModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 #policyModal .eng-edit-field { margin-bottom: 14px; }
 #policyModal .eng-edit-field:last-child { margin-bottom: 0; }
 #policyModal .eng-edit-field label {
@@ -3056,12 +3057,18 @@ body.dark-mode #policyModal .ql-editor.ql-blank::before { color: #6e7975; }
 
 /* ========= PRINT (Download PDF) ========= */
 .policy-print-only { display: none; }
+.policy-letterhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.policy-letterhead-info { font-size: 11px; line-height: 1.6; color: #003f47; }
+.policy-letterhead-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.policy-letterhead-logo { height: 60px; width: auto; }
+.policy-letterhead-rule { height: 2.5px; background: #003f47; margin: 10px 0 26px; }
+.policy-print-title-block { text-align: center; margin-bottom: 22px; }
+.policy-print-title-block h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.policy-print-effective { font-size: 13px; font-weight: 700; }
 @media print {
     body * { visibility: hidden; }
     .policy-screen-only { display: none !important; }
     .policy-print-only, .policy-print-only * { visibility: visible; }
     .policy-print-only { display: block; position: absolute; top: 0; left: 0; width: 100%; padding: 24px 40px; }
-    .policy-print-only h1 { font-size: 22px; margin-bottom: 4px; }
-    .policy-print-meta { font-size: 11px; color: #666; margin-bottom: 20px; }
-    .policy-print-content { font-size: 12.5px; line-height: 1.6; }
+    .policy-print-content { font-size: 12.5px; line-height: 1.6; color: #000; }
 }
