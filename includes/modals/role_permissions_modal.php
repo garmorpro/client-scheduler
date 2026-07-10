@@ -40,8 +40,10 @@
                       <span class="rp-role-name">Admin</span>
                     </span>
                   </td>
-                  <td colspan="6" class="rp-full-access">
-                    <i class="bi bi-check-circle-fill"></i> Full access &mdash; not editable
+                  <td colspan="6" class="rp-full-access-cell">
+                    <span class="rp-full-access">
+                      <i class="bi bi-check-circle-fill"></i> Full access &mdash; not editable
+                    </span>
                   </td>
                 </tr>
               </tbody>

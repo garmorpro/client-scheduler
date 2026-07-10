@@ -2358,9 +2358,10 @@ body.dark-mode .rp-role-name { color: #edf1ee; }
 
 .rp-admin-row { background: linear-gradient(90deg, rgba(0,63,71,.05), transparent); }
 body.dark-mode .rp-admin-row { background: linear-gradient(90deg, rgba(163,204,56,.07), transparent); }
+.rp-full-access-cell { text-align: center; }
 .rp-full-access {
     font-size: 12px; font-weight: 600; color: #2f9e57;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 .rp-full-access i { font-size: 13px; }
 body.dark-mode .rp-full-access { color: #4fbd7a; }
