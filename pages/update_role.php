@@ -30,6 +30,15 @@ if (!$userId || !in_array($newRole, $allowedRoles)) {
     exit;
 }
 
+// Promoting someone to admin is a bigger action than ordinary role management -
+// require the caller to actually be an admin, not just hold the manage_employees
+// permission (which a non-admin manager could otherwise use to self-promote).
+if ($newRole === 'admin' && strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Only an admin can grant admin access.']);
+    exit;
+}
+
 // Update the role
 $stmt = $conn->prepare("UPDATE users SET role=? WHERE user_id=?");
 $stmt->bind_param("si", $newRole, $userId);

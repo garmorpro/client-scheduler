@@ -155,7 +155,7 @@ if ($canApproveTimeOff) {
         <?php if ($isServiceAccount): ?>
         <ul class="sidebar-nav-group">
             <li class="nav-item">
-                <a href="service-settings.php" class="sidebar-link <?= $currentPage == 'service-settings.php' ? 'active' : '' ?>">
+                <a href="employees.php" class="sidebar-link <?= $currentPage == 'employees.php' ? 'active' : '' ?>">
                     <i class="bi bi-shield"></i>
                     Service Dashboard
                 </a>

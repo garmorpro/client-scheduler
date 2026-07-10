@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -16,6 +17,33 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 }
 
 $userId = (int)$_GET['user_id'];
+$requesterId = (int)$_SESSION['user_id'];
+
+// Viewing your own time off is always allowed. Otherwise the requester must
+// either manage employees generally, or approve time off for this specific
+// person (i.e. be their manager) - mirrors the scoping in
+// get_all_time_off_requests.php so this endpoint can't be used to read an
+// arbitrary employee's time-off history (including private reviewer notes).
+if ($userId !== $requesterId) {
+    $canManageEmployees = user_has_permission($conn, 'manage_employees');
+    $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
+
+    $isDirectReport = false;
+    if ($canApproveTimeOff && !$canManageEmployees) {
+        $mgrStmt = $conn->prepare("SELECT manager_id FROM users WHERE user_id = ?");
+        $mgrStmt->bind_param('i', $userId);
+        $mgrStmt->execute();
+        $mgrRow = $mgrStmt->get_result()->fetch_assoc();
+        $mgrStmt->close();
+        $isDirectReport = $mgrRow && (int)$mgrRow['manager_id'] === $requesterId;
+    }
+
+    if (!$canManageEmployees && !$isDirectReport) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
+    }
+}
 
 $stmt = $conn->prepare("
     SELECT timeoff_id, request_group, category, holiday_date, week_start, assigned_hours,

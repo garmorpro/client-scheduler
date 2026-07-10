@@ -58,6 +58,16 @@ if (!in_array($role, $allowedRoles, true)) {
     exit();
 }
 
+// Granting admin is a bigger action than ordinary employee management -
+// require the caller to actually be an admin, not just hold the
+// manage_employees permission (which a non-admin manager could otherwise
+// use to promote themselves or anyone else to admin).
+if ($role === 'admin' && strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Only an admin can grant admin access.']);
+    exit();
+}
+
 if (!in_array($status, $allowedStatuses, true)) {
     $status = 'active';
 }
