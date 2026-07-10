@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Log successful login
             logActivity($conn, "successful_login", $user_id, $email, $full_name, "Successful Login", "Successful login");
 
-            header("Location: ../pages/my-schedule.php");
+            header("Location: ../pages/my-schedule.php?welcome=1");
             exit;
         } else {
             logActivity($conn, "failed_login", $user_id, $email, $full_name, "Failed Login", "Incorrect password");

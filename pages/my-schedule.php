@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 
 if ($isAdmin) {
-    header("Location: master-schedule.php");
+    header("Location: master-schedule.php" . (isset($_GET['welcome']) ? '?welcome=1' : ''));
     exit();
 }
 

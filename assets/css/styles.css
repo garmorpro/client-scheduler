@@ -2841,4 +2841,38 @@ body.dark-mode .activity-empty { color: #6e7975; }
 body.dark-mode .app-logout-overlay { background: rgba(20, 24, 23, 0.92); }
 body.dark-mode .app-logout-spinner { border-color: rgba(255,255,255,0.12); border-top-color: var(--secondary-color); }
 body.dark-mode .app-logout-text { color: #edf1ee; }
+
+/* ========= WELCOME OVERLAY (post sign-in) ========= */
+.app-welcome-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: linear-gradient(155deg, #003f47 0%, #06555f 55%, #0b6b73 100%);
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+.app-welcome-overlay.show { opacity: 1; }
+.app-welcome-overlay.hide { opacity: 0; pointer-events: none; }
+.app-welcome-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; letter-spacing: .02em;
+}
+.app-welcome-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: .01em; }
+.app-welcome-spinner {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.22);
+    border-top-color: var(--secondary-color);
+    animation: app-logout-spin .7s linear infinite;
+}
 body.dark-mode .sidebar-logout:hover { background: #3a2228; color: #ff9a8f !important; }
