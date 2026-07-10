@@ -84,15 +84,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageItems = allEngagements.slice(start, start + ENG_ROWS_PER_PAGE);
 
     pageItems.forEach(eng => {
-      const row = document.createElement('div');
-      row.className = `eng-row status-${eng.status}`;
-      row.innerHTML = `
-        <div class="eng-dot"></div>
-        <div class="eng-name">${eng.client_name}</div>
-        <div class="eng-hours">${eng.total_hours}h</div>
-        ${canUnassign ? `<button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}"><i class="bi bi-trash"></i></button>` : ''}
+      const wrap = document.createElement('div');
+      wrap.className = 'eng-row-wrap';
+
+      const weeks = (eng.weeks || []).slice().sort((a, b) => (a.week_start || '').localeCompare(b.week_start || ''));
+      const weeksHtml = weeks.map(w => `
+        <div class="eng-week-row">
+          <span>Week of ${formatDate(w.week_start)}</span>
+          <span>${w.hours}h</span>
+        </div>
+      `).join('');
+
+      wrap.innerHTML = `
+        <div class="eng-row clickable status-${eng.status}" data-weeks-toggle>
+          <div class="eng-dot"></div>
+          <div class="eng-name">${eng.client_name}</div>
+          <div class="eng-hours">${eng.total_hours}h</div>
+          <i class="bi bi-chevron-down eng-weeks-chevron"></i>
+          ${canUnassign ? `<button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}"><i class="bi bi-trash"></i></button>` : ''}
+        </div>
+        <div class="eng-weeks-panel">
+          ${weeksHtml || '<div class="eng-week-row text-muted">No weekly hours recorded</div>'}
+          <div class="eng-week-row eng-week-total">
+            <span>Total</span>
+            <span>${eng.total_hours}h</span>
+          </div>
+        </div>
       `;
-      list.appendChild(row);
+      list.appendChild(wrap);
     });
 
     if (totalPages <= 1) {
@@ -174,6 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Failed to unassign', err);
     }
   }
+
+  document.getElementById('pf_eng_list').addEventListener('click', (e) => {
+    if (e.target.closest('.eng-unassign-btn')) return;
+    const toggle = e.target.closest('[data-weeks-toggle]');
+    if (!toggle) return;
+    toggle.closest('.eng-row-wrap').classList.toggle('expanded');
+  });
 
   if (canUnassign) {
     document.getElementById('pf_eng_list').addEventListener('click', (e) => {
