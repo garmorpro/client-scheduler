@@ -51,15 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.show();
     }
 
-    document.getElementById('addHolidayBtn')?.addEventListener('click', openAdd);
-
-    document.querySelectorAll('.edit-holiday-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const name = btn.dataset.name;
-            const days = JSON.parse(btn.dataset.days);
-            openEdit(name, days);
-        });
-    });
+    // Exposed so the Company Holidays list modal can drive this add/edit
+    // form without either file needing to know the other's internals.
+    window.HolidayModal = { openAdd, openEdit };
 
     function notify(message, isError) {
         if (typeof Swal !== 'undefined') {
@@ -114,7 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             data = await res.json();
             if (data.success) {
                 notify(mode === 'add' ? 'Holiday added!' : 'Holiday updated!', false);
-                setTimeout(() => location.reload(), 600);
+                modal.hide();
+                document.dispatchEvent(new CustomEvent('holidaysUpdated'));
             } else {
                 notify(data.message || 'Something went wrong.', true);
             }
@@ -122,52 +117,5 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to save holiday', err);
             notify('Network error. Please try again.', true);
         }
-    });
-
-    // Delete a single date (hover x in the table, no need to open Edit)
-    document.querySelectorAll('.date-row .chip-del').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.dataset.id;
-            if (!id) return;
-            const runDelete = () => {
-                fetch('delete_holiday_date.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                })
-                .then(res => res.json())
-                .then(data => { if (data.success) location.reload(); else notify(data.message || 'Could not remove date.', true); })
-                .catch(err => console.error('Failed to delete date', err));
-            };
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Remove this date?', showCancelButton: true, confirmButtonText: 'Remove', confirmButtonColor: '#c0392b' })
-                    .then(result => { if (result.isConfirmed) runDelete(); });
-            } else if (confirm('Remove this date?')) {
-                runDelete();
-            }
-        });
-    });
-
-    // Delete the whole holiday group
-    document.querySelectorAll('.delete-holiday-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const name = btn.dataset.name;
-            const runDelete = () => {
-                fetch('delete_holiday.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name })
-                })
-                .then(res => res.json())
-                .then(data => { if (data.success) location.reload(); else notify(data.message || 'Could not delete holiday.', true); })
-                .catch(err => console.error('Failed to delete holiday', err));
-            };
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Delete holiday?', text: `This will remove all days for "${name}".`, showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#c0392b' })
-                    .then(result => { if (result.isConfirmed) runDelete(); });
-            } else if (confirm(`Delete all days for "${name}"?`)) {
-                runDelete();
-            }
-        });
     });
 });

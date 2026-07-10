@@ -3372,3 +3372,63 @@ body.dark-mode .settings-tile-desc { color: #9aa8a2; }
 
 .settings-tile-arrow { color: #9aa39d; font-size: 13px; flex-shrink: 0; }
 body.dark-mode .settings-tile-arrow { color: #6e7975; }
+
+/* ========= COMPANY HOLIDAYS MODAL ========= */
+#companyHolidaysModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #companyHolidaysModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#companyHolidaysModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #companyHolidaysModal .eng-edit-title { color: #edf1ee; }
+#companyHolidaysModal .ch-hero { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+#companyHolidaysModal .eng-edit-body { padding: 16px 20px; }
+#companyHolidaysModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#companyHolidaysModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #companyHolidaysModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #companyHolidaysModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+
+#companyHolidaysModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #companyHolidaysModal .eng-edit-footer { border-color: #29302e; }
+#companyHolidaysModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#companyHolidaysModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #companyHolidaysModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #companyHolidaysModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+
+.ch-item {
+    border: 1px solid #e3e7e5; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+}
+.ch-item:last-child { margin-bottom: 0; }
+body.dark-mode .ch-item { border-color: #29302e; }
+.ch-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.ch-item-name { font-size: 13.5px; font-weight: 700; color: #16211f; }
+body.dark-mode .ch-item-name { color: #edf1ee; }
+.ch-item-total { font-size: 11.5px; color: #9aa39d; margin-top: 2px; }
+body.dark-mode .ch-item-total { color: #6e7975; }
+.ch-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.ch-dates { display: flex; flex-wrap: wrap; gap: 6px; }
+.ch-date-chip {
+    display: inline-flex; align-items: center; gap: 7px; padding: 5px 6px 5px 10px; border-radius: 8px;
+    background: #f1f4f3; font-size: 11.5px; color: #6b7570; font-weight: 500;
+}
+body.dark-mode .ch-date-chip { background: #232a2c; color: #9aa8a2; }
+.ch-date-chip .ch-chip-hrs { font-weight: 700; color: #16211f; }
+body.dark-mode .ch-date-chip .ch-chip-hrs { color: #edf1ee; }
+.ch-chip-del {
+    display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%;
+    border: none; background: transparent; color: #9aa39d; cursor: pointer; padding: 0; font-size: 10px;
+}
+.ch-chip-del:hover { background: #e3e7e5; color: #c0392b; }
+body.dark-mode .ch-chip-del:hover { background: #29302e; color: #e0685a; }

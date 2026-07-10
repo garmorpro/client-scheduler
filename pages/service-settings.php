@@ -55,7 +55,7 @@ if ($canAccessSystemSettings) {
         </a>
         <?php endif; ?>
         <?php if ($canAccessSystemSettings): ?>
-        <a href="company-holidays.php" class="settings-tile">
+        <a href="#" class="settings-tile" data-bs-toggle="modal" data-bs-target="#companyHolidaysModal">
             <div class="settings-tile-icon"><i class="bi bi-calendar2-week"></i></div>
             <div class="settings-tile-info">
                 <div class="settings-tile-title">Company Holidays</div>
@@ -111,6 +111,8 @@ if ($canAccessSystemSettings) {
 <?php include_once '../includes/modals/role_permissions_modal.php'; ?>
 <?php endif; ?>
 <?php if ($canAccessSystemSettings): ?>
+<?php include_once '../includes/modals/company_holidays_modal.php'; ?>
+<?php include_once '../includes/modals/holiday_modal.php'; ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
@@ -125,6 +127,8 @@ if ($canAccessSystemSettings) {
 <script src="../assets/js/role_permissions.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 <?php if ($canAccessSystemSettings): ?>
+<script src="../assets/js/company_holidays_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/holiday_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/backup_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>

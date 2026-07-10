@@ -126,7 +126,7 @@ if ($canApproveTimeOff) {
         <ul class="sidebar-nav-group">
             <li class="nav-item">
                 <?php
-                    $settingsPages = ['company-holidays.php', 'service-settings.php', 'time-off-requests.php', 'employees.php'];
+                    $settingsPages = ['service-settings.php', 'time-off-requests.php', 'employees.php'];
                     $isActive = in_array($currentPage, $settingsPages);
                 ?>
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsDropdown" role="button" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" aria-controls="settingsDropdown">
