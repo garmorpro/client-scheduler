@@ -1911,6 +1911,55 @@ body.dark-mode #editEngagementModal .eng-edit-btn-cancel:hover { background: #23
 #editEngagementModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #editEngagementModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= EDIT PROFILE MODAL ========= */
+#updateProfileDetailsModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #updateProfileDetailsModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#updateProfileDetailsModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-title { color: #edf1ee; }
+
+#updateProfileDetailsModal .eng-edit-body { padding: 16px 20px; }
+#updateProfileDetailsModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#updateProfileDetailsModal .eng-edit-field { margin-bottom: 14px; }
+#updateProfileDetailsModal .eng-edit-field:last-child { margin-bottom: 0; }
+#updateProfileDetailsModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #updateProfileDetailsModal .eng-edit-field label { color: #6e7975; }
+#updateProfileDetailsModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+#updateProfileDetailsModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+#updateProfileDetailsModal .eng-edit-input:disabled { color: #9aa39d; cursor: not-allowed; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-input:disabled { color: #6e7975; }
+
+#updateProfileDetailsModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #updateProfileDetailsModal .eng-edit-footer { border-color: #29302e; }
+#updateProfileDetailsModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#updateProfileDetailsModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#updateProfileDetailsModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#updateProfileDetailsModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #updateProfileDetailsModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
 /* ========= COMPANY HOLIDAYS ========= */
 .holiday-cell { display: flex; align-items: center; gap: 10px; padding-top: 2px; }
 .holiday-tile {

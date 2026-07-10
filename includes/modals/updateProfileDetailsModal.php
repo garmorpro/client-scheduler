@@ -1,40 +1,42 @@
 <?php require_once __DIR__ . '/../csrf.php'; ?>
 <div class="modal fade" id="updateProfileDetailsModal" tabindex="-1" aria-labelledby="updateProfileDetailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="updateProfileForm" action="update_profile.php" method="POST" class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="updateProfileDetailsModalLabel">
-                <i class="bi bi-pencil-square"></i> Edit User <br>
-                <span class="text-muted" style="font-size: 12px !important; font-weight: 400 !important; padding-top: -10px !important;">Update user information and permissions</span>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+    <div class="modal-content">
+      <form id="updateProfileForm">
+        <div class="modal-body position-relative p-0">
+          <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+          <div class="eng-edit-hero">
+            <div class="eng-edit-title" id="updateProfileDetailsModalLabel"><i class="bi bi-pencil-square"></i> Edit Profile</div>
+            <div class="text-muted" style="font-size: 12.5px; margin-top: 4px;">Update your name. Contact an administrator to change your email.</div>
           </div>
 
-          <div class="modal-body">
-
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
+          <div class="eng-edit-body">
             <input type="hidden" id="update_user_id" name="user_id">
 
-            <div class="mb-3">
-              <label for="update_first_name" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="update_first_name" name="first_name" >
+            <div class="eng-edit-row">
+              <div class="eng-edit-field">
+                <label for="update_first_name">First Name</label>
+                <input type="text" class="eng-edit-input" id="update_first_name" name="first_name" required>
+              </div>
+              <div class="eng-edit-field">
+                <label for="update_last_name">Last Name</label>
+                <input type="text" class="eng-edit-input" id="update_last_name" name="last_name" required>
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label for="update_last_name" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="update_last_name" name="last_name" >
+            <div class="eng-edit-field">
+              <label for="update_email">Email</label>
+              <input type="email" class="eng-edit-input" id="update_email" disabled>
             </div>
-
-            <div class="mb-3">
-              <label for="update_email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="update_email" name="email" >
-            </div>
-
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn badge text-black p-2 text-decoration-none fw-medium" style="font-size: .875rem; border: 1px solid rgb(229,229,229);" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="badge text-white p-2 text-decoration-none fw-medium" style="font-size: .875rem; background-color: rgb(3,2,18);">Update Profile</button>
+
+          <div class="eng-edit-footer">
+            <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="eng-edit-btn-save" id="updateProfileSaveBtn">Update Profile</button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
+  </div>
+</div>

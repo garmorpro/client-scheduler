@@ -47,6 +47,10 @@ if ($user) {
 
     $user['recent_activities'] = $activities;
 
+    $nameParts = array_pad(preg_split('/\s+/', trim($user['full_name'] ?? ''), 2), 2, '');
+    $user['first_name'] = $nameParts[0];
+    $user['last_name'] = $nameParts[1];
+
     header('Content-Type: application/json');
     echo json_encode($user);
 } else {

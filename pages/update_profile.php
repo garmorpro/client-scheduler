@@ -2,19 +2,22 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_valid()) {
-    die("Invalid CSRF token.");
+if (!csrf_valid()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+    exit;
 }
 
-// LOG ACTIVITY FUNCTION
 function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $description) {
-    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) 
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description)
             VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {
@@ -24,59 +27,45 @@ function logActivity($conn, $eventType, $user_id, $email, $full_name, $title, $d
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_POST['user_id'] ?? null;
-    $firstName = trim($_POST['first_name'] ?? '');
-    $lastName = trim($_POST['last_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-
-    if (!$userId || $firstName === '' || $lastName === '' || $email === '') {
-        die("Please fill all required fields.");
-    }
-
-    $fullName = trim($firstName . ' ' . $lastName);
-
-    // Update user query
-    $stmt = $conn->prepare("
-        UPDATE users
-        SET full_name = ?, email = ?
-        WHERE user_id = ?
-    ");
-    if (!$stmt) {
-        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
-    }
-
-    $stmt->bind_param("ssi", $fullName, $email, $userId);
-
-    if ($stmt->execute()) {
-        $stmt->close();
-
-        // Update session values if the logged-in user is the one being updated
-        if ((int)$userId === (int)$_SESSION['user_id']) {
-            $_SESSION['first_name'] = $firstName;
-            $_SESSION['last_name']  = $lastName;
-            $_SESSION['full_name']  = $fullName;
-            $_SESSION['email']      = $email;
-        }
-
-        // Log activity
-        $adminUserId = $_SESSION['user_id'] ?? null;
-        $adminEmail = $_SESSION['email'] ?? '';
-        $adminRole = $_SESSION['user_role'] ?? '';
-        $adminName = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-        $role_uc = ucfirst($adminRole);
-
-        $title = "User Updated";
-        $description = "Updated account for $firstName $lastName ($role_uc)";
-
-        logActivity($conn, "user_updated", $adminUserId, $adminEmail, $adminName, $title, $description);
-
-        header("Location: master-schedule.php?status=success");
-        exit();
-    } else {
-        die("Error updating user: " . $stmt->error);
-    }
-} else {
-    die('Invalid request.');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Invalid request']);
+    exit;
 }
-?>
+
+// Self-service only: employees edit their own name, regardless of what
+// user_id the client sends. Email is intentionally not editable here.
+$userId = $_SESSION['user_id'];
+
+$data = json_decode(file_get_contents('php://input'), true) ?? [];
+$firstName = trim($data['first_name'] ?? '');
+$lastName = trim($data['last_name'] ?? '');
+
+if ($firstName === '' || $lastName === '') {
+    echo json_encode(['success' => false, 'error' => 'Please fill all required fields.']);
+    exit;
+}
+
+$fullName = trim($firstName . ' ' . $lastName);
+
+$stmt = $conn->prepare("UPDATE users SET full_name = ? WHERE user_id = ?");
+$stmt->bind_param("si", $fullName, $userId);
+
+if ($stmt->execute()) {
+    $stmt->close();
+
+    $_SESSION['first_name'] = $firstName;
+    $_SESSION['last_name']  = $lastName;
+    $_SESSION['full_name']  = $fullName;
+
+    $email = $_SESSION['email'] ?? '';
+    $role = $_SESSION['user_role'] ?? '';
+    $roleUc = ucfirst($role);
+
+    logActivity($conn, "user_updated", $userId, $email, $fullName, "Profile Updated", "Updated own name ($roleUc)");
+
+    echo json_encode(['success' => true]);
+} else {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $stmt->error]);
+}
