@@ -389,9 +389,9 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
           hours immediately - unlike Archive, <strong>no record is kept</strong> and this cannot be undone.
         </p>
         <label for="deleteEngagementConfirmInput" class="form-label small mb-1">
-          Type <strong id="deleteModalClientNameConfirm"></strong> to confirm:
+          Type <strong>DELETE</strong> to confirm:
         </label>
-        <input type="text" id="deleteEngagementConfirmInput" class="form-control" autocomplete="off">
+        <input type="text" id="deleteEngagementConfirmInput" class="form-control" autocomplete="off" placeholder="DELETE">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -443,9 +443,9 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
         .catch(err => console.error("Error:", err));
     });
 
-    // Delete (permanent) flow - requires typing the client name to confirm,
-    // since this is irreversible and Archive already covers the "I don't
-    // need this anymore but want to keep a record" case.
+    // Delete (permanent) flow - requires typing DELETE to confirm, since this
+    // is irreversible and Archive already covers the "I don't need this
+    // anymore but want to keep a record" case.
     let deleteEngagementId, deleteClientName;
     const deleteConfirmInput = document.getElementById("deleteEngagementConfirmInput");
     const confirmDeleteEngagementBtn = document.getElementById("confirmDeleteEngagementBtn");
@@ -456,7 +456,6 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
             deleteEngagementId = this.dataset.engagementId;
             deleteClientName = this.dataset.clientName;
             document.getElementById("deleteModalClientName").textContent = deleteClientName;
-            document.getElementById("deleteModalClientNameConfirm").textContent = deleteClientName;
             deleteConfirmInput.value = "";
             confirmDeleteEngagementBtn.disabled = true;
             new bootstrap.Modal(document.getElementById("deleteEngagementModal")).show();
@@ -464,11 +463,11 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
     });
 
     deleteConfirmInput.addEventListener("input", function () {
-        confirmDeleteEngagementBtn.disabled = deleteConfirmInput.value !== deleteClientName;
+        confirmDeleteEngagementBtn.disabled = deleteConfirmInput.value.trim().toLowerCase() !== "delete";
     });
 
     document.getElementById("confirmDeleteEngagementBtn").addEventListener("click", function () {
-        if (deleteConfirmInput.value !== deleteClientName) return;
+        if (deleteConfirmInput.value.trim().toLowerCase() !== "delete") return;
 
         fetch("delete_engagement_permanent.php", {
             method: "POST",
