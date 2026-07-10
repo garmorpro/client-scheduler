@@ -4,7 +4,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
 
-if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'view_clients_engagements')) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
     exit();

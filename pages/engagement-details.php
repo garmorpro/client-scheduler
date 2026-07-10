@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
     // Permission holders can view any engagement; everyone else can only view
     // engagements they're actually staffed on (e.g. via the My Schedule page),
     // not an arbitrary engagement_id.
-    if (!user_has_permission($conn, 'manage_clients_engagements')) {
+    if (!user_has_permission($conn, 'view_clients_engagements')) {
         $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
         $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
         $accessStmt->execute();

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectAllCheckbox = document.getElementById('selectAllUsers');
       const userCheckboxes = document.querySelectorAll('.selectUser');
       const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+      if (!selectAllCheckbox || !bulkDeleteBtn) return;
 
       function updateBulkDeleteVisibility() {
         const checkedCheckboxes = Array.from(userCheckboxes).filter(cb => cb.checked);

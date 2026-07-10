@@ -9,13 +9,15 @@ if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !==
     exit;
 }
 
-$res = $conn->query("SELECT role, manage_employees, manage_clients_engagements, approve_time_off, access_system_settings FROM role_permissions ORDER BY FIELD(role, 'manager','senior','staff','intern','crm_team')");
+$res = $conn->query("SELECT role, manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, approve_time_off, access_system_settings FROM role_permissions ORDER BY FIELD(role, 'manager','senior','staff','intern','crm_team')");
 $permissions = [];
 while ($row = $res->fetch_assoc()) {
     $permissions[] = [
         'role' => $row['role'],
         'manage_employees' => (bool) $row['manage_employees'],
+        'view_employees' => (bool) $row['view_employees'],
         'manage_clients_engagements' => (bool) $row['manage_clients_engagements'],
+        'view_clients_engagements' => (bool) $row['view_clients_engagements'],
         'approve_time_off' => (bool) $row['approve_time_off'],
         'access_system_settings' => (bool) $row['access_system_settings'],
     ];

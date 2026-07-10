@@ -10,7 +10,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!user_has_permission($conn, 'manage_clients_engagements')) {
+$canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
+$canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
+
+if (!$canViewClientsEngagements) {
     header("Location: my-schedule.php");
     exit();
 }
@@ -259,6 +262,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         title="View">
                                         <i class="bi bi-eye"></i>
                                     </button>
+                                    <?php if ($canManageClientsEngagements): ?>
                                     <button class="client-icon-btn edit edit-engagement-btn"
                                         data-bs-toggle="modal" data-bs-target="#editEngagementModal"
                                         data-engagement-id="<?php echo $row['engagement_id']; ?>"
@@ -293,6 +297,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                             </li>
                                         </ul>
                                     </div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>

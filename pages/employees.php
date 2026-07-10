@@ -12,8 +12,9 @@ if (!isset($_SESSION['user_id'])) {
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $canManageEmployees = user_has_permission($conn, 'manage_employees');
+$canViewEmployees = user_has_permission($conn, 'view_employees');
 
-if (!$canManageEmployees) {
+if (!$canViewEmployees) {
     header("Location: my-schedule.php");
     exit();
 }
@@ -101,6 +102,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 
                 <!-- Right -->
                 <div class="user-management-buttons d-flex align-items-center gap-2">
+                    <?php if ($canManageEmployees): ?>
                     <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium"
                        style="font-size: .875rem; background-color: darkred; display:none;">
                       <i class="bi bi-trash me-3"></i>Delete Selected (<span id="selectedCount">0</span>)
@@ -111,6 +113,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                     <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="bi bi-person-plus me-3"></i>Add Employee
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -118,7 +121,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                 <table id="user-table" class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="selectAllUsers"></th>
+                            <?php if ($canManageEmployees): ?><th><input type="checkbox" id="selectAllUsers"></th><?php endif; ?>
                             <th>Employee Name</th>
                             <th>Role</th>
                             <th>Status</th>
@@ -130,7 +133,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                     <?php if (mysqli_num_rows($userresult) > 0): ?>
                         <?php while ($userrow = mysqli_fetch_assoc($userresult)): ?>
                             <tr data-role="<?php echo strtolower($userrow['role']); ?>">
-                                <td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td>
+                                <?php if ($canManageEmployees): ?><td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td><?php endif; ?>
                                 <td>
                                     <span class="emp-name-wrap">
                                         <?php echo htmlspecialchars($userrow['full_name']); ?>
@@ -174,6 +177,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                        <i class="bi bi-eye text-success"></i>
                                     </a>
 
+                                    <?php if ($canManageEmployees): ?>
                                     <!-- Edit Button -->
                                     <a href="#" class="action-icon-btn edit-user-btn text-decoration-none"
                                        data-bs-toggle="modal"
@@ -247,12 +251,13 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                             </li>
                                         </ul>
                                     </div>
+                                    <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <tr><td colspan="6" class="text-center">No users found</td></tr>
+                        <tr><td colspan="<?php echo $canManageEmployees ? 6 : 5; ?>" class="text-center">No users found</td></tr>
                     <?php endif; ?>
                     </tbody>
                 </table>

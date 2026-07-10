@@ -15,10 +15,12 @@ $isServiceAccount = isset($_SESSION['user_role']) && strtolower($_SESSION['user_
 $currentPage = basename($_SERVER['PHP_SELF']);
 
 $canManageEmployees = user_has_permission($conn, 'manage_employees');
+$canViewEmployees = user_has_permission($conn, 'view_employees');
 $canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
+$canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
 $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
-$canSeeSettingsMenu = $canManageEmployees || $canApproveTimeOff || $canAccessSystemSettings;
+$canSeeSettingsMenu = $canViewEmployees || $canApproveTimeOff || $canAccessSystemSettings;
 
 $pendingTimeOffCount = 0;
 if ($canApproveTimeOff) {
@@ -101,7 +103,7 @@ if ($canApproveTimeOff) {
                     Policies
                 </a>
             </li>
-            <?php if ($canManageClientsEngagements): ?>
+            <?php if ($canViewClientsEngagements): ?>
             <li class="nav-item">
                 <a href="client-management.php" class="sidebar-link <?= $currentPage == 'client-management.php' ? 'active' : '' ?>">
                     <i class="bi bi-building-gear"></i>
@@ -131,7 +133,7 @@ if ($canApproveTimeOff) {
                 </a>
                 <div class="collapse <?= $isActive ? 'show' : '' ?>" id="settingsDropdown">
                     <ul class="sidebar-submenu">
-                        <?php if ($canManageEmployees): ?>
+                        <?php if ($canViewEmployees): ?>
                         <li><a href="employees.php" class="sidebar-sublink <?= $currentPage == 'employees.php' ? 'active' : '' ?>">Employees</a></li>
                         <?php endif; ?>
                         <?php if ($canApproveTimeOff): ?>

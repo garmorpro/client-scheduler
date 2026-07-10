@@ -5,7 +5,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('rpTableBody');
     const saveBtn = document.getElementById('rpSaveBtn');
     const dirtyHint = document.getElementById('rpDirtyHint');
-    const permissionKeys = ['manage_employees', 'manage_clients_engagements', 'approve_time_off', 'access_system_settings'];
+    const permissionKeys = ['view_employees', 'manage_employees', 'view_clients_engagements', 'manage_clients_engagements', 'approve_time_off', 'access_system_settings'];
+    // "Manage" always includes "View" - keep the View toggle visually locked
+    // on (and disabled) whenever its paired Manage toggle is on, so the
+    // matrix doesn't look like you could have edit rights without view rights.
+    const viewManagePairs = [
+        ['view_employees', 'manage_employees'],
+        ['view_clients_engagements', 'manage_clients_engagements'],
+    ];
+
+    function syncViewManagePairs(tr) {
+        viewManagePairs.forEach(([viewKey, manageKey]) => {
+            const viewCb = tr.querySelector(`.rp-toggle-input[data-permission="${viewKey}"]`);
+            const manageCb = tr.querySelector(`.rp-toggle-input[data-permission="${manageKey}"]`);
+            if (!viewCb || !manageCb) return;
+
+            if (manageCb.checked) {
+                viewCb.checked = true;
+                viewCb.disabled = true;
+            } else {
+                viewCb.disabled = false;
+            }
+        });
+    }
 
     const palette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
     function hashColor(name) {
@@ -64,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                 `).join('')}
             `;
+            syncViewManagePairs(tr);
             tbody.appendChild(tr);
         });
 
@@ -72,7 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     tbody.addEventListener('change', (e) => {
-        if (e.target.matches('.rp-toggle-input')) checkDirty();
+        if (!e.target.matches('.rp-toggle-input')) return;
+        const tr = e.target.closest('tr[data-role]');
+        if (tr) syncViewManagePairs(tr);
+        checkDirty();
     });
 
     modalEl.addEventListener('show.bs.modal', async () => {

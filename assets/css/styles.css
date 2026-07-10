@@ -2336,6 +2336,9 @@ body.dark-mode .rp-table th { color: #6e7975; background: #1b2022; }
 .rp-col-head { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .rp-col-head i { font-size: 14px; color: #c3ccc6; }
 body.dark-mode .rp-col-head i { color: #45504b; }
+.rp-group-row th { padding-bottom: 6px; border-bottom: 1px dashed #e3e7e5; font-size: 11px; }
+body.dark-mode .rp-group-row th { border-color: #29302e; }
+.rp-sub-head { font-size: 9.5px !important; padding-top: 6px !important; }
 .rp-table tbody tr { transition: background-color .1s ease; }
 .rp-table tbody tr:not(.rp-admin-row):hover { background: #f8f9f8; }
 body.dark-mode .rp-table tbody tr:not(.rp-admin-row):hover { background: #1f2624; }

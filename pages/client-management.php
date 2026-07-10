@@ -10,7 +10,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!user_has_permission($conn, 'manage_clients_engagements')) {
+$canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
+$canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
+
+if (!$canViewClientsEngagements) {
     header("Location: my-schedule.php");
     exit();
 }
@@ -102,15 +105,17 @@ unset($client);
             <h3 class="mb-0">Client Management<span class="ms-2" style="font-size: 20px;">(<?php echo $activeClientsCount; ?>)</span></h3>
             <p class="mb-0">Manage all onboarded clients and their engagement status</p>
         </div>
+        <?php if ($canManageClientsEngagements): ?>
         <div class="d-flex align-items-center gap-2">
     <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" id="importClientsBtn">
         <i class="bi bi-upload me-3"></i>Import Clients
     </a>
-    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" 
+    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom"
        data-bs-toggle="modal" data-bs-target="#addClientModal">
         <i class="bi bi-person-plus me-3"></i>Add New Client
     </a>
 </div>
+        <?php endif; ?>
     </div>
 
     <div class="client-toolbar">
@@ -180,17 +185,20 @@ unset($client);
                             <td class="num"><span class="client-total-value"><?php echo $client['total_engagements'] ?? 0; ?></span></td>
                             <td class="num">
                                 <div class="client-row-actions">
+                                    <?php if ($canManageClientsEngagements): ?>
                                     <button class="client-icon-btn add add-engagement-btn"
                                         data-client-id="<?php echo $client['client_id']; ?>"
                                         data-client-name="<?php echo htmlspecialchars($client['client_name']); ?>"
                                         title="Add Engagement">
                                         <i class="bi bi-plus-lg"></i>
                                     </button>
+                                    <?php endif; ?>
                                     <button class="client-icon-btn view-client-button view-btn"
                                         data-client-id="<?php echo $client['client_id']; ?>"
                                         title="View">
                                         <i class="bi bi-eye"></i>
                                     </button>
+                                    <?php if ($canManageClientsEngagements): ?>
                                     <button class="client-icon-btn edit-client-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editClientModal"
@@ -210,6 +218,7 @@ unset($client);
                                         title="Delete Client">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
@@ -274,27 +283,33 @@ unset($client);
 
 
 
+<?php if ($canManageClientsEngagements): ?>
 <?php include_once '../includes/modals/add_client_modal.php'; ?>
-<?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/edit_client_modal.php'; ?>
 <?php include_once '../includes/modals/import_client_modal.php'; ?>
 <?php include_once '../includes/modals/delete_client_modal.php'; ?>
 <?php include_once '../includes/modals/add_engagement_modal.php'; ?>
+<?php endif; ?>
+<?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 
+<?php if ($canManageClientsEngagements): ?>
 <script src="../assets/js/add_client_modal.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/view_client_modal.js?v=<?php echo time(); ?>"></script>
+<?php if ($canManageClientsEngagements): ?>
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/delete_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/import-clients-modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/add-engagement-modal.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
+<script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
