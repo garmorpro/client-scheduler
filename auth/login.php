@@ -208,6 +208,7 @@ require_once '../includes/auth.php';
         }
         .login-submit:hover { background: #05545e; }
         .login-submit:active { transform: translateY(1px); }
+        .login-submit:disabled { opacity: .85; cursor: not-allowed; }
 
         .login-footer-note {
             text-align: center;
@@ -252,7 +253,7 @@ require_once '../includes/auth.php';
             <div class="login-alert"><i class="bi bi-exclamation-circle-fill"></i><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="">
+        <form method="POST" action="" id="loginForm">
             <div class="login-field">
                 <label for="email">Email</label>
                 <div class="login-input-wrap">
@@ -270,7 +271,9 @@ require_once '../includes/auth.php';
                     </button>
                 </div>
             </div>
-            <button type="submit" class="login-submit">Sign In</button>
+            <button type="submit" class="login-submit" id="loginSubmitBtn">
+                <span id="loginSubmitLabel">Sign In</span>
+            </button>
         </form>
 
         <p class="login-footer-note">Contact your administrator for account setup.</p>
@@ -285,6 +288,13 @@ require_once '../includes/auth.php';
         input.type = isHidden ? 'text' : 'password';
         icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
         this.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function () {
+        const btn = document.getElementById('loginSubmitBtn');
+        btn.disabled = true;
+        document.getElementById('loginSubmitLabel').innerHTML =
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
     });
 </script>
 </body>

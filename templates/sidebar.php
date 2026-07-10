@@ -179,10 +179,20 @@ if ($canApproveTimeOff) {
                 <div class="sidebar-fullname fw-semibold" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $_SESSION['full_name']; ?></div>
                 <small class="sidebar-role text-muted" style="font-size: 11px;"><?php echo htmlspecialchars(role_label($_SESSION['user_role'] ?? '')); ?></small>
             </div>
-            <a href="/auth/logout.php" class="sidebar-logout" aria-label="Log out" onclick="event.stopPropagation();">
+            <a href="/auth/logout.php" class="sidebar-logout" aria-label="Log out" onclick="event.stopPropagation(); showLogoutOverlay();">
                 <i class="bi bi-box-arrow-right"></i>
             </a>
         </div>
     </div>
 
 </div>
+
+<div class="app-logout-overlay" id="appLogoutOverlay">
+    <div class="app-logout-spinner"></div>
+    <div class="app-logout-text">Signing out&hellip;</div>
+</div>
+<script>
+    function showLogoutOverlay() {
+        document.getElementById('appLogoutOverlay').classList.add('show');
+    }
+</script>

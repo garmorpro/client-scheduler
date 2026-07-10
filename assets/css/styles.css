@@ -2811,4 +2811,34 @@ body.dark-mode .ms-empty-week .t { color: #edf1ee; }
     .ms-week-tiles { grid-template-columns: repeat(4, 1fr); row-gap: 8px; }
 }
 body.dark-mode .activity-empty { color: #6e7975; }
+
+/* ========= LOGOUT OVERLAY ========= */
+.app-logout-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(238, 241, 240, 0.92);
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease;
+}
+.app-logout-overlay.show { opacity: 1; pointer-events: all; }
+.app-logout-spinner {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 3.5px solid rgba(0, 63, 71, 0.15);
+    border-top-color: var(--primary-color);
+    animation: app-logout-spin .7s linear infinite;
+}
+.app-logout-text { font-size: 14px; font-weight: 600; color: #29332f; }
+@keyframes app-logout-spin { to { transform: rotate(360deg); } }
+body.dark-mode .app-logout-overlay { background: rgba(20, 24, 23, 0.92); }
+body.dark-mode .app-logout-spinner { border-color: rgba(255,255,255,0.12); border-top-color: var(--secondary-color); }
+body.dark-mode .app-logout-text { color: #edf1ee; }
 body.dark-mode .sidebar-logout:hover { background: #3a2228; color: #ff9a8f !important; }
