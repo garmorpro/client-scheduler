@@ -192,36 +192,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }).join('');
 
             const html = `
-                <div class="emp-header-block">
-                    <div class="emp-avatar" style="background-color:${avatarColor};">${initials}</div>
-                    <div>
-                        <div class="emp-name">${userName}</div>
-                        <div class="emp-meta">${roleLabel(role)}<span class="emp-meta-dot"></span><span class="text-lowercase">${email}</span></div>
+                <div class="ud-hero" style="padding-bottom: 18px;">
+                    <div class="ud-header" style="margin-bottom: 0;">
+                        <div class="ud-avatar" style="background-color:${avatarColor};">${initials}</div>
+                        <div>
+                            <div class="ud-name">${userName}</div>
+                            <div class="ud-email">${email}</div>
+                            <div class="ud-pills">
+                                <span class="role-pill text-capitalize">${roleLabel(role)}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="emp-stat-row">
-                    <div class="emp-stat-card">
-                        <div class="emp-stat-title">Engagements</div>
-                        <div class="emp-stat-value">${uniqueEngagements.size}</div>
+                <div class="ud-body" style="max-height: 52vh;">
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-title">Engagements</div>
+                            <div class="stat-value">${uniqueEngagements.size}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Assigned Hrs</div>
+                            <div class="stat-value">${totalHours}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Time Off</div>
+                            <div class="stat-value">${totalTimeOffHours}</div>
+                        </div>
                     </div>
-                    <div class="emp-stat-card">
-                        <div class="emp-stat-title">Assigned Hrs</div>
-                        <div class="emp-stat-value">${totalHours}</div>
-                    </div>
-                    <div class="emp-stat-card">
-                        <div class="emp-stat-title">Time Off</div>
-                        <div class="emp-stat-value">${totalTimeOffHours}</div>
-                    </div>
-                </div>
 
-                <div class="emp-section-title-row">
-                    <div class="emp-section-title">Breakdown</div>
-                    <div class="emp-section-hint">${rows.length} ${rows.length === 1 ? 'row' : 'rows'}</div>
-                </div>
+                    <div class="emp-section-title-row">
+                        <div class="detail-section-title" style="margin: 0;">Breakdown</div>
+                        <div class="emp-section-hint">${rows.length} ${rows.length === 1 ? 'row' : 'rows'}</div>
+                    </div>
 
-                <div class="emp-entry-list">
-                    ${rowsHtml || '<div class="emp-entry-row"><div class="emp-entry-label"><span class="emp-entry-name text-muted">No assignments in this window</span></div></div>'}
+                    <div class="emp-entry-list">
+                        ${rowsHtml || '<div class="emp-entry-row"><div class="emp-entry-label"><span class="emp-entry-name text-muted">No assignments in this window</span></div></div>'}
+                    </div>
                 </div>
             `;
 

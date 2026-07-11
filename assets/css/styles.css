@@ -1555,32 +1555,8 @@ body.dark-mode .sidebar-avatar { background: var(--secondary-color); color: #101
 }
 body.dark-mode .emp-modal-close { background-color: #1b2022; border-color: #29302e; filter: invert(1) grayscale(1); }
 
-.emp-header-block { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; padding-right: 30px; }
-.emp-avatar {
-    width: 46px; height: 46px; border-radius: 13px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0;
-}
-.emp-name { font-size: 16px; font-weight: 700; margin: 0 0 2px; }
-.emp-meta { font-size: 12px; color: #6b7570; display: flex; align-items: center; gap: 6px; }
-.emp-meta .emp-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #9aa39d; flex-shrink: 0; }
-body.dark-mode .emp-meta { color: #9aa8a2; }
-body.dark-mode .emp-meta .emp-meta-dot { background: #6e7975; }
-
-.emp-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.emp-stat-card { background: #f1f4f3; border-radius: 10px; padding: 9px 10px; }
-.emp-stat-title { font-size: 10px; color: #6b7570; margin-bottom: 2px; font-weight: 600; }
-.emp-stat-value { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; color: #16211f; }
-.emp-stat-value.over { color: rgb(220,53,69); }
-body.dark-mode .emp-stat-card { background: #232a2c; }
-body.dark-mode .emp-stat-title { color: #9aa8a2; }
-body.dark-mode .emp-stat-value { color: #edf1ee; }
-body.dark-mode .emp-stat-value.over { color: rgb(255,138,128); }
-
 .emp-section-title-row { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 0 8px; }
-.emp-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #9aa39d; }
 .emp-section-hint { font-size: 11px; color: #9aa39d; }
-body.dark-mode .emp-section-title,
 body.dark-mode .emp-section-hint { color: #6e7975; }
 
 .emp-entry-list { max-height: 340px; overflow-y: auto; border: 1px solid #e3e7e5; border-radius: 12px; }
@@ -3432,3 +3408,16 @@ body.dark-mode .ch-date-chip .ch-chip-hrs { color: #edf1ee; }
 }
 .ch-chip-del:hover { background: #e3e7e5; color: #c0392b; }
 body.dark-mode .ch-chip-del:hover { background: #29302e; color: #e0685a; }
+
+/* ========= MASTER SCHEDULE EMPLOYEE MODAL ========= */
+#employeeModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #employeeModal .eng-edit-footer { border-color: #29302e; }
+#employeeModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#employeeModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #employeeModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #employeeModal .eng-edit-btn-cancel:hover { background: #232a2c; }
