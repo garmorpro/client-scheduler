@@ -353,7 +353,10 @@ updateLastRowRadius();
                         data-user-id="<?php echo $userId; ?>"
                         data-user-name="<?php echo $fullName; ?>"
                         data-role="<?php echo strtolower($role); ?>"
-                        data-email="<?php echo htmlspecialchars($employee['email']); ?>">
+                        data-email="<?php echo htmlspecialchars($employee['email']); ?>"
+                        style="cursor: pointer;"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewProfileModal">
                         <div class="d-flex align-items-center">
                                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 40px; height: 40px; font-size: 14px; font-weight: 500;
@@ -455,25 +458,6 @@ updateLastRowRadius();
     <!-- end master schedule table -->
 
 
-    <!-- Employee Modal -->
-        <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" style="max-width: 640px;">
-            <div class="modal-content">
-              <div class="modal-body position-relative p-0">
-                <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div id="employeeModalContent">
-                  <!-- Dynamic content goes here -->
-                </div>
-                <div class="eng-edit-footer">
-                  <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-    <!-- end employee modal -->
-
-
 
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
@@ -483,9 +467,6 @@ updateLastRowRadius();
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/delete_custom_menu.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/timeoff_menu.js?v=<?php echo time(); ?>"></script>
-    <?php if ($isAdmin): ?>
-    <script src="../assets/js/employee_details.js?v=<?php echo time(); ?>"></script>
-    <?php endif; ?>
 
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/export_schedule.js?v=<?php echo time(); ?>"></script>
