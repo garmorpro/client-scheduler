@@ -291,6 +291,7 @@ unset($client);
 <?php include_once '../includes/modals/add_engagement_modal.php'; ?>
 <?php endif; ?>
 <?php include_once '../includes/modals/view_client_modal.php'; ?>
+<?php include_once '../includes/modals/view_engagement_modal.php'; ?>
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
@@ -300,6 +301,7 @@ unset($client);
 <?php endif; ?>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/view_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/view_client_modal.js?v=<?php echo time(); ?>"></script>
 <?php if ($canManageClientsEngagements): ?>
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
