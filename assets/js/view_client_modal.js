@@ -1,116 +1,102 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Client modal script loaded');
-
-    const viewButtons = document.querySelectorAll('.view-btn');
     const modalEl = document.getElementById('viewClientModal');
-    const modalBody = document.getElementById('viewClientModalBody');
+    if (!modalEl) return;
+    const modal = new bootstrap.Modal(modalEl);
 
-    if (!modalEl || !modalBody) {
-        console.error('Modal elements not found:', { modalEl, modalBody });
-        return;
+    const avatarEl = document.getElementById('vcAvatar');
+    const titleEl = document.getElementById('vcTitle');
+    const onboardedEl = document.getElementById('vcOnboarded');
+    const statusPillEl = document.getElementById('vcStatusPill');
+    const statusTextEl = document.getElementById('vcStatusText');
+    const totalEl = document.getElementById('vcTotalEngagements');
+    const confirmedEl = document.getElementById('vcConfirmedEngagements');
+    const historyListEl = document.getElementById('vcHistoryList');
+
+    const palette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
+    function hashColor(name) {
+        let hash = 0;
+        for (let i = 0; i < (name || '').length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+        return palette[hash % palette.length];
+    }
+    function initials(name) {
+        return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+    }
+    function ucfirst(str) {
+        return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+    }
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const d = new Date(dateString);
+        if (isNaN(d)) return 'N/A';
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function formatList(val) {
+        if (!val) return '<span class="text-muted">&mdash;</span>';
+        return val.split(',').map(v => v.trim()).filter(Boolean).join(', ');
     }
 
-    if (typeof bootstrap === 'undefined') {
-        console.error('Bootstrap JS is not loaded!');
-        return;
-    }
-
-    const modal = new bootstrap.Modal(modalEl, { keyboard: true });
-    console.log('Bootstrap modal initialized:', modal);
-
-    viewButtons.forEach(button => {
+    document.querySelectorAll('.view-btn').forEach(button => {
         button.addEventListener('click', async () => {
             const clientId = button.dataset.clientId;
-            console.log('View button clicked for client ID:', clientId);
+            if (!clientId) return;
 
-            if (!clientId) {
-                console.warn('No client ID found on button');
-                return;
-            }
+            avatarEl.style.backgroundColor = '';
+            avatarEl.textContent = '';
+            titleEl.textContent = 'Loading...';
+            onboardedEl.textContent = '';
+            statusPillEl.className = 'status-pill';
+            statusTextEl.textContent = '';
+            totalEl.textContent = '0';
+            confirmedEl.textContent = '0';
+            historyListEl.innerHTML = '<div class="settings-empty-row">Loading...</div>';
+            modal.show();
 
             try {
-                console.log('Fetching client data...');
-                const res = await fetch(`view_client.php?client_id=${clientId}`);
-                console.log('Fetch response status:', res.status);
-
-                if (!res.ok) throw new Error('Network response was not OK');
-
+                const res = await fetch(`view_client.php?client_id=${encodeURIComponent(clientId)}`);
                 const data = await res.json();
-                console.log('Fetched data:', data);
 
                 if (data.error) {
-                    alert(data.error);
+                    titleEl.textContent = 'Error';
+                    historyListEl.innerHTML = `<div class="settings-empty-row text-danger">${data.error}</div>`;
                     return;
                 }
 
                 const client = data.client;
                 const history = data.history || [];
+                const status = (client.status || '').toLowerCase();
 
-                console.log('Client info:', client);
-                console.log('Engagement history:', history);
+                avatarEl.style.backgroundColor = hashColor(client.client_name);
+                avatarEl.textContent = initials(client.client_name);
+                titleEl.textContent = client.client_name;
+                onboardedEl.textContent = `Onboarded ${formatDate(client.onboarded_date)}`;
+                statusPillEl.className = `status-pill ${status === 'active' ? 'active' : 'inactive'}`;
+                statusTextEl.textContent = ucfirst(client.status);
+                totalEl.textContent = client.total_engagements ?? 0;
+                confirmedEl.textContent = client.confirmed_engagements ?? 0;
 
-                const ucfirst = str => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
-                const statusClass = client.status?.toLowerCase() === 'active' ? 'text-success'
-                                  : client.status?.toLowerCase() === 'inactive' ? 'text-warning'
-                                  : 'text-muted';
-
-                modalBody.innerHTML = `
-<div style="background-color: rgb(245,245,247); border-radius: 15px; padding: 10px;">
-    <div class="d-flex justify-content-between">
-        <div><span class="fw-semibold">${client.client_name}</span><br><span class="${statusClass}">${ucfirst(client.status)}</span></div>
-        <small class="text-end">Onboarded<br><span class="text-muted">${client.onboarded_date ? new Date(client.onboarded_date).toLocaleDateString() : 'N/A'}</span></small>
-    </div>
-</div>
-<div class="d-flex gap-2 mt-2">
-    <div class="flex-fill bg-white rounded p-2 text-center shadow-sm">
-        <div class="fw-semibold">${client.total_engagements ?? 0}</div>
-        <div class="text-muted" style="font-size: 12px;">Total Engagements</div>
-    </div>
-    <div class="flex-fill bg-white rounded p-2 text-center shadow-sm">
-        <div class="fw-semibold">${client.confirmed_engagements ?? 0}</div>
-        <div class="text-muted" style="font-size: 12px;">Confirmed Engagements</div>
-    </div>
-</div>
-<hr>
-<div id="engagementHistoryContainer"></div>`;
-
-                const historyContainer = document.getElementById('engagementHistoryContainer');
-                if (!history || history.length === 0) {
-                    console.log('No engagement history for this client.');
-                    historyContainer.innerHTML = `<p class="text-muted">No records available.</p>`;
-                } else {
-                    const formatListItems = val => val ? val.split(',').map(i => `<div>${i.trim()}</div>`).join('') : '';
-                    const formatDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'N/A';
-
-                    historyContainer.innerHTML = history.map(h => {
-                        const managerHtml = formatListItems(h.manager);
-                        const seniorHtml = formatListItems(h.senior);
-                        const staffHtml = formatListItems(h.staff);
-                        const archiveDate = formatDate(h.archive_date);
-
-                        return `
-<div class="card p-2 mb-2">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="me-2">${h.engagement_year}</span><span class="badge" style="font-size:10px;background-color:black !important;">${h.status || 'Archived'}</span></div>
-        <div style="font-size:10px;"><span class="me-2"><span class="text-muted">Budgeted:</span> <span class="fw-bold text-black">${h.budgeted_hours}h</span></span> <span class="text-muted">Allocated:</span> <span class="fw-bold text-black">${h.allocated_hours}h</span></div>
-    </div>
-    <div class="d-flex fw-semibold border-bottom pb-1 mb-1" style="font-size:10px;"><div style="flex:1;">Manager</div><div style="flex:1;">Senior</div><div style="flex:1;">Staff</div></div>
-    <div class="d-flex text-muted" style="font-size:10px;">
-        <div style="flex:1;" class="d-flex flex-column">${managerHtml}</div>
-        <div style="flex:1;" class="d-flex flex-column">${seniorHtml}</div>
-        <div style="flex:1;" class="d-flex flex-column">${staffHtml}</div>
-    </div>
-    <hr>
-    <div style="font-size:10px;">Archived: ${archiveDate} by ${h.archived_by}</div>
-</div>`;
-                    }).join('');
+                if (history.length === 0) {
+                    historyListEl.innerHTML = '<div class="settings-empty-row">No engagement history yet.</div>';
+                    return;
                 }
 
-                console.log('Showing modal...');
-                modal.show();
+                historyListEl.innerHTML = history.map(h => `
+                    <div class="ch-item">
+                        <div class="ch-item-head">
+                            <div>
+                                <div class="ch-item-name">${h.engagement_year}</div>
+                                <div class="ch-item-total">Budgeted ${h.budgeted_hours}h &middot; Allocated ${h.allocated_hours}h</div>
+                            </div>
+                        </div>
+                        <div class="detail-row"><span class="detail-label">Manager</span><span class="detail-value">${formatList(h.manager)}</span></div>
+                        <div class="detail-row"><span class="detail-label">Senior</span><span class="detail-value">${formatList(h.senior)}</span></div>
+                        <div class="detail-row"><span class="detail-label">Staff</span><span class="detail-value">${formatList(h.staff)}</span></div>
+                        <div class="detail-row"><span class="detail-label">Archived</span><span class="detail-value">${formatDate(h.archive_date)} by ${h.archived_by || 'N/A'}</span></div>
+                    </div>
+                `).join('');
             } catch (err) {
-                console.error('Error fetching or rendering client data:', err);
-                alert('Error fetching client details. Check console.');
+                console.error('Failed to load client details', err);
+                titleEl.textContent = 'Error';
+                historyListEl.innerHTML = '<div class="settings-empty-row text-danger">Network error loading client details.</div>';
             }
         });
     });

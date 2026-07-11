@@ -3343,3 +3343,16 @@ body.dark-mode .ch-date-chip .ch-chip-hrs { color: #edf1ee; }
 }
 .ch-chip-del:hover { background: #e3e7e5; color: #c0392b; }
 body.dark-mode .ch-chip-del:hover { background: #29302e; color: #e0685a; }
+
+/* ========= VIEW CLIENT MODAL ========= */
+#viewClientModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #viewClientModal .eng-edit-footer { border-color: #29302e; }
+#viewClientModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#viewClientModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #viewClientModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #viewClientModal .eng-edit-btn-cancel:hover { background: #232a2c; }
