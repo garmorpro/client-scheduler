@@ -40,7 +40,7 @@
         ?>
     </select>
 </div>
-
+        </div>
 
         <div class="modal-footer p-2">
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
