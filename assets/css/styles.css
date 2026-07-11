@@ -3323,7 +3323,7 @@ body.dark-mode #companyHolidaysModal .eng-edit-btn-cancel:hover { background: #2
 .ch-item:last-child { margin-bottom: 0; }
 body.dark-mode .ch-item { border-color: #29302e; }
 .ch-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-.ch-item-name { font-size: 13.5px; font-weight: 700; color: #16211f; }
+.ch-item-name { font-size: 13.5px; font-weight: 700; color: #16211f; display: flex; align-items: center; gap: 8px; }
 body.dark-mode .ch-item-name { color: #edf1ee; }
 .ch-item-total { font-size: 11.5px; color: #9aa39d; margin-top: 2px; }
 body.dark-mode .ch-item-total { color: #6e7975; }

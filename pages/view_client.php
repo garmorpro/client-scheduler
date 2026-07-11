@@ -42,7 +42,7 @@ $res = $stmt3->get_result()->fetch_assoc();
 $client['current_manager'] = $res['manager'] ?? null;
 $stmt3->close();
 
-// Fetch engagement history
+// Archived engagement history
 $stmt2 = $conn->prepare("
     SELECT history_id, client_id, engagement_year, budgeted_hours, allocated_hours, manager, senior, staff, notes, archived_by, archive_date
     FROM client_engagement_history
@@ -51,11 +51,74 @@ $stmt2 = $conn->prepare("
 ");
 $stmt2->bind_param("i", $client_id);
 $stmt2->execute();
-$history = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+$archivedRows = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt2->close();
+
+// Current (non-archived) engagements - these live in `engagements`, not
+// `client_engagement_history`, so the modal's history list was previously
+// only ever showing archived years and missing every active engagement
+// regardless of its status (confirmed/pending/not_confirmed).
+$stmt4 = $conn->prepare("
+    SELECT e.engagement_id, e.status, e.budgeted_hours, e.manager, e.notes, e.year,
+        COALESCE(SUM(en.assigned_hours), 0) AS allocated_hours
+    FROM engagements e
+    LEFT JOIN entries en ON e.engagement_id = en.engagement_id
+    WHERE e.client_id = ?
+    GROUP BY e.engagement_id, e.status, e.budgeted_hours, e.manager, e.notes, e.year
+");
+$stmt4->bind_param("i", $client_id);
+$stmt4->execute();
+$activeRows = $stmt4->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt4->close();
+
+$history = [];
+foreach ($activeRows as $row) {
+    $history[] = [
+        'type' => 'active',
+        'engagement_year' => $row['year'],
+        'sort_id' => (int) $row['engagement_id'],
+        'status' => $row['status'],
+        'budgeted_hours' => $row['budgeted_hours'],
+        'allocated_hours' => $row['allocated_hours'],
+        'manager' => $row['manager'],
+        'senior' => null,
+        'staff' => null,
+        'notes' => $row['notes'],
+        'archived_by' => null,
+        'archive_date' => null,
+    ];
+}
+foreach ($archivedRows as $row) {
+    $history[] = [
+        'type' => 'archived',
+        'engagement_year' => $row['engagement_year'],
+        'sort_id' => (int) $row['history_id'],
+        'status' => null,
+        'budgeted_hours' => $row['budgeted_hours'],
+        'allocated_hours' => $row['allocated_hours'],
+        'manager' => $row['manager'],
+        'senior' => $row['senior'],
+        'staff' => $row['staff'],
+        'notes' => $row['notes'],
+        'archived_by' => $row['archived_by'],
+        'archive_date' => $row['archive_date'],
+    ];
+}
+
+// Newest first: by year, then active engagements before archived ones in
+// the same year, then by id so the most recently added/archived wins.
+usort($history, function ($a, $b) {
+    if ($a['engagement_year'] != $b['engagement_year']) {
+        return $b['engagement_year'] <=> $a['engagement_year'];
+    }
+    if ($a['type'] !== $b['type']) {
+        return $a['type'] === 'active' ? -1 : 1;
+    }
+    return $b['sort_id'] <=> $a['sort_id'];
+});
 
 echo json_encode([
     'client' => $client,
-    'history' => $history ?: []
+    'history' => $history
 ]);
 exit();

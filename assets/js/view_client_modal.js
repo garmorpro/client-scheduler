@@ -34,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!val) return '<span class="text-muted">&mdash;</span>';
         return val.split(',').map(v => v.trim()).filter(Boolean).join(', ');
     }
+    function statusLabel(status) {
+        return status === 'not_confirmed' ? 'Not Confirmed' : ucfirst(status);
+    }
+    function statusPillClass(status) {
+        return status === 'not_confirmed' ? 'not-confirmed' : status;
+    }
 
     document.querySelectorAll('.view-btn').forEach(button => {
         button.addEventListener('click', async () => {
@@ -83,14 +89,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="ch-item">
                         <div class="ch-item-head">
                             <div>
-                                <div class="ch-item-name">${h.engagement_year}</div>
+                                <div class="ch-item-name">
+                                    ${h.engagement_year}
+                                    ${h.type === 'active'
+                                        ? `<span class="eng-status-pill ${statusPillClass(h.status)}"><span class="dot"></span>${statusLabel(h.status)}</span>`
+                                        : `<span class="eng-status-pill" style="background:#f1f4f3;color:#6b7570;">Archived</span>`}
+                                </div>
                                 <div class="ch-item-total">Budgeted ${h.budgeted_hours}h &middot; Allocated ${h.allocated_hours}h</div>
                             </div>
                         </div>
                         <div class="detail-row"><span class="detail-label">Manager</span><span class="detail-value">${formatList(h.manager)}</span></div>
+                        ${h.type === 'archived' ? `
                         <div class="detail-row"><span class="detail-label">Senior</span><span class="detail-value">${formatList(h.senior)}</span></div>
                         <div class="detail-row"><span class="detail-label">Staff</span><span class="detail-value">${formatList(h.staff)}</span></div>
                         <div class="detail-row"><span class="detail-label">Archived</span><span class="detail-value">${formatDate(h.archive_date)} by ${h.archived_by || 'N/A'}</span></div>
+                        ` : ''}
                     </div>
                 `).join('');
             } catch (err) {
