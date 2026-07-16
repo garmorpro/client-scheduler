@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/permissions.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_master_schedule')) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }

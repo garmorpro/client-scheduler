@@ -18,6 +18,7 @@ $canManageEmployees = user_has_permission($conn, 'manage_employees');
 $canViewEmployees = user_has_permission($conn, 'view_employees');
 $canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
 $canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
+$canViewMasterSchedule = user_has_permission($conn, 'view_master_schedule');
 $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
 $canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
@@ -88,7 +89,7 @@ if ($canApproveTimeOff) {
                     My Schedule
                 </a>
             </li>
-            <li class="nav-item <?php if (!$canManageClientsEngagements) echo 'd-none'; ?>">
+            <li class="nav-item <?php if (!$canViewMasterSchedule) echo 'd-none'; ?>">
                 <a href="master-schedule.php" class="sidebar-link <?= $currentPage == 'master-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-calendar-range"></i>
                     Master Schedule

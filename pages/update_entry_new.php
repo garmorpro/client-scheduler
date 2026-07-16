@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/permissions.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
+if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_master_schedule')) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized']);
     exit();

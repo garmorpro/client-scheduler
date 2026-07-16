@@ -14,6 +14,7 @@ function user_has_permission($conn, $permissionKey) {
     $allowed = [
         'manage_employees', 'view_employees',
         'manage_clients_engagements', 'view_clients_engagements',
+        'manage_master_schedule', 'view_master_schedule',
         'approve_time_off', 'view_time_off_requests',
         'access_system_settings',
     ];
@@ -25,7 +26,7 @@ function user_has_permission($conn, $permissionKey) {
     if ($role === 'service_account') return in_array($permissionKey, ['manage_employees', 'view_employees'], true);
 
     if (!isset($cache[$role])) {
-        $stmt = $conn->prepare("SELECT manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, approve_time_off, view_time_off_requests, access_system_settings FROM role_permissions WHERE role = ?");
+        $stmt = $conn->prepare("SELECT manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, manage_master_schedule, view_master_schedule, approve_time_off, view_time_off_requests, access_system_settings FROM role_permissions WHERE role = ?");
         $stmt->bind_param('s', $role);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -35,6 +36,8 @@ function user_has_permission($conn, $permissionKey) {
             'view_employees' => 0,
             'manage_clients_engagements' => 0,
             'view_clients_engagements' => 0,
+            'manage_master_schedule' => 0,
+            'view_master_schedule' => 0,
             'approve_time_off' => 0,
             'view_time_off_requests' => 0,
             'access_system_settings' => 0,
@@ -46,6 +49,9 @@ function user_has_permission($conn, $permissionKey) {
     }
     if ($permissionKey === 'view_clients_engagements') {
         return !empty($cache[$role]['view_clients_engagements']) || !empty($cache[$role]['manage_clients_engagements']);
+    }
+    if ($permissionKey === 'view_master_schedule') {
+        return !empty($cache[$role]['view_master_schedule']) || !empty($cache[$role]['manage_master_schedule']);
     }
     if ($permissionKey === 'view_time_off_requests') {
         return !empty($cache[$role]['view_time_off_requests']) || !empty($cache[$role]['approve_time_off']);

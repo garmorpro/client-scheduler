@@ -12,10 +12,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Master Schedule shows every employee's full schedule across every client -
-// restrict it to the same permission that governs staffing/engagements,
-// rather than every logged-in role.
-$canEditSchedule = user_has_permission($conn, 'manage_clients_engagements');
-if (!$canEditSchedule) {
+// gated on its own view/manage permission pair, separate from client and
+// engagement management, so a role can see the schedule read-only without
+// also being able to edit clients/engagements (or vice versa).
+$canEditSchedule = user_has_permission($conn, 'manage_master_schedule');
+if (!user_has_permission($conn, 'view_master_schedule')) {
     header("Location: my-schedule.php");
     exit();
 }
