@@ -60,7 +60,7 @@
               </div>
               <div class="eng-edit-field">
                 <label for="smtpPassword">Password</label>
-                <input type="password" class="eng-edit-input" id="smtpPassword" name="smtp_password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" value="<?php echo htmlspecialchars($settings['smtp_password'] ?? '', ENT_QUOTES); ?>" required>
+                <input type="password" class="eng-edit-input" id="smtpPassword" name="smtp_password" placeholder="<?php echo !empty($settings['smtp_password']) ? 'Leave blank to keep current password' : ''; ?>" autocomplete="new-password">
               </div>
             </div>
 

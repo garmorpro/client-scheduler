@@ -43,6 +43,13 @@ foreach ($settings as $k => $v) {
     if ($v === false) $settings[$k] = 'false';
 }
 
+// The SMTP password field is never rendered back to the client (see
+// email_configuration_modal.php), so an empty submission means "leave the
+// stored password unchanged" rather than "clear it".
+if (isset($settings['smtp_password']) && $settings['smtp_password'] === '') {
+    unset($settings['smtp_password']);
+}
+
 // Prepare statements
 $stmtCheck = mysqli_prepare($conn, "SELECT id FROM settings WHERE setting_master_key = ? AND setting_key = ?");
 $stmtUpdate = mysqli_prepare($conn, "UPDATE settings SET setting_value = ? WHERE id = ?");
