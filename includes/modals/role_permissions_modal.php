@@ -20,6 +20,7 @@
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-people-fill"></i>Employees</div></th>
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-briefcase-fill"></i>Clients &amp; Engagements</div></th>
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-calendar3"></i>Master<br>Schedule</div></th>
+                  <th><div class="rp-col-head"><i class="bi bi-person-fill"></i>My<br>Schedule</div></th>
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-airplane-fill"></i>Time Off</div></th>
                   <th><div class="rp-col-head"><i class="bi bi-gear-fill"></i>System<br>Settings</div></th>
                 </tr>
@@ -31,6 +32,7 @@
                   <th class="rp-sub-head">Manage</th>
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">Manage</th>
+                  <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">Manage</th>
                   <th></th>
@@ -44,7 +46,7 @@
                       <span class="rp-role-name">Admin</span>
                     </span>
                   </td>
-                  <td colspan="9" class="rp-full-access-cell">
+                  <td colspan="10" class="rp-full-access-cell">
                     <span class="rp-full-access">
                       <i class="bi bi-check-circle-fill"></i> Full access &mdash; not editable
                     </span>

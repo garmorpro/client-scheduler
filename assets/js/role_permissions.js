@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('rpTableBody');
     const saveBtn = document.getElementById('rpSaveBtn');
     const dirtyHint = document.getElementById('rpDirtyHint');
-    const permissionKeys = ['view_employees', 'manage_employees', 'view_clients_engagements', 'manage_clients_engagements', 'view_master_schedule', 'manage_master_schedule', 'view_time_off_requests', 'approve_time_off', 'access_system_settings'];
+    const permissionKeys = ['view_employees', 'manage_employees', 'view_clients_engagements', 'manage_clients_engagements', 'view_master_schedule', 'manage_master_schedule', 'view_my_schedule', 'view_time_off_requests', 'approve_time_off', 'access_system_settings'];
     // "Manage" always includes "View" - keep the View toggle visually locked
     // on (and disabled) whenever its paired Manage toggle is on, so the
     // matrix doesn't look like you could have edit rights without view rights.

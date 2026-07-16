@@ -19,6 +19,7 @@ $canViewEmployees = user_has_permission($conn, 'view_employees');
 $canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
 $canViewClientsEngagements = user_has_permission($conn, 'view_clients_engagements');
 $canViewMasterSchedule = user_has_permission($conn, 'view_master_schedule');
+$canViewMySchedule = user_has_permission($conn, 'view_my_schedule');
 $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
 $canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
@@ -83,7 +84,7 @@ if ($canApproveTimeOff) {
         <!-- Nav Links -->
         <?php if (!$isServiceAccount): ?>
         <ul class="sidebar-nav-group">
-            <li class="nav-item <?php if ($isAdmin) echo 'd-none'; ?>">
+            <li class="nav-item <?php if ($isAdmin || !$canViewMySchedule) echo 'd-none'; ?>">
                 <a href="my-schedule.php" class="sidebar-link <?= $currentPage == 'my-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-person"></i>
                     My Schedule

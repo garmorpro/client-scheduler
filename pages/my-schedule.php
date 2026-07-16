@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/session_init.php';
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
+require_once __DIR__ . '/../includes/permissions.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -18,6 +19,15 @@ if ($isAdmin) {
 
 if ($isServiceAccount) {
     header("Location: employees.php" . (isset($_GET['welcome']) ? '?welcome=1' : ''));
+    exit();
+}
+
+// Roles like CRM Team have no schedule of their own to see here - send them
+// wherever they actually land day to day instead (Clients if they have it,
+// otherwise Policies, which every logged-in role can already reach).
+if (!user_has_permission($conn, 'view_my_schedule')) {
+    $fallback = user_has_permission($conn, 'view_clients_engagements') ? 'client-management.php' : 'policies.php';
+    header("Location: $fallback" . (isset($_GET['welcome']) ? '?welcome=1' : ''));
     exit();
 }
 

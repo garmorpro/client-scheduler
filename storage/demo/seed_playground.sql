@@ -44,12 +44,12 @@ INSERT INTO users (user_id, email, password, full_name, job_title, role, manager
 -- ---------------------------------------------------------------------
 -- Role permissions (shows off the View vs Manage tier split)
 -- ---------------------------------------------------------------------
-INSERT INTO role_permissions (role, manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, view_master_schedule, manage_master_schedule, approve_time_off, view_time_off_requests, access_system_settings) VALUES
-('manager',   1, 1, 1, 1, 1, 1, 1, 1, 0),
-('senior',    0, 1, 0, 1, 1, 0, 0, 1, 0),
-('staff',     0, 0, 0, 1, 1, 0, 0, 0, 0),
-('intern',    0, 0, 0, 1, 1, 0, 0, 0, 0),
-('crm_team',  0, 1, 1, 1, 0, 0, 0, 0, 0);
+INSERT INTO role_permissions (role, manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, view_master_schedule, manage_master_schedule, view_my_schedule, approve_time_off, view_time_off_requests, access_system_settings) VALUES
+('manager',   1, 1, 1, 1, 1, 1, 1, 1, 1, 0),
+('senior',    0, 1, 0, 1, 1, 0, 1, 0, 1, 0),
+('staff',     0, 0, 0, 1, 1, 0, 1, 0, 0, 0),
+('intern',    0, 0, 0, 1, 1, 0, 1, 0, 0, 0),
+('crm_team',  0, 1, 1, 1, 0, 0, 0, 0, 0, 0);
 
 -- ---------------------------------------------------------------------
 -- Clients
