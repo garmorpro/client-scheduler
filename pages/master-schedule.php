@@ -217,12 +217,14 @@ updateLastRowRadius();
                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                   <i class="bi bi-calendar-check me-3"></i>Today
                 </a>
+                <?php if ($canEditSchedule): ?>
                 <a href="#"
                    id="exportScheduleBtn"
                    class="badge text-black p-2 text-decoration-none fw-medium me-1"
                    style="font-size: .875rem; border: 1px solid rgb(229,229,229);">
                   <i class="bi bi-download me-3"></i>Export
                 </a>
+                <?php endif; ?>
                 <a href="#"
                    onclick="refreshWithScroll(); return false;"
                    class="badge text-black p-2 text-decoration-none fw-medium me-1"
