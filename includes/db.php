@@ -16,7 +16,10 @@ date_default_timezone_set('America/Chicago');
 use Dotenv\Dotenv;
 
 // ---------------- LOAD .ENV -------------------
-$dotenvPath = '/var/www/client-scheduler';
+// Resolved relative to this file's location (not hardcoded) so a second
+// copy of the app deployed elsewhere (e.g. a demo instance) picks up its
+// own .env automatically instead of reading production's.
+$dotenvPath = dirname(__DIR__);
 if (!file_exists($dotenvPath . '/.env')) {
     die(json_encode(['error' => 'Missing .env file', 'path' => $dotenvPath . '/.env']));
 }
