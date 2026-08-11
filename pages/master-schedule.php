@@ -93,9 +93,11 @@ $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+26 weeks', $startMonday));
 
 $query = "
-    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status
+    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status,
+        a.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color
     FROM entries a
     LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
+    LEFT JOIN audit_types at ON a.audit_type_id = at.audit_type_id
     WHERE a.week_start BETWEEN ? AND ?
 ";
 $stmt = $conn->prepare($query);
@@ -111,9 +113,21 @@ while ($row = $result->fetch_assoc()) {
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
         'engagement_status' => $row['engagement_status'],
+        'audit_type_id' => $row['audit_type_id'],
+        'audit_type_name' => $row['audit_type_name'],
+        'audit_type_color' => $row['audit_type_color'],
     ];
 }
 $stmt->close();
+
+// Active audit types, for the Master Schedule legend
+$auditTypeLegend = [];
+$atLegendResult = $conn->query("SELECT audit_type_id, name, color FROM audit_types WHERE is_active = 1 ORDER BY name ASC");
+if ($atLegendResult) {
+    while ($atRow = $atLegendResult->fetch_assoc()) {
+        $auditTypeLegend[] = $atRow;
+    }
+}
 
 // Global Time Off
 $globalTimeOffQuery = "SELECT week_start, SUM(assigned_hours) as assigned_hours FROM time_off WHERE is_global_timeoff = 1 AND week_start BETWEEN ? AND ? GROUP BY week_start";
@@ -211,6 +225,24 @@ updateLastRowRadius();
                 <p class="mb-0">Complete overview of all client engagements and team assignments</p>
             </div>
             <div class="header-buttons">
+                <?php if (!empty($auditTypeLegend)): ?>
+                <div class="dropdown d-inline-block me-1">
+                    <a href="#"
+                       class="badge text-black p-2 text-decoration-none fw-medium"
+                       style="font-size: .875rem; border: 1px solid rgb(229,229,229);"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-palette me-2"></i>Audit Types
+                    </a>
+                    <div class="dropdown-menu audit-type-legend p-2">
+                        <?php foreach ($auditTypeLegend as $atRow): ?>
+                        <div class="audit-type-legend-row">
+                            <span class="audit-type-dot" style="background:<?php echo htmlspecialchars($atRow['color']); ?>"></span>
+                            <?php echo htmlspecialchars($atRow['name']); ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <a href="#"
                    id="jumpToTodayBtn"
                    class="badge text-black p-2 text-decoration-none fw-medium me-1"
@@ -421,9 +453,14 @@ updateLastRowRadius();
                             $clientName = htmlspecialchars($entry['client_name']);
                             $assignedHours = htmlspecialchars($entry['assigned_hours']);
                             $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
+                            $auditTypeId = htmlspecialchars($entry['audit_type_id'] ?? '');
+                            $auditTypeName = htmlspecialchars($entry['audit_type_name'] ?? '');
+                            $auditTypeColor = htmlspecialchars($entry['audit_type_color'] ?? '');
                             $draggableAttr = $canEditSchedule ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
                             $badgeId = "badge-entry-{$entry['entry_id']}";
-                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='Drag to move'>{$clientName} ({$assignedHours})</span>";
+                            $auditDot = $auditTypeName !== '' ? "<span class='audit-type-dot' style='background:{$auditTypeColor}'></span>" : '';
+                            $badgeTitle = $auditTypeName !== '' ? "Drag to move &middot; {$auditTypeName}" : 'Drag to move';
+                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-audit-type-id='{$auditTypeId}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='{$badgeTitle}'>{$auditDot}{$clientName} ({$assignedHours})</span>";
                             $totalAssignedHours += floatval($entry['assigned_hours']);
                         }
 

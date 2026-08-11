@@ -13,30 +13,27 @@
         }
     }
 
-    // Fetch clients
-    fetch('get_clients.php')
-        .then(res => res.json())
-        .then(data => { activeClients = data; })
-        .catch(err => console.error('Failed to fetch clients:', err));
+    // Fetch clients (one row per engagement, each carrying its own audit types)
+    function loadClients() {
+        fetch('get_clients.php')
+            .then(res => res.json())
+            .then(data => { activeClients = data; })
+            .catch(err => console.error('Failed to fetch clients:', err));
+    }
+    loadClients();
+    document.addEventListener('auditTypesUpdated', loadClients);
 
     function searchClients(query) {
         query = query.toLowerCase();
         return activeClients.filter(c => c.client_name.toLowerCase().includes(query));
     }
 
-    function getClientStatus(clientName) {
-        const name = clientName.trim().toLowerCase();
-        const client = activeClients.find(c => c.client_name.trim().toLowerCase() === name);
-        return client && client.status ? client.status : 'confirmed';
-    }
-
-    function getBadgeClass(status) {
-        switch ((status || '').toLowerCase()) {
-            case 'confirmed': return 'confirmed';
-            case 'pending': return 'pending';
-            case 'not_confirmed': return 'not-confirmed';
-            default: return 'confirmed';
-        }
+    // Find the single engagement a badge's data-engagement-id refers to, so
+    // the edit-existing-entry flow can offer the right audit type choices
+    // without any ambiguity (unlike matching by client_name, which breaks
+    // when a client has more than one engagement).
+    function findEngagementById(engagementId) {
+        return activeClients.find(c => String(c.engagement_id) === String(engagementId)) || null;
     }
 
     function saveScrollAndReload() {
@@ -101,10 +98,42 @@
         if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
     }
 
+    // Builds (or clears) the audit-type <select> for a resolved engagement.
+    // Returns the <select> if one was created, or null if the engagement has
+    // no audit types to choose from (nothing to show).
+    function renderAuditTypeSelect(container, engagement, currentAuditTypeId) {
+        container.innerHTML = '';
+        if (!engagement || !engagement.audit_types || engagement.audit_types.length === 0) return null;
+
+        const select = document.createElement('select');
+        select.className = 'form-select form-select-sm mb-1 audit-type-select';
+        select.style.width = '100%';
+        if (engagement.audit_types.length > 1) {
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = 'Audit Type...';
+            select.appendChild(placeholder);
+        }
+        engagement.audit_types.forEach(at => {
+            const opt = document.createElement('option');
+            opt.value = at.id;
+            opt.textContent = at.name;
+            select.appendChild(opt);
+        });
+        if (engagement.audit_types.length === 1) {
+            select.value = engagement.audit_types[0].id;
+        } else if (currentAuditTypeId) {
+            select.value = currentAuditTypeId;
+        }
+        select.addEventListener('click', e => e.stopPropagation());
+        container.appendChild(select);
+        return select;
+    }
+
     document.querySelectorAll('td.addable').forEach(td => {
         td.addEventListener('click', e => {
             const target = e.target;
-            if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.classList.contains('timeoff-corner')) return;
+            if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.classList.contains('timeoff-corner')) return;
             if (activeTd === td) return;
 
             closeActiveInputs();
@@ -132,6 +161,8 @@
         clientInput.className = 'form-control form-control-sm mb-1';
         clientInput.style.width = '100%';
 
+        const auditTypeContainer = document.createElement('div');
+
         const hoursInput = document.createElement('input');
         hoursInput.type = 'number';
         hoursInput.min = '0';
@@ -140,12 +171,18 @@
         hoursInput.style.width = '100%';
 
         td.appendChild(clientInput);
+        td.appendChild(auditTypeContainer);
         td.appendChild(hoursInput);
 
+        let selectedEngagement = null;
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
 
-        attachInputEvents(td, clientInput, hoursInput, true);
-        setupAutocomplete(clientInput, globalDropdown);
+        setupAutocomplete(clientInput, globalDropdown, (client) => {
+            selectedEngagement = client;
+            renderAuditTypeSelect(auditTypeContainer, client, null);
+        });
+
+        attachInputEvents(td, clientInput, hoursInput, true, null, () => selectedEngagement, auditTypeContainer);
         clientInput.focus();
     }
 
@@ -173,6 +210,8 @@
         clientInput.className = 'form-control form-control-sm mb-1';
         clientInput.style.width = '100%';
 
+        const auditTypeContainer = document.createElement('div');
+
         const hoursInput = document.createElement('input');
         hoursInput.type = 'number';
         hoursInput.min = '0';
@@ -181,10 +220,12 @@
         hoursInput.style.width = '100%';
 
         overlay.appendChild(clientInput);
+        overlay.appendChild(auditTypeContainer);
         overlay.appendChild(hoursInput);
         document.body.appendChild(overlay);
         activeOverlay = overlay;
 
+        let selectedEngagement = null;
         [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
         overlay.addEventListener('click', e => e.stopPropagation());
 
@@ -201,13 +242,17 @@
         });
         document.body.appendChild(overlayDropdown);
 
-        setupAutocomplete(clientInput, overlayDropdown);
-        attachInputEvents(td, clientInput, hoursInput, false, overlay);
+        setupAutocomplete(clientInput, overlayDropdown, (client) => {
+            selectedEngagement = client;
+            renderAuditTypeSelect(auditTypeContainer, client, null);
+        });
+        attachInputEvents(td, clientInput, hoursInput, false, overlay, () => selectedEngagement, auditTypeContainer);
         clientInput.focus();
     }
 
-    function setupAutocomplete(clientInput, container) {
+    function setupAutocomplete(clientInput, container, onSelect) {
         clientInput.addEventListener('input', () => {
+            if (onSelect) onSelect(null); // typing again invalidates any prior selection
             const val = clientInput.value.trim();
             if (val.length >= 3) {
                 const matches = searchClients(val);
@@ -221,6 +266,7 @@
                         e.stopPropagation();
                         clientInput.value = client.client_name;
                         container.style.display = 'none';
+                        if (onSelect) onSelect(client);
                     });
                     container.appendChild(div);
                 });
@@ -235,7 +281,7 @@
         });
     }
 
-    function attachInputEvents(td, clientInput, hoursInput, inline = true, overlay = null) {
+    function attachInputEvents(td, clientInput, hoursInput, inline = true, overlay = null, getEngagement = () => null, auditTypeContainer = null) {
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async e => {
                 if (e.key === 'Enter') {
@@ -244,6 +290,13 @@
 
                     if (!clientName || !hours || hours <= 0) {
                         notify('warning', 'Missing information', 'Please enter a valid client and hours.');
+                        return;
+                    }
+
+                    const engagement = getEngagement();
+                    const auditSelect = auditTypeContainer ? auditTypeContainer.querySelector('select') : null;
+                    if (auditSelect && !auditSelect.value) {
+                        notify('warning', 'Missing information', 'Please choose an audit type.');
                         return;
                     }
 
@@ -263,6 +316,8 @@
                                 user_id: td.dataset.userId,
                                 week_start: td.dataset.weekStart,
                                 client_name: clientName,
+                                engagement_id: engagement ? engagement.engagement_id : null,
+                                audit_type_id: auditSelect ? auditSelect.value : null,
                                 assigned_hours: hours
                             })
                         });
@@ -296,6 +351,8 @@
         const match = badge.textContent.match(/^(.*)\s+\(([\d.]+)\)$/);
         const currentName = match ? match[1] : '';
         const currentHours = match ? match[2] : '';
+        const currentEngagementId = badge.dataset.engagementId || null;
+        const currentAuditTypeId = badge.dataset.auditTypeId || null;
 
         const rect = td.getBoundingClientRect();
         const overlay = document.createElement('div');
@@ -319,6 +376,8 @@
         clientInput.value = currentName;
         clientInput.className = 'form-control form-control-sm mb-1';
 
+        const auditTypeContainer = document.createElement('div');
+
         const hoursInput = document.createElement('input');
         hoursInput.type = 'number';
         hoursInput.min = '0';
@@ -326,9 +385,16 @@
         hoursInput.className = 'form-control form-control-sm';
 
         overlay.appendChild(clientInput);
+        overlay.appendChild(auditTypeContainer);
         overlay.appendChild(hoursInput);
         document.body.appendChild(overlay);
         activeOverlay = overlay;
+
+        // Editing an existing badge already has an unambiguous engagement_id
+        // (unlike typing a fresh client name), so pre-populate its audit
+        // types straight away without waiting for a new autocomplete pick.
+        let selectedEngagement = findEngagementById(currentEngagementId);
+        renderAuditTypeSelect(auditTypeContainer, selectedEngagement, currentAuditTypeId);
 
         const dropdown = document.createElement('div');
         Object.assign(dropdown.style, {
@@ -343,7 +409,10 @@
         });
         document.body.appendChild(dropdown);
 
-        setupAutocomplete(clientInput, dropdown);
+        setupAutocomplete(clientInput, dropdown, (client) => {
+            selectedEngagement = client;
+            renderAuditTypeSelect(auditTypeContainer, client, null);
+        });
 
         [clientInput, hoursInput].forEach(input => {
             input.addEventListener('keydown', async ev => {
@@ -354,6 +423,12 @@
 
                     if (!newName || !newHours || newHours <= 0) {
                         notify('warning', 'Missing information', 'Please enter a valid client and hours.');
+                        return;
+                    }
+
+                    const auditSelect = auditTypeContainer.querySelector('select');
+                    if (auditSelect && !auditSelect.value) {
+                        notify('warning', 'Missing information', 'Please choose an audit type.');
                         return;
                     }
 
@@ -370,6 +445,8 @@
                             body: JSON.stringify({
                                 entry_id: badge.dataset.entryId,
                                 client_name: newName,
+                                engagement_id: selectedEngagement ? selectedEngagement.engagement_id : currentEngagementId,
+                                audit_type_id: auditSelect ? auditSelect.value : null,
                                 assigned_hours: newHours
                             })
                         });

@@ -51,6 +51,29 @@
               <label for="edit_eng_notes">Notes</label>
               <textarea class="eng-edit-input" id="edit_eng_notes" name="notes" rows="3"></textarea>
             </div>
+
+            <div class="eng-edit-field">
+              <label>Audit Types</label>
+              <div class="eng-audit-type-list" id="edit_eng_audit_types">
+                <?php
+                require_once '../includes/db.php';
+                $auditTypeQuery = $conn->query("SELECT audit_type_id, name, color FROM audit_types WHERE is_active = 1 ORDER BY name ASC");
+                if ($auditTypeQuery && $auditTypeQuery->num_rows > 0):
+                    while ($atRow = $auditTypeQuery->fetch_assoc()):
+                ?>
+                <label class="eng-audit-type-chip">
+                  <input type="checkbox" name="audit_type_ids[]" value="<?php echo (int) $atRow['audit_type_id']; ?>">
+                  <span class="eng-audit-type-dot" style="background:<?php echo htmlspecialchars($atRow['color']); ?>"></span>
+                  <?php echo htmlspecialchars($atRow['name']); ?>
+                </label>
+                <?php
+                    endwhile;
+                else:
+                ?>
+                <div class="settings-empty-row" style="text-align:left; padding-left:0;">No audit types yet - add some under System Settings.</div>
+                <?php endif; ?>
+              </div>
+            </div>
           </div>
 
           <div class="eng-edit-footer">

@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('edit_eng_status').value = btn.getAttribute('data-status');
             document.getElementById('edit_eng_manager').value = btn.getAttribute('data-manager') || '';
             document.getElementById('edit_eng_notes').value = btn.getAttribute('data-notes') || '';
+
+            const selectedAuditTypes = (btn.getAttribute('data-audit-types') || '')
+                .split(',').map(s => s.trim()).filter(Boolean);
+            document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]').forEach(cb => {
+                cb.checked = selectedAuditTypes.includes(cb.value);
+            });
         });
     });
 

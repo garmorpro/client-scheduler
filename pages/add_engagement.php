@@ -50,11 +50,26 @@ if (!$stmt) {
 $stmt->bind_param('isssss', $client_id, $client_name, $budget_hours, $status, $year, $manager);
 
 if ($stmt->execute()) {
+    $engagement_id = $stmt->insert_id;
+    $stmt->close();
+
+    // Audit types are optional - an engagement can have none, one, or several.
+    $auditTypeIds = array_unique(array_map('intval', $_POST['audit_type_ids'] ?? []));
+    if (!empty($auditTypeIds)) {
+        $eatStmt = $conn->prepare("INSERT INTO engagement_audit_types (engagement_id, audit_type_id) VALUES (?, ?)");
+        foreach ($auditTypeIds as $atId) {
+            if ($atId <= 0) continue;
+            $eatStmt->bind_param('ii', $engagement_id, $atId);
+            $eatStmt->execute();
+        }
+        $eatStmt->close();
+    }
+
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'message' => $stmt->error]);
+    $stmt->close();
 }
 
-$stmt->close();
 $conn->close();
 ?>

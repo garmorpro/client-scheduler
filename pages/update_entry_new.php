@@ -24,29 +24,56 @@ if (!$data || !isset($data['entry_id'], $data['client_name'], $data['assigned_ho
     exit();
 }
 
-$entry_id    = intval($data['entry_id']);
-$client_name = trim($data['client_name']);
-$hours       = floatval($data['assigned_hours']);
+$entry_id      = intval($data['entry_id']);
+$client_name   = trim($data['client_name']);
+$hours         = floatval($data['assigned_hours']);
+$engagement_id = intval($data['engagement_id'] ?? 0);
+$audit_type_id = isset($data['audit_type_id']) && $data['audit_type_id'] !== '' ? intval($data['audit_type_id']) : null;
 
-// 1. Find engagement_id from engagements table
-$stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ?");
-$stmt->bind_param("s", $client_name);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Client not found in engagements table']);
-    exit();
+if ($engagement_id > 0) {
+    // Trust the engagement_id the client already knew (the badge being
+    // edited is already tied to one specific engagement, unambiguously).
+    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE engagement_id = ? AND client_name = ?");
+    $stmt->bind_param('is', $engagement_id, $client_name);
+    $stmt->execute();
+    if ($stmt->get_result()->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Client not found in engagements table']);
+        exit();
+    }
+    $stmt->close();
+} else {
+    // Client name changed with no re-selected engagement - fall back to
+    // best-effort lookup, same as before.
+    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE client_name = ?");
+    $stmt->bind_param('s', $client_name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Client not found in engagements table']);
+        exit();
+    }
+    $row = $result->fetch_assoc();
+    $engagement_id = intval($row['engagement_id']);
+    $stmt->close();
 }
 
-$row = $result->fetch_assoc();
-$engagement_id = intval($row['engagement_id']);
-$stmt->close();
+if ($audit_type_id !== null) {
+    $atStmt = $conn->prepare("SELECT 1 FROM engagement_audit_types WHERE engagement_id = ? AND audit_type_id = ?");
+    $atStmt->bind_param('ii', $engagement_id, $audit_type_id);
+    $atStmt->execute();
+    $isValidAuditType = (bool) $atStmt->get_result()->fetch_row();
+    $atStmt->close();
+    if (!$isValidAuditType) {
+        http_response_code(400);
+        echo json_encode(['error' => 'That audit type is not selected for this engagement.']);
+        exit();
+    }
+}
 
-// 2. Update entries with engagement_id and hours
-$stmt = $conn->prepare("UPDATE entries SET engagement_id = ?, assigned_hours = ? WHERE entry_id = ?");
-$stmt->bind_param("idi", $engagement_id, $hours, $entry_id);
+$stmt = $conn->prepare("UPDATE entries SET engagement_id = ?, audit_type_id = ?, assigned_hours = ? WHERE entry_id = ?");
+$stmt->bind_param('iidi', $engagement_id, $audit_type_id, $hours, $entry_id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'engagement_id' => $engagement_id]);

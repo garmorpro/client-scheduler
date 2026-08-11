@@ -87,6 +87,14 @@ if ($canAccessSystemSettings) {
             </div>
             <i class="bi bi-chevron-right settings-tile-arrow"></i>
         </a>
+        <a href="#" class="settings-tile" data-bs-toggle="modal" data-bs-target="#auditTypesModal">
+            <div class="settings-tile-icon"><i class="bi bi-clipboard2-check"></i></div>
+            <div class="settings-tile-info">
+                <div class="settings-tile-title">Audit Types</div>
+                <div class="settings-tile-desc">SOC, ISO, HIPAA &amp; other engagement types</div>
+            </div>
+            <i class="bi bi-chevron-right settings-tile-arrow"></i>
+        </a>
         <a href="#" id="configureBusySeasonBtn" class="settings-tile" data-bs-toggle="modal" data-bs-target="#busySeasonModal">
             <div class="settings-tile-icon"><i class="bi bi-sun"></i></div>
             <div class="settings-tile-info">
@@ -117,6 +125,7 @@ if ($canAccessSystemSettings) {
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/busy_season_modal.php'; ?>
+<?php include_once '../includes/modals/audit_types_modal.php'; ?>
 <?php endif; ?>
 
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
@@ -133,6 +142,7 @@ if ($canAccessSystemSettings) {
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/busy_season.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/audit_types_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

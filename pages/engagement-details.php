@@ -38,19 +38,24 @@ if (isset($_GET['id'])) {
     $engagement = $engagementResult->fetch_assoc();
 
     // Assigned employees + their hours + role, for the View Engagement modal.
-    // Ordered by role seniority (manager > senior > staff > intern), not hours.
-    $employeeQuery = "SELECT u.full_name, u.role, SUM(a.assigned_hours) AS total_hours
+    // Grouped by (user, audit_type) rather than just user - someone can be
+    // split across more than one audit type on the same engagement, and
+    // collapsing those together would blend their hours into one misleading
+    // total. Ordered by role seniority (manager > senior > staff > intern),
+    // not hours.
+    $employeeQuery = "SELECT u.full_name, u.role, a.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color, SUM(a.assigned_hours) AS total_hours
                       FROM entries a
                       JOIN users u ON a.user_id = u.user_id
+                      LEFT JOIN audit_types at ON a.audit_type_id = at.audit_type_id
                       WHERE a.engagement_id = ?
-                      GROUP BY a.user_id, u.full_name, u.role
+                      GROUP BY a.user_id, u.full_name, u.role, a.audit_type_id, at.name, at.color
                       ORDER BY CASE u.role
                           WHEN 'manager' THEN 1
                           WHEN 'senior' THEN 2
                           WHEN 'staff' THEN 3
                           WHEN 'intern' THEN 4
                           ELSE 5
-                      END, u.full_name ASC";
+                      END, u.full_name ASC, at.name ASC";
     $stmt = $conn->prepare($employeeQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
@@ -60,7 +65,9 @@ if (isset($_GET['id'])) {
         $assignedEmployees[] = [
             'name' => $employee['full_name'] ?? '',
             'role' => $employee['role'] ?? '',
-            'hours' => (float)$employee['total_hours']
+            'hours' => (float)$employee['total_hours'],
+            'audit_type_name' => $employee['audit_type_name'] ?? null,
+            'audit_type_color' => $employee['audit_type_color'] ?? null,
         ];
     }
 

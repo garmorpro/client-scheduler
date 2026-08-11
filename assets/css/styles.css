@@ -3382,4 +3382,80 @@ body.dark-mode .ch-eng-item { border-color: #29302e; }
 body.dark-mode .ch-eng-item:hover { background: #1f2624; border-color: #3a4440; }
 .ch-eng-item .ch-item-head { margin-bottom: 0; align-items: center; }
 .ch-eng-arrow { color: #9aa39d; font-size: 13px; flex-shrink: 0; }
+
+/* ========= AUDIT TYPES ========= */
+
+/* Small color dot - the Master Schedule pill (e.g. "Coresite (40)") is too
+   narrow for the audit type name, so it's shown as a color-coded dot with
+   the full name in the badge's title tooltip instead. */
+.audit-type-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    margin-right: 4px; flex-shrink: 0; vertical-align: middle;
+}
+
+.audit-type-legend { min-width: 180px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e3e7e5; }
+body.dark-mode .audit-type-legend { background: #1b2022; border-color: #29302e; }
+.audit-type-legend-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #16211f; padding: 3px 0; }
+body.dark-mode .audit-type-legend-row { color: #edf1ee; }
+
+/* Checkbox "chip" picker used on Add/Edit Engagement */
+.eng-audit-type-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.eng-audit-type-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+    border: 1px solid #e3e7e5; border-radius: 20px; font-size: 12.5px; font-weight: 500;
+    color: #16211f; cursor: pointer; user-select: none;
+}
+body.dark-mode .eng-audit-type-chip { border-color: #29302e; color: #edf1ee; }
+.eng-audit-type-chip input[type="checkbox"] { accent-color: var(--primary-color); }
+body.dark-mode .eng-audit-type-chip input[type="checkbox"] { accent-color: var(--secondary-color); }
+.eng-audit-type-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ========= AUDIT TYPES MODAL (System Settings) ========= */
+#auditTypesModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #auditTypesModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#auditTypesModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #auditTypesModal .eng-edit-title { color: #edf1ee; }
+
+#auditTypesModal .eng-edit-body { padding: 16px 20px; }
+#auditTypesModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#auditTypesModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #auditTypesModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #auditTypesModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+
+#auditTypesModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #auditTypesModal .eng-edit-footer { border-color: #29302e; }
+#auditTypesModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#auditTypesModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #auditTypesModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #auditTypesModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+
+.at-add-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.at-add-row .eng-edit-input { flex: 1; }
+.at-color-input {
+    width: 42px; height: 42px; padding: 3px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: none; cursor: pointer; flex-shrink: 0;
+}
+body.dark-mode .at-color-input { border-color: #29302e; }
+
+.at-list { display: flex; flex-direction: column; gap: 8px; }
+.at-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border: 1px solid #e3e7e5; border-radius: 10px;
+}
+body.dark-mode .at-item { border-color: #29302e; }
+.at-item.at-inactive { opacity: .55; }
+.at-swatch { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.at-name { flex: 1; font-size: 13.5px; font-weight: 600; color: #16211f; }
+body.dark-mode .at-name { color: #edf1ee; }
 body.dark-mode .ch-eng-arrow { color: #6e7975; }

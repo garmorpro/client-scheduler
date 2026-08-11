@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-emp-avatar">${(emp.name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('')}</div>
                         <div class="eng-vm-emp-info">
                             <div class="eng-vm-emp-name">${emp.name}</div>
-                            <div class="eng-vm-emp-role">${emp.role}</div>
+                            <div class="eng-vm-emp-role">${emp.role}${emp.audit_type_name ? ` &middot; <span class="audit-type-dot" style="background:${emp.audit_type_color || '#9aa39d'}"></span>${emp.audit_type_name}` : ''}</div>
                         </div>
                         <div class="eng-vm-emp-hours">${emp.hours}h</div>
                     </div>
