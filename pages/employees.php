@@ -102,6 +102,9 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 
                 <!-- Right -->
                 <div class="user-management-buttons d-flex align-items-center gap-2">
+                    <a href="#" id="openOrgChartBtn" class="badge p-2 text-decoration-none fw-medium btn-outline-custom">
+                        <i class="bi bi-diagram-3 me-3"></i>Org Chart
+                    </a>
                     <?php if ($canManageEmployees): ?>
                     <a href="#" id="bulkDeleteBtn" class="badge text-white p-2 text-decoration-none fw-medium"
                        style="font-size: .875rem; background-color: darkred; display:none;">
@@ -287,8 +290,10 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <?php include_once '../includes/modals/add_user_modal.php'; ?>
 <?php include_once '../includes/modals/edit_user_modal.php'; ?>
 <?php include_once '../includes/modals/import_users_modal.php'; ?>
+<?php include_once '../includes/modals/org_chart_modal.php'; ?>
 
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/org_chart_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/direct_reports_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
