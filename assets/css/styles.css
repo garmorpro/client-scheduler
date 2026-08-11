@@ -3467,3 +3467,54 @@ body.dark-mode .at-item { border-color: #29302e; }
 .at-name { flex: 1; font-size: 13.5px; font-weight: 600; color: #16211f; }
 body.dark-mode .at-name { color: #edf1ee; }
 body.dark-mode .ch-eng-arrow { color: #6e7975; }
+
+/* ========= MASTER SCHEDULE - ADD/EDIT ENTRY CARD ========= */
+/* The floating card used to add a person to a cell, or edit an existing
+   assignment (dynamic_cell_input.js) - styled as a proper small card
+   instead of bare stacked inputs. */
+.cell-edit-card {
+    display: flex; flex-direction: column; gap: 8px;
+    background: #ffffff; border: 1px solid #e3e7e5; border-radius: 12px;
+    padding: 10px; box-shadow: 0 12px 28px rgba(16, 33, 31, .16);
+}
+body.dark-mode .cell-edit-card { background: #232a2c; border-color: #29302e; box-shadow: 0 12px 28px rgba(0, 0, 0, .4); }
+
+.cell-edit-field { display: flex; flex-direction: column; gap: 3px; }
+.cell-edit-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d;
+}
+body.dark-mode .cell-edit-label { color: #6e7975; }
+
+.cell-edit-input {
+    box-sizing: border-box; width: 100%; height: 34px; padding: 6px 10px;
+    border-radius: 8px; border: 1px solid #e3e7e5; background: #f1f4f3;
+    color: #16211f; font-size: 13px; font-weight: 500; outline: none;
+}
+.cell-edit-input:focus { border-color: var(--primary-color); background: #ffffff; }
+body.dark-mode .cell-edit-input { background: #1b2022; border-color: #29302e; color: #edf1ee; }
+body.dark-mode .cell-edit-input:focus { border-color: var(--secondary-color); background: #232a2c; }
+
+.cell-edit-actions { display: flex; gap: 6px; margin-top: 2px; }
+.cell-edit-btn-save {
+    flex: 1; padding: 7px 10px; border-radius: 8px; border: none;
+    background: var(--primary-color); color: #ffffff; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.cell-edit-btn-save:hover { opacity: .9; }
+body.dark-mode .cell-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+.cell-edit-btn-cancel {
+    padding: 7px 10px; border-radius: 8px; border: 1px solid #e3e7e5; background: #ffffff;
+    color: #6b7570; font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.cell-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode .cell-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .cell-edit-btn-cancel:hover { background: #29302e; }
+
+.cell-edit-suggestions {
+    position: absolute; z-index: 10001; background: #ffffff; border: 1px solid #e3e7e5;
+    border-radius: 8px; max-height: 150px; overflow-y: auto; box-shadow: 0 8px 20px rgba(16, 33, 31, .14);
+}
+body.dark-mode .cell-edit-suggestions { background: #232a2c; border-color: #29302e; }
+.cell-edit-suggestion { padding: 7px 10px; font-size: 13px; color: #16211f; cursor: pointer; }
+.cell-edit-suggestion:hover { background: #f1f4f3; }
+body.dark-mode .cell-edit-suggestion { color: #edf1ee; }
+body.dark-mode .cell-edit-suggestion:hover { background: #1b2022; }

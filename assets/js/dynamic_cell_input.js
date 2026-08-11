@@ -43,20 +43,12 @@
         location.reload();
     }
 
-    // Global dropdown for inline cells
-    const globalDropdown = document.createElement('div');
-    Object.assign(globalDropdown.style, {
-        position: 'absolute',
-        zIndex: '9999',
-        background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-        border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-        borderRadius: '4px',
-        display: 'none',
-        maxHeight: '150px',
-        overflowY: 'auto'
-    });
-    document.body.appendChild(globalDropdown);
-    globalDropdown.addEventListener('click', e => e.stopPropagation());
+    // Autocomplete suggestion list, shared by every open card
+    const suggestionsList = document.createElement('div');
+    suggestionsList.className = 'cell-edit-suggestions';
+    suggestionsList.style.display = 'none';
+    document.body.appendChild(suggestionsList);
+    suggestionsList.addEventListener('click', e => e.stopPropagation());
 
     document.addEventListener('click', e => {
         if (activeTd) {
@@ -66,52 +58,62 @@
         }
     });
 
-    function restoreBiPlus(td) {
-        const plus = document.createElement('i');
-        plus.className = 'bi bi-plus';
-        plus.style.cursor = 'pointer';
-        td.appendChild(plus);
-    }
-
+    // The floating card never touches the cell's own markup (badges, the
+    // "+" icon, the time-off corner) - it just sits on top - so closing it
+    // is always just "remove the overlay," nothing to restore underneath.
     function closeActiveInputs() {
         if (activeOverlay) {
             activeOverlay.remove();
             activeOverlay = null;
         }
-        if (activeTd) {
-            if (!activeTd.querySelector('.draggable-badge')) {
-                const timeOff = activeTd.querySelector('.timeoff-corner');
-                activeTd.innerHTML = '';
-                if (timeOff) activeTd.appendChild(timeOff);
-
-                const hasOtherBadges = activeTd.querySelectorAll('.draggable-badge').length === 0;
-                if (hasOtherBadges) restoreBiPlus(activeTd);
-            }
-            activeTd = null;
-        }
-        globalDropdown.style.display = 'none';
+        activeTd = null;
+        suggestionsList.style.display = 'none';
     }
 
-    function makeBadgeDraggable(badge) {
-        badge.setAttribute('draggable', 'true');
-        if (typeof handleDragStart === 'function') badge.addEventListener('dragstart', handleDragStart);
-        if (typeof handleDragEnd === 'function') badge.addEventListener('dragend', handleDragEnd);
+    document.querySelectorAll('td.addable').forEach(td => {
+        td.addEventListener('click', e => {
+            const target = e.target;
+            if (target.classList.contains('draggable-badge') || target.classList.contains('timeoff-corner')) return;
+            if (activeTd === td) return;
+
+            closeActiveInputs();
+            openEntryCard(td, null);
+        });
+    });
+
+    // Double-click an existing badge to edit it
+    document.addEventListener('dblclick', e => {
+        if (!e.target.classList.contains('draggable-badge')) return;
+        e.stopPropagation();
+        closeActiveInputs();
+        activeTd = e.target.closest('td');
+        openEntryCard(activeTd, e.target);
+    });
+
+    function buildField(labelText, inputEl) {
+        const wrap = document.createElement('div');
+        wrap.className = 'cell-edit-field';
+        const label = document.createElement('label');
+        label.className = 'cell-edit-label';
+        label.textContent = labelText;
+        wrap.appendChild(label);
+        wrap.appendChild(inputEl);
+        return wrap;
     }
 
-    // Builds (or clears) the audit-type <select> for a resolved engagement.
-    // Returns the <select> if one was created, or null if the engagement has
-    // no audit types to choose from (nothing to show).
-    function renderAuditTypeSelect(container, engagement, currentAuditTypeId) {
+    // Builds (or clears) the audit-type <select> for a resolved engagement,
+    // wrapped as a labeled field. Returns the <select>, or null if the
+    // engagement has no audit types to choose from (nothing to show).
+    function renderAuditTypeField(container, engagement, currentAuditTypeId) {
         container.innerHTML = '';
         if (!engagement || !engagement.audit_types || engagement.audit_types.length === 0) return null;
 
         const select = document.createElement('select');
-        select.className = 'form-select form-select-sm mb-1 audit-type-select';
-        select.style.width = '100%';
+        select.className = 'cell-edit-input audit-type-select';
         if (engagement.audit_types.length > 1) {
             const placeholder = document.createElement('option');
             placeholder.value = '';
-            placeholder.textContent = 'Audit Type...';
+            placeholder.textContent = 'Choose one...';
             select.appendChild(placeholder);
         }
         engagement.audit_types.forEach(at => {
@@ -126,349 +128,176 @@
             select.value = currentAuditTypeId;
         }
         select.addEventListener('click', e => e.stopPropagation());
-        container.appendChild(select);
+        container.appendChild(buildField('Audit Type', select));
         return select;
     }
 
-    document.querySelectorAll('td.addable').forEach(td => {
-        td.addEventListener('click', e => {
-            const target = e.target;
-            if (target.classList.contains('draggable-badge') || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.classList.contains('timeoff-corner')) return;
-            if (activeTd === td) return;
-
-            closeActiveInputs();
-            activeTd = td;
-
-            const hasBadges = td.querySelector('.draggable-badge') !== null;
-            const timeOff = td.querySelector('.timeoff-corner');
-
-            if (hasBadges) {
-                showOverlay(td);
-                return;
-            }
-
-            showInlineInputs(td, timeOff);
-        });
-    });
-
-    function showInlineInputs(td, timeOff = null) {
-        td.innerHTML = '';
-        if (timeOff) td.appendChild(timeOff);
-
-        const clientInput = document.createElement('input');
-        clientInput.type = 'text';
-        clientInput.placeholder = 'Client Name';
-        clientInput.className = 'form-control form-control-sm mb-1';
-        clientInput.style.width = '100%';
-
-        const auditTypeContainer = document.createElement('div');
-
-        const hoursInput = document.createElement('input');
-        hoursInput.type = 'number';
-        hoursInput.min = '0';
-        hoursInput.placeholder = 'Hours';
-        hoursInput.className = 'form-control form-control-sm';
-        hoursInput.style.width = '100%';
-
-        td.appendChild(clientInput);
-        td.appendChild(auditTypeContainer);
-        td.appendChild(hoursInput);
-
-        let selectedEngagement = null;
-        [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
-
-        setupAutocomplete(clientInput, globalDropdown, (client) => {
-            selectedEngagement = client;
-            renderAuditTypeSelect(auditTypeContainer, client, null);
-        });
-
-        attachInputEvents(td, clientInput, hoursInput, true, null, () => selectedEngagement, auditTypeContainer);
-        clientInput.focus();
-    }
-
-    function showOverlay(td) {
-        const rect = td.getBoundingClientRect();
-        const overlay = document.createElement('div');
-        Object.assign(overlay.style, {
-            position: 'absolute',
-            top: rect.top + window.scrollY + 'px',
-            left: rect.left + window.scrollX + 'px',
-            width: rect.width + 'px',
-            minHeight: '50px',
-            background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-            border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-            borderRadius: '4px',
-            padding: '5px',
-            zIndex: '10000',
-            display: 'flex',
-            flexDirection: 'column'
-        });
-
-        const clientInput = document.createElement('input');
-        clientInput.type = 'text';
-        clientInput.placeholder = 'Client Name';
-        clientInput.className = 'form-control form-control-sm mb-1';
-        clientInput.style.width = '100%';
-
-        const auditTypeContainer = document.createElement('div');
-
-        const hoursInput = document.createElement('input');
-        hoursInput.type = 'number';
-        hoursInput.min = '0';
-        hoursInput.placeholder = 'Hours';
-        hoursInput.className = 'form-control form-control-sm';
-        hoursInput.style.width = '100%';
-
-        overlay.appendChild(clientInput);
-        overlay.appendChild(auditTypeContainer);
-        overlay.appendChild(hoursInput);
-        document.body.appendChild(overlay);
-        activeOverlay = overlay;
-
-        let selectedEngagement = null;
-        [clientInput, hoursInput].forEach(input => input.addEventListener('click', e => e.stopPropagation()));
-        overlay.addEventListener('click', e => e.stopPropagation());
-
-        const overlayDropdown = document.createElement('div');
-        Object.assign(overlayDropdown.style, {
-            position: 'absolute',
-            zIndex: '10001',
-            background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-            border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-            borderRadius: '4px',
-            display: 'none',
-            maxHeight: '150px',
-            overflowY: 'auto'
-        });
-        document.body.appendChild(overlayDropdown);
-
-        setupAutocomplete(clientInput, overlayDropdown, (client) => {
-            selectedEngagement = client;
-            renderAuditTypeSelect(auditTypeContainer, client, null);
-        });
-        attachInputEvents(td, clientInput, hoursInput, false, overlay, () => selectedEngagement, auditTypeContainer);
-        clientInput.focus();
-    }
-
-    function setupAutocomplete(clientInput, container, onSelect) {
-        clientInput.addEventListener('input', () => {
-            if (onSelect) onSelect(null); // typing again invalidates any prior selection
-            const val = clientInput.value.trim();
-            if (val.length >= 3) {
-                const matches = searchClients(val);
-                container.innerHTML = '';
-                matches.forEach(client => {
-                    const div = document.createElement('div');
-                    div.textContent = client.client_name;
-                    div.style.padding = '5px 10px';
-                    div.style.cursor = 'pointer';
-                    div.addEventListener('click', e => {
-                        e.stopPropagation();
-                        clientInput.value = client.client_name;
-                        container.style.display = 'none';
-                        if (onSelect) onSelect(client);
-                    });
-                    container.appendChild(div);
-                });
-                if (matches.length > 0) {
-                    const rect = clientInput.getBoundingClientRect();
-                    container.style.top = rect.bottom + window.scrollY + 'px';
-                    container.style.left = rect.left + window.scrollX + 'px';
-                    container.style.width = rect.width + 'px';
-                    container.style.display = 'block';
-                } else container.style.display = 'none';
-            } else container.style.display = 'none';
-        });
-    }
-
-    function attachInputEvents(td, clientInput, hoursInput, inline = true, overlay = null, getEngagement = () => null, auditTypeContainer = null) {
-        [clientInput, hoursInput].forEach(input => {
-            input.addEventListener('keydown', async e => {
-                if (e.key === 'Enter') {
-                    const clientName = clientInput.value.trim();
-                    const hours = parseFloat(hoursInput.value);
-
-                    if (!clientName || !hours || hours <= 0) {
-                        notify('warning', 'Missing information', 'Please enter a valid client and hours.');
-                        return;
-                    }
-
-                    const engagement = getEngagement();
-                    const auditSelect = auditTypeContainer ? auditTypeContainer.querySelector('select') : null;
-                    if (auditSelect && !auditSelect.value) {
-                        notify('warning', 'Missing information', 'Please choose an audit type.');
-                        return;
-                    }
-
-                    closeActiveInputs();
-                    if (inline) globalDropdown.style.display = 'none';
-                    else if (overlay && overlay.nextSibling) overlay.nextSibling.style.display = 'none';
-
-                    try {
-                        const resp = await fetch('add_entry_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                user_id: td.dataset.userId,
-                                week_start: td.dataset.weekStart,
-                                client_name: clientName,
-                                engagement_id: engagement ? engagement.engagement_id : null,
-                                audit_type_id: auditSelect ? auditSelect.value : null,
-                                assigned_hours: hours
-                            })
-                        });
-
-                        const data = await resp.json();
-                        if (resp.ok && data.success) {
-                            saveScrollAndReload();
-                        } else {
-                            notify('error', 'Failed to add entry', data.error || 'Server error');
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        notify('error', 'Network error', 'Could not add entry. Please try again.');
-                    }
-                } else if (e.key === 'Escape') {
-                    closeActiveInputs();
-                }
-            });
-        });
-    }
-
-    // Double-click to edit existing badge
-    document.addEventListener('dblclick', e => {
-        if (!e.target.classList.contains('draggable-badge')) return;
-        e.stopPropagation();
-
-        const badge = e.target;
-        const td = badge.closest('td');
+    // Single floating card used for both adding a new entry to a cell and
+    // editing an existing one - `existingBadge` is null when adding.
+    function openEntryCard(td, existingBadge) {
         activeTd = td;
 
-        const match = badge.textContent.match(/^(.*)\s+\(([\d.]+)\)$/);
-        const currentName = match ? match[1] : '';
-        const currentHours = match ? match[2] : '';
-        const currentEngagementId = badge.dataset.engagementId || null;
-        const currentAuditTypeId = badge.dataset.auditTypeId || null;
+        const isEdit = !!existingBadge;
+        const match = isEdit ? existingBadge.textContent.match(/^(.*)\s+\(([\d.]+)\)$/) : null;
+        const initialName = match ? match[1] : '';
+        const initialHours = match ? match[2] : '';
+        const initialEngagementId = isEdit ? (existingBadge.dataset.engagementId || null) : null;
+        const initialAuditTypeId = isEdit ? (existingBadge.dataset.auditTypeId || null) : null;
 
         const rect = td.getBoundingClientRect();
         const overlay = document.createElement('div');
+        overlay.className = 'cell-edit-card';
         Object.assign(overlay.style, {
             position: 'absolute',
             top: rect.top + window.scrollY + 'px',
             left: rect.left + window.scrollX + 'px',
-            width: rect.width + 'px',
-            minHeight: '50px',
-            background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-            border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-            borderRadius: '4px',
-            padding: '5px',
-            zIndex: '10000',
-            display: 'flex',
-            flexDirection: 'column'
+            minWidth: Math.max(rect.width, 190) + 'px',
+            zIndex: '10000'
         });
+        document.body.appendChild(overlay);
+        activeOverlay = overlay;
+        overlay.addEventListener('click', e => e.stopPropagation());
 
         const clientInput = document.createElement('input');
         clientInput.type = 'text';
-        clientInput.value = currentName;
-        clientInput.className = 'form-control form-control-sm mb-1';
+        clientInput.placeholder = 'Client name';
+        clientInput.className = 'cell-edit-input';
+        clientInput.value = initialName;
 
         const auditTypeContainer = document.createElement('div');
 
         const hoursInput = document.createElement('input');
         hoursInput.type = 'number';
         hoursInput.min = '0';
-        hoursInput.value = currentHours;
-        hoursInput.className = 'form-control form-control-sm';
+        hoursInput.placeholder = 'Hours';
+        hoursInput.className = 'cell-edit-input';
+        hoursInput.value = initialHours;
 
-        overlay.appendChild(clientInput);
+        const actions = document.createElement('div');
+        actions.className = 'cell-edit-actions';
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'button';
+        saveBtn.className = 'cell-edit-btn-save';
+        saveBtn.textContent = isEdit ? 'Save' : 'Add';
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'cell-edit-btn-cancel';
+        cancelBtn.textContent = 'Cancel';
+        actions.appendChild(cancelBtn);
+        actions.appendChild(saveBtn);
+
+        overlay.appendChild(buildField('Client', clientInput));
         overlay.appendChild(auditTypeContainer);
-        overlay.appendChild(hoursInput);
-        document.body.appendChild(overlay);
-        activeOverlay = overlay;
+        overlay.appendChild(buildField('Hours', hoursInput));
+        overlay.appendChild(actions);
 
         // Editing an existing badge already has an unambiguous engagement_id
         // (unlike typing a fresh client name), so pre-populate its audit
-        // types straight away without waiting for a new autocomplete pick.
-        let selectedEngagement = findEngagementById(currentEngagementId);
-        renderAuditTypeSelect(auditTypeContainer, selectedEngagement, currentAuditTypeId);
+        // types immediately instead of waiting for a new autocomplete pick.
+        let selectedEngagement = isEdit ? findEngagementById(initialEngagementId) : null;
+        if (selectedEngagement) renderAuditTypeField(auditTypeContainer, selectedEngagement, initialAuditTypeId);
 
-        const dropdown = document.createElement('div');
-        Object.assign(dropdown.style, {
-            position: 'absolute',
-            zIndex: '10001',
-            background: document.body.classList.contains('dark-mode') ? '#2a2a3d' : '#fff',
-            border: document.body.classList.contains('dark-mode') ? '1px solid #3a3a50' : '1px solid #ccc',
-            borderRadius: '4px',
-            display: 'none',
-            maxHeight: '150px',
-            overflowY: 'auto'
-        });
-        document.body.appendChild(dropdown);
+        clientInput.addEventListener('input', () => {
+            selectedEngagement = null;
+            auditTypeContainer.innerHTML = '';
 
-        setupAutocomplete(clientInput, dropdown, (client) => {
-            selectedEngagement = client;
-            renderAuditTypeSelect(auditTypeContainer, client, null);
+            const val = clientInput.value.trim();
+            if (val.length < 3) {
+                suggestionsList.style.display = 'none';
+                return;
+            }
+            const matches = searchClients(val);
+            suggestionsList.innerHTML = '';
+            matches.forEach(client => {
+                const item = document.createElement('div');
+                item.className = 'cell-edit-suggestion';
+                item.textContent = client.client_name;
+                item.addEventListener('click', e => {
+                    e.stopPropagation();
+                    clientInput.value = client.client_name;
+                    suggestionsList.style.display = 'none';
+                    selectedEngagement = client;
+                    renderAuditTypeField(auditTypeContainer, client, null);
+                });
+                suggestionsList.appendChild(item);
+            });
+            if (matches.length > 0) {
+                const inputRect = clientInput.getBoundingClientRect();
+                suggestionsList.style.top = inputRect.bottom + window.scrollY + 'px';
+                suggestionsList.style.left = inputRect.left + window.scrollX + 'px';
+                suggestionsList.style.width = inputRect.width + 'px';
+                suggestionsList.style.display = 'block';
+            } else {
+                suggestionsList.style.display = 'none';
+            }
         });
+
+        function trySubmit() {
+            const clientName = clientInput.value.trim();
+            const hours = parseFloat(hoursInput.value);
+
+            if (!clientName || !hours || hours <= 0) {
+                notify('warning', 'Missing information', 'Please enter a valid client and hours.');
+                return;
+            }
+            const auditSelect = auditTypeContainer.querySelector('select');
+            if (auditSelect && !auditSelect.value) {
+                notify('warning', 'Missing information', 'Please choose an audit type.');
+                return;
+            }
+
+            const engagementId = selectedEngagement ? selectedEngagement.engagement_id : initialEngagementId;
+            const auditTypeId = auditSelect ? auditSelect.value : null;
+            closeActiveInputs();
+
+            const payload = {
+                client_name: clientName,
+                engagement_id: engagementId,
+                audit_type_id: auditTypeId,
+                assigned_hours: hours
+            };
+            const request = isEdit
+                ? fetch('update_entry_new.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ ...payload, entry_id: existingBadge.dataset.entryId })
+                })
+                : fetch('add_entry_new.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ ...payload, user_id: td.dataset.userId, week_start: td.dataset.weekStart })
+                });
+
+            request
+                .then(resp => resp.json().then(data => ({ ok: resp.ok, data })))
+                .then(({ ok, data }) => {
+                    if (ok && data.success) {
+                        saveScrollAndReload();
+                    } else {
+                        notify('error', isEdit ? 'Failed to update entry' : 'Failed to add entry', data.error || 'Server error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify('error', 'Network error', 'Could not save. Please try again.');
+                });
+        }
+
+        saveBtn.addEventListener('click', trySubmit);
+        cancelBtn.addEventListener('click', () => closeActiveInputs());
 
         [clientInput, hoursInput].forEach(input => {
-            input.addEventListener('keydown', async ev => {
-                if (ev.key === 'Enter') {
-                    dropdown.style.display = 'none';
-                    const newName = clientInput.value.trim();
-                    const newHours = parseFloat(hoursInput.value);
-
-                    if (!newName || !newHours || newHours <= 0) {
-                        notify('warning', 'Missing information', 'Please enter a valid client and hours.');
-                        return;
-                    }
-
-                    const auditSelect = auditTypeContainer.querySelector('select');
-                    if (auditSelect && !auditSelect.value) {
-                        notify('warning', 'Missing information', 'Please choose an audit type.');
-                        return;
-                    }
-
-                    closeActiveInputs();
-
-                    try {
-                        const resp = await fetch('update_entry_new.php', {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                entry_id: badge.dataset.entryId,
-                                client_name: newName,
-                                engagement_id: selectedEngagement ? selectedEngagement.engagement_id : currentEngagementId,
-                                audit_type_id: auditSelect ? auditSelect.value : null,
-                                assigned_hours: newHours
-                            })
-                        });
-
-                        const data = await resp.json();
-                        if (resp.ok && data.success) {
-                            saveScrollAndReload();
-                        } else {
-                            notify('error', 'Failed to update entry', data.error || 'Server error');
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        notify('error', 'Network error', 'Could not update entry. Please try again.');
-                    }
-                } else if (ev.key === 'Escape') {
-                    closeActiveInputs();
-                }
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); trySubmit(); }
+                else if (e.key === 'Escape') closeActiveInputs();
             });
         });
 
-        clientInput.focus();
-    });
+        (isEdit ? hoursInput : clientInput).focus();
+        if (isEdit) hoursInput.select();
+    }
 
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closeActiveInputs();
