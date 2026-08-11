@@ -242,6 +242,15 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                             }
                                             ?>
                                             <li><hr class="dropdown-divider"></li>
+                                            <?php if (strtolower($userrow['status']) === 'active'): ?>
+                                            <li>
+                                                <a class="dropdown-item text-warning offboard-user-btn" href="#"
+                                                   data-user-id="<?php echo $safeId; ?>"
+                                                   data-user-name="<?php echo $safeName; ?>">
+                                                   <i class="bi bi-box-arrow-right me-2"></i>Offboard
+                                                </a>
+                                            </li>
+                                            <?php endif; ?>
                                             <li>
                                                 <a class="dropdown-item text-danger delete-user-btn" href="#"
                                                    data-user-id="<?php echo $userrow['user_id']; ?>"
@@ -284,6 +293,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <script src="../assets/js/direct_reports_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/bulk_delete_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/delete_user.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/offboard_user.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
