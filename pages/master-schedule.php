@@ -367,7 +367,7 @@ updateLastRowRadius();
                             if ($isCurrentWeek) $thClasses .= ' highlight-today';
                             if ($isGlobalWeek && $isCurrentWeek) $thClasses .= ' timeoff-current-week';
                         ?>
-                        <th class="<?php echo $thClasses; ?>">
+                        <th class="<?php echo $thClasses; ?>" data-week-start="<?php echo $weekKey; ?>" title="See who's available this week">
                             <?php echo date('M j', $monday); ?><br>
                             <small class="">Week of <?php echo date('n/j', $monday); ?></small>
                             <?php if ($isGlobalWeek): ?>
@@ -502,10 +502,12 @@ updateLastRowRadius();
     <?php include_once '../includes/modals/user_details.php'; ?>
     <?php include_once '../includes/modals/viewProfileModal.php'; ?>
     <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
+    <?php include_once '../includes/modals/week_availability_modal.php'; ?>
     
     <script src="../assets/js/dynamic_cell_input.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/drag_drop_function.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/delete_custom_menu.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/week_availability.js?v=<?php echo time(); ?>"></script>
 
     <script src="../assets/js/number_of_weeks.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/export_schedule.js?v=<?php echo time(); ?>"></script>

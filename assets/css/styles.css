@@ -3535,3 +3535,36 @@ body.dark-mode .badge-context-menu { background: #232a2c; border-color: #29302e;
 .badge-context-menu-item:hover { background: #fdecea; }
 body.dark-mode .badge-context-menu-item { color: #e08363; }
 body.dark-mode .badge-context-menu-item:hover { background: #3a231b; }
+
+/* ========= WEEK AVAILABILITY (click a Master Schedule date header) ========= */
+.schedule-table th.week { cursor: pointer; transition: background-color .1s ease; }
+.schedule-table th.week:hover { background-color: #eef2f0; }
+body.dark-mode .schedule-table th.week:hover { background-color: #232a2c; }
+
+#weekAvailabilityModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #weekAvailabilityModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#weekAvailabilityModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #weekAvailabilityModal .eng-edit-title { color: #edf1ee; }
+
+#weekAvailabilityModal .eng-edit-body { padding: 16px 20px; }
+
+#weekAvailabilityModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #weekAvailabilityModal .eng-edit-footer { border-color: #29302e; }
+#weekAvailabilityModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#weekAvailabilityModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #weekAvailabilityModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #weekAvailabilityModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+
+.wa-available-pill {
+    background: #e4f3e6; color: #1f6b3a; font-size: 11.5px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+body.dark-mode .wa-available-pill { background: #1e3d28; color: #7fd99a; }
