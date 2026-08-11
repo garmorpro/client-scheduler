@@ -3518,3 +3518,20 @@ body.dark-mode .cell-edit-suggestions { background: #232a2c; border-color: #2930
 .cell-edit-suggestion:hover { background: #f1f4f3; }
 body.dark-mode .cell-edit-suggestion { color: #edf1ee; }
 body.dark-mode .cell-edit-suggestion:hover { background: #1b2022; }
+
+/* Right-click "Delete Entry" menu on a schedule pill */
+.badge-context-menu {
+    position: absolute; display: none; z-index: 9999; min-width: 160px;
+    background: #ffffff; border: 1px solid #e3e7e5; border-radius: 10px;
+    box-shadow: 0 10px 26px rgba(16, 33, 31, .16); padding: 4px;
+}
+body.dark-mode .badge-context-menu { background: #232a2c; border-color: #29302e; box-shadow: 0 10px 26px rgba(0, 0, 0, .4); }
+
+.badge-context-menu-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 8px 10px; border: none; background: none; border-radius: 7px;
+    font-size: 13px; font-weight: 600; color: #c0392b; cursor: pointer; text-align: left;
+}
+.badge-context-menu-item:hover { background: #fdecea; }
+body.dark-mode .badge-context-menu-item { color: #e08363; }
+body.dark-mode .badge-context-menu-item:hover { background: #3a231b; }

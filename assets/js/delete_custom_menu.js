@@ -1,25 +1,14 @@
-// custom_menu.js
+// delete_custom_menu.js - right-click "Delete Entry" on a Master Schedule pill
 (function() {
     if (!IS_ADMIN) return; // only for admins
 
-    const isDark = document.body.classList.contains('dark-mode');
-
-const contextMenu = document.createElement('div');
-contextMenu.id = 'badgeContextMenu';
-contextMenu.style.cssText = `
-    position: absolute;
-    display: none;
-    z-index: 9999;
-    background: ${isDark ? '#2a2a3d' : '#fff'};
-    border: ${isDark ? '1px solid #3a3a50' : '1px solid #ccc'};
-    margin-top: 15px;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-`;
+    const contextMenu = document.createElement('div');
+    contextMenu.id = 'badgeContextMenu';
+    contextMenu.className = 'badge-context-menu';
     contextMenu.innerHTML = `
-        <ul style="list-style:none; margin:0; padding:5px 0; cursor: pointer;">
-            <li id="deleteBadge" style="padding:5px 15px; cursor:pointer;">Delete Entry</li>
-        </ul>
+        <button type="button" class="badge-context-menu-item" id="deleteBadge">
+            <i class="bi bi-trash"></i> Delete Entry
+        </button>
     `;
     document.body.appendChild(contextMenu);
 
@@ -81,7 +70,7 @@ contextMenu.style.cssText = `
 
     // Use event delegation for the delete button
     contextMenu.addEventListener('click', async function(e) {
-        if (e.target.id === 'deleteBadge' && selectedBadge) {
+        if (e.target.closest('#deleteBadge') && selectedBadge) {
             contextMenu.style.display = 'none';
 
             const badgeToDelete = selectedBadge;
@@ -104,11 +93,17 @@ contextMenu.style.cssText = `
             const entryId = badgeToDelete.dataset.entryId;
             const parentCell = badgeToDelete.parentElement;
 
-            // Capture what's needed to recreate the entry if the user hits Undo
+            // Capture what's needed to recreate the entry if the user hits
+            // Undo - including engagement_id/audit_type_id so the restored
+            // entry lands back on the exact same engagement and audit type
+            // instead of falling back to an ambiguous client_name match and
+            // silently losing the audit type.
             const undoInfo = {
                 user_id: badgeToDelete.dataset.userId,
                 week_start: badgeToDelete.dataset.weekStart,
                 client_name: badgeToDelete.dataset.clientName || badgeLabel.replace(/\s*\([\d.]+\)$/, ''),
+                engagement_id: badgeToDelete.dataset.engagementId || null,
+                audit_type_id: badgeToDelete.dataset.auditTypeId || null,
                 assigned_hours: (badgeLabel.match(/\(([\d.]+)\)$/) || [])[1],
             };
 
