@@ -174,7 +174,10 @@ body.dark-mode .overallocated-flag {
 }
 
       .schedule-table td .badge-status {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   width: 100%;
 }
 
@@ -3392,6 +3395,11 @@ body.dark-mode .ch-eng-item:hover { background: #1f2624; border-color: #3a4440; 
     display: inline-block; width: 7px; height: 7px; border-radius: 50%;
     margin-right: 4px; flex-shrink: 0; vertical-align: middle;
 }
+/* Inside a Master Schedule pill the dot sits in a flex row (see
+   .schedule-table td .badge-status), which already supplies spacing via
+   `gap` - drop the dot's own margin there so it centers with the text as
+   one group instead of getting shoved off-center. */
+.schedule-table td .badge-status .audit-type-dot { margin-right: 0; }
 
 .audit-type-legend { min-width: 180px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e3e7e5; }
 body.dark-mode .audit-type-legend { background: #1b2022; border-color: #29302e; }
