@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const subtitleEl = document.getElementById('waSubtitle');
     const listEl = document.getElementById('waList');
 
-    const palette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
-    function hashColor(name) {
-        let hash = 0;
-        for (let i = 0; i < (name || '').length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-        return palette[hash % palette.length];
+    // Same role colors as the Master Schedule employee column itself
+    // (senior/staff/intern), rather than a per-person hash color.
+    const ROLE_COLORS = { senior: 'rgb(230,144,65)', staff: 'rgb(66,127,194)', intern: 'rgb(76,175,80)' };
+    function roleColor(role) {
+        return ROLE_COLORS[(role || '').toLowerCase()] || '#6c757d';
     }
     function initials(name) {
         return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function empRowHtml(emp) {
         return `
             <div class="eng-vm-emp-row">
-                <div class="eng-vm-emp-avatar" style="background-color:${hashColor(emp.full_name)};color:#fff;">${initials(emp.full_name)}</div>
+                <div class="eng-vm-emp-avatar" style="background-color:${roleColor(emp.role)};color:#fff;">${initials(emp.full_name)}</div>
                 <div class="eng-vm-emp-info">
                     <div class="eng-vm-emp-name">${emp.full_name}</div>
                     <div class="eng-vm-emp-role">${roleLabel(emp.role)}</div>
