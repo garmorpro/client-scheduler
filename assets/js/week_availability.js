@@ -19,6 +19,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return r ? r.charAt(0).toUpperCase() + r.slice(1) : '';
     }
 
+    const ROLE_GROUPS = [
+        { key: 'senior', label: 'Seniors' },
+        { key: 'staff', label: 'Staff' },
+        { key: 'intern', label: 'Interns' },
+    ];
+
+    function empRowHtml(emp) {
+        return `
+            <div class="eng-vm-emp-row">
+                <div class="eng-vm-emp-avatar" style="background-color:${hashColor(emp.full_name)};color:#fff;">${initials(emp.full_name)}</div>
+                <div class="eng-vm-emp-info">
+                    <div class="eng-vm-emp-name">${emp.full_name}</div>
+                    <div class="eng-vm-emp-role">${roleLabel(emp.role)}</div>
+                </div>
+                <span class="wa-available-pill">${emp.available_hours}h open</span>
+            </div>
+        `;
+    }
+
     function render(data) {
         const weekLabel = new Date(data.week_start + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         subtitleEl.textContent = `Week of ${weekLabel} · under ${data.threshold}h assigned${data.is_busy_season ? ' (busy season)' : ''}`;
@@ -28,16 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        listEl.innerHTML = data.employees.map(emp => `
-            <div class="eng-vm-emp-row">
-                <div class="eng-vm-emp-avatar" style="background-color:${hashColor(emp.full_name)};color:#fff;">${initials(emp.full_name)}</div>
-                <div class="eng-vm-emp-info">
-                    <div class="eng-vm-emp-name">${emp.full_name}</div>
-                    <div class="eng-vm-emp-role">${roleLabel(emp.role)}</div>
-                </div>
-                <span class="wa-available-pill">${emp.available_hours}h open</span>
-            </div>
-        `).join('');
+        const sections = ROLE_GROUPS.map(group => {
+            const emps = data.employees.filter(e => (e.role || '').toLowerCase() === group.key);
+            if (emps.length === 0) return '';
+            return `<div class="wa-role-heading">${group.label}</div>${emps.map(empRowHtml).join('')}`;
+        }).join('');
+
+        listEl.innerHTML = sections || '<div class="settings-empty-row">Everyone\'s fully booked this week.</div>';
     }
 
     async function openForWeek(weekStart) {

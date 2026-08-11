@@ -40,16 +40,15 @@ $globalStmt->execute();
 $globalHours = (float) ($globalStmt->get_result()->fetch_assoc()['hrs'] ?? 0);
 $globalStmt->close();
 
-// Same roster Master Schedule itself staffs (active, non-admin/non-CRM
-// roles), each with their own assigned-hours and approved-time-off totals
-// for this specific week, via correlated subqueries rather than a JOIN so a
-// person with several entries/time-off rows can't fan out and double count.
+// Deliberately narrower than Master Schedule's own roster: this list is
+// for staffing decisions, so only the roles actually staffed on
+// engagement work are shown - no managers, CRM team, or admins.
 $stmt = $conn->prepare("
     SELECT u.user_id, u.full_name, u.role,
         COALESCE((SELECT SUM(a.assigned_hours) FROM entries a WHERE a.user_id = u.user_id AND a.week_start = ?), 0) AS assigned_hours,
         COALESCE((SELECT SUM(t.assigned_hours) FROM time_off t WHERE t.user_id = u.user_id AND t.week_start = ? AND t.is_global_timeoff = 0 AND t.status = 'approved'), 0) AS personal_timeoff_hours
     FROM users u
-    WHERE u.status = 'active' AND u.role IN ('intern', 'staff', 'senior', 'manager')
+    WHERE u.status = 'active' AND u.role IN ('senior', 'staff', 'intern')
     ORDER BY u.full_name ASC
 ");
 $stmt->bind_param('ss', $weekStart, $weekStart);
@@ -72,7 +71,12 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-usort($available, function ($a, $b) {
+// Grouped by role (Seniors, then Staff, then Interns), most available
+// first within each group.
+$rolePriority = ['senior' => 1, 'staff' => 2, 'intern' => 3];
+usort($available, function ($a, $b) use ($rolePriority) {
+    $roleCompare = ($rolePriority[$a['role']] ?? 99) <=> ($rolePriority[$b['role']] ?? 99);
+    if ($roleCompare !== 0) return $roleCompare;
     return $b['available_hours'] <=> $a['available_hours'];
 });
 
