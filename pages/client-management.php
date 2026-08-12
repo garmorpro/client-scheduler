@@ -270,13 +270,21 @@ unset($client);
 </script>
 
 <script>
-    const managersList = <?php 
+    const managersList = <?php
     $managerQuery = $conn->query("SELECT full_name FROM users WHERE role='manager' ORDER BY full_name ASC");
     $managers = [];
     while ($row = $managerQuery->fetch_assoc()) {
         $managers[] = $row['full_name'];
     }
     echo json_encode($managers);
+?>;
+    const auditTypesList = <?php
+    $auditTypesQuery = $conn->query("SELECT audit_type_id, name, color FROM audit_types WHERE is_active = 1 ORDER BY name ASC");
+    $auditTypesForJs = [];
+    while ($row = $auditTypesQuery->fetch_assoc()) {
+        $auditTypesForJs[] = ['id' => (int) $row['audit_type_id'], 'name' => $row['name'], 'color' => $row['color']];
+    }
+    echo json_encode($auditTypesForJs);
 ?>;
 </script>
 

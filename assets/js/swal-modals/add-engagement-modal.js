@@ -1,12 +1,29 @@
+const TSC_OPTIONS = ['Security', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+
 document.querySelectorAll('.add-engagement-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const clientId = this.dataset.clientId;
         const clientName = this.dataset.clientName;
         const isDark = document.body.classList.contains('dark-mode');
 
-        const managerOptions = managersList.map(m => 
+        const managerOptions = managersList.map(m =>
             `<option value="${m}">${m}</option>`
         ).join('');
+
+        const auditTypeCheckboxes = (typeof auditTypesList !== 'undefined' ? auditTypesList : []).map(at => `
+            <label class="eng-audit-type-chip">
+                <input type="checkbox" class="swal-audit-type-cb" value="${at.id}" data-audit-type-name="${at.name}">
+                <span class="eng-audit-type-dot" style="background:${at.color}"></span>
+                ${at.name}
+            </label>
+        `).join('');
+
+        const tscCheckboxes = TSC_OPTIONS.map(name => `
+            <label class="eng-audit-type-chip">
+                <input type="checkbox" class="swal-tsc-cb" value="${name}" ${name === 'Security' ? 'checked' : ''}>
+                ${name}
+            </label>
+        `).join('');
 
         Swal.fire({
             title: 'Add Engagement',
@@ -36,16 +53,40 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                         ${managerOptions}
                     </select>
                 </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">Audit Types</label>
+                    <div class="eng-audit-type-list" id="swal-audit-types">
+                        ${auditTypeCheckboxes || '<div class="text-muted small">No audit types yet - add some under System Settings.</div>'}
+                    </div>
+                </div>
+                <div class="mb-3 text-start d-none" id="swal-tsc-wrap">
+                    <label class="form-label">Trust Services Criteria (SOC 2)</label>
+                    <div class="eng-audit-type-list" id="swal-tsc">
+                        ${tscCheckboxes}
+                    </div>
+                </div>
             `,
             showCancelButton: true,
             confirmButtonText: 'Add',
             cancelButtonText: 'Cancel',
             confirmButtonColor: isDark ? '#3a3a50' : '#003f47',
             cancelButtonColor: isDark ? '#555572' : '#6c757d',
+            didOpen: () => {
+                const auditTypesEl = document.getElementById('swal-audit-types');
+                const tscWrap = document.getElementById('swal-tsc-wrap');
+                function syncTscVisibility() {
+                    const soc2Checked = Array.from(auditTypesEl.querySelectorAll('.swal-audit-type-cb'))
+                        .some(cb => cb.checked && cb.dataset.auditTypeName === 'SOC 2');
+                    tscWrap.classList.toggle('d-none', !soc2Checked);
+                }
+                auditTypesEl.addEventListener('change', syncTscVisibility);
+            },
             preConfirm: () => {
                 const budgetHours = document.getElementById('swal-budget-hours').value;
                 const status = document.getElementById('swal-status').value;
                 const manager = document.getElementById('swal-manager').value;
+                const auditTypeIds = Array.from(document.querySelectorAll('.swal-audit-type-cb:checked')).map(cb => cb.value);
+                const tsc = Array.from(document.querySelectorAll('.swal-tsc-cb:checked')).map(cb => cb.value);
 
                 if (!budgetHours || budgetHours <= 0) {
                     Swal.showValidationMessage('Please enter valid budget hours.');
@@ -66,6 +107,8 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                         formData.append('status', status);
                         formData.append('manager', manager);
                         formData.append('year', new Date().getFullYear());
+                        auditTypeIds.forEach(id => formData.append('audit_type_ids[]', id));
+                        tsc.forEach(name => formData.append('tsc[]', name));
                         return formData;
                     })()
                 })
