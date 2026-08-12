@@ -50,10 +50,16 @@ function loadEnvFile(string $path): array
 /**
  * Resolves the Engagement Tracker source DB connection.
  *
+ * Engagement Tracker and Client Scheduler live on two different servers
+ * with two separate MySQL instances, neither reachable from the other's
+ * network by default — so this almost always means an SSH tunnel, which
+ * lands on a non-default local port. Hence ET_DB_PORT (defaults to 3306,
+ * MySQL's normal port, for the rare case both really are on one host).
+ *
  * Looks for values, in order: real environment variables prefixed ET_
  * (ET_DB_HOST etc.), then a `.env.et` file sitting next to this script
  * (gitignored — copy Engagement Tracker's own .env values into it, same
- * key names, since this file is loaded standalone).
+ * key names, plus DB_PORT if you're tunneling).
  */
 function connectSourceEngagementTracker(): mysqli
 {
@@ -63,19 +69,21 @@ function connectSourceEngagementTracker(): mysqli
     $user = getenv('ET_DB_USER') ?: ($fromEnvFile['DB_USER'] ?? null);
     $pass = getenv('ET_DB_PASSWORD') ?: ($fromEnvFile['DB_PASSWORD'] ?? null);
     $name = getenv('ET_DB_NAME') ?: ($fromEnvFile['DB_NAME'] ?? null);
+    $port = (int) (getenv('ET_DB_PORT') ?: ($fromEnvFile['DB_PORT'] ?? 3306));
 
     if (!$host || !$user || $pass === null || !$name) {
         fwrite(STDERR, "Missing Engagement Tracker DB connection details.\n");
-        fwrite(STDERR, "Set ET_DB_HOST / ET_DB_USER / ET_DB_PASSWORD / ET_DB_NAME as\n");
-        fwrite(STDERR, "environment variables, or copy Engagement Tracker's .env values\n");
-        fwrite(STDERR, "(DB_HOST / DB_USER / DB_PASSWORD / DB_NAME) into:\n");
+        fwrite(STDERR, "Set ET_DB_HOST / ET_DB_USER / ET_DB_PASSWORD / ET_DB_NAME\n");
+        fwrite(STDERR, "(and ET_DB_PORT if tunneling) as environment variables, or copy\n");
+        fwrite(STDERR, "Engagement Tracker's .env values (DB_HOST / DB_USER / DB_PASSWORD /\n");
+        fwrite(STDERR, "DB_NAME, plus DB_PORT) into:\n");
         fwrite(STDERR, "  " . __DIR__ . "/.env.et\n");
         exit(1);
     }
 
-    $conn = new mysqli($host, $user, $pass, $name);
+    $conn = new mysqli($host, $user, $pass, $name, $port);
     if ($conn->connect_error) {
-        fwrite(STDERR, "Engagement Tracker DB connection failed: " . $conn->connect_error . "\n");
+        fwrite(STDERR, "Engagement Tracker DB connection failed (host=$host port=$port): " . $conn->connect_error . "\n");
         exit(1);
     }
     $conn->set_charset('utf8mb4');
