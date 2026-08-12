@@ -145,7 +145,13 @@ try {
         // Best-effort audit type links.
         $auditTypesRaw = array_filter(array_map('trim', explode(',', (string) ($row['et_audit_type'] ?? ''))));
         foreach ($auditTypesRaw as $rawType) {
-            $key = strtolower($rawType);
+            // Strip a trailing SOC report-tier suffix ("Type 1"/"Type II"/
+            // etc.) — that's the report type, tracked separately in
+            // audit_engagement_details.soc_type (already carried over from
+            // ET's own eng_soc_type column by script 4), not a distinct
+            // audit framework. e.g. "SOC 2 Type 2" -> matches "SOC 2".
+            $normalized = preg_replace('/\s+type\s+(i{1,2}|1|2)\s*$/i', '', $rawType);
+            $key = strtolower(trim($normalized));
             $auditTypeId = $auditTypeIdByName[$key] ?? $auditTypeIdByName[$auditTypeAliases[$key] ?? ''] ?? null;
             if (!$auditTypeId) {
                 logAction($log, $etIdno, 'audit type not linked', "unrecognized: '$rawType'");
