@@ -10,8 +10,9 @@
 -- an engagement is considered staffed on it).
 --
 -- Run this once, the same way the other files in this directory are applied.
--- Safe to re-run only after dropping the tables/columns it creates — it does
--- not check for existing objects first.
+-- Every CREATE TABLE / ADD COLUMN is written defensively (IF NOT EXISTS),
+-- so a partial or repeat run is safe — anything already created is skipped,
+-- not re-errored.
 
 -- ---------------------------------------------------------------------
 -- audit_engagement_details — 1:1 with engagements. The audit-specific
@@ -21,7 +22,7 @@
 -- eng_end_period, eng_repeat, eng_notes) — audit type itself is NOT
 -- duplicated here since engagement_audit_types already covers it.
 -- ---------------------------------------------------------------------
-CREATE TABLE audit_engagement_details (
+CREATE TABLE IF NOT EXISTS audit_engagement_details (
   engagement_id INT NOT NULL,
   location VARCHAR(255) NULL,
   poc VARCHAR(255) NULL,
@@ -48,7 +49,7 @@ CREATE TABLE audit_engagement_details (
 -- day); the weekly status call is a recurring day-of-week, optionally
 -- linked across engagements via `weekly_status_call_group`.
 -- ---------------------------------------------------------------------
-CREATE TABLE audit_engagement_timeline (
+CREATE TABLE IF NOT EXISTS audit_engagement_timeline (
   engagement_id INT NOT NULL,
   internal_planning_call_date DATE NULL,
   internal_planning_call_completed_at TIMESTAMP NULL,
@@ -88,7 +89,7 @@ CREATE TABLE audit_engagement_timeline (
 -- audit_engagement_milestones — 1:many. Custom milestones per engagement,
 -- same shape as Engagement Tracker's `engagement_milestones` table.
 -- ---------------------------------------------------------------------
-CREATE TABLE audit_engagement_milestones (
+CREATE TABLE IF NOT EXISTS audit_engagement_milestones (
   milestone_id INT NOT NULL AUTO_INCREMENT,
   engagement_id INT NOT NULL,
   milestone_type VARCHAR(100) NOT NULL,
@@ -109,7 +110,7 @@ CREATE TABLE audit_engagement_milestones (
 -- that's a workflow assumption (staffed via entries first), not an
 -- enforced constraint.
 -- ---------------------------------------------------------------------
-CREATE TABLE audit_dol_assignments (
+CREATE TABLE IF NOT EXISTS audit_dol_assignments (
   id INT NOT NULL AUTO_INCREMENT,
   engagement_id INT NOT NULL,
   user_id INT NOT NULL,
@@ -130,7 +131,7 @@ CREATE TABLE audit_dol_assignments (
 -- check/X/unanswered independence-from-client attestation, re-keyed to a
 -- real user_id instead of a free-text name. NULL = unanswered.
 -- ---------------------------------------------------------------------
-CREATE TABLE audit_team_independence (
+CREATE TABLE IF NOT EXISTS audit_team_independence (
   engagement_id INT NOT NULL,
   user_id INT NOT NULL,
   independent ENUM('Y','N') NULL,
@@ -145,7 +146,7 @@ CREATE TABLE audit_team_independence (
 -- employees.emp_restricted_criteria comma column with a proper junction
 -- table, keyed to a real user_id.
 -- ---------------------------------------------------------------------
-CREATE TABLE dol_training_restrictions (
+CREATE TABLE IF NOT EXISTS dol_training_restrictions (
   user_id INT NOT NULL,
   criterion VARCHAR(50) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -160,11 +161,11 @@ CREATE TABLE dol_training_restrictions (
 -- without being able to move a due date.
 -- ---------------------------------------------------------------------
 ALTER TABLE role_permissions
-  ADD COLUMN manage_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER access_system_settings,
-  ADD COLUMN view_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_dol,
-  ADD COLUMN manage_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER view_dol,
-  ADD COLUMN complete_audit_timeline_items TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_audit_timeline,
-  ADD COLUMN view_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER complete_audit_timeline_items;
+  ADD COLUMN IF NOT EXISTS manage_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER access_system_settings,
+  ADD COLUMN IF NOT EXISTS view_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_dol,
+  ADD COLUMN IF NOT EXISTS manage_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER view_dol,
+  ADD COLUMN IF NOT EXISTS complete_audit_timeline_items TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_audit_timeline,
+  ADD COLUMN IF NOT EXISTS view_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER complete_audit_timeline_items;
 
 -- Default grants. admin bypasses role_permissions entirely (per
 -- user_has_permission()) so it has no row here, same as every other

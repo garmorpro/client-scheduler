@@ -11,10 +11,11 @@
  * Run once, from the Client Scheduler project root:
  *   php tools/audit-migration/0-apply-schema.php
  *
- * Not idempotent — the underlying SQL is all CREATE TABLE / ADD COLUMN, so
- * running this twice against the same database will error out on the
- * second run (table/column already exists). That's intentional: it's the
- * signal that this step is already done.
+ * Safe to re-run — every CREATE TABLE / ADD COLUMN in the .sql file is
+ * written with IF NOT EXISTS, so anything already applied is skipped
+ * rather than re-erroring. Statements run one at a time (not via
+ * multi_query) so that if one fails, you get the exact statement text
+ * that failed, not just a number to cross-reference by hand.
  */
 
 require_once __DIR__ . '/lib.php'; // just for the CLI guard, no ET connection needed here
@@ -27,26 +28,30 @@ if (!file_exists($sqlPath)) {
     exit(1);
 }
 
-$sql = file_get_contents($sqlPath);
+$raw = file_get_contents($sqlPath);
 
-echo "Applying $sqlPath ...\n\n";
+// Strip full-line `--` comments, then split on statement-terminating
+// semicolons. None of the statements in this file contain a literal `;`
+// inside a string/comment, so this simple split is safe here — this is
+// not a general-purpose SQL parser.
+$withoutComments = preg_replace('/^--.*$/m', '', $raw);
+$statements = array_values(array_filter(
+    array_map('trim', explode(';', $withoutComments)),
+    fn($s) => $s !== ''
+));
 
-if (!$conn->multi_query($sql)) {
-    fwrite(STDERR, "Failed: " . $conn->error . "\n");
-    exit(1);
-}
+echo "Applying $sqlPath (" . count($statements) . " statement(s)) ...\n\n";
 
-$statementNum = 0;
-do {
-    $statementNum++;
-    if ($result = $conn->store_result()) {
-        $result->free();
-    }
-    if ($conn->errno) {
-        fwrite(STDERR, "Statement $statementNum failed: " . $conn->error . "\n");
+foreach ($statements as $i => $statement) {
+    $num = $i + 1;
+    try {
+        $conn->query($statement);
+        echo "  Statement $num: OK\n";
+    } catch (\mysqli_sql_exception $e) {
+        fwrite(STDERR, "\nStatement $num failed: " . $e->getMessage() . "\n\n");
+        fwrite(STDERR, "--- Failing statement ---\n$statement\n-------------------------\n");
         exit(1);
     }
-    echo "  Statement $statementNum: OK\n";
-} while ($conn->more_results() && $conn->next_result());
+}
 
 echo "\nSchema applied successfully.\n";
