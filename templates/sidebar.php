@@ -105,7 +105,10 @@ if ($canApproveTimeOff) {
                     Request Time Off
                 </a>
             </li>
-            <?php if ($canViewAuditTimeline): ?>
+            <?php /* AUDIT_CALENDAR_DISABLED — hidden from everyone, incl. admin, until further
+                     notice (2026-08-12). Page itself also hard-redirects; see pages/audit-calendar.php.
+                     Re-enable: change this to `if ($canViewAuditTimeline):`. */ ?>
+            <?php if (false): ?>
             <li class="nav-item">
                 <a href="audit-calendar.php" class="sidebar-link <?= $currentPage == 'audit-calendar.php' ? 'active' : '' ?>">
                     <i class="bi bi-calendar-week"></i>

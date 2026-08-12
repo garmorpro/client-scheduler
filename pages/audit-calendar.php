@@ -3,6 +3,14 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
 
+// AUDIT_CALENDAR_DISABLED — Garrett asked to hide this page from everyone,
+// including admin, until further notice (2026-08-12). Feature is built and
+// working, just not wanted live yet. To re-enable: delete this block.
+// See docs/client-scheduler-migration-plan.md (Engagement Tracker repo,
+// Phase 3 step 4) and the matching sidebar link in templates/sidebar.php.
+header("Location: my-schedule.php");
+exit();
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
     exit();
