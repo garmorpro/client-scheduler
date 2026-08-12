@@ -3686,3 +3686,44 @@ body.dark-mode .oc-manager-title { color: #6e7975; }
 body.dark-mode .oc-report-count { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
 .oc-reports { max-height: 220px; overflow-y: auto; }
 .oc-reports .eng-vm-emp-row { padding: 8px 12px; }
+
+/* DOL Generator (Phase 3 step 3 port from Engagement Tracker) - functional
+   pass, self-contained styling, revisit design later per Garrett. */
+.dolgen-card { border-color: #e3e7e5; border-radius: 13px; }
+body.dark-mode .dolgen-card { background: #171f28; border-color: #29302e; }
+.dolgen-step-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+.dolgen-step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--primary-color); color: #fff; font-size: 10.5px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+body.dark-mode .dolgen-step-num { background: var(--secondary-color); color: #10160f; }
+
+.dolgen-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.dolgen-pill { padding: 8px 14px; border-radius: 8px; border: 1.5px solid #e3e7e5; background: #f1f4f3; color: #6b7570; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.dolgen-pill.active { border-color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 10%, transparent); color: var(--primary-color); }
+body.dark-mode .dolgen-pill { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .dolgen-pill.active { border-color: var(--secondary-color); background: color-mix(in srgb, var(--secondary-color) 14%, transparent); color: var(--secondary-color); }
+
+.dolgen-member-row, .dolgen-result-member { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e3e7e5; }
+body.dark-mode .dolgen-member-row, body.dark-mode .dolgen-result-member { border-color: #29302e; }
+.dolgen-member-row:last-child { border-bottom: none; }
+.dolgen-result-member { display: block; background: #f1f4f3; border: 1px solid #e3e7e5; border-radius: 11px; padding: 14px; margin-bottom: 10px; }
+body.dark-mode .dolgen-result-member { background: #232a2c; border-color: #29302e; }
+.dolgen-avatar { width: 32px; height: 32px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dolgen-restricted-note { font-size: 10.5px; color: #c0392b; font-weight: 600; margin-top: 2px; }
+body.dark-mode .dolgen-restricted-note { color: #e0685a; }
+
+.dolgen-weight-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid #e3e7e5; }
+body.dark-mode .dolgen-weight-row { border-color: #29302e; }
+.dolgen-weight-row:last-child { border-bottom: none; }
+.dolgen-weight-name { font-size: 12.5px; font-weight: 700; }
+
+.dolgen-btn-primary { background: var(--primary-color); color: #fff; font-weight: 700; border: none; }
+.dolgen-btn-primary:hover { background: color-mix(in srgb, var(--primary-color) 85%, black); color: #fff; }
+body.dark-mode .dolgen-btn-primary { background: var(--secondary-color); color: #10160f; }
+body.dark-mode .dolgen-btn-primary:hover { background: color-mix(in srgb, var(--secondary-color) 88%, white); color: #10160f; }
+
+.dolgen-share { font-size: 11px; font-weight: 700; color: #6b7570; background: #fff; border: 1px solid #e3e7e5; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+body.dark-mode .dolgen-share { background: #171f28; border-color: #29302e; color: #9aa8a2; }
+.dolgen-chip { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--primary-color) 10%, transparent); color: var(--primary-color); cursor: pointer; }
+.dolgen-chip:hover { opacity: .75; }
+.dolgen-chip.restricted { background: #fbe8e6; color: #c0392b; }
+body.dark-mode .dolgen-chip { background: color-mix(in srgb, var(--secondary-color) 16%, transparent); color: var(--secondary-color); }
+body.dark-mode .dolgen-chip.restricted { background: #3a2320; color: #e0685a; }
