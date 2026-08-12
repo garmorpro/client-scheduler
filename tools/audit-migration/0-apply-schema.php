@@ -1,31 +1,37 @@
 <?php
 /**
- * Phase 1: applies the schema migration to Client Scheduler's own database.
+ * Applies a schema migration file to Client Scheduler's own database.
  *
- * Runs storage/migrations/2026-08-12_add_audit_tracking_schema.sql through
- * Client Scheduler's existing DB connection (includes/db.php) — no `mysql`
- * CLI needed, since it isn't guaranteed to be installed wherever this runs.
- * Only touches the Client Scheduler DB; no Engagement Tracker connection
- * involved in this step at all.
+ * Runs a storage/migrations/*.sql file through Client Scheduler's existing
+ * DB connection (includes/db.php) — no `mysql` CLI needed, since it isn't
+ * guaranteed to be installed wherever this runs. Only touches the Client
+ * Scheduler DB; no Engagement Tracker connection involved in this step.
  *
- * Run once, from the Client Scheduler project root:
+ * Run from the Client Scheduler project root:
  *   php tools/audit-migration/0-apply-schema.php
+ *   php tools/audit-migration/0-apply-schema.php --file=2026-08-12_add_audit_notification_log.sql
  *
- * Safe to re-run. Every CREATE TABLE in the .sql file uses IF NOT EXISTS
- * (universally supported). The role_permissions ADD COLUMN statement does
- * NOT — that syntax needs MySQL 8.0.29+, which isn't a safe assumption for
- * every server this might run on — so re-run safety for that one is
- * handled here instead: a "duplicate column" error (1060) is treated as
- * already-applied and skipped, not a failure. Statements run one at a
- * time (not via multi_query) so that if something ELSE fails, you get the
- * exact statement text that failed, not just a number to cross-reference
- * by hand.
+ * Defaults to the original Phase 1 schema file if --file isn't given.
+ * --file takes just the filename (relative to storage/migrations/), not a
+ * full path.
+ *
+ * Safe to re-run. Every CREATE TABLE in these files uses IF NOT EXISTS
+ * (universally supported). The one exception (an ADD COLUMN in the
+ * original Phase 1 file) needs MySQL 8.0.29+, which isn't a safe
+ * assumption for every server this might run on — so re-run safety for
+ * that one is handled here instead: a "duplicate column" error (1060) is
+ * treated as already-applied and skipped, not a failure. Statements run
+ * one at a time (not via multi_query) so that if something ELSE fails,
+ * you get the exact statement text that failed, not just a number to
+ * cross-reference by hand.
  */
 
 require_once __DIR__ . '/lib.php'; // just for the CLI guard, no ET connection needed here
 require_once __DIR__ . '/../../includes/db.php'; // $conn = Client Scheduler DB
 
-$sqlPath = __DIR__ . '/../../storage/migrations/2026-08-12_add_audit_tracking_schema.sql';
+$options = getopt('', ['file:']);
+$fileName = $options['file'] ?? '2026-08-12_add_audit_tracking_schema.sql';
+$sqlPath = __DIR__ . '/../../storage/migrations/' . basename($fileName);
 
 if (!file_exists($sqlPath)) {
     fwrite(STDERR, "Migration file not found: $sqlPath\n");
