@@ -13,11 +13,30 @@ if (!user_has_permission($conn, 'manage_dol')) {
     exit();
 }
 
-// Engagement picker - every engagement, newest year first. The generator
-// itself checks per-engagement whether it actually has a DOL-capable audit
-// type and eligible team before letting anything be generated.
+// Engagement picker, scoped to whoever's logged in: only engagements they
+// personally have an entries row on (i.e. they're actually staffed there),
+// not every engagement in the firm - admin is the only exception. The
+// generator itself separately checks per-engagement whether it actually
+// has a DOL-capable audit type and eligible team before letting anything
+// be generated.
+$isAdmin = strtolower($_SESSION['user_role'] ?? '') === 'admin';
+$currentUserId = (int) $_SESSION['user_id'];
+
 $engagements = [];
-$res = $conn->query("SELECT engagement_id, client_name, year FROM engagements ORDER BY client_name ASC, year DESC");
+if ($isAdmin) {
+    $res = $conn->query("SELECT engagement_id, client_name, year FROM engagements ORDER BY client_name ASC, year DESC");
+} else {
+    $stmt = $conn->prepare("
+        SELECT DISTINCT e.engagement_id, e.client_name, e.year
+        FROM engagements e
+        JOIN entries en ON en.engagement_id = e.engagement_id
+        WHERE en.user_id = ?
+        ORDER BY e.client_name ASC, e.year DESC
+    ");
+    $stmt->bind_param('i', $currentUserId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+}
 while ($row = $res->fetch_assoc()) {
     $engagements[] = $row;
 }

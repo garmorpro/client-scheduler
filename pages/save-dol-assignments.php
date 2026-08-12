@@ -33,6 +33,22 @@ if (!$engagementId || !$auditTypeId || !is_array($assignments)) {
     exit();
 }
 
+// Same scoping as get-dol-setup.php - a non-admin can only save DOL for an
+// engagement they're personally staffed on.
+$isAdmin = strtolower($_SESSION['user_role'] ?? '') === 'admin';
+if (!$isAdmin) {
+    $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
+    $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
+    $accessStmt->execute();
+    $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
+    $accessStmt->close();
+    if (!$hasAccess) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit();
+    }
+}
+
 $conn->begin_transaction();
 try {
     $stmt = $conn->prepare("DELETE FROM audit_dol_assignments WHERE engagement_id = ? AND audit_type_id = ?");

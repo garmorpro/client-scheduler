@@ -22,6 +22,24 @@ if (!$engagementId) {
     exit();
 }
 
+// Same scoping as the engagement picker in dol-generator.php, enforced
+// here too so it's not just a UI-level hide - a non-admin can only reach
+// engagements they're personally staffed on (an entries row), even by
+// hand-crafting a request.
+$isAdmin = strtolower($_SESSION['user_role'] ?? '') === 'admin';
+if (!$isAdmin) {
+    $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
+    $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
+    $accessStmt->execute();
+    $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
+    $accessStmt->close();
+    if (!$hasAccess) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit();
+    }
+}
+
 $stmt = $conn->prepare("
     SELECT e.engagement_id, e.client_name, e.year, d.tsc
     FROM engagements e
