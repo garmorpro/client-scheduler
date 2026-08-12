@@ -25,6 +25,7 @@ $canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
 $canViewDol = user_has_permission($conn, 'view_dol');
 $canManageDol = user_has_permission($conn, 'manage_dol');
+$canViewAuditTimeline = user_has_permission($conn, 'view_audit_timeline');
 $canSeeSettingsMenu = $canViewEmployees || $canViewTimeOffRequests || $canAccessSystemSettings;
 
 $pendingTimeOffCount = 0;
@@ -104,6 +105,14 @@ if ($canApproveTimeOff) {
                     Request Time Off
                 </a>
             </li>
+            <?php if ($canViewAuditTimeline): ?>
+            <li class="nav-item">
+                <a href="audit-calendar.php" class="sidebar-link <?= $currentPage == 'audit-calendar.php' ? 'active' : '' ?>">
+                    <i class="bi bi-calendar-week"></i>
+                    Audit Calendar
+                </a>
+            </li>
+            <?php endif; ?>
             <li class="nav-item">
                 <a href="policies.php" class="sidebar-link <?= in_array($currentPage, ['policies.php', 'policy.php']) ? 'active' : '' ?>">
                     <i class="bi bi-journal-text"></i>
