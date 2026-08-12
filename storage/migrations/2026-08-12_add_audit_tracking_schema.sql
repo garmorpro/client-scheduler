@@ -160,12 +160,16 @@ CREATE TABLE IF NOT EXISTS dol_training_restrictions (
 -- COMPLETION are separate grants, since staff/interns can check items off
 -- without being able to move a due date.
 -- ---------------------------------------------------------------------
+-- No IF NOT EXISTS here (unlike the CREATE TABLEs above) — ADD COLUMN IF
+-- NOT EXISTS needs MySQL 8.0.29+, which this server predates. Re-run
+-- safety for this statement is handled by 0-apply-schema.php instead,
+-- which treats "duplicate column" as an already-applied skip.
 ALTER TABLE role_permissions
-  ADD COLUMN IF NOT EXISTS manage_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER access_system_settings,
-  ADD COLUMN IF NOT EXISTS view_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_dol,
-  ADD COLUMN IF NOT EXISTS manage_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER view_dol,
-  ADD COLUMN IF NOT EXISTS complete_audit_timeline_items TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_audit_timeline,
-  ADD COLUMN IF NOT EXISTS view_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER complete_audit_timeline_items;
+  ADD COLUMN manage_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER access_system_settings,
+  ADD COLUMN view_dol TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_dol,
+  ADD COLUMN manage_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER view_dol,
+  ADD COLUMN complete_audit_timeline_items TINYINT(1) NOT NULL DEFAULT 0 AFTER manage_audit_timeline,
+  ADD COLUMN view_audit_timeline TINYINT(1) NOT NULL DEFAULT 0 AFTER complete_audit_timeline_items;
 
 -- Default grants. admin bypasses role_permissions entirely (per
 -- user_has_permission()) so it has no row here, same as every other
