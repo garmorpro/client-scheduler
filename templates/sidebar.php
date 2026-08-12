@@ -23,6 +23,8 @@ $canViewMySchedule = user_has_permission($conn, 'view_my_schedule');
 $canApproveTimeOff = user_has_permission($conn, 'approve_time_off');
 $canViewTimeOffRequests = user_has_permission($conn, 'view_time_off_requests');
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
+$canViewDol = user_has_permission($conn, 'view_dol');
+$canManageDol = user_has_permission($conn, 'manage_dol');
 $canSeeSettingsMenu = $canViewEmployees || $canViewTimeOffRequests || $canAccessSystemSettings;
 
 $pendingTimeOffCount = 0;
@@ -119,6 +121,22 @@ if ($canApproveTimeOff) {
                 <a href="engagement-management.php" class="sidebar-link <?= $currentPage == 'engagement-management.php' ? 'active' : '' ?>">
                     <i class="bi bi-file-earmark-text"></i>
                     Engagements
+                </a>
+            </li>
+            <?php endif; ?>
+            <?php if ($canViewDol): ?>
+            <li class="nav-item">
+                <a href="training.php" class="sidebar-link <?= $currentPage == 'training.php' ? 'active' : '' ?>">
+                    <i class="bi bi-mortarboard"></i>
+                    Training
+                </a>
+            </li>
+            <?php endif; ?>
+            <?php if ($canManageDol): ?>
+            <li class="nav-item">
+                <a href="dol-generator.php" class="sidebar-link <?= $currentPage == 'dol-generator.php' ? 'active' : '' ?>">
+                    <i class="bi bi-diagram-3"></i>
+                    DOL Generator
                 </a>
             </li>
             <?php endif; ?>

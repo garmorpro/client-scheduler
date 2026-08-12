@@ -26,3 +26,18 @@ function role_label($role) {
     if ($role === '') return '';
     return ucwords(str_replace('_', ' ', $role));
 }
+
+// Same role -> color mapping as ROLE_COLORS in assets/js/org_chart_modal.js
+// (and the senior/staff/intern subset in week_availability.js) - kept in
+// sync manually since one's PHP and the other's JS, but same source values.
+function role_color($role) {
+    $colors = [
+        'admin' => 'rgb(23,62,70)',
+        'manager' => 'rgb(155,107,214)',
+        'senior' => 'rgb(230,144,65)',
+        'staff' => 'rgb(66,127,194)',
+        'intern' => 'rgb(76,175,80)',
+        'crm_team' => 'rgb(214,122,168)',
+    ];
+    return $colors[strtolower(trim($role ?? ''))] ?? '#6c757d';
+}
