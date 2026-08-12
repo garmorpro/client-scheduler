@@ -19,7 +19,7 @@
  * silently dropped or guessed at.
  *
  * Usage (from the Client Scheduler project root):
- *   php tools/audit-migration/3-migrate-data.php [options]
+ *   php tools/audit-migration/4-migrate-data.php [options]
  *
  * Options:
  *   --identity=PATH      Path to the resolved identity crosswalk CSV.

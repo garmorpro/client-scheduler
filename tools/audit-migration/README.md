@@ -83,7 +83,16 @@ goes outward from wherever these scripts run.
 2. **`2-engagement-crosswalk.php`** — matches every Engagement Tracker
    engagement (active *and* archived — all of it) to a Client Scheduler
    `client_id` + the right year's `engagement_id`. Read-only on both sides.
-3. **`3-migrate-data.php`** — reads the (by then resolved) crosswalk CSVs
+3. **`3-backfill-missing-clients.php`** — as-needed. If Client Scheduler's
+   `clients` table doesn't have most of Engagement Tracker's roster yet
+   (expected if it hasn't been rolled out company-wide), script 2 will
+   show a lot of "no client match" rows — not one-off typos, a real gap.
+   This creates the missing `clients` + `engagements` rows in bulk instead
+   of hand-editing dozens of CSV cells. Client Scheduler connection only.
+   Safe by default (transaction, rolls back unless `--commit`). **After
+   running with `--commit`, re-run script 2** — those rows should come
+   back as exact matches.
+4. **`4-migrate-data.php`** — reads the (by then resolved) crosswalk CSVs
    and copies the actual data across. Safe by default: runs in a
    transaction and rolls back unless you pass `--commit`.
 
@@ -95,7 +104,7 @@ classify each row as `exact`, `fuzzy - needs confirmation`, or `no match`
 - `output/*_UNMATCHED_<timestamp>.csv` — only the rows that weren't an
   exact match. **This file is the required review artifact** — per the
   migration plan, every row on it needs to be resolved (fix the match, or
-  explicitly confirm it's new/excluded and why) before script 3 is allowed
+  explicitly confirm it's new/excluded and why) before script 4 is allowed
   to run for real.
 
 `output/` is gitignored — these reports contain real names and are not
@@ -115,21 +124,33 @@ php tools/audit-migration/2-engagement-crosswalk.php
 Each of the crosswalk scripts prints a short summary (total checked /
 exact matches / needs review) and the paths of the two CSVs it wrote.
 
+### If the engagement crosswalk shows lots of "no client match"
+
+That's expected if Client Scheduler hasn't been rolled out yet and its
+`clients` table is mostly empty — not dozens of individual typos. Backfill
+in bulk, then re-check:
+
+```bash
+php tools/audit-migration/3-backfill-missing-clients.php              # dry run first
+php tools/audit-migration/3-backfill-missing-clients.php --commit      # then for real
+php tools/audit-migration/2-engagement-crosswalk.php                  # re-run — should mostly be exact now
+```
+
 ### Then, before going further
 
 1. Open both `output/*_UNMATCHED_*.csv` files.
 2. For every row: either it's a genuine near-miss (fix a nickname/typo,
    fill in the correct `cs_user_id` / `cs_engagement_id` directly in the
    **full** report CSV — not the UNMATCHED one, that's just the filtered
-   view — and re-run script 3 against it), or it's genuinely new (a person
-   or engagement that doesn't exist yet on the Client Scheduler side and
-   needs to be created there first), or it's something that should be
-   excluded — leave its `cs_user_id`/`cs_engagement_id` blank and note why.
+   view — and re-run script 4 against it), or it's genuinely new (create
+   it by hand, or via script 3 above for engagements), or it's something
+   that should be excluded — leave its `cs_user_id`/`cs_engagement_id`
+   blank and note why.
 3. Once every row is accounted for:
 
 ```bash
-php tools/audit-migration/3-migrate-data.php              # dry run first
-php tools/audit-migration/3-migrate-data.php --commit      # then for real
+php tools/audit-migration/4-migrate-data.php              # dry run first
+php tools/audit-migration/4-migrate-data.php --commit      # then for real
 ```
 
 Read the migration log (`output/migration_log_*.csv`) after the dry run —
