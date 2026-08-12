@@ -43,7 +43,7 @@
 
           <div class="mb-3">
             <label class="form-label">Audit Types</label>
-            <div class="eng-audit-type-list">
+            <div class="eng-audit-type-list" id="add_eng_audit_types">
               <?php
               require_once '../includes/db.php';
               $auditTypeQuery = $conn->query("SELECT audit_type_id, name, color FROM audit_types WHERE is_active = 1 ORDER BY name ASC");
@@ -51,7 +51,7 @@
                   while ($atRow = $auditTypeQuery->fetch_assoc()):
               ?>
               <label class="eng-audit-type-chip">
-                <input type="checkbox" name="audit_type_ids[]" value="<?php echo (int) $atRow['audit_type_id']; ?>">
+                <input type="checkbox" name="audit_type_ids[]" value="<?php echo (int) $atRow['audit_type_id']; ?>" data-audit-type-name="<?php echo htmlspecialchars($atRow['name']); ?>">
                 <span class="eng-audit-type-dot" style="background:<?php echo htmlspecialchars($atRow['color']); ?>"></span>
                 <?php echo htmlspecialchars($atRow['name']); ?>
               </label>
@@ -61,6 +61,19 @@
               ?>
               <div class="settings-empty-row" style="text-align:left; padding-left:0;">No audit types yet - add some under System Settings.</div>
               <?php endif; ?>
+            </div>
+          </div>
+
+          <!-- TSC only matters for SOC 2 - hidden unless that's checked above. -->
+          <div class="mb-3 d-none" id="add_eng_tsc_wrap">
+            <label class="form-label">Trust Services Criteria (SOC 2)</label>
+            <div class="eng-audit-type-list">
+              <?php foreach (['Security', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'] as $tscOption): ?>
+              <label class="eng-audit-type-chip">
+                <input type="checkbox" name="tsc[]" value="<?php echo htmlspecialchars($tscOption); ?>" <?php echo $tscOption === 'Security' ? 'checked' : ''; ?>>
+                <?php echo htmlspecialchars($tscOption); ?>
+              </label>
+              <?php endforeach; ?>
             </div>
           </div>
         </div>

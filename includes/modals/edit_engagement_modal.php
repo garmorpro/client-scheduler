@@ -62,7 +62,7 @@
                     while ($atRow = $auditTypeQuery->fetch_assoc()):
                 ?>
                 <label class="eng-audit-type-chip">
-                  <input type="checkbox" name="audit_type_ids[]" value="<?php echo (int) $atRow['audit_type_id']; ?>">
+                  <input type="checkbox" name="audit_type_ids[]" value="<?php echo (int) $atRow['audit_type_id']; ?>" data-audit-type-name="<?php echo htmlspecialchars($atRow['name']); ?>">
                   <span class="eng-audit-type-dot" style="background:<?php echo htmlspecialchars($atRow['color']); ?>"></span>
                   <?php echo htmlspecialchars($atRow['name']); ?>
                 </label>
@@ -72,6 +72,19 @@
                 ?>
                 <div class="settings-empty-row" style="text-align:left; padding-left:0;">No audit types yet - add some under System Settings.</div>
                 <?php endif; ?>
+              </div>
+            </div>
+
+            <!-- TSC only matters for SOC 2 - hidden unless that's checked above. -->
+            <div class="eng-edit-field d-none" id="edit_eng_tsc_wrap">
+              <label>Trust Services Criteria (SOC 2)</label>
+              <div class="eng-audit-type-list" id="edit_eng_tsc">
+                <?php foreach (['Security', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'] as $tscOption): ?>
+                <label class="eng-audit-type-chip">
+                  <input type="checkbox" name="tsc[]" value="<?php echo htmlspecialchars($tscOption); ?>">
+                  <?php echo htmlspecialchars($tscOption); ?>
+                </label>
+                <?php endforeach; ?>
               </div>
             </div>
           </div>

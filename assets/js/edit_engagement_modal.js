@@ -3,6 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const editForm = document.getElementById('editEngagementForm');
     if (!editModal || !editForm) return;
 
+    const tscWrap = document.getElementById('edit_eng_tsc_wrap');
+    function syncTscVisibility() {
+        const soc2Checked = Array.from(document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]'))
+            .some(cb => cb.checked && cb.dataset.auditTypeName === 'SOC 2');
+        tscWrap.classList.toggle('d-none', !soc2Checked);
+    }
+    document.getElementById('edit_eng_audit_types')?.addEventListener('change', syncTscVisibility);
+
     document.querySelectorAll('.edit-engagement-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('edit_eng_engagement_id').value = btn.getAttribute('data-engagement-id');
@@ -17,6 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]').forEach(cb => {
                 cb.checked = selectedAuditTypes.includes(cb.value);
             });
+
+            const selectedTsc = (btn.getAttribute('data-tsc') || '')
+                .split(',').map(s => s.trim()).filter(Boolean);
+            document.querySelectorAll('#edit_eng_tsc input[name="tsc[]"]').forEach(cb => {
+                cb.checked = selectedTsc.includes(cb.value);
+            });
+
+            syncTscVisibility();
         });
     });
 

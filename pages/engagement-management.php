@@ -28,11 +28,13 @@ $engagementQuery = "
         e.manager,
         e.notes,
         COALESCE(SUM(en.assigned_hours), 0) AS total_assigned_hours,
-        (SELECT GROUP_CONCAT(audit_type_id) FROM engagement_audit_types WHERE engagement_id = e.engagement_id) AS audit_type_ids
+        (SELECT GROUP_CONCAT(audit_type_id) FROM engagement_audit_types WHERE engagement_id = e.engagement_id) AS audit_type_ids,
+        d.tsc
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes
+    LEFT JOIN audit_engagement_details d ON d.engagement_id = e.engagement_id
+    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -273,6 +275,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         data-manager="<?php echo htmlspecialchars($row['manager'] ?? ''); ?>"
                                         data-notes="<?php echo htmlspecialchars($row['notes'] ?? ''); ?>"
                                         data-audit-types="<?php echo htmlspecialchars($row['audit_type_ids'] ?? ''); ?>"
+                                        data-tsc="<?php echo htmlspecialchars($row['tsc'] ?? ''); ?>"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>

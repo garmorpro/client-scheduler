@@ -55,6 +55,18 @@ if ($stmt->execute()) {
         $eatStmt->close();
     }
 
+    // TSC (SOC 2 Trust Services Criteria) - always overwrite with whatever
+    // was submitted (including clearing it to '' if SOC 2 got unchecked),
+    // same "replace wholesale" approach as audit types above.
+    $tsc = implode(', ', array_filter(array_map('trim', $_POST['tsc'] ?? [])));
+    $tscStmt = $conn->prepare("
+        INSERT INTO audit_engagement_details (engagement_id, tsc) VALUES (?, ?)
+        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc)
+    ");
+    $tscStmt->bind_param('is', $engagement_id, $tsc);
+    $tscStmt->execute();
+    $tscStmt->close();
+
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'message' => $stmt->error]);
