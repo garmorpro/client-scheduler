@@ -18,6 +18,8 @@ function user_has_permission($conn, $permissionKey) {
         'view_my_schedule',
         'approve_time_off', 'view_time_off_requests',
         'access_system_settings',
+        'manage_dol', 'view_dol',
+        'manage_audit_timeline', 'complete_audit_timeline_items', 'view_audit_timeline',
     ];
     if (!in_array($permissionKey, $allowed, true)) return false;
 
@@ -27,7 +29,7 @@ function user_has_permission($conn, $permissionKey) {
     if ($role === 'service_account') return in_array($permissionKey, ['manage_employees', 'view_employees'], true);
 
     if (!isset($cache[$role])) {
-        $stmt = $conn->prepare("SELECT manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, manage_master_schedule, view_master_schedule, view_my_schedule, approve_time_off, view_time_off_requests, access_system_settings FROM role_permissions WHERE role = ?");
+        $stmt = $conn->prepare("SELECT manage_employees, view_employees, manage_clients_engagements, view_clients_engagements, manage_master_schedule, view_master_schedule, view_my_schedule, approve_time_off, view_time_off_requests, access_system_settings, manage_dol, view_dol, manage_audit_timeline, complete_audit_timeline_items, view_audit_timeline FROM role_permissions WHERE role = ?");
         $stmt->bind_param('s', $role);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -43,6 +45,11 @@ function user_has_permission($conn, $permissionKey) {
             'approve_time_off' => 0,
             'view_time_off_requests' => 0,
             'access_system_settings' => 0,
+            'manage_dol' => 0,
+            'view_dol' => 0,
+            'manage_audit_timeline' => 0,
+            'complete_audit_timeline_items' => 0,
+            'view_audit_timeline' => 0,
         ];
     }
 
@@ -57,6 +64,18 @@ function user_has_permission($conn, $permissionKey) {
     }
     if ($permissionKey === 'view_time_off_requests') {
         return !empty($cache[$role]['view_time_off_requests']) || !empty($cache[$role]['approve_time_off']);
+    }
+    if ($permissionKey === 'view_dol') {
+        return !empty($cache[$role]['view_dol']) || !empty($cache[$role]['manage_dol']);
+    }
+    if ($permissionKey === 'view_audit_timeline') {
+        // Implied by either the ability to move due dates or the (broader,
+        // staff/intern-reachable) ability to just check items off - not
+        // just manage_audit_timeline, since complete_audit_timeline_items
+        // is deliberately granted to more roles than manage_audit_timeline.
+        return !empty($cache[$role]['view_audit_timeline'])
+            || !empty($cache[$role]['manage_audit_timeline'])
+            || !empty($cache[$role]['complete_audit_timeline_items']);
     }
 
     return !empty($cache[$role][$permissionKey]);
