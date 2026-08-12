@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS audit_engagement_milestones (
 CREATE TABLE IF NOT EXISTS audit_dol_assignments (
   id INT NOT NULL AUTO_INCREMENT,
   engagement_id INT NOT NULL,
-  user_id INT NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
   audit_type_id INT NOT NULL,
   criterion VARCHAR(50) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS audit_dol_assignments (
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS audit_team_independence (
   engagement_id INT NOT NULL,
-  user_id INT NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
   independent ENUM('Y','N') NULL,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (engagement_id, user_id),
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS audit_team_independence (
 -- table, keyed to a real user_id.
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS dol_training_restrictions (
-  user_id INT NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
   criterion VARCHAR(50) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, criterion),
