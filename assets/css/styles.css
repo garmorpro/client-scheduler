@@ -2281,7 +2281,7 @@ body.dark-mode #importUsersModal #csvPreviewTable td { border-color: #29302e; co
 
 /* Role Permissions specifics */
 #rolePermissionsModal .rp-body { padding: 16px 20px; }
-.rp-table-shell { border: 1px solid #e3e7e5; border-radius: 12px; overflow: hidden; }
+.rp-table-shell { border: 1px solid #e3e7e5; border-radius: 12px; overflow: auto; }
 body.dark-mode .rp-table-shell { border-color: #29302e; }
 .rp-table { width: 100%; border-collapse: collapse; }
 .rp-table th {

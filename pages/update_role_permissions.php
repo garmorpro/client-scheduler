@@ -20,7 +20,16 @@ if (!csrf_valid()) {
 }
 
 $editableRoles = ['manager', 'senior', 'staff', 'intern', 'crm_team'];
-$permissionKeys = ['manage_employees', 'view_employees', 'manage_clients_engagements', 'view_clients_engagements', 'view_master_schedule', 'manage_master_schedule', 'view_my_schedule', 'approve_time_off', 'view_time_off_requests', 'access_system_settings'];
+$permissionKeys = [
+    'manage_employees', 'view_employees',
+    'manage_clients_engagements', 'view_clients_engagements',
+    'view_master_schedule', 'manage_master_schedule',
+    'view_my_schedule',
+    'approve_time_off', 'view_time_off_requests',
+    'access_system_settings',
+    'manage_dol', 'view_dol',
+    'manage_audit_timeline', 'complete_audit_timeline_items', 'view_audit_timeline',
+];
 
 $input = json_decode(file_get_contents('php://input'), true);
 $permissions = $input['permissions'] ?? [];
@@ -32,20 +41,25 @@ if (!is_array($permissions)) {
 
 $conn->begin_transaction();
 try {
-    $stmt = $conn->prepare("
-        UPDATE role_permissions
-        SET manage_employees = ?, view_employees = ?, manage_clients_engagements = ?, view_clients_engagements = ?, view_master_schedule = ?, manage_master_schedule = ?, view_my_schedule = ?, approve_time_off = ?, view_time_off_requests = ?, access_system_settings = ?
-        WHERE role = ?
-    ");
+    // Built from $permissionKeys rather than hand-written, so the column
+    // count and the bind_param type string can never drift out of sync
+    // with each other as keys get added.
+    $setClause = implode(', ', array_map(fn($key) => "$key = ?", $permissionKeys));
+    $stmt = $conn->prepare("UPDATE role_permissions SET $setClause WHERE role = ?");
+
     foreach ($permissions as $entry) {
         $role = strtolower(trim($entry['role'] ?? ''));
         if (!in_array($role, $editableRoles, true)) continue;
 
-        $values = [];
-        foreach ($permissionKeys as $key) {
-            $values[] = !empty($entry[$key]) ? 1 : 0;
+        $values = array_map(fn($key) => !empty($entry[$key]) ? 1 : 0, $permissionKeys);
+        $types = str_repeat('i', count($values)) . 's';
+
+        $bindArgs = [$types];
+        foreach ($values as $k => $v) {
+            $bindArgs[] = &$values[$k];
         }
-        $stmt->bind_param('iiiiiiiiiis', $values[0], $values[1], $values[2], $values[3], $values[4], $values[5], $values[6], $values[7], $values[8], $values[9], $role);
+        $bindArgs[] = &$role;
+        call_user_func_array([$stmt, 'bind_param'], $bindArgs);
         $stmt->execute();
     }
     $stmt->close();

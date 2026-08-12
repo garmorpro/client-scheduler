@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('rpTableBody');
     const saveBtn = document.getElementById('rpSaveBtn');
     const dirtyHint = document.getElementById('rpDirtyHint');
-    const permissionKeys = ['view_employees', 'manage_employees', 'view_clients_engagements', 'manage_clients_engagements', 'view_master_schedule', 'manage_master_schedule', 'view_my_schedule', 'view_time_off_requests', 'approve_time_off', 'access_system_settings'];
+    const permissionKeys = ['view_employees', 'manage_employees', 'view_clients_engagements', 'manage_clients_engagements', 'view_master_schedule', 'manage_master_schedule', 'view_my_schedule', 'view_time_off_requests', 'approve_time_off', 'access_system_settings', 'view_dol', 'manage_dol', 'view_audit_timeline', 'complete_audit_timeline_items', 'manage_audit_timeline'];
     // "Manage" always includes "View" - keep the View toggle visually locked
     // on (and disabled) whenever its paired Manage toggle is on, so the
     // matrix doesn't look like you could have edit rights without view rights.
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ['view_clients_engagements', 'manage_clients_engagements'],
         ['view_master_schedule', 'manage_master_schedule'],
         ['view_time_off_requests', 'approve_time_off'],
+        ['view_dol', 'manage_dol'],
     ];
 
     function syncViewManagePairs(tr) {
@@ -29,6 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 viewCb.disabled = false;
             }
         });
+
+        // Audit Timeline is a 3-tier group, not a simple view/manage pair:
+        // managing implies both completing AND viewing; completing (without
+        // managing) implies viewing only. Handled separately from the pairs
+        // above since "view" here can be locked on by either of two other
+        // toggles, and the generic pair loop would have one overwrite the
+        // other's lock state.
+        const viewCb = tr.querySelector('.rp-toggle-input[data-permission="view_audit_timeline"]');
+        const completeCb = tr.querySelector('.rp-toggle-input[data-permission="complete_audit_timeline_items"]');
+        const manageCb = tr.querySelector('.rp-toggle-input[data-permission="manage_audit_timeline"]');
+        if (viewCb && completeCb && manageCb) {
+            if (manageCb.checked) {
+                completeCb.checked = true;
+                completeCb.disabled = true;
+            } else {
+                completeCb.disabled = false;
+            }
+            if (manageCb.checked || completeCb.checked) {
+                viewCb.checked = true;
+                viewCb.disabled = true;
+            } else {
+                viewCb.disabled = false;
+            }
+        }
     }
 
     const palette = ['#4f8ef7', '#9b6bd6', '#4fbf9f', '#e0994c', '#5fb85f', '#5aa8d6', '#d67aa8', '#7a8fd6'];
