@@ -1766,6 +1766,49 @@ body.dark-mode .eng-vm-emp-avatar { background: #232a2c; color: #9aa8a2; }
 body.dark-mode .eng-vm-emp-role { color: #6e7975; }
 .eng-vm-emp-hours { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
+/* Audit tracking sections (timeline/milestones/DOL/independence) - added
+   for the Engagement Tracker migration. Reuses the eng-vm-section-title
+   label style; rows follow the same neutral-card conventions as
+   eng-vm-emp-row above rather than introducing a new visual language. */
+.eng-vm-tl-list { border: 1px solid #e3e7e5; border-radius: 12px; }
+body.dark-mode .eng-vm-tl-list { border-color: #29302e; }
+.eng-vm-tl-row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid #e3e7e5; font-size: 12.5px; }
+body.dark-mode .eng-vm-tl-row { border-color: #29302e; }
+.eng-vm-tl-row:last-child { border-bottom: none; }
+.eng-vm-tl-dot { width: 6px; height: 6px; border-radius: 50%; background: #c7cdc9; flex-shrink: 0; }
+body.dark-mode .eng-vm-tl-dot { background: #454e4b; }
+.eng-vm-tl-row.done .eng-vm-tl-dot { background: #2f9e57; }
+body.dark-mode .eng-vm-tl-row.done .eng-vm-tl-dot { background: #4fbd7a; }
+.eng-vm-tl-label { flex: 1; color: #16211f; }
+body.dark-mode .eng-vm-tl-label { color: #edf1ee; }
+.eng-vm-tl-row.done .eng-vm-tl-label { color: #6b7570; }
+body.dark-mode .eng-vm-tl-row.done .eng-vm-tl-label { color: #9aa8a2; }
+.eng-vm-tl-date { font-variant-numeric: tabular-nums; color: #6b7570; white-space: nowrap; }
+body.dark-mode .eng-vm-tl-date { color: #9aa8a2; }
+.eng-vm-tl-weekly { font-size: 11.5px; color: #6b7570; margin-top: 6px; }
+body.dark-mode .eng-vm-tl-weekly { color: #9aa8a2; }
+
+.eng-vm-dol-list { display: flex; flex-direction: column; gap: 8px; }
+.eng-vm-dol-row { border: 1px solid #e3e7e5; border-radius: 10px; padding: 8px 10px; }
+body.dark-mode .eng-vm-dol-row { border-color: #29302e; }
+.eng-vm-dol-name { font-size: 12.5px; font-weight: 600; margin-bottom: 5px; }
+.eng-vm-dol-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.eng-vm-dol-chip { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; border: 1.5px solid #9aa39d; color: #6b7570; }
+body.dark-mode .eng-vm-dol-chip { color: #9aa8a2; }
+
+.eng-vm-indep-list { border: 1px solid #e3e7e5; border-radius: 12px; }
+body.dark-mode .eng-vm-indep-list { border-color: #29302e; }
+.eng-vm-indep-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid #e3e7e5; font-size: 12.5px; }
+body.dark-mode .eng-vm-indep-row { border-color: #29302e; }
+.eng-vm-indep-row:last-child { border-bottom: none; }
+.eng-vm-indep-icon { font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.eng-vm-indep-icon.yes { background: #e4f3e6; color: #1f6b3a; }
+.eng-vm-indep-icon.no { background: #fbe8e6; color: #c0392b; }
+.eng-vm-indep-icon.unset { background: #f1f4f3; color: #9aa39d; }
+body.dark-mode .eng-vm-indep-icon.yes { background: #1e3d28; color: #7fd99a; }
+body.dark-mode .eng-vm-indep-icon.no { background: #3a2320; color: #e0685a; }
+body.dark-mode .eng-vm-indep-icon.unset { background: #232a2c; color: #6e7975; }
+
 /* Over-Budget list rows (reuse eng-vm-emp-list shell) */
 .eng-ob-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #e3e7e5; }
 body.dark-mode .eng-ob-row { border-color: #29302e; }

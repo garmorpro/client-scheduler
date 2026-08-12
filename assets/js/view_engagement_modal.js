@@ -12,6 +12,99 @@ document.addEventListener('DOMContentLoaded', () => {
         return status ? status.charAt(0).toUpperCase() + status.slice(1) : '';
     }
 
+    // Matches the formatDate() convention already used across the app
+    // (request_time_off.js, viewUserModal.js, etc.) for consistency.
+    function fmtDate(dateString) {
+        if (!dateString) return null;
+        const d = new Date(dateString.length <= 10 ? dateString + 'T00:00:00' : dateString.replace(' ', 'T'));
+        if (isNaN(d)) return null;
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Audit tracking sections (timeline/milestones/DOL/independence), added
+    // for the Engagement Tracker migration. Each is only present in `audit`
+    // if the backend decided the current user has permission to see it -
+    // a missing key means "don't render this section", not "empty".
+    function renderTimelineSection(audit) {
+        if (!audit.timeline) return '';
+        const rows = audit.timeline.map(step => {
+            const range = step.start_date && step.date
+                ? `${fmtDate(step.start_date)} &ndash; ${fmtDate(step.date)}`
+                : fmtDate(step.date);
+            const isDone = !!step.completed;
+            return `
+                <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
+                    <span class="eng-vm-tl-dot"></span>
+                    <span class="eng-vm-tl-label">${step.label}</span>
+                    <span class="eng-vm-tl-date">${range || '<span class="text-muted">Not set</span>'}</span>
+                </div>`;
+        }).join('');
+        const weekly = audit.weekly_status_call
+            ? `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${audit.weekly_status_call.day}</strong>${audit.weekly_status_call.group_name ? ` &middot; ${audit.weekly_status_call.group_name}` : ''}</div>`
+            : '';
+        return `
+            <div class="eng-vm-section-title" style="margin-top:16px;">Timeline</div>
+            <div class="eng-vm-tl-list">${rows}</div>
+            ${weekly}`;
+    }
+
+    function renderMilestonesSection(audit) {
+        if (!audit.milestones || audit.milestones.length === 0) return '';
+        const rows = audit.milestones.map(ms => {
+            const isDone = ms.is_completed == 1;
+            return `
+                <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
+                    <span class="eng-vm-tl-dot"></span>
+                    <span class="eng-vm-tl-label">${ms.milestone_type}</span>
+                    <span class="eng-vm-tl-date">${fmtDate(ms.due_date) || '<span class="text-muted">Not set</span>'}</span>
+                </div>`;
+        }).join('');
+        return `
+            <div class="eng-vm-section-title" style="margin-top:16px;">Milestones</div>
+            <div class="eng-vm-tl-list">${rows}</div>`;
+    }
+
+    function renderDolSection(audit) {
+        if (!audit.dol) return '';
+        if (audit.dol.length === 0) {
+            return `<div class="eng-vm-section-title" style="margin-top:16px;">Division of Labor</div>
+                    <div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>`;
+        }
+        const byPerson = new Map();
+        audit.dol.forEach(row => {
+            if (!byPerson.has(row.user_id)) byPerson.set(row.user_id, { name: row.full_name, criteria: [] });
+            byPerson.get(row.user_id).criteria.push({ criterion: row.criterion, color: row.audit_type_color, type: row.audit_type_name });
+        });
+        const rows = Array.from(byPerson.values()).map(person => `
+            <div class="eng-vm-dol-row">
+                <div class="eng-vm-dol-name">${person.name}</div>
+                <div class="eng-vm-dol-chips">
+                    ${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}
+                </div>
+            </div>`).join('');
+        return `
+            <div class="eng-vm-section-title" style="margin-top:16px;">Division of Labor</div>
+            <div class="eng-vm-dol-list">${rows}</div>`;
+    }
+
+    function renderIndependenceSection(audit) {
+        if (!audit.independence || audit.independence.length === 0) return '';
+        const rows = audit.independence.map(person => {
+            let icon, cls;
+            if (person.independent === 'Y') { icon = '&#10003;'; cls = 'yes'; }
+            else if (person.independent === 'N') { icon = '&#10007;'; cls = 'no'; }
+            else { icon = '&ndash;'; cls = 'unset'; }
+            return `
+                <div class="eng-vm-indep-row">
+                    <span class="eng-vm-indep-name">${person.full_name}</span>
+                    <span class="eng-vm-indep-icon ${cls}">${icon}</span>
+                </div>`;
+        }).join('');
+        return `
+            <div class="eng-vm-section-title" style="margin-top:16px;">Independence</div>
+            <div class="eng-vm-indep-list">${rows}</div>`;
+    }
+
     async function open(engagementId, avatarColor, initials, restrictFinancials) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
@@ -92,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`}
                     <div class="eng-vm-section-title">Assigned Employees</div>
                     <div class="eng-vm-emp-list">${empRowsHtml}</div>
+                    ${renderTimelineSection(data.audit || {})}
+                    ${renderMilestonesSection(data.audit || {})}
+                    ${renderDolSection(data.audit || {})}
+                    ${renderIndependenceSection(data.audit || {})}
                 </div>
             `;
         } catch (err) {
