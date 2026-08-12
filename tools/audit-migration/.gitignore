@@ -1,0 +1,5 @@
+# Real DB credentials for the source (Engagement Tracker) connection.
+.env.et
+
+# Generated reports contain real employee/client names — never commit these.
+output/
