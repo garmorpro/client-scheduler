@@ -130,13 +130,13 @@ $header = ['et_source', 'et_id', 'et_name', 'et_role', 'match_confidence', 'matc
 
 $fh = openCsv($fullPath, $header);
 foreach ($fullReport as $row) {
-    fputcsv($fh, $row);
+    fputcsv($fh, $row, ",", "\"", "\\");
 }
 fclose($fh);
 
 $fh = openCsv($unmatchedPath, $header);
 foreach ($unmatched as $row) {
-    fputcsv($fh, $row);
+    fputcsv($fh, $row, ",", "\"", "\\");
 }
 fclose($fh);
 

@@ -90,7 +90,7 @@ function openCsv(string $path, array $header)
         fwrite(STDERR, "Could not open $path for writing.\n");
         exit(1);
     }
-    fputcsv($fh, $header);
+    fputcsv($fh, $header, ",", "\"", "\\");
     return $fh;
 }
 
@@ -136,4 +136,75 @@ function bestNameMatch(string $sourceName, array $candidates): ?array
         return null;
     }
     return ['candidate' => $best, 'score' => $bestScore];
+}
+
+/** Reads a CSV (as written by openCsv()) back into an array of associative rows. */
+function readCsvAsAssoc(string $path): array
+{
+    if (!file_exists($path)) {
+        fwrite(STDERR, "CSV not found: $path\n");
+        exit(1);
+    }
+    $fh = fopen($path, 'r');
+    $header = fgetcsv($fh, 0, ",", "\"", "\\");
+    $rows = [];
+    while (($line = fgetcsv($fh, 0, ",", "\"", "\\")) !== false) {
+        if ($line === [null] || $line === false) {
+            continue;
+        }
+        $rows[] = array_combine($header, $line);
+    }
+    fclose($fh);
+    return $rows;
+}
+
+/**
+ * Finds the most recently written CSV in $dir whose name starts with
+ * $prefix, excluding *_UNMATCHED_* files (those are the review-only
+ * subset, never the source of truth to migrate from). Returns null if none
+ * found. Relies on the Y-m-d_His timestamp in the filename sorting
+ * lexically the same as chronologically.
+ */
+function findLatestCsv(string $dir, string $prefix): ?string
+{
+    $matches = glob("$dir/{$prefix}_*.csv") ?: [];
+    $matches = array_filter($matches, fn($f) => !str_contains(basename($f), 'UNMATCHED'));
+    if (empty($matches)) {
+        return null;
+    }
+    sort($matches);
+    return end($matches);
+}
+
+/**
+ * Prepares, binds, and executes a query against $params in one call,
+ * WITHOUT a hand-written type string — the type character for each
+ * parameter is derived from its actual PHP type (int -> 'i', float ->
+ * 'd', everything else including null -> 's', which mysqli still binds as
+ * a real SQL NULL). A hand-counted type string is exactly the kind of
+ * off-by-one mistake that's easy to make and hard to spot in a 10+
+ * parameter query, so every multi-param query in this migration goes
+ * through here instead of calling bind_param() directly.
+ */
+function bindExecute(mysqli $conn, string $sql, array $params): mysqli_stmt
+{
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new \RuntimeException('Prepare failed: ' . $conn->error . "\nSQL: $sql");
+    }
+    if (!empty($params)) {
+        $types = implode('', array_map(
+            fn($v) => is_int($v) ? 'i' : (is_float($v) ? 'd' : 's'),
+            $params
+        ));
+        $refs = [$types];
+        foreach ($params as $key => $value) {
+            $refs[] = &$params[$key];
+        }
+        call_user_func_array([$stmt, 'bind_param'], $refs);
+    }
+    if (!$stmt->execute()) {
+        throw new \RuntimeException('Execute failed: ' . $stmt->error . "\nSQL: $sql");
+    }
+    return $stmt;
 }

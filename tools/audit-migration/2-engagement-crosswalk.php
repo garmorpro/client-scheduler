@@ -178,13 +178,13 @@ $header = ['et_eng_idno', 'et_eng_name', 'et_status', 'et_archived', 'et_audit_t
 
 $fh = openCsv($fullPath, $header);
 foreach ($fullReport as $row) {
-    fputcsv($fh, $row);
+    fputcsv($fh, $row, ",", "\"", "\\");
 }
 fclose($fh);
 
 $fh = openCsv($unmatchedPath, $header);
 foreach ($unmatched as $row) {
-    fputcsv($fh, $row);
+    fputcsv($fh, $row, ",", "\"", "\\");
 }
 fclose($fh);
 
