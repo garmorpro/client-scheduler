@@ -22,9 +22,9 @@
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-calendar3"></i>Master<br>Schedule</div></th>
                   <th><div class="rp-col-head"><i class="bi bi-person-fill"></i>My<br>Schedule</div></th>
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-airplane-fill"></i>Time Off</div></th>
-                  <th><div class="rp-col-head"><i class="bi bi-gear-fill"></i>System<br>Settings</div></th>
                   <th colspan="2"><div class="rp-col-head"><i class="bi bi-diagram-3-fill"></i>DOL</div></th>
                   <th colspan="3"><div class="rp-col-head"><i class="bi bi-list-check"></i>Audit<br>Timeline</div></th>
+                  <th><div class="rp-col-head"><i class="bi bi-gear-fill"></i>System<br>Settings</div></th>
                 </tr>
                 <tr>
                   <th class="rp-col-role">Role</th>
@@ -37,12 +37,12 @@
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">Manage</th>
-                  <th></th>
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">Manage</th>
                   <th class="rp-sub-head">View</th>
                   <th class="rp-sub-head">Complete</th>
                   <th class="rp-sub-head">Manage</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="rpTableBody">
