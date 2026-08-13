@@ -2701,6 +2701,33 @@ body.dark-mode #independenceModal .eng-edit-btn-cancel:hover { background: #232a
 #independenceModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #independenceModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= VIEW ENGAGEMENT: PLANNING DOC PREVIEW MODAL ========= */
+#planningDocPreviewModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #planningDocPreviewModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#planningDocPreviewModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #planningDocPreviewModal .eng-edit-title { color: #edf1ee; }
+#planningDocPreviewModal .eng-edit-body { padding: 16px 20px; }
+#planningDocPreviewModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #planningDocPreviewModal .eng-edit-footer { border-color: #29302e; }
+#planningDocPreviewModal .eng-edit-btn-cancel {
+    display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#planningDocPreviewModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #planningDocPreviewModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #planningDocPreviewModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#planningDocPreviewModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+}
+#planningDocPreviewModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #planningDocPreviewModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
 /* Selectable option rows, replacing bare native radios - a custom dot
    (the real <input> stays in the DOM but visually hidden, so keyboard/
    screen-reader users still get a real radio group) plus a tinted

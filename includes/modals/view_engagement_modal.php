@@ -173,3 +173,31 @@
     </div>
   </div>
 </div>
+
+<!-- Planning Doc preview - "View current" opens this instead of triggering
+     a download. pdf/png/jpg/jpeg render inline (iframe/img against
+     download_planning_doc.php?mode=view); everything else shows a
+     "download instead" message, since browsers can't render Office formats
+     natively without external infrastructure this app doesn't have. -->
+<div class="modal fade" id="planningDocPreviewModal" tabindex="-1" aria-labelledby="planningDocPreviewModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 760px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="eng-edit-hero">
+          <div class="eng-edit-title" id="planningDocPreviewModalTitle">Planning Doc</div>
+        </div>
+
+        <div class="eng-edit-body" id="planningDocPreviewBody"></div>
+
+        <div class="eng-edit-footer">
+          <a href="#" id="planningDocDownloadLink" class="eng-edit-btn-cancel" target="_blank" rel="noopener">
+            <i class="bi bi-download"></i> Download
+          </a>
+          <button type="button" class="eng-edit-btn-save" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

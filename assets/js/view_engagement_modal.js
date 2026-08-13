@@ -143,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
                        <i class="bi bi-upload"></i> Upload Planning Doc
                        <input type="file" id="engVmPlanningDocInput" data-engagement-id="${engagementId}" hidden>
                    </label>
-                   ${details.planning_doc_url ? `<a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link">&middot; <i class="bi bi-download"></i> Download current</a>` : ''}
+                   ${details.planning_doc_url ? `<a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}">&middot; <i class="bi bi-eye"></i> View current</a>` : ''}
                </div>`
-            : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link"><i class="bi bi-download"></i> Planning Doc</a></div>` : '');
+            : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}"><i class="bi bi-eye"></i> Planning Doc</a></div>` : '');
 
         const titleAction = canManage
             ? `<div class="eng-vm-tl-title-actions">
@@ -966,6 +966,35 @@ document.addEventListener('DOMContentLoaded', () => {
         independenceModalInstance.show();
     }
 
+    let planningDocPreviewModalInstance = null;
+
+    // Only pdf/png/jpg/jpeg actually render in an iframe/img - everything
+    // else (doc/xlsx/pptx/etc.) has no in-browser renderer here, so those
+    // get a plain "download instead" message rather than a broken preview.
+    const PLANNING_DOC_PREVIEWABLE_EXTENSIONS = ['pdf', 'png', 'jpg', 'jpeg'];
+
+    function openPlanningDocPreview(engagementId, docUrl) {
+        const modalEl = document.getElementById('planningDocPreviewModal');
+        if (!modalEl) return;
+        if (!planningDocPreviewModalInstance) planningDocPreviewModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        const ext = (docUrl.split('.').pop() || '').toLowerCase();
+        const viewUrl = `download_planning_doc.php?engagement_id=${engagementId}&mode=view`;
+        const downloadUrl = `download_planning_doc.php?engagement_id=${engagementId}`;
+        const body = document.getElementById('planningDocPreviewBody');
+        document.getElementById('planningDocDownloadLink').href = downloadUrl;
+
+        if (ext === 'pdf') {
+            body.innerHTML = `<iframe src="${viewUrl}" title="Planning document preview" style="width:100%; height:70vh; border:none;"></iframe>`;
+        } else if (PLANNING_DOC_PREVIEWABLE_EXTENSIONS.includes(ext)) {
+            body.innerHTML = `<img src="${viewUrl}" alt="Planning document preview" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">`;
+        } else {
+            body.innerHTML = `<p class="text-muted" style="font-size:13px; text-align:center; padding:32px 16px; margin:0;">Preview isn't available for .${ext} files - use Download below to open it.</p>`;
+        }
+
+        planningDocPreviewModalInstance.show();
+    }
+
     // Parses/matches the file, then always routes into the modal above for
     // review before anything saves - matches ET's own "never a blind
     // import" behavior. Nothing is written to the database until Save
@@ -1049,6 +1078,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const indepTrigger = e.target.closest('.eng-vm-indep-icon.self');
         if (indepTrigger) {
             openIndependenceModal(indepTrigger.dataset.engagementId, indepTrigger.dataset.clientName, indepTrigger.dataset.value || null);
+        }
+
+        const viewDocTrigger = e.target.closest('.eng-vm-view-planning-doc');
+        if (viewDocTrigger) {
+            e.preventDefault();
+            openPlanningDocPreview(viewDocTrigger.dataset.engagementId, viewDocTrigger.dataset.docUrl);
         }
     });
     modalBody.addEventListener('keydown', (e) => {
