@@ -128,7 +128,7 @@ if ($stmt->execute()) {
     $timelineStmt->execute();
     $timelineStmt->close();
 
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'engagement_id' => $engagement_id]);
 } else {
     echo json_encode(['success' => false, 'message' => $stmt->error]);
     $stmt->close();

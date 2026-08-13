@@ -104,7 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (result.success) {
                 addModalInstance.hide();
-                location.reload();
+                // Land on the Engagements page with the new engagement's
+                // View panel already open, instead of just reloading this
+                // page - same sessionStorage-flag-then-click idiom
+                // engagement-management.php's own load handler already
+                // uses for the post-DOL-save reopen.
+                if (result.engagement_id) {
+                    sessionStorage.setItem('reopenEngagementId', result.engagement_id);
+                    window.location.href = 'engagement-management.php';
+                } else {
+                    location.reload();
+                }
             } else {
                 saveBtn.disabled = false;
                 saveBtn.textContent = originalLabel;
