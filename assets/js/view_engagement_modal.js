@@ -125,13 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
             weekly = `
                 <div class="eng-vm-tl-weekly-row">
                     <span class="eng-vm-tl-weekly-label"><i class="bi bi-arrow-repeat"></i> Weekly Status Call</span>
-                    <select class="eng-vm-tl-date-input" id="engVmWeeklyDayInput" data-engagement-id="${engagementId}">
-                        <option value="">No call set</option>
-                        ${dayOptions}
-                    </select>
+                    <div class="eng-vm-tl-weekly-inputs">
+                        <select class="eng-vm-tl-date-input" id="engVmWeeklyDayInput" data-engagement-id="${engagementId}" data-group-name="${wsc.group_name || ''}">
+                            <option value="">No call set</option>
+                            ${dayOptions}
+                        </select>
+                        <input type="time" class="eng-vm-tl-date-input" id="engVmWeeklyTimeInput" data-engagement-id="${engagementId}" value="${wsc.time_input || ''}">
+                    </div>
                 </div>`;
         } else if (wsc.day) {
-            weekly = `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${wsc.day}</strong>${wsc.group_name ? ` &middot; ${wsc.group_name}` : ''}</div>`;
+            weekly = `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${wsc.day}${wsc.time_label ? ` at ${wsc.time_label}` : ''}</strong>${wsc.group_name ? ` &middot; ${wsc.group_name}` : ''}</div>`;
         }
 
         const uploadRow = canManage
@@ -659,23 +662,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Day and time save together (not two independent partial updates) -
+        // the endpoint sets every column on each call, so saving one without
+        // the other would silently clear it.
         const weeklyDayInput = document.getElementById('engVmWeeklyDayInput');
-        if (weeklyDayInput) {
-            weeklyDayInput.addEventListener('change', async () => {
+        const weeklyTimeInput = document.getElementById('engVmWeeklyTimeInput');
+        if (weeklyDayInput || weeklyTimeInput) {
+            const saveWeeklyCall = async () => {
                 try {
                     const res = await fetch('update_audit_weekly_call.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ engagement_id: engagementId, day: weeklyDayInput.value === '' ? null : weeklyDayInput.value })
+                        body: JSON.stringify({
+                            engagement_id: engagementId,
+                            day: weeklyDayInput && weeklyDayInput.value !== '' ? weeklyDayInput.value : null,
+                            time: weeklyTimeInput && weeklyTimeInput.value !== '' ? weeklyTimeInput.value : null,
+                            group_name: (weeklyDayInput && weeklyDayInput.dataset.groupName) || ''
+                        })
                     });
                     const result = await res.json();
                     if (!result.success) notify(result.error || 'Could not save.', true);
                     refresh();
                 } catch (err) {
-                    console.error('Failed to save weekly call day', err);
+                    console.error('Failed to save weekly call', err);
                     notify('Network error. Please try again.', true);
                 }
-            });
+            };
+            if (weeklyDayInput) weeklyDayInput.addEventListener('change', saveWeeklyCall);
+            if (weeklyTimeInput) weeklyTimeInput.addEventListener('change', saveWeeklyCall);
         }
 
         const planningDocInput = document.getElementById('engVmPlanningDocInput');

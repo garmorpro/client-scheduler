@@ -141,10 +141,15 @@ if (isset($_GET['id'])) {
             // editable dropdown even before a day's been chosen.
             $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             $dayIndex = $tl['weekly_status_call_day'] !== null ? (int) $tl['weekly_status_call_day'] : null;
+            $timeRaw = $tl['weekly_status_call_time'] ?? null; // "HH:MM:SS" or null
             $auditData['weekly_status_call'] = [
                 'day_index' => $dayIndex,
                 'day' => $dayIndex !== null ? ($dayNames[$dayIndex] ?? null) : null,
                 'group_name' => $tl['weekly_status_call_group_name'],
+                // time_input feeds <input type="time">, time_label is the
+                // human "2:00 PM" shown in the read-only view.
+                'time_input' => $timeRaw ? substr($timeRaw, 0, 5) : null,
+                'time_label' => $timeRaw ? date('g:i A', strtotime($timeRaw)) : null,
             ];
         }
 

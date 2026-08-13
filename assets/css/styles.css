@@ -1932,6 +1932,7 @@ body.dark-mode .eng-vm-tl-row.overdue .eng-vm-tl-label { color: #e0685a; }
 body.dark-mode .eng-vm-tl-weekly-row { border-color: #29302e; }
 .eng-vm-tl-weekly-label { font-size: 11.5px; font-weight: 600; color: #6b7570; }
 body.dark-mode .eng-vm-tl-weekly-label { color: #9aa8a2; }
+.eng-vm-tl-weekly-inputs { display: flex; align-items: center; gap: 8px; }
 .eng-vm-tl-upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 11.5px; }
 .eng-vm-upload-link { display: inline-flex; align-items: center; gap: 5px; color: var(--primary-color); cursor: pointer; font-weight: 600; text-decoration: none; }
 .eng-vm-upload-link:hover { text-decoration: underline; }
