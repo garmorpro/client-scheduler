@@ -20,23 +20,59 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(d)) return null;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
+    // <input type="date"> needs a bare YYYY-MM-DD - strip any time portion.
+    function toInputDate(dateString) {
+        if (!dateString) return '';
+        return dateString.length >= 10 ? dateString.slice(0, 10) : '';
+    }
+    function notify(message, isError) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1100, showConfirmButton: !!isError });
+        } else if (isError) {
+            alert(message);
+        }
+    }
 
     // Audit tracking sections (timeline/milestones/DOL/independence), added
     // for the Engagement Tracker migration. Each is only present in `audit`
     // if the backend decided the current user has permission to see it -
     // a missing key means "don't render this section", not "empty".
-    function renderTimelineSection(audit) {
+    //
+    // can_manage_timeline / can_complete_timeline come pre-scoped from
+    // engagement-details.php (admin-or-staffed-on-this-engagement, not just
+    // "does this role have the permission at all") - the frontend doesn't
+    // re-derive that, it just renders inputs/checkable dots when they're true.
+    function renderTimelineSection(audit, engagementId) {
         if (!audit.timeline) return '';
+        const canManage = !!audit.can_manage_timeline;
+        const canComplete = !!audit.can_complete_timeline;
+
         const rows = audit.timeline.map(step => {
-            const range = step.start_date && step.date
-                ? `${fmtDate(step.start_date)} &ndash; ${fmtDate(step.date)}`
-                : fmtDate(step.date);
             const isDone = !!step.completed;
+
+            let dateHtml;
+            if (canManage) {
+                dateHtml = step.start_column
+                    ? `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.start_column}" value="${toInputDate(step.start_date)}">
+                       <span class="eng-vm-tl-date-sep">&ndash;</span>
+                       <input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`
+                    : `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`;
+            } else {
+                const range = step.start_date && step.date
+                    ? `${fmtDate(step.start_date)} &ndash; ${fmtDate(step.date)}`
+                    : fmtDate(step.date);
+                dateHtml = `<span class="eng-vm-tl-date">${range || '<span class="text-muted">Not set</span>'}</span>`;
+            }
+
+            const dotAttrs = canComplete
+                ? `role="button" tabindex="0" data-kind="timeline" data-engagement-id="${engagementId}" data-completed-column="${step.completed_column}" data-completed="${isDone ? '1' : '0'}"`
+                : '';
+
             return `
                 <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
-                    <span class="eng-vm-tl-dot"></span>
+                    <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
                     <span class="eng-vm-tl-label">${step.label}</span>
-                    <span class="eng-vm-tl-date">${range || '<span class="text-muted">Not set</span>'}</span>
+                    ${dateHtml}
                 </div>`;
         }).join('');
         const weekly = audit.weekly_status_call
@@ -50,13 +86,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMilestonesSection(audit) {
         if (!audit.milestones || audit.milestones.length === 0) return '';
+        const canManage = !!audit.can_manage_timeline;
+        const canComplete = !!audit.can_complete_timeline;
+
         const rows = audit.milestones.map(ms => {
             const isDone = ms.is_completed == 1;
+            const dateHtml = canManage
+                ? `<input type="date" class="eng-vm-tl-date-input" data-kind="milestone" data-milestone-id="${ms.milestone_id}" value="${toInputDate(ms.due_date)}">`
+                : `<span class="eng-vm-tl-date">${fmtDate(ms.due_date) || '<span class="text-muted">Not set</span>'}</span>`;
+            const dotAttrs = canComplete
+                ? `role="button" tabindex="0" data-kind="milestone" data-milestone-id="${ms.milestone_id}" data-completed="${isDone ? '1' : '0'}"`
+                : '';
             return `
                 <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
-                    <span class="eng-vm-tl-dot"></span>
+                    <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
                     <span class="eng-vm-tl-label">${ms.milestone_type}</span>
-                    <span class="eng-vm-tl-date">${fmtDate(ms.due_date) || '<span class="text-muted">Not set</span>'}</span>
+                    ${dateHtml}
                 </div>`;
         }).join('');
         return `
@@ -105,10 +150,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="eng-vm-indep-list">${rows}</div>`;
     }
 
+    let lastOpenArgs = null;
+
     async function open(engagementId, avatarColor, initials, restrictFinancials) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
         if (!engagementId) return;
+        lastOpenArgs = [engagementId, avatarColor, initials, restrictFinancials];
 
         modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
         modal.show();
@@ -185,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`}
                     <div class="eng-vm-section-title">Assigned Employees</div>
                     <div class="eng-vm-emp-list">${empRowsHtml}</div>
-                    ${renderTimelineSection(data.audit || {})}
+                    ${renderTimelineSection(data.audit || {}, engagementId)}
                     ${renderMilestonesSection(data.audit || {})}
                     ${renderDolSection(data.audit || {})}
                     ${renderIndependenceSection(data.audit || {})}
@@ -196,6 +244,73 @@ document.addEventListener('DOMContentLoaded', () => {
             modalBody.innerHTML = '<div class="text-center text-danger py-4">Could not load engagement details.</div>';
         }
     }
+
+    function refresh() {
+        if (lastOpenArgs) open(...lastOpenArgs);
+    }
+
+    async function saveTimelineField(column, engagementId, value) {
+        try {
+            const res = await fetch('update_audit_timeline_field.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId, column, value })
+            });
+            const result = await res.json();
+            if (!result.success) notify(result.error || 'Could not save.', true);
+            refresh();
+        } catch (err) {
+            console.error('Failed to save timeline field', err);
+            notify('Network error. Please try again.', true);
+        }
+    }
+
+    async function saveMilestone(milestoneId, action, value) {
+        try {
+            const res = await fetch('update_audit_milestone.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ milestone_id: milestoneId, action, value })
+            });
+            const result = await res.json();
+            if (!result.success) notify(result.error || 'Could not save.', true);
+            refresh();
+        } catch (err) {
+            console.error('Failed to save milestone', err);
+            notify('Network error. Please try again.', true);
+        }
+    }
+
+    // Event delegation - the timeline/milestone rows are re-rendered wholesale
+    // on every open()/refresh(), so listeners are bound once here rather than
+    // re-attached per row.
+    modalBody.addEventListener('change', (e) => {
+        const input = e.target.closest('.eng-vm-tl-date-input');
+        if (!input) return;
+        if (input.dataset.kind === 'timeline') {
+            saveTimelineField(input.dataset.column, input.dataset.engagementId, input.value || null);
+        } else if (input.dataset.kind === 'milestone') {
+            saveMilestone(input.dataset.milestoneId, 'set_due_date', input.value || null);
+        }
+    });
+
+    function toggleDot(dot) {
+        const nowCompleted = dot.dataset.completed !== '1';
+        if (dot.dataset.kind === 'timeline') {
+            saveTimelineField(dot.dataset.completedColumn, dot.dataset.engagementId, nowCompleted);
+        } else if (dot.dataset.kind === 'milestone') {
+            saveMilestone(dot.dataset.milestoneId, 'toggle_complete', nowCompleted);
+        }
+    }
+    modalBody.addEventListener('click', (e) => {
+        const dot = e.target.closest('.eng-vm-tl-dot.clickable');
+        if (dot) toggleDot(dot);
+    });
+    modalBody.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const dot = e.target.closest('.eng-vm-tl-dot.clickable');
+        if (dot) { e.preventDefault(); toggleDot(dot); }
+    });
 
     // Exposed so other modals (e.g. the View Client engagement history list)
     // can open this same detail view without needing a static
