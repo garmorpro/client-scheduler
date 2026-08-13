@@ -58,16 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${value || '<span class="text-muted">&mdash;</span>'}</span></div>`;
     }
 
-    // Two-up label-over-value fields (Overview/Details), matching the
-    // Engagement Tracker reference instead of the single-column
-    // label-left/value-right rows detailRow() above builds. gridRow() pairs
-    // up to two fields per line with a shared bottom border; pass one field
-    // for a line that spans the full width on its own.
-    function gridField(label, value) {
-        return `<div class="eng-vm-grid-field"><div class="eng-vm-grid-label">${label}</div><div class="eng-vm-grid-value">${value || '<span class="text-muted">&mdash;</span>'}</div></div>`;
-    }
-    function gridRow(...fields) {
-        return `<div class="eng-vm-grid-row">${fields.join('')}</div>`;
+    // Two-up label-over-value fields (Overview/Details) - a flat 2-column
+    // CSS grid that auto-flows items in DOM order, matching Engagement
+    // Tracker's own .drawer-info-grid exactly (pulled straight from its
+    // source, pages/dashboard.php's renderDrawer()) rather than wrapping
+    // pairs in row divs. `full` spans both columns (used for Scope).
+    function gridField(label, value, full) {
+        return `<div class="eng-vm-grid-field${full ? ' full' : ''}"><div class="eng-vm-grid-label">${label}</div><div class="eng-vm-grid-value">${value || '<span class="text-muted">&mdash;</span>'}</div></div>`;
     }
 
     // Audit tracking sections (timeline/milestones/DOL/independence), added
@@ -179,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rowListClass = editMode ? 'eng-vm-tl-list' : 'eng-vm-tl-list2';
 
         return card(
-            'Timeline & Key Dates', '#5aa8d6',
+            'Timeline & Key Dates', '#2f9e57',
             `${uploadRow}<div class="${rowListClass}">${rows}</div>${hint}${weekly}`,
             titleAction, 'engVmTimelineCard'
         );
@@ -235,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         if (employees.length === 0) {
-            return card('Team', '#4f8ef7', '<div class="text-muted" style="font-size:13px;">No employees assigned yet.</div>', titleAction);
+            return card('Team', '#003f47', '<div class="text-muted" style="font-size:13px;">No employees assigned yet.</div>', titleAction);
         }
 
         const dolByUser = new Map();
@@ -281,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
         }).join('');
 
-        return card('Team', '#4f8ef7', groups, titleAction);
+        return card('Team', '#003f47', groups, titleAction);
     }
 
     function renderIndependenceSection(audit) {
@@ -300,32 +297,53 @@ document.addEventListener('DOMContentLoaded', () => {
         return card('Independence', '#5fb85f', `<div class="eng-vm-indep-list">${rows}</div>`);
     }
 
+    // Field set/order/fallbacks copied exactly from Engagement Tracker's
+    // own renderDrawer() (pages/dashboard.php) - including its "As of X"
+    // fallback when there's no explicit review-period range, and the
+    // Type 1/Type 2 -> Type I/Type II relabeling. No TSC row - ET's
+    // reference doesn't have one (it's a Client Scheduler-only field not
+    // in ET's schema at all).
     function renderOverviewCard(data) {
         const d = data.details || {};
-        const reviewPeriod = d.review_period_start && d.review_period_end
-            ? `${fmtDate(d.review_period_start)} &ndash; ${fmtDate(d.review_period_end)}`
+        let reviewPeriod = 'N/A';
+        if (d.review_period_start && d.review_period_end) {
+            reviewPeriod = `${fmtDate(d.review_period_start) || 'N/A'} &ndash; ${fmtDate(d.review_period_end) || 'N/A'}`;
+        } else if (d.as_of_date) {
+            reviewPeriod = 'As of ' + (fmtDate(d.as_of_date) || 'N/A');
+        }
+        const auditTypeNames = (data.audit_types || []).map(t => t.name).join(', ') || 'N/A';
+        const reportType = d.soc_type
+            ? (d.soc_type === 'Type 1' ? 'Type I' : (d.soc_type === 'Type 2' ? 'Type II' : d.soc_type))
             : null;
-        const auditTypeNames = (data.audit_types || []).map(t => t.name).join(', ');
-        const rows = [
-            gridRow(gridField('Location', d.location), gridField('Review Period', reviewPeriod)),
-            gridRow(gridField('Audit Type', auditTypeNames), gridField('Report Type', d.soc_type)),
-            gridRow(gridField('Manager', data.manager), gridField('Point of Contact', d.poc)),
-            d.tsc ? gridRow(gridField('TSC', d.tsc)) : '',
+        const fields = [
+            gridField('Location', d.location || 'N/A'),
+            gridField('Review Period', reviewPeriod),
+            gridField('Audit Type', auditTypeNames),
+            reportType ? gridField('Report Type', reportType) : '',
+            gridField('Manager', data.manager || 'Unassigned'),
+            gridField('Point of Contact', d.poc || 'N/A'),
         ].join('');
-        return card('Overview', '#003f47', rows);
+        return card('Overview', '#003f47', `<div class="eng-vm-grid">${fields}</div>`);
     }
 
+    // Same field set as ET's reference Details card: Created/Last Updated,
+    // Archive Date, Scope (full width). No As-of Date (folded into
+    // Overview's Review Period above, matching ET) and no Planning Doc row
+    // (already shown under Timeline, matching ET's own layout - it puts
+    // the planning-doc row there too, not in Details). "Archive Date" is
+    // always "Not archived" here since this panel only ever opens for
+    // active engagements - once one's archived it shows the separate
+    // archived-summary view instead (see view_client_modal.js).
     function renderDetailsCard(data) {
         const d = data.details;
         if (!d) return '';
-        const rows = [
-            gridRow(gridField('As-of Date', fmtDate(d.as_of_date)), gridField('Scope', d.scope)),
-            gridRow(gridField('Created', fmtDate(d.created_at)), gridField('Last Updated', fmtDate(d.updated_at))),
-            d.planning_doc_url
-                ? gridRow(gridField('Planning Doc', `<a href="${d.planning_doc_url}" target="_blank" rel="noopener">Open link</a>`))
-                : '',
+        const fields = [
+            gridField('Created', fmtDate(d.created_at) || 'N/A'),
+            gridField('Last Updated', fmtDate(d.updated_at) || 'N/A'),
+            gridField('Archive Date', 'Not archived'),
+            gridField('Scope', d.scope || 'N/A', true),
         ].join('');
-        return card('Details', '#e0994c', rows);
+        return card('Details', '#e0994c', `<div class="eng-vm-grid">${fields}</div>`);
     }
 
     function renderNotesCard(data) {
