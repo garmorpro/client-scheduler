@@ -69,7 +69,7 @@ if (isset($_GET['id'])) {
     // collapsing those together would blend their hours into one misleading
     // total. Ordered by role seniority (manager > senior > staff > intern),
     // not hours.
-    $employeeQuery = "SELECT u.full_name, u.role, a.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color, SUM(a.assigned_hours) AS total_hours
+    $employeeQuery = "SELECT u.user_id, u.full_name, u.role, a.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color, SUM(a.assigned_hours) AS total_hours
                       FROM entries a
                       JOIN users u ON a.user_id = u.user_id
                       LEFT JOIN audit_types at ON a.audit_type_id = at.audit_type_id
@@ -89,6 +89,7 @@ if (isset($_GET['id'])) {
     $assignedEmployees = [];
     while ($employee = $employeeResult->fetch_assoc()) {
         $assignedEmployees[] = [
+            'user_id' => (int)$employee['user_id'],
             'name' => $employee['full_name'] ?? '',
             'role' => $employee['role'] ?? '',
             'hours' => (float)$employee['total_hours'],

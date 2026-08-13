@@ -1831,6 +1831,13 @@ body.dark-mode .eng-vm-emp-avatar { background: #232a2c; color: #9aa8a2; }
 .eng-vm-emp-role { font-size: 11px; color: #9aa39d; text-transform: capitalize; }
 body.dark-mode .eng-vm-emp-role { color: #6e7975; }
 .eng-vm-emp-hours { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* Merged Team section: a row carrying DOL chips grows taller than the
+   avatar/hours beside it, so top-align instead of the default vertical
+   centering (plain rows with no chips are unaffected). */
+.eng-vm-emp-row.has-chips { align-items: flex-start; }
+.eng-vm-emp-row.has-chips .eng-vm-emp-avatar { margin-top: 1px; }
+.eng-vm-emp-row.has-chips .eng-vm-emp-hours { margin-top: 1px; }
+.eng-vm-emp-info .eng-vm-dol-chips { margin-top: 6px; }
 
 /* Chips in the modal header: audit type(s) + a repeat badge. */
 .eng-vm-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }

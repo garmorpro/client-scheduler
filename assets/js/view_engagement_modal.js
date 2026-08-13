@@ -167,48 +167,72 @@ document.addEventListener('DOMContentLoaded', () => {
         return r.charAt(0).toUpperCase() + r.slice(1);
     }
 
-    function manageTeamLink(audit, engagementId) {
-        return audit.can_manage_dol
-            ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Manage Team</a>`
-            : '';
+    function initials(name) {
+        return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
     }
 
-    function renderDolSection(audit, engagementId) {
-        if (!audit.dol) return '';
-        if (audit.dol.length === 0) {
-            return card('Team (DOL)', '#7a8fd6', '<div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>', manageTeamLink(audit, engagementId));
+    // One merged "Team" section (Assigned Employees + DOL, previously two
+    // separate cards) - grouped by role (Manager > Senior > Staff > Intern),
+    // each person's row shows their hours/audit-type same as before, plus
+    // their DOL criteria chips underneath when DOL data is visible to this
+    // user. `audit.dol` is only present at all if the backend granted
+    // view_dol for this request - a missing key means "don't show chips",
+    // not "no DOL assigned".
+    function renderTeamSection(data, engagementId) {
+        const employees = data.assigned_employees || [];
+        const audit = data.audit || {};
+        const titleAction = audit.can_manage_dol
+            ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Edit DOL</a>`
+            : '';
+
+        if (employees.length === 0) {
+            return card('Team', '#4f8ef7', '<div class="text-muted" style="font-size:13px;">No employees assigned yet.</div>', titleAction);
         }
 
-        // Group by role first (Manager/Senior/Staff/Intern, matching the
-        // Engagement Tracker reference layout), then by person within it.
+        const dolByUser = new Map();
+        (audit.dol || []).forEach(row => {
+            if (!dolByUser.has(row.user_id)) dolByUser.set(row.user_id, []);
+            dolByUser.get(row.user_id).push({ criterion: row.criterion, color: row.audit_type_color, type: row.audit_type_name });
+        });
+
+        // Collapse the (user, audit_type) rows the backend sends into one
+        // row per person - hours summed across every audit type they're on,
+        // DOL chips attached from the map above.
         const roleOrder = ['manager', 'senior', 'staff', 'intern'];
         const byRole = new Map();
-        audit.dol.forEach(row => {
-            const role = (row.role || '').toLowerCase() || 'other';
+        employees.forEach(emp => {
+            const role = (emp.role || '').toLowerCase() || 'other';
             if (!byRole.has(role)) byRole.set(role, new Map());
             const byPerson = byRole.get(role);
-            if (!byPerson.has(row.user_id)) byPerson.set(row.user_id, { name: row.full_name, criteria: [] });
-            byPerson.get(row.user_id).criteria.push({ criterion: row.criterion, color: row.audit_type_color, type: row.audit_type_name });
+            if (!byPerson.has(emp.user_id)) {
+                byPerson.set(emp.user_id, { name: emp.name, hours: 0, auditTypes: [], criteria: dolByUser.get(emp.user_id) || [] });
+            }
+            const person = byPerson.get(emp.user_id);
+            person.hours += emp.hours;
+            if (emp.audit_type_name) person.auditTypes.push({ name: emp.audit_type_name, color: emp.audit_type_color });
         });
         const orderedRoles = [...roleOrder.filter(r => byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
 
         const groups = orderedRoles.map(role => {
             const people = Array.from(byRole.get(role).values());
             const rows = people.map(person => `
-                <div class="eng-vm-dol-row">
-                    <div class="eng-vm-dol-name">${person.name}</div>
-                    <div class="eng-vm-dol-chips">
-                        ${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}
+                <div class="eng-vm-emp-row ${person.criteria.length ? 'has-chips' : ''}">
+                    <div class="eng-vm-emp-avatar">${initials(person.name)}</div>
+                    <div class="eng-vm-emp-info">
+                        <div class="eng-vm-emp-name">${person.name}</div>
+                        ${person.auditTypes.length ? `<div class="eng-vm-emp-role">${person.auditTypes.map(t => `<span class="audit-type-dot" style="background:${t.color || '#9aa39d'}"></span>${t.name}`).join(' &middot; ')}</div>` : ''}
+                        ${person.criteria.length ? `<div class="eng-vm-dol-chips">${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}</div>` : ''}
                     </div>
+                    <div class="eng-vm-emp-hours">${person.hours}h</div>
                 </div>`).join('');
             return `
                 <div class="eng-vm-role-group">
                     <div class="eng-vm-role-group-title">${roleLabel(role)}${people.length > 1 ? ` (${people.length})` : ''}</div>
-                    <div class="eng-vm-dol-list">${rows}</div>
+                    <div class="eng-vm-emp-list">${rows}</div>
                 </div>`;
         }).join('');
 
-        return card('Team (DOL)', '#7a8fd6', groups, manageTeamLink(audit, engagementId));
+        return card('Team', '#4f8ef7', groups, titleAction);
     }
 
     function renderIndependenceSection(audit) {
@@ -290,19 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (pct >= 75) utilColor = 'green';
             else utilColor = 'yellow';
 
-            const empRowsHtml = employees.length > 0
-                ? employees.map(emp => `
-                    <div class="eng-vm-emp-row">
-                        <div class="eng-vm-emp-avatar">${(emp.name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('')}</div>
-                        <div class="eng-vm-emp-info">
-                            <div class="eng-vm-emp-name">${emp.name}</div>
-                            <div class="eng-vm-emp-role">${emp.role}${emp.audit_type_name ? ` &middot; <span class="audit-type-dot" style="background:${emp.audit_type_color || '#9aa39d'}"></span>${emp.audit_type_name}` : ''}</div>
-                        </div>
-                        <div class="eng-vm-emp-hours">${emp.hours}h</div>
-                    </div>
-                `).join('')
-                : '<div class="eng-vm-emp-row"><div class="eng-vm-emp-info"><div class="eng-vm-emp-name text-muted">No employees assigned yet</div></div></div>';
-
             const auditTypeChips = (data.audit_types || []).map(t =>
                 `<span class="eng-vm-audit-chip"><span class="eng-vm-audit-chip-dot" style="background:${t.color || '#9aa39d'}"></span>${t.name}</span>`
             ).join('');
@@ -375,10 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${card('Capacity', '#4fbf9f', capacityBody)}
                     ${renderDetailsCard(data)}
                     ${renderNotesCard(data)}
-                    ${card('Assigned Employees', '#4f8ef7', `<div class="eng-vm-emp-list">${empRowsHtml}</div>`)}
+                    ${renderTeamSection(data, engagementId)}
                     ${renderTimelineSection(data.audit || {}, engagementId, data.details)}
                     ${renderMilestonesSection(data.audit || {})}
-                    ${renderDolSection(data.audit || {}, engagementId)}
                     ${renderIndependenceSection(data.audit || {})}
                 </div>
             `;
