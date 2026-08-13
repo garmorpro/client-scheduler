@@ -171,7 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
             : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link"><i class="bi bi-download"></i> Planning Doc</a></div>` : '');
 
         const titleAction = canManage
-            ? `<a href="#" class="eng-vm-card-title-action" id="engVmTimelineEditToggle">${editMode ? 'Done' : 'Edit Timeline'}</a>`
+            ? `<div class="eng-vm-tl-title-actions">
+                   <a href="#" class="eng-vm-card-title-action" id="engVmTimelineImportBtn">Import Timeline</a>
+                   <a href="#" class="eng-vm-card-title-action" id="engVmTimelineEditToggle">${editMode ? 'Done' : 'Edit Timeline'}</a>
+                   <input type="file" id="engVmTimelineImportInput" accept=".xlsx,.xls,.csv" hidden>
+               </div>`
             : '';
         const rowListClass = editMode ? 'eng-vm-tl-list' : 'eng-vm-tl-list2';
 
@@ -657,6 +661,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        const importBtn = document.getElementById('engVmTimelineImportBtn');
+        const importInput = document.getElementById('engVmTimelineImportInput');
+        if (importBtn && importInput) {
+            importBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                importInput.click();
+            });
+            importInput.addEventListener('change', () => {
+                const file = importInput.files[0];
+                importInput.value = '';
+                if (file) importTimelineFromFile(file, engagementId);
+            });
+        }
+
         const weeklyDayInput = document.getElementById('engVmWeeklyDayInput');
         if (weeklyDayInput) {
             weeklyDayInput.addEventListener('change', async () => {
@@ -713,7 +731,10 @@ document.addEventListener('DOMContentLoaded', () => {
         wireTimelineCardActions(engagementId);
     }
 
-    async function saveTimelineField(column, engagementId, value) {
+    // `silent` skips the auto-refresh() - used by the Import Timeline flow
+    // below, which fires several of these at once and does one combined
+    // refresh() at the end instead of one full panel refetch per field.
+    async function saveTimelineField(column, engagementId, value, silent) {
         try {
             const res = await fetch('update_audit_timeline_field.php', {
                 method: 'POST',
@@ -722,10 +743,201 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const result = await res.json();
             if (!result.success) notify(result.error || 'Could not save.', true);
-            refresh();
+            if (!silent) refresh();
+            return !!result.success;
         } catch (err) {
             console.error('Failed to save timeline field', err);
             notify('Network error. Please try again.', true);
+            return false;
+        }
+    }
+
+    // ---------- Import Timeline (.xlsx/.xls/.csv) ----------
+    // Field-matching logic (exact task-name match first, falling back to
+    // looser keyword patterns) copied directly from Engagement Tracker's
+    // own matchTimelineFieldsFromRows()/TIMELINE_IMPORT_PATTERNS
+    // (pages/dashboard.php) - the column names are identical between the
+    // two apps (this schema was migrated from there), so no field mapping
+    // was needed, just the matching rules themselves. Unlike ET, which
+    // routes matched dates into a separate Edit Timeline modal for review,
+    // this saves straight into the same inline editable fields behind our
+    // own "Edit Timeline" toggle (switching into edit mode first if
+    // needed) - one less UI to build, same "always reviewable, never a
+    // silent blind save" outcome since the dates land in editable boxes,
+    // not committed instantly without a chance to look at them.
+    const TIMELINE_FIELD_LABELS = {
+        internal_planning_call_date: 'Internal Planning Call',
+        planning_memo_date: 'Planning Memo',
+        irl_due_date: 'IRL Due',
+        client_planning_call_date: 'Client Planning Call',
+        fieldwork_client_calls_end_date: 'Fieldwork - Client Calls',
+        fieldwork_documentation_end_date: 'Fieldwork - Documentation',
+        leadsheet_date: 'Leadsheet Due',
+        conclusion_memo_date: 'Conclusion Memo',
+        draft_report_due_date: 'Draft Report Due',
+        final_report_date: 'Final Report',
+        archive_date: 'Archive',
+    };
+    const TIMELINE_IMPORT_PATTERNS = {
+        internal_planning_call_date: { exact: 'Internal Team Planning Call', fallback: [/internal.*planning.*call/i] },
+        planning_memo_date: { exact: 'Compose Planning Memo', fallback: [/\bplanning memo\b/i] },
+        irl_due_date: { exact: 'Send Information Request List (IRL)', fallback: [/\birl\b/i, /information request list/i] },
+        client_planning_call_date: { exact: 'Client Planning Call', fallback: [/client.*planning.*call/i] },
+        fieldwork_client_calls_end_date: { exact: 'Client Calls', fallback: [/\bclient\s*calls?\b/i, /fieldwork.*client.*call/i] },
+        fieldwork_documentation_end_date: { exact: 'Documentation', fallback: [/\bdocumentation\b/i] },
+        leadsheet_date: { exact: 'Lead Sheets Due', fallback: [/lead\s*sheet/i] },
+        conclusion_memo_date: { exact: 'Compose Conclusion Memo', fallback: [/conclusion memo/i] },
+        draft_report_due_date: { exact: 'Draft Report Due', fallback: [/draft report.*due/i] },
+        final_report_date: { exact: 'Final Report Due', fallback: [/final report/i] },
+        archive_date: { exact: 'Alek Archive', fallback: [/\barchive\b/i] },
+    };
+    // End-date field -> paired start-date field, both filled from the same
+    // matched spreadsheet row when the sheet has a start-ish column.
+    const RANGE_FIELD_PAIRS = {
+        fieldwork_client_calls_end_date: 'fieldwork_client_calls_start_date',
+        fieldwork_documentation_end_date: 'fieldwork_documentation_start_date',
+    };
+
+    let xlsxLibPromise = null;
+    function loadXlsxLib() {
+        if (window.XLSX) return Promise.resolve();
+        if (!xlsxLibPromise) {
+            xlsxLibPromise = new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                s.onload = resolve;
+                s.onerror = () => reject(new Error('Could not load the spreadsheet library.'));
+                document.head.appendChild(s);
+            });
+        }
+        return xlsxLibPromise;
+    }
+
+    function parseSpreadsheetRows(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    // cellDates:false - read raw values (Excel serials / plain
+                    // text) so date conversion never passes through a JS
+                    // Date/timezone at all.
+                    const workbook = XLSX.read(data, { type: 'array', cellDates: false, raw: true });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    resolve(XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true }));
+                } catch (err) {
+                    reject(err);
+                }
+            };
+            reader.onerror = () => reject(new Error('Could not read the file'));
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    // No Date object anywhere in here on purpose - Date/.toISOString() shifts
+    // date-only values by a day depending on local timezone.
+    function parseDateCell(value) {
+        if (value === '' || value === null || value === undefined) return null;
+        if (typeof value === 'number') {
+            const d = XLSX.SSF.parse_date_code(value);
+            if (!d) return null;
+            return `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
+        }
+        const str = String(value).trim();
+        const slash = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        if (slash) {
+            let [, mo, da, yr] = slash;
+            if (yr.length === 2) yr = (Number(yr) < 70 ? '20' : '19') + yr;
+            return `${yr}-${mo.padStart(2, '0')}-${da.padStart(2, '0')}`;
+        }
+        const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
+        return null;
+    }
+
+    function matchTimelineFieldsFromRows(rows) {
+        if (!rows.length) return { matched: {}, unmatched: Object.keys(TIMELINE_IMPORT_PATTERNS) };
+        const keys = Object.keys(rows[0]);
+        const taskKey = keys.find(k => /task/i.test(k) && /name/i.test(k)) || keys.find(k => /task/i.test(k)) || keys[0];
+        const dateKey = keys.find(k => /planned/i.test(k) && /finish/i.test(k))
+            || keys.find(k => /finish/i.test(k))
+            || keys.find(k => /due/i.test(k));
+        const startDateKey = keys.find(k => /planned/i.test(k) && /start/i.test(k))
+            || keys.find(k => /^start/i.test(k.trim()))
+            || keys.find(k => /start/i.test(k));
+
+        const matched = {};
+        const unmatched = [];
+        Object.entries(TIMELINE_IMPORT_PATTERNS).forEach(([field, { exact, fallback }]) => {
+            if (!dateKey) { unmatched.push(field); return; }
+
+            const startField = RANGE_FIELD_PAIRS[field];
+            if (startField) {
+                let matchedRows = rows.filter(r => String(r[taskKey] || '').trim().toLowerCase() === exact.toLowerCase());
+                if (!matchedRows.length) {
+                    for (const pattern of fallback) {
+                        matchedRows = rows.filter(r => pattern.test(String(r[taskKey] || '').trim()));
+                        if (matchedRows.length) break;
+                    }
+                }
+                const endDates = matchedRows.map(r => parseDateCell(r[dateKey])).filter(Boolean).sort();
+                if (!endDates.length) { unmatched.push(field); return; }
+                matched[field] = endDates[endDates.length - 1];
+
+                if (startDateKey) {
+                    const startDates = matchedRows.map(r => parseDateCell(r[startDateKey])).filter(Boolean).sort();
+                    if (startDates.length) matched[startField] = startDates[0];
+                }
+                return;
+            }
+
+            let row = rows.find(r => String(r[taskKey] || '').trim().toLowerCase() === exact.toLowerCase());
+            if (!row) {
+                for (const pattern of fallback) {
+                    row = rows.find(r => pattern.test(String(r[taskKey] || '').trim()));
+                    if (row) break;
+                }
+            }
+            const parsedDate = row ? parseDateCell(row[dateKey]) : null;
+            if (parsedDate) {
+                matched[field] = parsedDate;
+            } else {
+                unmatched.push(field);
+            }
+        });
+        return { matched, unmatched };
+    }
+
+    async function importTimelineFromFile(file, engagementId) {
+        try {
+            await loadXlsxLib();
+            const rows = await parseSpreadsheetRows(file);
+            const { matched, unmatched } = matchTimelineFieldsFromRows(rows);
+            const matchedFields = Object.keys(matched);
+
+            if (!matchedFields.length) {
+                notify('Could not find any matching timeline dates in that file.', true);
+                return;
+            }
+
+            // Land in edit mode so the imported dates are sitting in the
+            // same reviewable boxes as a manual edit, not silently applied.
+            timelineEditMode = true;
+            reRenderTimeline();
+
+            await Promise.all(matchedFields.map(column => saveTimelineField(column, engagementId, matched[column], true)));
+            refresh();
+
+            const unmatchedLabels = unmatched.map(f => TIMELINE_FIELD_LABELS[f] || f);
+            const summary = `Imported ${matchedFields.length} date${matchedFields.length === 1 ? '' : 's'}.`;
+            if (unmatchedLabels.length) {
+                notify(`${summary} Couldn't match: ${unmatchedLabels.join(', ')}.`, true);
+            } else {
+                notify(summary, false);
+            }
+        } catch (err) {
+            console.error('Failed to import timeline', err);
+            notify(err.message || 'Could not read that file.', true);
         }
     }
 

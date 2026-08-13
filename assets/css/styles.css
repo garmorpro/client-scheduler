@@ -1806,6 +1806,7 @@ body.dark-mode .eng-vm-action-btn.danger { color: #e0685a; border-color: #3a2320
 .eng-vm-card-title-action { font-size: 10.5px; font-weight: 700; color: var(--primary-color); text-decoration: none; text-transform: none; letter-spacing: normal; }
 .eng-vm-card-title-action:hover { text-decoration: underline; }
 body.dark-mode .eng-vm-card-title-action { color: var(--secondary-color); }
+.eng-vm-tl-title-actions { display: flex; align-items: center; gap: 14px; }
 
 .eng-vm-tl-row.overdue .eng-vm-tl-dot { background: #c0392b; }
 body.dark-mode .eng-vm-tl-row.overdue .eng-vm-tl-dot { background: #e0685a; }
