@@ -24,6 +24,8 @@ $budgeted_hours = $_POST['budgeted_hours'] ?? null;
 $status = $_POST['status'] ?? null;
 $manager = $_POST['manager'] ?? null;
 $notes = $_POST['notes'] ?? '';
+$location = trim($_POST['location'] ?? '');
+$poc = trim($_POST['poc'] ?? '');
 
 if (!$engagement_id || $budgeted_hours === null || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -57,13 +59,16 @@ if ($stmt->execute()) {
 
     // TSC (SOC 2 Trust Services Criteria) - always overwrite with whatever
     // was submitted (including clearing it to '' if SOC 2 got unchecked),
-    // same "replace wholesale" approach as audit types above.
+    // same "replace wholesale" approach as audit types above. Location/POC
+    // (ported over from the Engagement Tracker reference's Create New
+    // Engagement modal - add_engagement.php gained these first) ride along
+    // in the same upsert.
     $tsc = implode(', ', array_filter(array_map('trim', $_POST['tsc'] ?? [])));
     $tscStmt = $conn->prepare("
-        INSERT INTO audit_engagement_details (engagement_id, tsc) VALUES (?, ?)
-        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc)
+        INSERT INTO audit_engagement_details (engagement_id, tsc, location, poc) VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc), location = VALUES(location), poc = VALUES(poc)
     ");
-    $tscStmt->bind_param('is', $engagement_id, $tsc);
+    $tscStmt->bind_param('isss', $engagement_id, $tsc, $location, $poc);
     $tscStmt->execute();
     $tscStmt->close();
 

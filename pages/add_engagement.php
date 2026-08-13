@@ -31,6 +31,8 @@ $budget_hours  = $_POST['budget_hours'] ?? null;
 $status        = $_POST['status'] ?? null;
 $year          = $_POST['year'] ?? date('Y');
 $manager       = $_POST['manager'] ?? null;
+$location      = trim($_POST['location'] ?? '');
+$poc           = trim($_POST['poc'] ?? '');
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -82,11 +84,18 @@ if ($stmt->execute()) {
     // NULL) still shows the card with "Not set" placeholders, ready for
     // Edit Timeline to fill in - same as every migrated engagement already
     // has from the one-time backfill.
+    // Location/POC ported over from the Engagement Tracker reference's own
+    // Create New Engagement modal - Client Scheduler's schema already had
+    // columns for both (audit_engagement_details.location/poc), just
+    // nothing on this form ever wrote to them until now.
+    $locationValue = $location !== '' ? $location : null;
+    $pocValue = $poc !== '' ? $poc : null;
+
     $detailsStmt = $conn->prepare("
-        INSERT INTO audit_engagement_details (engagement_id, tsc) VALUES (?, ?)
-        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc)
+        INSERT INTO audit_engagement_details (engagement_id, location, poc, tsc) VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc)
     ");
-    $detailsStmt->bind_param('is', $engagement_id, $tscValue);
+    $detailsStmt->bind_param('isss', $engagement_id, $locationValue, $pocValue, $tscValue);
     $detailsStmt->execute();
     $detailsStmt->close();
 

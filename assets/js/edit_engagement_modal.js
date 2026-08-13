@@ -13,10 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('edit_eng_audit_types')?.addEventListener('change', syncTscVisibility);
 
-    // data: { engagementId, clientName, budgetedHours, status, manager, notes, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
+        document.getElementById('edit_eng_location').value = data.location || '';
+        document.getElementById('edit_eng_poc').value = data.poc || '';
         document.getElementById('edit_eng_budgeted_hours').value = data.budgetedHours;
         document.getElementById('edit_eng_status').value = data.status;
         document.getElementById('edit_eng_manager').value = data.manager || '';
@@ -53,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 status: btn.getAttribute('data-status'),
                 manager: btn.getAttribute('data-manager') || '',
                 notes: btn.getAttribute('data-notes') || '',
+                location: btn.getAttribute('data-location') || '',
+                poc: btn.getAttribute('data-poc') || '',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),
             });

@@ -19,6 +19,18 @@
 
             <div class="eng-edit-row">
               <div class="eng-edit-field">
+                <label for="edit_eng_location">Location</label>
+                <input type="text" class="eng-edit-input" id="edit_eng_location" name="location" placeholder="e.g. Charlottesville, VA">
+              </div>
+
+              <div class="eng-edit-field">
+                <label for="edit_eng_poc">Point of Contact</label>
+                <input type="text" class="eng-edit-input" id="edit_eng_poc" name="poc" placeholder="Client-side contact name">
+              </div>
+            </div>
+
+            <div class="eng-edit-row">
+              <div class="eng-edit-field">
                 <label for="edit_eng_budgeted_hours">Budgeted Hours</label>
                 <input type="number" min="0" class="eng-edit-input" id="edit_eng_budgeted_hours" name="budgeted_hours" required>
               </div>

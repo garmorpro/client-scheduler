@@ -35,6 +35,14 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                     <input type="text" class="form-control" value="${clientName}" disabled>
                 </div>
                 <div class="mb-3 text-start">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="swal-location" placeholder="e.g. Charlottesville, VA">
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">Point of Contact</label>
+                    <input type="text" class="form-control" id="swal-poc" placeholder="Client-side contact name">
+                </div>
+                <div class="mb-3 text-start">
                     <label class="form-label">Budget Hours</label>
                     <input type="number" min="0" class="form-control" id="swal-budget-hours" required>
                 </div>
@@ -82,6 +90,8 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                 auditTypesEl.addEventListener('change', syncTscVisibility);
             },
             preConfirm: () => {
+                const location = document.getElementById('swal-location').value.trim();
+                const poc = document.getElementById('swal-poc').value.trim();
                 const budgetHours = document.getElementById('swal-budget-hours').value;
                 const status = document.getElementById('swal-status').value;
                 const manager = document.getElementById('swal-manager').value;
@@ -103,6 +113,8 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                         const formData = new FormData();
                         formData.append('client_id', clientId);
                         formData.append('client_name', clientName);
+                        formData.append('location', location);
+                        formData.append('poc', poc);
                         formData.append('budget_hours', budgetHours);
                         formData.append('status', status);
                         formData.append('manager', manager);

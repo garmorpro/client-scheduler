@@ -527,6 +527,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     status: data.status,
                     manager: data.manager,
                     notes: data.notes,
+                    location: data.details && data.details.location,
+                    poc: data.details && data.details.poc,
                     auditTypeIds,
                     tsc,
                 });
