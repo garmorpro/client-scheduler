@@ -573,9 +573,13 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
             return;
         }
 
-        Swal.fire({ icon: 'success', title: 'DOL saved', timer: 1400, showConfirmButton: false });
-        resetResult();
-        document.getElementById('setupSections').classList.remove('d-none');
+        // Same idiom as everywhere else in the app that navigates away and
+        // needs to land back on a specific detail view - flag it in
+        // sessionStorage, then engagement-management.php's own load
+        // handler clicks that engagement's View button for us.
+        sessionStorage.setItem('reopenEngagementId', engagementData.engagement.engagement_id);
+        window.location.href = 'engagement-management.php';
+        return;
     } catch (err) {
         console.error('Error:', err);
         saveBtn.disabled = false;

@@ -625,6 +625,23 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                 new bootstrap.Modal(document.getElementById('overBudgetModal')).show();
             });
         }
+
+        // Reopens the View Engagement panel after DOL Generator (or any
+        // other page) sends someone back here post-save - set via
+        // sessionStorage.setItem('reopenEngagementId', ...) before the
+        // redirect. Runs after view_engagement_modal.js's own
+        // DOMContentLoaded listener (its <script> tag is earlier in the
+        // page, and listeners fire in registration order), so its
+        // .view-engagement-btn click wiring is already attached - reusing
+        // an actual click keeps the avatar color/initials/restrict-
+        // financials logic in exactly one place instead of duplicating it
+        // here.
+        const reopenId = sessionStorage.getItem('reopenEngagementId');
+        if (reopenId) {
+            sessionStorage.removeItem('reopenEngagementId');
+            const btn = document.querySelector(`.view-engagement-btn[data-engagement-id="${reopenId}"]`);
+            if (btn) btn.click();
+        }
     });
 </script>
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
