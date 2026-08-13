@@ -104,45 +104,102 @@
     // Builds (or clears) the audit-type picker for a resolved engagement,
     // wrapped as a labeled field. One-click pills instead of a <select> -
     // this card gets used every time someone's staffed on a multi-audit-type
-    // engagement, so a single click beats open-dropdown-then-click. The
-    // chosen id is tracked on the container itself (`dataset.selectedAuditTypeId`)
-    // since there's no underlying <select> element to read a .value from.
-    function renderAuditTypeField(container, engagement, currentAuditTypeId) {
+    // engagement, so a single click beats open-dropdown-then-click.
+    //
+    // `allowMultiple` is only true when adding a fresh entry: someone's
+    // often staffed across more than one audit type on the same engagement
+    // in the same week, and each entries row can only hold one
+    // audit_type_id, so picking several here means several entries get
+    // created (with their own hours each - see renderHoursFields).
+    // Editing an existing badge is always single-select, since that one
+    // entry already has exactly one audit_type_id.
+    //
+    // `selectedIds` is a Set the caller owns (mutated in place) and
+    // `onChange` is called after every pick/unpick so the caller can
+    // re-sync whatever depends on the selection (the hours fields).
+    function renderAuditTypeField(container, engagement, selectedIds, allowMultiple, onChange) {
         container.innerHTML = '';
-        delete container.dataset.selectedAuditTypeId;
         if (!engagement || !engagement.audit_types || engagement.audit_types.length === 0) return;
 
         // Only one choice - nothing to pick, just show it as a fixed pill.
         if (engagement.audit_types.length === 1) {
-            container.dataset.selectedAuditTypeId = String(engagement.audit_types[0].id);
+            selectedIds.clear();
+            selectedIds.add(String(engagement.audit_types[0].id));
             const single = document.createElement('span');
             single.className = 'cell-edit-audit-pill active single';
             single.textContent = engagement.audit_types[0].name;
             container.appendChild(buildField('Audit Type', single));
+            onChange();
             return;
         }
 
         const pillRow = document.createElement('div');
         pillRow.className = 'cell-edit-audit-pills';
         engagement.audit_types.forEach(at => {
+            const id = String(at.id);
             const pill = document.createElement('button');
             pill.type = 'button';
             pill.className = 'cell-edit-audit-pill';
             pill.textContent = at.name;
-            pill.dataset.id = at.id;
-            if (currentAuditTypeId && String(currentAuditTypeId) === String(at.id)) {
-                pill.classList.add('active');
-                container.dataset.selectedAuditTypeId = String(at.id);
-            }
+            pill.dataset.id = id;
+            if (selectedIds.has(id)) pill.classList.add('active');
             pill.addEventListener('click', e => {
                 e.stopPropagation();
-                pillRow.querySelectorAll('.cell-edit-audit-pill').forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-                container.dataset.selectedAuditTypeId = String(at.id);
+                if (selectedIds.has(id)) {
+                    selectedIds.delete(id);
+                    pill.classList.remove('active');
+                } else {
+                    if (!allowMultiple) {
+                        selectedIds.clear();
+                        pillRow.querySelectorAll('.cell-edit-audit-pill').forEach(p => p.classList.remove('active'));
+                    }
+                    selectedIds.add(id);
+                    pill.classList.add('active');
+                }
+                onChange();
             });
             pillRow.appendChild(pill);
         });
-        container.appendChild(buildField('Audit Type', pillRow));
+        container.appendChild(buildField(allowMultiple ? 'Audit Type(s)' : 'Audit Type', pillRow));
+    }
+
+    // One hours input per selected audit type (labeled with the type name
+    // once there's more than one, so it's clear which box is which). Falls
+    // back to a single plain hours field when the engagement has no audit
+    // types at all - same as before this existed. `hoursByType` persists
+    // values across re-renders (toggling a pill off and back on keeps
+    // whatever was typed).
+    function renderHoursFields(container, engagement, selectedIds, hoursByType, fallbackInput) {
+        container.innerHTML = '';
+        const hasTypes = engagement && engagement.audit_types && engagement.audit_types.length > 0;
+        if (!hasTypes) {
+            container.appendChild(buildField('Hours', fallbackInput));
+            return;
+        }
+        if (selectedIds.size === 0) {
+            const hint = document.createElement('div');
+            hint.className = 'cell-edit-hint';
+            hint.textContent = 'Choose an audit type above.';
+            container.appendChild(hint);
+            return;
+        }
+        // Keep the engagement's own ordering, not selection order.
+        engagement.audit_types
+            .filter(at => selectedIds.has(String(at.id)))
+            .forEach(at => {
+                const id = String(at.id);
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = '0';
+                input.step = '0.25';
+                input.placeholder = 'Hours';
+                input.className = 'cell-edit-input';
+                input.value = hoursByType.get(id) || '';
+                input.addEventListener('click', e => e.stopPropagation());
+                input.addEventListener('input', () => hoursByType.set(id, input.value));
+                const label = selectedIds.size > 1 ? `Hours — ${at.name}` : 'Hours';
+                container.appendChild(buildField(label, input));
+            });
     }
 
     // Single floating card used for both adding a new entry to a cell and
@@ -199,20 +256,36 @@
         actions.appendChild(cancelBtn);
         actions.appendChild(saveBtn);
 
+        const hoursContainer = document.createElement('div');
+        hoursContainer.className = 'cell-edit-hours-fields';
+
         overlay.appendChild(buildField('Client', clientInput));
         overlay.appendChild(auditTypeContainer);
-        overlay.appendChild(buildField('Hours', hoursInput));
+        overlay.appendChild(hoursContainer);
         overlay.appendChild(actions);
 
         // Editing an existing badge already has an unambiguous engagement_id
         // (unlike typing a fresh client name), so pre-populate its audit
-        // types immediately instead of waiting for a new autocomplete pick.
+        // type immediately instead of waiting for a new autocomplete pick.
         let selectedEngagement = isEdit ? findEngagementById(initialEngagementId) : null;
-        if (selectedEngagement) renderAuditTypeField(auditTypeContainer, selectedEngagement, initialAuditTypeId);
+        const selectedAuditTypeIds = new Set(isEdit && initialAuditTypeId ? [String(initialAuditTypeId)] : []);
+        const hoursByType = new Map(isEdit && initialAuditTypeId ? [[String(initialAuditTypeId), initialHours]] : []);
+
+        function syncHoursFields() {
+            renderHoursFields(hoursContainer, selectedEngagement, selectedAuditTypeIds, hoursByType, hoursInput);
+        }
+
+        if (selectedEngagement) {
+            renderAuditTypeField(auditTypeContainer, selectedEngagement, selectedAuditTypeIds, !isEdit, syncHoursFields);
+        }
+        syncHoursFields();
 
         clientInput.addEventListener('input', () => {
             selectedEngagement = null;
+            selectedAuditTypeIds.clear();
+            hoursByType.clear();
             auditTypeContainer.innerHTML = '';
+            syncHoursFields();
 
             const val = clientInput.value.trim();
             if (val.length < 3) {
@@ -230,7 +303,10 @@
                     clientInput.value = client.client_name;
                     suggestionsList.style.display = 'none';
                     selectedEngagement = client;
-                    renderAuditTypeField(auditTypeContainer, client, null);
+                    selectedAuditTypeIds.clear();
+                    hoursByType.clear();
+                    renderAuditTypeField(auditTypeContainer, client, selectedAuditTypeIds, !isEdit, syncHoursFields);
+                    syncHoursFields();
                 });
                 suggestionsList.appendChild(item);
             });
@@ -245,52 +321,42 @@
             }
         });
 
-        function trySubmit() {
-            const clientName = clientInput.value.trim();
-            const hours = parseFloat(hoursInput.value);
-
-            if (!clientName || !hours || hours <= 0) {
-                notify('warning', 'Missing information', 'Please enter a valid client and hours.');
-                return;
-            }
-            const needsAuditType = auditTypeContainer.children.length > 0;
-            const auditTypeId = auditTypeContainer.dataset.selectedAuditTypeId || null;
-            if (needsAuditType && !auditTypeId) {
-                notify('warning', 'Missing information', 'Please choose an audit type.');
-                return;
-            }
-
-            const engagementId = selectedEngagement ? selectedEngagement.engagement_id : initialEngagementId;
+        // Fires one request per selected audit type (each entries row can
+        // only carry one audit_type_id) and reloads once they've all
+        // settled. If one fails after others already saved, there's no
+        // rollback across separate inserts - the error names which type
+        // failed and the grid still reloads to show whatever did save.
+        function submitEntries(clientName, engagementId, items) {
             closeActiveInputs();
+            const requests = items.map(item => {
+                const payload = {
+                    client_name: clientName,
+                    engagement_id: engagementId,
+                    audit_type_id: item.auditTypeId,
+                    assigned_hours: item.hours
+                };
+                return isEdit
+                    ? fetch('update_entry_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({ ...payload, entry_id: existingBadge.dataset.entryId })
+                    })
+                    : fetch('add_entry_new.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({ ...payload, user_id: td.dataset.userId, week_start: td.dataset.weekStart })
+                    });
+            });
 
-            const payload = {
-                client_name: clientName,
-                engagement_id: engagementId,
-                audit_type_id: auditTypeId,
-                assigned_hours: hours
-            };
-            const request = isEdit
-                ? fetch('update_entry_new.php', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ ...payload, entry_id: existingBadge.dataset.entryId })
-                })
-                : fetch('add_entry_new.php', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ ...payload, user_id: td.dataset.userId, week_start: td.dataset.weekStart })
-                });
-
-            request
-                .then(resp => resp.json().then(data => ({ ok: resp.ok, data })))
-                .then(({ ok, data }) => {
-                    if (ok && data.success) {
-                        saveScrollAndReload();
-                    } else {
-                        notify('error', isEdit ? 'Failed to update entry' : 'Failed to add entry', data.error || 'Server error');
+            Promise.all(requests.map(r => r.then(resp => resp.json().then(data => ({ ok: resp.ok, data })))))
+                .then(results => {
+                    const failed = results.find(r => !(r.ok && r.data.success));
+                    if (failed) {
+                        notify('error', isEdit ? 'Failed to update entry' : 'Failed to add entry', failed.data.error || 'Server error');
                     }
+                    saveScrollAndReload();
                 })
                 .catch(err => {
                     console.error(err);
@@ -298,18 +364,65 @@
                 });
         }
 
+        function trySubmit() {
+            const clientName = clientInput.value.trim();
+            if (!clientName) {
+                notify('warning', 'Missing information', 'Please enter a client.');
+                return;
+            }
+
+            const engagementId = selectedEngagement ? selectedEngagement.engagement_id : initialEngagementId;
+            const hasAuditTypes = selectedEngagement && selectedEngagement.audit_types && selectedEngagement.audit_types.length > 0;
+
+            if (!hasAuditTypes) {
+                const hours = parseFloat(hoursInput.value);
+                if (!hours || hours <= 0) {
+                    notify('warning', 'Missing information', 'Please enter valid hours.');
+                    return;
+                }
+                submitEntries(clientName, engagementId, [{ auditTypeId: null, hours }]);
+                return;
+            }
+
+            if (selectedAuditTypeIds.size === 0) {
+                notify('warning', 'Missing information', 'Please choose an audit type.');
+                return;
+            }
+
+            const items = [];
+            for (const id of selectedAuditTypeIds) {
+                const hours = parseFloat(hoursByType.get(id));
+                if (!hours || hours <= 0) {
+                    const name = (selectedEngagement.audit_types.find(a => String(a.id) === id) || {}).name || id;
+                    notify('warning', 'Missing information', `Please enter valid hours for ${name}.`);
+                    return;
+                }
+                items.push({ auditTypeId: id, hours });
+            }
+            submitEntries(clientName, engagementId, items);
+        }
+
         saveBtn.addEventListener('click', trySubmit);
         cancelBtn.addEventListener('click', () => closeActiveInputs());
 
-        [clientInput, hoursInput].forEach(input => {
-            input.addEventListener('keydown', e => {
-                if (e.key === 'Enter') { e.preventDefault(); trySubmit(); }
-                else if (e.key === 'Escape') closeActiveInputs();
-            });
+        clientInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); trySubmit(); }
+            else if (e.key === 'Escape') closeActiveInputs();
+        });
+        // Delegated so it keeps working as hoursContainer's children get
+        // swapped out every time the audit-type selection changes.
+        hoursContainer.addEventListener('keydown', e => {
+            if (e.target.tagName !== 'INPUT') return;
+            if (e.key === 'Enter') { e.preventDefault(); trySubmit(); }
+            else if (e.key === 'Escape') closeActiveInputs();
         });
 
-        (isEdit ? hoursInput : clientInput).focus();
-        if (isEdit) hoursInput.select();
+        if (isEdit) {
+            const firstHoursInput = hoursContainer.querySelector('input');
+            if (firstHoursInput) { firstHoursInput.focus(); firstHoursInput.select(); }
+        } else {
+            clientInput.focus();
+        }
     }
 
     document.addEventListener('keydown', e => {
