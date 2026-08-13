@@ -230,7 +230,10 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                 $rowUtilColor = 'yellow';
                             }
                         ?>
-                        <tr data-status="<?php echo $status; ?>" class="client-row">
+                        <tr data-status="<?php echo $status; ?>" class="client-row"
+                            data-engagement-id="<?php echo $row['engagement_id']; ?>"
+                            data-avatar-color="<?php echo $avatarColor; ?>"
+                            data-initials="<?php echo htmlspecialchars($initials); ?>">
                             <td><input type="checkbox" class="selectEngagement" data-engagement-id="<?php echo $row['engagement_id']; ?>"></td>
                             <td>
                                 <div class="client-cell">
@@ -258,13 +261,6 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             </td>
                             <td class="num">
                                 <div class="client-row-actions">
-                                    <button class="client-icon-btn view-engagement-btn"
-                                        data-engagement-id="<?php echo $row['engagement_id']; ?>"
-                                        data-avatar-color="<?php echo $avatarColor; ?>"
-                                        data-initials="<?php echo htmlspecialchars($initials); ?>"
-                                        title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
                                     <?php if ($canManageClientsEngagements): ?>
                                     <button class="client-icon-btn edit edit-engagement-btn"
                                         data-bs-toggle="modal" data-bs-target="#editEngagementModal"
@@ -626,21 +622,29 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
             });
         }
 
+        // Whole row opens the View Engagement panel now (the old eye-icon
+        // button is gone) - excludes clicks on the row's own action
+        // buttons/checkbox so Edit/Archive/Delete/select still work
+        // without also popping the panel open underneath them.
+        document.querySelectorAll('tr.client-row').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('.client-row-actions') || e.target.closest('input[type="checkbox"]')) return;
+                if (!window.ViewEngagementModal) return;
+                window.ViewEngagementModal.open(row.dataset.engagementId, row.dataset.avatarColor, row.dataset.initials, false);
+            });
+        });
+
         // Reopens the View Engagement panel after DOL Generator (or any
         // other page) sends someone back here post-save - set via
         // sessionStorage.setItem('reopenEngagementId', ...) before the
-        // redirect. Runs after view_engagement_modal.js's own
-        // DOMContentLoaded listener (its <script> tag is earlier in the
-        // page, and listeners fire in registration order), so its
-        // .view-engagement-btn click wiring is already attached - reusing
-        // an actual click keeps the avatar color/initials/restrict-
-        // financials logic in exactly one place instead of duplicating it
-        // here.
+        // redirect. Simulating a click on the row (rather than calling
+        // ViewEngagementModal.open() directly) keeps this consistent with
+        // a normal row click, including the exclusion checks above.
         const reopenId = sessionStorage.getItem('reopenEngagementId');
         if (reopenId) {
             sessionStorage.removeItem('reopenEngagementId');
-            const btn = document.querySelector(`.view-engagement-btn[data-engagement-id="${reopenId}"]`);
-            if (btn) btn.click();
+            const row = document.querySelector(`tr.client-row[data-engagement-id="${reopenId}"]`);
+            if (row) row.click();
         }
     });
 </script>

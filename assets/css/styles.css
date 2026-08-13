@@ -1606,6 +1606,8 @@ body.dark-mode .client-toolbar-hint { color: #6e7975; }
 .client-table tbody td { padding: 10px 14px; border-bottom: 1px solid #e3e7e5; font-size: 13px; vertical-align: middle; }
 .client-table tbody tr:last-child td { border-bottom: none; }
 .client-table tbody tr:hover { background: #f1f4f3; }
+.client-table tbody tr.client-row { cursor: pointer; }
+.client-table tbody tr.client-row .client-row-actions { cursor: default; }
 body.dark-mode .client-table-shell { background: #1b2022; border-color: #29302e; }
 body.dark-mode .client-table thead th { background: #232a2c; color: #6e7975; border-color: #29302e; }
 body.dark-mode .client-table tbody td { border-color: #29302e; }
