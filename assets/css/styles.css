@@ -1268,10 +1268,6 @@ body.dark-mode .role-submenu-current { background: #233a12; color: #c3e08a; }
   font-weight: 500;
 }
 
-.modal-body {
-  overflow: visible !important;
-}
-
 .nav-link[data-bs-toggle="collapse"] .bi-chevron-down {
     transition: transform 0.3s ease;
 }
