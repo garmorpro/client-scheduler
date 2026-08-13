@@ -63,19 +63,6 @@
               </select>
             </div>
 
-            <!-- TSC only matters for SOC 2 - hidden unless that's checked below. -->
-            <div class="eng-edit-field d-none" id="add_eng_tsc_wrap">
-              <label>Trust Services Criteria (SOC 2)</label>
-              <div class="eng-audit-type-list" id="add_eng_tsc">
-                <?php foreach (['Security', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'] as $tscOption): ?>
-                <label class="eng-audit-type-chip">
-                  <input type="checkbox" name="tsc[]" value="<?php echo htmlspecialchars($tscOption); ?>" <?php echo $tscOption === 'Security' ? 'checked' : ''; ?>>
-                  <?php echo htmlspecialchars($tscOption); ?>
-                </label>
-                <?php endforeach; ?>
-              </div>
-            </div>
-
             <div class="eng-edit-field">
               <label for="add_eng_scope">Scope</label>
               <textarea class="eng-edit-input" id="add_eng_scope" name="scope" rows="3" placeholder="Enter scope"></textarea>
@@ -115,6 +102,19 @@
                 ?>
                 <div class="settings-empty-row" style="text-align:left; padding-left:0;">No audit types yet - add some under System Settings.</div>
                 <?php endif; ?>
+              </div>
+            </div>
+
+            <!-- TSC only matters for SOC 2 - hidden unless that's checked above. -->
+            <div class="eng-edit-field d-none" id="add_eng_tsc_wrap">
+              <label>Trust Services Criteria (SOC 2)</label>
+              <div class="eng-audit-type-list" id="add_eng_tsc">
+                <?php foreach (['Security', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'] as $tscOption): ?>
+                <label class="eng-audit-type-chip">
+                  <input type="checkbox" name="tsc[]" value="<?php echo htmlspecialchars($tscOption); ?>" <?php echo $tscOption === 'Security' ? 'checked' : ''; ?>>
+                  <?php echo htmlspecialchars($tscOption); ?>
+                </label>
+                <?php endforeach; ?>
               </div>
             </div>
           </div>
