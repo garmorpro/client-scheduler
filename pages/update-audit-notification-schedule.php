@@ -84,6 +84,18 @@ if (!$scriptPath) {
     echo json_encode(['success' => false, 'error' => 'Could not resolve audit-notification-cron.php path on this server.']);
     exit();
 }
+// Resolve the CLI php binary's absolute path now, while this request still
+// has a normal shell environment/PATH to find it in, and bake that
+// resolved path into the crontab line - so cron (whose own environment is
+// far more minimal, no .bashrc/.profile PATH setup) never has to resolve
+// "php" itself. NOT PHP_BINARY: that reflects whatever SAPI is running
+// *this* request (PHP-FPM, since this is a web endpoint), not the CLI
+// binary cron needs - using it directly would be wrong, not just fragile.
+$phpBinary = trim(shell_exec('command -v php 2>/dev/null') ?? '') ?: '/usr/bin/php';
+if (!is_executable($phpBinary)) {
+    echo json_encode(['success' => false, 'error' => "Could not find a runnable php binary on this server (looked for '{$phpBinary}'). Settings were not saved."]);
+    exit();
+}
 $marker = '# AUDIT_NOTIFICATION_CRON';
 
 $existing = shell_exec('crontab -l 2>/dev/null') ?? '';
@@ -93,7 +105,7 @@ $lines = array_values(array_filter($lines, fn($l) => strpos($l, $marker) === fal
 
 if ($enabled) {
     $dayOfWeekField = implode(',', $days); // e.g. "1,2,3,4,5" for weekdays - always valid cron syntax, whether contiguous or not
-    $lines[] = "{$minute} {$hour} * * {$dayOfWeekField} php " . escapeshellarg($scriptPath) . " >> /dev/null 2>&1 {$marker}";
+    $lines[] = "{$minute} {$hour} * * {$dayOfWeekField} " . escapeshellarg($phpBinary) . ' ' . escapeshellarg($scriptPath) . " >> /dev/null 2>&1 {$marker}";
 }
 
 $tmpFile = tempnam(sys_get_temp_dir(), 'cron');
