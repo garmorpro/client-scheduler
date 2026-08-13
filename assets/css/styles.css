@@ -1771,6 +1771,17 @@ body.dark-mode .eng-vm-divider { background: #29302e; }
    matter what width was set here, regardless of stylesheet order.
    Matching that specificity so ours actually wins. */
 .offcanvas.eng-vm-panel { width: min(560px, 100vw); max-width: 92vw; }
+/* Header (code/name/status/actions) stays put; only the card list below it
+   scrolls. Bootstrap's own .offcanvas-body scrolls as one unit by default -
+   turned that off here and moved overflow down to just .eng-vm-body, with
+   the header/divider as fixed-height flex siblings above it. min-height: 0
+   on the flex children is required for the scroll area to actually shrink
+   and scroll instead of pushing the whole panel taller. */
+.offcanvas.eng-vm-panel .offcanvas-body { display: flex; flex-direction: column; overflow: hidden; }
+.offcanvas.eng-vm-panel #viewEngagementModalBody { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.offcanvas.eng-vm-panel .eng-vm-header,
+.offcanvas.eng-vm-panel .eng-vm-divider { flex-shrink: 0; }
+.offcanvas.eng-vm-panel .eng-vm-body { flex: 1; min-height: 0; overflow-y: auto; }
 .eng-vm-eng-code { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #9aa39d; margin-bottom: 4px; }
 body.dark-mode .eng-vm-eng-code { color: #6e7975; }
 .eng-vm-client-name-lg { font-size: 19px; font-weight: 800; color: #16211f; margin-bottom: 10px; }
