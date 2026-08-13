@@ -58,6 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${value || '<span class="text-muted">&mdash;</span>'}</span></div>`;
     }
 
+    // Two-up label-over-value fields (Overview/Details), matching the
+    // Engagement Tracker reference instead of the single-column
+    // label-left/value-right rows detailRow() above builds. gridRow() pairs
+    // up to two fields per line with a shared bottom border; pass one field
+    // for a line that spans the full width on its own.
+    function gridField(label, value) {
+        return `<div class="eng-vm-grid-field"><div class="eng-vm-grid-label">${label}</div><div class="eng-vm-grid-value">${value || '<span class="text-muted">&mdash;</span>'}</div></div>`;
+    }
+    function gridRow(...fields) {
+        return `<div class="eng-vm-grid-row">${fields.join('')}</div>`;
+    }
+
     // Audit tracking sections (timeline/milestones/DOL/independence), added
     // for the Engagement Tracker migration. Each is only present in `audit`
     // if the backend decided the current user has permission to see it -
@@ -294,12 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `${fmtDate(d.review_period_start)} &ndash; ${fmtDate(d.review_period_end)}`
             : null;
         const rows = [
-            detailRow('Manager', data.manager),
-            detailRow('Point of Contact', d.poc),
-            detailRow('Location', d.location),
-            detailRow('Review Period', reviewPeriod),
-            detailRow('Report / SOC Type', d.soc_type),
-            detailRow('TSC', d.tsc),
+            gridRow(gridField('Manager', data.manager), gridField('Point of Contact', d.poc)),
+            gridRow(gridField('Location', d.location), gridField('Review Period', reviewPeriod)),
+            gridRow(gridField('Report / SOC Type', d.soc_type), gridField('TSC', d.tsc)),
         ].join('');
         return card('Overview', '#003f47', rows);
     }
@@ -308,19 +317,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = data.details;
         if (!d) return '';
         const rows = [
-            detailRow('As-of Date', fmtDate(d.as_of_date)),
-            detailRow('Scope', d.scope),
-            detailRow('Created', fmtDate(d.created_at)),
-            detailRow('Last Updated', fmtDate(d.updated_at)),
-            d.planning_doc_url ? `<div class="detail-row"><span class="detail-label">Planning Doc</span><span class="detail-value"><a href="${d.planning_doc_url}" target="_blank" rel="noopener">Open link</a></span></div>` : '',
+            gridRow(gridField('As-of Date', fmtDate(d.as_of_date)), gridField('Scope', d.scope)),
+            gridRow(gridField('Created', fmtDate(d.created_at)), gridField('Last Updated', fmtDate(d.updated_at))),
+            d.planning_doc_url
+                ? gridRow(gridField('Planning Doc', `<a href="${d.planning_doc_url}" target="_blank" rel="noopener">Open link</a>`))
+                : '',
         ].join('');
         return card('Details', '#e0994c', rows);
     }
 
     function renderNotesCard(data) {
         const notes = (data.details && data.details.notes) || data.notes;
-        if (!notes) return '';
-        return card('Notes', '#9b6bd6', `<p style="font-size:13px; margin:0; white-space:pre-wrap;">${notes}</p>`);
+        const body = notes
+            ? `<p style="font-size:13px; margin:0; white-space:pre-wrap;">${notes}</p>`
+            : `<p class="text-muted" style="font-size:13px; margin:0; font-style:italic;">No notes added yet.</p>`;
+        return card('Notes', '#9b6bd6', body);
     }
 
     let lastOpenArgs = null;

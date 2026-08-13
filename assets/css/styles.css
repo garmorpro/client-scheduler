@@ -1877,6 +1877,18 @@ body.dark-mode .eng-vm-card-title { color: #9aa8a2; }
 .eng-vm-role-group-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; margin-bottom: 6px; }
 body.dark-mode .eng-vm-role-group-title { color: #6e7975; }
 
+/* Two-up label-over-value fields (Overview/Details cards) - matches the
+   Engagement Tracker reference layout instead of the single-column
+   label-left/value-right .detail-row rows used elsewhere in the app. */
+.eng-vm-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; padding: 10px 0; border-bottom: 1px solid #e3e7e5; }
+.eng-vm-grid-row:last-child { border-bottom: none; }
+body.dark-mode .eng-vm-grid-row { border-color: #29302e; }
+.eng-vm-grid-field { min-width: 0; }
+.eng-vm-grid-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; margin-bottom: 3px; }
+body.dark-mode .eng-vm-grid-label { color: #6e7975; }
+.eng-vm-grid-value { font-size: 14px; font-weight: 700; color: #16211f; }
+body.dark-mode .eng-vm-grid-value { color: #edf1ee; }
+
 /* Audit tracking sections (timeline/milestones/DOL/independence) - added
    for the Engagement Tracker migration. Reuses the eng-vm-section-title
    label style; rows follow the same neutral-card conventions as
