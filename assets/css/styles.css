@@ -4506,14 +4506,14 @@ body.dark-mode #orgChartModal .eng-edit-footer { border-color: #29302e; }
 body.dark-mode #orgChartModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
 body.dark-mode #orgChartModal .eng-edit-btn-cancel:hover { background: #232a2c; }
 
-.oc-tier { margin-bottom: 24px; }
+.oc-tier { margin-bottom: 28px; }
 .oc-tier:last-child { margin-bottom: 0; }
 .oc-tier-label {
     font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
-    color: #9aa39d; margin-bottom: 10px;
+    color: #9aa39d; margin-bottom: 12px;
 }
 body.dark-mode .oc-tier-label { color: #6e7975; }
-.oc-tier-hint { text-transform: none; font-weight: 500; letter-spacing: normal; color: #c7d0cb; }
+.oc-tier-hint { text-transform: none; font-weight: 500; letter-spacing: normal; color: #c7d0cb; margin-left: 4px; }
 body.dark-mode .oc-tier-hint { color: #45504b; }
 
 .oc-avatar {
@@ -4524,31 +4524,44 @@ body.dark-mode .oc-tier-hint { color: #45504b; }
 
 .oc-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .oc-chip {
-    display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px;
+    display: flex; align-items: center; gap: 9px; padding: 7px 14px 7px 7px;
     border: 1px solid #e3e7e5; border-radius: 30px; background: #ffffff;
+    transition: border-color .12s ease, box-shadow .12s ease;
 }
+.oc-chip:hover { border-color: #c7d0cb; box-shadow: 0 2px 8px rgba(22,33,31,.06); }
 body.dark-mode .oc-chip { border-color: #29302e; background: #232a2c; }
+body.dark-mode .oc-chip:hover { border-color: #3a4440; }
 .oc-chip-name { font-size: 12.5px; font-weight: 700; color: #16211f; }
 body.dark-mode .oc-chip-name { color: #edf1ee; }
 .oc-chip-role { font-size: 10.5px; color: #9aa39d; }
 body.dark-mode .oc-chip-role { color: #6e7975; }
 
-.oc-manager-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-.oc-manager-card { border: 1px solid #e3e7e5; border-radius: 14px; overflow: hidden; }
-body.dark-mode .oc-manager-card { border-color: #29302e; }
-.oc-manager-head { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8f9f8; }
-body.dark-mode .oc-manager-head { background: #1f2624; }
+.oc-manager-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.oc-manager-card {
+    border: 1px solid #e3e7e5; border-radius: 14px; overflow: hidden; background: #ffffff;
+    transition: border-color .12s ease, box-shadow .12s ease;
+}
+.oc-manager-card:hover { border-color: #c7d0cb; box-shadow: 0 6px 18px -6px rgba(22,33,31,.12); }
+body.dark-mode .oc-manager-card { border-color: #29302e; background: #1e2325; }
+body.dark-mode .oc-manager-card:hover { border-color: #3a4440; }
+.oc-manager-head {
+    display: flex; align-items: center; gap: 10px; padding: 13px 14px;
+    background: #f8f9f8; border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode .oc-manager-head { background: #1a1f21; border-color: #29302e; }
 .oc-manager-name { font-size: 13.5px; font-weight: 700; color: #16211f; }
 body.dark-mode .oc-manager-name { color: #edf1ee; }
-.oc-manager-title { font-size: 11px; color: #9aa39d; }
+.oc-manager-title { font-size: 11px; color: #9aa39d; margin-top: 1px; }
 body.dark-mode .oc-manager-title { color: #6e7975; }
 .oc-report-count {
     margin-left: auto; background: #ffffff; border: 1px solid #e3e7e5; border-radius: 20px;
-    font-size: 11px; font-weight: 700; color: #6b7570; padding: 2px 9px; flex-shrink: 0;
+    font-size: 11px; font-weight: 700; color: #6b7570; padding: 3px 10px; flex-shrink: 0;
 }
 body.dark-mode .oc-report-count { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
-.oc-reports { max-height: 220px; overflow-y: auto; }
-.oc-reports .eng-vm-emp-row { padding: 8px 12px; }
+.oc-reports { max-height: 220px; overflow-y: auto; padding: 4px 0; }
+.oc-reports .eng-vm-emp-row { padding: 8px 14px; }
+.oc-reports .eng-vm-emp-row:hover { background: #f8f9f8; }
+body.dark-mode .oc-reports .eng-vm-emp-row:hover { background: #1a1f21; }
 
 /* DOL Generator (Phase 3 step 3 port from Engagement Tracker) - functional
    pass, self-contained styling, revisit design later per Garrett. */
