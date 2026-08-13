@@ -2107,6 +2107,72 @@ body.dark-mode #editEngagementModal .eng-edit-btn-cancel:hover { background: #23
 #editEngagementModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #editEngagementModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= ADD ENGAGEMENT MODAL ========= */
+/* Restyled on the Engagement Tracker reference's own "Create New
+   Engagement" modal - a big centered title + plain section dividers
+   ("Basic Information" / "Audit Details") instead of the gradient hero
+   band the other eng-edit-* modals use. Reuses the same field/input/
+   footer/button rules as #editEngagementModal, just re-scoped. */
+#addEngagementModal .eng-edit-modal-title {
+    font-size: 22px; font-weight: 700; color: #16211f; text-align: center;
+    padding: 24px 44px 6px 20px;
+}
+body.dark-mode #addEngagementModal .eng-edit-modal-title { color: #edf1ee; }
+#addEngagementModal .eng-edit-section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    color: #6b7570; margin: 22px 0 14px; padding-top: 14px; border-top: 1px solid #e3e7e5;
+}
+#addEngagementModal .eng-edit-section-title:first-of-type { margin-top: 4px; padding-top: 0; border-top: none; }
+body.dark-mode #addEngagementModal .eng-edit-section-title { color: #9aa8a2; border-color: #29302e; }
+
+#addEngagementModal .eng-edit-body { padding: 4px 20px 16px; max-height: 72vh; overflow-y: auto; }
+#addEngagementModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#addEngagementModal .eng-edit-field { margin-bottom: 14px; }
+#addEngagementModal .eng-edit-field:last-child { margin-bottom: 0; }
+#addEngagementModal .eng-edit-checkbox-label {
+    display: flex !important; align-items: center; gap: 8px; margin-bottom: 0 !important; cursor: pointer;
+    text-transform: none; letter-spacing: normal; font-size: 13.5px; font-weight: 600; color: #16211f;
+}
+body.dark-mode #addEngagementModal .eng-edit-checkbox-label { color: #edf1ee; }
+#addEngagementModal .eng-edit-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary-color); }
+body.dark-mode #addEngagementModal .eng-edit-checkbox-label input[type="checkbox"] { accent-color: var(--secondary-color); }
+#addEngagementModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #addEngagementModal .eng-edit-field label { color: #6e7975; }
+#addEngagementModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+#addEngagementModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+#addEngagementModal .eng-edit-input:disabled { color: #6b7570; cursor: not-allowed; }
+#addEngagementModal textarea.eng-edit-input { height: auto; resize: vertical; min-height: 44px; }
+body.dark-mode #addEngagementModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #addEngagementModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+body.dark-mode #addEngagementModal .eng-edit-input:disabled { color: #9aa8a2; }
+
+#addEngagementModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #addEngagementModal .eng-edit-footer { border-color: #29302e; }
+#addEngagementModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addEngagementModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #addEngagementModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #addEngagementModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#addEngagementModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addEngagementModal .eng-edit-btn-save:hover { opacity: .9; }
+#addEngagementModal .eng-edit-btn-save:disabled { opacity: .6; cursor: not-allowed; }
+body.dark-mode #addEngagementModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
 /* ========= EDIT TIMELINE MODAL ========= */
 #editTimelineModal .eng-edit-hero {
     padding: 18px 20px 14px;

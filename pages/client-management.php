@@ -269,33 +269,13 @@ unset($client);
     updateToolbarHint(cards.length);
 </script>
 
-<script>
-    const managersList = <?php
-    $managerQuery = $conn->query("SELECT full_name FROM users WHERE role='manager' ORDER BY full_name ASC");
-    $managers = [];
-    while ($row = $managerQuery->fetch_assoc()) {
-        $managers[] = $row['full_name'];
-    }
-    echo json_encode($managers);
-?>;
-    const auditTypesList = <?php
-    $auditTypesQuery = $conn->query("SELECT audit_type_id, name, color FROM audit_types WHERE is_active = 1 ORDER BY name ASC");
-    $auditTypesForJs = [];
-    while ($row = $auditTypesQuery->fetch_assoc()) {
-        $auditTypesForJs[] = ['id' => (int) $row['audit_type_id'], 'name' => $row['name'], 'color' => $row['color']];
-    }
-    echo json_encode($auditTypesForJs);
-?>;
-</script>
-
-
-
 
 <?php if ($canManageClientsEngagements): ?>
 <?php include_once '../includes/modals/add_client_modal.php'; ?>
 <?php include_once '../includes/modals/edit_client_modal.php'; ?>
 <?php include_once '../includes/modals/import_client_modal.php'; ?>
 <?php include_once '../includes/modals/delete_client_modal.php'; ?>
+<?php include_once '../includes/modals/add_engagement_modal.php'; ?>
 <?php endif; ?>
 <?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/view_engagement_modal.php'; ?>
@@ -315,7 +295,7 @@ unset($client);
 <script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/delete_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/import-clients-modal.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/swal-modals/add-engagement-modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
 
