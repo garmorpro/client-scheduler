@@ -96,9 +96,10 @@ function auditFormatDaysAway(int $days): string
  * flat list of per-(recipient, item) rows to be grouped into per-recipient
  * digests by the caller - doesn't send anything itself. Marks each
  * qualifying field as notified as it's found, same "notify once" contract
- * as the source.
+ * as the source - unless $dryRun, which skips that so repeated test runs
+ * stay idempotent instead of consuming the dedup log.
  */
-function collectUpcomingKeyDateDigestRows(mysqli $conn): array
+function collectUpcomingKeyDateDigestRows(mysqli $conn, bool $dryRun = false): array
 {
     $dateFields = getAuditTimelineDateFields();
     $rangeStartFields = getAuditRangeStartFields();
@@ -142,14 +143,16 @@ function collectUpcomingKeyDateDigestRows(mysqli $conn): array
                     'days_away' => auditFormatDaysAway($daysUntil),
                 ];
             }
-            auditMarkNotified($conn, $engagementId, $dateCol);
+            if (!$dryRun) {
+                auditMarkNotified($conn, $engagementId, $dateCol);
+            }
         }
     }
     return $rows;
 }
 
 /** Same idea as above, for milestones - matches ET's 5-day (not 7-day) window. */
-function collectUpcomingMilestoneDigestRows(mysqli $conn): array
+function collectUpcomingMilestoneDigestRows(mysqli $conn, bool $dryRun = false): array
 {
     $rows = [];
     $res = $conn->query("
@@ -179,23 +182,28 @@ function collectUpcomingMilestoneDigestRows(mysqli $conn): array
                 'days_away' => auditFormatDaysAway($daysUntil),
             ];
         }
-        auditMarkNotified($conn, $engagementId, $field);
+        if (!$dryRun) {
+            auditMarkNotified($conn, $engagementId, $field);
+        }
     }
     return $rows;
 }
 
 /**
  * Groups digest rows by recipient and sends one combined email per person.
- * Returns how many emails actually went out (sendEmail() itself no-ops and
- * returns false if email notifications are disabled in Settings).
+ * Returns one result row per recipient: ['name', 'email', 'items', 'sent']
+ * - 'sent' is always false in dry-run mode (nothing is actually emailed,
+ * and the dedup log is left untouched so a real run afterward still sees
+ * everything). sendEmail() itself also no-ops and returns false if email
+ * notifications are disabled in Settings, independent of dry-run.
  */
-function sendAuditDueDateDigests(mysqli $conn): int
+function sendAuditDueDateDigests(mysqli $conn, bool $dryRun = false): array
 {
     $rows = array_merge(
-        collectUpcomingKeyDateDigestRows($conn),
-        collectUpcomingMilestoneDigestRows($conn)
+        collectUpcomingKeyDateDigestRows($conn, $dryRun),
+        collectUpcomingMilestoneDigestRows($conn, $dryRun)
     );
-    if (empty($rows)) return 0;
+    if (empty($rows)) return [];
 
     $byRecipient = [];
     foreach ($rows as $row) {
@@ -204,7 +212,7 @@ function sendAuditDueDateDigests(mysqli $conn): int
         $byRecipient[$row['user_id']]['items'][] = $row;
     }
 
-    $sent = 0;
+    $results = [];
     foreach ($byRecipient as $recipient) {
         $itemsHtml = implode('', array_map(
             fn($item) => '<li><strong>' . htmlspecialchars($item['client_name']) . '</strong> — ' . htmlspecialchars($item['title'])
@@ -217,9 +225,14 @@ function sendAuditDueDateDigests(mysqli $conn): int
               . '<p>You have ' . $count . ' upcoming ' . ($count === 1 ? 'item' : 'items') . ' due soon:</p>'
               . "<ul>{$itemsHtml}</ul>";
 
-        if (sendEmail($recipient['email'], $subject, $body, $conn)) {
-            $sent++;
-        }
+        $sent = $dryRun ? false : sendEmail($recipient['email'], $subject, $body, $conn);
+
+        $results[] = [
+            'name' => $recipient['name'],
+            'email' => $recipient['email'],
+            'items' => $recipient['items'],
+            'sent' => $sent,
+        ];
     }
-    return $sent;
+    return $results;
 }
