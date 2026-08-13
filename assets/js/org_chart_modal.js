@@ -5,15 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentEl = document.getElementById('ocContent');
     const openBtn = document.getElementById('openOrgChartBtn');
 
-    // Same senior/staff/intern colors used elsewhere (Master Schedule, Who's
-    // Available), plus admin/manager colors to round out every role.
+    // Org Chart's own role palette - every person in the same role reads as
+    // the same color at a glance (previously each manager card ended up
+    // looking near-identical purple, since role colors weren't distinct
+    // enough from each other). Admin and CRM Team share the AARC-360 brand
+    // teal since both are "not on the reporting ladder" groups. This is
+    // intentionally its own palette, separate from the senior/staff/intern
+    // colors used on Master Schedule/Who's Available - those are unchanged.
     const ROLE_COLORS = {
-        admin: 'rgb(23,62,70)',
-        manager: 'rgb(155,107,214)',
-        senior: 'rgb(230,144,65)',
-        staff: 'rgb(66,127,194)',
-        intern: 'rgb(76,175,80)',
-        crm_team: 'rgb(214,122,168)',
+        admin: '#003f47',
+        manager: '#1e2f4d',
+        senior: '#8457b0',
+        staff: '#3f7d52',
+        intern: '#9c6b2e',
+        crm_team: '#003f47',
     };
     function roleColor(role) {
         return ROLE_COLORS[(role || '').toLowerCase()] || '#6c757d';
