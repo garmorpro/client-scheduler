@@ -183,26 +183,27 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                     </a>
 
                                     <?php if ($canManageEmployees): ?>
-                                    <!-- Edit Button -->
-                                    <a href="#" class="action-icon-btn edit-user-btn text-decoration-none"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#editUserModal"
-                                       data-user-id="<?php echo $userrow['user_id']; ?>"
-                                       data-full-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
-                                       data-email="<?php echo htmlspecialchars($userrow['email']); ?>"
-                                       data-role="<?php echo strtolower($userrow['role']); ?>"
-                                       data-job-title="<?php echo htmlspecialchars($userrow['job_title'] ?? ''); ?>"
-                                       data-status="<?php echo strtolower($userrow['status']); ?>"
-                                       title="Edit Employee">
-                                       <i class="bi bi-pencil-square text-primary"></i>
-                                    </a>
-
-                                    <!-- More Actions (Direct Reports / Promote-Demote / Delete) -->
+                                    <!-- All row actions now live in one dropdown, including Edit - no
+                                         separate icon buttons sitting outside the menu. -->
                                     <div class="dropdown">
-                                        <a href="#" class="action-icon-btn text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" title="More">
+                                        <a href="#" class="action-icon-btn text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item edit-user-btn" href="#"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#editUserModal"
+                                                   data-user-id="<?php echo $userrow['user_id']; ?>"
+                                                   data-full-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"
+                                                   data-email="<?php echo htmlspecialchars($userrow['email']); ?>"
+                                                   data-role="<?php echo strtolower($userrow['role']); ?>"
+                                                   data-job-title="<?php echo htmlspecialchars($userrow['job_title'] ?? ''); ?>"
+                                                   data-status="<?php echo strtolower($userrow['status']); ?>">
+                                                   <i class="bi bi-pencil-square me-2 text-primary"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
                                             <?php if (strtolower($userrow['role']) === 'manager'): ?>
                                             <li>
                                                 <a class="dropdown-item direct-reports-btn" href="#"
