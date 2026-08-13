@@ -93,6 +93,12 @@ if ($canApproveTimeOff) {
                     My Schedule
                 </a>
             </li>
+            <li class="nav-item <?php if ($isAdmin || !$canViewMySchedule) echo 'd-none'; ?>">
+                <a href="my-engagements.php" class="sidebar-link <?= $currentPage == 'my-engagements.php' ? 'active' : '' ?>">
+                    <i class="bi bi-briefcase"></i>
+                    My Engagements
+                </a>
+            </li>
             <li class="nav-item <?php if (!$canViewMasterSchedule) echo 'd-none'; ?>">
                 <a href="master-schedule.php" class="sidebar-link <?= $currentPage == 'master-schedule.php' ? 'active' : '' ?>">
                     <i class="bi bi-calendar-range"></i>
