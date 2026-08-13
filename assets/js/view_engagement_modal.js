@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modalEl = document.getElementById('viewEngagementModal');
     if (!modalEl) return;
-    const modal = new bootstrap.Modal(modalEl);
+    const modal = new bootstrap.Offcanvas(modalEl);
     const modalBody = document.getElementById('viewEngagementModalBody');
 
     function statusClass(status) {
@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!dateString) return '';
         return dateString.length >= 10 ? dateString.slice(0, 10) : '';
     }
+    // Past its due date and not yet marked complete - calendar-day
+    // comparison, not exact-time (a date due "today" isn't overdue yet).
+    function isOverdue(dateString, completed) {
+        if (!dateString || completed) return false;
+        const due = toInputDate(dateString);
+        const today = new Date().toISOString().slice(0, 10);
+        return due < today;
+    }
     function notify(message, isError) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1100, showConfirmButton: !!isError });
@@ -36,10 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sectioned "card" shell used by every part of the body below - a
     // colored dot + label, matching the Engagement Tracker reference layout
     // instead of one long undifferentiated scroll.
-    function card(title, color, bodyHtml) {
+    function card(title, color, bodyHtml, titleAction) {
         return `
             <div class="eng-vm-card">
-                <div class="eng-vm-card-title"><span class="eng-vm-card-dot" style="background:${color}"></span>${title}</div>
+                <div class="eng-vm-card-title">
+                    <span class="eng-vm-card-title-left"><span class="eng-vm-card-dot" style="background:${color}"></span>${title}</span>
+                    ${titleAction || ''}
+                </div>
                 ${bodyHtml}
             </div>`;
     }
@@ -56,13 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // engagement-details.php (admin-or-staffed-on-this-engagement, not just
     // "does this role have the permission at all") - the frontend doesn't
     // re-derive that, it just renders inputs/checkable dots when they're true.
-    function renderTimelineSection(audit, engagementId) {
+    function renderTimelineSection(audit, engagementId, details) {
+        details = details || {};
         if (!audit.timeline) return '';
         const canManage = !!audit.can_manage_timeline;
         const canComplete = !!audit.can_complete_timeline;
 
         const rows = audit.timeline.map(step => {
             const isDone = !!step.completed;
+            const overdue = isOverdue(step.date, isDone);
 
             let dateHtml;
             if (canManage) {
@@ -83,16 +96,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 : '';
 
             return `
-                <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
+                <div class="eng-vm-tl-row ${isDone ? 'done' : ''} ${overdue ? 'overdue' : ''}">
                     <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
                     <span class="eng-vm-tl-label">${step.label}</span>
                     ${dateHtml}
                 </div>`;
         }).join('');
-        const weekly = audit.weekly_status_call
-            ? `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${audit.weekly_status_call.day}</strong>${audit.weekly_status_call.group_name ? ` &middot; ${audit.weekly_status_call.group_name}` : ''}</div>`
-            : '';
-        return card('Timeline', '#5aa8d6', `<div class="eng-vm-tl-list">${rows}</div>${weekly}`);
+
+        const canEditWeekly = canManage;
+        const wsc = audit.weekly_status_call || {};
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let weekly = '';
+        if (canEditWeekly) {
+            const dayOptions = dayNames.map((name, i) =>
+                `<option value="${i}" ${wsc.day_index === i ? 'selected' : ''}>${name}</option>`
+            ).join('');
+            weekly = `
+                <div class="eng-vm-tl-weekly-row">
+                    <span class="eng-vm-tl-weekly-label"><i class="bi bi-arrow-repeat"></i> Weekly Status Call</span>
+                    <select class="eng-vm-tl-date-input" id="engVmWeeklyDayInput" data-engagement-id="${engagementId}">
+                        <option value="">No call set</option>
+                        ${dayOptions}
+                    </select>
+                </div>`;
+        } else if (wsc.day) {
+            weekly = `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${wsc.day}</strong>${wsc.group_name ? ` &middot; ${wsc.group_name}` : ''}</div>`;
+        }
+
+        const uploadRow = canManage
+            ? `<div class="eng-vm-tl-upload-row">
+                   <label class="eng-vm-upload-link">
+                       <i class="bi bi-upload"></i> Upload Planning Doc
+                       <input type="file" id="engVmPlanningDocInput" data-engagement-id="${engagementId}" hidden>
+                   </label>
+                   ${details.planning_doc_url ? `<a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link">&middot; <i class="bi bi-download"></i> Download current</a>` : ''}
+               </div>`
+            : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link"><i class="bi bi-download"></i> Planning Doc</a></div>` : '');
+
+        return card('Timeline', '#5aa8d6', `${uploadRow}<div class="eng-vm-tl-list">${rows}</div>${weekly}`);
     }
 
     function renderMilestonesSection(audit) {
@@ -102,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const rows = audit.milestones.map(ms => {
             const isDone = ms.is_completed == 1;
+            const overdue = isOverdue(ms.due_date, isDone);
             const dateHtml = canManage
                 ? `<input type="date" class="eng-vm-tl-date-input" data-kind="milestone" data-milestone-id="${ms.milestone_id}" value="${toInputDate(ms.due_date)}">`
                 : `<span class="eng-vm-tl-date">${fmtDate(ms.due_date) || '<span class="text-muted">Not set</span>'}</span>`;
@@ -109,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `role="button" tabindex="0" data-kind="milestone" data-milestone-id="${ms.milestone_id}" data-completed="${isDone ? '1' : '0'}"`
                 : '';
             return `
-                <div class="eng-vm-tl-row ${isDone ? 'done' : ''}">
+                <div class="eng-vm-tl-row ${isDone ? 'done' : ''} ${overdue ? 'overdue' : ''}">
                     <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
                     <span class="eng-vm-tl-label">${ms.milestone_type}</span>
                     ${dateHtml}
@@ -125,10 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return r.charAt(0).toUpperCase() + r.slice(1);
     }
 
-    function renderDolSection(audit) {
+    function manageTeamLink(audit, engagementId) {
+        return audit.can_manage_dol
+            ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Manage Team</a>`
+            : '';
+    }
+
+    function renderDolSection(audit, engagementId) {
         if (!audit.dol) return '';
         if (audit.dol.length === 0) {
-            return card('Team (DOL)', '#7a8fd6', '<div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>');
+            return card('Team (DOL)', '#7a8fd6', '<div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>', manageTeamLink(audit, engagementId));
         }
 
         // Group by role first (Manager/Senior/Staff/Intern, matching the
@@ -160,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
         }).join('');
 
-        return card('Team (DOL)', '#7a8fd6', groups);
+        return card('Team (DOL)', '#7a8fd6', groups, manageTeamLink(audit, engagementId));
     }
 
     function renderIndependenceSection(audit) {
@@ -293,29 +341,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     ${isOver ? `<div class="eng-util-over">+${overHours}h over</div>` : ''}`;
 
+            const engCode = `ENG-${data.year || new Date().getFullYear()}-${String(engagementId).padStart(3, '0')}`;
+            const canManageEng = !!data.can_manage_engagement;
+
+            const statusOptions = ['confirmed', 'pending', 'not_confirmed']
+                .map(s => `<option value="${s}" ${data.status === s ? 'selected' : ''}>${statusLabel(s)}</option>`)
+                .join('');
+            const statusHtml = canManageEng
+                ? `<select class="eng-vm-status-select ${statusClass(data.status)}" id="engVmStatusSelect" data-engagement-id="${engagementId}">${statusOptions}</select>`
+                : `<span class="eng-status-pill ${statusClass(data.status)}"><span class="dot"></span>${statusLabel(data.status)}</span>`;
+
+            const actionsHtml = canManageEng
+                ? `<div class="eng-vm-actions">
+                       <button type="button" class="eng-vm-action-btn primary" id="engVmEditBtn"><i class="bi bi-pencil-square"></i> Edit</button>
+                       <button type="button" class="eng-vm-action-btn" id="engVmArchiveBtn"><i class="bi bi-archive"></i> Archive</button>
+                       <button type="button" class="eng-vm-action-btn danger" id="engVmDeleteBtn"><i class="bi bi-trash"></i> Delete</button>
+                   </div>`
+                : '';
+
             modalBody.innerHTML = `
                 <div class="eng-vm-header">
-                    <div class="eng-vm-client-row">
-                        <div class="eng-vm-tile" style="background-color:${avatarColor};">${initials}</div>
-                        <div>
-                            <div class="eng-vm-client-name">${data.client_name || ''}${data.year ? ` <span class="text-muted" style="font-weight:500;">&middot; ${data.year}</span>` : ''}</div>
-                            <span class="eng-status-pill ${statusClass(data.status)}"><span class="dot"></span>${statusLabel(data.status)}</span>
-                            ${chipsRow}
-                        </div>
+                    <div class="eng-vm-eng-code">${engCode}</div>
+                    <div class="eng-vm-client-name-lg">${data.client_name || ''}</div>
+                    <div class="eng-vm-status-row">
+                        ${statusHtml}
+                        ${chipsRow}
                     </div>
+                    ${actionsHtml}
                 </div>
+                <div class="eng-vm-divider"></div>
                 <div class="eng-vm-body">
                     ${renderOverviewCard(data)}
                     ${card('Capacity', '#4fbf9f', capacityBody)}
                     ${renderDetailsCard(data)}
                     ${renderNotesCard(data)}
                     ${card('Assigned Employees', '#4f8ef7', `<div class="eng-vm-emp-list">${empRowsHtml}</div>`)}
-                    ${renderTimelineSection(data.audit || {}, engagementId)}
+                    ${renderTimelineSection(data.audit || {}, engagementId, data.details)}
                     ${renderMilestonesSection(data.audit || {})}
-                    ${renderDolSection(data.audit || {})}
+                    ${renderDolSection(data.audit || {}, engagementId)}
                     ${renderIndependenceSection(data.audit || {})}
                 </div>
             `;
+
+            wireHeaderActions(data, engagementId, avatarColor, initials);
         } catch (err) {
             console.error('Failed to load engagement details', err);
             modalBody.innerHTML = '<div class="text-center text-danger py-4">Could not load engagement details.</div>';
@@ -324,6 +392,163 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function refresh() {
         if (lastOpenArgs) open(...lastOpenArgs);
+    }
+
+    function wireHeaderActions(data, engagementId, avatarColor, initials) {
+        const statusSelect = document.getElementById('engVmStatusSelect');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', async () => {
+                statusSelect.className = `eng-vm-status-select ${statusClass(statusSelect.value)}`;
+                try {
+                    const res = await fetch('update_engagement_status.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_id: engagementId, status: statusSelect.value })
+                    });
+                    const result = await res.json();
+                    if (!result.success) notify(result.error || 'Could not save status.', true);
+                    refresh();
+                } catch (err) {
+                    console.error('Failed to save status', err);
+                    notify('Network error. Please try again.', true);
+                }
+            });
+        }
+
+        const editBtn = document.getElementById('engVmEditBtn');
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                if (!window.EditEngagementModal) {
+                    notify('Edit is only available from the Engagements page right now.', true);
+                    return;
+                }
+                const auditTypeIds = (data.audit_types || []).map(t => t.audit_type_id);
+                const tsc = ((data.details && data.details.tsc) || '').split(',').map(s => s.trim()).filter(Boolean);
+                modal.hide();
+                window.EditEngagementModal.open({
+                    engagementId,
+                    clientName: data.client_name,
+                    budgetedHours: data.budgeted_hours,
+                    status: data.status,
+                    manager: data.manager,
+                    notes: data.notes,
+                    auditTypeIds,
+                    tsc,
+                });
+                // Reopen this panel once the edit form closes.
+                const onHidden = () => {
+                    window.EditEngagementModal.modalEl.removeEventListener('hidden.bs.modal', onHidden);
+                    open(engagementId, avatarColor, initials, false);
+                };
+                window.EditEngagementModal.modalEl.addEventListener('hidden.bs.modal', onHidden);
+            });
+        }
+
+        const archiveBtn = document.getElementById('engVmArchiveBtn');
+        if (archiveBtn) {
+            archiveBtn.addEventListener('click', () => {
+                const run = async () => {
+                    try {
+                        const formData = new FormData();
+                        formData.append('engagement_id', engagementId);
+                        const res = await fetch('archive_engagement.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (result.success) {
+                            modal.hide();
+                            location.reload();
+                        } else {
+                            notify(result.message || 'Could not archive.', true);
+                        }
+                    } catch (err) {
+                        console.error('Failed to archive engagement', err);
+                        notify('Network error. Please try again.', true);
+                    }
+                };
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'warning', title: 'Archive this engagement?', text: 'It will move to Archived and out of the active list.', showCancelButton: true, confirmButtonText: 'Archive', confirmButtonColor: '#285a80' })
+                        .then(result => { if (result.isConfirmed) run(); });
+                } else if (confirm('Archive this engagement?')) {
+                    run();
+                }
+            });
+        }
+
+        const deleteBtn = document.getElementById('engVmDeleteBtn');
+        const deleteConfirmModalEl = document.getElementById('viewEngDeleteConfirmModal');
+        if (deleteBtn && deleteConfirmModalEl) {
+            const deleteConfirmModal = bootstrap.Modal.getOrCreateInstance(deleteConfirmModalEl);
+            const deleteInput = document.getElementById('viewEngDeleteConfirmInput');
+            const deleteConfirmBtn = document.getElementById('viewEngDeleteConfirmBtn');
+
+            deleteBtn.addEventListener('click', () => {
+                deleteInput.value = '';
+                deleteConfirmBtn.disabled = true;
+                deleteConfirmModal.show();
+            });
+            deleteInput.oninput = () => {
+                deleteConfirmBtn.disabled = deleteInput.value.trim().toLowerCase() !== 'delete';
+            };
+            deleteConfirmBtn.onclick = async () => {
+                if (deleteInput.value.trim().toLowerCase() !== 'delete') return;
+                try {
+                    const res = await fetch('delete_engagement_permanent.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_id: engagementId })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        deleteConfirmModal.hide();
+                        modal.hide();
+                        location.reload();
+                    } else {
+                        notify(result.message || 'Could not delete.', true);
+                    }
+                } catch (err) {
+                    console.error('Failed to delete engagement', err);
+                    notify('Network error. Please try again.', true);
+                }
+            };
+        }
+
+        const weeklyDayInput = document.getElementById('engVmWeeklyDayInput');
+        if (weeklyDayInput) {
+            weeklyDayInput.addEventListener('change', async () => {
+                try {
+                    const res = await fetch('update_audit_weekly_call.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_id: engagementId, day: weeklyDayInput.value === '' ? null : weeklyDayInput.value })
+                    });
+                    const result = await res.json();
+                    if (!result.success) notify(result.error || 'Could not save.', true);
+                    refresh();
+                } catch (err) {
+                    console.error('Failed to save weekly call day', err);
+                    notify('Network error. Please try again.', true);
+                }
+            });
+        }
+
+        const planningDocInput = document.getElementById('engVmPlanningDocInput');
+        if (planningDocInput) {
+            planningDocInput.addEventListener('change', async () => {
+                const file = planningDocInput.files[0];
+                if (!file) return;
+                const formData = new FormData();
+                formData.append('engagement_id', engagementId);
+                formData.append('file', file);
+                try {
+                    const res = await fetch('upload_planning_doc.php', { method: 'POST', body: formData });
+                    const result = await res.json();
+                    if (!result.success) notify(result.error || 'Could not upload file.', true);
+                    refresh();
+                } catch (err) {
+                    console.error('Failed to upload planning doc', err);
+                    notify('Network error. Please try again.', true);
+                }
+            });
+        }
     }
 
     async function saveTimelineField(column, engagementId, value) {

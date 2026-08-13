@@ -20,3 +20,7 @@ assets/uploads/policies/*
 # Local DB backups (not source-controlled)
 storage/backups/*
 !storage/backups/.gitkeep
+
+# User-uploaded engagement planning docs (not source-controlled)
+storage/planning_docs/*
+!storage/planning_docs/.gitkeep

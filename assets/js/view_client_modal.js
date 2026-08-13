@@ -99,9 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Reopen the client modal once the nested engagement-detail modal closes.
+    // Reopen the client modal once the nested engagement-detail panel closes.
+    // View Engagement is a Bootstrap Offcanvas (right-side panel), not a
+    // Modal, so it fires hidden.bs.offcanvas instead of hidden.bs.modal.
     if (window.ViewEngagementModal) {
-        window.ViewEngagementModal.modalEl.addEventListener('hidden.bs.modal', () => {
+        window.ViewEngagementModal.modalEl.addEventListener('hidden.bs.offcanvas', () => {
             if (!reopenAfterEngagementModal) return;
             reopenAfterEngagementModal = false;
             modal.show();

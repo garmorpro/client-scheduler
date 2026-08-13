@@ -38,9 +38,10 @@ if (isset($_GET['id'])) {
     $engagementResult = $stmt->get_result();
     $engagement = $engagementResult->fetch_assoc();
 
-    // Audit types selected for this engagement (chips in the modal header).
+    // Audit types selected for this engagement (chips in the modal header,
+    // and the IDs feed the Edit button's audit-type checkboxes).
     $stmt = $conn->prepare("
-        SELECT at.name, at.color
+        SELECT at.audit_type_id, at.name, at.color
         FROM engagement_audit_types eat
         JOIN audit_types at ON at.audit_type_id = eat.audit_type_id
         WHERE eat.engagement_id = ?
@@ -135,13 +136,15 @@ if (isset($_GET['id'])) {
                 ['label' => 'Archive', 'date' => $tl['archive_date'], 'completed' => $tl['archive_completed_at'], 'date_column' => 'archive_date', 'completed_column' => 'archive_completed_at'],
             ];
 
-            if ($tl['weekly_status_call_day'] !== null) {
-                $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                $auditData['weekly_status_call'] = [
-                    'day' => $dayNames[(int) $tl['weekly_status_call_day']] ?? null,
-                    'group_name' => $tl['weekly_status_call_group_name'],
-                ];
-            }
+            // Always present (not just when set) so the panel can render an
+            // editable dropdown even before a day's been chosen.
+            $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            $dayIndex = $tl['weekly_status_call_day'] !== null ? (int) $tl['weekly_status_call_day'] : null;
+            $auditData['weekly_status_call'] = [
+                'day_index' => $dayIndex,
+                'day' => $dayIndex !== null ? ($dayNames[$dayIndex] ?? null) : null,
+                'group_name' => $tl['weekly_status_call_group_name'],
+            ];
         }
 
         $stmt = $conn->prepare("SELECT milestone_id, milestone_type, due_date, is_completed FROM audit_engagement_milestones WHERE engagement_id = ? ORDER BY due_date IS NULL, due_date ASC");
@@ -193,18 +196,27 @@ if (isset($_GET['id'])) {
     // they're actually staffed on; Admin can act on any engagement.
     $auditData['can_manage_timeline'] = audit_can_act_on_engagement($conn, $engagementId, 'manage_audit_timeline');
     $auditData['can_complete_timeline'] = audit_can_act_on_engagement($conn, $engagementId, 'complete_audit_timeline_items');
+    // Same scoping the DOL Generator itself already applies (staffed-on
+    // engagements only, admin excepted) - just surfaced here too for the
+    // panel's "Manage Team" link.
+    $auditData['can_manage_dol'] = audit_can_act_on_engagement($conn, $engagementId, 'manage_dol');
 
     echo json_encode([
+        'engagement_id' => $engagementId,
         'client_name' => $engagement['client_name'] ?? '',
         'status' => $engagement['status'] ?? '',
         'year' => $engagement['year'] ?? null,
         'total_hours' => $totalHours,
         'budgeted_hours' => (float)($engagement['budgeted_hours'] ?? 0),
         'manager' => $engagement['manager'] ?? '',
-        'assigned_employees' => $assignedEmployees,
         'notes' => $engagement['notes'] ?? '',
+        'assigned_employees' => $assignedEmployees,
         'audit_types' => $auditTypes,
         'details' => $auditDetails ?: null,
         'audit' => $auditData,
+        // Not per-engagement scoped anywhere else in the app for this
+        // permission (Edit/Archive/Delete on engagement-management.php's
+        // table use the same plain check), so kept consistent here.
+        'can_manage_engagement' => user_has_permission($conn, 'manage_clients_engagements'),
     ]);
 }
