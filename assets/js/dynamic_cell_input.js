@@ -101,35 +101,48 @@
         return wrap;
     }
 
-    // Builds (or clears) the audit-type <select> for a resolved engagement,
-    // wrapped as a labeled field. Returns the <select>, or null if the
-    // engagement has no audit types to choose from (nothing to show).
+    // Builds (or clears) the audit-type picker for a resolved engagement,
+    // wrapped as a labeled field. One-click pills instead of a <select> -
+    // this card gets used every time someone's staffed on a multi-audit-type
+    // engagement, so a single click beats open-dropdown-then-click. The
+    // chosen id is tracked on the container itself (`dataset.selectedAuditTypeId`)
+    // since there's no underlying <select> element to read a .value from.
     function renderAuditTypeField(container, engagement, currentAuditTypeId) {
         container.innerHTML = '';
-        if (!engagement || !engagement.audit_types || engagement.audit_types.length === 0) return null;
+        delete container.dataset.selectedAuditTypeId;
+        if (!engagement || !engagement.audit_types || engagement.audit_types.length === 0) return;
 
-        const select = document.createElement('select');
-        select.className = 'cell-edit-input audit-type-select';
-        if (engagement.audit_types.length > 1) {
-            const placeholder = document.createElement('option');
-            placeholder.value = '';
-            placeholder.textContent = 'Choose one...';
-            select.appendChild(placeholder);
-        }
-        engagement.audit_types.forEach(at => {
-            const opt = document.createElement('option');
-            opt.value = at.id;
-            opt.textContent = at.name;
-            select.appendChild(opt);
-        });
+        // Only one choice - nothing to pick, just show it as a fixed pill.
         if (engagement.audit_types.length === 1) {
-            select.value = engagement.audit_types[0].id;
-        } else if (currentAuditTypeId) {
-            select.value = currentAuditTypeId;
+            container.dataset.selectedAuditTypeId = String(engagement.audit_types[0].id);
+            const single = document.createElement('span');
+            single.className = 'cell-edit-audit-pill active single';
+            single.textContent = engagement.audit_types[0].name;
+            container.appendChild(buildField('Audit Type', single));
+            return;
         }
-        select.addEventListener('click', e => e.stopPropagation());
-        container.appendChild(buildField('Audit Type', select));
-        return select;
+
+        const pillRow = document.createElement('div');
+        pillRow.className = 'cell-edit-audit-pills';
+        engagement.audit_types.forEach(at => {
+            const pill = document.createElement('button');
+            pill.type = 'button';
+            pill.className = 'cell-edit-audit-pill';
+            pill.textContent = at.name;
+            pill.dataset.id = at.id;
+            if (currentAuditTypeId && String(currentAuditTypeId) === String(at.id)) {
+                pill.classList.add('active');
+                container.dataset.selectedAuditTypeId = String(at.id);
+            }
+            pill.addEventListener('click', e => {
+                e.stopPropagation();
+                pillRow.querySelectorAll('.cell-edit-audit-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                container.dataset.selectedAuditTypeId = String(at.id);
+            });
+            pillRow.appendChild(pill);
+        });
+        container.appendChild(buildField('Audit Type', pillRow));
     }
 
     // Single floating card used for both adding a new entry to a cell and
@@ -240,14 +253,14 @@
                 notify('warning', 'Missing information', 'Please enter a valid client and hours.');
                 return;
             }
-            const auditSelect = auditTypeContainer.querySelector('select');
-            if (auditSelect && !auditSelect.value) {
+            const needsAuditType = auditTypeContainer.children.length > 0;
+            const auditTypeId = auditTypeContainer.dataset.selectedAuditTypeId || null;
+            if (needsAuditType && !auditTypeId) {
                 notify('warning', 'Missing information', 'Please choose an audit type.');
                 return;
             }
 
             const engagementId = selectedEngagement ? selectedEngagement.engagement_id : initialEngagementId;
-            const auditTypeId = auditSelect ? auditSelect.value : null;
             closeActiveInputs();
 
             const payload = {

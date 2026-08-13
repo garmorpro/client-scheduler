@@ -3663,6 +3663,22 @@ body.dark-mode .cell-edit-label { color: #6e7975; }
 body.dark-mode .cell-edit-input { background: #1b2022; border-color: #29302e; color: #edf1ee; }
 body.dark-mode .cell-edit-input:focus { border-color: var(--secondary-color); background: #232a2c; }
 
+/* One-click audit-type pills (schedule cell add/edit card) - replaces a
+   dropdown since this field shows up every time someone's staffed on a
+   multi-audit-type engagement. */
+.cell-edit-audit-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.cell-edit-audit-pill {
+    padding: 5px 10px; border-radius: 999px; border: 1.5px solid #e3e7e5;
+    background: #f1f4f3; color: #6b7570; font-size: 12px; font-weight: 700;
+    cursor: pointer; line-height: 1.2;
+}
+.cell-edit-audit-pill:hover { border-color: #c7cfca; }
+.cell-edit-audit-pill.active { background: var(--primary-color); border-color: var(--primary-color); color: #ffffff; cursor: default; }
+.cell-edit-audit-pill.single { cursor: default; }
+body.dark-mode .cell-edit-audit-pill { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .cell-edit-audit-pill:hover { border-color: #3a4340; }
+body.dark-mode .cell-edit-audit-pill.active { background: var(--secondary-color); border-color: var(--secondary-color); color: #10211f; }
+
 .cell-edit-actions { display: flex; gap: 6px; margin-top: 2px; }
 .cell-edit-btn-save {
     flex: 1; padding: 7px 10px; border-radius: 8px; border: none;
