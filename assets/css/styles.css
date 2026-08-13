@@ -1754,7 +1754,7 @@ body.dark-mode .eng-vm-divider { background: #29302e; }
    (0,2,0 specificity) and was beating a plain .eng-vm-panel (0,1,0) no
    matter what width was set here, regardless of stylesheet order.
    Matching that specificity so ours actually wins. */
-.offcanvas.eng-vm-panel { width: 920px; max-width: 92vw; }
+.offcanvas.eng-vm-panel { width: min(560px, 100vw); max-width: 92vw; }
 .eng-vm-eng-code { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #9aa39d; margin-bottom: 4px; }
 body.dark-mode .eng-vm-eng-code { color: #6e7975; }
 .eng-vm-client-name-lg { font-size: 19px; font-weight: 800; color: #16211f; margin-bottom: 10px; }
