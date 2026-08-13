@@ -409,9 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `<div class="eng-vm-chip-row">${auditTypeChips}${repeatBadge}</div>`
                 : '';
 
-            const capacityBody = restrictFinancials
-                ? `<div class="eng-vm-stat-row" style="grid-template-columns: 1fr;"><div class="eng-vm-stat-card"><div class="eng-vm-stat-title">Employees</div><div class="eng-vm-stat-value">${employees.length}</div></div></div>`
-                : `<div class="eng-vm-stat-row">
+            // Staff/Senior viewing their own schedule (restrictFinancials)
+            // don't get a Capacity card at all - not even the Employees
+            // count on its own, since that's not their business to see from
+            // My Schedule. Managers/Admin/whoever else can manage the
+            // engagement still get the full budget/allocation/utilization
+            // breakdown.
+            const capacityBody = `<div class="eng-vm-stat-row">
                         <div class="eng-vm-stat-card">
                             <div class="eng-vm-stat-title">Budgeted</div>
                             <div class="eng-vm-stat-value">${budgeted}h</div>
@@ -468,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="eng-vm-divider"></div>
                 <div class="eng-vm-body">
                     ${renderOverviewCard(data)}
-                    ${card('Capacity', '#4fbf9f', capacityBody)}
+                    ${restrictFinancials ? '' : card('Capacity', '#4fbf9f', capacityBody)}
                     ${renderDetailsCard(data)}
                     ${renderNotesCard(data)}
                     ${renderTeamSection(data, engagementId)}
