@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function notify(message, isError) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: isError ? 'warning' : 'success', title: message });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: isError ? 'warning' : 'success', title: message });
         } else {
             alert(message);
         }

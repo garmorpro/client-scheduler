@@ -2265,6 +2265,96 @@ body.dark-mode #importClientsModal .eng-edit-btn-cancel:hover { background: #232
 #importClientsModal .eng-edit-btn-save:disabled { opacity: .6; cursor: not-allowed; }
 body.dark-mode #importClientsModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= APP ALERTS (in-house SweetAlert2 replacement) ========= */
+/* Confirm dialogs and toasts built by assets/js/app_alerts.js - styled to
+   match the rest of the app's eng-edit-* look instead of SweetAlert2's
+   own default popup. Global/unscoped on purpose, unlike every eng-edit-*
+   modal rule elsewhere in this file - app_alerts.js builds this DOM once
+   from JS and reuses the same instance app-wide, so there's exactly one
+   thing to style, not one per host modal id. */
+.app-alert-overlay {
+    position: fixed; inset: 0; background: rgba(10, 15, 14, .45); z-index: 3000;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+body.dark-mode .app-alert-overlay { background: rgba(0, 0, 0, .6); }
+.app-alert-card {
+    background: #ffffff; border-radius: 16px; padding: 28px 26px 22px; max-width: 400px; width: 100%;
+    text-align: center; box-shadow: 0 20px 60px rgba(16, 33, 31, .25);
+}
+body.dark-mode .app-alert-card { background: #1e2425; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
+.app-alert-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.app-alert-title { font-size: 17px; font-weight: 700; color: #16211f; margin-bottom: 6px; }
+body.dark-mode .app-alert-title { color: #edf1ee; }
+.app-alert-text { font-size: 13.5px; color: #6b7570; line-height: 1.5; margin-bottom: 18px; }
+body.dark-mode .app-alert-text { color: #9aa8a2; }
+.app-alert-select, .app-alert-field {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; margin-bottom: 18px;
+    -webkit-appearance: none; appearance: none; outline: none;
+}
+.app-alert-field:focus { border-color: var(--primary-color); background-color: #ffffff; }
+.app-alert-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7570' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 14px; padding-right: 34px;
+}
+body.dark-mode .app-alert-select, body.dark-mode .app-alert-field {
+    background-color: #232a2c; border-color: #29302e; color: #edf1ee;
+}
+body.dark-mode .app-alert-field:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+body.dark-mode .app-alert-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.app-alert-actions { display: flex; gap: 8px; justify-content: center; }
+.app-alert-btn-cancel {
+    flex: 1; padding: 10px 16px; border-radius: 10px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.app-alert-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode .app-alert-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .app-alert-btn-cancel:hover { background: #232a2c; }
+.app-alert-btn-confirm {
+    flex: 1; padding: 10px 16px; border-radius: 10px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.app-alert-btn-confirm:hover { opacity: .9; }
+.app-alert-btn-confirm.danger { background: #c0392b; }
+body.dark-mode .app-alert-btn-confirm { background: var(--secondary-color); color: #10160f; }
+body.dark-mode .app-alert-btn-confirm.danger { background: #c0392b; color: #ffffff; }
+
+.app-toast-container {
+    position: fixed; bottom: 20px; right: 20px; z-index: 3100;
+    display: flex; flex-direction: column; gap: 10px; max-width: 360px;
+}
+.app-toast {
+    display: flex; align-items: flex-start; gap: 10px; background: #ffffff; border-radius: 12px;
+    padding: 12px 14px; box-shadow: 0 10px 30px rgba(16, 33, 31, .18); border-left: 4px solid #9aa39d;
+    opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease;
+}
+.app-toast.show { opacity: 1; transform: translateY(0); }
+body.dark-mode .app-toast { background: #1e2425; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); }
+.app-toast-success { border-left-color: #2f9e57; }
+.app-toast-error { border-left-color: #c0392b; }
+.app-toast-warning { border-left-color: #c98a2e; }
+.app-toast-icon { flex-shrink: 0; display: flex; align-items: center; }
+.app-toast-icon svg { width: 18px; height: 18px; }
+.app-toast-body { flex: 1; min-width: 0; }
+.app-toast-title { font-size: 13px; font-weight: 700; color: #16211f; }
+body.dark-mode .app-toast-title { color: #edf1ee; }
+.app-toast-text { font-size: 12px; color: #6b7570; margin-top: 2px; }
+body.dark-mode .app-toast-text { color: #9aa8a2; }
+.app-toast-close { flex-shrink: 0; border: none; background: transparent; color: #9aa39d; font-size: 16px; line-height: 1; cursor: pointer; padding: 0; }
+.app-toast-close:hover { color: #6b7570; }
+body.dark-mode .app-toast-close { color: #6e7975; }
+body.dark-mode .app-toast-close:hover { color: #9aa8a2; }
+.app-toast-undo-btn {
+    margin-top: 6px; padding: 4px 12px; border-radius: 6px; border: 1px solid currentColor;
+    background: transparent; color: #2f9e57; cursor: pointer; font-size: 12px; font-weight: 700;
+}
+.app-toast-undo-btn:hover { background: rgba(47, 158, 87, .1); }
+body.dark-mode .app-toast-undo-btn { color: #4fbd7a; }
+body.dark-mode .app-toast-undo-btn:hover { background: rgba(79, 189, 122, .12); }
+
 /* ========= SMALL FORM MODALS (Add/Edit/Delete Client, Import Global PTO,
    Employee Details) ========= */
 /* Same eng-edit-* look as Add/Edit Engagement/Import Clients - grouped

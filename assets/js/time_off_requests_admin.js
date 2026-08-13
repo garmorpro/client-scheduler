@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function notify(icon, title, text) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon, title, text });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon, title, text });
         } else {
             alert(title + (text ? ': ' + text : ''));
         }
@@ -273,14 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
             request_changes: { icon: 'question', title: 'Send this back to the employee?', confirmText: 'Send Back', color: '#3f83b8' }
         }[action];
 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: copy.icon,
-                title: copy.title,
-                showCancelButton: true,
-                confirmButtonText: copy.confirmText,
-                confirmButtonColor: copy.color
-            }).then(result => { if (result.isConfirmed) run(); });
+        if (typeof appConfirm !== 'undefined') {
+            appConfirm({ icon: copy.icon, title: copy.title, confirmText: copy.confirmText, confirmColor: copy.color })
+                .then(confirmed => { if (confirmed) run(); });
         } else {
             run();
         }
@@ -309,11 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'warning', title: 'Remove this request?', text: 'This permanently deletes the request record.',
-                showCancelButton: true, confirmButtonText: 'Remove', confirmButtonColor: '#c0392b'
-            }).then(result => { if (result.isConfirmed) run(); });
+        if (typeof appConfirm !== 'undefined') {
+            appConfirm({ icon: 'warning', title: 'Remove this request?', text: 'This permanently deletes the request record.', confirmText: 'Remove', danger: true })
+                .then(confirmed => { if (confirmed) run(); });
         } else if (confirm('Remove this request?')) {
             run();
         }

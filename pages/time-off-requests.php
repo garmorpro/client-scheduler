@@ -137,7 +137,7 @@ if (!$canViewTimeOffRequests) {
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script>window.CAN_APPROVE_TIME_OFF = <?php echo $canApproveTimeOff ? 'true' : 'false'; ?>;</script>
 <script src="../assets/js/time_off_requests_admin.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>

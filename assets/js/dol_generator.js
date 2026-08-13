@@ -192,7 +192,7 @@ document.getElementById('engagementSelect').addEventListener('change', async (ev
         const res = await fetch('get-dol-setup.php?engagement_id=' + encodeURIComponent(engId));
         const data = await res.json();
         if (!data.success) {
-            Swal.fire('Error', data.error || 'Failed to load engagement', 'error');
+            appNotify({ icon: 'error', title: 'Error', text: data.error || 'Failed to load engagement' });
             return;
         }
         engagementData = data;
@@ -202,7 +202,7 @@ document.getElementById('engagementSelect').addEventListener('change', async (ev
         renderAuditTypePills();
     } catch (err) {
         console.error('Error:', err);
-        Swal.fire('Error', 'Failed to load engagement', 'error');
+        appNotify({ icon: 'error', title: 'Error', text: 'Failed to load engagement' });
     }
 });
 
@@ -508,28 +508,24 @@ function swapAllCriteria(idxA, idxB) {
 async function openMoveMenu(fromIdx, criterion) {
     const others = lastResult.map((m, i) => ({ m, i })).filter(x => x.i !== fromIdx);
     if (!others.length) return;
-    const { value: toIdx } = await Swal.fire({
+    const toIdx = await appSelectPrompt({
         title: `Move ${criterion} to…`,
-        input: 'select',
-        inputOptions: Object.fromEntries(others.map(x => [x.i, x.m.full_name])),
-        showCancelButton: true,
-        confirmButtonText: 'Move'
+        options: others.map(x => ({ value: x.i, label: x.m.full_name })),
+        confirmText: 'Move'
     });
-    if (toIdx === undefined || toIdx === '') return;
+    if (toIdx === null || toIdx === '') return;
     moveCriterion(fromIdx, parseInt(toIdx), criterion);
 }
 
 async function openSwapMenu(idxA) {
     const others = lastResult.map((m, i) => ({ m, i })).filter(x => x.i !== idxA);
     if (!others.length) return;
-    const { value: idxB } = await Swal.fire({
+    const idxB = await appSelectPrompt({
         title: `Swap ${lastResult[idxA].full_name}'s criteria with…`,
-        input: 'select',
-        inputOptions: Object.fromEntries(others.map(x => [x.i, x.m.full_name])),
-        showCancelButton: true,
-        confirmButtonText: 'Swap'
+        options: others.map(x => ({ value: x.i, label: x.m.full_name })),
+        confirmText: 'Swap'
     });
-    if (idxB === undefined || idxB === '') return;
+    if (idxB === null || idxB === '') return;
     swapAllCriteria(idxA, parseInt(idxB));
 }
 
@@ -569,7 +565,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
         saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save to Engagement';
 
         if (!data.success) {
-            Swal.fire('Error', data.error || 'Failed to save DOL', 'error');
+            appNotify({ icon: 'error', title: 'Error', text: data.error || 'Failed to save DOL' });
             return;
         }
 
@@ -584,7 +580,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
         console.error('Error:', err);
         saveBtn.disabled = false;
         saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save to Engagement';
-        Swal.fire('Error', 'Failed to save DOL', 'error');
+        appNotify({ icon: 'error', title: 'Error', text: 'Failed to save DOL' });
     }
 });
 

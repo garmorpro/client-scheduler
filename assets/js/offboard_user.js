@@ -12,23 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const res = await fetch('offboard_user.php', { method: 'POST', body: formData });
                     const data = await res.json();
                     if (data.success) {
-                        if (typeof Swal !== 'undefined') {
+                        if (typeof appNotify !== 'undefined') {
                             const parts = [`${userName} has been set to inactive`];
                             if (data.unassigned > 0) parts.push(`unassigned from ${data.unassigned} schedule ${data.unassigned === 1 ? 'entry' : 'entries'}`);
                             if (data.reports_cleared > 0) parts.push(`${data.reports_cleared} direct report${data.reports_cleared === 1 ? '' : 's'} reassigned`);
-                            Swal.fire({
+                            appNotify({
                                 icon: 'success',
                                 title: 'Employee offboarded',
                                 text: parts.join(', ') + '.',
-                                timer: 2200,
-                                showConfirmButton: false
-                            }).then(() => location.reload());
+                                timer: 2200
+                            });
+                            setTimeout(() => location.reload(), 2200);
                         } else {
                             location.reload();
                         }
                     } else {
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({ icon: 'error', title: 'Could not offboard employee', text: data.error || 'Please try again.' });
+                        if (typeof appNotify !== 'undefined') {
+                            appNotify({ icon: 'error', title: 'Could not offboard employee', text: data.error || 'Please try again.' });
                         } else {
                             alert('Error: ' + (data.error || 'Could not offboard employee.'));
                         }
@@ -38,15 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            if (typeof appConfirm !== 'undefined') {
+                appConfirm({
                     icon: 'warning',
                     title: 'Offboard this employee?',
-                    html: `This deactivates <b>${userName}</b>'s login, unassigns them from every current schedule entry, and (if they're a manager) clears their direct reports. Their past hours and time-off history are kept. This can be undone later by editing their status back to Active.`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, offboard',
-                    confirmButtonColor: '#c98a1f'
-                }).then(result => { if (result.isConfirmed) run(); });
+                    text: `This deactivates <b>${userName}</b>'s login, unassigns them from every current schedule entry, and (if they're a manager) clears their direct reports. Their past hours and time-off history are kept. This can be undone later by editing their status back to Active.`,
+                    confirmText: 'Yes, offboard',
+                    confirmColor: '#c98a1f'
+                }).then(confirmed => { if (confirmed) run(); });
             } else if (confirm(`Offboard ${userName}? This deactivates their login and unassigns their current schedule.`)) {
                 run();
             }

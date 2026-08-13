@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let auditTypes = [];
 
     function notify(message, isError) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300, showConfirmButton: !!isError });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300 });
         } else if (isError) {
             alert(message);
         }
@@ -128,9 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(err => console.error('Failed to delete audit type', err));
         };
 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: 'warning', title: 'Delete this audit type?', text: `"${name}" will be permanently removed.`, showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#c0392b' })
-                .then(result => { if (result.isConfirmed) runDelete(); });
+        if (typeof appConfirm !== 'undefined') {
+            appConfirm({ icon: 'warning', title: 'Delete this audit type?', text: `"${name}" will be permanently removed.`, confirmText: 'Delete', danger: true })
+                .then(confirmed => { if (confirmed) runDelete(); });
         } else if (confirm(`Delete "${name}"?`)) {
             runDelete();
         }

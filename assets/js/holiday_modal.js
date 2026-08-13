@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.HolidayModal = { openAdd, openEdit };
 
     function notify(message, isError) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300, showConfirmButton: !!isError });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300 });
         } else if (isError) {
             alert(message);
         }

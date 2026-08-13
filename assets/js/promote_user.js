@@ -21,8 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (data.success) {
                         location.reload();
                     } else {
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({ icon: 'error', title: 'Could not update role', text: data.error || 'Please try again.' });
+                        if (typeof appNotify !== 'undefined') {
+                            appNotify({ icon: 'error', title: 'Could not update role', text: data.error || 'Please try again.' });
                         } else {
                             alert("Error: " + data.error);
                         }
@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .catch(err => {
                     console.error(err);
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ icon: 'error', title: 'Request failed', text: String(err) });
+                    if (typeof appNotify !== 'undefined') {
+                        appNotify({ icon: 'error', title: 'Request failed', text: String(err) });
                     } else {
                         alert("AJAX request failed.");
                     }
@@ -45,15 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     const userName = this.dataset.userName;
                     const newRole = this.dataset.newRole;
 
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
+                    if (typeof appConfirm !== 'undefined') {
+                        appConfirm({
                             icon: 'question',
                             title: "Change this employee's role?",
                             text: `Change ${userName}'s role to ${roleLabel(newRole)}?`,
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, change it',
-                            confirmButtonColor: '#003f47'
-                        }).then(result => { if (result.isConfirmed) updateRole(userId, newRole); });
+                            confirmText: 'Yes, change it'
+                        }).then(confirmed => { if (confirmed) updateRole(userId, newRole); });
                     } else if (confirm(`Are you sure you want to change ${userName}'s role to ${newRole}?`)) {
                         updateRole(userId, newRole);
                     }

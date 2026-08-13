@@ -15,35 +15,16 @@
     let selectedBadge = null;
 
     function notifyError(title, text) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: 'error', title, text });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: 'error', title, text });
         } else {
             alert(`${title}: ${text}`);
         }
     }
 
     function showUndoToast(message, onUndo) {
-        if (typeof Swal === 'undefined') return;
-        Swal.fire({
-            toast: true,
-            position: 'bottom-end',
-            icon: 'success',
-            title: message,
-            html: '<button type="button" id="undoActionBtn" style="margin-top:6px;padding:4px 12px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-size:12px;font-weight:600;">Undo</button>',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 6000,
-            timerProgressBar: true,
-            didOpen: (toastEl) => {
-                const btn = toastEl.querySelector('#undoActionBtn');
-                if (btn) {
-                    btn.addEventListener('click', () => {
-                        Swal.close();
-                        onUndo();
-                    });
-                }
-            }
-        });
+        if (typeof appUndoToast === 'undefined') return;
+        appUndoToast(message, onUndo);
     }
 
     // Show context menu on right-click
@@ -79,18 +60,17 @@
             const auditTypeName = badgeToDelete.dataset.auditTypeName || '';
             const badgeLabelWithType = auditTypeName ? `${badgeLabel} — ${auditTypeName}` : badgeLabel;
 
-            const confirmResult = typeof Swal !== 'undefined'
-                ? await Swal.fire({
+            const confirmed = typeof appConfirm !== 'undefined'
+                ? await appConfirm({
                     icon: 'warning',
                     title: 'Delete this entry?',
                     text: `This removes "${badgeLabelWithType}" from the schedule.`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Delete',
-                    confirmButtonColor: '#dc3545',
+                    confirmText: 'Delete',
+                    danger: true,
                 })
-                : { isConfirmed: confirm(`Delete "${badgeLabelWithType}"?`) };
+                : confirm(`Delete "${badgeLabelWithType}"?`);
 
-            if (!confirmResult.isConfirmed) return;
+            if (!confirmed) return;
 
             const entryId = badgeToDelete.dataset.entryId;
             const parentCell = badgeToDelete.parentElement;

@@ -149,6 +149,7 @@ $historyRows = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script>
     let unarchiveHistoryId = null;
     const unarchiveModal = new bootstrap.Modal(document.getElementById('unarchiveModal'));

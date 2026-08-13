@@ -168,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function notify(title, text) {
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({ icon: 'error', title, text });
+    if (typeof appNotify !== 'undefined') {
+      appNotify({ icon: 'error', title, text });
     } else {
       alert(`${title}: ${text}`);
     }
@@ -207,12 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!btn || !currentUserId) return;
       const engagementId = btn.dataset.engagementId;
       const clientName = btn.dataset.clientName;
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
+      if (typeof appConfirm !== 'undefined') {
+        appConfirm({
           icon: 'warning', title: 'Unassign engagement?',
           text: `Remove all assigned hours for ${clientName}.`,
-          showCancelButton: true, confirmButtonText: 'Unassign', confirmButtonColor: '#c0392b'
-        }).then(result => { if (result.isConfirmed) doUnassign('unassign_user_engagement.php', { user_id: currentUserId, engagement_id: engagementId }); });
+          confirmText: 'Unassign', danger: true
+        }).then(confirmed => { if (confirmed) doUnassign('unassign_user_engagement.php', { user_id: currentUserId, engagement_id: engagementId }); });
       } else if (confirm(`Unassign ${clientName}?`)) {
         doUnassign('unassign_user_engagement.php', { user_id: currentUserId, engagement_id: engagementId });
       }
@@ -220,12 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('pf_unassign_all_btn').addEventListener('click', () => {
       if (!currentUserId) return;
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
+      if (typeof appConfirm !== 'undefined') {
+        appConfirm({
           icon: 'warning', title: 'Unassign all engagements?',
           text: 'This removes every assigned hour across all engagements.',
-          showCancelButton: true, confirmButtonText: 'Unassign All', confirmButtonColor: '#c0392b'
-        }).then(result => { if (result.isConfirmed) doUnassign('unassign_all_user_engagements.php', { user_id: currentUserId }); });
+          confirmText: 'Unassign All', danger: true
+        }).then(confirmed => { if (confirmed) doUnassign('unassign_all_user_engagements.php', { user_id: currentUserId }); });
       } else if (confirm('Unassign all engagements?')) {
         doUnassign('unassign_all_user_engagements.php', { user_id: currentUserId });
       }

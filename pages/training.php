@@ -61,7 +61,6 @@ if (!empty($userIds)) {
     <title>Training</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
@@ -122,7 +121,7 @@ if (!empty($userIds)) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <?php if ($canManageDol): ?>
 <script src="../assets/js/training.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>

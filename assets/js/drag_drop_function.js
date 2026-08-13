@@ -61,44 +61,19 @@
         }
 
         function notifyDragError(title, text) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'error', title, text });
+            if (typeof appNotify !== 'undefined') {
+                appNotify({ icon: 'error', title, text });
             } else {
                 alert(`${title}: ${text}`);
             }
         }
 
         function showUndoToast(message, onUndo, onSettle) {
-            if (typeof Swal === 'undefined') {
+            if (typeof appUndoToast === 'undefined') {
                 onSettle();
                 return;
             }
-            let undoRequested = false;
-            Swal.fire({
-                toast: true,
-                position: 'bottom-end',
-                icon: 'success',
-                title: message,
-                html: '<button type="button" id="undoActionBtn" style="margin-top:6px;padding:4px 12px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;font-size:12px;font-weight:600;">Undo</button>',
-                showConfirmButton: false,
-                showCloseButton: true,
-                timer: 6000,
-                timerProgressBar: true,
-                didOpen: (toastEl) => {
-                    const btn = toastEl.querySelector('#undoActionBtn');
-                    if (btn) {
-                        btn.addEventListener('click', async () => {
-                            undoRequested = true;
-                            Swal.close();
-                            await onUndo();
-                            onSettle();
-                        });
-                    }
-                },
-                willClose: () => {
-                    if (!undoRequested) onSettle();
-                }
-            });
+            appUndoToast(message, async () => { await onUndo(); onSettle(); }, onSettle);
         }
 
         async function onDrop(e) {

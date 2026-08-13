@@ -6,8 +6,8 @@
     let activeOverlay = null;
 
     function notify(icon, title, text) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon, title, text });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon, title, text });
         } else {
             alert(text ? `${title}: ${text}` : title);
         }

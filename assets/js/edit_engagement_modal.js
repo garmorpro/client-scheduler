@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 editModalInstance.hide();
                 location.reload();
             } else {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Could not save changes', text: result.message || 'Please try again.' });
+                if (typeof appNotify !== 'undefined') {
+                    appNotify({ icon: 'error', title: 'Could not save changes', text: result.message || 'Please try again.' });
                 } else {
                     alert('Error: ' + result.message);
                 }

@@ -625,7 +625,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/view_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/edit_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>

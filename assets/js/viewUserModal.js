@@ -400,20 +400,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function confirmAndUnassign({ title, text, url, body, onSuccess }) {
-    if (typeof Swal === 'undefined') {
+    if (typeof appConfirm === 'undefined') {
       if (!confirm(text)) return;
       doUnassign(url, body, onSuccess);
       return;
     }
-    Swal.fire({
+    appConfirm({
       icon: 'warning',
       title,
       text,
-      showCancelButton: true,
-      confirmButtonText: 'Unassign',
-      confirmButtonColor: '#c0392b'
-    }).then(result => {
-      if (result.isConfirmed) doUnassign(url, body, onSuccess);
+      confirmText: 'Unassign',
+      danger: true
+    }).then(confirmed => {
+      if (confirmed) doUnassign(url, body, onSuccess);
     });
   }
 
@@ -428,8 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json().catch(() => null);
       if (!res.ok || !data || !data.success) {
         const errMsg = (data && data.error) || 'Please try again.';
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({ icon: 'error', title: 'Could not unassign', text: errMsg });
+        if (typeof appNotify !== 'undefined') {
+          appNotify({ icon: 'error', title: 'Could not unassign', text: errMsg });
         } else {
           alert(errMsg);
         }

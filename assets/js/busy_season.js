@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = new bootstrap.Modal(modalEl);
 
     function notify(icon, title, text) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon, title, text });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon, title, text });
         } else {
             alert(title + (text ? ': ' + text : ''));
         }

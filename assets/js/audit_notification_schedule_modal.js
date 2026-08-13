@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const days = getActiveDays();
 
         if (enabledCb.checked && days.length === 0) {
-            Swal.fire({ icon: 'warning', title: 'Pick at least one day', text: 'Select which days the digest should send, or turn the master switch off.' });
+            appNotify({ icon: 'warning', title: 'Pick at least one day', text: 'Select which days the digest should send, or turn the master switch off.' });
             return;
         }
 
@@ -85,12 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!data.success) {
                 saveHint.textContent = '';
-                Swal.fire({ icon: 'error', title: 'Could not save schedule', text: data.error || 'Please try again.' });
+                appNotify({ icon: 'error', title: 'Could not save schedule', text: data.error || 'Please try again.' });
                 return;
             }
 
             saveHint.textContent = '';
-            Swal.fire({
+            appNotify({
                 icon: 'success',
                 title: enabledCb.checked ? 'Schedule saved' : 'Digest disabled',
                 text: enabledCb.checked
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.disabled = false;
             saveHint.textContent = '';
             console.error('Failed to save audit notification schedule', err);
-            Swal.fire({ icon: 'error', title: 'Could not save schedule', text: 'Please try again.' });
+            appNotify({ icon: 'error', title: 'Could not save schedule', text: 'Please try again.' });
         }
     });
 });

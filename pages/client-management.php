@@ -300,7 +300,7 @@ unset($client);
 
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <?php if ($flashSuccess): ?>
 <script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon: 'success', title: <?php echo json_encode($flashSuccess); ?>, timer: 2500, showConfirmButton: false }));</script>
 <?php endif; ?>

@@ -5,7 +5,7 @@ document.getElementById('openPermissionsBtn').addEventListener('click', function
     const textColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const mutedColor = isDark ? '#6b6b8a' : '#9ca3af';
 
-    Swal.fire({
+    appNotify({
         title: '<i class="bi bi-shield-lock me-2"></i>Role Permissions',
         background: isDark ? '#1e1e2f' : '#fff',
         color: textColor,

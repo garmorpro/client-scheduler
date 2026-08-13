@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!budgetHours || Number(budgetHours) <= 0) {
             saveBtn.disabled = false;
             saveBtn.textContent = originalLabel;
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Missing information', text: 'Please enter valid budget hours.' });
+            if (typeof appNotify !== 'undefined') {
+                appNotify({ icon: 'warning', title: 'Missing information', text: 'Please enter valid budget hours.' });
             } else {
                 alert('Please enter valid budget hours.');
             }
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!formData.get('manager')) {
             saveBtn.disabled = false;
             saveBtn.textContent = originalLabel;
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Missing information', text: 'Please select a manager.' });
+            if (typeof appNotify !== 'undefined') {
+                appNotify({ icon: 'warning', title: 'Missing information', text: 'Please select a manager.' });
             } else {
                 alert('Please select a manager.');
             }
@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 saveBtn.disabled = false;
                 saveBtn.textContent = originalLabel;
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Could not create engagement', text: result.message || 'Please try again.' });
+                if (typeof appNotify !== 'undefined') {
+                    appNotify({ icon: 'error', title: 'Could not create engagement', text: result.message || 'Please try again.' });
                 } else {
                     alert('Error: ' + result.message);
                 }
@@ -128,8 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to add engagement', error);
             saveBtn.disabled = false;
             saveBtn.textContent = originalLabel;
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'error', title: 'Network error', text: 'Could not save. Please try again.' });
+            if (typeof appNotify !== 'undefined') {
+                appNotify({ icon: 'error', title: 'Network error', text: 'Could not save. Please try again.' });
             }
         }
     });

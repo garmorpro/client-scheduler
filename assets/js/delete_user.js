@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.success) {
                         location.reload();
                     } else {
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({ icon: 'error', title: 'Could not delete employee', text: data.error || 'Please try again.' });
+                        if (typeof appNotify !== 'undefined') {
+                            appNotify({ icon: 'error', title: 'Could not delete employee', text: data.error || 'Please try again.' });
                         } else {
                             alert('Error: ' + (data.error || 'Could not delete employee.'));
                         }
@@ -25,15 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            if (typeof appConfirm !== 'undefined') {
+                appConfirm({
                     icon: 'warning',
                     title: 'Delete this employee?',
                     text: `This permanently deletes ${userName}'s account. This cannot be undone.`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete',
-                    confirmButtonColor: '#c0392b'
-                }).then(result => { if (result.isConfirmed) run(); });
+                    confirmText: 'Yes, delete',
+                    danger: true
+                }).then(confirmed => { if (confirmed) run(); });
             } else if (confirm(`Delete ${userName}'s account? This cannot be undone.`)) {
                 run();
             }

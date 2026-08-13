@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function notify(icon, title, text) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon, title, text });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon, title, text });
         } else {
             alert(title + (text ? ': ' + text : ''));
         }
@@ -333,11 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'warning', title: 'Cancel this request?',
-                showCancelButton: true, confirmButtonText: 'Cancel Request', confirmButtonColor: '#c0392b'
-            }).then(result => { if (result.isConfirmed) run(); });
+        if (typeof appConfirm !== 'undefined') {
+            appConfirm({ icon: 'warning', title: 'Cancel this request?', confirmText: 'Cancel Request', danger: true })
+                .then(confirmed => { if (confirmed) run(); });
         } else if (confirm('Cancel this request?')) {
             run();
         }

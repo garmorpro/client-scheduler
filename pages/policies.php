@@ -51,7 +51,6 @@ if ($result) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css?v=<?php echo time(); ?>">
     <?php if ($canManagePolicies): ?>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <?php endif; ?>
 </head>
 <body class="d-flex <?= ($_SESSION['theme'] ?? 'light') === 'dark' ? 'dark-mode' : '' ?>">
@@ -138,7 +137,7 @@ if ($result) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php if ($canManagePolicies): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/policy_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>

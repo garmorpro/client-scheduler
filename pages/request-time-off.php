@@ -224,7 +224,7 @@ $stmt->close();
 
 <script>window.CURRENT_USER_NAME = <?= json_encode($_SESSION['full_name'] ?? 'You') ?>;</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/request_time_off.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>

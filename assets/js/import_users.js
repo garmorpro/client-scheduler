@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('AJAX Response:', data);
 
             if (data.error || data.success === false) {
-                Swal.fire({ title: 'Import failed', text: data.error || 'Please try again.', icon: 'error' });
+                appNotify({ title: 'Import failed', text: data.error || 'Please try again.', icon: 'error' });
                 return;
             }
 
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Show SweetAlert2 modal
-            Swal.fire({
+            appNotify({
                 title: 'Import Results',
                 html: htmlMsg,
                 icon: data.errors.length ? 'warning' : 'success',
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(err => {
             console.error('AJAX Error:', err);
-            Swal.fire({
+            appNotify({
                 title: 'Error',
                 text: 'Something went wrong. Check console.',
                 icon: 'error'

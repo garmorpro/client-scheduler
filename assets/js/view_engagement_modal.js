@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return due < today;
     }
     function notify(message, isError) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1100, showConfirmButton: !!isError });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1100 });
         } else if (isError) {
             alert(message);
         }
@@ -567,9 +567,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         notify('Network error. Please try again.', true);
                     }
                 };
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'warning', title: 'Archive this engagement?', text: 'It will move to Archived and out of the active list.', showCancelButton: true, confirmButtonText: 'Archive', confirmButtonColor: '#285a80' })
-                        .then(result => { if (result.isConfirmed) run(); });
+                if (typeof appConfirm !== 'undefined') {
+                    appConfirm({ icon: 'warning', title: 'Archive this engagement?', text: 'It will move to Archived and out of the active list.', confirmText: 'Archive' })
+                        .then(confirmed => { if (confirmed) run(); });
                 } else if (confirm('Archive this engagement?')) {
                     run();
                 }

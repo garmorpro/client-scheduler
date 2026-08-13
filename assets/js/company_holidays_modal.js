@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let reopenAfterHolidayModal = false;
 
     function notify(message, isError) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300, showConfirmButton: !!isError });
+        if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: isError ? 'error' : 'success', title: message, timer: isError ? undefined : 1300 });
         } else if (isError) {
             alert(message);
         }
@@ -120,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(err => console.error('Failed to delete holiday', err));
             };
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Delete holiday?', text: `This will remove all days for "${name}".`, showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#c0392b' })
-                    .then(result => { if (result.isConfirmed) runDelete(); });
+            if (typeof appConfirm !== 'undefined') {
+                appConfirm({ icon: 'warning', title: 'Delete holiday?', text: `This will remove all days for "${name}".`, confirmText: 'Delete', danger: true })
+                    .then(confirmed => { if (confirmed) runDelete(); });
             } else if (confirm(`Delete all days for "${name}"?`)) {
                 runDelete();
             }
@@ -146,9 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(err => console.error('Failed to delete date', err));
             };
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Remove this date?', showCancelButton: true, confirmButtonText: 'Remove', confirmButtonColor: '#c0392b' })
-                    .then(result => { if (result.isConfirmed) runDelete(); });
+            if (typeof appConfirm !== 'undefined') {
+                appConfirm({ icon: 'warning', title: 'Remove this date?', confirmText: 'Remove', danger: true })
+                    .then(confirmed => { if (confirmed) runDelete(); });
             } else if (confirm('Remove this date?')) {
                 runDelete();
             }

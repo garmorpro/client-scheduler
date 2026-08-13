@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalEl.querySelector('.btn-close').click();
                 location.reload();
             } else {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Could not add employee', text: result.error || 'Please try again.' });
+                if (typeof appNotify !== 'undefined') {
+                    appNotify({ icon: 'error', title: 'Could not add employee', text: result.error || 'Please try again.' });
                 } else {
                     alert('Error: ' + (result.error || 'Could not add employee.'));
                 }

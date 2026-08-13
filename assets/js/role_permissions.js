@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 savedSnapshot = JSON.stringify(permissions);
                 checkDirty();
                 modalEl.querySelector('.btn-close').click();
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'success', title: 'Permissions saved', timer: 1400, showConfirmButton: false });
+                if (typeof appNotify !== 'undefined') {
+                    appNotify({ icon: 'success', title: 'Permissions saved', timer: 1400, showConfirmButton: false });
                 }
             } else {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Could not save permissions', text: result.error || 'Please try again.' });
+                if (typeof appNotify !== 'undefined') {
+                    appNotify({ icon: 'error', title: 'Could not save permissions', text: result.error || 'Please try again.' });
                 } else {
                     alert('Error: ' + (result.error || 'Could not save permissions.'));
                 }

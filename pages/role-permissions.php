@@ -158,6 +158,7 @@ if ($settingResult) {
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>

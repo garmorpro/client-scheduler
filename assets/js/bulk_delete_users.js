@@ -45,28 +45,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (result.success) {
             const skippedCount = (result.skippedSelf ? 1 : 0) + (result.skippedWithData ? result.skippedWithData.length : 0);
-            if (skippedCount > 0 && typeof Swal !== 'undefined') {
+            if (skippedCount > 0 && typeof appNotify !== 'undefined') {
               const reasons = [];
               if (result.skippedSelf) reasons.push('you can\'t delete your own account');
               if (result.skippedWithData && result.skippedWithData.length) reasons.push(`${result.skippedWithData.length} user(s) have scheduled hours or time off`);
-              Swal.fire({
-                icon: 'info',
+              appNotify({
+                icon: 'success',
                 title: `Deleted ${result.deletedCount}, skipped ${skippedCount}`,
-                text: `Skipped because ${reasons.join(' and ')}.`
-              }).then(() => location.reload());
+                text: `Skipped because ${reasons.join(' and ')}.`,
+                timer: 3200
+              });
+              setTimeout(() => location.reload(), 3200);
             } else {
               location.reload();
             }
           } else {
-            if (typeof Swal !== 'undefined') {
-              Swal.fire({ icon: 'error', title: 'Could not delete employees', text: result.error || 'Unknown error' });
+            if (typeof appNotify !== 'undefined') {
+              appNotify({ icon: 'error', title: 'Could not delete employees', text: result.error || 'Unknown error' });
             } else {
               alert('Error deleting users: ' + (result.error || 'Unknown error'));
             }
           }
         } catch (error) {
-          if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: 'error', title: 'Request failed', text: error.message });
+          if (typeof appNotify !== 'undefined') {
+            appNotify({ icon: 'error', title: 'Request failed', text: error.message });
           } else {
             alert('Network or server error: ' + error.message);
           }
@@ -81,15 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedIds.length === 0) return;
 
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
+        if (typeof appConfirm !== 'undefined') {
+          appConfirm({
             icon: 'warning',
             title: `Delete ${selectedIds.length} employee${selectedIds.length === 1 ? '' : 's'}?`,
             text: 'This action cannot be undone.',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete',
-            confirmButtonColor: '#c0392b'
-          }).then(result => { if (result.isConfirmed) runBulkDelete(selectedIds); });
+            confirmText: 'Yes, delete',
+            danger: true
+          }).then(confirmed => { if (confirmed) runBulkDelete(selectedIds); });
         } else if (confirm(`Are you sure you want to delete ${selectedIds.length} user(s)? This action cannot be undone.`)) {
           runBulkDelete(selectedIds);
         }

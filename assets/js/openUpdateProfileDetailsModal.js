@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       bootstrap.Modal.getInstance(updateProfileDetailsModal).hide();
 
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
+      if (typeof appNotify !== 'undefined') {
+        appNotify({
           icon: 'success', title: 'Profile updated',
           timer: 1400, showConfirmButton: false
         }).then(() => location.reload());
@@ -64,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({ icon: 'error', title: 'Could not update profile', text: error.message });
+      if (typeof appNotify !== 'undefined') {
+        appNotify({ icon: 'error', title: 'Could not update profile', text: error.message });
       } else {
         alert('Could not update profile: ' + error.message);
       }
