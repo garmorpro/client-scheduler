@@ -1743,7 +1743,8 @@ body.dark-mode .eng-stat-bar { background: #29302e; }
 
 /* View Engagement / Over-Budget modal bodies */
 .eng-vm-header { padding: 20px 44px 16px 20px; }
-.eng-vm-body { padding: 16px 20px 20px; }
+.eng-vm-body { padding: 16px 20px 20px; background-color: #f4f6f5; }
+body.dark-mode .eng-vm-body { background-color: #16191a; }
 .eng-vm-client-row { display: flex; align-items: center; gap: 12px; }
 .eng-vm-divider { height: 1px; background: #e3e7e5; margin: 0 20px; }
 body.dark-mode .eng-vm-divider { background: #29302e; }
@@ -1863,9 +1864,10 @@ body.dark-mode .eng-vm-repeat-badge { background: #1a2540; color: #7fa8e0; }
    reference layout, instead of one long undifferentiated scroll. */
 .eng-vm-card {
     border: 1px solid #e3e7e5; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+    background-color: #ffffff;
 }
 .eng-vm-card:last-child { margin-bottom: 0; }
-body.dark-mode .eng-vm-card { border-color: #29302e; }
+body.dark-mode .eng-vm-card { border-color: #29302e; background-color: #1e2325; }
 .eng-vm-card-title {
     display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em; color: #6b7570; margin-bottom: 10px;
