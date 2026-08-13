@@ -214,7 +214,6 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                                    <i class="bi bi-diagram-2 me-2"></i>Direct Reports
                                                 </a>
                                             </li>
-                                            <li><hr class="dropdown-divider"></li>
                                             <?php endif; ?>
                                             <?php
                                             $role = strtolower($userrow['role']);
