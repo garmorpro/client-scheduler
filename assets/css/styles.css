@@ -1937,6 +1937,8 @@ body.dark-mode .eng-vm-tl-weekly-label { color: #9aa8a2; }
 .eng-vm-upload-link { display: inline-flex; align-items: center; gap: 5px; color: var(--primary-color); cursor: pointer; font-weight: 600; text-decoration: none; }
 .eng-vm-upload-link:hover { text-decoration: underline; }
 body.dark-mode .eng-vm-upload-link { color: var(--secondary-color); }
+.eng-vm-upload-link.danger { color: #c0392b; }
+body.dark-mode .eng-vm-upload-link.danger { color: #e0685a; }
 .eng-vm-tile { width: 42px; height: 42px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
 .eng-vm-client-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
 .eng-vm-stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }

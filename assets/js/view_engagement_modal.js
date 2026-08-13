@@ -137,15 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
             weekly = `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${wsc.day}${wsc.time_label ? ` at ${wsc.time_label}` : ''}</strong>${wsc.group_name ? ` &middot; ${wsc.group_name}` : ''}</div>`;
         }
 
-        const uploadRow = canManage
-            ? `<div class="eng-vm-tl-upload-row">
-                   <label class="eng-vm-upload-link">
-                       <i class="bi bi-upload"></i> Upload Planning Doc
-                       <input type="file" id="engVmPlanningDocInput" data-engagement-id="${engagementId}" hidden>
-                   </label>
-                   ${details.planning_doc_url ? `<a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}">&middot; <i class="bi bi-eye"></i> View current</a>` : ''}
-               </div>`
-            : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}"><i class="bi bi-eye"></i> Planning Doc</a></div>` : '');
+        // Once a doc exists, "Upload" stops making sense as the primary
+        // action - View/Replace/Remove instead. The hidden file input is
+        // still there either way, just relabeled to "Replace" when it's
+        // swapping an existing file rather than adding a first one.
+        const fileInput = `<input type="file" id="engVmPlanningDocInput" data-engagement-id="${engagementId}" hidden>`;
+        let uploadRow;
+        if (canManage && details.planning_doc_url) {
+            uploadRow = `<div class="eng-vm-tl-upload-row">
+                   <a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}"><i class="bi bi-eye"></i> View Planning Doc</a>
+                   <label class="eng-vm-upload-link"><i class="bi bi-arrow-repeat"></i> Replace${fileInput}</label>
+                   <a href="#" class="eng-vm-upload-link danger eng-vm-remove-planning-doc" data-engagement-id="${engagementId}"><i class="bi bi-trash"></i> Remove</a>
+               </div>`;
+        } else if (canManage) {
+            uploadRow = `<div class="eng-vm-tl-upload-row">
+                   <label class="eng-vm-upload-link"><i class="bi bi-upload"></i> Upload Planning Doc${fileInput}</label>
+               </div>`;
+        } else {
+            uploadRow = details.planning_doc_url
+                ? `<div class="eng-vm-tl-upload-row"><a href="#" class="eng-vm-upload-link eng-vm-view-planning-doc" data-engagement-id="${engagementId}" data-doc-url="${details.planning_doc_url}"><i class="bi bi-eye"></i> View Planning Doc</a></div>`
+                : '';
+        }
 
         const titleAction = canManage
             ? `<div class="eng-vm-tl-title-actions">
@@ -708,6 +720,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     console.error('Failed to upload planning doc', err);
                     notify('Network error. Please try again.', true);
+                }
+            });
+        }
+
+        const removeDocBtn = document.querySelector('.eng-vm-remove-planning-doc');
+        if (removeDocBtn) {
+            removeDocBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const run = async () => {
+                    try {
+                        const res = await fetch('remove_planning_doc.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ engagement_id: engagementId })
+                        });
+                        const result = await res.json();
+                        if (!result.success) notify(result.error || 'Could not remove file.', true);
+                        refresh();
+                    } catch (err) {
+                        console.error('Failed to remove planning doc', err);
+                        notify('Network error. Please try again.', true);
+                    }
+                };
+                if (typeof appConfirm !== 'undefined') {
+                    const confirmed = await appConfirm({ icon: 'warning', title: 'Remove this planning doc?', text: 'This deletes the uploaded file. You can upload a new one afterward.', confirmText: 'Remove', danger: true });
+                    if (confirmed) run();
+                } else if (confirm('Remove this planning doc?')) {
+                    run();
                 }
             });
         }
