@@ -91,6 +91,19 @@ function auditFormatDaysAway(int $days): string
     return "in {$days} days";
 }
 
+// Calendar-day difference between today and $dateValue, ignoring
+// time-of-day entirely - comparing raw timestamps (today's exact current
+// moment vs. midnight of the due date) understates the gap by however far
+// into the current day it already is, so "due tomorrow" would round down
+// to 0 (and get skipped, since the check requires >= 1) any time this ran
+// after roughly midday. A due date is a calendar day, not an exact moment.
+function auditDaysUntil(string $dateValue): int
+{
+    $todayMidnight = strtotime('today');
+    $dueMidnight = strtotime(date('Y-m-d', strtotime($dateValue)));
+    return (int) round(($dueMidnight - $todayMidnight) / 86400);
+}
+
 /**
  * Scans every engagement's timeline for items due in 1-7 days. Returns a
  * flat list of per-(recipient, item) rows to be grouped into per-recipient
@@ -119,7 +132,7 @@ function collectUpcomingKeyDateDigestRows(mysqli $conn, bool $dryRun = false): a
             $completedValue = $timeline[$completedCol] ?? null;
             if (!$dateValue || $completedValue) continue;
 
-            $daysUntil = (int) round((strtotime($dateValue) - time()) / 86400);
+            $daysUntil = auditDaysUntil($dateValue);
             if ($daysUntil < 1 || $daysUntil > 7) continue;
             if (auditAlreadyNotified($conn, $engagementId, $dateCol)) continue;
 
@@ -162,7 +175,7 @@ function collectUpcomingMilestoneDigestRows(mysqli $conn, bool $dryRun = false):
         WHERE m.due_date IS NOT NULL AND m.is_completed = 0
     ");
     while ($row = $res->fetch_assoc()) {
-        $daysUntil = (int) round((strtotime($row['due_date']) - time()) / 86400);
+        $daysUntil = auditDaysUntil($row['due_date']);
         if ($daysUntil < 1 || $daysUntil > 5) continue;
 
         $engagementId = (int) $row['engagement_id'];
