@@ -218,36 +218,36 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                             <?php endif; ?>
                                             <?php
                                             $role = strtolower($userrow['role']);
-                                            // Escaped once here since it's reused across every case below - the
+                                            // Escaped once here since it's reused across every item below - the
                                             // raw full_name was previously interpolated straight into these
                                             // data-* attributes, letting a quote character in a name (e.g. from
                                             // CSV import) break out and inject arbitrary HTML/JS.
                                             $safeName = htmlspecialchars($userrow['full_name']);
                                             $safeId = (int)$userrow['user_id'];
-                                            switch ($role) {
-                                                case 'staff':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
-                                                    break;
-                                                case 'senior':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Manager</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
-                                                    break;
-                                                case 'manager':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="admin"><i class="bi bi-arrow-up-circle me-2 text-success"></i>Promote to Admin</a></li>';
-                                                    break;
-                                                case 'admin':
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="staff"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Staff</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="senior"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Senior</a></li>';
-                                                    echo '<li><a class="dropdown-item promote-user" href="#" data-user-id="'.$safeId.'" data-user-name="'.$safeName.'" data-new-role="manager"><i class="bi bi-arrow-down-circle me-2 text-danger"></i>Demote to Manager</a></li>';
-                                                    break;
-                                            }
+                                            $rankedRoles = ['staff', 'senior', 'manager', 'admin'];
+                                            // "Change role" - a single item with a hover flyout listing every
+                                            // other role, replacing the old flat Promote-to-X/Demote-to-X list
+                                            // (which forced you to scan up/down arrows and red/green to find the
+                                            // right one). Only shown for the ranked roles; CRM Team has no ladder.
+                                            if (in_array($role, $rankedRoles, true)):
                                             ?>
+                                            <li class="dropdown-submenu">
+                                                <a class="dropdown-item role-submenu-trigger" href="#" tabindex="-1">
+                                                    <span><i class="bi bi-arrow-left-right me-2"></i>Change Role</span>
+                                                    <i class="bi bi-chevron-right role-submenu-chevron"></i>
+                                                </a>
+                                                <ul class="role-submenu">
+                                                    <?php foreach ($rankedRoles as $r): ?>
+                                                        <?php if ($r === $role): ?>
+                                                        <li class="role-submenu-current"><?php echo ucfirst($r); ?><i class="bi bi-check2"></i></li>
+                                                        <?php else: ?>
+                                                        <li><a class="dropdown-item promote-user" href="#" data-user-id="<?php echo $safeId; ?>" data-user-name="<?php echo $safeName; ?>" data-new-role="<?php echo $r; ?>"><?php echo ucfirst($r); ?></a></li>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </li>
                                             <li><hr class="dropdown-divider"></li>
+                                            <?php endif; ?>
                                             <?php if (strtolower($userrow['status']) === 'active'): ?>
                                             <li>
                                                 <a class="dropdown-item text-warning offboard-user-btn" href="#"

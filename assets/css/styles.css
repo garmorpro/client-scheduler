@@ -1177,6 +1177,40 @@ input, select {
   color: #6c757d;
 }
 
+/* "Change Role" flyout submenu on the Employees row-actions dropdown -
+   replaces the old flat Promote to X / Demote to X list with a single
+   trigger that reveals every other role on hover (with a click-toggle
+   fallback below for touch, since there's no hover state to reveal it). */
+.dropdown-submenu { position: relative; }
+.role-submenu-trigger { display: flex; align-items: center; justify-content: space-between; }
+.role-submenu-chevron { font-size: 11px; color: #9aa39d; margin-left: 10px; }
+.role-submenu {
+  display: none;
+  position: absolute;
+  top: -6px;
+  left: 100%;
+  min-width: 150px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #e3e7e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  z-index: 1060;
+}
+.dropdown-submenu:hover > .role-submenu,
+.dropdown-submenu.open > .role-submenu { display: block; }
+.role-submenu li { margin: 0; }
+.role-submenu .dropdown-item { border-bottom: none; border-radius: 6px; padding: 7px 10px; font-size: 13px; }
+.role-submenu-current {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; font-size: 13px; font-weight: 600;
+  border-radius: 6px; background: #f4f9e6; color: #4c6417;
+}
+body.dark-mode .role-submenu { background: #1e2325; border-color: #29302e; }
+body.dark-mode .role-submenu-current { background: #233a12; color: #c3e08a; }
+
 #selectedClient {
   font-weight: 500;
 }

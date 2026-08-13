@@ -1,4 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
+            // "Change Role" flyout submenu - opens on hover via CSS, plus a
+            // click-toggle here as a fallback for touch devices (no hover
+            // state to reveal it there). Bootstrap's own dropdown-close
+            // listener fires on any document click, so opening on click
+            // needs its propagation stopped or the parent dropdown would
+            // close in the same tick it opens.
+            document.querySelectorAll(".dropdown-submenu > .role-submenu-trigger").forEach(trigger => {
+                trigger.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const submenu = trigger.closest(".dropdown-submenu");
+                    document.querySelectorAll(".dropdown-submenu.open").forEach(other => {
+                        if (other !== submenu) other.classList.remove("open");
+                    });
+                    submenu.classList.toggle("open");
+                });
+            });
+
+            // Reset any click-opened submenu when its parent dropdown closes,
+            // so it doesn't render pre-opened the next time that row's menu
+            // is opened.
+            document.addEventListener("hidden.bs.dropdown", (e) => {
+                e.target.querySelectorAll(".dropdown-submenu.open").forEach(el => el.classList.remove("open"));
+            });
+
             const promoteLinks = document.querySelectorAll(".promote-user");
 
             function roleLabel(role) {
