@@ -259,7 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Edit DOL</a>`
             : '';
 
-        if (employees.length === 0) {
+        // manager_user (resolved server-side from engagements.manager, a
+        // plain name field - see engagement-details.php) can exist even when
+        // nobody has logged hours yet, so an assigned-manager-only
+        // engagement still isn't "no employees assigned".
+        if (employees.length === 0 && !data.manager_user) {
             return card('Team', '#003f47', '<div class="text-muted" style="font-size:13px;">No employees assigned yet.</div>', titleAction);
         }
 
@@ -313,8 +317,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let html = '';
-        if (byRole.has('manager')) {
-            const manager = Array.from(byRole.get('manager').values())[0];
+        // Prefer whichever entries-based manager row already has real
+        // hours/DOL; fall back to the resolved manager_user (0h, no DOL)
+        // when the manager hasn't logged anything on this engagement -
+        // either way, the engagement's manager always gets a lead row.
+        const managerFromEntries = byRole.has('manager') ? Array.from(byRole.get('manager').values())[0] : null;
+        const manager = managerFromEntries || (data.manager_user
+            ? { user_id: data.manager_user.user_id, name: data.manager_user.full_name, hours: 0, dolByType: new Map() }
+            : null);
+        if (manager) {
             html += `
                 <div class="eng-vm-team-lead-row">
                     ${teamAvatar('manager', manager.name, 'lead')}
@@ -323,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-team-lead-role">Manager</div>
                     </div>
                     ${independenceControl(manager, independenceByUser, engagementId, clientName)}
-                    <div class="eng-vm-team-hours">${manager.hours}h</div>
+                    <div class="eng-vm-team-hours">${manager.hours > 0 ? manager.hours + 'h' : ''}</div>
                 </div>`;
         }
 

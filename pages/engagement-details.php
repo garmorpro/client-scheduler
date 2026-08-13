@@ -219,6 +219,29 @@ if (isset($_GET['id'])) {
     // panel's "Manage Team" link.
     $auditData['can_manage_dol'] = audit_can_act_on_engagement($conn, $engagementId, 'manage_dol');
 
+    // `engagements.manager` is just a free-text name (set from a dropdown of
+    // current managers at assign time, see add_engagement.php/edit_engagement.php),
+    // not a foreign key - resolve it to a real user here so the Team card can
+    // show a proper avatar/lead row for the manager even when they have no
+    // entries of their own on this engagement (manager is a role on the
+    // engagement, not something derived from logged hours).
+    $managerUser = null;
+    if (!empty($engagement['manager'])) {
+        $mgrStmt = $conn->prepare("SELECT user_id, full_name, role, job_title FROM users WHERE full_name = ? LIMIT 1");
+        $mgrStmt->bind_param('s', $engagement['manager']);
+        $mgrStmt->execute();
+        $mgrRow = $mgrStmt->get_result()->fetch_assoc();
+        $mgrStmt->close();
+        if ($mgrRow) {
+            $managerUser = [
+                'user_id' => (int) $mgrRow['user_id'],
+                'full_name' => $mgrRow['full_name'],
+                'role' => strtolower($mgrRow['role']),
+                'job_title' => $mgrRow['job_title'] ?? '',
+            ];
+        }
+    }
+
     echo json_encode([
         'engagement_id' => $engagementId,
         'client_name' => $engagement['client_name'] ?? '',
@@ -227,6 +250,7 @@ if (isset($_GET['id'])) {
         'total_hours' => $totalHours,
         'budgeted_hours' => (float)($engagement['budgeted_hours'] ?? 0),
         'manager' => $engagement['manager'] ?? '',
+        'manager_user' => $managerUser,
         'notes' => $engagement['notes'] ?? '',
         'assigned_employees' => $assignedEmployees,
         'audit_types' => $auditTypes,

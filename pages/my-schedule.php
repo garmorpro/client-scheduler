@@ -119,7 +119,7 @@ $stmt->close();
 // ------------------------------------------------------
 // Selected week details
 $sqlWeekDetails = "
-    SELECT e.entry_id, e.assigned_hours, e.engagement_id, eng.client_name, eng.status
+    SELECT e.entry_id, e.assigned_hours, e.engagement_id, eng.client_name, eng.status, eng.manager
     FROM entries e
     LEFT JOIN engagements eng ON e.engagement_id = eng.engagement_id
     WHERE e.user_id = ?
@@ -184,7 +184,7 @@ $netHours = $totalHours;
 
 // ------------------------------------------------------
 // Fetch team members
-function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
+function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId, $managerName = null) {
     $sql = "
         SELECT u.full_name, e.assigned_hours
         FROM entries e
@@ -201,10 +201,22 @@ function getTeamMembers($conn, $engagement_id, $weekStart, $currentUserId) {
     $stmt->execute();
     $res = $stmt->get_result();
     $members = [];
+    $seenNames = [];
     while ($row = $res->fetch_assoc()) {
         $members[] = $row['full_name'] . ' (' . $row['assigned_hours'] . ')';
+        $seenNames[strtolower($row['full_name'])] = true;
     }
     $stmt->close();
+
+    // The engagement's manager is a separate field on `engagements`, not
+    // someone who necessarily has an entries row - they might not have
+    // logged hours this specific week (or ever). Still part of the team,
+    // so still belongs in this list.
+    $managerName = trim((string) $managerName);
+    if ($managerName !== '' && !isset($seenNames[strtolower($managerName)]) && strcasecmp($managerName, $_SESSION['full_name'] ?? '') !== 0) {
+        array_unshift($members, $managerName);
+    }
+
     return $members;
 }
 
@@ -323,7 +335,7 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
     <?php else: ?>
       <div class="ms-entry-list">
         <?php foreach ($engagements as $eng):
-          $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId);
+          $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId, $eng['manager'] ?? null);
           $clientName = $eng['client_name'] ?? 'Unknown';
           $status = strtolower($eng['status'] ?? 'confirmed');
           $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';

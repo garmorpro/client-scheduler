@@ -56,8 +56,10 @@ $stmt->close();
 
 // Everyone else (not the viewer) who has ever logged hours to this
 // engagement - all-time, not scoped to a single week like My Schedule's own
-// getTeamMembers().
-function getEngagementTeammates($conn, $engagement_id, $currentUserId) {
+// getTeamMembers(). Also includes the engagement's manager even if they've
+// never logged an hour themselves - manager is a separate field on
+// `engagements`, not derived from entries, same reasoning as My Schedule's.
+function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerName = null) {
     $stmt = $conn->prepare("
         SELECT DISTINCT u.full_name
         FROM entries e
@@ -69,8 +71,18 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId) {
     $stmt->execute();
     $res = $stmt->get_result();
     $members = [];
-    while ($row = $res->fetch_assoc()) $members[] = $row['full_name'];
+    $seenNames = [];
+    while ($row = $res->fetch_assoc()) {
+        $members[] = $row['full_name'];
+        $seenNames[strtolower($row['full_name'])] = true;
+    }
     $stmt->close();
+
+    $managerName = trim((string) $managerName);
+    if ($managerName !== '' && !isset($seenNames[strtolower($managerName)]) && strcasecmp($managerName, $_SESSION['full_name'] ?? '') !== 0) {
+        array_unshift($members, $managerName);
+    }
+
     return $members;
 }
 ?>
@@ -124,7 +136,7 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId) {
     <?php else: ?>
       <div class="ms-entry-list">
         <?php foreach ($myEngagements as $eng):
-          $teammates = getEngagementTeammates($conn, $eng['engagement_id'], $userId);
+          $teammates = getEngagementTeammates($conn, $eng['engagement_id'], $userId, $eng['manager'] ?? null);
           $clientName = $eng['client_name'] ?? 'Unknown';
           $status = strtolower($eng['status'] ?? 'confirmed');
           $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';
