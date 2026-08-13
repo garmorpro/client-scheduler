@@ -18,6 +18,7 @@ let lastResult = null;       // computed split, kept for Save
 let lastUnassignable = [];   // bundles nobody was eligible for
 let lastTotalHours = 0;
 let criteriaWeights = {};    // name -> weight
+let draggingChip = null;     // { fromIdx, criterion } while a chip drag is in progress
 
 const SOC2_DEFAULT_WEIGHTS = {
     'CC1': 1, 'CC2': 1, 'CC3': 2, 'CC4': 1, 'CC5': 1,
@@ -196,9 +197,9 @@ document.getElementById('engagementSelect').addEventListener('change', async (ev
         }
         engagementData = data;
         eligibleMembers = data.team || [];
-        renderAuditTypePills();
-        renderTeamHours();
         document.getElementById('setupSections').classList.remove('d-none');
+        renderTeamHours();
+        renderAuditTypePills();
     } catch (err) {
         console.error('Error:', err);
         Swal.fire('Error', 'Failed to load engagement', 'error');
@@ -222,10 +223,66 @@ function renderAuditTypePills() {
             container.querySelectorAll('.dolgen-pill').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedAuditType = relevant.find(t => String(t.audit_type_id) === btn.dataset.id);
-            updateCriteriaForAuditType();
+            loadSelectedAuditType();
         });
     });
+    loadSelectedAuditType();
+}
+
+// Whatever this engagement already has saved for the given audit type, or
+// null if there's nothing to show yet (a brand-new split still needs Step
+// 4 + Generate).
+function existingDolFor(auditTypeId) {
+    const byUser = (engagementData.existing_dol && engagementData.existing_dol[auditTypeId]) || null;
+    return byUser && Object.keys(byUser).length ? byUser : null;
+}
+
+// Picking an audit type (on load or via pill click) always preps Step 4 in
+// case someone wants to regenerate from scratch via "Back & Adjust" -> but
+// if this engagement already has DOL saved for that type, skip straight to
+// the review/edit view instead of forcing a re-split of something that's
+// already there.
+function loadSelectedAuditType() {
     updateCriteriaForAuditType();
+    const existing = existingDolFor(selectedAuditType.audit_type_id);
+    if (existing) {
+        showExistingDol(existing);
+    } else {
+        resetResult();
+        document.getElementById('setupSections').classList.remove('d-none');
+    }
+}
+
+// Populates lastResult from what's already saved (rather than a freshly
+// computed split) and reuses renderResult()'s same review/edit UI - drag a
+// chip or use Swap, then Save replaces this audit type's DOL like any other
+// save. Weights are display-only here (SOC 2 defaults, else 1) - nothing
+// about editing existing DOL depends on them the way generating a fresh
+// split does.
+function showExistingDol(existingByUser) {
+    criteriaWeights = {};
+    Object.values(existingByUser).flat().forEach(name => {
+        if (!(name in criteriaWeights)) criteriaWeights[name] = getDefaultWeight(name);
+    });
+
+    lastTotalHours = eligibleMembers.reduce((sum, m) => sum + (m.hours || 0), 0);
+    lastUnassignable = [];
+    lastResult = eligibleMembers.map(m => {
+        let assigned = existingByUser[m.user_id] || [];
+        if (selectedAuditType.name === 'SOC 2') assigned = sortSoc2Criteria(assigned);
+        const assignedWeight = assigned.reduce((sum, c) => sum + (criteriaWeights[c] || 1), 0);
+        return { ...m, assigned, assignedWeight };
+    });
+
+    const allCriteria = Object.keys(criteriaWeights);
+    const totalWeight = allCriteria.reduce((sum, c) => sum + (criteriaWeights[c] || 1), 0);
+    renderResult(lastTotalHours, allCriteria.length, totalWeight);
+
+    // renderResult()'s summary line assumes a just-generated split ("split
+    // by hours... = N total") - this is existing data being reviewed, not
+    // a fresh computation, so it gets its own wording.
+    document.getElementById('resultSummary').innerHTML =
+        `${escapeHtml(engagementData.engagement.client_name)} &middot; ${escapeHtml(selectedAuditType.name)} &middot; showing the current DOL (${allCriteria.length} criteria across ${lastResult.length} people). Drag a chip onto someone else to move it, or Swap, then Save.`;
 }
 
 function updateCriteriaForAuditType() {
@@ -361,11 +418,11 @@ function renderResultMembers() {
         const chips = m.assigned.length
             ? m.assigned.map(c => {
                 const isRestricted = restricted.includes(c);
-                return `<span class="dolgen-chip ${isRestricted ? 'restricted' : ''}" data-member-idx="${idx}" data-criterion="${escAttr(c)}" title="${isRestricted ? escAttr(m.full_name) + " isn't trained on this yet — " : ''}Click to move to someone else">${isRestricted ? '<i class="bi bi-exclamation-triangle-fill"></i> ' : ''}${escapeHtml(c)}</span>`;
+                return `<span class="dolgen-chip ${isRestricted ? 'restricted' : ''}" draggable="true" data-member-idx="${idx}" data-criterion="${escAttr(c)}" title="${isRestricted ? escAttr(m.full_name) + " isn't trained on this yet — " : ''}Drag onto someone else, or click to move">${isRestricted ? '<i class="bi bi-exclamation-triangle-fill"></i> ' : ''}${escapeHtml(c)}</span>`;
             }).join('')
             : '<span class="text-muted small">No criteria assigned</span>';
         return `
-            <div class="dolgen-result-member">
+            <div class="dolgen-result-member" data-member-idx="${idx}">
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <div class="dolgen-avatar" style="background:${ROLE_COLORS[roleKey] || '#6c757d'}">${initials(m.full_name)}</div>
                     <div class="flex-grow-1">
@@ -375,16 +432,53 @@ function renderResultMembers() {
                     <span class="dolgen-share">${m.hours} hrs &middot; ${pct}% &middot; ${m.assigned.length} criteria (${m.assignedWeight} wt)</span>
                     <button type="button" class="btn btn-sm btn-outline-secondary dolgen-swap-btn" data-member-idx="${idx}" title="Swap all criteria with someone else"><i class="bi bi-arrow-left-right"></i> Swap</button>
                 </div>
-                <div class="d-flex flex-wrap gap-1">${chips}</div>
+                <div class="d-flex flex-wrap gap-1 dolgen-chip-zone">${chips}</div>
             </div>
         `;
     }).join('');
 
     document.querySelectorAll('.dolgen-chip[data-criterion]').forEach(chip => {
         chip.addEventListener('click', () => openMoveMenu(parseInt(chip.dataset.memberIdx), chip.dataset.criterion));
+        chip.addEventListener('dragstart', (e) => {
+            draggingChip = { fromIdx: parseInt(chip.dataset.memberIdx), criterion: chip.dataset.criterion };
+            chip.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            // Firefox won't fire dragstart at all without setData called.
+            e.dataTransfer.setData('text/plain', chip.dataset.criterion);
+        });
+        chip.addEventListener('dragend', () => {
+            chip.classList.remove('dragging');
+            draggingChip = null;
+        });
     });
     document.querySelectorAll('.dolgen-swap-btn').forEach(btn => {
         btn.addEventListener('click', () => openSwapMenu(parseInt(btn.dataset.memberIdx)));
+    });
+
+    // Drop target is the whole card, not just the chip row, so there's a
+    // generous target to aim for.
+    document.querySelectorAll('.dolgen-result-member').forEach(card => {
+        const toIdx = parseInt(card.dataset.memberIdx);
+        card.addEventListener('dragover', (e) => {
+            if (!draggingChip) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        card.addEventListener('dragenter', (e) => {
+            if (!draggingChip) return;
+            e.preventDefault();
+            card.classList.add('dolgen-drop-target');
+        });
+        card.addEventListener('dragleave', (e) => {
+            if (!card.contains(e.relatedTarget)) card.classList.remove('dolgen-drop-target');
+        });
+        card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            card.classList.remove('dolgen-drop-target');
+            if (!draggingChip || draggingChip.fromIdx === toIdx) return;
+            moveCriterion(draggingChip.fromIdx, toIdx, draggingChip.criterion);
+            draggingChip = null;
+        });
     });
 }
 

@@ -108,6 +108,21 @@ if (!empty($team)) {
     $stmt->close();
 }
 
+// Whatever's already saved for this engagement, grouped audit_type_id ->
+// user_id -> [criteria]. Lets the generator open straight to a review/edit
+// view of the current DOL (drag chips around, Swap, Save) instead of
+// always making you regenerate a split from scratch, even when nothing
+// about the team/criteria actually changed.
+$existingDol = [];
+$stmt = $conn->prepare("SELECT audit_type_id, user_id, criterion FROM audit_dol_assignments WHERE engagement_id = ? ORDER BY criterion");
+$stmt->bind_param('i', $engagementId);
+$stmt->execute();
+$res = $stmt->get_result();
+while ($row = $res->fetch_assoc()) {
+    $existingDol[(int) $row['audit_type_id']][(int) $row['user_id']][] = $row['criterion'];
+}
+$stmt->close();
+
 echo json_encode([
     'success' => true,
     'engagement' => [
@@ -124,4 +139,5 @@ echo json_encode([
         'hours' => (float) $m['hours'],
         'restricted' => $restrictions[$m['user_id']] ?? [],
     ], $team),
+    'existing_dol' => $existingDol,
 ]);

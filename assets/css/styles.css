@@ -4011,6 +4011,11 @@ body.dark-mode .dolgen-share { background: #171f28; border-color: #29302e; color
 .dolgen-chip.restricted { background: #fbe8e6; color: #c0392b; }
 body.dark-mode .dolgen-chip { background: color-mix(in srgb, var(--secondary-color) 16%, transparent); color: var(--secondary-color); }
 body.dark-mode .dolgen-chip.restricted { background: #3a2320; color: #e0685a; }
+.dolgen-chip { cursor: grab; }
+.dolgen-chip.dragging { opacity: .4; cursor: grabbing; }
+.dolgen-chip-zone { min-height: 26px; }
+.dolgen-result-member.dolgen-drop-target { outline: 2px dashed var(--primary-color); outline-offset: 2px; background: color-mix(in srgb, var(--primary-color) 6%, #f1f4f3); }
+body.dark-mode .dolgen-result-member.dolgen-drop-target { outline-color: var(--secondary-color); background: color-mix(in srgb, var(--secondary-color) 10%, #232a2c); }
 
 /* Audit Calendar (Phase 3 step 4 port from Engagement Tracker) - functional
    pass, same "revisit design later" note as the DOL Generator. */
