@@ -531,6 +531,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     poc: data.details && data.details.poc,
                     scope: data.details && data.details.scope,
                     repeatFlag: !!(data.details && data.details.repeat_flag == 1),
+                    socType: data.details && data.details.soc_type,
+                    asOfDate: toInputDate(data.details && data.details.as_of_date),
+                    reviewPeriodStart: toInputDate(data.details && data.details.review_period_start),
+                    reviewPeriodEnd: toInputDate(data.details && data.details.review_period_end),
                     auditTypeIds,
                     tsc,
                 });

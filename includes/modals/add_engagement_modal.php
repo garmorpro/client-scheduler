@@ -105,6 +105,34 @@
               </div>
             </div>
 
+            <!-- Report/SOC Type only matters when SOC 1 or SOC 2 is checked
+                 above - hidden otherwise. Type 1 asks for a single As-of
+                 Date; Type 2 asks for a Review Period range. -->
+            <div class="eng-edit-field d-none" id="add_eng_soc_type_wrap">
+              <label for="add_eng_soc_type">Report / SOC Type</label>
+              <select class="eng-edit-input" id="add_eng_soc_type" name="soc_type">
+                <option value="">Select type&hellip;</option>
+                <option value="Type 1">Type 1</option>
+                <option value="Type 2">Type 2</option>
+              </select>
+            </div>
+
+            <div class="eng-edit-field d-none" id="add_eng_as_of_wrap">
+              <label for="add_eng_as_of_date">As-of Date</label>
+              <input type="date" class="eng-edit-input" id="add_eng_as_of_date" name="as_of_date">
+            </div>
+
+            <div class="eng-edit-row d-none" id="add_eng_review_period_wrap">
+              <div class="eng-edit-field">
+                <label for="add_eng_review_period_start">Review Period Start</label>
+                <input type="date" class="eng-edit-input" id="add_eng_review_period_start" name="review_period_start">
+              </div>
+              <div class="eng-edit-field">
+                <label for="add_eng_review_period_end">Review Period End</label>
+                <input type="date" class="eng-edit-input" id="add_eng_review_period_end" name="review_period_end">
+              </div>
+            </div>
+
             <!-- TSC only matters for SOC 2 - hidden unless that's checked above. -->
             <div class="eng-edit-field d-none" id="add_eng_tsc_wrap">
               <label>Trust Services Criteria (SOC 2)</label>

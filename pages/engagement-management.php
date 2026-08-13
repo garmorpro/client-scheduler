@@ -33,12 +33,16 @@ $engagementQuery = "
         d.location,
         d.poc,
         d.scope,
-        d.repeat_flag
+        d.repeat_flag,
+        d.soc_type,
+        d.as_of_date,
+        d.review_period_start,
+        d.review_period_end
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     LEFT JOIN audit_engagement_details d ON d.engagement_id = e.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag
+    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag, d.soc_type, d.as_of_date, d.review_period_start, d.review_period_end
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -280,6 +284,10 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         data-poc="<?php echo htmlspecialchars($row['poc'] ?? ''); ?>"
                                         data-scope="<?php echo htmlspecialchars($row['scope'] ?? ''); ?>"
                                         data-repeat-flag="<?php echo (int) ($row['repeat_flag'] ?? 0); ?>"
+                                        data-soc-type="<?php echo htmlspecialchars($row['soc_type'] ?? ''); ?>"
+                                        data-as-of-date="<?php echo htmlspecialchars($row['as_of_date'] ?? ''); ?>"
+                                        data-review-period-start="<?php echo htmlspecialchars($row['review_period_start'] ?? ''); ?>"
+                                        data-review-period-end="<?php echo htmlspecialchars($row['review_period_end'] ?? ''); ?>"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>

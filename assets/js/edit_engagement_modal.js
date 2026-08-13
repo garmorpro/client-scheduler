@@ -6,14 +6,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const editModalInstance = new bootstrap.Modal(editModal);
 
     const tscWrap = document.getElementById('edit_eng_tsc_wrap');
-    function syncTscVisibility() {
-        const soc2Checked = Array.from(document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]'))
-            .some(cb => cb.checked && cb.dataset.auditTypeName === 'SOC 2');
-        tscWrap.classList.toggle('d-none', !soc2Checked);
+    function checkedAuditTypeNames() {
+        return Array.from(document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]'))
+            .filter(cb => cb.checked).map(cb => cb.dataset.auditTypeName);
     }
-    document.getElementById('edit_eng_audit_types')?.addEventListener('change', syncTscVisibility);
+    function syncTscVisibility() {
+        tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
+    }
 
-    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, auditTypeIds: [...], tsc: [...] }
+    const socTypeWrap = document.getElementById('edit_eng_soc_type_wrap');
+    const socTypeSelect = document.getElementById('edit_eng_soc_type');
+    const asOfWrap = document.getElementById('edit_eng_as_of_wrap');
+    const reviewPeriodWrap = document.getElementById('edit_eng_review_period_wrap');
+    function syncReportTypeFields() {
+        const type = socTypeSelect.value;
+        asOfWrap.classList.toggle('d-none', type !== 'Type 1');
+        reviewPeriodWrap.classList.toggle('d-none', type !== 'Type 2');
+    }
+    function syncSocTypeVisibility() {
+        const names = checkedAuditTypeNames();
+        const socChecked = names.includes('SOC 1') || names.includes('SOC 2');
+        socTypeWrap.classList.toggle('d-none', !socChecked);
+        syncReportTypeFields();
+    }
+    socTypeSelect.addEventListener('change', syncReportTypeFields);
+    document.getElementById('edit_eng_audit_types')?.addEventListener('change', () => {
+        syncTscVisibility();
+        syncSocTypeVisibility();
+    });
+
+    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
@@ -25,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit_eng_scope').value = data.scope || '';
         document.getElementById('edit_eng_repeat_flag').checked = !!data.repeatFlag;
         document.getElementById('edit_eng_notes').value = data.notes || '';
+        socTypeSelect.value = data.socType || '';
+        document.getElementById('edit_eng_as_of_date').value = data.asOfDate || '';
+        document.getElementById('edit_eng_review_period_start').value = data.reviewPeriodStart || '';
+        document.getElementById('edit_eng_review_period_end').value = data.reviewPeriodEnd || '';
 
         const selectedAuditTypes = (data.auditTypeIds || []).map(String);
         document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]').forEach(cb => {
@@ -37,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         syncTscVisibility();
+        syncSocTypeVisibility();
     }
 
     function open(data) {
@@ -61,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 poc: btn.getAttribute('data-poc') || '',
                 scope: btn.getAttribute('data-scope') || '',
                 repeatFlag: btn.getAttribute('data-repeat-flag') === '1',
+                socType: btn.getAttribute('data-soc-type') || '',
+                asOfDate: btn.getAttribute('data-as-of-date') || '',
+                reviewPeriodStart: btn.getAttribute('data-review-period-start') || '',
+                reviewPeriodEnd: btn.getAttribute('data-review-period-end') || '',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),
             });

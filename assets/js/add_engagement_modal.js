@@ -11,12 +11,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const addModalInstance = new bootstrap.Modal(addModal);
 
     const tscWrap = document.getElementById('add_eng_tsc_wrap');
-    function syncTscVisibility() {
-        const soc2Checked = Array.from(document.querySelectorAll('#add_eng_audit_types input[name="audit_type_ids[]"]'))
-            .some(cb => cb.checked && cb.dataset.auditTypeName === 'SOC 2');
-        tscWrap.classList.toggle('d-none', !soc2Checked);
+    function checkedAuditTypeNames() {
+        return Array.from(document.querySelectorAll('#add_eng_audit_types input[name="audit_type_ids[]"]'))
+            .filter(cb => cb.checked).map(cb => cb.dataset.auditTypeName);
     }
-    document.getElementById('add_eng_audit_types')?.addEventListener('change', syncTscVisibility);
+    function syncTscVisibility() {
+        tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
+    }
+
+    // Report/SOC Type only matters once SOC 1 or SOC 2 is checked; which of
+    // As-of Date vs. Review Period shows depends on Type 1 vs. Type 2.
+    const socTypeWrap = document.getElementById('add_eng_soc_type_wrap');
+    const socTypeSelect = document.getElementById('add_eng_soc_type');
+    const asOfWrap = document.getElementById('add_eng_as_of_wrap');
+    const reviewPeriodWrap = document.getElementById('add_eng_review_period_wrap');
+    function syncReportTypeFields() {
+        const type = socTypeSelect.value;
+        asOfWrap.classList.toggle('d-none', type !== 'Type 1');
+        reviewPeriodWrap.classList.toggle('d-none', type !== 'Type 2');
+    }
+    function syncSocTypeVisibility() {
+        const names = checkedAuditTypeNames();
+        const socChecked = names.includes('SOC 1') || names.includes('SOC 2');
+        socTypeWrap.classList.toggle('d-none', !socChecked);
+        if (!socChecked) socTypeSelect.value = '';
+        syncReportTypeFields();
+    }
+    socTypeSelect.addEventListener('change', syncReportTypeFields);
+    document.getElementById('add_eng_audit_types')?.addEventListener('change', () => {
+        syncTscVisibility();
+        syncSocTypeVisibility();
+    });
 
     function open({ clientId, clientName }) {
         addForm.reset();
@@ -27,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // markup (Security, under TSC) - resync visibility to match since
         // nothing else is checked yet.
         syncTscVisibility();
+        syncSocTypeVisibility();
         addModalInstance.show();
     }
 

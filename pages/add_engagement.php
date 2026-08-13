@@ -36,6 +36,10 @@ $poc           = trim($_POST['poc'] ?? '');
 $scope         = trim($_POST['scope'] ?? '');
 $repeat_flag   = !empty($_POST['repeat_flag']) ? 1 : 0;
 $notes         = trim($_POST['notes'] ?? '');
+$soc_type      = trim($_POST['soc_type'] ?? '');
+$as_of_date    = trim($_POST['as_of_date'] ?? '');
+$review_period_start = trim($_POST['review_period_start'] ?? '');
+$review_period_end   = trim($_POST['review_period_end'] ?? '');
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -94,12 +98,28 @@ if ($stmt->execute()) {
     $locationValue = $location !== '' ? $location : null;
     $pocValue = $poc !== '' ? $poc : null;
     $scopeValue = $scope !== '' ? $scope : null;
+    // Report/SOC Type - Type 1 asks for a single As-of Date, Type 2 asks
+    // for a Review Period range (see add_engagement_modal.js's
+    // syncReportTypeFields()). Whichever the client didn't fill in for the
+    // selected type is just left null rather than guessed at.
+    $socTypeValue = $soc_type !== '' ? $soc_type : null;
+    $asOfDateValue = $as_of_date !== '' ? $as_of_date : null;
+    $reviewStartValue = $review_period_start !== '' ? $review_period_start : null;
+    $reviewEndValue = $review_period_end !== '' ? $review_period_end : null;
 
     $detailsStmt = $conn->prepare("
-        INSERT INTO audit_engagement_details (engagement_id, location, poc, tsc, scope, repeat_flag) VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc), scope = VALUES(scope), repeat_flag = VALUES(repeat_flag)
+        INSERT INTO audit_engagement_details
+            (engagement_id, location, poc, tsc, scope, repeat_flag, soc_type, as_of_date, review_period_start, review_period_end)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc), scope = VALUES(scope), repeat_flag = VALUES(repeat_flag),
+            soc_type = VALUES(soc_type), as_of_date = VALUES(as_of_date), review_period_start = VALUES(review_period_start), review_period_end = VALUES(review_period_end)
     ");
-    $detailsStmt->bind_param('issssi', $engagement_id, $locationValue, $pocValue, $tscValue, $scopeValue, $repeat_flag);
+    $detailsStmt->bind_param(
+        'issssissss',
+        $engagement_id, $locationValue, $pocValue, $tscValue, $scopeValue, $repeat_flag,
+        $socTypeValue, $asOfDateValue, $reviewStartValue, $reviewEndValue
+    );
     $detailsStmt->execute();
     $detailsStmt->close();
 
