@@ -305,10 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const reviewPeriod = d.review_period_start && d.review_period_end
             ? `${fmtDate(d.review_period_start)} &ndash; ${fmtDate(d.review_period_end)}`
             : null;
+        const auditTypeNames = (data.audit_types || []).map(t => t.name).join(', ');
         const rows = [
-            gridRow(gridField('Manager', data.manager), gridField('Point of Contact', d.poc)),
             gridRow(gridField('Location', d.location), gridField('Review Period', reviewPeriod)),
-            gridRow(gridField('Report / SOC Type', d.soc_type), gridField('TSC', d.tsc)),
+            gridRow(gridField('Audit Type', auditTypeNames), gridField('Report Type', d.soc_type)),
+            gridRow(gridField('Manager', data.manager), gridField('Point of Contact', d.poc)),
+            d.tsc ? gridRow(gridField('TSC', d.tsc)) : '',
         ].join('');
         return card('Overview', '#003f47', rows);
     }
