@@ -55,16 +55,19 @@ $myEngagements = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 // Everyone else (not the viewer) who has ever logged hours to this
-// engagement - all-time, not scoped to a single week like My Schedule's own
-// getTeamMembers(). Also includes the engagement's manager even if they've
-// never logged an hour themselves - manager is a separate field on
-// `engagements`, not derived from entries, same reasoning as My Schedule's.
+// engagement - all-time total hours (summed across every week), not scoped
+// to a single week like My Schedule's own getTeamMembers(). Also includes
+// the engagement's manager even if they've never logged an hour themselves -
+// manager is a separate field on `engagements`, not derived from entries,
+// same reasoning as My Schedule's - shown with no hours suffix, matching
+// how My Schedule already displays a manager with nothing logged.
 function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerName = null) {
     $stmt = $conn->prepare("
-        SELECT DISTINCT u.full_name
+        SELECT u.full_name, SUM(e.assigned_hours) AS total_hours
         FROM entries e
         JOIN users u ON e.user_id = u.user_id
         WHERE e.engagement_id = ? AND e.user_id != ?
+        GROUP BY u.user_id, u.full_name
         ORDER BY u.full_name ASC
     ");
     $stmt->bind_param('ii', $engagement_id, $currentUserId);
@@ -73,7 +76,7 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerN
     $members = [];
     $seenNames = [];
     while ($row = $res->fetch_assoc()) {
-        $members[] = $row['full_name'];
+        $members[] = $row['full_name'] . ' (' . $row['total_hours'] . ')';
         $seenNames[strtolower($row['full_name'])] = true;
     }
     $stmt->close();
