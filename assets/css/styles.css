@@ -4520,11 +4520,12 @@ body.dark-mode .oc-tier-hint { color: #45504b; }
 
 .oc-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .oc-chip {
-    display: flex; align-items: center; gap: 9px; padding: 7px 14px 7px 7px;
-    border: 1px solid #e3e7e5; border-radius: 30px; background: #ffffff;
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border: 1px solid #e3e7e5; border-radius: 10px; background: #ffffff;
+    min-width: 190px;
     transition: border-color .12s ease, box-shadow .12s ease;
 }
-.oc-chip:hover { border-color: #c7d0cb; box-shadow: 0 2px 8px rgba(22,33,31,.06); }
+.oc-chip:hover { border-color: #c7d0cb; box-shadow: 0 4px 14px -6px rgba(22,33,31,.12); }
 body.dark-mode .oc-chip { border-color: #29302e; background: #232a2c; }
 body.dark-mode .oc-chip:hover { border-color: #3a4440; }
 .oc-chip-name { font-size: 12.5px; font-weight: 700; color: #16211f; line-height: 1.25; }
