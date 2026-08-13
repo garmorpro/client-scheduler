@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function chipHtml(person) {
         return `
             <div class="oc-chip">
-                ${avatar(person, 'oc-avatar-sm')}
+                ${avatar(person)}
                 <div>
                     <div class="oc-chip-name">${person.full_name}</div>
                     <div class="oc-chip-role">${person.job_title || roleLabel(person.role)}</div>

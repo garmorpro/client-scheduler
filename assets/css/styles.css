@@ -4518,18 +4518,18 @@ body.dark-mode .oc-tier-hint { color: #45504b; }
 }
 .oc-avatar-sm { width: 26px; height: 26px; border-radius: 8px; font-size: 10.5px; }
 
-.oc-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.oc-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .oc-chip {
-    display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px;
+    display: flex; align-items: center; gap: 9px; padding: 7px 14px 7px 7px;
     border: 1px solid #e3e7e5; border-radius: 30px; background: #ffffff;
     transition: border-color .12s ease, box-shadow .12s ease;
 }
 .oc-chip:hover { border-color: #c7d0cb; box-shadow: 0 2px 8px rgba(22,33,31,.06); }
 body.dark-mode .oc-chip { border-color: #29302e; background: #232a2c; }
 body.dark-mode .oc-chip:hover { border-color: #3a4440; }
-.oc-chip-name { font-size: 12px; font-weight: 700; color: #16211f; line-height: 1.25; }
+.oc-chip-name { font-size: 12.5px; font-weight: 700; color: #16211f; line-height: 1.25; }
 body.dark-mode .oc-chip-name { color: #edf1ee; }
-.oc-chip-role { font-size: 10px; color: #9aa39d; line-height: 1.25; }
+.oc-chip-role { font-size: 10.5px; color: #9aa39d; line-height: 1.25; }
 body.dark-mode .oc-chip-role { color: #6e7975; }
 
 /* Sits between the manager-grid and the no-direct-reports chip row within
