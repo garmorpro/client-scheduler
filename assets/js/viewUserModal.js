@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  viewUserModal.addEventListener('show.bs.modal', (event) => {
+  viewUserModal.addEventListener('show.bs.offcanvas', (event) => {
     const button = event.relatedTarget;
     const userId = button?.getAttribute('data-user-id');
     if (!userId) return;

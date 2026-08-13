@@ -173,7 +173,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                     <div class="table-actions-inner">
                                     <!-- View Button -->
                                     <a href="#" class="action-icon-btn view-user-btn text-decoration-none"
-                                       data-bs-toggle="modal"
+                                       data-bs-toggle="offcanvas"
                                        data-bs-target="#viewUserModal"
                                        data-user-id="<?php echo $userrow['user_id']; ?>"
                                        title="View Details">
