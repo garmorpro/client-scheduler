@@ -1,13 +1,17 @@
 <?php
 /**
- * Audit due-date notification cron. Run daily via cron, e.g.:
- *   0 8 * * * php /var/www/client-scheduler/pages/audit-notification-cron.php
+ * Audit due-date notification cron. Scheduling is managed from Settings ->
+ * Audit Notification Schedule (writes/removes the crontab entry directly),
+ * not by hand-editing crontab - see pages/update-audit-notification-schedule.php.
  *
  * Checks audit_engagement_timeline / audit_engagement_milestones for
  * anything due in the next 1-7 days (5 for milestones) that hasn't been
  * emailed yet, and sends one combined digest email per person covering
  * everything due across every engagement they're staffed on. See
  * includes/audit_notifications.php for the actual logic.
+ *
+ * --force skips the 'enabled' settings check below, for a manual test run
+ * regardless of the current toggle state.
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -25,6 +29,22 @@ if (!is_dir(dirname($logFile))) {
 function auditCronLog(string $file, string $message): void
 {
     file_put_contents($file, date('Y-m-d H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND);
+}
+
+$force = in_array('--force', $argv ?? [], true);
+
+// Belt-and-suspenders: the schedule page removes the crontab entry
+// entirely when disabled, but check the DB flag too in case the crontab
+// and the setting ever drift (e.g. someone edited cron by hand). Defaults
+// to enabled if the setting was never set at all, so a crontab entry
+// installed manually (before this toggle existed) keeps working.
+if (!$force) {
+    $res = $conn->query("SELECT setting_value FROM settings WHERE setting_master_key = 'audit_notifications' AND setting_key = 'enabled'");
+    $row = $res ? $res->fetch_assoc() : null;
+    if ($row && $row['setting_value'] === 'false') {
+        auditCronLog($logFile, 'Skipped - disabled in Settings');
+        exit(0);
+    }
 }
 
 auditCronLog($logFile, 'Starting audit notification cron job');

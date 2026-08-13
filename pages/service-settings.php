@@ -87,6 +87,14 @@ if ($canAccessSystemSettings) {
             </div>
             <i class="bi bi-chevron-right settings-tile-arrow"></i>
         </a>
+        <a href="#" id="configureAuditNotificationBtn" class="settings-tile">
+            <div class="settings-tile-icon"><i class="bi bi-clock-history"></i></div>
+            <div class="settings-tile-info">
+                <div class="settings-tile-title">Audit Notification Schedule</div>
+                <div class="settings-tile-desc">When the due-date digest emails send</div>
+            </div>
+            <i class="bi bi-chevron-right settings-tile-arrow"></i>
+        </a>
         <a href="#" class="settings-tile" data-bs-toggle="modal" data-bs-target="#auditTypesModal">
             <div class="settings-tile-icon"><i class="bi bi-clipboard2-check"></i></div>
             <div class="settings-tile-info">
@@ -126,6 +134,7 @@ if ($canAccessSystemSettings) {
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/busy_season_modal.php'; ?>
 <?php include_once '../includes/modals/audit_types_modal.php'; ?>
+<?php include_once '../includes/modals/audit_notification_schedule_modal.php'; ?>
 <?php endif; ?>
 
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
@@ -142,6 +151,7 @@ if ($canAccessSystemSettings) {
 <script src="../assets/js/security_policy.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/email_configurations.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/busy_season.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/audit_notification_schedule_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/audit_types_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
