@@ -6,11 +6,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const enabledCb = document.getElementById('auditNotifEnabled');
     const timeInput = document.getElementById('auditNotifTime');
+    const daysContainer = document.getElementById('auditNotifDays');
+    const dayButtons = Array.from(daysContainer.querySelectorAll('.audit-notif-day-btn'));
     const statusBanner = document.getElementById('auditNotifCrontabStatus');
     const saveHint = document.getElementById('auditNotifSaveHint');
     const saveBtn = document.getElementById('auditNotifSaveBtn');
 
     function pad(n) { return String(n).padStart(2, '0'); }
+
+    function setActiveDays(days) {
+        dayButtons.forEach(btn => btn.classList.toggle('active', days.includes(parseInt(btn.dataset.day, 10))));
+    }
+    function getActiveDays() {
+        return dayButtons.filter(btn => btn.classList.contains('active')).map(btn => parseInt(btn.dataset.day, 10));
+    }
+    daysContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.audit-notif-day-btn');
+        if (btn) btn.classList.toggle('active');
+    });
 
     async function loadSchedule() {
         statusBanner.style.display = 'none';
@@ -21,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             enabledCb.checked = !!data.enabled;
             timeInput.value = `${pad(data.hour)}:${pad(data.minute)}`;
+            // Defaults to weekdays (Mon-Fri) the first time this is ever
+            // configured, matching the most common "no notifications on
+            // the weekend" preference rather than defaulting to every day.
+            setActiveDays(Array.isArray(data.days) && data.days.length ? data.days : [1, 2, 3, 4, 5]);
 
             statusBanner.style.display = 'flex';
             statusBanner.innerHTML = data.installed_in_crontab
@@ -47,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const roundedMinute = Math.round(rawMinute / 15) * 15;
         const hour = roundedMinute === 60 ? (parseInt(hourStr, 10) + 1) % 24 : parseInt(hourStr, 10);
         const minute = roundedMinute % 60;
+        const days = getActiveDays();
+
+        if (enabledCb.checked && days.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'Pick at least one day', text: 'Select which days the digest should send, or turn the master switch off.' });
+            return;
+        }
 
         saveBtn.disabled = true;
         saveHint.textContent = 'Saving…';
@@ -55,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('update-audit-notification-schedule.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ enabled: enabledCb.checked, hour, minute })
+                body: JSON.stringify({ enabled: enabledCb.checked, hour, minute, days })
             });
             const data = await res.json();
 

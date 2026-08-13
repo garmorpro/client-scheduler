@@ -3867,3 +3867,14 @@ body.dark-mode #auditNotificationScheduleModal .eng-edit-btn-cancel:hover { back
 }
 #auditNotificationScheduleModal .eng-edit-btn-save:hover { opacity: .9; }
 body.dark-mode #auditNotificationScheduleModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+.audit-notif-days { display: flex; gap: 6px; }
+.audit-notif-day-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid #e3e7e5; background: #f1f4f3;
+    color: #6b7570; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.audit-notif-day-btn:hover { border-color: var(--primary-color); }
+.audit-notif-day-btn.active { border-color: var(--primary-color); background: var(--primary-color); color: #fff; }
+body.dark-mode .audit-notif-day-btn { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .audit-notif-day-btn:hover { border-color: var(--secondary-color); }
+body.dark-mode .audit-notif-day-btn.active { border-color: var(--secondary-color); background: var(--secondary-color); color: #10160f; }

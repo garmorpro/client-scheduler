@@ -28,6 +28,19 @@
               <div class="form-text" style="font-size:11px;">Rounds to the nearest 15 minutes.</div>
             </div>
 
+            <div class="eng-edit-field">
+              <label>Days</label>
+              <div class="audit-notif-days" id="auditNotifDays">
+                <button type="button" class="audit-notif-day-btn" data-day="0" title="Sunday">S</button>
+                <button type="button" class="audit-notif-day-btn" data-day="1" title="Monday">M</button>
+                <button type="button" class="audit-notif-day-btn" data-day="2" title="Tuesday">T</button>
+                <button type="button" class="audit-notif-day-btn" data-day="3" title="Wednesday">W</button>
+                <button type="button" class="audit-notif-day-btn" data-day="4" title="Thursday">T</button>
+                <button type="button" class="audit-notif-day-btn" data-day="5" title="Friday">F</button>
+                <button type="button" class="audit-notif-day-btn" data-day="6" title="Saturday">S</button>
+              </div>
+            </div>
+
             <div class="settings-status-banner" id="auditNotifCrontabStatus" style="display:none;"></div>
           </div>
         </div>

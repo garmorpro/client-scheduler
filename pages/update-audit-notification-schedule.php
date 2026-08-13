@@ -38,15 +38,36 @@ $input = json_decode(file_get_contents('php://input'), true);
 $enabled = !empty($input['enabled']);
 $hour = filter_var($input['hour'] ?? null, FILTER_VALIDATE_INT);
 $minute = filter_var($input['minute'] ?? null, FILTER_VALIDATE_INT);
+$rawDays = is_array($input['days'] ?? null) ? $input['days'] : [];
 
 if ($hour === false || $hour < 0 || $hour > 23 || !in_array($minute, [0, 15, 30, 45], true)) {
     echo json_encode(['success' => false, 'error' => 'Invalid time']);
     exit();
 }
 
+// Every value strictly validated against 0-6 (Sun-Sat, matching cron's own
+// day-of-week convention) before it's allowed anywhere near a shell command
+// or the crontab line - anything outside that range is dropped, not just
+// cast, so a malformed request can't smuggle something unexpected through.
+$days = array_values(array_unique(array_filter(
+    array_map(fn($d) => filter_var($d, FILTER_VALIDATE_INT), $rawDays),
+    fn($d) => $d !== false && $d >= 0 && $d <= 6
+)));
+sort($days);
+
+if ($enabled && empty($days)) {
+    echo json_encode(['success' => false, 'error' => 'Select at least one day, or turn the digest off.']);
+    exit();
+}
+
 // --- Persist to settings (the cron script itself also checks 'enabled' as
 // a second safety net, independent of whether the crontab line exists). ---
-$pairs = ['enabled' => $enabled ? 'true' : 'false', 'hour' => (string) $hour, 'minute' => (string) $minute];
+$pairs = [
+    'enabled' => $enabled ? 'true' : 'false',
+    'hour' => (string) $hour,
+    'minute' => (string) $minute,
+    'days' => implode(',', $days),
+];
 $stmt = $conn->prepare("
     INSERT INTO settings (setting_master_key, setting_key, setting_value) VALUES ('audit_notifications', ?, ?)
     ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
@@ -71,7 +92,8 @@ $lines = array_values(array_filter(array_map('rtrim', explode("\n", $existing)),
 $lines = array_values(array_filter($lines, fn($l) => strpos($l, $marker) === false));
 
 if ($enabled) {
-    $lines[] = "{$minute} {$hour} * * * php " . escapeshellarg($scriptPath) . " >> /dev/null 2>&1 {$marker}";
+    $dayOfWeekField = implode(',', $days); // e.g. "1,2,3,4,5" for weekdays - always valid cron syntax, whether contiguous or not
+    $lines[] = "{$minute} {$hour} * * {$dayOfWeekField} php " . escapeshellarg($scriptPath) . " >> /dev/null 2>&1 {$marker}";
 }
 
 $tmpFile = tempnam(sys_get_temp_dir(), 'cron');
@@ -93,8 +115,10 @@ if ($cronReturnCode !== 0) {
 $adminUserId = $_SESSION['user_id'] ?? null;
 $adminEmail = $_SESSION['email'] ?? '';
 $adminName = $_SESSION['full_name'] ?? '';
+$dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+$dayLabel = implode(',', array_map(fn($d) => $dayNames[$d], $days));
 $description = $enabled
-    ? sprintf("Audit notification cron scheduled for %02d:%02d daily (crontab of OS user '%s')", $hour, $minute, $osUser)
+    ? sprintf("Audit notification cron scheduled for %02d:%02d on %s (crontab of OS user '%s')", $hour, $minute, $dayLabel, $osUser)
     : "Audit notification cron disabled and removed from crontab (OS user '{$osUser}')";
 $logStmt = $conn->prepare("INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)");
 if ($logStmt) {

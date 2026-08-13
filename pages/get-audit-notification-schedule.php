@@ -22,10 +22,15 @@ while ($row = $res->fetch_assoc()) {
 $existing = shell_exec('crontab -l 2>/dev/null') ?? '';
 $installed = strpos($existing, '# AUDIT_NOTIFICATION_CRON') !== false;
 
+$days = isset($settings['days']) && $settings['days'] !== ''
+    ? array_map('intval', explode(',', $settings['days']))
+    : []; // frontend defaults to Mon-Fri when this is empty (never configured yet)
+
 echo json_encode([
     'success' => true,
     'enabled' => ($settings['enabled'] ?? 'false') === 'true',
     'hour' => isset($settings['hour']) ? (int) $settings['hour'] : 8,
     'minute' => isset($settings['minute']) ? (int) $settings['minute'] : 0,
+    'days' => $days,
     'installed_in_crontab' => $installed,
 ]);
