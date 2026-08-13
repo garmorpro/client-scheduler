@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function chipHtml(person) {
         return `
             <div class="oc-chip">
-                ${avatar(person)}
+                ${avatar(person, 'oc-avatar-sm')}
                 <div>
                     <div class="oc-chip-name">${person.full_name}</div>
                     <div class="oc-chip-role">${person.job_title || roleLabel(person.role)}</div>
@@ -60,9 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function managerCardHtml(node) {
-        const reportsHtml = node.reports.length > 0
-            ? node.reports.map(reportRowHtml).join('')
-            : '<div class="settings-empty-row">No direct reports yet.</div>';
+        const reportsHtml = node.reports.map(reportRowHtml).join('');
         return `
             <div class="oc-manager-card">
                 <div class="oc-manager-head">
@@ -78,6 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Managers with no direct reports don't need a full card (there'd be
+    // nothing in it but an empty state) - shown instead as the same
+    // compact chip used for Admin/Unassigned, after everyone with a team.
+    function emptyManagerChipHtml(node) {
+        return chipHtml(node.manager);
+    }
+
     function render(data) {
         const sections = [];
 
@@ -91,10 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (data.manager_nodes.length > 0) {
+            const staffedManagers = data.manager_nodes.filter(n => n.reports.length > 0);
+            const emptyManagers = data.manager_nodes.filter(n => n.reports.length === 0);
             sections.push(`
                 <div class="oc-tier">
                     <div class="oc-tier-label">Managers &amp; Their Teams</div>
-                    <div class="oc-manager-grid">${data.manager_nodes.map(managerCardHtml).join('')}</div>
+                    ${staffedManagers.length > 0 ? `<div class="oc-manager-grid">${staffedManagers.map(managerCardHtml).join('')}</div>` : ''}
+                    ${emptyManagers.length > 0 ? `
+                        <div class="oc-subtier-label">No Direct Reports</div>
+                        <div class="oc-chip-row">${emptyManagers.map(emptyManagerChipHtml).join('')}</div>
+                    ` : ''}
                 </div>
             `);
         }

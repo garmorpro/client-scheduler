@@ -57,16 +57,34 @@ function formatUser($row) {
     ];
 }
 
+// Senior before Staff (then alphabetical within each) so a manager's team
+// reads most-senior-first instead of a flat A-Z mix.
+$reportRoleRank = ['senior' => 0, 'staff' => 1, 'intern' => 2, 'crm_team' => 3];
+function reportRank($row, $reportRoleRank) {
+    return $reportRoleRank[strtolower($row['role'])] ?? 4;
+}
+
 $managerNodes = [];
 foreach ($managers as $manager) {
     $reports = $reportsByManager[$manager['user_id']] ?? [];
-    usort($reports, function ($a, $b) { return strcmp($a['full_name'], $b['full_name']); });
+    usort($reports, function ($a, $b) use ($reportRoleRank) {
+        $rankDiff = reportRank($a, $reportRoleRank) <=> reportRank($b, $reportRoleRank);
+        return $rankDiff !== 0 ? $rankDiff : strcmp($a['full_name'], $b['full_name']);
+    });
     $managerNodes[] = [
         'manager' => formatUser($manager),
         'reports' => array_map('formatUser', $reports),
     ];
 }
-usort($managerNodes, function ($a, $b) { return strcmp($a['manager']['full_name'], $b['manager']['full_name']); });
+// Managers with a team first (alphabetical), managers with no direct
+// reports pushed to the end (also alphabetical) - so an empty "no direct
+// reports yet" card isn't sitting in the middle of the grid.
+usort($managerNodes, function ($a, $b) {
+    $aEmpty = count($a['reports']) === 0 ? 1 : 0;
+    $bEmpty = count($b['reports']) === 0 ? 1 : 0;
+    if ($aEmpty !== $bEmpty) return $aEmpty <=> $bEmpty;
+    return strcmp($a['manager']['full_name'], $b['manager']['full_name']);
+});
 
 usort($unassigned, function ($a, $b) { return strcmp($a['full_name'], $b['full_name']); });
 
