@@ -217,13 +217,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
     }
 
+    // Role -> CSS variable, matching ET's --manager/--senior/--staff/--intern
+    // tokens exactly (defined at the top of styles.css, light + dark).
+    const TEAM_ROLE_COLOR_VAR = { manager: '--eng-role-manager', senior: '--eng-role-senior', staff: '--eng-role-staff', intern: '--eng-role-intern' };
+    function teamAvatar(role, name, extraClass) {
+        const colorVar = `var(${TEAM_ROLE_COLOR_VAR[role] || '--eng-role-staff'})`;
+        return `<div class="eng-vm-team-avatar${extraClass ? ' ' + extraClass : ''}" style="background:${colorVar}">${initials(name)}</div>`;
+    }
+
     // One merged "Team" section (Assigned Employees + DOL, previously two
-    // separate cards) - grouped by role (Manager > Senior > Staff > Intern),
-    // each person's row shows their hours/audit-type same as before, plus
-    // their DOL criteria chips underneath when DOL data is visible to this
-    // user. `audit.dol` is only present at all if the backend granted
-    // view_dol for this request - a missing key means "don't show chips",
-    // not "no DOL assigned".
+    // separate cards) - structure and styling copied from Engagement
+    // Tracker's own renderDrawerTeam() (pages/dashboard.php): the Manager
+    // gets a tinted "lead row" instead of sitting in a Manager group of
+    // its own, Senior/Staff/Intern are divided rows (not boxed) under a
+    // role-colored avatar, and DOL is listed per audit type
+    // ("SOC 2  [CC4][CC5]...") rather than one flat chip row. Hours stay
+    // on the right - ET's own Team(DOL) card doesn't show hours at all
+    // (it's a separate card there), but ours intentionally merged
+    // Assigned Employees + DOL into one, so hours is real functionality
+    // to keep, not something to drop just to match visually.
     function renderTeamSection(data, engagementId) {
         const employees = data.assigned_employees || [];
         const audit = data.audit || {};
@@ -235,15 +247,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return card('Team', '#003f47', '<div class="text-muted" style="font-size:13px;">No employees assigned yet.</div>', titleAction);
         }
 
+        // Per person, DOL grouped by audit type name (not one flat list) -
+        // matches ET's "AUDIT TYPE  [chip][chip]" line-per-type format.
         const dolByUser = new Map();
         (audit.dol || []).forEach(row => {
-            if (!dolByUser.has(row.user_id)) dolByUser.set(row.user_id, []);
-            dolByUser.get(row.user_id).push({ criterion: row.criterion, color: row.audit_type_color, type: row.audit_type_name });
+            if (!dolByUser.has(row.user_id)) dolByUser.set(row.user_id, new Map());
+            const byType = dolByUser.get(row.user_id);
+            const typeName = row.audit_type_name || '';
+            if (!byType.has(typeName)) byType.set(typeName, { color: row.audit_type_color, criteria: [] });
+            byType.get(typeName).criteria.push(row.criterion);
         });
 
-        // Collapse the (user, audit_type) rows the backend sends into one
-        // row per person - hours summed across every audit type they're on,
-        // DOL chips attached from the map above.
         const roleOrder = ['manager', 'senior', 'staff', 'intern'];
         const byRole = new Map();
         employees.forEach(emp => {
@@ -251,34 +265,58 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!byRole.has(role)) byRole.set(role, new Map());
             const byPerson = byRole.get(role);
             if (!byPerson.has(emp.user_id)) {
-                byPerson.set(emp.user_id, { name: emp.name, hours: 0, auditTypes: [], criteria: dolByUser.get(emp.user_id) || [] });
+                byPerson.set(emp.user_id, { name: emp.name, hours: 0, dolByType: dolByUser.get(emp.user_id) || new Map() });
             }
-            const person = byPerson.get(emp.user_id);
-            person.hours += emp.hours;
-            if (emp.audit_type_name) person.auditTypes.push({ name: emp.audit_type_name, color: emp.audit_type_color });
+            byPerson.get(emp.user_id).hours += emp.hours;
         });
-        const orderedRoles = [...roleOrder.filter(r => byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
 
-        const groups = orderedRoles.map(role => {
-            const people = Array.from(byRole.get(role).values());
-            const rows = people.map(person => `
-                <div class="eng-vm-emp-row ${person.criteria.length ? 'has-chips' : ''}">
-                    <div class="eng-vm-emp-avatar">${initials(person.name)}</div>
-                    <div class="eng-vm-emp-info">
-                        <div class="eng-vm-emp-name">${person.name}</div>
-                        ${person.auditTypes.length ? `<div class="eng-vm-emp-role">${person.auditTypes.map(t => `<span class="audit-type-dot" style="background:${t.color || '#9aa39d'}"></span>${t.name}`).join(' &middot; ')}</div>` : ''}
-                        ${person.criteria.length ? `<div class="eng-vm-dol-chips">${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}</div>` : ''}
-                    </div>
-                    <div class="eng-vm-emp-hours">${person.hours}h</div>
-                </div>`).join('');
+        function dolLinesHtml(person) {
+            const groups = Array.from(person.dolByType.entries()).filter(([, g]) => g.criteria.length);
+            if (!groups.length) return '<span class="eng-vm-team-no-dol">No DOL assigned</span>';
+            return `<div class="eng-vm-team-dol-lines">${groups.map(([typeName, g]) => `
+                <div class="eng-vm-team-dol-line">
+                    <span class="eng-vm-team-dol-audit-label">${typeName}</span>
+                    <span class="eng-vm-team-dol-chips">${g.criteria.map(c => `<span class="eng-vm-team-dol-chip" style="background:${g.color || '#9aa39d'}22; color:${g.color || '#6b7570'}">${c}</span>`).join('')}</span>
+                </div>`).join('')}</div>`;
+        }
+
+        function memberRow(role, person) {
             return `
-                <div class="eng-vm-role-group">
-                    <div class="eng-vm-role-group-title">${roleLabel(role)}${people.length > 1 ? ` (${people.length})` : ''}</div>
-                    <div class="eng-vm-emp-list">${rows}</div>
+                <div class="eng-vm-team-member-row">
+                    ${teamAvatar(role, person.name)}
+                    <div class="eng-vm-team-member-info">
+                        <div class="eng-vm-team-member-name">${person.name}</div>
+                        ${dolLinesHtml(person)}
+                    </div>
+                    <div class="eng-vm-team-hours">${person.hours}h</div>
                 </div>`;
-        }).join('');
+        }
 
-        return card('Team', '#003f47', groups, titleAction);
+        let html = '';
+        if (byRole.has('manager')) {
+            const manager = Array.from(byRole.get('manager').values())[0];
+            html += `
+                <div class="eng-vm-team-lead-row">
+                    ${teamAvatar('manager', manager.name, 'lead')}
+                    <div class="eng-vm-team-lead-info">
+                        <div class="eng-vm-team-lead-name">${manager.name}</div>
+                        <div class="eng-vm-team-lead-role">Manager</div>
+                    </div>
+                    <div class="eng-vm-team-hours">${manager.hours}h</div>
+                </div>`;
+        }
+
+        const otherRoles = [...roleOrder.filter(r => r !== 'manager' && byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
+        otherRoles.forEach(role => {
+            const people = Array.from(byRole.get(role).values());
+            html += `
+                <div class="eng-vm-team-role-group">
+                    <div class="eng-vm-team-role-label">${roleLabel(role)} (${people.length})</div>
+                    ${people.map(p => memberRow(role, p)).join('')}
+                </div>`;
+        });
+
+        return card('Team', '#003f47', html, titleAction);
     }
 
     function renderIndependenceSection(audit) {
