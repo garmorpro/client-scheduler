@@ -1,48 +1,37 @@
+<!-- Employee Details Modal - restyled on the eng-edit-* look established
+     for Add/Edit Engagement. Note: as of this restyle, nothing in
+     pages/master-schedule.php (or anywhere else) actually triggers
+     #employeeDetailsModal - it's included but unreachable, an orphan same
+     as a couple of others found this session. Left functionally as-is
+     (just restyled) since wiring it up is a separate decision. -->
 <div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
-          <!-- Employee Role -->
-          <h4 id="employeeName" class="text-center mb-3 fw-bold"></h4>
-          <p id="employeeRole" class="text-muted mb-3"></p>
+        <div class="eng-edit-body">
+          <div class="eng-edit-modal-title" id="employeeDetailsModalLabel">Employee Details</div>
+          <div id="employeeName" style="text-align:center; font-size:16px; font-weight:700; color:#16211f;"></div>
+          <p id="employeeRole" style="text-align:center; font-size:12.5px; color:#6b7570; margin:2px 0 18px;"></p>
 
-          <!-- Assigned Hours and Entries -->
-          <div class="mb-4">
-            <h6>Total Assigned Hours:</h6>
-            <div class="d-flex justify-content-between">
-              <span id="totalAssignedHoursEmployee" class="fw-bold fs-5 text-dark"></span>
-              <span id="totalAvailableHoursEmployee" class="text-muted">/ <span id="totalAvailableHoursEmployeeVal">1000</span> hrs</span>
+          <div class="eng-edit-field">
+            <label>Total Assigned Hours</label>
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span id="totalAssignedHoursEmployee" style="font-size:18px; font-weight:700; color:#16211f;"></span>
+              <span style="font-size:12.5px; color:#6b7570;">/ <span id="totalAvailableHoursEmployeeVal">1000</span> hrs</span>
             </div>
-            <div class="progress mt-2" style="height: 20px; border-radius: 10px;">
-              <div id="utilizationBarEmployee" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>
+            <div class="eng-util-track" style="margin-top:8px;">
+              <div id="utilizationBarEmployee" class="eng-util-fill green" style="width:0;"></div>
             </div>
           </div>
 
-          <!-- Assigned Entries Section -->
-          <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-light">
-              <h6 class="mb-0">Upcoming Entries</h6>
-            </div>
-            <div class="card-body">
-              <div id="assignedEntries" class="list-group"></div>
-            </div>
+          <div class="eng-edit-field">
+            <label>Upcoming Entries</label>
+            <div id="assignedEntries" class="eng-vm-emp-list"></div>
           </div>
-
-          <!-- Notes Section (Optional) -->
-          <!-- <div class="card shadow-sm">
-            <div class="card-header bg-light">
-              <h6 class="mb-0">Employee Notes</h6>
-            </div>
-            <div class="card-body">
-              <p id="employeeNotes" class="text-muted">No notes available.</p>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
   </div>
+</div>

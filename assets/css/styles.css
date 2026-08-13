@@ -2265,6 +2265,164 @@ body.dark-mode #importClientsModal .eng-edit-btn-cancel:hover { background: #232
 #importClientsModal .eng-edit-btn-save:disabled { opacity: .6; cursor: not-allowed; }
 body.dark-mode #importClientsModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
 
+/* ========= SMALL FORM MODALS (Add/Edit/Delete Client, Import Global PTO,
+   Employee Details) ========= */
+/* Same eng-edit-* look as Add/Edit Engagement/Import Clients - grouped
+   together since these five otherwise need identical field/input/footer/
+   button rules, just under five more modal ids. */
+#addClientModal .eng-edit-modal-title,
+#editClientModal .eng-edit-modal-title,
+#deleteClientModal .eng-edit-modal-title,
+#importGlobalPtoModal .eng-edit-modal-title,
+#employeeDetailsModal .eng-edit-modal-title {
+    font-size: 20px; font-weight: 700; color: #16211f; text-align: center;
+    padding: 24px 44px 14px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+body.dark-mode #addClientModal .eng-edit-modal-title,
+body.dark-mode #editClientModal .eng-edit-modal-title,
+body.dark-mode #deleteClientModal .eng-edit-modal-title,
+body.dark-mode #importGlobalPtoModal .eng-edit-modal-title,
+body.dark-mode #employeeDetailsModal .eng-edit-modal-title { color: #edf1ee; }
+
+#addClientModal .eng-edit-subtitle,
+#editClientModal .eng-edit-subtitle,
+#deleteClientModal .eng-edit-subtitle,
+#importGlobalPtoModal .eng-edit-subtitle,
+#employeeDetailsModal .eng-edit-subtitle {
+    font-size: 13px; color: #6b7570; text-align: center; margin: 0 0 18px;
+}
+body.dark-mode #addClientModal .eng-edit-subtitle,
+body.dark-mode #editClientModal .eng-edit-subtitle,
+body.dark-mode #deleteClientModal .eng-edit-subtitle,
+body.dark-mode #importGlobalPtoModal .eng-edit-subtitle,
+body.dark-mode #employeeDetailsModal .eng-edit-subtitle { color: #9aa8a2; }
+
+#addClientModal .eng-edit-body,
+#editClientModal .eng-edit-body,
+#deleteClientModal .eng-edit-body,
+#importGlobalPtoModal .eng-edit-body,
+#employeeDetailsModal .eng-edit-body { padding: 4px 20px 16px; max-height: 72vh; overflow-y: auto; }
+
+#addClientModal .eng-edit-field,
+#editClientModal .eng-edit-field,
+#deleteClientModal .eng-edit-field,
+#importGlobalPtoModal .eng-edit-field,
+#employeeDetailsModal .eng-edit-field { margin-bottom: 14px; }
+#addClientModal .eng-edit-field:last-child,
+#editClientModal .eng-edit-field:last-child,
+#deleteClientModal .eng-edit-field:last-child,
+#importGlobalPtoModal .eng-edit-field:last-child,
+#employeeDetailsModal .eng-edit-field:last-child { margin-bottom: 0; }
+
+#addClientModal .eng-edit-field label,
+#editClientModal .eng-edit-field label,
+#deleteClientModal .eng-edit-field label,
+#importGlobalPtoModal .eng-edit-field label,
+#employeeDetailsModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #addClientModal .eng-edit-field label,
+body.dark-mode #editClientModal .eng-edit-field label,
+body.dark-mode #deleteClientModal .eng-edit-field label,
+body.dark-mode #importGlobalPtoModal .eng-edit-field label,
+body.dark-mode #employeeDetailsModal .eng-edit-field label { color: #6e7975; }
+
+#addClientModal .eng-edit-input,
+#editClientModal .eng-edit-input,
+#deleteClientModal .eng-edit-input,
+#importGlobalPtoModal .eng-edit-input,
+#employeeDetailsModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+    -webkit-appearance: none; appearance: none;
+}
+#addClientModal .eng-edit-input:focus,
+#editClientModal .eng-edit-input:focus,
+#deleteClientModal .eng-edit-input:focus,
+#importGlobalPtoModal .eng-edit-input:focus,
+#employeeDetailsModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+#addClientModal textarea.eng-edit-input,
+#editClientModal textarea.eng-edit-input,
+#importGlobalPtoModal textarea.eng-edit-input { height: auto; resize: vertical; min-height: 44px; }
+body.dark-mode #addClientModal .eng-edit-input,
+body.dark-mode #editClientModal .eng-edit-input,
+body.dark-mode #deleteClientModal .eng-edit-input,
+body.dark-mode #importGlobalPtoModal .eng-edit-input,
+body.dark-mode #employeeDetailsModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #addClientModal .eng-edit-input:focus,
+body.dark-mode #editClientModal .eng-edit-input:focus,
+body.dark-mode #deleteClientModal .eng-edit-input:focus,
+body.dark-mode #importGlobalPtoModal .eng-edit-input:focus,
+body.dark-mode #employeeDetailsModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+
+#importGlobalPtoModal .eng-edit-hint { font-size: 11.5px; color: #9aa39d; margin-top: 6px; }
+body.dark-mode #importGlobalPtoModal .eng-edit-hint { color: #6e7975; }
+#importGlobalPtoModal .eng-edit-import-banner,
+#deleteClientModal .eng-edit-import-banner {
+    padding: 10px 12px; border-radius: 8px; font-size: 12.5px; line-height: 1.6;
+    background: rgba(0,63,71,.07); border-left: 3px solid var(--primary-color); color: #16211f;
+}
+body.dark-mode #importGlobalPtoModal .eng-edit-import-banner,
+body.dark-mode #deleteClientModal .eng-edit-import-banner { background: rgba(163,204,56,.10); border-left-color: var(--secondary-color); color: #edf1ee; }
+
+#addClientModal .eng-edit-footer,
+#editClientModal .eng-edit-footer,
+#deleteClientModal .eng-edit-footer,
+#importGlobalPtoModal .eng-edit-footer,
+#employeeDetailsModal .eng-edit-footer {
+    display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5;
+}
+body.dark-mode #addClientModal .eng-edit-footer,
+body.dark-mode #editClientModal .eng-edit-footer,
+body.dark-mode #deleteClientModal .eng-edit-footer,
+body.dark-mode #importGlobalPtoModal .eng-edit-footer,
+body.dark-mode #employeeDetailsModal .eng-edit-footer { border-color: #29302e; }
+
+#addClientModal .eng-edit-btn-cancel,
+#editClientModal .eng-edit-btn-cancel,
+#deleteClientModal .eng-edit-btn-cancel,
+#importGlobalPtoModal .eng-edit-btn-cancel,
+#employeeDetailsModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addClientModal .eng-edit-btn-cancel:hover,
+#editClientModal .eng-edit-btn-cancel:hover,
+#deleteClientModal .eng-edit-btn-cancel:hover,
+#importGlobalPtoModal .eng-edit-btn-cancel:hover,
+#employeeDetailsModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #addClientModal .eng-edit-btn-cancel,
+body.dark-mode #editClientModal .eng-edit-btn-cancel,
+body.dark-mode #deleteClientModal .eng-edit-btn-cancel,
+body.dark-mode #importGlobalPtoModal .eng-edit-btn-cancel,
+body.dark-mode #employeeDetailsModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #addClientModal .eng-edit-btn-cancel:hover,
+body.dark-mode #editClientModal .eng-edit-btn-cancel:hover,
+body.dark-mode #deleteClientModal .eng-edit-btn-cancel:hover,
+body.dark-mode #importGlobalPtoModal .eng-edit-btn-cancel:hover,
+body.dark-mode #employeeDetailsModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+
+#addClientModal .eng-edit-btn-save,
+#editClientModal .eng-edit-btn-save,
+#deleteClientModal .eng-edit-btn-save,
+#importGlobalPtoModal .eng-edit-btn-save,
+#employeeDetailsModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#addClientModal .eng-edit-btn-save:hover,
+#editClientModal .eng-edit-btn-save:hover,
+#deleteClientModal .eng-edit-btn-save:hover,
+#importGlobalPtoModal .eng-edit-btn-save:hover,
+#employeeDetailsModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #addClientModal .eng-edit-btn-save,
+body.dark-mode #editClientModal .eng-edit-btn-save,
+body.dark-mode #importGlobalPtoModal .eng-edit-btn-save,
+body.dark-mode #employeeDetailsModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+/* Delete Client's save button stays red (destructive action) in both themes - not swapped to the brand secondary color like the others. */
+
 /* ========= EDIT TIMELINE MODAL ========= */
 #editTimelineModal .eng-edit-hero {
     padding: 18px 20px 14px;
