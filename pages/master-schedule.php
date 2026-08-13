@@ -460,7 +460,7 @@ updateLastRowRadius();
                             $badgeId = "badge-entry-{$entry['entry_id']}";
                             $auditDot = $auditTypeName !== '' ? "<span class='audit-type-dot' style='background:{$auditTypeColor}'></span>" : '';
                             $badgeTitle = $auditTypeName !== '' ? "Drag to move &middot; {$auditTypeName}" : 'Drag to move';
-                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-audit-type-id='{$auditTypeId}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='{$badgeTitle}'>{$auditDot}{$clientName} ({$assignedHours})</span>";
+                            $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-audit-type-id='{$auditTypeId}' data-audit-type-name='{$auditTypeName}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='{$badgeTitle}'>{$auditDot}{$clientName} ({$assignedHours})</span>";
                             $totalAssignedHours += floatval($entry['assigned_hours']);
                         }
 

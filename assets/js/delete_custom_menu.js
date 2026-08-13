@@ -76,17 +76,19 @@
             const badgeToDelete = selectedBadge;
             selectedBadge = null;
             const badgeLabel = badgeToDelete.textContent.trim();
+            const auditTypeName = badgeToDelete.dataset.auditTypeName || '';
+            const badgeLabelWithType = auditTypeName ? `${badgeLabel} — ${auditTypeName}` : badgeLabel;
 
             const confirmResult = typeof Swal !== 'undefined'
                 ? await Swal.fire({
                     icon: 'warning',
                     title: 'Delete this entry?',
-                    text: `This removes "${badgeLabel}" from the schedule.`,
+                    text: `This removes "${badgeLabelWithType}" from the schedule.`,
                     showCancelButton: true,
                     confirmButtonText: 'Delete',
                     confirmButtonColor: '#dc3545',
                 })
-                : { isConfirmed: confirm(`Delete "${badgeLabel}"?`) };
+                : { isConfirmed: confirm(`Delete "${badgeLabelWithType}"?`) };
 
             if (!confirmResult.isConfirmed) return;
 
