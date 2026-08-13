@@ -213,6 +213,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // (it's a separate card there), but ours intentionally merged
     // Assigned Employees + DOL into one, so hours is real functionality
     // to keep, not something to drop just to match visually.
+    // Read-only indicator for a teammate's independence status, or a
+    // clickable Yes/No self-attestation if this row belongs to the person
+    // looking at it - independence is self-certified (audit_team_independence
+    // is one attestation per person per engagement), never set on someone
+    // else's behalf.
+    function independenceControl(person, independenceByUser, engagementId) {
+        const value = independenceByUser.get(person.user_id) || null;
+        const isSelf = person.user_id === (window.CURRENT_USER_ID || 0);
+
+        if (!isSelf) {
+            let icon, cls, label;
+            if (value === 'Y') { icon = '&#10003;'; cls = 'yes'; label = 'Independent'; }
+            else if (value === 'N') { icon = '&#10007;'; cls = 'no'; label = 'Not independent'; }
+            else { icon = '&ndash;'; cls = 'unset'; label = 'Not yet confirmed'; }
+            return `<span class="eng-vm-indep-icon ${cls}" title="Independence: ${label}">${icon}</span>`;
+        }
+
+        return `
+            <div class="eng-vm-team-indep-self" title="Confirm your independence from the client">
+                <button type="button" class="eng-vm-indep-btn yes ${value === 'Y' ? 'active' : ''}" data-engagement-id="${engagementId}" data-value="Y">Yes</button>
+                <button type="button" class="eng-vm-indep-btn no ${value === 'N' ? 'active' : ''}" data-engagement-id="${engagementId}" data-value="N">No</button>
+            </div>`;
+    }
+
     function renderTeamSection(data, engagementId) {
         const employees = data.assigned_employees || [];
         const audit = data.audit || {};
@@ -235,6 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
             byType.get(typeName).criteria.push(row.criterion);
         });
 
+        const independenceByUser = new Map();
+        (audit.independence || []).forEach(row => independenceByUser.set(row.user_id, row.independent));
+
         const roleOrder = ['manager', 'senior', 'staff', 'intern'];
         const byRole = new Map();
         employees.forEach(emp => {
@@ -242,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!byRole.has(role)) byRole.set(role, new Map());
             const byPerson = byRole.get(role);
             if (!byPerson.has(emp.user_id)) {
-                byPerson.set(emp.user_id, { name: emp.name, hours: 0, dolByType: dolByUser.get(emp.user_id) || new Map() });
+                byPerson.set(emp.user_id, { user_id: emp.user_id, name: emp.name, hours: 0, dolByType: dolByUser.get(emp.user_id) || new Map() });
             }
             byPerson.get(emp.user_id).hours += emp.hours;
         });
@@ -265,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-team-member-name">${person.name}</div>
                         ${dolLinesHtml(person)}
                     </div>
+                    ${independenceControl(person, independenceByUser, engagementId)}
                     <div class="eng-vm-team-hours">${person.hours}h</div>
                 </div>`;
         }
@@ -279,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-team-lead-name">${manager.name}</div>
                         <div class="eng-vm-team-lead-role">Manager</div>
                     </div>
+                    ${independenceControl(manager, independenceByUser, engagementId)}
                     <div class="eng-vm-team-hours">${manager.hours}h</div>
                 </div>`;
         }
@@ -956,6 +985,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function saveIndependence(engagementId, value) {
+        try {
+            const res = await fetch('update_audit_independence.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId, independent: value })
+            });
+            const result = await res.json();
+            if (!result.success) notify(result.error || 'Could not save.', true);
+            refresh();
+        } catch (err) {
+            console.error('Failed to save independence', err);
+            notify('Network error. Please try again.', true);
+        }
+    }
+
     // Event delegation - the timeline/milestone rows are re-rendered wholesale
     // on every open()/refresh(), so listeners are bound once here rather than
     // re-attached per row.
@@ -984,6 +1029,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modalBody.addEventListener('click', (e) => {
         const el = e.target.closest('.eng-vm-tl-dot.clickable, .eng-vm-tl-row2.clickable');
         if (el) toggleDot(el);
+
+        const indepBtn = e.target.closest('.eng-vm-indep-btn');
+        if (indepBtn) saveIndependence(indepBtn.dataset.engagementId, indepBtn.dataset.value);
     });
     modalBody.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;

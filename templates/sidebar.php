@@ -56,7 +56,13 @@ if ($canApproveTimeOff) {
     }
 }
 ?>
-<script>window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;</script>
+<script>
+window.CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+// Own id only (not sensitive - the user already knows it) - used client-side
+// to tell "your own row" apart from a teammate's, e.g. so the Independence
+// check in the View Engagement modal only lets you attest for yourself.
+window.CURRENT_USER_ID = <?= json_encode((int) ($_SESSION['user_id'] ?? 0)) ?>;
+</script>
 <script src="../assets/js/csrf_fetch.js"></script>
 
 <div class="sidebar" style="width: 250px; height: 100vh; padding: 20px 14px; overflow-y: auto;">

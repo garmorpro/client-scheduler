@@ -189,7 +189,19 @@ if (isset($_GET['id'])) {
     ");
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
-    $auditData['independence'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $independenceResult = $stmt->get_result();
+    $independence = [];
+    // user_id cast to int - mysqli returns it as a numeric string otherwise,
+    // which would silently break the frontend's Map lookup keyed by the
+    // (already-int) user_id from assigned_employees below.
+    while ($row = $independenceResult->fetch_assoc()) {
+        $independence[] = [
+            'user_id' => (int) $row['user_id'],
+            'full_name' => $row['full_name'],
+            'independent' => $row['independent'],
+        ];
+    }
+    $auditData['independence'] = $independence;
     $stmt->close();
 
     // Scoped per-engagement, not just "does this role have the permission" -

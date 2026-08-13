@@ -2033,6 +2033,23 @@ body.dark-mode .eng-vm-team-dol-audit-label { color: #6e7975; }
 .eng-vm-team-no-dol { font-size: 11.5px; color: #9aa39d; font-style: italic; }
 body.dark-mode .eng-vm-team-no-dol { color: #6e7975; }
 
+/* Independence, inline on each Team row - a read-only check/x/dash (reusing
+   .eng-vm-indep-icon's colors from the standalone Independence card below)
+   for a teammate, or a clickable Yes/No pair on your own row - independence
+   is self-attested, never set on someone else's behalf. */
+.eng-vm-team-indep-self { display: flex; gap: 4px; flex-shrink: 0; }
+.eng-vm-indep-btn {
+    padding: 3px 9px; border-radius: 20px; border: 1px solid #e3e7e5; background: #ffffff;
+    color: #6b7570; font-size: 11px; font-weight: 700; cursor: pointer;
+}
+.eng-vm-indep-btn:hover { background: #f1f4f3; }
+body.dark-mode .eng-vm-indep-btn { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .eng-vm-indep-btn:hover { background: #232a2c; }
+.eng-vm-indep-btn.yes.active { background: #e4f3e6; border-color: #e4f3e6; color: #1f6b3a; }
+.eng-vm-indep-btn.no.active { background: #fbe8e6; border-color: #fbe8e6; color: #c0392b; }
+body.dark-mode .eng-vm-indep-btn.yes.active { background: #1e3d28; border-color: #1e3d28; color: #7fd99a; }
+body.dark-mode .eng-vm-indep-btn.no.active { background: #3a2320; border-color: #3a2320; color: #e0685a; }
+
 /* Two-up label-over-value fields (Overview/Details cards) - matches the
    Engagement Tracker reference layout instead of the single-column
    label-left/value-right .detail-row rows used elsewhere in the app. */
