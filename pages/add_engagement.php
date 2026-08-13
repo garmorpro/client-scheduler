@@ -71,15 +71,29 @@ if ($stmt->execute()) {
     // later) since Master Schedule/DOL Generator both need audit types
     // (and TSC, for DOL's criteria derivation) to exist from day one.
     $tsc = implode(', ', array_filter(array_map('trim', $_POST['tsc'] ?? [])));
-    if ($tsc !== '') {
-        $tscStmt = $conn->prepare("
-            INSERT INTO audit_engagement_details (engagement_id, tsc) VALUES (?, ?)
-            ON DUPLICATE KEY UPDATE tsc = VALUES(tsc)
-        ");
-        $tscStmt->bind_param('is', $engagement_id, $tsc);
-        $tscStmt->execute();
-        $tscStmt->close();
-    }
+    $tscValue = $tsc !== '' ? $tsc : null;
+
+    // Always create the paired audit_engagement_details/audit_engagement_
+    // timeline rows, not just when TSC happens to be set - the View
+    // Engagement panel's Details card and Timeline & Key Dates card were
+    // silently missing entirely (not just empty) on any engagement that
+    // skipped this insert, since renderTimelineSection() only renders at
+    // all when the backend found a timeline row. A bare row (every date
+    // NULL) still shows the card with "Not set" placeholders, ready for
+    // Edit Timeline to fill in - same as every migrated engagement already
+    // has from the one-time backfill.
+    $detailsStmt = $conn->prepare("
+        INSERT INTO audit_engagement_details (engagement_id, tsc) VALUES (?, ?)
+        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc)
+    ");
+    $detailsStmt->bind_param('is', $engagement_id, $tscValue);
+    $detailsStmt->execute();
+    $detailsStmt->close();
+
+    $timelineStmt = $conn->prepare("INSERT IGNORE INTO audit_engagement_timeline (engagement_id) VALUES (?)");
+    $timelineStmt->bind_param('i', $engagement_id);
+    $timelineStmt->execute();
+    $timelineStmt->close();
 
     echo json_encode(['success' => true]);
 } else {

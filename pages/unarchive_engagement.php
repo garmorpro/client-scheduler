@@ -65,7 +65,22 @@ if (!$insert->execute()) {
     echo json_encode(['success' => false, 'message' => $insert->error]);
     exit;
 }
+$engagementId = $insert->insert_id;
 $insert->close();
+
+// Same as add_engagement.php - a restored engagement is a brand-new
+// engagement_id, so it needs its own bare audit_engagement_details/
+// audit_engagement_timeline rows or the View Engagement panel's Details
+// and Timeline & Key Dates cards won't render at all.
+$detailsStmt = $conn->prepare("INSERT IGNORE INTO audit_engagement_details (engagement_id) VALUES (?)");
+$detailsStmt->bind_param('i', $engagementId);
+$detailsStmt->execute();
+$detailsStmt->close();
+
+$timelineStmt = $conn->prepare("INSERT IGNORE INTO audit_engagement_timeline (engagement_id) VALUES (?)");
+$timelineStmt->bind_param('i', $engagementId);
+$timelineStmt->execute();
+$timelineStmt->close();
 
 $delete = $conn->prepare("DELETE FROM client_engagement_history WHERE history_id = ?");
 $delete->bind_param('i', $history_id);
