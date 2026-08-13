@@ -494,16 +494,13 @@ body.dark-mode .modal-footer {
     border-top: none !important;
 }
 
-/* Dropdowns */
-body.dark-mode .dropdown-list,
-body.dark-mode .dropdown-item {
+/* Dropdowns - .dropdown-list is a separate, unused custom autocomplete
+   component; real Bootstrap dropdown-menu/.dropdown-item dark-mode
+   styling lives further down, scoped alongside the rest of that redesign. */
+body.dark-mode .dropdown-list {
     background-color: #2a2a3d !important;
     color: #e0e0e0 !important;
     border-color: #3a3a50 !important;
-}
-body.dark-mode .dropdown-item:hover {
-    background-color: #3a3a50 !important;
-    color: #fff !important;
 }
 
 /* Tabs */
@@ -1155,21 +1152,76 @@ input, select {
   border-radius: 10px;
 }
 
+/* Bootstrap dropdown menu shell - rounded card + soft shadow instead of
+   the default hairline-bordered flat rectangle, matching the rest of the
+   app's card language (eng-vm-card, ud-hero, etc.). */
+.dropdown-menu {
+  border: 1px solid #e3e7e5;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -8px rgba(22,33,31,.18), 0 2px 8px rgba(22,33,31,.06);
+  padding: 6px;
+  min-width: 195px;
+}
+body.dark-mode .dropdown-menu {
+  background: #1e2325;
+  border-color: #29302e;
+  box-shadow: 0 10px 30px -8px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.3);
+}
+
+/* .dropdown-item is also Bootstrap's own class, reused here for every real
+   dropdown menu in the app (row actions, etc.) - each item is its own
+   rounded row instead of a flat list with hairline dividers between rows;
+   icons default to a muted neutral and pick up the row's own color (via
+   Bootstrap's text-primary/text-warning/text-danger utilities already in
+   the markup) on hover. */
 .dropdown-item {
-  padding: 8px 12px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-}
-
-.dropdown-item:last-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
   border-bottom: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #2b3230;
+  cursor: pointer;
+  transition: background-color .12s ease;
 }
-
+.dropdown-item i {
+  font-size: 15px;
+  width: 16px;
+  text-align: center;
+  color: #9aa39d;
+  flex-shrink: 0;
+}
 .dropdown-item:hover,
 .dropdown-item:focus {
-  background: #f0f0f0;
+  background: #f1f4f3;
+  color: #16211f;
   outline: none;
 }
+.dropdown-item:last-child { border-bottom: none; }
+
+.dropdown-item.text-danger,
+.dropdown-item.text-danger i { color: #c0392b !important; }
+.dropdown-item.text-danger:hover { background: #fbeceb; }
+
+.dropdown-item.text-warning,
+.dropdown-item.text-warning i { color: #92600f !important; }
+.dropdown-item.text-warning:hover { background: #fbeed9; }
+
+.dropdown-divider { margin: 4px 6px; border-color: #e3e7e5; opacity: 1; }
+
+body.dark-mode .dropdown-item { color: #c9d2ce; }
+body.dark-mode .dropdown-item i { color: #6e7975; }
+body.dark-mode .dropdown-item:hover { background: #262d2f; color: #edf1ee; }
+body.dark-mode .dropdown-item.text-danger,
+body.dark-mode .dropdown-item.text-danger i { color: #e0685a !important; }
+body.dark-mode .dropdown-item.text-danger:hover { background: #3a201d; }
+body.dark-mode .dropdown-item.text-warning,
+body.dark-mode .dropdown-item.text-warning i { color: #e0b566 !important; }
+body.dark-mode .dropdown-item.text-warning:hover { background: #3d2f16; }
+body.dark-mode .dropdown-divider { border-color: #29302e; }
 
 .dropdown-item div small.text-muted {
   font-size: 12px;
@@ -1183,7 +1235,8 @@ input, select {
    fallback below for touch, since there's no hover state to reveal it). */
 .dropdown-submenu { position: relative; }
 .role-submenu-trigger { display: flex; align-items: center; justify-content: space-between; }
-.role-submenu-chevron { font-size: 11px; color: #9aa39d; margin-left: 10px; }
+.role-submenu-trigger .role-submenu-chevron { font-size: 11px; width: auto; color: #9aa39d; margin-left: 10px; }
+body.dark-mode .role-submenu-trigger .role-submenu-chevron { color: #6e7975; }
 .role-submenu {
   display: none;
   position: absolute;
