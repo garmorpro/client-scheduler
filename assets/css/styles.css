@@ -1782,6 +1782,16 @@ body.dark-mode .eng-vm-divider { background: #29302e; }
 .offcanvas.eng-vm-panel .eng-vm-header,
 .offcanvas.eng-vm-panel .eng-vm-divider { flex-shrink: 0; }
 .offcanvas.eng-vm-panel .eng-vm-body { flex: 1; min-height: 0; overflow-y: auto; }
+
+/* Same right-side panel treatment for View Client (was a centered modal).
+   Reuses the .ud-hero / .ud-body pieces already shared with the employee
+   profile modal - the panel-specific bits are just width + the sticky
+   header/scrolling body split, same pattern as .eng-vm-panel above. */
+.offcanvas.client-vm-panel { width: min(560px, 100vw); max-width: 92vw; }
+.offcanvas.client-vm-panel .offcanvas-body { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+.offcanvas.client-vm-panel .ud-hero { flex-shrink: 0; }
+.offcanvas.client-vm-panel .ud-body { flex: 1; min-height: 0; max-height: none; overflow-y: auto; }
+.offcanvas.client-vm-panel .eng-edit-footer { flex-shrink: 0; }
 .eng-vm-eng-code { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #9aa39d; margin-bottom: 4px; }
 body.dark-mode .eng-vm-eng-code { color: #6e7975; }
 .eng-vm-client-name-lg { font-size: 19px; font-weight: 800; color: #16211f; margin-bottom: 10px; }

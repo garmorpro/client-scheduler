@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modalEl = document.getElementById('viewClientModal');
     if (!modalEl) return;
-    const modal = new bootstrap.Modal(modalEl);
+    const modal = bootstrap.Offcanvas.getOrCreateInstance(modalEl);
 
     const avatarEl = document.getElementById('vcAvatar');
     const titleEl = document.getElementById('vcTitle');
