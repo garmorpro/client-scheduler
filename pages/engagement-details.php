@@ -31,12 +31,36 @@ if (isset($_GET['id'])) {
         }
     }
 
-    $engagementQuery = "SELECT client_name, status, budgeted_hours, manager, notes FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, status, budgeted_hours, manager, notes, year FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
     $engagementResult = $stmt->get_result();
     $engagement = $engagementResult->fetch_assoc();
+
+    // Audit types selected for this engagement (chips in the modal header).
+    $stmt = $conn->prepare("
+        SELECT at.name, at.color
+        FROM engagement_audit_types eat
+        JOIN audit_types at ON at.audit_type_id = eat.audit_type_id
+        WHERE eat.engagement_id = ?
+        ORDER BY at.name
+    ");
+    $stmt->bind_param('i', $engagementId);
+    $stmt->execute();
+    $auditTypes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    // audit_engagement_details - the fields Engagement Tracker tracked that
+    // Client Scheduler's own `engagements` row never had (location, POC,
+    // TSC, SOC type, scope, review period, repeat flag, notes). Same
+    // visibility as Independence below: anyone who passed the top-level
+    // access check for this engagement, no separate permission carved out.
+    $stmt = $conn->prepare("SELECT * FROM audit_engagement_details WHERE engagement_id = ?");
+    $stmt->bind_param('i', $engagementId);
+    $stmt->execute();
+    $auditDetails = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 
     // Assigned employees + their hours + role, for the View Engagement modal.
     // Grouped by (user, audit_type) rather than just user - someone can be
@@ -129,12 +153,18 @@ if (isset($_GET['id'])) {
 
     if (user_has_permission($conn, 'view_dol')) {
         $stmt = $conn->prepare("
-            SELECT ada.criterion, at.name AS audit_type_name, at.color AS audit_type_color, u.user_id, u.full_name
+            SELECT ada.criterion, at.name AS audit_type_name, at.color AS audit_type_color, u.user_id, u.full_name, u.role
             FROM audit_dol_assignments ada
             JOIN users u ON u.user_id = ada.user_id
             LEFT JOIN audit_types at ON at.audit_type_id = ada.audit_type_id
             WHERE ada.engagement_id = ?
-            ORDER BY at.name, u.full_name, ada.criterion
+            ORDER BY CASE u.role
+                WHEN 'manager' THEN 1
+                WHEN 'senior' THEN 2
+                WHEN 'staff' THEN 3
+                WHEN 'intern' THEN 4
+                ELSE 5
+            END, u.full_name, ada.criterion
         ");
         $stmt->bind_param('i', $engagementId);
         $stmt->execute();
@@ -167,11 +197,14 @@ if (isset($_GET['id'])) {
     echo json_encode([
         'client_name' => $engagement['client_name'] ?? '',
         'status' => $engagement['status'] ?? '',
+        'year' => $engagement['year'] ?? null,
         'total_hours' => $totalHours,
         'budgeted_hours' => (float)($engagement['budgeted_hours'] ?? 0),
         'manager' => $engagement['manager'] ?? '',
         'assigned_employees' => $assignedEmployees,
         'notes' => $engagement['notes'] ?? '',
+        'audit_types' => $auditTypes,
+        'details' => $auditDetails ?: null,
         'audit' => $auditData,
     ]);
 }

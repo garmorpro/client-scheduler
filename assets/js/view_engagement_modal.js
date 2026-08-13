@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Sectioned "card" shell used by every part of the body below - a
+    // colored dot + label, matching the Engagement Tracker reference layout
+    // instead of one long undifferentiated scroll.
+    function card(title, color, bodyHtml) {
+        return `
+            <div class="eng-vm-card">
+                <div class="eng-vm-card-title"><span class="eng-vm-card-dot" style="background:${color}"></span>${title}</div>
+                ${bodyHtml}
+            </div>`;
+    }
+    function detailRow(label, value) {
+        return `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${value || '<span class="text-muted">&mdash;</span>'}</span></div>`;
+    }
+
     // Audit tracking sections (timeline/milestones/DOL/independence), added
     // for the Engagement Tracker migration. Each is only present in `audit`
     // if the backend decided the current user has permission to see it -
@@ -78,10 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const weekly = audit.weekly_status_call
             ? `<div class="eng-vm-tl-weekly">Weekly status call: <strong>${audit.weekly_status_call.day}</strong>${audit.weekly_status_call.group_name ? ` &middot; ${audit.weekly_status_call.group_name}` : ''}</div>`
             : '';
-        return `
-            <div class="eng-vm-section-title" style="margin-top:16px;">Timeline</div>
-            <div class="eng-vm-tl-list">${rows}</div>
-            ${weekly}`;
+        return card('Timeline', '#5aa8d6', `<div class="eng-vm-tl-list">${rows}</div>${weekly}`);
     }
 
     function renderMilestonesSection(audit) {
@@ -104,32 +115,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${dateHtml}
                 </div>`;
         }).join('');
-        return `
-            <div class="eng-vm-section-title" style="margin-top:16px;">Milestones</div>
-            <div class="eng-vm-tl-list">${rows}</div>`;
+        return card('Milestones', '#d67aa8', `<div class="eng-vm-tl-list">${rows}</div>`);
+    }
+
+    function roleLabel(role) {
+        const r = (role || '').toLowerCase();
+        if (r === 'crm_team') return 'CRM Team';
+        if (!r) return 'Other';
+        return r.charAt(0).toUpperCase() + r.slice(1);
     }
 
     function renderDolSection(audit) {
         if (!audit.dol) return '';
         if (audit.dol.length === 0) {
-            return `<div class="eng-vm-section-title" style="margin-top:16px;">Division of Labor</div>
-                    <div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>`;
+            return card('Team (DOL)', '#7a8fd6', '<div class="text-muted" style="font-size:13px;">No DOL assigned yet.</div>');
         }
-        const byPerson = new Map();
+
+        // Group by role first (Manager/Senior/Staff/Intern, matching the
+        // Engagement Tracker reference layout), then by person within it.
+        const roleOrder = ['manager', 'senior', 'staff', 'intern'];
+        const byRole = new Map();
         audit.dol.forEach(row => {
+            const role = (row.role || '').toLowerCase() || 'other';
+            if (!byRole.has(role)) byRole.set(role, new Map());
+            const byPerson = byRole.get(role);
             if (!byPerson.has(row.user_id)) byPerson.set(row.user_id, { name: row.full_name, criteria: [] });
             byPerson.get(row.user_id).criteria.push({ criterion: row.criterion, color: row.audit_type_color, type: row.audit_type_name });
         });
-        const rows = Array.from(byPerson.values()).map(person => `
-            <div class="eng-vm-dol-row">
-                <div class="eng-vm-dol-name">${person.name}</div>
-                <div class="eng-vm-dol-chips">
-                    ${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}
-                </div>
-            </div>`).join('');
-        return `
-            <div class="eng-vm-section-title" style="margin-top:16px;">Division of Labor</div>
-            <div class="eng-vm-dol-list">${rows}</div>`;
+        const orderedRoles = [...roleOrder.filter(r => byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
+
+        const groups = orderedRoles.map(role => {
+            const people = Array.from(byRole.get(role).values());
+            const rows = people.map(person => `
+                <div class="eng-vm-dol-row">
+                    <div class="eng-vm-dol-name">${person.name}</div>
+                    <div class="eng-vm-dol-chips">
+                        ${person.criteria.map(c => `<span class="eng-vm-dol-chip" style="border-color:${c.color || '#9aa39d'}" title="${c.type || ''}">${c.criterion}</span>`).join('')}
+                    </div>
+                </div>`).join('');
+            return `
+                <div class="eng-vm-role-group">
+                    <div class="eng-vm-role-group-title">${roleLabel(role)}${people.length > 1 ? ` (${people.length})` : ''}</div>
+                    <div class="eng-vm-dol-list">${rows}</div>
+                </div>`;
+        }).join('');
+
+        return card('Team (DOL)', '#7a8fd6', groups);
     }
 
     function renderIndependenceSection(audit) {
@@ -145,9 +176,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="eng-vm-indep-icon ${cls}">${icon}</span>
                 </div>`;
         }).join('');
-        return `
-            <div class="eng-vm-section-title" style="margin-top:16px;">Independence</div>
-            <div class="eng-vm-indep-list">${rows}</div>`;
+        return card('Independence', '#5fb85f', `<div class="eng-vm-indep-list">${rows}</div>`);
+    }
+
+    function renderOverviewCard(data) {
+        const d = data.details || {};
+        const reviewPeriod = d.review_period_start && d.review_period_end
+            ? `${fmtDate(d.review_period_start)} &ndash; ${fmtDate(d.review_period_end)}`
+            : null;
+        const rows = [
+            detailRow('Manager', data.manager),
+            detailRow('Point of Contact', d.poc),
+            detailRow('Location', d.location),
+            detailRow('Review Period', reviewPeriod),
+            detailRow('Report / SOC Type', d.soc_type),
+            detailRow('TSC', d.tsc),
+        ].join('');
+        return card('Overview', '#003f47', rows);
+    }
+
+    function renderDetailsCard(data) {
+        const d = data.details;
+        if (!d) return '';
+        const rows = [
+            detailRow('As-of Date', fmtDate(d.as_of_date)),
+            detailRow('Scope', d.scope),
+            detailRow('Created', fmtDate(d.created_at)),
+            detailRow('Last Updated', fmtDate(d.updated_at)),
+            d.planning_doc_url ? `<div class="detail-row"><span class="detail-label">Planning Doc</span><span class="detail-value"><a href="${d.planning_doc_url}" target="_blank" rel="noopener">Open link</a></span></div>` : '',
+        ].join('');
+        return card('Details', '#e0994c', rows);
+    }
+
+    function renderNotesCard(data) {
+        const notes = (data.details && data.details.notes) || data.notes;
+        if (!notes) return '';
+        return card('Notes', '#9b6bd6', `<p style="font-size:13px; margin:0; white-space:pre-wrap;">${notes}</p>`);
     }
 
     let lastOpenArgs = null;
@@ -191,19 +255,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('')
                 : '<div class="eng-vm-emp-row"><div class="eng-vm-emp-info"><div class="eng-vm-emp-name text-muted">No employees assigned yet</div></div></div>';
 
-            modalBody.innerHTML = `
-                <div class="eng-vm-header">
-                    <div class="eng-vm-client-row">
-                        <div class="eng-vm-tile" style="background-color:${avatarColor};">${initials}</div>
-                        <div>
-                            <div class="eng-vm-client-name">${data.client_name || ''}</div>
-                            <span class="eng-status-pill ${statusClass(data.status)}"><span class="dot"></span>${statusLabel(data.status)}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="eng-vm-body">
-                    <div class="eng-vm-stat-row">
-                        ${restrictFinancials ? '' : `
+            const auditTypeChips = (data.audit_types || []).map(t =>
+                `<span class="eng-vm-audit-chip"><span class="eng-vm-audit-chip-dot" style="background:${t.color || '#9aa39d'}"></span>${t.name}</span>`
+            ).join('');
+            const repeatBadge = data.details && data.details.repeat_flag == 1
+                ? '<span class="eng-vm-repeat-badge"><i class="bi bi-arrow-repeat"></i> Repeat</span>'
+                : '';
+            const chipsRow = (auditTypeChips || repeatBadge)
+                ? `<div class="eng-vm-chip-row">${auditTypeChips}${repeatBadge}</div>`
+                : '';
+
+            const capacityBody = restrictFinancials
+                ? `<div class="eng-vm-stat-row" style="grid-template-columns: 1fr;"><div class="eng-vm-stat-card"><div class="eng-vm-stat-title">Employees</div><div class="eng-vm-stat-value">${employees.length}</div></div></div>`
+                : `<div class="eng-vm-stat-row">
                         <div class="eng-vm-stat-card">
                             <div class="eng-vm-stat-title">Budgeted</div>
                             <div class="eng-vm-stat-value">${budgeted}h</div>
@@ -211,28 +275,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-stat-card">
                             <div class="eng-vm-stat-title">Allocated</div>
                             <div class="eng-vm-stat-value ${isOver ? 'over' : ''}">${allocated}h</div>
-                        </div>`}
+                        </div>
                         <div class="eng-vm-stat-card">
                             <div class="eng-vm-stat-title">Employees</div>
                             <div class="eng-vm-stat-value">${employees.length}</div>
                         </div>
                         <div class="eng-vm-stat-card">
-                            <div class="eng-vm-stat-title">Manager</div>
-                            <div class="eng-vm-stat-value text" title="${data.manager || '-'}">${data.manager || '-'}</div>
+                            <div class="eng-vm-stat-title">Utilization</div>
+                            <div class="eng-vm-stat-value ${utilColor === 'red' ? 'over' : ''}">${Math.round(pct)}%</div>
                         </div>
                     </div>
-                    ${restrictFinancials ? '' : `
-                    <div style="margin-bottom: 16px;">
-                        <div class="eng-util-cell">
-                            <div class="eng-util-track">
-                                <div class="eng-util-fill ${utilColor}" style="width: ${barWidth}%"></div>
-                            </div>
-                            <span class="eng-util-pct ${utilColor}">${Math.round(pct)}%</span>
+                    <div class="eng-util-cell">
+                        <div class="eng-util-track">
+                            <div class="eng-util-fill ${utilColor}" style="width: ${barWidth}%"></div>
                         </div>
-                        ${isOver ? `<div class="eng-util-over">+${overHours}h over</div>` : ''}
-                    </div>`}
-                    <div class="eng-vm-section-title">Assigned Employees</div>
-                    <div class="eng-vm-emp-list">${empRowsHtml}</div>
+                        <span class="eng-util-pct ${utilColor}">${Math.round(pct)}%</span>
+                    </div>
+                    ${isOver ? `<div class="eng-util-over">+${overHours}h over</div>` : ''}`;
+
+            modalBody.innerHTML = `
+                <div class="eng-vm-header">
+                    <div class="eng-vm-client-row">
+                        <div class="eng-vm-tile" style="background-color:${avatarColor};">${initials}</div>
+                        <div>
+                            <div class="eng-vm-client-name">${data.client_name || ''}${data.year ? ` <span class="text-muted" style="font-weight:500;">&middot; ${data.year}</span>` : ''}</div>
+                            <span class="eng-status-pill ${statusClass(data.status)}"><span class="dot"></span>${statusLabel(data.status)}</span>
+                            ${chipsRow}
+                        </div>
+                    </div>
+                </div>
+                <div class="eng-vm-body">
+                    ${renderOverviewCard(data)}
+                    ${card('Capacity', '#4fbf9f', capacityBody)}
+                    ${renderDetailsCard(data)}
+                    ${renderNotesCard(data)}
+                    ${card('Assigned Employees', '#4f8ef7', `<div class="eng-vm-emp-list">${empRowsHtml}</div>`)}
                     ${renderTimelineSection(data.audit || {}, engagementId)}
                     ${renderMilestonesSection(data.audit || {})}
                     ${renderDolSection(data.audit || {})}

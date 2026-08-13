@@ -1770,6 +1770,39 @@ body.dark-mode .eng-vm-emp-avatar { background: #232a2c; color: #9aa8a2; }
 body.dark-mode .eng-vm-emp-role { color: #6e7975; }
 .eng-vm-emp-hours { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
+/* Chips in the modal header: audit type(s) + a repeat badge. */
+.eng-vm-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.eng-vm-audit-chip {
+    display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px;
+    font-size: 10.5px; font-weight: 700; background: #f1f4f3; color: #6b7570;
+}
+body.dark-mode .eng-vm-audit-chip { background: #232a2c; color: #9aa8a2; }
+.eng-vm-audit-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.eng-vm-repeat-badge {
+    display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px;
+    font-size: 10.5px; font-weight: 700; background: #e2eef6; color: #285a80;
+}
+body.dark-mode .eng-vm-repeat-badge { background: #1a2540; color: #7fa8e0; }
+
+/* Sectioned "card" layout for the redesigned View Engagement modal - a
+   colored dot + label per section, matching the Engagement Tracker
+   reference layout, instead of one long undifferentiated scroll. */
+.eng-vm-card {
+    border: 1px solid #e3e7e5; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+}
+.eng-vm-card:last-child { margin-bottom: 0; }
+body.dark-mode .eng-vm-card { border-color: #29302e; }
+.eng-vm-card-title {
+    display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: #6b7570; margin-bottom: 10px;
+}
+body.dark-mode .eng-vm-card-title { color: #9aa8a2; }
+.eng-vm-card-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.eng-vm-role-group { margin-bottom: 12px; }
+.eng-vm-role-group:last-child { margin-bottom: 0; }
+.eng-vm-role-group-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9aa39d; margin-bottom: 6px; }
+body.dark-mode .eng-vm-role-group-title { color: #6e7975; }
+
 /* Audit tracking sections (timeline/milestones/DOL/independence) - added
    for the Engagement Tracker migration. Reuses the eng-vm-section-title
    label style; rows follow the same neutral-card conventions as
