@@ -130,3 +130,46 @@
     </div>
   </div>
 </div>
+
+<!-- Independence - a self-attestation popup opened from your own row in the
+     Team card. Always about the person looking at it, so there's no name
+     field - just which engagement/client it's for. -->
+<div class="modal fade" id="independenceModal" tabindex="-1" aria-labelledby="independenceModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="eng-edit-hero">
+          <div class="eng-edit-title" id="independenceModalTitle">Independence</div>
+          <p class="text-muted" id="independenceModalSubtitle" style="font-size: 12.5px; margin: 4px 0 0;">Confirm your independence from this client</p>
+        </div>
+
+        <div class="eng-edit-body">
+          <div class="eng-indep-options" id="independenceOptions">
+            <label class="eng-indep-option yes">
+              <input type="radio" name="independentValue" value="Y">
+              <span class="eng-indep-option-dot"></span>
+              <span class="eng-indep-option-label">Yes, independent</span>
+            </label>
+            <label class="eng-indep-option no">
+              <input type="radio" name="independentValue" value="N">
+              <span class="eng-indep-option-dot"></span>
+              <span class="eng-indep-option-label">No, not independent</span>
+            </label>
+            <label class="eng-indep-option unset">
+              <input type="radio" name="independentValue" value="">
+              <span class="eng-indep-option-dot"></span>
+              <span class="eng-indep-option-label">Not answered yet</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="eng-edit-footer">
+          <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="eng-edit-btn-save" id="independenceSaveBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

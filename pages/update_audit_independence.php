@@ -19,9 +19,12 @@ if (!csrf_valid()) {
 
 $data = json_decode(file_get_contents('php://input'), true);
 $engagementId = intval($data['engagement_id'] ?? 0);
-$value = $data['independent'] ?? null; // 'Y' | 'N'
+$rawValue = $data['independent'] ?? null;
+// 'Y' / 'N' are the only real answers - anything else (including the
+// explicit "Not answered yet" choice) means clear any existing attestation.
+$value = in_array($rawValue, ['Y', 'N'], true) ? $rawValue : null;
 
-if (!$engagementId || !in_array($value, ['Y', 'N'], true)) {
+if (!$engagementId) {
     echo json_encode(['success' => false, 'error' => 'Invalid request']);
     exit();
 }
@@ -46,12 +49,19 @@ if (!$isStaffed) {
     exit();
 }
 
-$stmt = $conn->prepare("
-    INSERT INTO audit_team_independence (engagement_id, user_id, independent)
-    VALUES (?, ?, ?)
-    ON DUPLICATE KEY UPDATE independent = VALUES(independent)
-");
-$stmt->bind_param('iis', $engagementId, $userId, $value);
+if ($value === null) {
+    // "Not answered yet" - no row means unanswered, same as never having
+    // attested at all, so clear rather than storing a third enum state.
+    $stmt = $conn->prepare("DELETE FROM audit_team_independence WHERE engagement_id = ? AND user_id = ?");
+    $stmt->bind_param('ii', $engagementId, $userId);
+} else {
+    $stmt = $conn->prepare("
+        INSERT INTO audit_team_independence (engagement_id, user_id, independent)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE independent = VALUES(independent)
+    ");
+    $stmt->bind_param('iis', $engagementId, $userId, $value);
+}
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

@@ -214,32 +214,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Assigned Employees + DOL into one, so hours is real functionality
     // to keep, not something to drop just to match visually.
     // Read-only indicator for a teammate's independence status, or a
-    // clickable Yes/No self-attestation if this row belongs to the person
-    // looking at it - independence is self-certified (audit_team_independence
-    // is one attestation per person per engagement), never set on someone
-    // else's behalf.
-    function independenceControl(person, independenceByUser, engagementId) {
+    // clickable trigger opening the Independence popup if this row belongs
+    // to the person looking at it - independence is self-certified
+    // (audit_team_independence is one attestation per person per
+    // engagement), never set on someone else's behalf.
+    function independenceIconParts(value) {
+        if (value === 'Y') return { icon: '&#10003;', cls: 'yes', label: 'Independent' };
+        if (value === 'N') return { icon: '&#10007;', cls: 'no', label: 'Not independent' };
+        return { icon: '?', cls: 'unset', label: 'Not yet confirmed' };
+    }
+
+    function independenceControl(person, independenceByUser, engagementId, clientName) {
         const value = independenceByUser.get(person.user_id) || null;
         const isSelf = person.user_id === (window.CURRENT_USER_ID || 0);
+        const { icon, cls, label } = independenceIconParts(value);
 
         if (!isSelf) {
-            let icon, cls, label;
-            if (value === 'Y') { icon = '&#10003;'; cls = 'yes'; label = 'Independent'; }
-            else if (value === 'N') { icon = '&#10007;'; cls = 'no'; label = 'Not independent'; }
-            else { icon = '&ndash;'; cls = 'unset'; label = 'Not yet confirmed'; }
             return `<span class="eng-vm-indep-icon ${cls}" title="Independence: ${label}">${icon}</span>`;
         }
 
-        return `
-            <div class="eng-vm-team-indep-self" title="Confirm your independence from the client">
-                <button type="button" class="eng-vm-indep-btn yes ${value === 'Y' ? 'active' : ''}" data-engagement-id="${engagementId}" data-value="Y">Yes</button>
-                <button type="button" class="eng-vm-indep-btn no ${value === 'N' ? 'active' : ''}" data-engagement-id="${engagementId}" data-value="N">No</button>
-            </div>`;
+        return `<button type="button" class="eng-vm-indep-icon self ${cls}" data-engagement-id="${engagementId}" data-client-name="${clientName}" data-value="${value || ''}" title="Independence: ${label} - click to change">${icon}</button>`;
     }
 
     function renderTeamSection(data, engagementId) {
         const employees = data.assigned_employees || [];
         const audit = data.audit || {};
+        const clientName = data.client_name || '';
         const titleAction = audit.can_manage_dol
             ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Edit DOL</a>`
             : '';
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-team-member-name">${person.name}</div>
                         ${dolLinesHtml(person)}
                     </div>
-                    ${independenceControl(person, independenceByUser, engagementId)}
+                    ${independenceControl(person, independenceByUser, engagementId, clientName)}
                     <div class="eng-vm-team-hours">${person.hours}h</div>
                 </div>`;
         }
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="eng-vm-team-lead-name">${manager.name}</div>
                         <div class="eng-vm-team-lead-role">Manager</div>
                     </div>
-                    ${independenceControl(manager, independenceByUser, engagementId)}
+                    ${independenceControl(manager, independenceByUser, engagementId, clientName)}
                     <div class="eng-vm-team-hours">${manager.hours}h</div>
                 </div>`;
         }
@@ -323,22 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         return card('Team', '#003f47', html, titleAction);
-    }
-
-    function renderIndependenceSection(audit) {
-        if (!audit.independence || audit.independence.length === 0) return '';
-        const rows = audit.independence.map(person => {
-            let icon, cls;
-            if (person.independent === 'Y') { icon = '&#10003;'; cls = 'yes'; }
-            else if (person.independent === 'N') { icon = '&#10007;'; cls = 'no'; }
-            else { icon = '&ndash;'; cls = 'unset'; }
-            return `
-                <div class="eng-vm-indep-row">
-                    <span class="eng-vm-indep-name">${person.full_name}</span>
-                    <span class="eng-vm-indep-icon ${cls}">${icon}</span>
-                </div>`;
-        }).join('');
-        return card('Independence', '#5fb85f', `<div class="eng-vm-indep-list">${rows}</div>`);
     }
 
     // Field set/order/fallbacks copied exactly from Engagement Tracker's
@@ -507,7 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${renderTeamSection(data, engagementId)}
                     ${renderTimelineSection(data.audit || {}, engagementId, data.details)}
                     ${renderMilestonesSection(data.audit || {})}
-                    ${renderIndependenceSection(data.audit || {})}
                 </div>
             `;
 
@@ -952,6 +935,23 @@ document.addEventListener('DOMContentLoaded', () => {
         editTimelineModalInstance.show();
     }
 
+    let independenceModalInstance = null;
+    let independenceEngagementId = null;
+
+    function openIndependenceModal(engagementId, clientName, currentValue) {
+        const modalEl = document.getElementById('independenceModal');
+        if (!modalEl) return;
+        if (!independenceModalInstance) independenceModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        independenceEngagementId = engagementId;
+
+        document.getElementById('independenceModalSubtitle').textContent = `Confirm your independence from ${clientName || 'this client'}`;
+        document.querySelectorAll('#independenceOptions input[name="independentValue"]').forEach(input => {
+            input.checked = input.value === (currentValue || '');
+        });
+
+        independenceModalInstance.show();
+    }
+
     // Parses/matches the file, then always routes into the modal above for
     // review before anything saves - matches ET's own "never a blind
     // import" behavior. Nothing is written to the database until Save
@@ -985,12 +985,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // value is 'Y', 'N', or null (Not answered yet - clears any existing
+    // attestation rather than storing a third enum state).
     async function saveIndependence(engagementId, value) {
         try {
             const res = await fetch('update_audit_independence.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ engagement_id: engagementId, independent: value })
+                body: JSON.stringify({ engagement_id: engagementId, independent: value || null })
             });
             const result = await res.json();
             if (!result.success) notify(result.error || 'Could not save.', true);
@@ -1030,8 +1032,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = e.target.closest('.eng-vm-tl-dot.clickable, .eng-vm-tl-row2.clickable');
         if (el) toggleDot(el);
 
-        const indepBtn = e.target.closest('.eng-vm-indep-btn');
-        if (indepBtn) saveIndependence(indepBtn.dataset.engagementId, indepBtn.dataset.value);
+        const indepTrigger = e.target.closest('.eng-vm-indep-icon.self');
+        if (indepTrigger) {
+            openIndependenceModal(indepTrigger.dataset.engagementId, indepTrigger.dataset.clientName, indepTrigger.dataset.value || null);
+        }
     });
     modalBody.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -1060,6 +1064,24 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Changes';
+            }
+        });
+    }
+
+    // #independenceModal's own markup is static, same reasoning as
+    // #editTimelineModal above - wired once here, not per row render.
+    const independenceSaveBtn = document.getElementById('independenceSaveBtn');
+    if (independenceSaveBtn) {
+        independenceSaveBtn.addEventListener('click', async () => {
+            if (!independenceEngagementId) return;
+            const selected = document.querySelector('#independenceOptions input[name="independentValue"]:checked');
+            const value = selected ? selected.value : '';
+            independenceSaveBtn.disabled = true;
+            try {
+                await saveIndependence(independenceEngagementId, value || null);
+                independenceModalInstance.hide();
+            } finally {
+                independenceSaveBtn.disabled = false;
             }
         });
     }

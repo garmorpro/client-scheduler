@@ -2033,22 +2033,17 @@ body.dark-mode .eng-vm-team-dol-audit-label { color: #6e7975; }
 .eng-vm-team-no-dol { font-size: 11.5px; color: #9aa39d; font-style: italic; }
 body.dark-mode .eng-vm-team-no-dol { color: #6e7975; }
 
-/* Independence, inline on each Team row - a read-only check/x/dash (reusing
-   .eng-vm-indep-icon's colors from the standalone Independence card below)
-   for a teammate, or a clickable Yes/No pair on your own row - independence
-   is self-attested, never set on someone else's behalf. */
-.eng-vm-team-indep-self { display: flex; gap: 4px; flex-shrink: 0; }
-.eng-vm-indep-btn {
-    padding: 3px 9px; border-radius: 20px; border: 1px solid #e3e7e5; background: #ffffff;
-    color: #6b7570; font-size: 11px; font-weight: 700; cursor: pointer;
+/* Independence, inline on each Team row - a read-only check/x/? for a
+   teammate, or the same icon as a real <button> on your own row that opens
+   #independenceModal - independence is self-attested, never set on someone
+   else's behalf. (This used to also have a separate standalone Independence
+   card lower in the modal - dropped as redundant once this went in.) */
+.eng-vm-indep-icon.self {
+    border: none; cursor: pointer; padding: 0; font-family: inherit;
+    box-shadow: 0 0 0 2px transparent;
 }
-.eng-vm-indep-btn:hover { background: #f1f4f3; }
-body.dark-mode .eng-vm-indep-btn { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
-body.dark-mode .eng-vm-indep-btn:hover { background: #232a2c; }
-.eng-vm-indep-btn.yes.active { background: #e4f3e6; border-color: #e4f3e6; color: #1f6b3a; }
-.eng-vm-indep-btn.no.active { background: #fbe8e6; border-color: #fbe8e6; color: #c0392b; }
-body.dark-mode .eng-vm-indep-btn.yes.active { background: #1e3d28; border-color: #1e3d28; color: #7fd99a; }
-body.dark-mode .eng-vm-indep-btn.no.active { background: #3a2320; border-color: #3a2320; color: #e0685a; }
+.eng-vm-indep-icon.self:hover { box-shadow: 0 0 0 2px #c7d0cb; }
+body.dark-mode .eng-vm-indep-icon.self:hover { box-shadow: 0 0 0 2px #45504b; }
 
 /* Two-up label-over-value fields (Overview/Details cards) - matches the
    Engagement Tracker reference layout instead of the single-column
@@ -2134,11 +2129,6 @@ body.dark-mode .eng-vm-dol-row { border-color: #29302e; }
 .eng-vm-dol-chip { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; border: 1.5px solid #9aa39d; color: #6b7570; }
 body.dark-mode .eng-vm-dol-chip { color: #9aa8a2; }
 
-.eng-vm-indep-list { border: 1px solid #e3e7e5; border-radius: 12px; }
-body.dark-mode .eng-vm-indep-list { border-color: #29302e; }
-.eng-vm-indep-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid #e3e7e5; font-size: 12.5px; }
-body.dark-mode .eng-vm-indep-row { border-color: #29302e; }
-.eng-vm-indep-row:last-child { border-bottom: none; }
 .eng-vm-indep-icon { font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
 .eng-vm-indep-icon.yes { background: #e4f3e6; color: #1f6b3a; }
 .eng-vm-indep-icon.no { background: #fbe8e6; color: #c0392b; }
@@ -2683,6 +2673,60 @@ body.dark-mode #editTimelineModal .eng-edit-btn-save { background: var(--seconda
     background: rgba(0,63,71,.07); border-left: 3px solid var(--primary-color); color: #16211f;
 }
 body.dark-mode #editTimelineModal .eng-edit-import-banner { background: rgba(163,204,56,.10); border-left-color: var(--secondary-color); color: #edf1ee; }
+
+/* ========= VIEW ENGAGEMENT: INDEPENDENCE MODAL ========= */
+#independenceModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #independenceModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#independenceModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #independenceModal .eng-edit-title { color: #edf1ee; }
+#independenceModal .eng-edit-body { padding: 16px 20px; }
+#independenceModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #independenceModal .eng-edit-footer { border-color: #29302e; }
+#independenceModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#independenceModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #independenceModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #independenceModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#independenceModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+}
+#independenceModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #independenceModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+/* Selectable option rows, replacing bare native radios - a custom dot
+   (the real <input> stays in the DOM but visually hidden, so keyboard/
+   screen-reader users still get a real radio group) plus a tinted
+   selected state per option. */
+.eng-indep-options { display: flex; flex-direction: column; gap: 8px; }
+.eng-indep-option {
+    display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+    border: 1px solid #e3e7e5; border-radius: 10px; cursor: pointer;
+    font-size: 13.5px; font-weight: 600; color: #16211f;
+}
+body.dark-mode .eng-indep-option { border-color: #29302e; color: #edf1ee; }
+.eng-indep-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.eng-indep-option-dot {
+    width: 16px; height: 16px; border-radius: 50%; border: 2px solid #c7d0cb; flex-shrink: 0; position: relative;
+}
+body.dark-mode .eng-indep-option-dot { border-color: #45504b; }
+.eng-indep-option input:checked ~ .eng-indep-option-dot { border-color: var(--primary-color); }
+body.dark-mode .eng-indep-option input:checked ~ .eng-indep-option-dot { border-color: var(--secondary-color); }
+.eng-indep-option input:checked ~ .eng-indep-option-dot::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--primary-color);
+}
+body.dark-mode .eng-indep-option input:checked ~ .eng-indep-option-dot::after { background: var(--secondary-color); }
+.eng-indep-option input:focus-visible ~ .eng-indep-option-dot { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+.eng-indep-option.yes:has(input:checked) { border-color: #9fcaa9; background: #f2f9f3; }
+.eng-indep-option.no:has(input:checked) { border-color: #eab3ac; background: #fdf3f1; }
+body.dark-mode .eng-indep-option.yes:has(input:checked) { border-color: #2c5138; background: #16261b; }
+body.dark-mode .eng-indep-option.no:has(input:checked) { border-color: #55302a; background: #2a1b18; }
 
 /* ========= VIEW ENGAGEMENT: DELETE CONFIRM MODAL ========= */
 /* Nested inside includes/modals/view_engagement_modal.php - had eng-edit-*
