@@ -296,7 +296,6 @@ unset($client);
 <?php include_once '../includes/modals/edit_client_modal.php'; ?>
 <?php include_once '../includes/modals/import_client_modal.php'; ?>
 <?php include_once '../includes/modals/delete_client_modal.php'; ?>
-<?php include_once '../includes/modals/add_engagement_modal.php'; ?>
 <?php endif; ?>
 <?php include_once '../includes/modals/view_client_modal.php'; ?>
 <?php include_once '../includes/modals/view_engagement_modal.php'; ?>
@@ -315,7 +314,6 @@ unset($client);
 <script src="../assets/js/edit_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_client_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/delete_client_modal.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/add_engagement_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/import-clients-modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/swal-modals/add-engagement-modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
