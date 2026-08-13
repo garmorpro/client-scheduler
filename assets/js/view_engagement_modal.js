@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sectioned "card" shell used by every part of the body below - a
     // colored dot + label, matching the Engagement Tracker reference layout
     // instead of one long undifferentiated scroll.
-    function card(title, color, bodyHtml, titleAction) {
+    function card(title, color, bodyHtml, titleAction, id) {
         return `
-            <div class="eng-vm-card">
+            <div class="eng-vm-card"${id ? ` id="${id}"` : ''}>
                 <div class="eng-vm-card-title">
                     <span class="eng-vm-card-title-left"><span class="eng-vm-card-dot" style="background:${color}"></span>${title}</span>
                     ${titleAction || ''}
@@ -67,41 +67,69 @@ document.addEventListener('DOMContentLoaded', () => {
     // engagement-details.php (admin-or-staffed-on-this-engagement, not just
     // "does this role have the permission at all") - the frontend doesn't
     // re-derive that, it just renders inputs/checkable dots when they're true.
+    //
+    // Two display modes for the date list itself: read-only (default,
+    // matches the Engagement Tracker reference - label-over-date, colored
+    // dot, click a row to toggle complete/incomplete) and edit (behind the
+    // "Edit Timeline" toggle, for actually changing a date - the original
+    // inline <input type="date"> boxes). `timelineEditMode` is module-scoped
+    // so it survives a refresh() (e.g. after saving a date) but resets
+    // whenever a different engagement is opened - see open().
+    function timelineRowReadOnly(step, engagementId, canComplete) {
+        const isDone = !!step.completed;
+        const overdue = isOverdue(step.date, isDone);
+        const dateText = step.start_date && step.date
+            ? `${fmtDate(step.start_date)} &ndash; ${fmtDate(step.date)}`
+            : fmtDate(step.date);
+        const dotState = isDone ? 'done' : (overdue ? 'overdue' : 'pending');
+        const clickAttrs = canComplete
+            ? `role="button" tabindex="0" data-kind="timeline" data-engagement-id="${engagementId}" data-completed-column="${step.completed_column}" data-completed="${isDone ? '1' : '0'}"`
+            : '';
+        return `
+            <div class="eng-vm-tl-row2 ${canComplete ? 'clickable' : ''}" ${clickAttrs}>
+                <span class="eng-vm-tl-dot2 ${dotState}"></span>
+                <div class="eng-vm-tl-info">
+                    <div class="eng-vm-tl-label2">${step.label}</div>
+                    <div class="eng-vm-tl-date2 ${overdue ? 'overdue' : ''}">${dateText || '<span class="text-muted">Not set</span>'}</div>
+                </div>
+            </div>`;
+    }
+
+    function timelineRowEditable(step, engagementId, canComplete) {
+        const isDone = !!step.completed;
+        const overdue = isOverdue(step.date, isDone);
+
+        const dateHtml = step.start_column
+            ? `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.start_column}" value="${toInputDate(step.start_date)}">
+               <span class="eng-vm-tl-date-sep">&ndash;</span>
+               <input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`
+            : `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`;
+
+        const dotAttrs = canComplete
+            ? `role="button" tabindex="0" data-kind="timeline" data-engagement-id="${engagementId}" data-completed-column="${step.completed_column}" data-completed="${isDone ? '1' : '0'}"`
+            : '';
+
+        return `
+            <div class="eng-vm-tl-row ${isDone ? 'done' : ''} ${overdue ? 'overdue' : ''}">
+                <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
+                <span class="eng-vm-tl-label">${step.label}</span>
+                ${dateHtml}
+            </div>`;
+    }
+
     function renderTimelineSection(audit, engagementId, details) {
         details = details || {};
         if (!audit.timeline) return '';
         const canManage = !!audit.can_manage_timeline;
         const canComplete = !!audit.can_complete_timeline;
+        const editMode = timelineEditMode && canManage;
 
-        const rows = audit.timeline.map(step => {
-            const isDone = !!step.completed;
-            const overdue = isOverdue(step.date, isDone);
-
-            let dateHtml;
-            if (canManage) {
-                dateHtml = step.start_column
-                    ? `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.start_column}" value="${toInputDate(step.start_date)}">
-                       <span class="eng-vm-tl-date-sep">&ndash;</span>
-                       <input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`
-                    : `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`;
-            } else {
-                const range = step.start_date && step.date
-                    ? `${fmtDate(step.start_date)} &ndash; ${fmtDate(step.date)}`
-                    : fmtDate(step.date);
-                dateHtml = `<span class="eng-vm-tl-date">${range || '<span class="text-muted">Not set</span>'}</span>`;
-            }
-
-            const dotAttrs = canComplete
-                ? `role="button" tabindex="0" data-kind="timeline" data-engagement-id="${engagementId}" data-completed-column="${step.completed_column}" data-completed="${isDone ? '1' : '0'}"`
-                : '';
-
-            return `
-                <div class="eng-vm-tl-row ${isDone ? 'done' : ''} ${overdue ? 'overdue' : ''}">
-                    <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
-                    <span class="eng-vm-tl-label">${step.label}</span>
-                    ${dateHtml}
-                </div>`;
-        }).join('');
+        const rows = audit.timeline
+            .map(step => editMode ? timelineRowEditable(step, engagementId, canComplete) : timelineRowReadOnly(step, engagementId, canComplete))
+            .join('');
+        const hint = (!editMode && canComplete)
+            ? '<div class="eng-vm-tl-hint">Click a date to mark it complete or incomplete.</div>'
+            : '';
 
         const canEditWeekly = canManage;
         const wsc = audit.weekly_status_call || {};
@@ -133,7 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
                </div>`
             : (details.planning_doc_url ? `<div class="eng-vm-tl-upload-row"><a href="download_planning_doc.php?engagement_id=${engagementId}" class="eng-vm-upload-link"><i class="bi bi-download"></i> Planning Doc</a></div>` : '');
 
-        return card('Timeline', '#5aa8d6', `${uploadRow}<div class="eng-vm-tl-list">${rows}</div>${weekly}`);
+        const titleAction = canManage
+            ? `<a href="#" class="eng-vm-card-title-action" id="engVmTimelineEditToggle">${editMode ? 'Done' : 'Edit Timeline'}</a>`
+            : '';
+        const rowListClass = editMode ? 'eng-vm-tl-list' : 'eng-vm-tl-list2';
+
+        return card(
+            'Timeline & Key Dates', '#5aa8d6',
+            `${uploadRow}<div class="${rowListClass}">${rows}</div>${hint}${weekly}`,
+            titleAction, 'engVmTimelineCard'
+        );
     }
 
     function renderMilestonesSection(audit) {
@@ -287,12 +324,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let lastOpenArgs = null;
+    let lastData = null;
+    // Timeline dates are read-only by default (Engagement Tracker's own
+    // layout); "Edit Timeline" swaps that one card into the old editable
+    // inputs. Module-scoped so it survives a refresh() (saving a date
+    // re-fetches and re-renders everything), but reset whenever a
+    // *different* engagement is opened - see below.
+    let timelineEditMode = false;
+    let timelineEditModeEngagementId = null;
 
     async function open(engagementId, avatarColor, initials, restrictFinancials) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
         if (!engagementId) return;
         lastOpenArgs = [engagementId, avatarColor, initials, restrictFinancials];
+        if (timelineEditModeEngagementId !== String(engagementId)) {
+            timelineEditMode = false;
+            timelineEditModeEngagementId = String(engagementId);
+        }
 
         modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
         modal.show();
@@ -300,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`engagement-details.php?id=${encodeURIComponent(engagementId)}`);
             const data = await res.json();
+            lastData = data;
 
             const budgeted = data.budgeted_hours || 0;
             const allocated = data.total_hours || 0;
@@ -521,6 +571,23 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
+        wireTimelineCardActions(engagementId);
+    }
+
+    // Wiring for just the Timeline card - split out from wireHeaderActions
+    // so it can be re-bound after a local re-render (toggling the
+    // "Edit Timeline" link swaps that one card's HTML without a full
+    // network refetch - see reRenderTimeline()).
+    function wireTimelineCardActions(engagementId) {
+        const editToggle = document.getElementById('engVmTimelineEditToggle');
+        if (editToggle) {
+            editToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                timelineEditMode = !timelineEditMode;
+                reRenderTimeline();
+            });
+        }
+
         const weeklyDayInput = document.getElementById('engVmWeeklyDayInput');
         if (weeklyDayInput) {
             weeklyDayInput.addEventListener('change', async () => {
@@ -559,6 +626,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    }
+
+    // Re-renders just the Timeline card from the last-fetched data, with no
+    // network round trip - used for the "Edit Timeline" / "Done" toggle,
+    // which is a pure display-mode switch, not a data change. The generic
+    // change/click/keydown delegation below is bound on modalBody itself,
+    // so it keeps working on the new markup automatically; only this
+    // card's own listeners (the toggle, weekly select, upload input) need
+    // re-wiring after outerHTML replaces the element they were bound to.
+    function reRenderTimeline() {
+        if (!lastData) return;
+        const wrap = document.getElementById('engVmTimelineCard');
+        if (!wrap) return;
+        const engagementId = lastData.engagement_id;
+        wrap.outerHTML = renderTimelineSection(lastData.audit || {}, engagementId, lastData.details);
+        wireTimelineCardActions(engagementId);
     }
 
     async function saveTimelineField(column, engagementId, value) {
@@ -614,14 +697,18 @@ document.addEventListener('DOMContentLoaded', () => {
             saveMilestone(dot.dataset.milestoneId, 'toggle_complete', nowCompleted);
         }
     }
+    // Toggling completion can be triggered from either the editable dot
+    // (.eng-vm-tl-dot, edit mode) or the whole read-only row
+    // (.eng-vm-tl-row2, default view - matches the "click a date to mark it
+    // complete" hint), so both carry the same data-* attributes.
     modalBody.addEventListener('click', (e) => {
-        const dot = e.target.closest('.eng-vm-tl-dot.clickable');
-        if (dot) toggleDot(dot);
+        const el = e.target.closest('.eng-vm-tl-dot.clickable, .eng-vm-tl-row2.clickable');
+        if (el) toggleDot(el);
     });
     modalBody.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
-        const dot = e.target.closest('.eng-vm-tl-dot.clickable');
-        if (dot) { e.preventDefault(); toggleDot(dot); }
+        const el = e.target.closest('.eng-vm-tl-dot.clickable, .eng-vm-tl-row2.clickable');
+        if (el) { e.preventDefault(); toggleDot(el); }
     });
 
     // Exposed so other modals (e.g. the View Client engagement history list)
