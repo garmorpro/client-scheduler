@@ -46,7 +46,12 @@ while ($row = $res->fetch_assoc()) {
 // $engagements list above, so the scoping (admin vs. staffed-only) still
 // holds - a non-admin can't get linked into an engagement they're not on.
 $preselectEngagementId = isset($_GET['engagement_id']) ? (int) $_GET['engagement_id'] : 0;
-if ($preselectEngagementId && !in_array($preselectEngagementId, array_column($engagements, 'engagement_id'), true)) {
+// array_map('intval', ...) here matters - mysqli can hand back engagement_id
+// as a numeric string depending on driver config, and in_array's strict
+// (true) mode would then never match an int against "57", silently
+// resetting the preselect to 0 even though the id really is in the list.
+$engagementIds = array_map('intval', array_column($engagements, 'engagement_id'));
+if ($preselectEngagementId && !in_array($preselectEngagementId, $engagementIds, true)) {
     $preselectEngagementId = 0;
 }
 ?>
