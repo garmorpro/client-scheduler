@@ -267,6 +267,19 @@ unset($client);
     });
 
     updateToolbarHint(cards.length);
+
+    // Whole row opens the View Client panel, same as the row-click pattern
+    // on Engagements - excludes clicks on the row's own action buttons so
+    // Add Engagement/Edit/Delete still work without also popping the panel
+    // open underneath them. Delegates to the existing eye-icon button's
+    // click handler rather than duplicating its lookup/fetch logic.
+    cards.forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('.client-row-actions')) return;
+            const viewBtn = row.querySelector('.view-btn');
+            if (viewBtn) viewBtn.click();
+        });
+    });
 </script>
 
 
@@ -302,10 +315,10 @@ unset($client);
 
 <script src="../assets/js/app_alerts.js?v=<?php echo time(); ?>"></script>
 <?php if ($flashSuccess): ?>
-<script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon: 'success', title: <?php echo json_encode($flashSuccess); ?>, timer: 2500, showConfirmButton: false }));</script>
+<script>document.addEventListener('DOMContentLoaded', () => appNotify({ icon: 'success', title: <?php echo json_encode($flashSuccess); ?>, timer: 2500 }));</script>
 <?php endif; ?>
 <?php if ($flashError): ?>
-<script>document.addEventListener('DOMContentLoaded', () => Swal.fire({ icon: 'error', title: 'Could not delete client', text: <?php echo json_encode($flashError); ?> }));</script>
+<script>document.addEventListener('DOMContentLoaded', () => appNotify({ icon: 'error', title: 'Could not delete client', text: <?php echo json_encode($flashError); ?> }));</script>
 <?php endif; ?>
 </body>
 </html>

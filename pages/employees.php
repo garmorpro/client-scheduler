@@ -135,7 +135,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                     <tbody>
                     <?php if (mysqli_num_rows($userresult) > 0): ?>
                         <?php while ($userrow = mysqli_fetch_assoc($userresult)): ?>
-                            <tr data-role="<?php echo strtolower($userrow['role']); ?>">
+                            <tr class="user-row" data-role="<?php echo strtolower($userrow['role']); ?>">
                                 <?php if ($canManageEmployees): ?><td><input type="checkbox" class="selectUser" data-user-id="<?php echo $userrow['user_id']; ?>" data-role="<?php echo strtolower($userrow['role']); ?>" data-user-name="<?php echo htmlspecialchars($userrow['full_name']); ?>"></td><?php endif; ?>
                                 <td>
                                     <span class="emp-name-wrap">
@@ -292,6 +292,24 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <?php include_once '../includes/modals/import_users_modal.php'; ?>
 <?php include_once '../includes/modals/org_chart_modal.php'; ?>
 
+<script>
+// Whole row opens the View User panel, same click-the-row pattern used on
+// Engagements/Clients - delegated on the tbody (rather than bound per-row)
+// since search_pagination.js only shows/hides existing rows, but this way
+// nothing has to be re-wired if that ever changes. Excludes the actions
+// cell and the select-checkbox so Edit/Offboard/Delete/select still work.
+document.addEventListener('DOMContentLoaded', () => {
+    const tbody = document.querySelector('#user-table tbody');
+    if (!tbody) return;
+    tbody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr.user-row');
+        if (!row) return;
+        if (e.target.closest('.table-actions') || e.target.closest('input[type="checkbox"]')) return;
+        const viewBtn = row.querySelector('.view-user-btn');
+        if (viewBtn) viewBtn.click();
+    });
+});
+</script>
 <script src="../assets/js/viewUserModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/org_chart_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/promote_user.js?v=<?php echo time(); ?>"></script>

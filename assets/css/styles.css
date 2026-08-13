@@ -1608,6 +1608,10 @@ body.dark-mode .client-toolbar-hint { color: #6e7975; }
 .client-table tbody tr:hover { background: #f1f4f3; }
 .client-table tbody tr.client-row { cursor: pointer; }
 .client-table tbody tr.client-row .client-row-actions { cursor: default; }
+
+#user-table tbody tr.user-row { cursor: pointer; }
+#user-table tbody tr.user-row .table-actions,
+#user-table tbody tr.user-row input[type="checkbox"] { cursor: default; }
 body.dark-mode .client-table-shell { background: #1b2022; border-color: #29302e; }
 body.dark-mode .client-table thead th { background: #232a2c; color: #6e7975; border-color: #29302e; }
 body.dark-mode .client-table tbody td { border-color: #29302e; }
