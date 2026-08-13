@@ -1750,7 +1750,7 @@ body.dark-mode .eng-vm-divider { background: #29302e; }
 
 /* Right-side slide-in panel (Bootstrap Offcanvas), replacing the old
    centered modal - matches the Engagement Tracker reference layout. */
-.eng-vm-panel { width: 780px; max-width: 92vw; }
+.eng-vm-panel { width: 920px; max-width: 92vw; }
 .eng-vm-eng-code { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #9aa39d; margin-bottom: 4px; }
 body.dark-mode .eng-vm-eng-code { color: #6e7975; }
 .eng-vm-client-name-lg { font-size: 19px; font-weight: 800; color: #16211f; margin-bottom: 10px; }
