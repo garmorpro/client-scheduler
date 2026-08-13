@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  viewProfileModal.addEventListener('show.bs.modal', async (event) => {
+  viewProfileModal.addEventListener('show.bs.offcanvas', async (event) => {
     const button = event.relatedTarget;
     const userId = button ? button.getAttribute('data-user-id') : null;
     if (!userId) return;

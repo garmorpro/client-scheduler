@@ -202,7 +202,7 @@ if ($canApproveTimeOff) {
 
     <!-- Bottom User Info -->
     <div class="sidebar-footer">
-        <div class="sidebar-account" data-bs-toggle="modal" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>">
+        <div class="sidebar-account" data-bs-toggle="offcanvas" data-bs-target="#viewProfileModal" data-user-id="<?php echo $_SESSION['user_id']; ?>">
             <div class="sidebar-avatar">
                 <?php
                 $fullName = $_SESSION['full_name'] ?? '';

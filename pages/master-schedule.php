@@ -390,7 +390,7 @@ updateLastRowRadius();
                         data-role="<?php echo strtolower($role); ?>"
                         data-email="<?php echo htmlspecialchars($employee['email']); ?>"
                         style="cursor: pointer;"
-                        data-bs-toggle="modal"
+                        data-bs-toggle="offcanvas"
                         data-bs-target="#viewProfileModal">
                         <div class="d-flex align-items-center">
                                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3"

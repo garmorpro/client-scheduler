@@ -1,8 +1,6 @@
-<div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 560px;">
-    <div class="modal-content">
-      <div class="modal-body position-relative p-0">
-        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="offcanvas offcanvas-end client-vm-panel" tabindex="-1" id="viewProfileModal" aria-labelledby="viewProfileModalLabel" aria-hidden="true">
+  <div class="offcanvas-body position-relative p-0">
+    <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 
         <div class="ud-hero">
           <div class="ud-header">
@@ -86,9 +84,7 @@
           <button type="button" class="pd-btn-edit" data-bs-toggle="modal" data-bs-target="#updateProfileDetailsModal" data-user-id="<?php echo $_SESSION['user_id']; ?>">
             <i class="bi bi-pencil-square"></i> Edit Profile
           </button>
-          <button type="button" class="pd-btn-close" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="pd-btn-close" data-bs-dismiss="offcanvas">Close</button>
         </div>
-      </div>
-    </div>
   </div>
 </div>
