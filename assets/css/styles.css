@@ -4516,7 +4516,7 @@ body.dark-mode .oc-tier-hint { color: #45504b; }
     width: 36px; height: 36px; border-radius: 10px; color: #ffffff; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
 }
-.oc-avatar-sm { width: 26px; height: 26px; border-radius: 8px; font-size: 10.5px; }
+.oc-avatar-sm { width: 26px; height: 26px; border-radius: 8px; font-size: 9.5px; letter-spacing: -.02em; }
 
 .oc-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .oc-chip {
