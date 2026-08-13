@@ -40,7 +40,10 @@ $hour = filter_var($input['hour'] ?? null, FILTER_VALIDATE_INT);
 $minute = filter_var($input['minute'] ?? null, FILTER_VALIDATE_INT);
 $rawDays = is_array($input['days'] ?? null) ? $input['days'] : [];
 
-if ($hour === false || $hour < 0 || $hour > 23 || !in_array($minute, [0, 15, 30, 45], true)) {
+// Cron's minute field accepts any value 0-59 natively - no need to
+// restrict this to a fixed set of increments, that was never a real
+// requirement.
+if ($hour === false || $hour < 0 || $hour > 23 || $minute === false || $minute < 0 || $minute > 59) {
     echo json_encode(['success' => false, 'error' => 'Invalid time']);
     exit();
 }

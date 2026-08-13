@@ -24,8 +24,7 @@
 
             <div class="eng-edit-field">
               <label for="auditNotifTime">Send Time</label>
-              <input type="time" class="eng-edit-input" id="auditNotifTime" step="900">
-              <div class="form-text" style="font-size:11px;">Rounds to the nearest 15 minutes.</div>
+              <input type="time" class="eng-edit-input" id="auditNotifTime">
             </div>
 
             <div class="eng-edit-field">

@@ -58,12 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const [hourStr, minuteStr] = (timeInput.value || '08:00').split(':');
-        // Round to the nearest quarter-hour, matching the crontab's actual
-        // granularity — a raw native time picker can return any minute.
-        const rawMinute = parseInt(minuteStr, 10) || 0;
-        const roundedMinute = Math.round(rawMinute / 15) * 15;
-        const hour = roundedMinute === 60 ? (parseInt(hourStr, 10) + 1) % 24 : parseInt(hourStr, 10);
-        const minute = roundedMinute % 60;
+        // Cron's minute field accepts any value 0-59 natively - no reason
+        // to round this, that was an arbitrary restriction with no real
+        // technical basis (not something cron itself requires).
+        const hour = parseInt(hourStr, 10) || 0;
+        const minute = parseInt(minuteStr, 10) || 0;
         const days = getActiveDays();
 
         if (enabledCb.checked && days.length === 0) {
