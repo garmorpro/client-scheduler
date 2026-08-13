@@ -77,13 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // "does this role have the permission at all") - the frontend doesn't
     // re-derive that, it just renders inputs/checkable dots when they're true.
     //
-    // Two display modes for the date list itself: read-only (default,
-    // matches the Engagement Tracker reference - label-over-date, colored
-    // dot, click a row to toggle complete/incomplete) and edit (behind the
-    // "Edit Timeline" toggle, for actually changing a date - the original
-    // inline <input type="date"> boxes). `timelineEditMode` is module-scoped
-    // so it survives a refresh() (e.g. after saving a date) but resets
-    // whenever a different engagement is opened - see open().
+    // Dates are always displayed read-only here - label-over-date, colored
+    // status dot, click a row to toggle complete/incomplete - matching the
+    // Engagement Tracker reference. Actually changing a date happens in the
+    // separate #editTimelineModal (a real modal, not inline boxes - see
+    // openEditTimelineModal()), which is also where Import Timeline routes
+    // its matched dates for review before anything saves.
     function timelineRowReadOnly(step, engagementId, canComplete) {
         const isDone = !!step.completed;
         const overdue = isOverdue(step.date, isDone);
@@ -104,39 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
-    function timelineRowEditable(step, engagementId, canComplete) {
-        const isDone = !!step.completed;
-        const overdue = isOverdue(step.date, isDone);
-
-        const dateHtml = step.start_column
-            ? `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.start_column}" value="${toInputDate(step.start_date)}">
-               <span class="eng-vm-tl-date-sep">&ndash;</span>
-               <input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`
-            : `<input type="date" class="eng-vm-tl-date-input" data-kind="timeline" data-engagement-id="${engagementId}" data-column="${step.date_column}" value="${toInputDate(step.date)}">`;
-
-        const dotAttrs = canComplete
-            ? `role="button" tabindex="0" data-kind="timeline" data-engagement-id="${engagementId}" data-completed-column="${step.completed_column}" data-completed="${isDone ? '1' : '0'}"`
-            : '';
-
-        return `
-            <div class="eng-vm-tl-row ${isDone ? 'done' : ''} ${overdue ? 'overdue' : ''}">
-                <span class="eng-vm-tl-dot ${canComplete ? 'clickable' : ''}" ${dotAttrs}></span>
-                <span class="eng-vm-tl-label">${step.label}</span>
-                ${dateHtml}
-            </div>`;
-    }
-
     function renderTimelineSection(audit, engagementId, details) {
         details = details || {};
         if (!audit.timeline) return '';
         const canManage = !!audit.can_manage_timeline;
         const canComplete = !!audit.can_complete_timeline;
-        const editMode = timelineEditMode && canManage;
 
-        const rows = audit.timeline
-            .map(step => editMode ? timelineRowEditable(step, engagementId, canComplete) : timelineRowReadOnly(step, engagementId, canComplete))
-            .join('');
-        const hint = (!editMode && canComplete)
+        const rows = audit.timeline.map(step => timelineRowReadOnly(step, engagementId, canComplete)).join('');
+        const hint = canComplete
             ? '<div class="eng-vm-tl-hint">Click a date to mark it complete or incomplete.</div>'
             : '';
 
@@ -173,15 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleAction = canManage
             ? `<div class="eng-vm-tl-title-actions">
                    <a href="#" class="eng-vm-card-title-action" id="engVmTimelineImportBtn">Import Timeline</a>
-                   <a href="#" class="eng-vm-card-title-action" id="engVmTimelineEditToggle">${editMode ? 'Done' : 'Edit Timeline'}</a>
+                   <a href="#" class="eng-vm-card-title-action" id="engVmTimelineEditBtn">Edit Timeline</a>
                    <input type="file" id="engVmTimelineImportInput" accept=".xlsx,.xls,.csv" hidden>
                </div>`
             : '';
-        const rowListClass = editMode ? 'eng-vm-tl-list' : 'eng-vm-tl-list2';
 
         return card(
             'Timeline & Key Dates', '#2f9e57',
-            `${uploadRow}<div class="${rowListClass}">${rows}</div>${hint}${weekly}`,
+            `${uploadRow}<div class="eng-vm-tl-list2">${rows}</div>${hint}${weekly}`,
             titleAction, 'engVmTimelineCard'
         );
     }
@@ -398,23 +371,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastOpenArgs = null;
     let lastData = null;
-    // Timeline dates are read-only by default (Engagement Tracker's own
-    // layout); "Edit Timeline" swaps that one card into the old editable
-    // inputs. Module-scoped so it survives a refresh() (saving a date
-    // re-fetches and re-renders everything), but reset whenever a
-    // *different* engagement is opened - see below.
-    let timelineEditMode = false;
-    let timelineEditModeEngagementId = null;
 
     async function open(engagementId, avatarColor, initials, restrictFinancials) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
         if (!engagementId) return;
         lastOpenArgs = [engagementId, avatarColor, initials, restrictFinancials];
-        if (timelineEditModeEngagementId !== String(engagementId)) {
-            timelineEditMode = false;
-            timelineEditModeEngagementId = String(engagementId);
-        }
 
         modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
         modal.show();
@@ -648,16 +610,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Wiring for just the Timeline card - split out from wireHeaderActions
-    // so it can be re-bound after a local re-render (toggling the
-    // "Edit Timeline" link swaps that one card's HTML without a full
-    // network refetch - see reRenderTimeline()).
+    // so it can be re-bound after saveTimelineField's refresh() re-renders
+    // the whole panel from scratch.
     function wireTimelineCardActions(engagementId) {
-        const editToggle = document.getElementById('engVmTimelineEditToggle');
-        if (editToggle) {
-            editToggle.addEventListener('click', (e) => {
+        const editBtn = document.getElementById('engVmTimelineEditBtn');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                timelineEditMode = !timelineEditMode;
-                reRenderTimeline();
+                openEditTimelineModal(engagementId);
             });
         }
 
@@ -713,22 +673,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-    }
-
-    // Re-renders just the Timeline card from the last-fetched data, with no
-    // network round trip - used for the "Edit Timeline" / "Done" toggle,
-    // which is a pure display-mode switch, not a data change. The generic
-    // change/click/keydown delegation below is bound on modalBody itself,
-    // so it keeps working on the new markup automatically; only this
-    // card's own listeners (the toggle, weekly select, upload input) need
-    // re-wiring after outerHTML replaces the element they were bound to.
-    function reRenderTimeline() {
-        if (!lastData) return;
-        const wrap = document.getElementById('engVmTimelineCard');
-        if (!wrap) return;
-        const engagementId = lastData.engagement_id;
-        wrap.outerHTML = renderTimelineSection(lastData.audit || {}, engagementId, lastData.details);
-        wireTimelineCardActions(engagementId);
     }
 
     // `silent` skips the auto-refresh() - used by the Import Timeline flow
@@ -908,33 +852,76 @@ document.addEventListener('DOMContentLoaded', () => {
         return { matched, unmatched };
     }
 
+    // Every date column shown in #editTimelineModal - matches ET's own
+    // Edit Timeline modal field set exactly, including both halves of the
+    // two fieldwork ranges.
+    const TIMELINE_MODAL_COLUMNS = [
+        'internal_planning_call_date', 'planning_memo_date', 'irl_due_date', 'client_planning_call_date',
+        'fieldwork_client_calls_start_date', 'fieldwork_client_calls_end_date',
+        'fieldwork_documentation_start_date', 'fieldwork_documentation_end_date',
+        'leadsheet_date', 'conclusion_memo_date', 'draft_report_due_date', 'final_report_date', 'archive_date',
+    ];
+
+    // Flattens the last-fetched audit.timeline array (one object per step,
+    // carrying date_column/start_column) into a plain column -> value map,
+    // so the modal's inputs can be pre-filled from whatever the last load
+    // actually has, regardless of overrides from an import.
+    function timelineCurrentValues() {
+        const values = {};
+        ((lastData && lastData.audit && lastData.audit.timeline) || []).forEach(step => {
+            if (step.date_column) values[step.date_column] = toInputDate(step.date);
+            if (step.start_column) values[step.start_column] = toInputDate(step.start_date);
+        });
+        return values;
+    }
+
+    let editTimelineModalInstance = null;
+    let editTimelineEngagementId = null;
+
+    // `overrides`/`unmatchedLabels` are only passed by the Import Timeline
+    // flow below - a plain "Edit Timeline" click opens with just the
+    // engagement's current values and no banner.
+    function openEditTimelineModal(engagementId, overrides, unmatchedLabels) {
+        const modalEl = document.getElementById('editTimelineModal');
+        if (!modalEl) return;
+        if (!editTimelineModalInstance) editTimelineModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        editTimelineEngagementId = engagementId;
+
+        const current = timelineCurrentValues();
+        TIMELINE_MODAL_COLUMNS.forEach(column => {
+            const input = document.getElementById('tl_' + column);
+            if (input) input.value = (overrides && overrides[column]) || current[column] || '';
+        });
+
+        const banner = document.getElementById('editTimelineImportBanner');
+        if (overrides) {
+            const importedCount = Object.keys(overrides).length;
+            let html = importedCount
+                ? `Filled ${importedCount} date${importedCount === 1 ? '' : 's'} from your spreadsheet.`
+                : 'Could not match any task names from your spreadsheet.';
+            if (unmatchedLabels && unmatchedLabels.length) html += `<br>Couldn't find a match for: ${unmatchedLabels.join(', ')}.`;
+            html += ' Review before saving.';
+            banner.innerHTML = html;
+            banner.classList.remove('d-none');
+        } else {
+            banner.classList.add('d-none');
+            banner.innerHTML = '';
+        }
+
+        editTimelineModalInstance.show();
+    }
+
+    // Parses/matches the file, then always routes into the modal above for
+    // review before anything saves - matches ET's own "never a blind
+    // import" behavior. Nothing is written to the database until Save
+    // Changes is clicked in the modal.
     async function importTimelineFromFile(file, engagementId) {
         try {
             await loadXlsxLib();
             const rows = await parseSpreadsheetRows(file);
             const { matched, unmatched } = matchTimelineFieldsFromRows(rows);
-            const matchedFields = Object.keys(matched);
-
-            if (!matchedFields.length) {
-                notify('Could not find any matching timeline dates in that file.', true);
-                return;
-            }
-
-            // Land in edit mode so the imported dates are sitting in the
-            // same reviewable boxes as a manual edit, not silently applied.
-            timelineEditMode = true;
-            reRenderTimeline();
-
-            await Promise.all(matchedFields.map(column => saveTimelineField(column, engagementId, matched[column], true)));
-            refresh();
-
             const unmatchedLabels = unmatched.map(f => TIMELINE_FIELD_LABELS[f] || f);
-            const summary = `Imported ${matchedFields.length} date${matchedFields.length === 1 ? '' : 's'}.`;
-            if (unmatchedLabels.length) {
-                notify(`${summary} Couldn't match: ${unmatchedLabels.join(', ')}.`, true);
-            } else {
-                notify(summary, false);
-            }
+            openEditTimelineModal(engagementId, matched, unmatchedLabels);
         } catch (err) {
             console.error('Failed to import timeline', err);
             notify(err.message || 'Could not read that file.', true);
@@ -991,6 +978,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = e.target.closest('.eng-vm-tl-dot.clickable, .eng-vm-tl-row2.clickable');
         if (el) { e.preventDefault(); toggleDot(el); }
     });
+
+    // #editTimelineModal's own markup is static (not re-rendered per open()
+    // like the cards above), so its submit listener is wired once here
+    // rather than re-bound on every wireTimelineCardActions() call.
+    const editTimelineForm = document.getElementById('editTimelineForm');
+    if (editTimelineForm) {
+        editTimelineForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!editTimelineEngagementId) return;
+            const saveBtn = document.getElementById('editTimelineSaveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            try {
+                await Promise.all(TIMELINE_MODAL_COLUMNS.map(column => {
+                    const input = document.getElementById('tl_' + column);
+                    return saveTimelineField(column, editTimelineEngagementId, input.value || null, true);
+                }));
+                editTimelineModalInstance.hide();
+                refresh();
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        });
+    }
 
     // Exposed so other modals (e.g. the View Client engagement history list)
     // can open this same detail view without needing a static
