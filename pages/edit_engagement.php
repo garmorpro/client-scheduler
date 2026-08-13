@@ -26,6 +26,8 @@ $manager = $_POST['manager'] ?? null;
 $notes = $_POST['notes'] ?? '';
 $location = trim($_POST['location'] ?? '');
 $poc = trim($_POST['poc'] ?? '');
+$scope = trim($_POST['scope'] ?? '');
+$repeat_flag = !empty($_POST['repeat_flag']) ? 1 : 0;
 
 if (!$engagement_id || $budgeted_hours === null || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -65,10 +67,10 @@ if ($stmt->execute()) {
     // in the same upsert.
     $tsc = implode(', ', array_filter(array_map('trim', $_POST['tsc'] ?? [])));
     $tscStmt = $conn->prepare("
-        INSERT INTO audit_engagement_details (engagement_id, tsc, location, poc) VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc), location = VALUES(location), poc = VALUES(poc)
+        INSERT INTO audit_engagement_details (engagement_id, tsc, location, poc, scope, repeat_flag) VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE tsc = VALUES(tsc), location = VALUES(location), poc = VALUES(poc), scope = VALUES(scope), repeat_flag = VALUES(repeat_flag)
     ");
-    $tscStmt->bind_param('isss', $engagement_id, $tsc, $location, $poc);
+    $tscStmt->bind_param('issssi', $engagement_id, $tsc, $location, $poc, $scope, $repeat_flag);
     $tscStmt->execute();
     $tscStmt->close();
 

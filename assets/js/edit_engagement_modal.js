@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('edit_eng_audit_types')?.addEventListener('change', syncTscVisibility);
 
-    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit_eng_budgeted_hours').value = data.budgetedHours;
         document.getElementById('edit_eng_status').value = data.status;
         document.getElementById('edit_eng_manager').value = data.manager || '';
+        document.getElementById('edit_eng_scope').value = data.scope || '';
+        document.getElementById('edit_eng_repeat_flag').checked = !!data.repeatFlag;
         document.getElementById('edit_eng_notes').value = data.notes || '';
 
         const selectedAuditTypes = (data.auditTypeIds || []).map(String);
@@ -57,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 notes: btn.getAttribute('data-notes') || '',
                 location: btn.getAttribute('data-location') || '',
                 poc: btn.getAttribute('data-poc') || '',
+                scope: btn.getAttribute('data-scope') || '',
+                repeatFlag: btn.getAttribute('data-repeat-flag') === '1',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),
             });

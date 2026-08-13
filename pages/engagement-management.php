@@ -31,12 +31,14 @@ $engagementQuery = "
         (SELECT GROUP_CONCAT(audit_type_id) FROM engagement_audit_types WHERE engagement_id = e.engagement_id) AS audit_type_ids,
         d.tsc,
         d.location,
-        d.poc
+        d.poc,
+        d.scope,
+        d.repeat_flag
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     LEFT JOIN audit_engagement_details d ON d.engagement_id = e.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc
+    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -276,6 +278,8 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         data-tsc="<?php echo htmlspecialchars($row['tsc'] ?? ''); ?>"
                                         data-location="<?php echo htmlspecialchars($row['location'] ?? ''); ?>"
                                         data-poc="<?php echo htmlspecialchars($row['poc'] ?? ''); ?>"
+                                        data-scope="<?php echo htmlspecialchars($row['scope'] ?? ''); ?>"
+                                        data-repeat-flag="<?php echo (int) ($row['repeat_flag'] ?? 0); ?>"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>

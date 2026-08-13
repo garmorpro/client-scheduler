@@ -60,6 +60,18 @@
             </div>
 
             <div class="eng-edit-field">
+              <label for="edit_eng_scope">Scope</label>
+              <textarea class="eng-edit-input" id="edit_eng_scope" name="scope" rows="3" placeholder="Enter scope"></textarea>
+            </div>
+
+            <div class="eng-edit-field eng-edit-checkbox-field">
+              <label class="eng-edit-checkbox-label">
+                <input type="checkbox" id="edit_eng_repeat_flag" name="repeat_flag" value="1">
+                Repeat Engagement
+              </label>
+            </div>
+
+            <div class="eng-edit-field">
               <label for="edit_eng_notes">Notes</label>
               <textarea class="eng-edit-input" id="edit_eng_notes" name="notes" rows="3"></textarea>
             </div>

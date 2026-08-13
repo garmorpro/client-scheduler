@@ -33,6 +33,9 @@ $year          = $_POST['year'] ?? date('Y');
 $manager       = $_POST['manager'] ?? null;
 $location      = trim($_POST['location'] ?? '');
 $poc           = trim($_POST['poc'] ?? '');
+$scope         = trim($_POST['scope'] ?? '');
+$repeat_flag   = !empty($_POST['repeat_flag']) ? 1 : 0;
+$notes         = trim($_POST['notes'] ?? '');
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -41,15 +44,15 @@ if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
 
 // Insert into engagements including manager (as string)
 $stmt = $conn->prepare("
-    INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year, manager) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year, manager, notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 ");
 if (!$stmt) {
     echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
     exit;
 }
 
-$stmt->bind_param('isssss', $client_id, $client_name, $budget_hours, $status, $year, $manager);
+$stmt->bind_param('issssss', $client_id, $client_name, $budget_hours, $status, $year, $manager, $notes);
 
 if ($stmt->execute()) {
     $engagement_id = $stmt->insert_id;
@@ -90,12 +93,13 @@ if ($stmt->execute()) {
     // nothing on this form ever wrote to them until now.
     $locationValue = $location !== '' ? $location : null;
     $pocValue = $poc !== '' ? $poc : null;
+    $scopeValue = $scope !== '' ? $scope : null;
 
     $detailsStmt = $conn->prepare("
-        INSERT INTO audit_engagement_details (engagement_id, location, poc, tsc) VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc)
+        INSERT INTO audit_engagement_details (engagement_id, location, poc, tsc, scope, repeat_flag) VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc), scope = VALUES(scope), repeat_flag = VALUES(repeat_flag)
     ");
-    $detailsStmt->bind_param('isss', $engagement_id, $locationValue, $pocValue, $tscValue);
+    $detailsStmt->bind_param('issssi', $engagement_id, $locationValue, $pocValue, $tscValue, $scopeValue, $repeat_flag);
     $detailsStmt->execute();
     $detailsStmt->close();
 

@@ -73,6 +73,18 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                         ${tscCheckboxes}
                     </div>
                 </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">Scope</label>
+                    <textarea class="form-control" id="swal-scope" rows="3" placeholder="Enter scope"></textarea>
+                </div>
+                <div class="mb-3 text-start form-check">
+                    <input type="checkbox" class="form-check-input" id="swal-repeat">
+                    <label class="form-check-label" for="swal-repeat">Repeat Engagement</label>
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-control" id="swal-notes" rows="3" placeholder="Enter notes"></textarea>
+                </div>
             `,
             showCancelButton: true,
             confirmButtonText: 'Add',
@@ -95,6 +107,9 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                 const budgetHours = document.getElementById('swal-budget-hours').value;
                 const status = document.getElementById('swal-status').value;
                 const manager = document.getElementById('swal-manager').value;
+                const scope = document.getElementById('swal-scope').value.trim();
+                const repeat = document.getElementById('swal-repeat').checked;
+                const notes = document.getElementById('swal-notes').value.trim();
                 const auditTypeIds = Array.from(document.querySelectorAll('.swal-audit-type-cb:checked')).map(cb => cb.value);
                 const tsc = Array.from(document.querySelectorAll('.swal-tsc-cb:checked')).map(cb => cb.value);
 
@@ -118,6 +133,9 @@ document.querySelectorAll('.add-engagement-btn').forEach(btn => {
                         formData.append('budget_hours', budgetHours);
                         formData.append('status', status);
                         formData.append('manager', manager);
+                        formData.append('scope', scope);
+                        formData.append('repeat_flag', repeat ? '1' : '0');
+                        formData.append('notes', notes);
                         formData.append('year', new Date().getFullYear());
                         auditTypeIds.forEach(id => formData.append('audit_type_ids[]', id));
                         tsc.forEach(name => formData.append('tsc[]', name));

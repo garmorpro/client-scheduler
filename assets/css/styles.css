@@ -2056,6 +2056,13 @@ body.dark-mode #editEngagementModal .eng-edit-title { color: #edf1ee; }
 #editEngagementModal .eng-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 #editEngagementModal .eng-edit-field { margin-bottom: 14px; }
 #editEngagementModal .eng-edit-field:last-child { margin-bottom: 0; }
+#editEngagementModal .eng-edit-checkbox-label {
+    display: flex !important; align-items: center; gap: 8px; margin-bottom: 0 !important; cursor: pointer;
+    text-transform: none; letter-spacing: normal; font-size: 13.5px; font-weight: 600; color: #16211f;
+}
+body.dark-mode #editEngagementModal .eng-edit-checkbox-label { color: #edf1ee; }
+#editEngagementModal .eng-edit-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary-color); }
+body.dark-mode #editEngagementModal .eng-edit-checkbox-label input[type="checkbox"] { accent-color: var(--secondary-color); }
 #editEngagementModal .eng-edit-field label {
     display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
     color: #9aa39d; margin-bottom: 6px;

@@ -529,6 +529,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     notes: data.notes,
                     location: data.details && data.details.location,
                     poc: data.details && data.details.poc,
+                    scope: data.details && data.details.scope,
+                    repeatFlag: !!(data.details && data.details.repeat_flag == 1),
                     auditTypeIds,
                     tsc,
                 });
