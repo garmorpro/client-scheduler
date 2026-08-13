@@ -227,16 +227,25 @@ function sendAuditDueDateDigests(mysqli $conn, bool $dryRun = false): array
 
     $results = [];
     foreach ($byRecipient as $recipient) {
-        $itemsHtml = implode('', array_map(
-            fn($item) => '<li><strong>' . htmlspecialchars($item['client_name']) . '</strong> — ' . htmlspecialchars($item['title'])
-                . ' due ' . htmlspecialchars($item['date_label']) . ' (' . htmlspecialchars($item['days_away']) . ')</li>',
-            $recipient['items']
-        ));
         $count = count($recipient['items']);
+        $lastIdx = $count - 1;
+        // Table-based rows with inline styles, not <ul>/<li> - matches
+        // the branded shell's email-safe conventions (wrapBrandedEmailHtml()
+        // in email_functions.php, which this content gets wrapped in).
+        $rowsHtml = '';
+        foreach ($recipient['items'] as $idx => $item) {
+            $border = $idx === $lastIdx ? '' : 'border-bottom:1px solid #e3e7e5;';
+            $rowsHtml .= '<tr><td style="padding:14px 0; ' . $border . '">'
+                . '<div style="font-size:13px; font-weight:700; color:#003f47;">' . htmlspecialchars($item['client_name']) . '</div>'
+                . '<div style="font-size:13.5px; color:#16211f; margin-top:3px;">' . htmlspecialchars($item['title']) . ' &mdash; due ' . htmlspecialchars($item['date_label'])
+                . ' <span style="color:#6b7570; font-size:12.5px;">(' . htmlspecialchars($item['days_away']) . ')</span></div>'
+                . '</td></tr>';
+        }
+
         $subject = $count === 1 ? 'Upcoming Due Date' : "{$count} Upcoming Due Dates";
-        $body = '<p>Hi ' . htmlspecialchars($recipient['name']) . ',</p>'
-              . '<p>You have ' . $count . ' upcoming ' . ($count === 1 ? 'item' : 'items') . ' due soon:</p>'
-              . "<ul>{$itemsHtml}</ul>";
+        $body = '<p style="margin:0 0 4px; font-size:15px;">Hi ' . htmlspecialchars($recipient['name']) . ',</p>'
+              . '<p style="margin:0 0 18px; color:#6b7570;">You have ' . $count . ' upcoming ' . ($count === 1 ? 'item' : 'items') . ' due soon:</p>'
+              . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $rowsHtml . '</table>';
 
         $sent = $dryRun ? false : sendEmail($recipient['email'], $subject, $body, $conn);
 
