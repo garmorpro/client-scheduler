@@ -4533,57 +4533,22 @@ body.dark-mode .oc-chip-name { color: #edf1ee; }
 .oc-chip-role { font-size: 10.5px; color: #9aa39d; }
 body.dark-mode .oc-chip-role { color: #6e7975; }
 
-/* Org Chart tree - classic nested-<ul> CSS technique: each <li> draws its
-   own left/right half of the horizontal bar to its siblings plus a
-   vertical drop to its own box, and a child <ul> draws the trunk line
-   down from the parent row into its row. Scales to arbitrary depth/
-   breadth without any JS-computed coordinates; .oc-tree-wrap scrolls
-   horizontally once a row of siblings outgrows the modal. */
-.oc-tree-wrap { overflow-x: auto; padding: 6px 4px 14px; }
-.oc-tree, .oc-tree ul { list-style: none; margin: 0; padding: 0; position: relative; }
-.oc-tree { display: flex; justify-content: center; flex-wrap: wrap; }
-.oc-tree li { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; padding: 24px 10px 0; }
-.oc-tree li ul { display: flex; justify-content: center; padding-top: 24px; }
-
-.oc-tree li::before,
-.oc-tree li::after {
-    content: ''; position: absolute; top: 0; right: 50%; width: 50%; height: 24px;
-    border-top: 1.5px solid #d5dbd8;
+.oc-manager-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.oc-manager-card { border: 1px solid #e3e7e5; border-radius: 14px; overflow: hidden; }
+body.dark-mode .oc-manager-card { border-color: #29302e; }
+.oc-manager-head { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8f9f8; }
+body.dark-mode .oc-manager-head { background: #1f2624; }
+.oc-manager-name { font-size: 13.5px; font-weight: 700; color: #16211f; }
+body.dark-mode .oc-manager-name { color: #edf1ee; }
+.oc-manager-title { font-size: 11px; color: #9aa39d; }
+body.dark-mode .oc-manager-title { color: #6e7975; }
+.oc-report-count {
+    margin-left: auto; background: #ffffff; border: 1px solid #e3e7e5; border-radius: 20px;
+    font-size: 11px; font-weight: 700; color: #6b7570; padding: 2px 9px; flex-shrink: 0;
 }
-.oc-tree li::after { right: auto; left: 50%; border-left: 1.5px solid #d5dbd8; }
-.oc-tree li:only-child::before,
-.oc-tree li:only-child::after { display: none; }
-.oc-tree li:only-child { padding-top: 0; }
-.oc-tree li:first-child::before,
-.oc-tree li:last-child::after { border: 0 none; }
-.oc-tree li:last-child::before { border-right: 1.5px solid #d5dbd8; border-radius: 0 6px 0 0; }
-.oc-tree li:first-child::after { border-radius: 6px 0 0 0; }
-/* Root-level siblings aren't actually connected to each other (there's no
-   shared "company" node in the data) - suppress the sibling bar there,
-   keep it everywhere else. */
-.oc-tree > li { padding-top: 0; }
-.oc-tree > li::before,
-.oc-tree > li::after { display: none; }
-.oc-tree li ul::before {
-    content: ''; position: absolute; top: 0; left: 50%; width: 0; height: 24px;
-    border-left: 1.5px solid #d5dbd8;
-}
-body.dark-mode .oc-tree li::before,
-body.dark-mode .oc-tree li::after,
-body.dark-mode .oc-tree li ul::before { border-color: #3a4440; }
-
-.oc-tree-node {
-    display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px;
-    border: 1px solid #e3e7e5; border-radius: 10px; background: #ffffff;
-    min-width: 155px; max-width: 195px; text-align: left;
-}
-body.dark-mode .oc-tree-node { border-color: #29302e; background: #1e2325; }
-.oc-tree-avatar { width: 30px; height: 30px; border-radius: 9px; font-size: 11.5px; }
-.oc-tree-node-text { min-width: 0; }
-.oc-tree-node-name { font-size: 12px; font-weight: 700; color: #16211f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.dark-mode .oc-tree-node-name { color: #edf1ee; }
-.oc-tree-node-role { font-size: 10.5px; color: #9aa39d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.dark-mode .oc-tree-node-role { color: #6e7975; }
+body.dark-mode .oc-report-count { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
+.oc-reports { max-height: 220px; overflow-y: auto; }
+.oc-reports .eng-vm-emp-row { padding: 8px 12px; }
 
 /* DOL Generator (Phase 3 step 3 port from Engagement Tracker) - functional
    pass, self-contained styling, revisit design later per Garrett. */

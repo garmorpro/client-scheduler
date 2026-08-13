@@ -42,46 +42,54 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // True hierarchy tree (replaces the old flat Admin-tier/Manager-tier
-    // card grid) - each node is a person, connected to their manager and
-    // reports with actual lines via the classic nested-<ul> CSS technique
-    // (see .oc-tree rules in styles.css), recursing to whatever depth the
-    // real manager_id chain goes.
-    function treeNodeCardHtml(node) {
-        const p = node.user;
+    function reportRowHtml(person) {
         return `
-            <div class="oc-tree-node">
-                ${avatar(p, 'oc-tree-avatar')}
-                <div class="oc-tree-node-text">
-                    <div class="oc-tree-node-name">${p.full_name}</div>
-                    <div class="oc-tree-node-role">${p.job_title || roleLabel(p.role)}</div>
+            <div class="eng-vm-emp-row">
+                ${avatar(person, 'oc-avatar-sm')}
+                <div class="eng-vm-emp-info">
+                    <div class="eng-vm-emp-name">${person.full_name}</div>
+                    <div class="eng-vm-emp-role">${roleLabel(person.role)}</div>
                 </div>
             </div>
         `;
     }
 
-    function treeNodeHtml(node) {
-        const hasChildren = node.children && node.children.length > 0;
+    function managerCardHtml(node) {
+        const reportsHtml = node.reports.length > 0
+            ? node.reports.map(reportRowHtml).join('')
+            : '<div class="settings-empty-row">No direct reports yet.</div>';
         return `
-            <li>
-                ${treeNodeCardHtml(node)}
-                ${hasChildren ? treeListHtml(node.children) : ''}
-            </li>
+            <div class="oc-manager-card">
+                <div class="oc-manager-head">
+                    ${avatar(node.manager)}
+                    <div>
+                        <div class="oc-manager-name">${node.manager.full_name}</div>
+                        <div class="oc-manager-title">${node.manager.job_title || 'Manager'}</div>
+                    </div>
+                    <span class="oc-report-count">${node.reports.length}</span>
+                </div>
+                <div class="oc-reports">${reportsHtml}</div>
+            </div>
         `;
-    }
-
-    function treeListHtml(nodes) {
-        return `<ul class="oc-tree">${nodes.map(treeNodeHtml).join('')}</ul>`;
     }
 
     function render(data) {
         const sections = [];
 
-        if (data.tree.length > 0) {
+        if (data.admins.length > 0) {
             sections.push(`
                 <div class="oc-tier">
-                    <div class="oc-tier-label">Reporting Structure</div>
-                    <div class="oc-tree-wrap">${treeListHtml(data.tree)}</div>
+                    <div class="oc-tier-label">Admin</div>
+                    <div class="oc-chip-row">${data.admins.map(chipHtml).join('')}</div>
+                </div>
+            `);
+        }
+
+        if (data.manager_nodes.length > 0) {
+            sections.push(`
+                <div class="oc-tier">
+                    <div class="oc-tier-label">Managers &amp; Their Teams</div>
+                    <div class="oc-manager-grid">${data.manager_nodes.map(managerCardHtml).join('')}</div>
                 </div>
             `);
         }
@@ -89,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.unassigned.length > 0) {
             sections.push(`
                 <div class="oc-tier">
-                    <div class="oc-tier-label">Unassigned <span class="oc-tier-hint">no manager set, no one reports to them</span></div>
+                    <div class="oc-tier-label">Unassigned <span class="oc-tier-hint">no manager set - includes CRM Team and Interns</span></div>
                     <div class="oc-chip-row">${data.unassigned.map(chipHtml).join('')}</div>
                 </div>
             `);
