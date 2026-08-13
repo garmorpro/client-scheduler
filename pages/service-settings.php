@@ -26,6 +26,26 @@ if ($canAccessSystemSettings) {
         }
     }
 }
+
+// backup_configuration_modal.php, security_policy_modal.php, and
+// email_configuration_modal.php all read a bare $settings array (scoped to
+// their own setting_master_key) to prefill their forms, but this page
+// never actually populated it - meaning every field in all three has
+// always rendered empty/default on load, regardless of what was actually
+// saved (saving itself works fine, it's a completely separate JS/backend
+// path - this was purely a "form never shows what's already saved" bug).
+function fetchSettingsGroup(mysqli $conn, string $masterKey): array {
+    $group = [];
+    $stmt = $conn->prepare("SELECT setting_key, setting_value FROM settings WHERE setting_master_key = ?");
+    $stmt->bind_param('s', $masterKey);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        $group[$row['setting_key']] = $row['setting_value'];
+    }
+    $stmt->close();
+    return $group;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -129,8 +149,11 @@ if ($canAccessSystemSettings) {
 <?php if ($canAccessSystemSettings): ?>
 <?php include_once '../includes/modals/company_holidays_modal.php'; ?>
 <?php include_once '../includes/modals/holiday_modal.php'; ?>
+<?php $settings = fetchSettingsGroup($conn, 'backup_config'); ?>
 <?php include_once '../includes/modals/backup_configuration_modal.php'; ?>
+<?php $settings = fetchSettingsGroup($conn, 'security_policy'); ?>
 <?php include_once '../includes/modals/security_policy_modal.php'; ?>
+<?php $settings = fetchSettingsGroup($conn, 'email'); ?>
 <?php include_once '../includes/modals/email_configuration_modal.php'; ?>
 <?php include_once '../includes/modals/busy_season_modal.php'; ?>
 <?php include_once '../includes/modals/audit_types_modal.php'; ?>

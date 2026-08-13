@@ -25,16 +25,14 @@
               </label>
             </div>
 
-            <!-- Notification Frequency -->
-            <div class="detail-section-title">Notification Frequency</div>
-            <div class="eng-edit-field">
-              <label for="notificationFrequency">Frequency</label>
-              <select class="eng-edit-input" id="notificationFrequency" name="notification_frequency" required>
-                <option value="immediately" <?php if (($settings['notification_frequency'] ?? '') === 'immediately') echo 'selected'; ?>>Immediately</option>
-                <option value="hourly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'hourly_digest') echo 'selected'; ?>>Hourly Digest</option>
-                <option value="daily_digest" <?php if (($settings['notification_frequency'] ?? '') === 'daily_digest') echo 'selected'; ?>>Daily Digest</option>
-                <option value="weekly_digest" <?php if (($settings['notification_frequency'] ?? '') === 'weekly_digest') echo 'selected'; ?>>Weekly Digest</option>
-              </select>
+            <!-- Notification Frequency: was a generic dropdown that nothing
+                 in the app ever actually read - replaced with a pointer to
+                 the real scheduling control (Settings > Audit Notification
+                 Schedule), which actually drives the crontab. -->
+            <div class="detail-section-title">Audit Notification Digest</div>
+            <div class="settings-status-banner">
+              <i class="bi bi-info-circle"></i>
+              <span>Scheduling for the audit due-date digest (send time, days) is configured separately under <strong>Audit Notification Schedule</strong> in System Settings.</span>
             </div>
 
             <div class="settings-divider"></div>
