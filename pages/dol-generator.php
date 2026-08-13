@@ -40,6 +40,15 @@ if ($isAdmin) {
 while ($row = $res->fetch_assoc()) {
     $engagements[] = $row;
 }
+
+// Optional deep-link from the View Engagement panel's "Manage Team" link
+// (?engagement_id=X). Only pre-selects if it's actually in this user's own
+// $engagements list above, so the scoping (admin vs. staffed-only) still
+// holds - a non-admin can't get linked into an engagement they're not on.
+$preselectEngagementId = isset($_GET['engagement_id']) ? (int) $_GET['engagement_id'] : 0;
+if ($preselectEngagementId && !in_array($preselectEngagementId, array_column($engagements, 'engagement_id'), true)) {
+    $preselectEngagementId = 0;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -66,7 +75,7 @@ while ($row = $res->fetch_assoc()) {
             <select class="form-select" id="engagementSelect">
                 <option value="">Select an engagement&hellip;</option>
                 <?php foreach ($engagements as $eng): ?>
-                    <option value="<?php echo (int) $eng['engagement_id']; ?>"><?php echo htmlspecialchars($eng['client_name']); ?> &mdash; <?php echo (int) $eng['year']; ?></option>
+                    <option value="<?php echo (int) $eng['engagement_id']; ?>" <?php echo ($preselectEngagementId === (int) $eng['engagement_id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($eng['client_name']); ?> &mdash; <?php echo (int) $eng['year']; ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

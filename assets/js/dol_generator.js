@@ -489,3 +489,14 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
         Swal.fire('Error', 'Failed to save DOL', 'error');
     }
 });
+
+// If the page loaded with an option pre-selected server-side (the
+// ?engagement_id= deep link from the View Engagement panel's "Manage Team"
+// link), fire the same load path a manual pick would trigger. This script
+// tag sits at the bottom of the page, so the DOM (and the select's
+// server-rendered `selected` option) is already in place by the time this
+// runs - no need to wait on DOMContentLoaded.
+(() => {
+    const select = document.getElementById('engagementSelect');
+    if (select && select.value) select.dispatchEvent(new Event('change'));
+})();
