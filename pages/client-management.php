@@ -193,7 +193,11 @@ unset($client);
                                         <i class="bi bi-plus-lg"></i>
                                     </button>
                                     <?php endif; ?>
-                                    <button class="client-icon-btn view-client-button view-btn"
+                                    <!-- Eye icon retired now that the whole row opens the View panel
+                                         (see the row-click handler below); kept as a hidden trigger so
+                                         view_client_modal.js's existing click listener/fetch logic
+                                         doesn't need to be duplicated. -->
+                                    <button class="client-icon-btn view-client-button view-btn" style="display:none;"
                                         data-client-id="<?php echo $client['client_id']; ?>"
                                         title="View">
                                         <i class="bi bi-eye"></i>

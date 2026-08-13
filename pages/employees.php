@@ -171,8 +171,10 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                                 </td>
                                 <td class="table-actions">
                                     <div class="table-actions-inner">
-                                    <!-- View Button -->
-                                    <a href="#" class="action-icon-btn view-user-btn text-decoration-none"
+                                    <!-- Eye icon retired now that the whole row opens the View panel
+                                         (see the row-click handler below); kept as a hidden trigger so
+                                         Bootstrap's data-bs-toggle wiring doesn't need to be duplicated. -->
+                                    <a href="#" class="action-icon-btn view-user-btn text-decoration-none" style="display:none;"
                                        data-bs-toggle="offcanvas"
                                        data-bs-target="#viewUserModal"
                                        data-user-id="<?php echo $userrow['user_id']; ?>"
