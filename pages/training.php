@@ -59,6 +59,28 @@ if (!empty($userIds)) {
     $stmt->close();
 }
 
+// Canonical SOC 2 criteria order - same list as dol_generator.js's
+// SOC2_CRITERIA_ORDER (CC1-CC9, then the four named categories) - alphabetical
+// (what the ORDER BY above gives) puts Availability/Confidentiality before
+// any CC number, which reads oddly. Anything not on this list (e.g. SOC 1's
+// CO-numbered criteria) just sorts after, alphabetically.
+function sort_training_criteria(array $criteria): array {
+    $order = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
+    usort($criteria, function ($a, $b) use ($order) {
+        $ia = array_search($a, $order, true);
+        $ib = array_search($b, $order, true);
+        if ($ia === false && $ib === false) return strcasecmp($a, $b);
+        if ($ia === false) return 1;
+        if ($ib === false) return -1;
+        return $ia <=> $ib;
+    });
+    return $criteria;
+}
+foreach ($roster as &$person) {
+    $person['restricted'] = sort_training_criteria($person['restricted']);
+}
+unset($person);
+
 $totalCount = count($roster);
 $restrictedCount = 0;
 foreach ($roster as $person) {

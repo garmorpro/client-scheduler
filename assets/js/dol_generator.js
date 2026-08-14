@@ -29,7 +29,7 @@ function getDefaultWeight(name) {
     return SOC2_DEFAULT_WEIGHTS[name] || 1;
 }
 
-const SOC2_CRITERIA_ORDER = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+const SOC2_CRITERIA_ORDER = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
 function sortSoc2Criteria(names) {
     return [...names].sort((a, b) => {
         const ia = SOC2_CRITERIA_ORDER.indexOf(a);
