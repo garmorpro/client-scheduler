@@ -77,7 +77,11 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerN
     $members = [];
     $seenNames = [];
     while ($row = $res->fetch_assoc()) {
-        $members[] = $row['full_name'] . ' (' . $row['total_hours'] . ')';
+        // Bare name when there's nothing logged yet (e.g. someone staged
+        // via Add Team Member with a placeholder 0-hour entry) - same
+        // treatment the manager below already gets.
+        $hours = (float) $row['total_hours'];
+        $members[] = $hours > 0 ? $row['full_name'] . ' (' . $hours . ')' : $row['full_name'];
         $seenNames[strtolower($row['full_name'])] = true;
     }
     $stmt->close();
