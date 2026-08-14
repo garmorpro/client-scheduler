@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     const backBtn = document.getElementById('onboardBackBtn');
     const nextBtn = document.getElementById('onboardNextBtn');
-    const progressFill = document.getElementById('onboardProgressFill');
-    const progressLabel = document.getElementById('onboardProgressLabel');
+    const progressSteps = document.getElementById('onboardProgressSteps');
+    const STEP_LABELS = { basic: 'Basic Info', manager: 'Manager', training: 'Training', review: 'Review' };
 
     const roleSelect = document.getElementById('onboard_role');
     const fullNameInput = document.getElementById('onboard_full_name');
@@ -35,8 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
         form.querySelectorAll('.onboard-step').forEach(el => {
             el.classList.toggle('d-none', el.dataset.step !== stepName);
         });
-        progressFill.style.width = `${((stepIndex + 1) / activeSteps.length) * 100}%`;
-        progressLabel.textContent = `Step ${stepIndex + 1} of ${activeSteps.length}`;
+
+        // Named breadcrumb of exactly the steps that apply to this role -
+        // shows plainly when Manager/Training aren't part of the flow
+        // (e.g. onboarding an Admin), rather than looking like a step went
+        // missing.
+        progressSteps.innerHTML = activeSteps.map((s, i) => {
+            const cls = i === stepIndex ? 'current' : (i < stepIndex ? 'done' : '');
+            return `<span class="onboard-progress-step ${cls}">${STEP_LABELS[s]}</span>`;
+        }).join('<span class="onboard-progress-sep">&rsaquo;</span>');
+
         backBtn.textContent = stepIndex === 0 ? 'Cancel' : 'Back';
         nextBtn.textContent = stepName === 'review' ? 'Onboard Employee' : 'Next';
 
