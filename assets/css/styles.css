@@ -896,6 +896,14 @@ body.dark-mode .tr-editor-chip { background: #3a2320; color: #e0685a; }
 }
 .tr-editor-chips-empty { font-size: 12px; color: #9aa39d; font-style: italic; }
 body.dark-mode .tr-editor-chips-empty { color: #6e7975; }
+.tr-editor-quick-add { display: flex; flex-wrap: wrap; gap: 6px; }
+.tr-editor-quick-add button {
+    border: 1px solid #e3e7e5; background: #f1f4f3; color: #6b7570;
+    font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; cursor: pointer;
+}
+.tr-editor-quick-add button:hover { background: #e3e7e5; color: #16211f; }
+body.dark-mode .tr-editor-quick-add button { background: #232a2c; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode .tr-editor-quick-add button:hover { background: #29302e; color: #edf1ee; }
 .reports-to-hint {
     position: relative;
     display: inline-flex; align-items: center; justify-content: center;

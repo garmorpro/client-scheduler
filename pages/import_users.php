@@ -138,8 +138,24 @@ if (($handle = fopen($fileTmpPath, "r")) !== FALSE) {
             $stmt->close();
             continue;
         }
+        $newUserId = $stmt->insert_id;
         $successCount++;
         $stmt->close();
+
+        // Same "onboarded fully restricted" default as add_user.php - see
+        // that file for why. Only Staff/Intern, matching what the Training
+        // page manages.
+        if (in_array($rowAssoc['role'], ['staff', 'intern'], true)) {
+            $allCriteria = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
+            $restrictStmt = $conn->prepare("INSERT INTO dol_training_restrictions (user_id, criterion) VALUES (?, ?)");
+            if ($restrictStmt) {
+                foreach ($allCriteria as $criterion) {
+                    $restrictStmt->bind_param('is', $newUserId, $criterion);
+                    $restrictStmt->execute();
+                }
+                $restrictStmt->close();
+            }
+        }
     }
     fclose($handle);
 

@@ -23,6 +23,10 @@
           <div class="eng-edit-field">
             <input type="text" class="eng-edit-input" id="trainingStatusAddInput" placeholder="Type a criterion and press Enter">
           </div>
+          <div class="eng-edit-field" id="trainingStatusQuickAddWrap">
+            <label>Quick add</label>
+            <div class="tr-editor-quick-add" id="trainingStatusQuickAdd"></div>
+          </div>
         </div>
 
         <div class="eng-edit-footer">

@@ -80,6 +80,26 @@ if ($stmt->execute()) {
     $newUserId = $stmt->insert_id;
     $stmt->close();
 
+    // Staff/Intern start out restricted on every criterion, not fully
+    // trained - training.php's own default assumed "no restrictions row =
+    // fully trained," which was backwards for someone who just started.
+    // Cleared one at a time (click the x) as they're actually tested and
+    // documented on each. Same canonical list used everywhere else
+    // (dol_generator.js's SOC2_CRITERIA_ORDER, training.php's
+    // sort_training_criteria()) - only Staff/Intern get these since
+    // they're the only roles the Training page manages.
+    if (in_array($role, ['staff', 'intern'], true)) {
+        $allCriteria = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
+        $restrictStmt = $conn->prepare("INSERT INTO dol_training_restrictions (user_id, criterion) VALUES (?, ?)");
+        if ($restrictStmt) {
+            foreach ($allCriteria as $criterion) {
+                $restrictStmt->bind_param('is', $newUserId, $criterion);
+                $restrictStmt->execute();
+            }
+            $restrictStmt->close();
+        }
+    }
+
     $adminUserId = $_SESSION['user_id'] ?? null;
     $adminEmail  = $_SESSION['email'] ?? '';
     $adminName   = $_SESSION['full_name'] ?? '';

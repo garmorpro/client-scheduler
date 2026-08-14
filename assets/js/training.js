@@ -6,7 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     const chipsContainer = document.getElementById('trainingStatusChips');
     const addInput = document.getElementById('trainingStatusAddInput');
+    const quickAddContainer = document.getElementById('trainingStatusQuickAdd');
     const saveBtn = document.getElementById('trainingStatusSaveBtn');
+
+    // Same canonical list new Staff/Intern get seeded with on hire (see
+    // add_user.php/import_users.php) - one-click buttons for whichever of
+    // these aren't already chips, so clearing a standard criterion doesn't
+    // require typing its exact name.
+    const CANONICAL_CRITERIA = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
 
     let activeRow = null;
     let currentCriteria = [];
@@ -38,14 +45,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderChips() {
         if (!currentCriteria.length) {
             chipsContainer.innerHTML = '<span class="tr-editor-chips-empty">Nothing yet - fully trained</span>';
+        } else {
+            chipsContainer.innerHTML = currentCriteria.map((c, idx) => `
+                <span class="tr-editor-chip" data-idx="${idx}">
+                    ${escapeHtml(c)}
+                    <span class="tr-editor-chip-remove" role="button" tabindex="0" aria-label="Remove ${escapeHtml(c)}"></span>
+                </span>`).join('');
+        }
+        renderQuickAdd();
+    }
+
+    // Only offers whichever canonical criteria aren't already chips - once
+    // added (by button or by typing), it drops out of this row so there's
+    // nothing to click twice.
+    function renderQuickAdd() {
+        const remaining = CANONICAL_CRITERIA.filter(name => !currentCriteria.some(c => c.toLowerCase() === name.toLowerCase()));
+        const wrap = document.getElementById('trainingStatusQuickAddWrap');
+        if (!remaining.length) {
+            wrap.classList.add('d-none');
             return;
         }
-        chipsContainer.innerHTML = currentCriteria.map((c, idx) => `
-            <span class="tr-editor-chip" data-idx="${idx}">
-                ${escapeHtml(c)}
-                <span class="tr-editor-chip-remove" role="button" tabindex="0" aria-label="Remove ${escapeHtml(c)}"></span>
-            </span>`).join('');
+        wrap.classList.remove('d-none');
+        quickAddContainer.innerHTML = remaining.map(name => `<button type="button" data-name="${escapeHtml(name)}">+ ${escapeHtml(name)}</button>`).join('');
     }
+
+    quickAddContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-name]');
+        if (!btn) return;
+        addCriterion(btn.dataset.name);
+    });
 
     function addCriterion(raw) {
         const value = raw.trim();
