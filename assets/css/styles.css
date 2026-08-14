@@ -841,6 +841,61 @@ body.dark-mode .tr-row-role { color: #6e7975; }
 .tr-row-status { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
 .tr-row-restricted-list { font-size: 12px; color: #6b7570; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 body.dark-mode .tr-row-restricted-list { color: #9aa8a2; }
+
+/* ========= TRAINING STATUS EDITOR MODAL ========= */
+#trainingStatusModal .eng-edit-hero {
+    padding: 18px 20px 14px;
+    background: linear-gradient(135deg, rgba(0,63,71,.08), #ffffff 70%);
+    border-bottom: 1px solid #e3e7e5;
+}
+body.dark-mode #trainingStatusModal .eng-edit-hero { background: linear-gradient(135deg, rgba(163,204,56,.10), #1b2022 70%); border-color: #29302e; }
+#trainingStatusModal .eng-edit-title { font-size: 16px; font-weight: 700; color: #16211f; padding-right: 30px; }
+body.dark-mode #trainingStatusModal .eng-edit-title { color: #edf1ee; }
+#trainingStatusModal .eng-edit-body { padding: 16px 20px; }
+#trainingStatusModal .eng-edit-field { margin-bottom: 14px; }
+#trainingStatusModal .eng-edit-field:last-child { margin-bottom: 0; }
+#trainingStatusModal .eng-edit-field label {
+    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    color: #9aa39d; margin-bottom: 6px;
+}
+body.dark-mode #trainingStatusModal .eng-edit-field label { color: #6e7975; }
+#trainingStatusModal .eng-edit-input {
+    box-sizing: border-box;
+    width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
+    background: #f1f4f3; color: #16211f; font-size: 13.5px; font-weight: 500; outline: none;
+}
+#trainingStatusModal .eng-edit-input:focus { border-color: var(--primary-color); background-color: #ffffff; }
+body.dark-mode #trainingStatusModal .eng-edit-input { background-color: #232a2c; border-color: #29302e; color: #edf1ee; }
+body.dark-mode #trainingStatusModal .eng-edit-input:focus { border-color: var(--secondary-color); background-color: #1b2022; }
+#trainingStatusModal .eng-edit-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #e3e7e5; }
+body.dark-mode #trainingStatusModal .eng-edit-footer { border-color: #29302e; }
+#trainingStatusModal .eng-edit-btn-cancel {
+    padding: 8px 16px; border-radius: 9px; border: 1px solid #e3e7e5; background: #ffffff; color: #6b7570;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+}
+#trainingStatusModal .eng-edit-btn-cancel:hover { background: #f1f4f3; }
+body.dark-mode #trainingStatusModal .eng-edit-btn-cancel { background: #1b2022; border-color: #29302e; color: #9aa8a2; }
+body.dark-mode #trainingStatusModal .eng-edit-btn-cancel:hover { background: #232a2c; }
+#trainingStatusModal .eng-edit-btn-save {
+    padding: 8px 16px; border-radius: 9px; border: none; background: var(--primary-color); color: #ffffff;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+}
+#trainingStatusModal .eng-edit-btn-save:hover { opacity: .9; }
+body.dark-mode #trainingStatusModal .eng-edit-btn-save { background: var(--secondary-color); color: #10160f; }
+
+.tr-editor-chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 26px; }
+.tr-editor-chip {
+    display: inline-flex; align-items: center; gap: 5px; background: #fbe8e6; color: #c0392b;
+    font-size: 11.5px; font-weight: 700; padding: 4px 6px 4px 10px; border-radius: 20px;
+}
+body.dark-mode .tr-editor-chip { background: #3a2320; color: #e0685a; }
+.tr-editor-chip-remove { display: inline-flex; cursor: pointer; opacity: .75; font-size: 0; line-height: 0; }
+.tr-editor-chip-remove:hover { opacity: 1; }
+.tr-editor-chip-remove::before {
+    content: "\00d7"; font-size: 14px; font-weight: 700; line-height: 1;
+}
+.tr-editor-chips-empty { font-size: 12px; color: #9aa39d; font-style: italic; }
+body.dark-mode .tr-editor-chips-empty { color: #6e7975; }
 .reports-to-hint {
     position: relative;
     display: inline-flex; align-items: center; justify-content: center;
