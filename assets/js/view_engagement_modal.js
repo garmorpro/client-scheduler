@@ -1113,17 +1113,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const employeeSelect = document.getElementById('addTeamMemberEmployeeSelect');
         const auditTypeWrap = document.getElementById('addTeamMemberAuditTypeWrap');
-        const auditTypeSelect = document.getElementById('addTeamMemberAuditTypeSelect');
+        const auditTypeList = document.getElementById('addTeamMemberAuditTypeList');
         const saveBtn = document.getElementById('addTeamMemberSaveBtn');
         saveBtn.dataset.engagementId = engagementId;
 
+        // Checkboxes, not a single-select - someone can be staffed under
+        // more than one of the engagement's audit types at once (e.g. both
+        // HIPAA and PCI), same as Master Schedule's own staffing card.
         const auditTypes = (lastData && lastData.audit_types) || [];
         if (auditTypes.length > 0) {
-            auditTypeSelect.innerHTML = '<option value="">Not specific to one type</option>' +
-                auditTypes.map(t => `<option value="${t.audit_type_id}">${t.name}</option>`).join('');
+            auditTypeList.innerHTML = auditTypes.map(t => `
+                <label class="eng-audit-type-chip">
+                    <input type="checkbox" name="add_team_member_audit_type_ids[]" value="${t.audit_type_id}">
+                    ${t.name}
+                </label>`).join('');
             auditTypeWrap.classList.remove('d-none');
         } else {
-            auditTypeSelect.innerHTML = '<option value="">Not specific to one type</option>';
+            auditTypeList.innerHTML = '';
             auditTypeWrap.classList.add('d-none');
         }
 
@@ -1305,7 +1311,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addTeamMemberSaveBtn.addEventListener('click', async () => {
             const engagementId = addTeamMemberSaveBtn.dataset.engagementId;
             const userId = document.getElementById('addTeamMemberEmployeeSelect').value;
-            const auditTypeId = document.getElementById('addTeamMemberAuditTypeSelect').value;
+            const auditTypeIds = Array.from(document.querySelectorAll('#addTeamMemberAuditTypeList input[name="add_team_member_audit_type_ids[]"]:checked')).map(cb => cb.value);
             if (!engagementId || !userId) {
                 notify('Please select an employee.', true);
                 return;
@@ -1315,7 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('add_team_member.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ engagement_id: engagementId, user_id: userId, audit_type_id: auditTypeId || null })
+                    body: JSON.stringify({ engagement_id: engagementId, user_id: userId, audit_type_ids: auditTypeIds })
                 });
                 const result = await res.json();
                 if (!result.success) {

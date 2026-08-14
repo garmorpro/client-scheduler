@@ -198,10 +198,8 @@
             </select>
           </div>
           <div class="eng-edit-field d-none" id="addTeamMemberAuditTypeWrap">
-            <label for="addTeamMemberAuditTypeSelect">Audit Type <span class="eng-edit-optional">(optional)</span></label>
-            <select class="eng-edit-input" id="addTeamMemberAuditTypeSelect">
-              <option value="">Not specific to one type</option>
-            </select>
+            <label>Audit Type(s) <span class="eng-edit-optional">(optional - leave all unchecked if not specific to one type)</span></label>
+            <div class="eng-audit-type-list" id="addTeamMemberAuditTypeList"></div>
           </div>
         </div>
 

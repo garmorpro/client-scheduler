@@ -28,7 +28,12 @@ if (!csrf_valid()) {
 $data = json_decode(file_get_contents('php://input'), true);
 $engagementId = (int) ($data['engagement_id'] ?? 0);
 $userId = (int) ($data['user_id'] ?? 0);
-$auditTypeId = isset($data['audit_type_id']) && $data['audit_type_id'] !== '' ? (int) $data['audit_type_id'] : null;
+// Someone can be staffed under more than one of the engagement's audit
+// types at once (same as staffing them via Master Schedule's own "+"
+// cell), so this is a list, not a single value - one 0-hour entries row
+// gets created per type. Empty means "not specific to one type" (a single
+// untagged row), same as leaving audit_type blank anywhere else in the app.
+$auditTypeIds = array_values(array_unique(array_filter(array_map('intval', $data['audit_type_ids'] ?? []), fn($id) => $id > 0)));
 
 if (!$engagementId || !$userId) {
     echo json_encode(['success' => false, 'error' => 'Missing engagement or employee']);
@@ -53,13 +58,15 @@ if (!$userStmt->get_result()->fetch_row()) {
 }
 $userStmt->close();
 
-if ($auditTypeId) {
+if (!empty($auditTypeIds)) {
     $atStmt = $conn->prepare("SELECT 1 FROM engagement_audit_types WHERE engagement_id = ? AND audit_type_id = ?");
-    $atStmt->bind_param('ii', $engagementId, $auditTypeId);
-    $atStmt->execute();
-    if (!$atStmt->get_result()->fetch_row()) {
-        echo json_encode(['success' => false, 'error' => 'That audit type is not selected for this engagement.']);
-        exit();
+    foreach ($auditTypeIds as $atId) {
+        $atStmt->bind_param('ii', $engagementId, $atId);
+        $atStmt->execute();
+        if (!$atStmt->get_result()->fetch_row()) {
+            echo json_encode(['success' => false, 'error' => 'One of the selected audit types is not selected for this engagement.']);
+            exit();
+        }
     }
     $atStmt->close();
 }
@@ -77,15 +84,28 @@ $existsStmt->close();
 
 // Week is just a placeholder (current week) - Team card, DOL Generator, and
 // everything else that reads staffing from entries sums hours across every
-// week regardless, so which week this lands in doesn't matter.
+// week regardless, so which week this lands in doesn't matter. One row per
+// selected audit type (or a single untagged row when none were picked).
 $weekStart = date('Y-m-d', strtotime('monday this week'));
 $stmt = $conn->prepare("INSERT INTO entries (user_id, week_start, engagement_id, audit_type_id, assigned_hours) VALUES (?, ?, ?, ?, 0)");
-$stmt->bind_param('isii', $userId, $weekStart, $engagementId, $auditTypeId);
 
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'entry_id' => $stmt->insert_id]);
+$rowsToInsert = !empty($auditTypeIds) ? $auditTypeIds : [null];
+$insertedIds = [];
+$ok = true;
+foreach ($rowsToInsert as $atId) {
+    $stmt->bind_param('isii', $userId, $weekStart, $engagementId, $atId);
+    if ($stmt->execute()) {
+        $insertedIds[] = $stmt->insert_id;
+    } else {
+        $ok = false;
+        break;
+    }
+}
+$stmt->close();
+
+if ($ok) {
+    echo json_encode(['success' => true, 'entry_ids' => $insertedIds]);
 } else {
     echo json_encode(['success' => false, 'error' => 'Failed to add team member']);
 }
-$stmt->close();
 $conn->close();
