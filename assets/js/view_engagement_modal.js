@@ -419,13 +419,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastOpenArgs = null;
     let lastData = null;
 
-    async function open(engagementId, avatarColor, initials, restrictFinancials) {
+    // `isRefresh` is only ever true when called from refresh() itself - a
+    // real "open a (possibly different) engagement" click always scrolls to
+    // the top, same as before. On a refresh (re-fetching the same
+    // engagement after a save, e.g. clicking a Timeline & Key Dates item),
+    // skip the "Loading..." placeholder - blanking modalBody down to one
+    // line collapses its scroll height, which was silently resetting
+    // scrollTop to 0 on every single field save - and restore the scroll
+    // position once the refreshed content is back in.
+    async function open(engagementId, avatarColor, initials, restrictFinancials, isRefresh) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
         if (!engagementId) return;
         lastOpenArgs = [engagementId, avatarColor, initials, restrictFinancials];
 
-        modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
+        const preservedScrollTop = isRefresh ? modalBody.scrollTop : 0;
+        if (!isRefresh) {
+            modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
+        }
         modal.show();
 
         try {
@@ -529,6 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             wireHeaderActions(data, engagementId, avatarColor, initials);
+            if (isRefresh) modalBody.scrollTop = preservedScrollTop;
         } catch (err) {
             console.error('Failed to load engagement details', err);
             modalBody.innerHTML = '<div class="text-center text-danger py-4">Could not load engagement details.</div>';
@@ -536,7 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function refresh() {
-        if (lastOpenArgs) open(...lastOpenArgs);
+        if (lastOpenArgs) open(lastOpenArgs[0], lastOpenArgs[1], lastOpenArgs[2], lastOpenArgs[3], true);
     }
 
     function wireHeaderActions(data, engagementId, avatarColor, initials) {
