@@ -1,0 +1,441 @@
+<?php
+// Shared parse+validate logic for the bulk Engagement/Hours import
+// (Settings > Import Engagements). Used identically by the "dry run"
+// validate endpoint and the commit endpoint - the commit endpoint re-runs
+// this same function immediately before writing, rather than trusting a
+// report the browser already showed, since time may have passed between
+// the two requests (someone else could have added a same-named client,
+// the file could have been re-picked, etc).
+//
+// Returns an array shaped like:
+// [
+//   'ok' => bool,                 // no blocking errors - safe to commit
+//   'errors' => [ ['sheet','row','message'], ... ],
+//   'warnings' => [ ['sheet','row','message'], ... ],
+//   'summary' => [ 'new_clients', 'existing_clients', 'new_engagements',
+//                  'existing_engagements', 'hours_rows', 'total_hours' ],
+//   'clients_to_create' => [ ['client_name','onboarded_date','status','notes'], ... ],
+//   'engagements_to_create' => [ engagement_key => [...fields...], ... ],
+//   'hours_rows' => [ ['engagement_key','user_id','week_start','hours','audit_type_id'], ... ],
+// ]
+//
+// Nothing in this file writes to the database - every $conn use below is a
+// read (existence checks), even inside the code paths the commit endpoint
+// calls right before it starts writing.
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+function engagement_import_key(string $clientName, $year): string {
+    return strtolower(trim($clientName)) . '|' . trim((string) $year);
+}
+
+function engagement_import_parse_date($value): ?string {
+    if ($value === null || $value === '') return null;
+    if (is_numeric($value)) {
+        // Excel serial date (PhpSpreadsheet hands these back as numbers when
+        // a cell is formatted as a date but read via getValue()).
+        try {
+            $dt = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+            return $dt->format('Y-m-d');
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+    $value = trim((string) $value);
+    $ts = strtotime($value);
+    if ($ts === false) return null;
+    return date('Y-m-d', $ts);
+}
+
+function engagement_import_read_sheet($spreadsheet, string $name): ?array {
+    // Case-insensitive sheet name match ("weekly hours" vs "Weekly Hours").
+    foreach ($spreadsheet->getSheetNames() as $sheetName) {
+        if (strcasecmp(trim($sheetName), $name) === 0) {
+            $sheet = $spreadsheet->getSheetByName($sheetName);
+            $rows = $sheet->toArray(null, true, true, false);
+            if (empty($rows)) return [];
+            $header = array_map(function ($h) { return strtolower(trim((string) $h)); }, array_shift($rows));
+            $out = [];
+            foreach ($rows as $rowIdx => $row) {
+                // Skip fully blank rows (common at the end of a filled-in
+                // template, or between example rows someone left as spacers).
+                $allBlank = true;
+                foreach ($row as $cell) {
+                    if (trim((string) $cell) !== '') { $allBlank = false; break; }
+                }
+                if ($allBlank) continue;
+                $assoc = [];
+                foreach ($header as $i => $colName) {
+                    if ($colName === '') continue;
+                    $assoc[$colName] = $row[$i] ?? null;
+                }
+                // +2: header is row 1, $rowIdx is 0-based after the shift.
+                $assoc['__row'] = $rowIdx + 2;
+                $out[] = $assoc;
+            }
+            return $out;
+        }
+    }
+    return null; // sheet not present at all
+}
+
+function parse_and_validate_engagement_import(mysqli $conn, string $filePath): array {
+    $errors = [];
+    $warnings = [];
+
+    try {
+        $spreadsheet = IOFactory::load($filePath);
+    } catch (\Throwable $e) {
+        return [
+            'ok' => false,
+            'errors' => [['sheet' => 'File', 'row' => null, 'message' => 'Could not read this file as an Excel workbook: ' . $e->getMessage()]],
+            'warnings' => [],
+            'summary' => null,
+            'clients_to_create' => [],
+            'engagements_to_create' => [],
+            'hours_rows' => [],
+        ];
+    }
+
+    $clientsRows = engagement_import_read_sheet($spreadsheet, 'Clients') ?? [];
+    $engagementsRows = engagement_import_read_sheet($spreadsheet, 'Engagements') ?? [];
+    $hoursRows = engagement_import_read_sheet($spreadsheet, 'Weekly Hours');
+
+    if ($hoursRows === null) {
+        $errors[] = ['sheet' => 'Weekly Hours', 'row' => null, 'message' => "This workbook has no 'Weekly Hours' sheet - that's the one required sheet (Clients and Engagements are only needed for records that don't already exist)."];
+        return [
+            'ok' => false, 'errors' => $errors, 'warnings' => $warnings, 'summary' => null,
+            'clients_to_create' => [], 'engagements_to_create' => [], 'hours_rows' => [],
+        ];
+    }
+
+    // ---------------------------------------------------------------
+    // Existing DB lookups
+    // ---------------------------------------------------------------
+    $existingClients = []; // lowercased trimmed name => true
+    $res = $conn->query("SELECT client_name FROM clients");
+    while ($row = $res->fetch_assoc()) $existingClients[strtolower(trim($row['client_name']))] = true;
+
+    $existingEngagements = []; // "client|year" => ['engagement_id' => id, 'audit_type_ids' => [...]]
+    $res = $conn->query("SELECT engagement_id, client_name, year FROM engagements");
+    while ($row = $res->fetch_assoc()) {
+        $key = engagement_import_key($row['client_name'], $row['year']);
+        $existingEngagements[$key] = ['engagement_id' => (int) $row['engagement_id'], 'audit_type_ids' => []];
+    }
+    if (!empty($existingEngagements)) {
+        $ids = array_map(function ($e) { return $e['engagement_id']; }, $existingEngagements);
+        $idList = implode(',', array_map('intval', $ids));
+        $res = $conn->query("SELECT engagement_id, audit_type_id FROM engagement_audit_types WHERE engagement_id IN ($idList)");
+        $byId = [];
+        foreach ($existingEngagements as $key => $e) $byId[$e['engagement_id']] = $key;
+        while ($row = $res->fetch_assoc()) {
+            $key = $byId[(int) $row['engagement_id']] ?? null;
+            if ($key) $existingEngagements[$key]['audit_type_ids'][] = (int) $row['audit_type_id'];
+        }
+    }
+
+    $auditTypesByName = []; // lowercased name => ['id'=>, 'name'=>]
+    $res = $conn->query("SELECT audit_type_id, name FROM audit_types WHERE is_active = 1");
+    while ($row = $res->fetch_assoc()) $auditTypesByName[strtolower(trim($row['name']))] = ['id' => (int) $row['audit_type_id'], 'name' => $row['name']];
+
+    $usersByName = []; // lowercased full_name => [user_id, user_id, ...] (array to detect ambiguity)
+    $res = $conn->query("SELECT user_id, full_name FROM users WHERE status = 'active'");
+    while ($row = $res->fetch_assoc()) {
+        $key = strtolower(trim($row['full_name']));
+        $usersByName[$key][] = (int) $row['user_id'];
+    }
+
+    // ---------------------------------------------------------------
+    // Clients sheet
+    // ---------------------------------------------------------------
+    $clientsToCreate = [];
+    $clientsSeenInFile = []; // lowercased name => row number first seen
+    $knownClientNames = $existingClients; // union, grows as we validate
+
+    foreach ($clientsRows as $row) {
+        $rowNum = $row['__row'];
+        $name = trim((string) ($row['client_name'] ?? ''));
+        if ($name === '') { $errors[] = ['sheet' => 'Clients', 'row' => $rowNum, 'message' => 'client_name is required.']; continue; }
+        $lname = strtolower($name);
+
+        if (isset($clientsSeenInFile[$lname])) {
+            $errors[] = ['sheet' => 'Clients', 'row' => $rowNum, 'message' => "\"$name\" is listed more than once in this sheet (also row {$clientsSeenInFile[$lname]})."];
+            continue;
+        }
+        $clientsSeenInFile[$lname] = $rowNum;
+
+        if (isset($existingClients[$lname])) {
+            // Already a real client - nothing to create, just informational.
+            $warnings[] = ['sheet' => 'Clients', 'row' => $rowNum, 'message' => "\"$name\" already exists as a client - this row will be skipped, not duplicated."];
+            $knownClientNames[$lname] = true;
+            continue;
+        }
+
+        $onboardedDate = engagement_import_parse_date($row['onboarded_date'] ?? null);
+        if ($onboardedDate === null) {
+            $errors[] = ['sheet' => 'Clients', 'row' => $rowNum, 'message' => 'onboarded_date is required and must be a valid date (e.g. 2026-01-15).'];
+            continue;
+        }
+
+        $status = strtolower(trim((string) ($row['status'] ?? 'active')));
+        if (!in_array($status, ['active', 'inactive'], true)) {
+            $errors[] = ['sheet' => 'Clients', 'row' => $rowNum, 'message' => "status must be Active or Inactive, got \"{$row['status']}\"."];
+            continue;
+        }
+
+        $knownClientNames[$lname] = true;
+        $clientsToCreate[] = [
+            'client_name' => $name,
+            'onboarded_date' => $onboardedDate,
+            'status' => $status,
+            'notes' => trim((string) ($row['notes'] ?? '')),
+        ];
+    }
+
+    // ---------------------------------------------------------------
+    // Engagements sheet
+    // ---------------------------------------------------------------
+    $engagementsToCreate = []; // key => fields
+    $engagementKeysInFile = []; // key => row number first seen
+    $resolvedEngagements = $existingEngagements; // key => ['engagement_id'=>id-or-null, 'audit_type_ids'=>[]]
+
+    $statusMap = ['confirmed' => 'confirmed', 'pending' => 'pending', 'not confirmed' => 'not_confirmed', 'not_confirmed' => 'not_confirmed'];
+
+    foreach ($engagementsRows as $row) {
+        $rowNum = $row['__row'];
+        $clientName = trim((string) ($row['client_name'] ?? ''));
+        $year = trim((string) ($row['year'] ?? ''));
+
+        if ($clientName === '') { $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'client_name is required.']; continue; }
+        if ($year === '' || !ctype_digit($year)) { $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'year is required and must be a 4-digit number.']; continue; }
+
+        $lclient = strtolower($clientName);
+        if (!isset($knownClientNames[$lclient])) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "\"$clientName\" isn't an existing client and has no row in the Clients sheet - add one there first."];
+            continue;
+        }
+
+        $key = engagement_import_key($clientName, $year);
+        if (isset($existingEngagements[$key])) {
+            $warnings[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$clientName already has a $year engagement - this row will be skipped, not duplicated."];
+            continue;
+        }
+        if (isset($engagementKeysInFile[$key])) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$clientName / $year is listed more than once in this sheet (also row {$engagementKeysInFile[$key]})."];
+            continue;
+        }
+        $engagementKeysInFile[$key] = $rowNum;
+
+        $statusRaw = strtolower(trim((string) ($row['status'] ?? 'pending')));
+        $status = $statusMap[$statusRaw] ?? null;
+        if ($status === null) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "status must be Confirmed, Pending, or Not Confirmed, got \"{$row['status']}\"."];
+            continue;
+        }
+
+        $budgetedHours = trim((string) ($row['budgeted_hours'] ?? ''));
+        if ($budgetedHours === '' || !is_numeric($budgetedHours) || (float) $budgetedHours < 0) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'budgeted_hours is required and must be a non-negative number.'];
+            continue;
+        }
+
+        $manager = trim((string) ($row['manager'] ?? ''));
+        if ($manager !== '' && !isset($usersByName[strtolower($manager)])) {
+            $warnings[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "Manager \"$manager\" doesn't match any active employee's name - it'll be stored as free text, same as it would if typed into Add Engagement."];
+        }
+
+        $auditTypeIds = [];
+        $auditTypesRaw = trim((string) ($row['audit_types'] ?? ''));
+        if ($auditTypesRaw !== '') {
+            foreach (array_filter(array_map('trim', explode(',', $auditTypesRaw))) as $atName) {
+                $match = $auditTypesByName[strtolower($atName)] ?? null;
+                if (!$match) {
+                    $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "Audit type \"$atName\" doesn't match any configured audit type (System Settings > Audit Types)."];
+                    continue 2;
+                }
+                $auditTypeIds[] = $match['id'];
+            }
+        }
+
+        $socType = trim((string) ($row['soc_type'] ?? ''));
+        if ($socType !== '' && !in_array($socType, ['Type 1', 'Type 2'], true)) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'soc_type must be "Type 1" or "Type 2" (or left blank).'];
+            continue;
+        }
+
+        $asOfDate = engagement_import_parse_date($row['as_of_date'] ?? null);
+        $reviewStart = engagement_import_parse_date($row['review_period_start'] ?? null);
+        $reviewEnd = engagement_import_parse_date($row['review_period_end'] ?? null);
+        if ($reviewStart && $reviewEnd && $reviewStart > $reviewEnd) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'review_period_start is after review_period_end.'];
+            continue;
+        }
+
+        $repeatRaw = strtolower(trim((string) ($row['repeat'] ?? '')));
+        $repeatFlag = in_array($repeatRaw, ['yes', 'y', 'true', '1'], true) ? 1 : 0;
+
+        $engagementsToCreate[$key] = [
+            'client_name' => $clientName,
+            'year' => (int) $year,
+            'status' => $status,
+            'budgeted_hours' => (float) $budgetedHours,
+            'manager' => $manager,
+            'audit_type_ids' => $auditTypeIds,
+            'tsc' => trim((string) ($row['tsc'] ?? '')),
+            'soc_type' => $socType !== '' ? $socType : null,
+            'as_of_date' => $asOfDate,
+            'review_period_start' => $reviewStart,
+            'review_period_end' => $reviewEnd,
+            'location' => trim((string) ($row['location'] ?? '')),
+            'poc' => trim((string) ($row['poc'] ?? '')),
+            'scope' => trim((string) ($row['scope'] ?? '')),
+            'repeat_flag' => $repeatFlag,
+            'notes' => trim((string) ($row['notes'] ?? '')),
+        ];
+        $resolvedEngagements[$key] = ['engagement_id' => null, 'audit_type_ids' => $auditTypeIds];
+    }
+
+    // ---------------------------------------------------------------
+    // Weekly Hours sheet
+    // ---------------------------------------------------------------
+    $parsedHoursRows = [];
+    // Merge exact-duplicate (engagement, user, week, audit type) rows within
+    // the file itself into one summed row, rather than inserting two
+    // separate `entries` rows for what's clearly the same intended entry.
+    $mergeKeyToIndex = [];
+
+    foreach ($hoursRows as $row) {
+        $rowNum = $row['__row'];
+        $clientName = trim((string) ($row['client_name'] ?? ''));
+        $year = trim((string) ($row['year'] ?? ''));
+        $employeeName = trim((string) ($row['employee_full_name'] ?? ''));
+
+        if ($clientName === '' || $year === '') { $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'client_name and year are required.']; continue; }
+        if ($employeeName === '') { $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'employee_full_name is required.']; continue; }
+
+        $key = engagement_import_key($clientName, $year);
+        if (!isset($resolvedEngagements[$key])) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "No engagement found for $clientName / $year - add it to the Engagements sheet, or check the client name/year matches an existing engagement exactly."];
+            continue;
+        }
+
+        $matches = $usersByName[strtolower($employeeName)] ?? [];
+        if (count($matches) === 0) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "\"$employeeName\" doesn't match any active employee's full name exactly."];
+            continue;
+        }
+        if (count($matches) > 1) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "\"$employeeName\" matches more than one active employee - rename one of them, or use a more specific name, and try again."];
+            continue;
+        }
+        $userId = $matches[0];
+
+        $weekStart = engagement_import_parse_date($row['week_start'] ?? null);
+        if ($weekStart === null) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'week_start is required and must be a valid date.'];
+            continue;
+        }
+        if ((int) date('N', strtotime($weekStart)) !== 1) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "week_start ($weekStart) must be a Monday - that's how the app buckets weeks on Master Schedule."];
+            continue;
+        }
+
+        $hours = trim((string) ($row['hours'] ?? ''));
+        if ($hours === '' || !is_numeric($hours) || (float) $hours <= 0) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'hours is required and must be a positive number.'];
+            continue;
+        }
+        $hours = (float) $hours;
+        if ($hours > 60) {
+            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$hours hours in a single week for $employeeName looks unusually high - double check this row."];
+        }
+
+        $auditTypeId = null;
+        $auditTypeRaw = trim((string) ($row['audit_type'] ?? ''));
+        if ($auditTypeRaw !== '') {
+            $match = $auditTypesByName[strtolower($auditTypeRaw)] ?? null;
+            if (!$match) {
+                $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "Audit type \"$auditTypeRaw\" doesn't match any configured audit type."];
+                continue;
+            }
+            $auditTypeId = $match['id'];
+            $engAuditTypeIds = $resolvedEngagements[$key]['audit_type_ids'] ?? [];
+            if (!empty($engAuditTypeIds) && !in_array($auditTypeId, $engAuditTypeIds, true)) {
+                $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "\"$auditTypeRaw\" isn't one of $clientName's selected audit types for this engagement - double check this row."];
+            }
+        }
+
+        $mergeKey = $key . '|' . $userId . '|' . $weekStart . '|' . ($auditTypeId ?? '0');
+        if (isset($mergeKeyToIndex[$mergeKey])) {
+            $idx = $mergeKeyToIndex[$mergeKey];
+            $parsedHoursRows[$idx]['hours'] += $hours;
+            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "Same person/week/engagement as row {$parsedHoursRows[$idx]['first_row']} - hours were summed rather than added as a separate entry."];
+            continue;
+        }
+
+        $mergeKeyToIndex[$mergeKey] = count($parsedHoursRows);
+        $parsedHoursRows[] = [
+            'engagement_key' => $key,
+            'user_id' => $userId,
+            'week_start' => $weekStart,
+            'hours' => $hours,
+            'audit_type_id' => $auditTypeId,
+            'first_row' => $rowNum,
+        ];
+    }
+
+    // Flag rows where the employee already has hours logged for that exact
+    // engagement/week, so the import doesn't silently double someone's
+    // hours if it's run more than once or after manual entries already
+    // exist - it still proceeds (this is a warning, not a blocker), since
+    // legitimately adding a second chunk of hours to the same week is
+    // normal (e.g. splitting across audit types).
+    if (!empty($parsedHoursRows)) {
+        $existingEntryKeys = [];
+        $engagementIdsToCheck = [];
+        foreach ($parsedHoursRows as $r) {
+            $eid = $resolvedEngagements[$r['engagement_key']]['engagement_id'] ?? null;
+            if ($eid) $engagementIdsToCheck[$eid] = true;
+        }
+        if (!empty($engagementIdsToCheck)) {
+            $idList = implode(',', array_map('intval', array_keys($engagementIdsToCheck)));
+            $res = $conn->query("SELECT user_id, engagement_id, week_start, SUM(assigned_hours) AS total FROM entries WHERE engagement_id IN ($idList) GROUP BY user_id, engagement_id, week_start");
+            while ($row = $res->fetch_assoc()) {
+                $existingEntryKeys[$row['user_id'] . '|' . $row['engagement_id'] . '|' . $row['week_start']] = (float) $row['total'];
+            }
+        }
+        foreach ($parsedHoursRows as $r) {
+            $eid = $resolvedEngagements[$r['engagement_key']]['engagement_id'] ?? null;
+            if (!$eid) continue; // brand-new engagement, can't already have hours
+            $existingTotal = $existingEntryKeys[$r['user_id'] . '|' . $eid . '|' . $r['week_start']] ?? null;
+            if ($existingTotal !== null) {
+                $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $r['first_row'], 'message' => "Already has {$existingTotal}h logged for this engagement/week - this import adds {$r['hours']}h on top, it doesn't replace it."];
+            }
+        }
+    }
+
+    $newClientCount = count($clientsToCreate);
+    $existingClientRefCount = count($clientsSeenInFile) - $newClientCount;
+    $newEngagementCount = count($engagementsToCreate);
+    $existingEngagementRefCount = count($engagementKeysInFile) - $newEngagementCount;
+    $totalHours = array_sum(array_column($parsedHoursRows, 'hours'));
+
+    return [
+        'ok' => empty($errors),
+        'errors' => $errors,
+        'warnings' => $warnings,
+        'summary' => [
+            'new_clients' => $newClientCount,
+            'existing_clients' => max(0, $existingClientRefCount),
+            'new_engagements' => $newEngagementCount,
+            'existing_engagements' => max(0, $existingEngagementRefCount),
+            'hours_rows' => count($parsedHoursRows),
+            'total_hours' => $totalHours,
+        ],
+        'clients_to_create' => $clientsToCreate,
+        'engagements_to_create' => $engagementsToCreate,
+        'hours_rows' => $parsedHoursRows,
+    ];
+}

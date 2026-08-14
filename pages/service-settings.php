@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $canAccessSystemSettings = user_has_permission($conn, 'access_system_settings');
+$canManageClientsEngagements = user_has_permission($conn, 'manage_clients_engagements');
 
 if (!$canAccessSystemSettings && !$isAdmin) {
     header("Location: my-schedule.php");
@@ -123,6 +124,16 @@ function fetchSettingsGroup(mysqli $conn, string $masterKey): array {
             </div>
             <i class="bi bi-chevron-right settings-tile-arrow"></i>
         </a>
+        <?php if ($canManageClientsEngagements): ?>
+        <a href="#" class="settings-tile" data-bs-toggle="modal" data-bs-target="#importEngagementsModal">
+            <div class="settings-tile-icon"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+            <div class="settings-tile-info">
+                <div class="settings-tile-title">Import Engagements</div>
+                <div class="settings-tile-desc">Bulk-create clients, engagements &amp; weekly hours</div>
+            </div>
+            <i class="bi bi-chevron-right settings-tile-arrow"></i>
+        </a>
+        <?php endif; ?>
         <a href="#" id="configureBusySeasonBtn" class="settings-tile" data-bs-toggle="modal" data-bs-target="#busySeasonModal">
             <div class="settings-tile-icon"><i class="bi bi-sun"></i></div>
             <div class="settings-tile-info">
@@ -159,6 +170,9 @@ function fetchSettingsGroup(mysqli $conn, string $masterKey): array {
 <?php include_once '../includes/modals/audit_types_modal.php'; ?>
 <?php include_once '../includes/modals/audit_notification_schedule_modal.php'; ?>
 <?php endif; ?>
+<?php if ($canManageClientsEngagements): ?>
+<?php include_once '../includes/modals/import_engagements_modal.php'; ?>
+<?php endif; ?>
 
 <script src="../assets/js/viewProfileModal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/openUpdateProfileDetailsModal.js?v=<?php echo time(); ?>"></script>
@@ -176,6 +190,10 @@ function fetchSettingsGroup(mysqli $conn, string $masterKey): array {
 <script src="../assets/js/busy_season.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/audit_notification_schedule_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/audit_types_modal.js?v=<?php echo time(); ?>"></script>
+<?php endif; ?>
+
+<?php if ($canManageClientsEngagements): ?>
+<script src="../assets/js/import_engagements_modal.js?v=<?php echo time(); ?>"></script>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
