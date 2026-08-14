@@ -82,7 +82,7 @@ $lines = [
     ['Only add a row here for an engagement that does NOT already exist. An engagement is matched by client_name + year, so an existing client can still get a brand-new engagement row here.', false],
     ['', false],
     ['Weekly Hours tab', true],
-    ['One row per employee, per week, per engagement. client_name + year must match a row in the Engagements tab (or an engagement that already exists). employee_full_name must match an active employee\'s name exactly. week_start must be a Monday.', false],
+    ['One row per employee, per engagement - not per week. Every Monday of the current year is its own column to the right; type hours into whichever weeks that person worked on this engagement and leave the rest blank. client_name + year must match a row in the Engagements tab (or an engagement that already exists). employee_full_name must match an active employee\'s name exactly. audit_type applies to every week in that row - give the same person a second row (with a different audit_type) if their hours on this engagement need to be split across audit types.', false],
     ['', false],
     ['Before anything is created', true],
     ['Uploading shows a full report first - what will be created, plus any errors that need fixing - nothing is saved until you review it and confirm.', false],
@@ -128,18 +128,50 @@ foreach (['I', 'J', 'K'] as $col) $sheet->getStyle("{$col}2:{$col}200")->getNumb
 foreach (['A' => 28, 'B' => 8, 'C' => 14, 'D' => 15, 'E' => 20, 'F' => 22, 'G' => 26, 'H' => 10, 'I' => 13, 'J' => 16, 'K' => 16, 'L' => 16, 'M' => 16, 'N' => 24, 'O' => 9, 'P' => 24] as $col => $w) $sheet->getColumnDimension($col)->setWidth($w);
 
 // ---------------------------------------------------------------
-// Weekly Hours
+// Weekly Hours - a grid (one row per person per engagement, weeks as
+// columns) instead of one row per person per week. Filling this out by
+// hand for a full year of hours across a team would mean retyping
+// client_name/employee_full_name on every single week's row otherwise;
+// here it's typed once per person+engagement and every week is just a
+// number in the matching column (blank = no hours that week).
 // ---------------------------------------------------------------
 $sheet = $spreadsheet->createSheet();
 $sheet->setTitle('Weekly Hours');
-$headers = ['client_name', 'year', 'employee_full_name', 'week_start', 'hours', 'audit_type'];
+
+$currentYear = (int) date('Y');
+$weekStarts = [];
+$d = new \DateTime("{$currentYear}-01-01");
+while ((int) $d->format('N') !== 1) $d->modify('+1 day'); // first Monday on/after Jan 1
+while ((int) $d->format('Y') === $currentYear) {
+    $weekStarts[] = $d->format('Y-m-d');
+    $d->modify('+7 days');
+}
+
+$fixedHeaders = ['client_name', 'year', 'employee_full_name', 'audit_type'];
+$headers = array_merge($fixedHeaders, $weekStarts);
 $sheet->fromArray($headers, null, 'A1');
 styleHeaderRow($sheet, count($headers));
-$sheet->fromArray(['Example Client Inc.', 2026, 'Jane Doe', '2026-01-05', 8, 'SOC 2'], null, 'A2');
-$sheet->getStyle('A2:F2')->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
-if (!empty($auditTypeNames)) addDropdown($sheet, 'F', 2, 2000, $auditTypeNames);
-$sheet->getStyle('D2:D2000')->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-foreach (['A' => 28, 'B' => 8, 'C' => 24, 'D' => 14, 'E' => 9, 'F' => 22] as $col => $w) $sheet->getColumnDimension($col)->setWidth($w);
+$sheet->freezePane('E2'); // client/year/employee/audit_type stay visible while scrolling through weeks
+$sheet->getStyle('A1:D1')->getAlignment()->setWrapText(false);
+$lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));
+$sheet->getStyle("E1:{$lastCol}1")->getAlignment()->setTextRotation(90);
+
+$exampleRow = array_merge(['Example Client Inc.', $currentYear, 'Jane Doe', 'SOC 2'], array_fill(0, count($weekStarts), null));
+$exampleRow[4] = 8;  // first week
+$exampleRow[5] = 6;  // second week
+$sheet->fromArray($exampleRow, null, 'A2');
+$sheet->getStyle("A2:{$lastCol}2")->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
+
+if (!empty($auditTypeNames)) addDropdown($sheet, 'D', 2, 500, $auditTypeNames);
+
+$sheet->getColumnDimension('A')->setWidth(28);
+$sheet->getColumnDimension('B')->setWidth(8);
+$sheet->getColumnDimension('C')->setWidth(24);
+$sheet->getColumnDimension('D')->setWidth(16);
+foreach ($weekStarts as $i => $ws) {
+    $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(5 + $i);
+    $sheet->getColumnDimension($col)->setWidth(7);
+}
 
 $spreadsheet->setActiveSheetIndex(0);
 

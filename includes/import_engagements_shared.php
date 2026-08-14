@@ -298,13 +298,31 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
     }
 
     // ---------------------------------------------------------------
-    // Weekly Hours sheet
+    // Weekly Hours sheet - a grid: one row per person per engagement,
+    // every other column is a week (its header is that week's Monday
+    // date). Fixed columns are client_name/year/employee_full_name/
+    // audit_type; anything else in the header row that parses as a date
+    // is treated as a week column, so the sheet isn't locked to exactly
+    // the weeks the template shipped with - a hand-added extra week
+    // column still works the same way.
     // ---------------------------------------------------------------
+    $fixedCols = ['client_name', 'year', 'employee_full_name', 'audit_type', '__row'];
+    $weekColumns = []; // header text => parsed Monday date
+    if (!empty($hoursRows)) {
+        foreach (array_keys($hoursRows[0]) as $colName) {
+            if (in_array($colName, $fixedCols, true)) continue;
+            $parsed = engagement_import_parse_date($colName);
+            if ($parsed === null) continue; // not a date-shaped header - ignore rather than hard error
+            if ((int) date('N', strtotime($parsed)) !== 1) {
+                $errors[] = ['sheet' => 'Weekly Hours', 'row' => null, 'message' => "Column header \"$colName\" isn't a Monday - week columns must be Mondays, same as how the app buckets weeks on Master Schedule."];
+                continue;
+            }
+            $weekColumns[$colName] = $parsed;
+        }
+    }
+
     $parsedHoursRows = [];
-    // Merge exact-duplicate (engagement, user, week, audit type) rows within
-    // the file itself into one summed row, rather than inserting two
-    // separate `entries` rows for what's clearly the same intended entry.
-    $mergeKeyToIndex = [];
+    $rowSeenKeys = []; // "engagement|user|audit_type" => row number first seen, to catch duplicate person+engagement+audit_type rows
 
     foreach ($hoursRows as $row) {
         $rowNum = $row['__row'];
@@ -332,26 +350,6 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
         }
         $userId = $matches[0];
 
-        $weekStart = engagement_import_parse_date($row['week_start'] ?? null);
-        if ($weekStart === null) {
-            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'week_start is required and must be a valid date.'];
-            continue;
-        }
-        if ((int) date('N', strtotime($weekStart)) !== 1) {
-            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "week_start ($weekStart) must be a Monday - that's how the app buckets weeks on Master Schedule."];
-            continue;
-        }
-
-        $hours = trim((string) ($row['hours'] ?? ''));
-        if ($hours === '' || !is_numeric($hours) || (float) $hours <= 0) {
-            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'hours is required and must be a positive number.'];
-            continue;
-        }
-        $hours = (float) $hours;
-        if ($hours > 60) {
-            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$hours hours in a single week for $employeeName looks unusually high - double check this row."];
-        }
-
         $auditTypeId = null;
         $auditTypeRaw = trim((string) ($row['audit_type'] ?? ''));
         if ($auditTypeRaw !== '') {
@@ -367,23 +365,40 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             }
         }
 
-        $mergeKey = $key . '|' . $userId . '|' . $weekStart . '|' . ($auditTypeId ?? '0');
-        if (isset($mergeKeyToIndex[$mergeKey])) {
-            $idx = $mergeKeyToIndex[$mergeKey];
-            $parsedHoursRows[$idx]['hours'] += $hours;
-            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "Same person/week/engagement as row {$parsedHoursRows[$idx]['first_row']} - hours were summed rather than added as a separate entry."];
+        $rowKey = $key . '|' . $userId . '|' . ($auditTypeId ?? '0');
+        if (isset($rowSeenKeys[$rowKey])) {
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName already has a row for $clientName / $year with this audit_type (also row {$rowSeenKeys[$rowKey]}) - combine them into one row instead of two."];
             continue;
         }
+        $rowSeenKeys[$rowKey] = $rowNum;
 
-        $mergeKeyToIndex[$mergeKey] = count($parsedHoursRows);
-        $parsedHoursRows[] = [
-            'engagement_key' => $key,
-            'user_id' => $userId,
-            'week_start' => $weekStart,
-            'hours' => $hours,
-            'audit_type_id' => $auditTypeId,
-            'first_row' => $rowNum,
-        ];
+        $rowHadAnyHours = false;
+        foreach ($weekColumns as $colName => $weekStart) {
+            $cell = trim((string) ($row[$colName] ?? ''));
+            if ($cell === '') continue; // blank week = no hours that week, not an error
+
+            if (!is_numeric($cell) || (float) $cell <= 0) {
+                $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "Week of $weekStart: \"$cell\" isn't a positive number."];
+                continue;
+            }
+            $hours = (float) $cell;
+            if ($hours > 60) {
+                $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$hours hours for $employeeName in the week of $weekStart looks unusually high - double check this cell."];
+            }
+
+            $rowHadAnyHours = true;
+            $parsedHoursRows[] = [
+                'engagement_key' => $key,
+                'user_id' => $userId,
+                'week_start' => $weekStart,
+                'hours' => $hours,
+                'audit_type_id' => $auditTypeId,
+                'first_row' => $rowNum,
+            ];
+        }
+        if (!$rowHadAnyHours) {
+            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName's row for $clientName / $year has no hours filled in on any week - this row won't create anything."];
+        }
     }
 
     // Flag rows where the employee already has hours logged for that exact
