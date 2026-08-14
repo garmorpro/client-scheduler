@@ -206,7 +206,11 @@ document.getElementById('engagementSelect').addEventListener('change', async (ev
     }
 });
 
-function renderAuditTypePills() {
+// `autoLoad` is false right after a save - the pills just need to redraw
+// with fresh checkmarks (and keep whichever type is already selected)
+// without also jumping into that type's review view, so the picker itself
+// is what's on screen for the next click, not a results card.
+function renderAuditTypePills(autoLoad = true) {
     const container = document.getElementById('auditTypePills');
     const relevant = (engagementData.audit_types || []).filter(t => DOL_AUDIT_TYPE_NAMES.includes(t.name));
 
@@ -216,8 +220,16 @@ function renderAuditTypePills() {
         return;
     }
 
-    selectedAuditType = relevant[0];
-    container.innerHTML = relevant.map(t => `<button type="button" class="dolgen-pill ${t.audit_type_id === selectedAuditType.audit_type_id ? 'active' : ''}" data-id="${t.audit_type_id}">${escapeHtml(t.name)}</button>`).join('');
+    if (!selectedAuditType || !relevant.some(t => t.audit_type_id === selectedAuditType.audit_type_id)) {
+        selectedAuditType = relevant[0];
+    }
+    // A checkmark on any type that already has DOL saved, so working
+    // through several assessment types on one engagement shows progress at
+    // a glance instead of having to click into each one to check.
+    container.innerHTML = relevant.map(t => {
+        const hasDol = !!existingDolFor(t.audit_type_id);
+        return `<button type="button" class="dolgen-pill ${t.audit_type_id === selectedAuditType.audit_type_id ? 'active' : ''}" data-id="${t.audit_type_id}">${escapeHtml(t.name)}${hasDol ? ' <i class="bi bi-check-circle-fill"></i>' : ''}</button>`;
+    }).join('');
     container.querySelectorAll('.dolgen-pill').forEach(btn => {
         btn.addEventListener('click', () => {
             container.querySelectorAll('.dolgen-pill').forEach(b => b.classList.remove('active'));
@@ -226,7 +238,23 @@ function renderAuditTypePills() {
             loadSelectedAuditType();
         });
     });
-    loadSelectedAuditType();
+    if (autoLoad) loadSelectedAuditType();
+}
+
+// Re-fetches this same engagement's data (existing_dol, team hours) after a
+// save, so the picker's checkmarks and Step 3's hours stay current without
+// a full page reload.
+async function reloadEngagementData(engagementId) {
+    try {
+        const res = await fetch('get-dol-setup.php?engagement_id=' + encodeURIComponent(engagementId));
+        const data = await res.json();
+        if (!data.success) return;
+        engagementData = data;
+        eligibleMembers = data.team || [];
+        renderTeamHours();
+    } catch (err) {
+        console.error('Failed to reload engagement data', err);
+    }
 }
 
 // Whatever this engagement already has saved for the given audit type, or
@@ -543,19 +571,33 @@ document.getElementById('backToEditBtn').addEventListener('click', () => {
 });
 
 // ---------- Save ----------
+// Used to always navigate away after saving (engagement-management.php,
+// via the same sessionStorage-reopen idiom used elsewhere) - but an
+// engagement is usually staffed across several DOL-capable audit types at
+// once, and that meant leaving the generator (sometimes even bouncing
+// through my-schedule.php first, for anyone without engagement-management's
+// own view_clients_engagements permission) and re-navigating all the way
+// back in just to set the next type's DOL. Now it just stays put: refresh
+// this engagement's data and drop back to the audit type picker so the
+// next type is one click away.
 document.getElementById('saveBtn').addEventListener('click', async () => {
     if (!lastResult || !selectedAuditType) return;
     const saveBtn = document.getElementById('saveBtn');
     saveBtn.disabled = true;
     saveBtn.textContent = 'Saving…';
 
+    const savedAuditTypeId = selectedAuditType.audit_type_id;
+    const savedAuditTypeName = selectedAuditType.name;
+    const engagementId = engagementData.engagement.engagement_id;
+    const clientName = engagementData.engagement.client_name;
+
     try {
         const res = await fetch('save-dol-assignments.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                engagement_id: engagementData.engagement.engagement_id,
-                audit_type_id: selectedAuditType.audit_type_id,
+                engagement_id: engagementId,
+                audit_type_id: savedAuditTypeId,
                 assignments: lastResult.map(m => ({ user_id: m.user_id, criteria: m.assigned }))
             })
         });
@@ -569,18 +611,32 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
             return;
         }
 
-        // Same idiom as everywhere else in the app that navigates away and
-        // needs to land back on a specific detail view - flag it in
-        // sessionStorage, then engagement-management.php's own load
-        // handler clicks that engagement's View button for us.
-        sessionStorage.setItem('reopenEngagementId', engagementData.engagement.engagement_id);
-        window.location.href = 'engagement-management.php';
-        return;
+        appNotify({ icon: 'success', title: 'DOL saved', text: `${savedAuditTypeName} DOL saved for ${clientName}.` });
+
+        await reloadEngagementData(engagementId);
+        resetResult();
+        document.getElementById('setupSections').classList.remove('d-none');
+        selectedAuditType = (engagementData.audit_types || []).find(t => t.audit_type_id === savedAuditTypeId) || null;
+        renderAuditTypePills(false);
     } catch (err) {
         console.error('Error:', err);
         saveBtn.disabled = false;
         saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save to Engagement';
         appNotify({ icon: 'error', title: 'Error', text: 'Failed to save DOL' });
+    }
+});
+
+// Saving no longer navigates away on its own (see the Save handler above),
+// so this is the explicit way back once someone's done setting DOL for
+// however many audit types they needed - goes to wherever they actually
+// came from (My Engagements, My Schedule, Engagement Management, ...)
+// rather than guessing a destination that depends on their permissions.
+document.getElementById('dolGenBackLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = 'my-engagements.php';
     }
 });
 

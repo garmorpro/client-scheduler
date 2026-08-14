@@ -68,8 +68,13 @@ if ($preselectEngagementId && !in_array($preselectEngagementId, $engagementIds, 
 <?php include_once '../templates/sidebar.php'; ?>
 
 <div class="flex-grow-1 p-4" style="margin-left: 250px; max-width: 900px;">
-    <h3 class="mb-0">DOL Generator</h3>
-    <p class="text-muted mb-4">Split criteria across your team by hours</p>
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h3 class="mb-0">DOL Generator</h3>
+            <p class="text-muted mb-4">Split criteria across your team by hours</p>
+        </div>
+        <a href="#" id="dolGenBackLink" class="text-muted small mt-1"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
 
     <!-- Step 1: Engagement -->
     <div class="card dolgen-card mb-3">
