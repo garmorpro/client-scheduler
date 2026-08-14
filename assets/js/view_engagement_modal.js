@@ -423,17 +423,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // real "open a (possibly different) engagement" click always scrolls to
     // the top, same as before. On a refresh (re-fetching the same
     // engagement after a save, e.g. clicking a Timeline & Key Dates item),
-    // skip the "Loading..." placeholder - blanking modalBody down to one
-    // line collapses its scroll height, which was silently resetting
-    // scrollTop to 0 on every single field save - and restore the scroll
-    // position once the refreshed content is back in.
+    // skip the "Loading..." placeholder and restore the scroll position
+    // once the refreshed content is back in. The actual scrolling element
+    // is .eng-vm-body (see styles.css - modalBody itself doesn't scroll,
+    // .offcanvas-body has overflow:hidden), and it gets torn down and
+    // rebuilt fresh on every render since it's part of the template
+    // string below - so the scrollTop has to be read from and re-applied
+    // to that inner element specifically, not modalBody.
     async function open(engagementId, avatarColor, initials, restrictFinancials, isRefresh) {
         avatarColor = avatarColor || '#4f8ef7';
         initials = initials || '?';
         if (!engagementId) return;
         lastOpenArgs = [engagementId, avatarColor, initials, restrictFinancials];
 
-        const preservedScrollTop = isRefresh ? modalBody.scrollTop : 0;
+        const existingBodyEl = isRefresh ? modalBody.querySelector('.eng-vm-body') : null;
+        const preservedScrollTop = existingBodyEl ? existingBodyEl.scrollTop : 0;
         if (!isRefresh) {
             modalBody.innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
         }
@@ -540,7 +544,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             wireHeaderActions(data, engagementId, avatarColor, initials);
-            if (isRefresh) modalBody.scrollTop = preservedScrollTop;
+            if (isRefresh) {
+                const newBodyEl = modalBody.querySelector('.eng-vm-body');
+                if (newBodyEl) newBodyEl.scrollTop = preservedScrollTop;
+            }
         } catch (err) {
             console.error('Failed to load engagement details', err);
             modalBody.innerHTML = '<div class="text-center text-danger py-4">Could not load engagement details.</div>';
