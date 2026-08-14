@@ -103,13 +103,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
-    function renderTimelineSection(audit, engagementId, details) {
+    function renderTimelineSection(audit, engagementId, details, restrictFinancials) {
         details = details || {};
         if (!audit.timeline) return '';
         const canManage = !!audit.can_manage_timeline;
         const canComplete = !!audit.can_complete_timeline;
 
-        const rows = audit.timeline.map(step => timelineRowReadOnly(step, engagementId, canComplete)).join('');
+        // Archive is a Manager/CRM Team/Admin concern (per Garrett) - Staff
+        // and Senior looking at their own schedule don't get it, same
+        // restrictFinancials flag Capacity above already uses for the same
+        // audience.
+        const timelineSteps = restrictFinancials
+            ? audit.timeline.filter(step => step.completed_column !== 'archive_completed_at')
+            : audit.timeline;
+        const rows = timelineSteps.map(step => timelineRowReadOnly(step, engagementId, canComplete)).join('');
         const hint = canComplete
             ? '<div class="eng-vm-tl-hint">Click a date to mark it complete or incomplete.</div>'
             : '';
@@ -569,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${renderDetailsCard(data)}
                     ${renderNotesCard(data)}
                     ${renderTeamSection(data, engagementId)}
-                    ${renderTimelineSection(data.audit || {}, engagementId, data.details)}
+                    ${renderTimelineSection(data.audit || {}, engagementId, data.details, restrictFinancials)}
                     ${renderMilestonesSection(data.audit || {})}
                 </div>
             `;
