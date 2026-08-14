@@ -288,15 +288,25 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
 
         // PCI Assessment Type + Delivery Date - only relevant for PCI
         // engagements, but harmless to store regardless (same reasoning as
-        // TSC below). Not every PCI engagement produces a ROC (Report on
-        // Compliance) - smaller merchants/service providers instead get an
-        // AOC or file a SAQ variant, so this is its own field.
-        $pciAssessmentType = trim((string) ($row['pci_assessment_type'] ?? ''));
+        // TSC below). Not every PCI engagement produces just a ROC (Report
+        // on Compliance) - a smaller merchant/service provider might file
+        // an AOC and a SAQ variant at once, so this accepts a comma-
+        // separated list, same as audit_types above.
         $validPciTypes = ['ROC', 'AOC', 'SAQ A', 'SAQ A-EP', 'SAQ B', 'SAQ B-IP', 'SAQ C', 'SAQ C-VT', 'SAQ D (Merchant)', 'SAQ D (Service Provider)', 'P2PE'];
-        if ($pciAssessmentType !== '' && !in_array($pciAssessmentType, $validPciTypes, true)) {
-            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'pci_assessment_type must be one of: ' . implode(', ', $validPciTypes) . ' (or left blank).'];
-            continue;
+        $validPciTypesLower = array_map('strtolower', $validPciTypes);
+        $pciAssessmentTypeRaw = trim((string) ($row['pci_assessment_type'] ?? ''));
+        $pciAssessmentTypes = [];
+        if ($pciAssessmentTypeRaw !== '') {
+            foreach (array_filter(array_map('trim', explode(',', $pciAssessmentTypeRaw))) as $pciTypeName) {
+                $idx = array_search(strtolower($pciTypeName), $validPciTypesLower, true);
+                if ($idx === false) {
+                    $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "pci_assessment_type \"$pciTypeName\" must be one of: " . implode(', ', $validPciTypes) . '.'];
+                    continue 2;
+                }
+                $pciAssessmentTypes[] = $validPciTypes[$idx]; // normalize to canonical casing
+            }
         }
+        $pciAssessmentType = implode(', ', $pciAssessmentTypes);
 
         $pciDeliveryDateRaw = trim((string) ($row['pci_delivery_date'] ?? ''));
         $pciDeliveryDate = null;

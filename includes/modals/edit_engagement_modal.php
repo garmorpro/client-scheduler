@@ -149,19 +149,21 @@
 
             <!-- PCI Assessment Type + Delivery Date only matter when PCI is
                  checked above - hidden otherwise. Not every PCI engagement
-                 produces a ROC (Report on Compliance) - smaller merchants/
-                 service providers instead get an AOC (Attestation of
-                 Compliance) or file a SAQ, so the assessment type is its
-                 own field rather than assuming ROC. -->
-            <div class="eng-edit-row d-none" id="edit_eng_pci_wrap">
+                 produces just a ROC (Report on Compliance) - a smaller
+                 merchant/service provider might file an AOC and a SAQ at
+                 once, so this allows more than one (checkboxes, same
+                 pattern as TSC below), instead of assuming just one. -->
+            <div class="d-none" id="edit_eng_pci_wrap">
               <div class="eng-edit-field">
-                <label for="edit_eng_pci_assessment_type">PCI Assessment Type</label>
-                <select class="eng-edit-input" id="edit_eng_pci_assessment_type" name="pci_assessment_type">
-                  <option value="">Select type&hellip;</option>
+                <label>PCI Assessment Type</label>
+                <div class="eng-audit-type-list" id="edit_eng_pci_assessment_type">
                   <?php foreach (['ROC', 'AOC', 'SAQ A', 'SAQ A-EP', 'SAQ B', 'SAQ B-IP', 'SAQ C', 'SAQ C-VT', 'SAQ D (Merchant)', 'SAQ D (Service Provider)', 'P2PE'] as $pciOption): ?>
-                  <option value="<?php echo htmlspecialchars($pciOption); ?>"><?php echo htmlspecialchars($pciOption); ?></option>
+                  <label class="eng-audit-type-chip">
+                    <input type="checkbox" name="pci_assessment_type[]" value="<?php echo htmlspecialchars($pciOption); ?>">
+                    <?php echo htmlspecialchars($pciOption); ?>
+                  </label>
                   <?php endforeach; ?>
-                </select>
+                </div>
               </div>
               <div class="eng-edit-field">
                 <label for="edit_eng_pci_delivery_date">PCI Delivery Date</label>

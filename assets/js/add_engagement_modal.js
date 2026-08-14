@@ -20,16 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // PCI Assessment Type + Delivery Date only matter when PCI is checked,
-    // regardless of what else is checked alongside it. Not every PCI
-    // engagement produces a ROC - could be an AOC or a SAQ variant instead.
+    // regardless of what else is checked alongside it. Assessment type
+    // allows more than one (checkboxes) - a PCI engagement isn't always
+    // just a single ROC, could be an AOC and/or a SAQ variant too.
     const pciWrap = document.getElementById('add_eng_pci_wrap');
-    const pciTypeSelect = document.getElementById('add_eng_pci_assessment_type');
     const pciDateInput = document.getElementById('add_eng_pci_delivery_date');
     function syncPciVisibility() {
         const pciChecked = checkedAuditTypeNames().includes('PCI');
         pciWrap.classList.toggle('d-none', !pciChecked);
         if (!pciChecked) {
-            pciTypeSelect.value = '';
+            document.querySelectorAll('#add_eng_pci_assessment_type input[name="pci_assessment_type[]"]').forEach(cb => { cb.checked = false; });
             pciDateInput.value = '';
         }
     }

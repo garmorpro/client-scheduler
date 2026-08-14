@@ -15,16 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // PCI Assessment Type + Delivery Date only matter when PCI is checked,
-    // regardless of what else is checked alongside it. Not every PCI
-    // engagement produces a ROC - could be an AOC or a SAQ variant instead.
+    // regardless of what else is checked alongside it. Assessment type
+    // allows more than one (checkboxes) - a PCI engagement isn't always
+    // just a single ROC, could be an AOC and/or a SAQ variant too.
     const pciWrap = document.getElementById('edit_eng_pci_wrap');
-    const pciTypeSelect = document.getElementById('edit_eng_pci_assessment_type');
     const pciDateInput = document.getElementById('edit_eng_pci_delivery_date');
     function syncPciVisibility() {
         const pciChecked = checkedAuditTypeNames().includes('PCI');
         pciWrap.classList.toggle('d-none', !pciChecked);
         if (!pciChecked) {
-            pciTypeSelect.value = '';
+            document.querySelectorAll('#edit_eng_pci_assessment_type input[name="pci_assessment_type[]"]').forEach(cb => { cb.checked = false; });
             pciDateInput.value = '';
         }
     }
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncPciVisibility();
     });
 
-    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, pciAssessmentType, pciDeliveryDate, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, pciAssessmentTypes: [...], pciDeliveryDate, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit_eng_as_of_date').value = data.asOfDate || '';
         document.getElementById('edit_eng_review_period_start').value = data.reviewPeriodStart || '';
         document.getElementById('edit_eng_review_period_end').value = data.reviewPeriodEnd || '';
-        pciTypeSelect.value = data.pciAssessmentType || '';
         pciDateInput.value = data.pciDeliveryDate || '';
 
         const selectedAuditTypes = (data.auditTypeIds || []).map(String);
@@ -79,6 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTsc = data.tsc || [];
         document.querySelectorAll('#edit_eng_tsc input[name="tsc[]"]').forEach(cb => {
             cb.checked = selectedTsc.includes(cb.value);
+        });
+
+        const selectedPciTypes = data.pciAssessmentTypes || [];
+        document.querySelectorAll('#edit_eng_pci_assessment_type input[name="pci_assessment_type[]"]').forEach(cb => {
+            cb.checked = selectedPciTypes.includes(cb.value);
         });
 
         syncTscVisibility();
@@ -113,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 asOfDate: btn.getAttribute('data-as-of-date') || '',
                 reviewPeriodStart: btn.getAttribute('data-review-period-start') || '',
                 reviewPeriodEnd: btn.getAttribute('data-review-period-end') || '',
-                pciAssessmentType: btn.getAttribute('data-pci-assessment-type') || '',
+                pciAssessmentTypes: (btn.getAttribute('data-pci-assessment-type') || '').split(',').map(s => s.trim()).filter(Boolean),
                 pciDeliveryDate: btn.getAttribute('data-pci-delivery-date') || '',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),

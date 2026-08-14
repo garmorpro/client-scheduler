@@ -46,11 +46,9 @@ $soc_type      = trim($_POST['soc_type'] ?? '');
 $as_of_date    = trim($_POST['as_of_date'] ?? '');
 $review_period_start = trim($_POST['review_period_start'] ?? '');
 $review_period_end   = trim($_POST['review_period_end'] ?? '');
-// PCI Assessment Type + Delivery Date - only relevant when PCI is one of
-// the audit types (see add_engagement_modal.js's syncPciVisibility()). Not
-// every PCI engagement produces a ROC (Report on Compliance) - could be an
-// AOC (Attestation of Compliance) or a SAQ variant instead.
-$pci_assessment_type = trim($_POST['pci_assessment_type'] ?? '');
+// PCI Delivery Date - only relevant when PCI is one of the audit types
+// (see add_engagement_modal.js's syncPciVisibility()). Assessment type
+// itself is read further down alongside TSC - both are checkbox arrays.
 $pci_delivery_date = trim($_POST['pci_delivery_date'] ?? '');
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
@@ -95,6 +93,12 @@ if ($stmt->execute()) {
     $tsc = implode(', ', array_filter(array_map('trim', $_POST['tsc'] ?? [])));
     $tscValue = $tsc !== '' ? $tsc : null;
 
+    // PCI Assessment Type - not every PCI engagement produces just a ROC
+    // (Report on Compliance); a smaller merchant/service provider might
+    // file an AOC and a SAQ variant at once, so this allows more than one,
+    // same "checkbox array joined with commas" approach as TSC above.
+    $pciAssessmentType = implode(', ', array_filter(array_map('trim', $_POST['pci_assessment_type'] ?? [])));
+
     // Always create the paired audit_engagement_details/audit_engagement_
     // timeline rows, not just when TSC happens to be set - the View
     // Engagement panel's Details card and Timeline & Key Dates card were
@@ -119,7 +123,7 @@ if ($stmt->execute()) {
     $asOfDateValue = $as_of_date !== '' ? $as_of_date : null;
     $reviewStartValue = $review_period_start !== '' ? $review_period_start : null;
     $reviewEndValue = $review_period_end !== '' ? $review_period_end : null;
-    $pciAssessmentTypeValue = $pci_assessment_type !== '' ? $pci_assessment_type : null;
+    $pciAssessmentTypeValue = $pciAssessmentType !== '' ? $pciAssessmentType : null;
     $pciDeliveryDateValue = $pci_delivery_date !== '' ? $pci_delivery_date : null;
 
     $detailsStmt = $conn->prepare("

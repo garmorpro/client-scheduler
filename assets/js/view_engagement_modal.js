@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     asOfDate: toInputDate(data.details && data.details.as_of_date),
                     reviewPeriodStart: toInputDate(data.details && data.details.review_period_start),
                     reviewPeriodEnd: toInputDate(data.details && data.details.review_period_end),
-                    pciAssessmentType: data.details && data.details.pci_assessment_type,
+                    pciAssessmentTypes: ((data.details && data.details.pci_assessment_type) || '').split(',').map(s => s.trim()).filter(Boolean),
                     pciDeliveryDate: toInputDate(data.details && data.details.pci_delivery_date),
                     auditTypeIds,
                     tsc,

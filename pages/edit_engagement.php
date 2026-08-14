@@ -36,11 +36,9 @@ $soc_type = trim($_POST['soc_type'] ?? '');
 $as_of_date = trim($_POST['as_of_date'] ?? '');
 $review_period_start = trim($_POST['review_period_start'] ?? '');
 $review_period_end = trim($_POST['review_period_end'] ?? '');
-// PCI Assessment Type + Delivery Date - only relevant when PCI is one of
-// the audit types (see edit_engagement_modal.js's syncPciVisibility()). Not
-// every PCI engagement produces a ROC (Report on Compliance) - could be an
-// AOC (Attestation of Compliance) or a SAQ variant instead.
-$pci_assessment_type = trim($_POST['pci_assessment_type'] ?? '');
+// PCI Delivery Date - only relevant when PCI is one of the audit types
+// (see edit_engagement_modal.js's syncPciVisibility()). Assessment type
+// itself is read further down alongside TSC - both are checkbox arrays.
 $pci_delivery_date = trim($_POST['pci_delivery_date'] ?? '');
 
 if (!$engagement_id || $budgeted_hours === null || !$status || !$manager) {
@@ -89,7 +87,11 @@ if ($stmt->execute()) {
     $asOfDateValue = $as_of_date !== '' ? $as_of_date : null;
     $reviewStartValue = $review_period_start !== '' ? $review_period_start : null;
     $reviewEndValue = $review_period_end !== '' ? $review_period_end : null;
-    $pciAssessmentTypeValue = $pci_assessment_type !== '' ? $pci_assessment_type : null;
+    // PCI Assessment Type - not every PCI engagement produces just a ROC
+    // (Report on Compliance); allows more than one, same "checkbox array
+    // joined with commas, always overwrite wholesale" approach as TSC.
+    $pciAssessmentType = implode(', ', array_filter(array_map('trim', $_POST['pci_assessment_type'] ?? [])));
+    $pciAssessmentTypeValue = $pciAssessmentType !== '' ? $pciAssessmentType : null;
     $pciDeliveryDateValue = $pci_delivery_date !== '' ? $pci_delivery_date : null;
 
     $tscStmt = $conn->prepare("
