@@ -46,6 +46,9 @@ $soc_type      = trim($_POST['soc_type'] ?? '');
 $as_of_date    = trim($_POST['as_of_date'] ?? '');
 $review_period_start = trim($_POST['review_period_start'] ?? '');
 $review_period_end   = trim($_POST['review_period_end'] ?? '');
+// ROC (Report on Compliance) Delivery Date - only relevant when PCI is one
+// of the audit types (see add_engagement_modal.js's syncRocDateVisibility()).
+$roc_delivery_date = trim($_POST['roc_delivery_date'] ?? '');
 
 if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
@@ -113,19 +116,21 @@ if ($stmt->execute()) {
     $asOfDateValue = $as_of_date !== '' ? $as_of_date : null;
     $reviewStartValue = $review_period_start !== '' ? $review_period_start : null;
     $reviewEndValue = $review_period_end !== '' ? $review_period_end : null;
+    $rocDeliveryDateValue = $roc_delivery_date !== '' ? $roc_delivery_date : null;
 
     $detailsStmt = $conn->prepare("
         INSERT INTO audit_engagement_details
-            (engagement_id, location, poc, tsc, scope, repeat_flag, soc_type, as_of_date, review_period_start, review_period_end)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (engagement_id, location, poc, tsc, scope, repeat_flag, soc_type, as_of_date, review_period_start, review_period_end, roc_delivery_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             location = VALUES(location), poc = VALUES(poc), tsc = VALUES(tsc), scope = VALUES(scope), repeat_flag = VALUES(repeat_flag),
-            soc_type = VALUES(soc_type), as_of_date = VALUES(as_of_date), review_period_start = VALUES(review_period_start), review_period_end = VALUES(review_period_end)
+            soc_type = VALUES(soc_type), as_of_date = VALUES(as_of_date), review_period_start = VALUES(review_period_start), review_period_end = VALUES(review_period_end),
+            roc_delivery_date = VALUES(roc_delivery_date)
     ");
     $detailsStmt->bind_param(
-        'issssissss',
+        'issssisssss',
         $engagement_id, $locationValue, $pocValue, $tscValue, $scopeValue, $repeat_flag,
-        $socTypeValue, $asOfDateValue, $reviewStartValue, $reviewEndValue
+        $socTypeValue, $asOfDateValue, $reviewStartValue, $reviewEndValue, $rocDeliveryDateValue
     );
     $detailsStmt->execute();
     $detailsStmt->close();

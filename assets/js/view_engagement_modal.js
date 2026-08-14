@@ -369,11 +369,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const reportType = d.soc_type
             ? (d.soc_type === 'Type 1' ? 'Type I' : (d.soc_type === 'Type 2' ? 'Type II' : d.soc_type))
             : null;
+        // ROC (Report on Compliance) Delivery Date only matters for PCI
+        // engagements, regardless of what else is checked alongside PCI.
+        const isPci = (data.audit_types || []).some(t => t.name === 'PCI');
         const fields = [
             gridField('Location', d.location || 'N/A'),
             gridField('Review Period', reviewPeriod),
             gridField('Audit Type', auditTypeNames),
             reportType ? gridField('Report Type', reportType) : '',
+            isPci ? gridField('ROC Delivery Date', fmtDate(d.roc_delivery_date) || 'N/A') : '',
             gridField('Manager', data.manager || 'Unassigned'),
             gridField('Point of Contact', d.poc || 'N/A'),
         ].join('');
@@ -578,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     asOfDate: toInputDate(data.details && data.details.as_of_date),
                     reviewPeriodStart: toInputDate(data.details && data.details.review_period_start),
                     reviewPeriodEnd: toInputDate(data.details && data.details.review_period_end),
+                    rocDeliveryDate: toInputDate(data.details && data.details.roc_delivery_date),
                     auditTypeIds,
                     tsc,
                 });

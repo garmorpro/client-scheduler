@@ -19,6 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
         tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
     }
 
+    // ROC Delivery Date only matters when PCI is checked, regardless of what
+    // else is checked alongside it.
+    const rocDateWrap = document.getElementById('add_eng_roc_date_wrap');
+    const rocDateInput = document.getElementById('add_eng_roc_delivery_date');
+    function syncRocDateVisibility() {
+        const pciChecked = checkedAuditTypeNames().includes('PCI');
+        rocDateWrap.classList.toggle('d-none', !pciChecked);
+        if (!pciChecked) rocDateInput.value = '';
+    }
+
     // Report/SOC Type only matters once SOC 1 or SOC 2 is checked; which of
     // As-of Date vs. Review Period shows depends on Type 1 vs. Type 2.
     const socTypeWrap = document.getElementById('add_eng_soc_type_wrap');
@@ -41,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add_eng_audit_types')?.addEventListener('change', () => {
         syncTscVisibility();
         syncSocTypeVisibility();
+        syncRocDateVisibility();
     });
 
     function open({ clientId, clientName }) {
@@ -53,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // nothing else is checked yet.
         syncTscVisibility();
         syncSocTypeVisibility();
+        syncRocDateVisibility();
         addModalInstance.show();
     }
 

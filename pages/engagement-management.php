@@ -39,12 +39,13 @@ $engagementQuery = "
         d.soc_type,
         d.as_of_date,
         d.review_period_start,
-        d.review_period_end
+        d.review_period_end,
+        d.roc_delivery_date
     FROM engagements e
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     LEFT JOIN audit_engagement_details d ON d.engagement_id = e.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.engagement_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag, d.soc_type, d.as_of_date, d.review_period_start, d.review_period_end
+    GROUP BY e.engagement_id, c.client_name, e.engagement_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag, d.soc_type, d.as_of_date, d.review_period_start, d.review_period_end, d.roc_delivery_date
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -297,6 +298,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         data-as-of-date="<?php echo htmlspecialchars($row['as_of_date'] ?? ''); ?>"
                                         data-review-period-start="<?php echo htmlspecialchars($row['review_period_start'] ?? ''); ?>"
                                         data-review-period-end="<?php echo htmlspecialchars($row['review_period_end'] ?? ''); ?>"
+                                        data-roc-delivery-date="<?php echo htmlspecialchars($row['roc_delivery_date'] ?? ''); ?>"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>

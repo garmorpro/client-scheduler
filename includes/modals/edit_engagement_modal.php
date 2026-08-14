@@ -146,6 +146,13 @@
                 <?php endforeach; ?>
               </div>
             </div>
+
+            <!-- ROC Delivery Date only matters when PCI is checked above -
+                 hidden otherwise. -->
+            <div class="eng-edit-field d-none" id="edit_eng_roc_date_wrap">
+              <label for="edit_eng_roc_delivery_date">ROC Delivery Date</label>
+              <input type="date" class="eng-edit-input" id="edit_eng_roc_delivery_date" name="roc_delivery_date">
+            </div>
           </div>
 
           <div class="eng-edit-footer">

@@ -97,13 +97,13 @@ try {
 
         $detailsStmt = $conn->prepare("
             INSERT INTO audit_engagement_details
-                (engagement_id, location, poc, tsc, scope, repeat_flag, soc_type, as_of_date, review_period_start, review_period_end)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (engagement_id, location, poc, tsc, scope, repeat_flag, soc_type, as_of_date, review_period_start, review_period_end, roc_delivery_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $detailsStmt->bind_param(
-            'issssissss',
+            'issssisssss',
             $engagementId, $locationValue, $pocValue, $tscValue, $scopeValue, $e['repeat_flag'],
-            $e['soc_type'], $e['as_of_date'], $e['review_period_start'], $e['review_period_end']
+            $e['soc_type'], $e['as_of_date'], $e['review_period_start'], $e['review_period_end'], $e['roc_delivery_date']
         );
         if (!$detailsStmt->execute()) throw new \Exception('Failed to save engagement details for "' . $e['client_name'] . '": ' . $detailsStmt->error);
         $detailsStmt->close();

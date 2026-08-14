@@ -14,6 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
         tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
     }
 
+    // ROC Delivery Date only matters when PCI is checked, regardless of what
+    // else is checked alongside it.
+    const rocDateWrap = document.getElementById('edit_eng_roc_date_wrap');
+    const rocDateInput = document.getElementById('edit_eng_roc_delivery_date');
+    function syncRocDateVisibility() {
+        const pciChecked = checkedAuditTypeNames().includes('PCI');
+        rocDateWrap.classList.toggle('d-none', !pciChecked);
+        if (!pciChecked) rocDateInput.value = '';
+    }
+
     const socTypeWrap = document.getElementById('edit_eng_soc_type_wrap');
     const socTypeSelect = document.getElementById('edit_eng_soc_type');
     const asOfWrap = document.getElementById('edit_eng_as_of_wrap');
@@ -33,9 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('edit_eng_audit_types')?.addEventListener('change', () => {
         syncTscVisibility();
         syncSocTypeVisibility();
+        syncRocDateVisibility();
     });
 
-    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, rocDeliveryDate, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
@@ -52,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit_eng_as_of_date').value = data.asOfDate || '';
         document.getElementById('edit_eng_review_period_start').value = data.reviewPeriodStart || '';
         document.getElementById('edit_eng_review_period_end').value = data.reviewPeriodEnd || '';
+        rocDateInput.value = data.rocDeliveryDate || '';
 
         const selectedAuditTypes = (data.auditTypeIds || []).map(String);
         document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]').forEach(cb => {
@@ -65,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         syncTscVisibility();
         syncSocTypeVisibility();
+        syncRocDateVisibility();
     }
 
     function open(data) {
@@ -94,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 asOfDate: btn.getAttribute('data-as-of-date') || '',
                 reviewPeriodStart: btn.getAttribute('data-review-period-start') || '',
                 reviewPeriodEnd: btn.getAttribute('data-review-period-end') || '',
+                rocDeliveryDate: btn.getAttribute('data-roc-delivery-date') || '',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),
             });

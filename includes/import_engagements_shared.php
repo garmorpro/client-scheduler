@@ -286,6 +286,19 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             continue;
         }
 
+        // ROC (Report on Compliance) Delivery Date - only relevant for PCI
+        // engagements, but harmless to store regardless (same reasoning as
+        // TSC below).
+        $rocDeliveryDateRaw = trim((string) ($row['roc_delivery_date'] ?? ''));
+        $rocDeliveryDate = null;
+        if ($rocDeliveryDateRaw !== '') {
+            $rocDeliveryDate = engagement_import_parse_date($rocDeliveryDateRaw);
+            if ($rocDeliveryDate === null) {
+                $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "roc_delivery_date \"$rocDeliveryDateRaw\" isn't a valid date."];
+                continue;
+            }
+        }
+
         $repeatRaw = strtolower(trim((string) ($row['repeat'] ?? '')));
         $repeatFlag = in_array($repeatRaw, ['yes', 'y', 'true', '1'], true) ? 1 : 0;
 
@@ -302,6 +315,7 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             'as_of_date' => $asOfDate,
             'review_period_start' => $reviewStart,
             'review_period_end' => $reviewEnd,
+            'roc_delivery_date' => $rocDeliveryDate,
             'location' => trim((string) ($row['location'] ?? '')),
             'poc' => trim((string) ($row['poc'] ?? '')),
             'scope' => trim((string) ($row['scope'] ?? '')),
