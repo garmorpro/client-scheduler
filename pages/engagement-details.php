@@ -3,6 +3,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_once __DIR__ . '/../includes/audit_timeline_fields.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -31,7 +32,7 @@ if (isset($_GET['id'])) {
         }
     }
 
-    $engagementQuery = "SELECT client_name, status, budgeted_hours, manager, notes, year FROM engagements WHERE engagement_id = ?";
+    $engagementQuery = "SELECT client_name, engagement_name, status, budgeted_hours, manager, notes, year FROM engagements WHERE engagement_id = ?";
     $stmt = $conn->prepare($engagementQuery);
     $stmt->bind_param('i', $engagementId);
     $stmt->execute();
@@ -245,6 +246,10 @@ if (isset($_GET['id'])) {
     echo json_encode([
         'engagement_id' => $engagementId,
         'client_name' => $engagement['client_name'] ?? '',
+        'engagement_name' => $engagement['engagement_name'] ?? null,
+        // What the modal header should actually show - engagement_name when
+        // set, otherwise just the client name. See includes/engagement_helpers.php.
+        'display_name' => engagement_display_name($engagement['client_name'] ?? '', $engagement['engagement_name'] ?? null),
         'status' => $engagement['status'] ?? '',
         'year' => $engagement['year'] ?? null,
         'total_hours' => $totalHours,

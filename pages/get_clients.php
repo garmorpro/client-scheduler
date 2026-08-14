@@ -2,6 +2,7 @@
 require_once '../includes/db.php'; // adjust path if needed
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_master_schedule')) {
     http_response_code(403);
@@ -15,12 +16,12 @@ header('Content-Type: application/json');
 // Master Schedule "add staff" flow can offer the right audit type choices
 // once a specific engagement is picked, without a second round trip.
 $result = $conn->query("
-    SELECT e.engagement_id, e.client_name, e.status,
+    SELECT e.engagement_id, e.client_name, e.engagement_name, e.status,
         at.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color
     FROM engagements e
     LEFT JOIN engagement_audit_types eat ON eat.engagement_id = e.engagement_id
     LEFT JOIN audit_types at ON at.audit_type_id = eat.audit_type_id AND at.is_active = 1
-    ORDER BY e.client_name ASC
+    ORDER BY e.client_name ASC, e.engagement_name ASC
 ");
 
 $clients = [];
@@ -34,6 +35,12 @@ if ($result) {
             $clients[] = [
                 'engagement_id' => (int) $engagementId,
                 'client_name' => $row['client_name'],
+                'engagement_name' => $row['engagement_name'],
+                // What to show in the staffing autocomplete's suggestion
+                // list - "LivePerson — Conversation Cloud" when this
+                // client has more than one engagement, otherwise just
+                // "LivePerson". See includes/engagement_helpers.php.
+                'display_name' => engagement_combined_label($row['client_name'], $row['engagement_name']),
                 'status' => $row['status'] ?: 'confirmed',
                 'audit_types' => [],
             ];

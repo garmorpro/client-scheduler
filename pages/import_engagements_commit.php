@@ -73,8 +73,8 @@ try {
         $clientId = $clientIdByName[strtolower(trim($e['client_name']))] ?? null;
         if (!$clientId) throw new \Exception('Could not resolve client_id for "' . $e['client_name'] . '" - this should not happen.');
 
-        $stmt = $conn->prepare("INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year, manager, notes) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param('issssss', $clientId, $e['client_name'], $e['budgeted_hours'], $e['status'], $e['year'], $e['manager'], $e['notes']);
+        $stmt = $conn->prepare("INSERT INTO engagements (client_id, client_name, engagement_name, budgeted_hours, status, year, manager, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param('isssssss', $clientId, $e['client_name'], $e['engagement_name'], $e['budgeted_hours'], $e['status'], $e['year'], $e['manager'], $e['notes']);
         if (!$stmt->execute()) throw new \Exception('Failed to create engagement for "' . $e['client_name'] . '" (' . $e['year'] . '): ' . $stmt->error);
         $engagementId = $stmt->insert_id;
         $stmt->close();
@@ -122,9 +122,9 @@ try {
         if (!isset($engagementIdByKey[$h['engagement_key']])) $missingKeys[$h['engagement_key']] = true;
     }
     if (!empty($missingKeys)) {
-        $res = $conn->query("SELECT engagement_id, client_name, year FROM engagements");
+        $res = $conn->query("SELECT engagement_id, client_name, engagement_name, year FROM engagements");
         while ($row = $res->fetch_assoc()) {
-            $key = engagement_import_key($row['client_name'], $row['year']);
+            $key = engagement_import_key($row['client_name'], $row['year'], $row['engagement_name'] ?? '');
             if (isset($missingKeys[$key])) $engagementIdByKey[$key] = (int) $row['engagement_id'];
         }
     }

@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/session_init.php';
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -119,7 +120,7 @@ $stmt->close();
 // ------------------------------------------------------
 // Selected week details
 $sqlWeekDetails = "
-    SELECT e.entry_id, e.assigned_hours, e.engagement_id, eng.client_name, eng.status, eng.manager
+    SELECT e.entry_id, e.assigned_hours, e.engagement_id, eng.client_name, eng.engagement_name, eng.status, eng.manager
     FROM entries e
     LEFT JOIN engagements eng ON e.engagement_id = eng.engagement_id
     WHERE e.user_id = ?
@@ -337,6 +338,11 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
         <?php foreach ($engagements as $eng):
           $teamMembers = getTeamMembers($conn, $eng['engagement_id'], $weekStartDate, $userId, $eng['manager'] ?? null);
           $clientName = $eng['client_name'] ?? 'Unknown';
+          // Combined label ("LivePerson — Conversation Cloud") so this list
+          // stays unambiguous when staffed on more than one of a client's
+          // engagements - avatar color/initials stay keyed to the client
+          // alone, so the same client always reads with the same avatar.
+          $displayName = engagement_combined_label($clientName, $eng['engagement_name'] ?? null);
           $status = strtolower($eng['status'] ?? 'confirmed');
           $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';
           $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
@@ -348,7 +354,7 @@ $firstName = trim(explode(' ', $_SESSION['full_name'] ?? '')[0] ?? 'there');
                data-restrict-financials="<?php echo $restrictEngagementFinancials ? '1' : '0'; ?>">
             <div class="ms-entry-avatar" style="background-color:<?php echo avatar_color($clientName); ?>;"><?php echo htmlspecialchars(avatar_initials($clientName)); ?></div>
             <div class="ms-entry-main">
-              <div class="ms-entry-name"><?php echo htmlspecialchars($clientName); ?></div>
+              <div class="ms-entry-name"><?php echo htmlspecialchars($displayName); ?></div>
               <div class="ms-entry-team">Team: <b><?php echo !empty($teamMembers) ? htmlspecialchars(implode(', ', $teamMembers)) : 'Just you'; ?></b></div>
             </div>
             <span class="eng-status-pill <?php echo $statusClass; ?>"><span class="dot"></span><?php echo htmlspecialchars($statusLabel); ?></span>

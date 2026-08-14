@@ -35,10 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
         syncSocTypeVisibility();
     });
 
-    // data: { engagementId, clientName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
+        document.getElementById('edit_eng_engagement_name').value = data.engagementName || '';
         document.getElementById('edit_eng_location').value = data.location || '';
         document.getElementById('edit_eng_poc').value = data.poc || '';
         document.getElementById('edit_eng_budgeted_hours').value = data.budgetedHours;
@@ -80,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             open({
                 engagementId: btn.getAttribute('data-engagement-id'),
                 clientName: btn.getAttribute('data-client-name'),
+                engagementName: btn.getAttribute('data-engagement-name') || '',
                 budgetedHours: btn.getAttribute('data-budgeted-hours'),
                 status: btn.getAttribute('data-status'),
                 manager: btn.getAttribute('data-manager') || '',

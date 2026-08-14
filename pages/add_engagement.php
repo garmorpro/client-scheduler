@@ -27,6 +27,12 @@ if (!csrf_valid()) {
 // Validate POST
 $client_id     = $_POST['client_id'] ?? null;
 $client_name   = $_POST['client_name'] ?? null;
+// Optional - a client with just one engagement doesn't need one; a client
+// running several engagements under different products (e.g. LivePerson:
+// Conversation Cloud, Tenfold, Voicebase) uses this to tell them apart.
+// Null/blank means "just use the client name" everywhere it's displayed -
+// see includes/engagement_helpers.php.
+$engagement_name = trim($_POST['engagement_name'] ?? '');
 $budget_hours  = $_POST['budget_hours'] ?? null;
 $status        = $_POST['status'] ?? null;
 $year          = $_POST['year'] ?? date('Y');
@@ -47,16 +53,17 @@ if (!$client_id || !$client_name || !$budget_hours || !$status || !$manager) {
 }
 
 // Insert into engagements including manager (as string)
+$engagementNameValue = $engagement_name !== '' ? $engagement_name : null;
 $stmt = $conn->prepare("
-    INSERT INTO engagements (client_id, client_name, budgeted_hours, status, year, manager, notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO engagements (client_id, client_name, engagement_name, budgeted_hours, status, year, manager, notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ");
 if (!$stmt) {
     echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
     exit;
 }
 
-$stmt->bind_param('issssss', $client_id, $client_name, $budget_hours, $status, $year, $manager, $notes);
+$stmt->bind_param('isssssss', $client_id, $client_name, $engagementNameValue, $budget_hours, $status, $year, $manager, $notes);
 
 if ($stmt->execute()) {
     $engagement_id = $stmt->insert_id;

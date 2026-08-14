@@ -2,6 +2,7 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -19,13 +20,21 @@ if (isset($_GET['query'])) {
     // this data from.
     $clients = [];
     if (user_has_permission($conn, 'view_clients_engagements')) {
-        $clientQuery = "SELECT engagement_id AS id, client_name AS name, 'client' AS type FROM engagements WHERE client_name LIKE ?";
+        // Matches against the engagement's own name too (e.g. "Tenfold"
+        // finds LivePerson's Tenfold engagement) and shows the combined
+        // "Client — Engagement" label so multiple results for one client
+        // are distinguishable - see includes/engagement_helpers.php.
+        $clientQuery = "SELECT engagement_id AS id, client_name, engagement_name, 'client' AS type FROM engagements WHERE client_name LIKE ? OR engagement_name LIKE ?";
         $stmt = $conn->prepare($clientQuery);
-        $stmt->bind_param('s', $query);
+        $stmt->bind_param('ss', $query, $query);
         $stmt->execute();
         $clientResult = $stmt->get_result();
         while ($row = $clientResult->fetch_assoc()) {
-            $clients[] = $row;
+            $clients[] = [
+                'id' => $row['id'],
+                'name' => engagement_combined_label($row['client_name'], $row['engagement_name']),
+                'type' => $row['type'],
+            ];
         }
     }
 

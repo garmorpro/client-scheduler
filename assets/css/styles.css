@@ -2182,6 +2182,7 @@ body.dark-mode #editEngagementModal .eng-edit-checkbox-label input[type="checkbo
     color: #9aa39d; margin-bottom: 6px;
 }
 body.dark-mode #editEngagementModal .eng-edit-field label { color: #6e7975; }
+#editEngagementModal .eng-edit-optional { font-weight: 500; text-transform: none; letter-spacing: normal; }
 #editEngagementModal .eng-edit-input {
     box-sizing: border-box;
     width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
@@ -2255,6 +2256,7 @@ body.dark-mode #addEngagementModal .eng-edit-checkbox-label input[type="checkbox
     color: #9aa39d; margin-bottom: 6px;
 }
 body.dark-mode #addEngagementModal .eng-edit-field label { color: #6e7975; }
+#addEngagementModal .eng-edit-optional { font-weight: 500; text-transform: none; letter-spacing: normal; }
 #addEngagementModal .eng-edit-input {
     box-sizing: border-box;
     width: 100%; height: 42px; padding: 9px 12px; border-radius: 10px; border: 1px solid #e3e7e5;
@@ -4303,6 +4305,9 @@ body.dark-mode .ch-item { border-color: #29302e; }
 .ch-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .ch-item-name { font-size: 13.5px; font-weight: 700; color: #16211f; display: flex; align-items: center; gap: 8px; }
 body.dark-mode .ch-item-name { color: #edf1ee; }
+/* Only rendered when engagement_name is set - i.e. this client has more
+   than one engagement in the same year and needs telling apart. */
+.ch-item-eng-name { font-weight: 700; }
 .ch-item-total { font-size: 11.5px; color: #9aa39d; margin-top: 2px; }
 body.dark-mode .ch-item-total { color: #6e7975; }
 .ch-item-actions { display: flex; gap: 6px; flex-shrink: 0; }

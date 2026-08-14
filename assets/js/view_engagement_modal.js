@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalBody.innerHTML = `
                 <div class="eng-vm-header">
                     <div class="eng-vm-eng-code">${engCode}</div>
-                    <div class="eng-vm-client-name-lg">${data.client_name || ''}</div>
+                    <div class="eng-vm-client-name-lg">${data.display_name || data.client_name || ''}</div>
                     <div class="eng-vm-status-row">
                         ${statusHtml}
                         ${chipsRow}
@@ -565,6 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.EditEngagementModal.open({
                     engagementId,
                     clientName: data.client_name,
+                    engagementName: data.engagement_name,
                     budgetedHours: data.budgeted_hours,
                     status: data.status,
                     manager: data.manager,

@@ -98,10 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
       wrap.innerHTML = `
         <div class="eng-row clickable status-${eng.status}" data-weeks-toggle>
           <div class="eng-dot"></div>
-          <div class="eng-name">${eng.client_name}</div>
+          <div class="eng-name">${eng.display_name || eng.client_name}</div>
           <div class="eng-hours">${eng.total_hours}h</div>
           <i class="bi bi-chevron-down eng-weeks-chevron"></i>
-          ${canUnassign ? `<button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}"><i class="bi bi-trash"></i></button>` : ''}
+          ${canUnassign ? `<button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.display_name || eng.client_name}"><i class="bi bi-trash"></i></button>` : ''}
         </div>
         <div class="eng-weeks-panel">
           ${weeksHtml || '<div class="eng-week-row text-muted">No weekly hours recorded</div>'}

@@ -27,8 +27,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-function engagement_import_key(string $clientName, $year): string {
-    return strtolower(trim($clientName)) . '|' . trim((string) $year);
+// engagement_name is optional (see storage/migrations/2026-08-13_add_engagement_name.sql) -
+// a client with just one engagement a year doesn't need one, but a client
+// running several concurrent engagements under different products (e.g.
+// LivePerson: Conversation Cloud, Tenfold, Voicebase) needs it to keep
+// them from colliding under the old client+year-only key, where the 2nd
+// and 3rd same-year engagement for one client would silently look like a
+// duplicate of the 1st and get skipped. Blank/null normalizes to '' on
+// both sides (DB rows and sheet rows), so a client with a single unnamed
+// engagement still keys exactly as it always did.
+function engagement_import_key(string $clientName, $year, string $engagementName = ''): string {
+    return strtolower(trim($clientName)) . '|' . trim((string) $year) . '|' . strtolower(trim($engagementName));
 }
 
 function engagement_import_parse_date($value): ?string {
@@ -118,10 +127,10 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
     $res = $conn->query("SELECT client_name FROM clients");
     while ($row = $res->fetch_assoc()) $existingClients[strtolower(trim($row['client_name']))] = true;
 
-    $existingEngagements = []; // "client|year" => ['engagement_id' => id, 'audit_type_ids' => [...]]
-    $res = $conn->query("SELECT engagement_id, client_name, year FROM engagements");
+    $existingEngagements = []; // "client|year|engagement_name" => ['engagement_id' => id, 'audit_type_ids' => [...]]
+    $res = $conn->query("SELECT engagement_id, client_name, engagement_name, year FROM engagements");
     while ($row = $res->fetch_assoc()) {
-        $key = engagement_import_key($row['client_name'], $row['year']);
+        $key = engagement_import_key($row['client_name'], $row['year'], $row['engagement_name'] ?? '');
         $existingEngagements[$key] = ['engagement_id' => (int) $row['engagement_id'], 'audit_type_ids' => []];
     }
     if (!empty($existingEngagements)) {
@@ -207,6 +216,10 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
         $rowNum = $row['__row'];
         $clientName = trim((string) ($row['client_name'] ?? ''));
         $year = trim((string) ($row['year'] ?? ''));
+        // Optional - only needed when a client has more than one engagement
+        // in the same year. See engagement_import_key() above.
+        $engagementName = trim((string) ($row['engagement_name'] ?? ''));
+        $engLabel = $engagementName !== '' ? "$clientName ($engagementName)" : $clientName;
 
         if ($clientName === '') { $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'client_name is required.']; continue; }
         if ($year === '' || !ctype_digit($year)) { $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'year is required and must be a 4-digit number.']; continue; }
@@ -217,13 +230,13 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             continue;
         }
 
-        $key = engagement_import_key($clientName, $year);
+        $key = engagement_import_key($clientName, $year, $engagementName);
         if (isset($existingEngagements[$key])) {
-            $warnings[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$clientName already has a $year engagement - this row will be skipped, not duplicated."];
+            $warnings[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$engLabel already has a $year engagement - this row will be skipped, not duplicated."];
             continue;
         }
         if (isset($engagementKeysInFile[$key])) {
-            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$clientName / $year is listed more than once in this sheet (also row {$engagementKeysInFile[$key]})."];
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "$engLabel / $year is listed more than once in this sheet (also row {$engagementKeysInFile[$key]})."];
             continue;
         }
         $engagementKeysInFile[$key] = $rowNum;
@@ -278,6 +291,7 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
 
         $engagementsToCreate[$key] = [
             'client_name' => $clientName,
+            'engagement_name' => $engagementName !== '' ? $engagementName : null,
             'year' => (int) $year,
             'status' => $status,
             'budgeted_hours' => (float) $budgetedHours,
@@ -306,7 +320,7 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
     // the weeks the template shipped with - a hand-added extra week
     // column still works the same way.
     // ---------------------------------------------------------------
-    $fixedCols = ['client_name', 'year', 'employee_full_name', 'audit_type', '__row'];
+    $fixedCols = ['client_name', 'engagement_name', 'year', 'employee_full_name', 'audit_type', '__row'];
     $weekColumns = []; // header text => parsed Monday date
     if (!empty($hoursRows)) {
         foreach (array_keys($hoursRows[0]) as $colName) {
@@ -329,13 +343,18 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
         $clientName = trim((string) ($row['client_name'] ?? ''));
         $year = trim((string) ($row['year'] ?? ''));
         $employeeName = trim((string) ($row['employee_full_name'] ?? ''));
+        // Optional - only needed to pick out which of a client's several
+        // engagements these hours belong to. Leave blank when the client
+        // only has one engagement that year.
+        $engagementName = trim((string) ($row['engagement_name'] ?? ''));
+        $engLabel = $engagementName !== '' ? "$clientName ($engagementName)" : $clientName;
 
         if ($clientName === '' || $year === '') { $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'client_name and year are required.']; continue; }
         if ($employeeName === '') { $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => 'employee_full_name is required.']; continue; }
 
-        $key = engagement_import_key($clientName, $year);
+        $key = engagement_import_key($clientName, $year, $engagementName);
         if (!isset($resolvedEngagements[$key])) {
-            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "No engagement found for $clientName / $year - add it to the Engagements sheet, or check the client name/year matches an existing engagement exactly."];
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "No engagement found for $engLabel / $year - add it to the Engagements sheet, or check the client name/engagement_name/year matches an existing engagement exactly."];
             continue;
         }
 
@@ -361,13 +380,13 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             $auditTypeId = $match['id'];
             $engAuditTypeIds = $resolvedEngagements[$key]['audit_type_ids'] ?? [];
             if (!empty($engAuditTypeIds) && !in_array($auditTypeId, $engAuditTypeIds, true)) {
-                $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "\"$auditTypeRaw\" isn't one of $clientName's selected audit types for this engagement - double check this row."];
+                $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "\"$auditTypeRaw\" isn't one of $engLabel's selected audit types for this engagement - double check this row."];
             }
         }
 
         $rowKey = $key . '|' . $userId . '|' . ($auditTypeId ?? '0');
         if (isset($rowSeenKeys[$rowKey])) {
-            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName already has a row for $clientName / $year with this audit_type (also row {$rowSeenKeys[$rowKey]}) - combine them into one row instead of two."];
+            $errors[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName already has a row for $engLabel / $year with this audit_type (also row {$rowSeenKeys[$rowKey]}) - combine them into one row instead of two."];
             continue;
         }
         $rowSeenKeys[$rowKey] = $rowNum;
@@ -397,7 +416,7 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             ];
         }
         if (!$rowHadAnyHours) {
-            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName's row for $clientName / $year has no hours filled in on any week - this row won't create anything."];
+            $warnings[] = ['sheet' => 'Weekly Hours', 'row' => $rowNum, 'message' => "$employeeName's row for $engLabel / $year has no hours filled in on any week - this row won't create anything."];
         }
     }
 

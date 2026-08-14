@@ -2,6 +2,7 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 
 $isAdmin = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'admin';
 $isManager = isset($_SESSION['user_role']) && strtolower($_SESSION['user_role']) === 'manager';
@@ -93,7 +94,7 @@ $startDate = date('Y-m-d', $startMonday);
 $endDate = date('Y-m-d', strtotime('+26 weeks', $startMonday));
 
 $query = "
-    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, a.week_start, a.assigned_hours, e.status AS engagement_status,
+    SELECT a.entry_id, a.user_id, a.engagement_id, e.client_name, e.engagement_name, a.week_start, a.assigned_hours, e.status AS engagement_status,
         a.audit_type_id, at.name AS audit_type_name, at.color AS audit_type_color
     FROM entries a
     LEFT JOIN engagements e ON a.engagement_id = e.engagement_id
@@ -110,6 +111,7 @@ while ($row = $result->fetch_assoc()) {
     $entries[$row['user_id']][$row['week_start']][] = [
         'entry_id' => $row['entry_id'],
         'client_name' => $row['client_name'],
+        'engagement_name' => $row['engagement_name'],
         'assigned_hours' => $row['assigned_hours'],
         'engagement_id' => $row['engagement_id'],
         'engagement_status' => $row['engagement_status'],
@@ -450,7 +452,12 @@ updateLastRowRadius();
                                 case 'not_confirmed': $entry_class='badge-not-confirmed'; break;
                                 default: $entry_class='badge-confirmed'; break;
                             }
-                            $clientName = htmlspecialchars($entry['client_name']);
+                            // Pill text stays short (engagement_name if set,
+                            // otherwise the client name) - there's no room for
+                            // "Client — Engagement" on a small badge. The full
+                            // combined label shows in the hover tooltip instead.
+                            $clientName = htmlspecialchars(engagement_display_name($entry['client_name'], $entry['engagement_name'] ?? null));
+                            $combinedLabel = htmlspecialchars(engagement_combined_label($entry['client_name'], $entry['engagement_name'] ?? null));
                             $assignedHours = htmlspecialchars($entry['assigned_hours']);
                             $engagementId = htmlspecialchars($entry['engagement_id'] ?? '');
                             $auditTypeId = htmlspecialchars($entry['audit_type_id'] ?? '');
@@ -459,7 +466,7 @@ updateLastRowRadius();
                             $draggableAttr = $canEditSchedule ? "draggable='true' class='badge badge-status $entry_class mt-1 draggable-badge'" : "class='badge badge-status $entry_class mt-1'";
                             $badgeId = "badge-entry-{$entry['entry_id']}";
                             $auditDot = $auditTypeName !== '' ? "<span class='audit-type-dot' style='background:{$auditTypeColor}'></span>" : '';
-                            $badgeTitle = $auditTypeName !== '' ? "Drag to move &middot; {$auditTypeName}" : 'Drag to move';
+                            $badgeTitle = $auditTypeName !== '' ? "{$combinedLabel} &middot; Drag to move &middot; {$auditTypeName}" : "{$combinedLabel} &middot; Drag to move";
                             $cellContent .= "<span id='{$badgeId}' {$draggableAttr} data-entry-id='{$entry['entry_id']}' data-user-id='{$userId}' data-engagement-id='{$engagementId}' data-audit-type-id='{$auditTypeId}' data-audit-type-name='{$auditTypeName}' data-week-start='{$weekKey}' data-client-name='{$clientName}' title='{$badgeTitle}'>{$auditDot}{$clientName} ({$assignedHours})</span>";
                             $totalAssignedHours += floatval($entry['assigned_hours']);
                         }

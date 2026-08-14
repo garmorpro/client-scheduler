@@ -20,6 +20,10 @@ if (!csrf_valid()) {
 }
 
 $engagement_id = intval($_POST['engagement_id'] ?? 0);
+// Optional - see add_engagement.php / includes/engagement_helpers.php.
+// Blank clears it back to null (falls back to the client name), same
+// "always overwrite wholesale" approach as the rest of this form.
+$engagement_name = trim($_POST['engagement_name'] ?? '');
 $budgeted_hours = $_POST['budgeted_hours'] ?? null;
 $status = $_POST['status'] ?? null;
 $manager = $_POST['manager'] ?? null;
@@ -38,8 +42,9 @@ if (!$engagement_id || $budgeted_hours === null || !$status || !$manager) {
     exit;
 }
 
-$stmt = $conn->prepare("UPDATE engagements SET budgeted_hours = ?, status = ?, manager = ?, notes = ? WHERE engagement_id = ?");
-$stmt->bind_param('ssssi', $budgeted_hours, $status, $manager, $notes, $engagement_id);
+$engagementNameValue = $engagement_name !== '' ? $engagement_name : null;
+$stmt = $conn->prepare("UPDATE engagements SET engagement_name = ?, budgeted_hours = ?, status = ?, manager = ?, notes = ? WHERE engagement_id = ?");
+$stmt->bind_param('sssssi', $engagementNameValue, $budgeted_hours, $status, $manager, $notes, $engagement_id);
 
 if ($stmt->execute()) {
     $stmt->close();

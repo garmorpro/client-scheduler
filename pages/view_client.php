@@ -59,12 +59,12 @@ $stmt2->close();
 // only ever showing archived years and missing every active engagement
 // regardless of its status (confirmed/pending/not_confirmed).
 $stmt4 = $conn->prepare("
-    SELECT e.engagement_id, e.status, e.budgeted_hours, e.manager, e.notes, e.year,
+    SELECT e.engagement_id, e.engagement_name, e.status, e.budgeted_hours, e.manager, e.notes, e.year,
         COALESCE(SUM(en.assigned_hours), 0) AS allocated_hours
     FROM engagements e
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     WHERE e.client_id = ?
-    GROUP BY e.engagement_id, e.status, e.budgeted_hours, e.manager, e.notes, e.year
+    GROUP BY e.engagement_id, e.engagement_name, e.status, e.budgeted_hours, e.manager, e.notes, e.year
 ");
 $stmt4->bind_param("i", $client_id);
 $stmt4->execute();
@@ -77,6 +77,9 @@ foreach ($activeRows as $row) {
         'type' => 'active',
         'engagement_year' => $row['year'],
         'sort_id' => (int) $row['engagement_id'],
+        // Optional - only set when this client has more than one
+        // engagement to tell apart. See includes/engagement_helpers.php.
+        'engagement_name' => $row['engagement_name'],
         'status' => $row['status'],
         'budgeted_hours' => $row['budgeted_hours'],
         'allocated_hours' => $row['allocated_hours'],
@@ -93,6 +96,10 @@ foreach ($archivedRows as $row) {
         'type' => 'archived',
         'engagement_year' => $row['engagement_year'],
         'sort_id' => (int) $row['history_id'],
+        // client_engagement_history predates engagement_name and has no
+        // column for it - archived rows just show the client name, same as
+        // every engagement did before this feature existed.
+        'engagement_name' => null,
         'status' => null,
         'budgeted_hours' => $row['budgeted_hours'],
         'allocated_hours' => $row['allocated_hours'],

@@ -4,6 +4,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -23,6 +24,7 @@ $engagementQuery = "
     SELECT
         e.engagement_id,
         c.client_name,
+        e.engagement_name,
         e.status,
         e.budgeted_hours,
         e.manager,
@@ -42,7 +44,7 @@ $engagementQuery = "
     JOIN clients c ON e.client_id = c.client_id
     LEFT JOIN entries en ON e.engagement_id = en.engagement_id
     LEFT JOIN audit_engagement_details d ON d.engagement_id = e.engagement_id
-    GROUP BY e.engagement_id, c.client_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag, d.soc_type, d.as_of_date, d.review_period_start, d.review_period_end
+    GROUP BY e.engagement_id, c.client_name, e.engagement_name, e.status, e.budgeted_hours, e.manager, e.notes, d.tsc, d.location, d.poc, d.scope, d.repeat_flag, d.soc_type, d.as_of_date, d.review_period_start, d.review_period_end
     ORDER BY c.client_name ASC
 ";
 $engagementResult = mysqli_query($conn, $engagementQuery);
@@ -68,6 +70,7 @@ foreach ($engagementRows as $row) {
     if ($allocated > $budgeted) {
         $overBudgetList[] = [
             'client_name' => $row['client_name'],
+            'display_name' => engagement_combined_label($row['client_name'], $row['engagement_name'] ?? null),
             'budgeted_hours' => $budgeted,
             'allocated_hours' => $allocated,
             'over_hours' => $allocated - $budgeted
@@ -224,6 +227,11 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
                             $avatarColor = avatar_color($row['client_name']);
                             $initials = avatar_initials($row['client_name']);
+                            // Combined label ("LivePerson — Conversation Cloud") so
+                            // clients with several concurrent engagements are
+                            // distinguishable in this list - just the client name
+                            // when engagement_name isn't set.
+                            $rowCombinedLabel = engagement_combined_label($row['client_name'], $row['engagement_name'] ?? null);
 
                             $rowBudgeted = (float)$row['budgeted_hours'];
                             $rowAllocated = (float)$row['total_assigned_hours'];
@@ -246,7 +254,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                             <td>
                                 <div class="client-cell">
                                     <div class="client-tile" style="background-color: <?php echo $avatarColor; ?>;"><?php echo htmlspecialchars($initials); ?></div>
-                                    <span class="client-name"><?php echo htmlspecialchars($row['client_name']); ?></span>
+                                    <span class="client-name"><?php echo htmlspecialchars($rowCombinedLabel); ?></span>
                                 </div>
                             </td>
                             <td class="num"><span class="hours-value"><?php echo $row['budgeted_hours']; ?></span></td>
@@ -274,6 +282,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                                         data-bs-toggle="modal" data-bs-target="#editEngagementModal"
                                         data-engagement-id="<?php echo $row['engagement_id']; ?>"
                                         data-client-name="<?php echo htmlspecialchars($row['client_name']); ?>"
+                                        data-engagement-name="<?php echo htmlspecialchars($row['engagement_name'] ?? ''); ?>"
                                         data-budgeted-hours="<?php echo $row['budgeted_hours']; ?>"
                                         data-status="<?php echo htmlspecialchars($row['status']); ?>"
                                         data-manager="<?php echo htmlspecialchars($row['manager'] ?? ''); ?>"
@@ -348,7 +357,7 @@ $utilizationPct = $totalBudgetedHours > 0 ? round(($totalAllocatedHours / $total
                     <?php foreach ($overBudgetList as $ob): ?>
                         <div class="eng-ob-row">
                             <div class="client-tile" style="background-color: <?php echo avatar_color($ob['client_name']); ?>; width:26px; height:26px; font-size:10px;"><?php echo htmlspecialchars(avatar_initials($ob['client_name'])); ?></div>
-                            <div class="eng-ob-client"><?php echo htmlspecialchars($ob['client_name']); ?></div>
+                            <div class="eng-ob-client"><?php echo htmlspecialchars($ob['display_name']); ?></div>
                             <div class="eng-ob-hours"><?php echo $ob['allocated_hours']; ?> of <?php echo $ob['budgeted_hours']; ?>h</div>
                             <div class="eng-ob-over">+<?php echo $ob['over_hours']; ?>h</div>
                         </div>

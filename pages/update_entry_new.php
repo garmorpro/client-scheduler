@@ -32,9 +32,13 @@ $audit_type_id = isset($data['audit_type_id']) && $data['audit_type_id'] !== '' 
 
 if ($engagement_id > 0) {
     // Trust the engagement_id the client already knew (the badge being
-    // edited is already tied to one specific engagement, unambiguously).
-    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE engagement_id = ? AND client_name = ?");
-    $stmt->bind_param('is', $engagement_id, $client_name);
+    // edited is already tied to one specific engagement, unambiguously). No
+    // longer cross-checked against client_name - see add_entry_new.php for
+    // why: engagement_id alone is already authoritative, and the input
+    // field can now show a combined "Client — Engagement Name" label that
+    // wouldn't equal the raw client_name column even on a correct pick.
+    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE engagement_id = ?");
+    $stmt->bind_param('i', $engagement_id);
     $stmt->execute();
     if ($stmt->get_result()->num_rows === 0) {
         http_response_code(404);

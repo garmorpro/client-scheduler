@@ -23,9 +23,15 @@
     loadClients();
     document.addEventListener('auditTypesUpdated', loadClients);
 
+    // Matches against both the client's own name and the engagement's name
+    // (e.g. typing "Tenfold" finds LivePerson's Tenfold engagement even
+    // though "LivePerson" itself doesn't contain "Tenfold").
     function searchClients(query) {
         query = query.toLowerCase();
-        return activeClients.filter(c => c.client_name.toLowerCase().includes(query));
+        return activeClients.filter(c =>
+            c.client_name.toLowerCase().includes(query) ||
+            (c.engagement_name || '').toLowerCase().includes(query)
+        );
     }
 
     // Find the single engagement a badge's data-engagement-id refers to, so
@@ -297,10 +303,14 @@
             matches.forEach(client => {
                 const item = document.createElement('div');
                 item.className = 'cell-edit-suggestion';
-                item.textContent = client.client_name;
+                // "LivePerson — Conversation Cloud" when this client has more
+                // than one engagement, otherwise just "LivePerson" - lets
+                // someone tell apart a client's several concurrent engagements
+                // while picking.
+                item.textContent = client.display_name || client.client_name;
                 item.addEventListener('click', e => {
                     e.stopPropagation();
-                    clientInput.value = client.client_name;
+                    clientInput.value = client.display_name || client.client_name;
                     suggestionsList.style.display = 'none';
                     selectedEngagement = client;
                     selectedAuditTypeIds.clear();

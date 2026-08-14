@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/session_init.php';
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/avatar_helpers.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /");
@@ -41,11 +42,11 @@ $userId = $_SESSION['user_id'];
 // needed here to exclude archived engagements - they're simply gone from
 // this join already.
 $engagementsQuery = "
-    SELECT e.engagement_id, e.client_name, e.status, e.manager, SUM(en.assigned_hours) AS my_hours
+    SELECT e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager, SUM(en.assigned_hours) AS my_hours
     FROM entries en
     JOIN engagements e ON en.engagement_id = e.engagement_id
     WHERE en.user_id = ?
-    GROUP BY e.engagement_id, e.client_name, e.status, e.manager
+    GROUP BY e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager
     ORDER BY FIELD(e.status, 'confirmed', 'pending', 'not_confirmed'), e.client_name ASC
 ";
 $stmt = $conn->prepare($engagementsQuery);
@@ -141,6 +142,10 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerN
         <?php foreach ($myEngagements as $eng):
           $teammates = getEngagementTeammates($conn, $eng['engagement_id'], $userId, $eng['manager'] ?? null);
           $clientName = $eng['client_name'] ?? 'Unknown';
+          // Combined label so this lookup list stays unambiguous when
+          // staffed on more than one of a client's engagements - avatar
+          // color/initials stay keyed to the client alone.
+          $displayName = engagement_combined_label($clientName, $eng['engagement_name'] ?? null);
           $status = strtolower($eng['status'] ?? 'confirmed');
           $statusClass = in_array($status, ['confirmed', 'pending', 'not_confirmed'], true) ? str_replace('_', '-', $status) : 'confirmed';
           $statusLabel = $status === 'not_confirmed' ? 'Not Confirmed' : ucfirst($status);
@@ -152,7 +157,7 @@ function getEngagementTeammates($conn, $engagement_id, $currentUserId, $managerN
                data-restrict-financials="<?php echo $restrictEngagementFinancials ? '1' : '0'; ?>">
             <div class="ms-entry-avatar" style="background-color:<?php echo avatar_color($clientName); ?>;"><?php echo htmlspecialchars(avatar_initials($clientName)); ?></div>
             <div class="ms-entry-main">
-              <div class="ms-entry-name"><?php echo htmlspecialchars($clientName); ?></div>
+              <div class="ms-entry-name"><?php echo htmlspecialchars($displayName); ?></div>
               <div class="ms-entry-team">Team: <b><?php echo !empty($teammates) ? htmlspecialchars(implode(', ', $teammates)) : 'Just you'; ?></b></div>
             </div>
             <span class="eng-status-pill <?php echo $statusClass; ?>"><span class="dot"></span><?php echo htmlspecialchars($statusLabel); ?></span>

@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
       row.className = `eng-row status-${eng.status}`;
       row.innerHTML = `
         <div class="eng-dot"></div>
-        <div class="eng-name">${eng.client_name}</div>
+        <div class="eng-name">${eng.display_name || eng.client_name}</div>
         <div class="eng-hours">${eng.total_hours}h</div>
-        <button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.client_name}">
+        <button type="button" class="eng-unassign-btn" title="Unassign" data-engagement-id="${eng.engagement_id}" data-client-name="${eng.display_name || eng.client_name}">
           <i class="bi bi-trash"></i>
         </button>
       `;

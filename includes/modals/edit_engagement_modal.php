@@ -18,6 +18,11 @@
             </div>
 
             <div class="eng-edit-field">
+              <label for="edit_eng_engagement_name">Engagement Name <span class="eng-edit-optional">(optional)</span></label>
+              <input type="text" class="eng-edit-input" id="edit_eng_engagement_name" name="engagement_name" placeholder="e.g. Conversation Cloud - leave blank to just use the client name">
+            </div>
+
+            <div class="eng-edit-field">
               <label for="edit_eng_location">Location</label>
               <input type="text" class="eng-edit-input" id="edit_eng_location" name="location" placeholder="e.g. Charlottesville, VA">
             </div>

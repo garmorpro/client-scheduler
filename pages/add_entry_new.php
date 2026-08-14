@@ -37,9 +37,15 @@ if (!$user_id || !$week_start || !$client_name || $assigned_hours <= 0) {
 if ($engagement_id > 0) {
     // Trust the engagement_id the client resolved via autocomplete - this is
     // the only way to know exactly which engagement was meant when a client
-    // has more than one (client_name alone is ambiguous in that case).
-    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE engagement_id = ? AND client_name = ? LIMIT 1");
-    $stmt->bind_param('is', $engagement_id, $client_name);
+    // has more than one (client_name alone is ambiguous in that case). No
+    // longer cross-checked against client_name: the input field can now
+    // show a combined "Client — Engagement Name" label once engagement_name
+    // exists, which wouldn't equal the raw client_name column even for a
+    // correct pick - engagement_id is already the unambiguous, authoritative
+    // identifier, so a name-text match on top of it was never adding real
+    // protection (client_name is arbitrary client-supplied text anyway).
+    $stmt = $conn->prepare("SELECT engagement_id FROM engagements WHERE engagement_id = ? LIMIT 1");
+    $stmt->bind_param('i', $engagement_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if (!($result && $row = $result->fetch_assoc())) {

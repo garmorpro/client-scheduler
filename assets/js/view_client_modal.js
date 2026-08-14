@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="ch-item-head">
                         <div>
                             <div class="ch-item-name">
+                                ${h.engagement_name ? `<span class="ch-item-eng-name">${h.engagement_name}</span>` : ''}
                                 ${h.type === 'active'
                                     ? `<span class="eng-status-pill ${statusPillClass(h.status)}"><span class="dot"></span>${statusLabel(h.status)}</span>`
                                     : `<span class="eng-status-pill" style="background:#f1f4f3;color:#6b7570;">Archived</span>`}

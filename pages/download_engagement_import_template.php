@@ -79,10 +79,11 @@ $lines = [
     ['Only add a row here for a client that does NOT already exist in the app. If a name matches an existing client, that row is skipped automatically - it will not create a duplicate.', false],
     ['', false],
     ['Engagements tab', true],
-    ['Only add a row here for an engagement that does NOT already exist. An engagement is matched by client_name + year, so an existing client can still get a brand-new engagement row here.', false],
+    ['Only add a row here for an engagement that does NOT already exist. An engagement is matched by client_name + year + engagement_name, so an existing client can still get a brand-new engagement row here.', false],
+    ['engagement_name is OPTIONAL - leave it blank and the client\'s own name is used everywhere. Only fill it in when one client runs more than one engagement in the same year (e.g. a client named "LivePerson" with separate engagements named "Conversation Cloud", "Tenfold", and "Voicebase") - without it, the 2nd and 3rd engagement for that client/year would look like duplicates of the 1st and get skipped.', false],
     ['', false],
     ['Weekly Hours tab', true],
-    ['One row per employee, per engagement - not per week. Every Monday of the current year is its own column to the right; type hours into whichever weeks that person worked on this engagement and leave the rest blank. client_name + year must match a row in the Engagements tab (or an engagement that already exists). employee_full_name must match an active employee\'s name exactly. audit_type applies to every week in that row - give the same person a second row (with a different audit_type) if their hours on this engagement need to be split across audit types.', false],
+    ['One row per employee, per engagement - not per week. Every Monday of the current year is its own column to the right; type hours into whichever weeks that person worked on this engagement and leave the rest blank. client_name + year (+ engagement_name, if that client has more than one engagement this year) must match a row in the Engagements tab (or an engagement that already exists). employee_full_name must match an active employee\'s name exactly. audit_type applies to every week in that row - give the same person a second row (with a different audit_type) if their hours on this engagement need to be split across audit types.', false],
     ['', false],
     ['Before anything is created', true],
     ['Uploading shows a full report first - what will be created, plus any errors that need fixing - nothing is saved until you review it and confirm.', false],
@@ -115,17 +116,17 @@ $sheet->getStyle('B2:B200')->getNumberFormat()->setFormatCode('yyyy-mm-dd');
 // ---------------------------------------------------------------
 $sheet = $spreadsheet->createSheet();
 $sheet->setTitle('Engagements');
-$headers = ['client_name', 'year', 'status', 'budgeted_hours', 'manager', 'audit_types', 'tsc', 'soc_type', 'as_of_date', 'review_period_start', 'review_period_end', 'location', 'poc', 'scope', 'repeat', 'notes'];
+$headers = ['client_name', 'engagement_name', 'year', 'status', 'budgeted_hours', 'manager', 'audit_types', 'tsc', 'soc_type', 'as_of_date', 'review_period_start', 'review_period_end', 'location', 'poc', 'scope', 'repeat', 'notes'];
 $sheet->fromArray($headers, null, 'A1');
 styleHeaderRow($sheet, count($headers));
-$sheet->fromArray(['Example Client Inc.', 2026, 'Pending', 200, $managerNames[0] ?? '', 'SOC 2', 'Security, Availability', 'Type 2', '', '2026-01-01', '2026-12-31', 'Remote', 'Jane Doe', 'Full scope audit', 'No', 'Optional'], null, 'A2');
-$sheet->getStyle('A2:P2')->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
-addDropdown($sheet, 'C', 2, 200, ['Confirmed', 'Pending', 'Not Confirmed']);
-if (!empty($auditTypeNames)) addDropdown($sheet, 'F', 2, 200, $auditTypeNames);
-addDropdown($sheet, 'H', 2, 200, ['Type 1', 'Type 2']);
-addDropdown($sheet, 'O', 2, 200, ['Yes', 'No']);
-foreach (['I', 'J', 'K'] as $col) $sheet->getStyle("{$col}2:{$col}200")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-foreach (['A' => 28, 'B' => 8, 'C' => 14, 'D' => 15, 'E' => 20, 'F' => 22, 'G' => 26, 'H' => 10, 'I' => 13, 'J' => 16, 'K' => 16, 'L' => 16, 'M' => 16, 'N' => 24, 'O' => 9, 'P' => 24] as $col => $w) $sheet->getColumnDimension($col)->setWidth($w);
+$sheet->fromArray(['Example Client Inc.', '', 2026, 'Pending', 200, $managerNames[0] ?? '', 'SOC 2', 'Security, Availability', 'Type 2', '', '2026-01-01', '2026-12-31', 'Remote', 'Jane Doe', 'Full scope audit', 'No', 'Optional'], null, 'A2');
+$sheet->getStyle('A2:Q2')->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
+addDropdown($sheet, 'D', 2, 200, ['Confirmed', 'Pending', 'Not Confirmed']);
+if (!empty($auditTypeNames)) addDropdown($sheet, 'G', 2, 200, $auditTypeNames);
+addDropdown($sheet, 'I', 2, 200, ['Type 1', 'Type 2']);
+addDropdown($sheet, 'P', 2, 200, ['Yes', 'No']);
+foreach (['J', 'K', 'L'] as $col) $sheet->getStyle("{$col}2:{$col}200")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
+foreach (['A' => 28, 'B' => 22, 'C' => 8, 'D' => 14, 'E' => 15, 'F' => 20, 'G' => 22, 'H' => 26, 'I' => 10, 'J' => 13, 'K' => 16, 'L' => 16, 'M' => 16, 'N' => 16, 'O' => 24, 'P' => 9, 'Q' => 24] as $col => $w) $sheet->getColumnDimension($col)->setWidth($w);
 
 // ---------------------------------------------------------------
 // Weekly Hours - a grid (one row per person per engagement, weeks as
@@ -147,29 +148,30 @@ while ((int) $d->format('Y') === $currentYear) {
     $d->modify('+7 days');
 }
 
-$fixedHeaders = ['client_name', 'year', 'employee_full_name', 'audit_type'];
+$fixedHeaders = ['client_name', 'engagement_name', 'year', 'employee_full_name', 'audit_type'];
 $headers = array_merge($fixedHeaders, $weekStarts);
 $sheet->fromArray($headers, null, 'A1');
 styleHeaderRow($sheet, count($headers));
-$sheet->freezePane('E2'); // client/year/employee/audit_type stay visible while scrolling through weeks
-$sheet->getStyle('A1:D1')->getAlignment()->setWrapText(false);
+$sheet->freezePane('F2'); // client/engagement/year/employee/audit_type stay visible while scrolling through weeks
+$sheet->getStyle('A1:E1')->getAlignment()->setWrapText(false);
 $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));
-$sheet->getStyle("E1:{$lastCol}1")->getAlignment()->setTextRotation(90);
+$sheet->getStyle("F1:{$lastCol}1")->getAlignment()->setTextRotation(90);
 
-$exampleRow = array_merge(['Example Client Inc.', $currentYear, 'Jane Doe', 'SOC 2'], array_fill(0, count($weekStarts), null));
-$exampleRow[4] = 8;  // first week
-$exampleRow[5] = 6;  // second week
+$exampleRow = array_merge(['Example Client Inc.', '', $currentYear, 'Jane Doe', 'SOC 2'], array_fill(0, count($weekStarts), null));
+$exampleRow[5] = 8;  // first week
+$exampleRow[6] = 6;  // second week
 $sheet->fromArray($exampleRow, null, 'A2');
 $sheet->getStyle("A2:{$lastCol}2")->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
 
-if (!empty($auditTypeNames)) addDropdown($sheet, 'D', 2, 500, $auditTypeNames);
+if (!empty($auditTypeNames)) addDropdown($sheet, 'E', 2, 500, $auditTypeNames);
 
 $sheet->getColumnDimension('A')->setWidth(28);
-$sheet->getColumnDimension('B')->setWidth(8);
-$sheet->getColumnDimension('C')->setWidth(24);
-$sheet->getColumnDimension('D')->setWidth(16);
+$sheet->getColumnDimension('B')->setWidth(22);
+$sheet->getColumnDimension('C')->setWidth(8);
+$sheet->getColumnDimension('D')->setWidth(24);
+$sheet->getColumnDimension('E')->setWidth(16);
 foreach ($weekStarts as $i => $ws) {
-    $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(5 + $i);
+    $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(6 + $i);
     $sheet->getColumnDimension($col)->setWidth(7);
 }
 

@@ -1,6 +1,7 @@
 <?php
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
+require_once __DIR__ . '/../includes/engagement_helpers.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -18,11 +19,11 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 $user_id = (int)$_GET['user_id'];
 
 $stmt = $conn->prepare("
-    SELECT e.engagement_id, e.client_name, e.status, en.week_start, SUM(en.assigned_hours) AS week_hours
+    SELECT e.engagement_id, e.client_name, e.engagement_name, e.status, en.week_start, SUM(en.assigned_hours) AS week_hours
     FROM entries en
     JOIN engagements e ON en.engagement_id = e.engagement_id
     WHERE en.user_id = ?
-    GROUP BY e.engagement_id, e.client_name, e.status, en.week_start
+    GROUP BY e.engagement_id, e.client_name, e.engagement_name, e.status, en.week_start
     ORDER BY e.client_name ASC, en.week_start ASC
 ");
 $stmt->bind_param('i', $user_id);
@@ -36,6 +37,8 @@ while ($row = $result->fetch_assoc()) {
         $engagements[$engId] = [
             'engagement_id' => $engId,
             'client_name' => $row['client_name'],
+            'engagement_name' => $row['engagement_name'],
+            'display_name' => engagement_combined_label($row['client_name'], $row['engagement_name']),
             'status' => $row['status'],
             'weeks' => [],
             'total_hours' => 0
