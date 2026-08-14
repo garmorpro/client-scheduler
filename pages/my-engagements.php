@@ -33,6 +33,7 @@ if (!user_has_permission($conn, 'view_my_schedule')) {
 $userRole = strtolower($_SESSION['user_role'] ?? '');
 $restrictEngagementFinancials = in_array($userRole, ['staff', 'senior'], true);
 $userId = $_SESSION['user_id'];
+$fullName = trim($_SESSION['full_name'] ?? '');
 
 // Every active engagement this person has ever logged hours to, regardless
 // of week - unlike My Schedule (which is scoped to one week at a time),
@@ -41,7 +42,31 @@ $userId = $_SESSION['user_id'];
 // engagements row itself (see archive_engagement.php), so nothing extra is
 // needed here to exclude archived engagements - they're simply gone from
 // this join already.
-$engagementsQuery = "
+//
+// A manager assigned to an engagement (engagements.manager, a free-text
+// name field) never necessarily has an entries row of their own - the
+// entries-only query above used to leave a manager's own "My Engagements"
+// completely empty despite genuinely managing several. Second branch adds
+// anything they're the named manager on that isn't already covered by the
+// first branch, with 0 hours (same "manager with nothing logged shows
+// bare" treatment used everywhere else this field is resolved).
+$engagementsQuery = $fullName !== '' ? "
+    SELECT * FROM (
+        SELECT e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager, SUM(en.assigned_hours) AS my_hours
+        FROM entries en
+        JOIN engagements e ON en.engagement_id = e.engagement_id
+        WHERE en.user_id = ?
+        GROUP BY e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager
+
+        UNION
+
+        SELECT e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager, 0 AS my_hours
+        FROM engagements e
+        WHERE e.manager = ?
+          AND e.engagement_id NOT IN (SELECT engagement_id FROM entries WHERE user_id = ?)
+    ) combined
+    ORDER BY FIELD(status, 'confirmed', 'pending', 'not_confirmed'), client_name ASC
+" : "
     SELECT e.engagement_id, e.client_name, e.engagement_name, e.status, e.manager, SUM(en.assigned_hours) AS my_hours
     FROM entries en
     JOIN engagements e ON en.engagement_id = e.engagement_id
@@ -50,7 +75,11 @@ $engagementsQuery = "
     ORDER BY FIELD(e.status, 'confirmed', 'pending', 'not_confirmed'), e.client_name ASC
 ";
 $stmt = $conn->prepare($engagementsQuery);
-$stmt->bind_param('i', $userId);
+if ($fullName !== '') {
+    $stmt->bind_param('isi', $userId, $fullName, $userId);
+} else {
+    $stmt->bind_param('i', $userId);
+}
 $stmt->execute();
 $myEngagements = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
