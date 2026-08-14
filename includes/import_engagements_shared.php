@@ -286,15 +286,24 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             continue;
         }
 
-        // ROC (Report on Compliance) Delivery Date - only relevant for PCI
+        // PCI Assessment Type + Delivery Date - only relevant for PCI
         // engagements, but harmless to store regardless (same reasoning as
-        // TSC below).
-        $rocDeliveryDateRaw = trim((string) ($row['roc_delivery_date'] ?? ''));
-        $rocDeliveryDate = null;
-        if ($rocDeliveryDateRaw !== '') {
-            $rocDeliveryDate = engagement_import_parse_date($rocDeliveryDateRaw);
-            if ($rocDeliveryDate === null) {
-                $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "roc_delivery_date \"$rocDeliveryDateRaw\" isn't a valid date."];
+        // TSC below). Not every PCI engagement produces a ROC (Report on
+        // Compliance) - smaller merchants/service providers instead get an
+        // AOC or file a SAQ variant, so this is its own field.
+        $pciAssessmentType = trim((string) ($row['pci_assessment_type'] ?? ''));
+        $validPciTypes = ['ROC', 'AOC', 'SAQ A', 'SAQ A-EP', 'SAQ B', 'SAQ B-IP', 'SAQ C', 'SAQ C-VT', 'SAQ D (Merchant)', 'SAQ D (Service Provider)', 'P2PE'];
+        if ($pciAssessmentType !== '' && !in_array($pciAssessmentType, $validPciTypes, true)) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'pci_assessment_type must be one of: ' . implode(', ', $validPciTypes) . ' (or left blank).'];
+            continue;
+        }
+
+        $pciDeliveryDateRaw = trim((string) ($row['pci_delivery_date'] ?? ''));
+        $pciDeliveryDate = null;
+        if ($pciDeliveryDateRaw !== '') {
+            $pciDeliveryDate = engagement_import_parse_date($pciDeliveryDateRaw);
+            if ($pciDeliveryDate === null) {
+                $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => "pci_delivery_date \"$pciDeliveryDateRaw\" isn't a valid date."];
                 continue;
             }
         }
@@ -315,7 +324,8 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
             'as_of_date' => $asOfDate,
             'review_period_start' => $reviewStart,
             'review_period_end' => $reviewEnd,
-            'roc_delivery_date' => $rocDeliveryDate,
+            'pci_assessment_type' => $pciAssessmentType !== '' ? $pciAssessmentType : null,
+            'pci_delivery_date' => $pciDeliveryDate,
             'location' => trim((string) ($row['location'] ?? '')),
             'poc' => trim((string) ($row['poc'] ?? '')),
             'scope' => trim((string) ($row['scope'] ?? '')),

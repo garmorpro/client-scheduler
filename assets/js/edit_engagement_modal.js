@@ -14,14 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
         tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
     }
 
-    // ROC Delivery Date only matters when PCI is checked, regardless of what
-    // else is checked alongside it.
-    const rocDateWrap = document.getElementById('edit_eng_roc_date_wrap');
-    const rocDateInput = document.getElementById('edit_eng_roc_delivery_date');
-    function syncRocDateVisibility() {
+    // PCI Assessment Type + Delivery Date only matter when PCI is checked,
+    // regardless of what else is checked alongside it. Not every PCI
+    // engagement produces a ROC - could be an AOC or a SAQ variant instead.
+    const pciWrap = document.getElementById('edit_eng_pci_wrap');
+    const pciTypeSelect = document.getElementById('edit_eng_pci_assessment_type');
+    const pciDateInput = document.getElementById('edit_eng_pci_delivery_date');
+    function syncPciVisibility() {
         const pciChecked = checkedAuditTypeNames().includes('PCI');
-        rocDateWrap.classList.toggle('d-none', !pciChecked);
-        if (!pciChecked) rocDateInput.value = '';
+        pciWrap.classList.toggle('d-none', !pciChecked);
+        if (!pciChecked) {
+            pciTypeSelect.value = '';
+            pciDateInput.value = '';
+        }
     }
 
     const socTypeWrap = document.getElementById('edit_eng_soc_type_wrap');
@@ -43,10 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('edit_eng_audit_types')?.addEventListener('change', () => {
         syncTscVisibility();
         syncSocTypeVisibility();
-        syncRocDateVisibility();
+        syncPciVisibility();
     });
 
-    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, rocDeliveryDate, auditTypeIds: [...], tsc: [...] }
+    // data: { engagementId, clientName, engagementName, budgetedHours, status, manager, notes, location, poc, scope, repeatFlag, socType, asOfDate, reviewPeriodStart, reviewPeriodEnd, pciAssessmentType, pciDeliveryDate, auditTypeIds: [...], tsc: [...] }
     function populate(data) {
         document.getElementById('edit_eng_engagement_id').value = data.engagementId;
         document.getElementById('edit_eng_client_name').value = data.clientName;
@@ -63,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit_eng_as_of_date').value = data.asOfDate || '';
         document.getElementById('edit_eng_review_period_start').value = data.reviewPeriodStart || '';
         document.getElementById('edit_eng_review_period_end').value = data.reviewPeriodEnd || '';
-        rocDateInput.value = data.rocDeliveryDate || '';
+        pciTypeSelect.value = data.pciAssessmentType || '';
+        pciDateInput.value = data.pciDeliveryDate || '';
 
         const selectedAuditTypes = (data.auditTypeIds || []).map(String);
         document.querySelectorAll('#edit_eng_audit_types input[name="audit_type_ids[]"]').forEach(cb => {
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         syncTscVisibility();
         syncSocTypeVisibility();
-        syncRocDateVisibility();
+        syncPciVisibility();
     }
 
     function open(data) {
@@ -107,7 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 asOfDate: btn.getAttribute('data-as-of-date') || '',
                 reviewPeriodStart: btn.getAttribute('data-review-period-start') || '',
                 reviewPeriodEnd: btn.getAttribute('data-review-period-end') || '',
-                rocDeliveryDate: btn.getAttribute('data-roc-delivery-date') || '',
+                pciAssessmentType: btn.getAttribute('data-pci-assessment-type') || '',
+                pciDeliveryDate: btn.getAttribute('data-pci-delivery-date') || '',
                 auditTypeIds: (btn.getAttribute('data-audit-types') || '').split(',').map(s => s.trim()).filter(Boolean),
                 tsc: (btn.getAttribute('data-tsc') || '').split(',').map(s => s.trim()).filter(Boolean),
             });

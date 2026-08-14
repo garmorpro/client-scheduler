@@ -153,11 +153,26 @@
               </div>
             </div>
 
-            <!-- ROC Delivery Date only matters when PCI is checked above -
-                 hidden otherwise. -->
-            <div class="eng-edit-field d-none" id="add_eng_roc_date_wrap">
-              <label for="add_eng_roc_delivery_date">ROC Delivery Date</label>
-              <input type="date" class="eng-edit-input" id="add_eng_roc_delivery_date" name="roc_delivery_date">
+            <!-- PCI Assessment Type + Delivery Date only matter when PCI is
+                 checked above - hidden otherwise. Not every PCI engagement
+                 produces a ROC (Report on Compliance) - smaller merchants/
+                 service providers instead get an AOC (Attestation of
+                 Compliance) or file a SAQ, so the assessment type is its
+                 own field rather than assuming ROC. -->
+            <div class="eng-edit-row d-none" id="add_eng_pci_wrap">
+              <div class="eng-edit-field">
+                <label for="add_eng_pci_assessment_type">PCI Assessment Type</label>
+                <select class="eng-edit-input" id="add_eng_pci_assessment_type" name="pci_assessment_type">
+                  <option value="">Select type&hellip;</option>
+                  <?php foreach (['ROC', 'AOC', 'SAQ A', 'SAQ A-EP', 'SAQ B', 'SAQ B-IP', 'SAQ C', 'SAQ C-VT', 'SAQ D (Merchant)', 'SAQ D (Service Provider)', 'P2PE'] as $pciOption): ?>
+                  <option value="<?php echo htmlspecialchars($pciOption); ?>"><?php echo htmlspecialchars($pciOption); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="eng-edit-field">
+                <label for="add_eng_pci_delivery_date">PCI Delivery Date</label>
+                <input type="date" class="eng-edit-input" id="add_eng_pci_delivery_date" name="pci_delivery_date">
+              </div>
             </div>
           </div>
 

@@ -19,14 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         tscWrap.classList.toggle('d-none', !checkedAuditTypeNames().includes('SOC 2'));
     }
 
-    // ROC Delivery Date only matters when PCI is checked, regardless of what
-    // else is checked alongside it.
-    const rocDateWrap = document.getElementById('add_eng_roc_date_wrap');
-    const rocDateInput = document.getElementById('add_eng_roc_delivery_date');
-    function syncRocDateVisibility() {
+    // PCI Assessment Type + Delivery Date only matter when PCI is checked,
+    // regardless of what else is checked alongside it. Not every PCI
+    // engagement produces a ROC - could be an AOC or a SAQ variant instead.
+    const pciWrap = document.getElementById('add_eng_pci_wrap');
+    const pciTypeSelect = document.getElementById('add_eng_pci_assessment_type');
+    const pciDateInput = document.getElementById('add_eng_pci_delivery_date');
+    function syncPciVisibility() {
         const pciChecked = checkedAuditTypeNames().includes('PCI');
-        rocDateWrap.classList.toggle('d-none', !pciChecked);
-        if (!pciChecked) rocDateInput.value = '';
+        pciWrap.classList.toggle('d-none', !pciChecked);
+        if (!pciChecked) {
+            pciTypeSelect.value = '';
+            pciDateInput.value = '';
+        }
     }
 
     // Report/SOC Type only matters once SOC 1 or SOC 2 is checked; which of
@@ -51,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add_eng_audit_types')?.addEventListener('change', () => {
         syncTscVisibility();
         syncSocTypeVisibility();
-        syncRocDateVisibility();
+        syncPciVisibility();
     });
 
     function open({ clientId, clientName }) {
@@ -64,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // nothing else is checked yet.
         syncTscVisibility();
         syncSocTypeVisibility();
-        syncRocDateVisibility();
+        syncPciVisibility();
         addModalInstance.show();
     }
 

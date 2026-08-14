@@ -369,15 +369,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const reportType = d.soc_type
             ? (d.soc_type === 'Type 1' ? 'Type I' : (d.soc_type === 'Type 2' ? 'Type II' : d.soc_type))
             : null;
-        // ROC (Report on Compliance) Delivery Date only matters for PCI
-        // engagements, regardless of what else is checked alongside PCI.
+        // PCI Assessment Type + Delivery Date only matter for PCI
+        // engagements, regardless of what else is checked alongside PCI. Not
+        // every PCI engagement produces a ROC (Report on Compliance) -
+        // smaller merchants/service providers instead get an AOC or file a
+        // SAQ variant, so the assessment type is tracked separately.
         const isPci = (data.audit_types || []).some(t => t.name === 'PCI');
         const fields = [
             gridField('Location', d.location || 'N/A'),
             gridField('Review Period', reviewPeriod),
             gridField('Audit Type', auditTypeNames),
             reportType ? gridField('Report Type', reportType) : '',
-            isPci ? gridField('ROC Delivery Date', fmtDate(d.roc_delivery_date) || 'N/A') : '',
+            isPci ? gridField('PCI Assessment Type', d.pci_assessment_type || 'N/A') : '',
+            isPci ? gridField('PCI Delivery Date', fmtDate(d.pci_delivery_date) || 'N/A') : '',
             gridField('Manager', data.manager || 'Unassigned'),
             gridField('Point of Contact', d.poc || 'N/A'),
         ].join('');
@@ -582,7 +586,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     asOfDate: toInputDate(data.details && data.details.as_of_date),
                     reviewPeriodStart: toInputDate(data.details && data.details.review_period_start),
                     reviewPeriodEnd: toInputDate(data.details && data.details.review_period_end),
-                    rocDeliveryDate: toInputDate(data.details && data.details.roc_delivery_date),
+                    pciAssessmentType: data.details && data.details.pci_assessment_type,
+                    pciDeliveryDate: toInputDate(data.details && data.details.pci_delivery_date),
                     auditTypeIds,
                     tsc,
                 });
