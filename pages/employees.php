@@ -113,8 +113,8 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
                     <a href="#" class="badge p-2 text-decoration-none fw-medium btn-outline-custom" data-bs-toggle="modal" data-bs-target="#importUsersModal">
                         <i class="bi bi-upload me-3"></i>Import Users
                     </a>
-                    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus me-3"></i>Add Employee
+                    <a href="#" class="badge p-2 text-decoration-none fw-medium btn-dark-custom" data-bs-toggle="modal" data-bs-target="#onboardEmployeeModal">
+                        <i class="bi bi-person-plus me-3"></i>Onboard Employee
                     </a>
                     <?php endif; ?>
                 </div>
@@ -289,7 +289,7 @@ while ($rcRow = mysqli_fetch_assoc($roleCountResult)) {
 <?php include_once '../includes/modals/viewProfileModal.php'; ?>
 <?php include_once '../includes/modals/updateProfileDetailsModal.php'; ?>
 <?php include_once '../includes/modals/direct_reports_modal.php'; ?>
-<?php include_once '../includes/modals/add_user_modal.php'; ?>
+<?php include_once '../includes/modals/onboard_employee_modal.php'; ?>
 <?php include_once '../includes/modals/edit_user_modal.php'; ?>
 <?php include_once '../includes/modals/import_users_modal.php'; ?>
 <?php include_once '../includes/modals/org_chart_modal.php'; ?>
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="../assets/js/inactivity_counter.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/search_pagination.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/theme_mode.js?v=<?php echo time(); ?>"></script>
-<script src="../assets/js/add_user_modal.js?v=<?php echo time(); ?>"></script>
+<script src="../assets/js/onboard_employee_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/edit_user_modal.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/import_users.js?v=<?php echo time(); ?>"></script>
 <script src="../assets/js/read_bulk_import_users.js?v=<?php echo time(); ?>"></script>

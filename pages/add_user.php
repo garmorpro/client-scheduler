@@ -39,6 +39,11 @@ $fullName = trim($_POST['full_name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $jobTitle = trim($_POST['job_title'] ?? '');
 $role = strtolower(trim($_POST['role'] ?? ''));
+// Optional, and only meaningful for Staff/Senior - matches
+// set_direct_reports.php's own restriction on who users.manager_id can be
+// set for. Silently ignored for any other role rather than erroring, since
+// the Onboard Employee wizard only shows this step for those two roles.
+$managerId = (int) ($_POST['manager_id'] ?? 0);
 
 if ($fullName === '' || $email === '' || $role === '') {
     echo json_encode(['success' => false, 'error' => 'Full name, email, and role are required.']);
@@ -55,6 +60,18 @@ if (!in_array($role, $allowedRoles, true)) {
     exit();
 }
 
+$managerIdValue = null;
+if ($managerId > 0 && in_array($role, ['staff', 'senior'], true)) {
+    $mgrCheck = $conn->prepare("SELECT user_id FROM users WHERE user_id = ? AND role = 'manager'");
+    $mgrCheck->bind_param('i', $managerId);
+    $mgrCheck->execute();
+    $mgrCheck->store_result();
+    if ($mgrCheck->num_rows > 0) {
+        $managerIdValue = $managerId;
+    }
+    $mgrCheck->close();
+}
+
 $lowerEmail = strtolower($email);
 $dupCheck = $conn->prepare("SELECT user_id FROM users WHERE LOWER(email) = ?");
 $dupCheck->bind_param("s", $lowerEmail);
@@ -69,12 +86,12 @@ $dupCheck->close();
 
 $defaultPassword = password_hash("change_me", PASSWORD_DEFAULT);
 
-$stmt = $conn->prepare("INSERT INTO users (full_name, email, job_title, role, password) VALUES (?, ?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO users (full_name, email, job_title, role, password, manager_id) VALUES (?, ?, ?, ?, ?, ?)");
 if (!$stmt) {
     echo json_encode(['success' => false, 'error' => 'Database error']);
     exit();
 }
-$stmt->bind_param("sssss", $fullName, $email, $jobTitle, $role, $defaultPassword);
+$stmt->bind_param("sssssi", $fullName, $email, $jobTitle, $role, $defaultPassword, $managerIdValue);
 
 if ($stmt->execute()) {
     $newUserId = $stmt->insert_id;
