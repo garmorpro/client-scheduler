@@ -10,6 +10,25 @@ if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_
     exit();
 }
 
+if (!class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class)) {
+    http_response_code(500);
+    header('Content-Type: text/plain');
+    echo "The PhpSpreadsheet library isn't installed on this server yet.\n"
+        . "Run: composer update phpoffice/phpspreadsheet\n"
+        . "(composer install alone won't pick it up if composer.lock predates it being added to composer.json.)";
+    exit();
+}
+
+// Fall back to a readable error instead of a blank page for anything else
+// that goes wrong below (e.g. the server's PHP is missing ext-zip, which
+// PhpSpreadsheet's .xlsx writer needs) - display_errors is off in
+// production, so an uncaught error here would otherwise just be silent.
+set_exception_handler(function (\Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: text/plain');
+    echo "Template generation failed: " . $e->getMessage();
+});
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;

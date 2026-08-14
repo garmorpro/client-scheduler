@@ -7,6 +7,13 @@ require_once __DIR__ . '/../includes/import_engagements_shared.php';
 
 header('Content-Type: application/json');
 
+// Covers anything before the transaction's own try/catch below (e.g. a
+// missing dependency) - same reasoning as the other two import endpoints.
+set_exception_handler(function (\Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Something went wrong: ' . $e->getMessage()]);
+});
+
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);

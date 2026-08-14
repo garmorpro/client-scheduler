@@ -7,6 +7,15 @@ require_once __DIR__ . '/../includes/import_engagements_shared.php';
 
 header('Content-Type: application/json');
 
+// Same reasoning as download_engagement_import_template.php - without
+// this, a missing dependency or unexpected error here would just be a
+// blank response body (display_errors is off in production) instead of
+// something the upload UI can actually show the user.
+set_exception_handler(function (\Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Something went wrong reading this file: ' . $e->getMessage()]);
+});
+
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_clients_engagements')) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
