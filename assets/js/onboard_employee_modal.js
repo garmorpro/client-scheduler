@@ -68,14 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     trainingAddInput.addEventListener('blur', () => addTrainingCriterion(trainingAddInput.value));
 
-    // Manager step only applies to Staff/Senior (matches
+    // Manager step applies to Staff/Senior/Intern (matches
     // set_direct_reports.php's own role restriction on users.manager_id);
     // Training step only applies to Staff/Intern (matches add_user.php's
     // auto-restriction seeding). Basic and Review always show.
     function computeActiveSteps() {
         const role = roleSelect.value;
         const steps = ['basic'];
-        if (['staff', 'senior'].includes(role)) steps.push('manager');
+        if (['staff', 'senior', 'intern'].includes(role)) steps.push('manager');
         if (['staff', 'intern'].includes(role)) steps.push('training');
         steps.push('review');
         return steps;

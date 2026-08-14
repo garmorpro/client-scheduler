@@ -14,7 +14,7 @@ $stmt = $conn->prepare("
     SELECT u.user_id, u.full_name, u.role, u.manager_id, m.full_name AS manager_name
     FROM users u
     LEFT JOIN users m ON u.manager_id = m.user_id
-    WHERE u.role IN ('staff', 'senior')
+    WHERE u.role IN ('staff', 'senior', 'intern')
     ORDER BY u.full_name ASC
 ");
 $stmt->execute();

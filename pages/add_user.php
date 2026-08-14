@@ -39,10 +39,10 @@ $fullName = trim($_POST['full_name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $jobTitle = trim($_POST['job_title'] ?? '');
 $role = strtolower(trim($_POST['role'] ?? ''));
-// Optional, and only meaningful for Staff/Senior - matches
+// Optional, and only meaningful for Staff/Senior/Intern - matches
 // set_direct_reports.php's own restriction on who users.manager_id can be
 // set for. Silently ignored for any other role rather than erroring, since
-// the Onboard Employee wizard only shows this step for those two roles.
+// the Onboard Employee wizard only shows this step for those roles.
 $managerId = (int) ($_POST['manager_id'] ?? 0);
 
 if ($fullName === '' || $email === '' || $role === '') {
@@ -61,7 +61,7 @@ if (!in_array($role, $allowedRoles, true)) {
 }
 
 $managerIdValue = null;
-if ($managerId > 0 && in_array($role, ['staff', 'senior'], true)) {
+if ($managerId > 0 && in_array($role, ['staff', 'senior', 'intern'], true)) {
     $mgrCheck = $conn->prepare("SELECT user_id FROM users WHERE user_id = ? AND role = 'manager'");
     $mgrCheck->bind_param('i', $managerId);
     $mgrCheck->execute();

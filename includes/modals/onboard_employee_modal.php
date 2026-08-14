@@ -1,6 +1,6 @@
 <!-- Onboard Employee - replaces the old single-screen Add Employee modal
      with a short wizard. Step 1 (Basic Info) always shows; Step 2 (Manager)
-     only applies to Staff/Senior (matching set_direct_reports.php's own
+     applies to Staff/Senior/Intern (matching set_direct_reports.php's own
      role restriction on users.manager_id) and Step 3 (Training) only
      applies to Staff/Intern (matching add_user.php's auto-restriction
      seeding) - onboard_employee_modal.js computes which steps are actually
@@ -55,7 +55,7 @@
               </p>
             </div>
 
-            <!-- Step: Manager Assignment (Staff/Senior only) -->
+            <!-- Step: Manager Assignment (Staff/Senior/Intern only) -->
             <div class="onboard-step d-none" data-step="manager">
               <p class="text-muted" style="font-size: 12.5px; margin-top: 0;">Who does <strong id="onboardManagerStepName">this person</strong> report to?</p>
               <div class="eng-edit-field">

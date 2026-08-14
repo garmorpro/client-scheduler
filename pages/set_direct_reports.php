@@ -52,7 +52,7 @@ try {
     // Assign everyone checked to this manager.
     if (!empty($userIds)) {
         $placeholders = implode(',', array_fill(0, count($userIds), '?'));
-        $stmt = $conn->prepare("UPDATE users SET manager_id = ? WHERE user_id IN ($placeholders) AND role IN ('staff', 'senior')");
+        $stmt = $conn->prepare("UPDATE users SET manager_id = ? WHERE user_id IN ($placeholders) AND role IN ('staff', 'senior', 'intern')");
         $types = 'i' . str_repeat('i', count($userIds));
         $stmt->bind_param($types, $managerId, ...$userIds);
         $stmt->execute();
