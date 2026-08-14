@@ -15,7 +15,10 @@
 
           <div class="eng-edit-hero">
             <div class="eng-edit-title" id="onboardEmployeeModalTitle">Onboard Employee</div>
-            <div class="onboard-progress" id="onboardProgressSteps"></div>
+            <div class="onboard-progress">
+              <div class="onboard-progress-bar"><div class="onboard-progress-fill" id="onboardProgressFill"></div></div>
+              <div class="onboard-progress-label" id="onboardProgressLabel">Step 1 of 4</div>
+            </div>
           </div>
 
           <div class="eng-edit-body">

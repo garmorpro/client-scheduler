@@ -6,8 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     const backBtn = document.getElementById('onboardBackBtn');
     const nextBtn = document.getElementById('onboardNextBtn');
-    const progressSteps = document.getElementById('onboardProgressSteps');
-    const STEP_LABELS = { basic: 'Basic Info', manager: 'Manager', training: 'Training', review: 'Review' };
+    const progressFill = document.getElementById('onboardProgressFill');
+    const progressLabel = document.getElementById('onboardProgressLabel');
+
+    // Full sequence, used as the starting assumption before the role is
+    // even picked (so it reads "Step 1 of 4" right away instead of "of 1")
+    // - computeActiveSteps() below re-derives the real, possibly-shorter
+    // list once Next is clicked past Basic Info and the role is known.
+    const ALL_STEPS = ['basic', 'manager', 'training', 'review'];
 
     const roleSelect = document.getElementById('onboard_role');
     const fullNameInput = document.getElementById('onboard_full_name');
@@ -28,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return steps;
     }
 
-    let activeSteps = ['basic'];
+    let activeSteps = ALL_STEPS;
     let stepIndex = 0;
 
     function showStep(stepName) {
@@ -36,15 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.toggle('d-none', el.dataset.step !== stepName);
         });
 
-        // Named breadcrumb of exactly the steps that apply to this role -
-        // shows plainly when Manager/Training aren't part of the flow
-        // (e.g. onboarding an Admin), rather than looking like a step went
-        // missing.
-        progressSteps.innerHTML = activeSteps.map((s, i) => {
-            const cls = i === stepIndex ? 'current' : (i < stepIndex ? 'done' : '');
-            return `<span class="onboard-progress-step ${cls}">${STEP_LABELS[s]}</span>`;
-        }).join('<span class="onboard-progress-sep">&rsaquo;</span>');
-
+        progressFill.style.width = `${((stepIndex + 1) / activeSteps.length) * 100}%`;
+        progressLabel.textContent = `Step ${stepIndex + 1} of ${activeSteps.length}`;
         backBtn.textContent = stepIndex === 0 ? 'Cancel' : 'Back';
         nextBtn.textContent = stepName === 'review' ? 'Onboard Employee' : 'Next';
 
@@ -149,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalEl.addEventListener('show.bs.modal', () => {
         form.reset();
-        activeSteps = ['basic'];
+        activeSteps = ALL_STEPS;
         stepIndex = 0;
         showStep('basic');
     });
