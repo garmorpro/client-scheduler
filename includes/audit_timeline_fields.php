@@ -36,20 +36,47 @@ function audit_timeline_field_map() {
     ];
 }
 
+// True if the given user (defaults to whoever's logged in) is staffed on
+// this engagement - either an `entries` row, or being the engagement's
+// named manager (engagements.manager, a free-text name field someone can
+// hold without ever personally logging hours). The manager branch only
+// checks the current session's own name (every real caller only ever asks
+// about the logged-in user - resolving an arbitrary other user's name
+// would need an extra lookup nothing here actually needs). Used by every
+// endpoint that used to just check `entries` alone and, as a result,
+// silently locked a genuinely-assigned manager out of their own
+// engagement's timeline/DOL/independence/planning doc until they happened
+// to log an entry on it themselves.
+function user_is_staffed_on_engagement($conn, $engagementId, $userId = null) {
+    $userId = $userId !== null ? (int) $userId : (int) ($_SESSION['user_id'] ?? 0);
+    if (!$userId) return false;
+
+    $stmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
+    $stmt->bind_param('ii', $engagementId, $userId);
+    $stmt->execute();
+    $hasEntry = (bool) $stmt->get_result()->fetch_row();
+    $stmt->close();
+    if ($hasEntry) return true;
+
+    if ($userId !== (int) ($_SESSION['user_id'] ?? 0)) return false;
+    $fullName = trim((string) ($_SESSION['full_name'] ?? ''));
+    if ($fullName === '') return false;
+
+    $stmt = $conn->prepare("SELECT 1 FROM engagements WHERE engagement_id = ? AND manager = ? LIMIT 1");
+    $stmt->bind_param('is', $engagementId, $fullName);
+    $stmt->execute();
+    $isManager = (bool) $stmt->get_result()->fetch_row();
+    $stmt->close();
+    return $isManager;
+}
+
 // Admins can act on any engagement. Everyone else needs the role permission
-// AND to actually be staffed on this specific engagement (an `entries` row),
-// matching the scoping already used by engagement-details.php's own view
-// check and by approve_time_off's manager-scoping elsewhere in the app.
+// AND to actually be staffed on this specific engagement.
 function audit_can_act_on_engagement($conn, $engagementId, $permissionKey) {
     if (!user_has_permission($conn, $permissionKey)) return false;
 
     $role = strtolower($_SESSION['user_role'] ?? '');
     if ($role === 'admin') return true;
 
-    $stmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-    $stmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
-    $stmt->execute();
-    $hasEntry = (bool) $stmt->get_result()->fetch_row();
-    $stmt->close();
-    return $hasEntry;
+    return user_is_staffed_on_engagement($conn, $engagementId);
 }

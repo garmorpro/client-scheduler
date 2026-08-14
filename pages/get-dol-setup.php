@@ -11,6 +11,7 @@
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/audit_timeline_fields.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_dol')) {
@@ -27,15 +28,11 @@ if (!$engagementId) {
 
 // Same scoping as the engagement picker in dol-generator.php, enforced
 // here too so it's not just a UI-level hide - a non-admin can only reach
-// engagements they're personally staffed on (an entries row), even by
-// hand-crafting a request.
+// engagements they're personally staffed on (an entries row, or being the
+// engagement's named manager), even by hand-crafting a request.
 $isAdmin = strtolower($_SESSION['user_role'] ?? '') === 'admin';
 if (!$isAdmin) {
-    $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-    $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
-    $accessStmt->execute();
-    $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
-    $accessStmt->close();
+    $hasAccess = user_is_staffed_on_engagement($conn, $engagementId);
     if (!$hasAccess) {
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Unauthorized']);

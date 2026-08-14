@@ -3,6 +3,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/audit_timeline_fields.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
@@ -36,14 +37,11 @@ if (!$engagementId) {
 // admins needing to correct a bad entry can do it at the DB level.
 $userId = (int) $_SESSION['user_id'];
 
-// Must actually be staffed on this engagement to attest to anything on it.
-$stmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-$stmt->bind_param('ii', $engagementId, $userId);
-$stmt->execute();
-$isStaffed = (bool) $stmt->get_result()->fetch_row();
-$stmt->close();
-
-if (!$isStaffed) {
+// Must actually be staffed on this engagement to attest to anything on it -
+// an entries row, or being the engagement's named manager (a manager can
+// be genuinely involved and need to attest without ever personally
+// logging hours).
+if (!user_is_staffed_on_engagement($conn, $engagementId, $userId)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'You are not staffed on this engagement']);
     exit();

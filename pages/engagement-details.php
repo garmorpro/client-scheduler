@@ -16,20 +16,13 @@ if (isset($_GET['id'])) {
     $engagementId = (int)$_GET['id'];
 
     // Permission holders can view any engagement; everyone else can only view
-    // engagements they're actually staffed on (e.g. via the My Schedule page),
-    // not an arbitrary engagement_id.
-    if (!user_has_permission($conn, 'view_clients_engagements')) {
-        $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-        $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
-        $accessStmt->execute();
-        $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
-        $accessStmt->close();
-
-        if (!$hasAccess) {
-            http_response_code(403);
-            echo json_encode(['error' => 'Unauthorized']);
-            exit;
-        }
+    // engagements they're actually staffed on (e.g. via the My Schedule page) -
+    // an entries row, or being the engagement's named manager - not an
+    // arbitrary engagement_id.
+    if (!user_has_permission($conn, 'view_clients_engagements') && !user_is_staffed_on_engagement($conn, $engagementId)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
     }
 
     $engagementQuery = "SELECT client_name, engagement_name, status, budgeted_hours, manager, notes, year FROM engagements WHERE engagement_id = ?";

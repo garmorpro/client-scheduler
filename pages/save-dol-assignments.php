@@ -9,6 +9,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/permissions.php';
+require_once __DIR__ . '/../includes/audit_timeline_fields.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) || !user_has_permission($conn, 'manage_dol')) {
@@ -34,19 +35,13 @@ if (!$engagementId || !$auditTypeId || !is_array($assignments)) {
 }
 
 // Same scoping as get-dol-setup.php - a non-admin can only save DOL for an
-// engagement they're personally staffed on.
+// engagement they're personally staffed on (an entries row, or being the
+// engagement's named manager).
 $isAdmin = strtolower($_SESSION['user_role'] ?? '') === 'admin';
-if (!$isAdmin) {
-    $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-    $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
-    $accessStmt->execute();
-    $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
-    $accessStmt->close();
-    if (!$hasAccess) {
-        http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-        exit();
-    }
+if (!$isAdmin && !user_is_staffed_on_engagement($conn, $engagementId)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit();
 }
 
 $conn->begin_transaction();

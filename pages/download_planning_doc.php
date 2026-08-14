@@ -3,6 +3,7 @@ require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_once __DIR__ . '/../includes/planning_doc_helpers.php';
+require_once __DIR__ . '/../includes/audit_timeline_fields.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
@@ -16,17 +17,11 @@ if ($engagementId <= 0) {
 }
 
 // Same view-level access rule as engagement-details.php: permission holders
-// can view any engagement, everyone else only ones they're staffed on.
-if (!user_has_permission($conn, 'view_clients_engagements')) {
-    $accessStmt = $conn->prepare("SELECT 1 FROM entries WHERE engagement_id = ? AND user_id = ? LIMIT 1");
-    $accessStmt->bind_param('ii', $engagementId, $_SESSION['user_id']);
-    $accessStmt->execute();
-    $hasAccess = (bool) $accessStmt->get_result()->fetch_row();
-    $accessStmt->close();
-    if (!$hasAccess) {
-        http_response_code(403);
-        exit('Unauthorized');
-    }
+// can view any engagement, everyone else only ones they're staffed on (an
+// entries row, or being the engagement's named manager).
+if (!user_has_permission($conn, 'view_clients_engagements') && !user_is_staffed_on_engagement($conn, $engagementId)) {
+    http_response_code(403);
+    exit('Unauthorized');
 }
 
 $stmt = $conn->prepare("SELECT planning_doc_url FROM audit_engagement_details WHERE engagement_id = ?");
