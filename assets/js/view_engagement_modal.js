@@ -306,6 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function memberRow(role, person) {
+            // Blank rather than "0h" - same treatment as the lead row above.
+            // In practice 0h only ever happens for someone staged via Add
+            // Team Member (a placeholder entries row with no hours yet),
+            // since anyone else here has real logged work.
             return `
                 <div class="eng-vm-team-member-row">
                     ${teamAvatar(role, person.name)}
@@ -314,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${dolLinesHtml(person)}
                     </div>
                     ${independenceControl(person, independenceByUser, engagementId, clientName)}
-                    <div class="eng-vm-team-hours">${person.hours}h</div>
+                    <div class="eng-vm-team-hours">${person.hours > 0 ? person.hours + 'h' : ''}</div>
                 </div>`;
         }
 
