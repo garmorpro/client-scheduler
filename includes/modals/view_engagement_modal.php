@@ -174,6 +174,46 @@
   </div>
 </div>
 
+<!-- Add Team Member - a genuine 0-hour staffing row (see add_team_member.php),
+     same mechanism Master Schedule uses to staff someone, just with no hours
+     yet. Lets someone be added to the roster (and become DOL-assignable)
+     even without logged hours - e.g. a person promoted to manager after
+     doing real senior/staff-level work on the engagement. -->
+<div class="modal fade" id="addTeamMemberModal" tabindex="-1" aria-labelledby="addTeamMemberModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+    <div class="modal-content">
+      <div class="modal-body position-relative p-0">
+        <button type="button" class="btn-close emp-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="eng-edit-hero">
+          <div class="eng-edit-title" id="addTeamMemberModalTitle">Add Team Member</div>
+          <p class="text-muted" id="addTeamMemberModalSubtitle" style="font-size: 12.5px; margin: 4px 0 0;">Stage someone on this engagement with no hours yet</p>
+        </div>
+
+        <div class="eng-edit-body">
+          <div class="eng-edit-field">
+            <label for="addTeamMemberEmployeeSelect">Employee</label>
+            <select class="eng-edit-input" id="addTeamMemberEmployeeSelect">
+              <option value="">Select employee&hellip;</option>
+            </select>
+          </div>
+          <div class="eng-edit-field d-none" id="addTeamMemberAuditTypeWrap">
+            <label for="addTeamMemberAuditTypeSelect">Audit Type <span class="eng-edit-optional">(optional)</span></label>
+            <select class="eng-edit-input" id="addTeamMemberAuditTypeSelect">
+              <option value="">Not specific to one type</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="eng-edit-footer">
+          <button type="button" class="eng-edit-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="eng-edit-btn-save" id="addTeamMemberSaveBtn">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Planning Doc preview - "View current" opens this instead of triggering
      a download. pdf/png/jpg/jpeg render inline (iframe/img against
      download_planning_doc.php?mode=view); everything else shows a

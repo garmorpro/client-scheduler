@@ -1,10 +1,13 @@
 <?php
 // Everything the DOL Generator needs for one engagement: which DOL-capable
-// audit types it covers, its team (senior/staff/intern only - managers
-// don't get DOL line items), each person's hours on this engagement (real
-// data from entries, summed across all their rows regardless of which
-// audit_type_id each is tagged with - just a starting point, still
+// audit types it covers, its team, each person's hours on this engagement
+// (real data from entries, summed across all their rows regardless of
+// which audit_type_id each is tagged with - just a starting point, still
 // editable in the generator), and training restrictions per person.
+// Managers are included (not just senior/staff/intern) - someone can be
+// staffed on an engagement as a senior/staff doing real review work, then
+// get promoted to manager afterward, and still needs a DOL line item for
+// the work they actually did.
 require_once '../includes/db.php';
 require_once __DIR__ . '/../includes/session_init.php';
 require_once __DIR__ . '/../includes/permissions.php';
@@ -79,14 +82,14 @@ $auditTypes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 // Team = anyone with at least one entries row for this engagement (Phase 0's
-// "team membership derives from entries" decision), role senior/staff/intern.
+// "team membership derives from entries" decision), any role.
 $stmt = $conn->prepare("
     SELECT u.user_id, u.full_name, u.role, COALESCE(SUM(en.assigned_hours), 0) AS hours
     FROM entries en
     JOIN users u ON u.user_id = en.user_id
-    WHERE en.engagement_id = ? AND u.role IN ('senior', 'staff', 'intern')
+    WHERE en.engagement_id = ? AND u.role IN ('manager', 'senior', 'staff', 'intern')
     GROUP BY u.user_id, u.full_name, u.role
-    ORDER BY FIELD(u.role, 'senior', 'staff', 'intern'), u.full_name
+    ORDER BY FIELD(u.role, 'manager', 'senior', 'staff', 'intern'), u.full_name
 ");
 $stmt->bind_param('i', $engagementId);
 $stmt->execute();

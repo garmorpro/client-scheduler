@@ -255,9 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const employees = data.assigned_employees || [];
         const audit = data.audit || {};
         const clientName = data.client_name || '';
-        const titleAction = audit.can_manage_dol
-            ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Edit DOL</a>`
-            : '';
+        const canManageEng = !!data.can_manage_engagement;
+        const titleAction = [
+            audit.can_manage_dol ? `<a href="dol-generator.php?engagement_id=${engagementId}" class="eng-vm-card-title-action">Edit DOL</a>` : '',
+            canManageEng ? `<a href="#" class="eng-vm-card-title-action eng-vm-add-team-member-btn" data-engagement-id="${engagementId}">+ Add Team Member</a>` : '',
+        ].filter(Boolean).join('');
 
         // manager_user (resolved server-side from engagements.manager, a
         // plain name field - see engagement-details.php) can exist even when
@@ -317,11 +319,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let html = '';
-        // Prefer whichever entries-based manager row already has real
-        // hours/DOL; fall back to the resolved manager_user (0h, no DOL)
-        // when the manager hasn't logged anything on this engagement -
-        // either way, the engagement's manager always gets a lead row.
-        const managerFromEntries = byRole.has('manager') ? Array.from(byRole.get('manager').values())[0] : null;
+        // The lead row is always the engagement's official manager (the
+        // `manager` field on `engagements`, resolved server-side to a real
+        // user) - prefer their entries-based row (real hours/DOL) when they
+        // have one, falling back to a bare 0h/no-DOL placeholder when they
+        // haven't logged anything on this engagement yet.
+        //
+        // Someone else can also hold role=manager and have real entries
+        // here without being the engagement's official manager - e.g. staffed
+        // as a senior/staff, then promoted to manager afterward. They still
+        // need to show up (and stay DOL-assignable), so they get a normal
+        // "Manager (N)" role group below instead of being silently dropped -
+        // this used to only ever show ONE manager total, since byRole's
+        // 'manager' bucket was entirely excluded from the group loop.
+        const managerPeople = byRole.has('manager') ? Array.from(byRole.get('manager').values()) : [];
+        const officialManagerId = data.manager_user ? data.manager_user.user_id : null;
+        const managerFromEntries = officialManagerId != null
+            ? managerPeople.find(p => p.user_id === officialManagerId)
+            : managerPeople[0];
         const manager = managerFromEntries || (data.manager_user
             ? { user_id: data.manager_user.user_id, name: data.manager_user.full_name, hours: 0, dolByType: new Map() }
             : null);
@@ -337,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="eng-vm-team-hours">${manager.hours > 0 ? manager.hours + 'h' : ''}</div>
                 </div>`;
         }
+        const otherManagers = managerPeople.filter(p => !manager || p.user_id !== manager.user_id);
 
         const otherRoles = [...roleOrder.filter(r => r !== 'manager' && byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
         otherRoles.forEach(role => {
@@ -347,6 +363,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${people.map(p => memberRow(role, p)).join('')}
                 </div>`;
         });
+        if (otherManagers.length > 0) {
+            html += `
+                <div class="eng-vm-team-role-group">
+                    <div class="eng-vm-team-role-label">${roleLabel('manager')} (${otherManagers.length})</div>
+                    ${otherManagers.map(p => memberRow('manager', p)).join('')}
+                </div>`;
+        }
 
         return card('Team', '#003f47', html, titleAction);
     }
@@ -1076,6 +1099,59 @@ document.addEventListener('DOMContentLoaded', () => {
         planningDocPreviewModalInstance.show();
     }
 
+    let addTeamMemberModalInstance = null;
+
+    // Populates the employee picker (everyone active, minus whoever's
+    // already on the team) and the audit type picker (only shown when this
+    // engagement actually has audit types selected) using `lastData` - the
+    // same payload the Team card itself was just rendered from, so "already
+    // on the team" always matches what's on screen.
+    function openAddTeamMemberModal(engagementId) {
+        const modalEl = document.getElementById('addTeamMemberModal');
+        if (!modalEl) return;
+        if (!addTeamMemberModalInstance) addTeamMemberModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        const employeeSelect = document.getElementById('addTeamMemberEmployeeSelect');
+        const auditTypeWrap = document.getElementById('addTeamMemberAuditTypeWrap');
+        const auditTypeSelect = document.getElementById('addTeamMemberAuditTypeSelect');
+        const saveBtn = document.getElementById('addTeamMemberSaveBtn');
+        saveBtn.dataset.engagementId = engagementId;
+
+        const auditTypes = (lastData && lastData.audit_types) || [];
+        if (auditTypes.length > 0) {
+            auditTypeSelect.innerHTML = '<option value="">Not specific to one type</option>' +
+                auditTypes.map(t => `<option value="${t.audit_type_id}">${t.name}</option>`).join('');
+            auditTypeWrap.classList.remove('d-none');
+        } else {
+            auditTypeSelect.innerHTML = '<option value="">Not specific to one type</option>';
+            auditTypeWrap.classList.add('d-none');
+        }
+
+        employeeSelect.innerHTML = '<option value="">Loading&hellip;</option>';
+        employeeSelect.disabled = true;
+        addTeamMemberModalInstance.show();
+
+        const alreadyOnTeam = new Set((lastData && lastData.assigned_employees || []).map(e => e.user_id));
+        if (lastData && lastData.manager_user) alreadyOnTeam.add(lastData.manager_user.user_id);
+
+        fetch('get_active_employees.php')
+            .then(res => res.json())
+            .then(list => {
+                const available = (Array.isArray(list) ? list : []).filter(e => !alreadyOnTeam.has(e.user_id));
+                if (available.length === 0) {
+                    employeeSelect.innerHTML = '<option value="">Everyone active is already on this team</option>';
+                    return;
+                }
+                employeeSelect.innerHTML = '<option value="">Select employee&hellip;</option>' +
+                    available.map(e => `<option value="${e.user_id}">${e.full_name} (${roleLabel(e.role)})</option>`).join('');
+                employeeSelect.disabled = false;
+            })
+            .catch(err => {
+                console.error('Failed to load employees', err);
+                employeeSelect.innerHTML = '<option value="">Could not load employees</option>';
+            });
+    }
+
     // Parses/matches the file, then always routes into the modal above for
     // review before anything saves - matches ET's own "never a blind
     // import" behavior. Nothing is written to the database until Save
@@ -1166,6 +1242,12 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             openPlanningDocPreview(viewDocTrigger.dataset.engagementId, viewDocTrigger.dataset.docUrl);
         }
+
+        const addTeamMemberTrigger = e.target.closest('.eng-vm-add-team-member-btn');
+        if (addTeamMemberTrigger) {
+            e.preventDefault();
+            openAddTeamMemberModal(addTeamMemberTrigger.dataset.engagementId);
+        }
     });
     modalBody.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -1212,6 +1294,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 independenceModalInstance.hide();
             } finally {
                 independenceSaveBtn.disabled = false;
+            }
+        });
+    }
+
+    // #addTeamMemberModal's own markup is static too - wired once here,
+    // same reasoning as #independenceModal above.
+    const addTeamMemberSaveBtn = document.getElementById('addTeamMemberSaveBtn');
+    if (addTeamMemberSaveBtn) {
+        addTeamMemberSaveBtn.addEventListener('click', async () => {
+            const engagementId = addTeamMemberSaveBtn.dataset.engagementId;
+            const userId = document.getElementById('addTeamMemberEmployeeSelect').value;
+            const auditTypeId = document.getElementById('addTeamMemberAuditTypeSelect').value;
+            if (!engagementId || !userId) {
+                notify('Please select an employee.', true);
+                return;
+            }
+            addTeamMemberSaveBtn.disabled = true;
+            try {
+                const res = await fetch('add_team_member.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engagement_id: engagementId, user_id: userId, audit_type_id: auditTypeId || null })
+                });
+                const result = await res.json();
+                if (!result.success) {
+                    notify(result.error || 'Could not add team member.', true);
+                    return;
+                }
+                if (addTeamMemberModalInstance) addTeamMemberModalInstance.hide();
+                refresh();
+            } catch (err) {
+                console.error('Failed to add team member', err);
+                notify('Network error. Please try again.', true);
+            } finally {
+                addTeamMemberSaveBtn.disabled = false;
             }
         });
     }
