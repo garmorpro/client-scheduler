@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if (!user_has_permission($conn, 'access_system_settings')) {
+if (!user_has_permission($conn, 'manage_policies')) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'You do not have permission to manage policies']);
     exit;

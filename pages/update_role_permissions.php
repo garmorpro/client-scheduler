@@ -27,6 +27,7 @@ $permissionKeys = [
     'view_my_schedule',
     'approve_time_off', 'view_time_off_requests',
     'access_system_settings',
+    'manage_policies',
     'manage_dol', 'view_dol',
     'manage_audit_timeline', 'complete_audit_timeline_items', 'view_audit_timeline',
 ];
