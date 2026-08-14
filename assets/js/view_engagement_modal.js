@@ -352,7 +352,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="eng-vm-team-hours">${manager.hours > 0 ? manager.hours + 'h' : ''}</div>
                 </div>`;
         }
+        // Any other staffed manager goes right under the lead row, ahead of
+        // Senior/Staff/Intern - same seniority ordering (manager > senior >
+        // staff > intern) as everywhere else, just with the engagement's
+        // official manager pulled out into its own lead row above it.
         const otherManagers = managerPeople.filter(p => !manager || p.user_id !== manager.user_id);
+        if (otherManagers.length > 0) {
+            html += `
+                <div class="eng-vm-team-role-group">
+                    <div class="eng-vm-team-role-label">${roleLabel('manager')} (${otherManagers.length})</div>
+                    ${otherManagers.map(p => memberRow('manager', p)).join('')}
+                </div>`;
+        }
 
         const otherRoles = [...roleOrder.filter(r => r !== 'manager' && byRole.has(r)), ...Array.from(byRole.keys()).filter(r => !roleOrder.includes(r))];
         otherRoles.forEach(role => {
@@ -363,13 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${people.map(p => memberRow(role, p)).join('')}
                 </div>`;
         });
-        if (otherManagers.length > 0) {
-            html += `
-                <div class="eng-vm-team-role-group">
-                    <div class="eng-vm-team-role-label">${roleLabel('manager')} (${otherManagers.length})</div>
-                    ${otherManagers.map(p => memberRow('manager', p)).join('')}
-                </div>`;
-        }
 
         return card('Team', '#003f47', html, titleAction);
     }
