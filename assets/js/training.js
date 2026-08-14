@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tbody = document.getElementById('trainingTableBody');
-    if (!tbody) return;
+    const list = document.getElementById('trainingList');
+    if (!list) return;
 
     function escapeHtml(str) {
         const div = document.createElement('div');
@@ -8,15 +8,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     }
 
-    async function openEditor(tr) {
-        const userId = tr.dataset.userId;
-        const userName = tr.dataset.userName;
-        const currentChips = Array.from(tr.querySelectorAll('.tr-chip')).map(c => c.textContent.trim());
+    // Recomputes the three stat cards from what's actually on screen -
+    // cheaper than a round trip, and always exactly matches the rows below
+    // since it's reading the same data-restricted attributes the rows
+    // themselves were just updated from.
+    function refreshStats() {
+        const rows = list.querySelectorAll('.tr-row');
+        let restrictedCount = 0;
+        rows.forEach(row => {
+            if ((row.dataset.restricted || '').trim() !== '') restrictedCount++;
+        });
+        const totalEl = document.getElementById('trStatTotal');
+        const trainedEl = document.getElementById('trStatTrained');
+        const restrictedEl = document.getElementById('trStatRestricted');
+        if (totalEl) totalEl.textContent = rows.length;
+        if (trainedEl) trainedEl.textContent = rows.length - restrictedCount;
+        if (restrictedEl) restrictedEl.textContent = restrictedCount;
+    }
+
+    async function openEditor(row) {
+        const userId = row.dataset.userId;
+        const userName = row.dataset.userName;
+        const currentValue = row.dataset.restricted || '';
 
         const value = await appTextPrompt({
             title: 'Training status',
             text: `Criteria <strong>${escapeHtml(userName)}</strong> hasn't completed training on yet &mdash; the DOL Generator won't assign these to them until cleared here.`,
-            value: currentChips.join(', '),
+            value: currentValue,
             placeholder: 'e.g. CC6, CC9, Privacy',
             confirmText: 'Save'
         });
@@ -36,10 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const cell = tr.querySelector('.tr-restricted-cell');
-            cell.innerHTML = restricted.length
-                ? restricted.map(c => `<span class="tr-chip">${escapeHtml(c)}</span>`).join('')
-                : '<span class="text-muted" style="font-size:12.5px;">Fully trained</span>';
+            row.dataset.restricted = restricted.join(',');
+            const statusEl = row.querySelector('.tr-row-status');
+            statusEl.innerHTML = restricted.length
+                ? `<span class="eng-status-pill denied"><span class="dot"></span>${restricted.length} restricted</span><span class="tr-row-restricted-list">${escapeHtml(restricted.join(', '))}</span>`
+                : '<span class="eng-status-pill confirmed"><span class="dot"></span>Fully trained</span>';
+            refreshStats();
 
             if (typeof appNotify !== 'undefined') {
                 appNotify({ icon: 'success', title: 'Saved', timer: 1200 });
@@ -50,9 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    tbody.addEventListener('click', (e) => {
+    list.addEventListener('click', (e) => {
         const btn = e.target.closest('.tr-edit-btn');
         if (!btn) return;
-        openEditor(btn.closest('tr[data-user-id]'));
+        openEditor(btn.closest('.tr-row[data-user-id]'));
     });
 });

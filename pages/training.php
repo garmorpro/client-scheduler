@@ -22,8 +22,12 @@ if (!$canManageDol && !$canViewDol) {
 
 $currentUserId = (int) $_SESSION['user_id'];
 
+// Only Staff and Intern show up here - by the time someone's a Senior or
+// Manager, training restrictions aren't tracked for them anymore (per
+// Garrett). DOL Generator can still assign Senior/Manager work (see
+// get-dol-setup.php), it just never checks a restriction list for them.
 if ($canManageDol) {
-    $usersql = "SELECT user_id, full_name, role FROM users WHERE role IN ('manager','senior','staff','intern') ORDER BY FIELD(role, 'manager','senior','staff','intern'), full_name ASC";
+    $usersql = "SELECT user_id, full_name, role FROM users WHERE role IN ('staff','intern') ORDER BY FIELD(role, 'staff','intern'), full_name ASC";
     $userresult = mysqli_query($conn, $usersql);
 } else {
     $stmt = $conn->prepare("SELECT user_id, full_name, role FROM users WHERE user_id = ?");
@@ -54,6 +58,13 @@ if (!empty($userIds)) {
     }
     $stmt->close();
 }
+
+$totalCount = count($roster);
+$restrictedCount = 0;
+foreach ($roster as $person) {
+    if (!empty($person['restricted'])) $restrictedCount++;
+}
+$fullyTrainedCount = $totalCount - $restrictedCount;
 ?>
 <!DOCTYPE html>
 <html>
@@ -75,49 +86,57 @@ if (!empty($userIds)) {
             : 'Your own training progress. Ask a manager or senior to update this once you\'ve completed training on something.'; ?>
     </p>
 
-    <div class="container-fluid">
-        <div class="user-table">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Role</th>
-                        <th>Not Yet Trained On</th>
-                        <?php if ($canManageDol): ?><th>Actions</th><?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody id="trainingTableBody">
-                    <?php foreach ($roster as $person): ?>
-                    <tr data-user-id="<?php echo $person['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($person['full_name']); ?>" data-role="<?php echo htmlspecialchars($person['role']); ?>">
-                        <td>
-                            <span class="emp-name-wrap">
-                                <span class="tr-avatar" style="background-color:<?php echo htmlspecialchars(role_color($person['role'])); ?>;"><?php echo htmlspecialchars(avatar_initials($person['full_name'])); ?></span>
-                                <?php echo htmlspecialchars($person['full_name']); ?>
-                            </span>
-                        </td>
-                        <td><span class="badge-role"><?php echo htmlspecialchars(role_label($person['role'])); ?></span></td>
-                        <td class="tr-restricted-cell">
-                            <?php if (empty($person['restricted'])): ?>
-                                <span class="text-muted" style="font-size:12.5px;">Fully trained</span>
-                            <?php else: ?>
-                                <?php foreach ($person['restricted'] as $criterion): ?>
-                                    <span class="tr-chip"><?php echo htmlspecialchars($criterion); ?></span>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </td>
-                        <?php if ($canManageDol): ?>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-outline-secondary tr-edit-btn" title="Edit training status">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+    <?php if ($canManageDol): ?>
+    <div class="tr-stat-row">
+        <div class="eng-stat-card">
+            <div class="eng-stat-title">Staff and Interns</div>
+            <div class="eng-stat-value" id="trStatTotal"><?php echo $totalCount; ?></div>
+        </div>
+        <div class="eng-stat-card">
+            <div class="eng-stat-title">Fully Trained</div>
+            <div class="eng-stat-value tr-stat-good" id="trStatTrained"><?php echo $fullyTrainedCount; ?></div>
+        </div>
+        <div class="eng-stat-card">
+            <div class="eng-stat-title">With Restrictions</div>
+            <div class="eng-stat-value tr-stat-warn" id="trStatRestricted"><?php echo $restrictedCount; ?></div>
         </div>
     </div>
+    <?php endif; ?>
+
+    <?php if (empty($roster)): ?>
+        <div class="ms-empty-week">
+            <i class="bi bi-mortarboard"></i>
+            <div class="t">Nothing to show</div>
+            <div><?php echo $canManageDol ? 'No Staff or Interns yet.' : "Training tracking doesn't apply to your role."; ?></div>
+        </div>
+    <?php else: ?>
+    <div class="tr-list" id="trainingList">
+        <?php foreach ($roster as $person):
+            $restricted = $person['restricted'];
+        ?>
+        <div class="tr-row" data-user-id="<?php echo $person['user_id']; ?>" data-user-name="<?php echo htmlspecialchars($person['full_name']); ?>" data-role="<?php echo htmlspecialchars($person['role']); ?>" data-restricted="<?php echo htmlspecialchars(implode(',', $restricted)); ?>">
+            <span class="tr-avatar" style="background-color:<?php echo htmlspecialchars(role_color($person['role'])); ?>;"><?php echo htmlspecialchars(avatar_initials($person['full_name'])); ?></span>
+            <div class="tr-row-main">
+                <div class="tr-row-name"><?php echo htmlspecialchars($person['full_name']); ?></div>
+                <div class="tr-row-role"><?php echo htmlspecialchars(role_label($person['role'])); ?></div>
+            </div>
+            <div class="tr-row-status">
+                <?php if (empty($restricted)): ?>
+                    <span class="eng-status-pill confirmed"><span class="dot"></span>Fully trained</span>
+                <?php else: ?>
+                    <span class="eng-status-pill denied"><span class="dot"></span><?php echo count($restricted); ?> restricted</span>
+                    <span class="tr-row-restricted-list"><?php echo htmlspecialchars(implode(', ', $restricted)); ?></span>
+                <?php endif; ?>
+            </div>
+            <?php if ($canManageDol): ?>
+            <button type="button" class="client-icon-btn edit tr-edit-btn" title="Edit training status">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
