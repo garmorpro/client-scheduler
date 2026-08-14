@@ -20,6 +20,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('onboard_email');
     const jobTitleInput = document.getElementById('onboard_job_title');
     const managerSelect = document.getElementById('onboard_manager_id');
+    const trainingChipsContainer = document.getElementById('onboardTrainingChips');
+    const trainingAddInput = document.getElementById('onboardTrainingAddInput');
+
+    // Starting point every time the modal opens - same list add_user.php
+    // used to always apply unconditionally. Removable here (e.g. someone
+    // transferring in with real experience shouldn't start restricted on
+    // everything), same chip-editing pattern as the Training page's own
+    // status editor.
+    const ALL_TRAINING_CRITERIA = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
+    let trainingCriteria = [...ALL_TRAINING_CRITERIA];
+
+    function renderTrainingChips() {
+        if (!trainingCriteria.length) {
+            trainingChipsContainer.innerHTML = '<span class="tr-editor-chips-empty">None left - starts fully trained</span>';
+            return;
+        }
+        trainingChipsContainer.innerHTML = trainingCriteria.map((c, idx) => `
+            <span class="tr-editor-chip" data-idx="${idx}">
+                ${escapeHtml(c)}
+                <span class="tr-editor-chip-remove" role="button" tabindex="0" aria-label="Remove ${escapeHtml(c)}"></span>
+            </span>`).join('');
+    }
+
+    function addTrainingCriterion(raw) {
+        const value = raw.trim();
+        if (!value) return;
+        if (!trainingCriteria.some(c => c.toLowerCase() === value.toLowerCase())) {
+            trainingCriteria.push(value);
+            renderTrainingChips();
+        }
+        trainingAddInput.value = '';
+    }
+
+    trainingChipsContainer.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.tr-editor-chip-remove');
+        if (!removeBtn) return;
+        const idx = parseInt(removeBtn.closest('.tr-editor-chip').dataset.idx, 10);
+        trainingCriteria.splice(idx, 1);
+        renderTrainingChips();
+    });
+    trainingAddInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            addTrainingCriterion(trainingAddInput.value);
+        }
+    });
+    trainingAddInput.addEventListener('blur', () => addTrainingCriterion(trainingAddInput.value));
 
     // Manager step only applies to Staff/Senior (matches
     // set_direct_reports.php's own role restriction on users.manager_id);
@@ -47,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backBtn.textContent = stepIndex === 0 ? 'Cancel' : 'Back';
         nextBtn.textContent = stepName === 'review' ? 'Onboard Employee' : 'Next';
 
+        if (stepName === 'training') renderTrainingChips();
         if (stepName === 'review') renderReview();
     }
 
@@ -70,7 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('onboardReviewList').innerHTML = rows.map(([label, value]) => `
             <div class="onboard-review-row"><span class="label">${label}</span><span class="value">${escapeHtml(value)}</span></div>
         `).join('') + (activeSteps.includes('training')
-            ? '<div class="onboard-review-note">Will start restricted on all 13 training criteria - clear them from the Training page as this person is tested and documented on each.</div>'
+            ? (trainingCriteria.length
+                ? `<div class="onboard-review-note">Will start restricted on ${trainingCriteria.length} training ${trainingCriteria.length === 1 ? 'criterion' : 'criteria'} - clear them from the Training page as this person is tested and documented on each.</div>`
+                : '<div class="onboard-review-note">No restrictions removed on the Training step - starts fully trained.</div>')
             : '');
     }
 
@@ -123,6 +173,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const formData = new FormData(form);
+            // Chips aren't real form fields, so FormData(form) doesn't pick
+            // them up on its own - append explicitly, and only when the
+            // Training step actually applied to this role. A separate flag
+            // marks that the step was shown at all, since trainingCriteria
+            // can legitimately be empty (everything removed) - add_user.php
+            // needs to tell "step applied, list emptied on purpose" apart
+            // from "step never applied, use the full default list."
+            if (activeSteps.includes('training')) {
+                formData.append('training_step_shown', '1');
+                trainingCriteria.forEach(c => formData.append('training_criteria[]', c));
+            }
             const response = await fetch('add_user.php', { method: 'POST', body: formData });
             const result = await response.json();
             if (result.success) {
@@ -150,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         form.reset();
         activeSteps = ALL_STEPS;
         stepIndex = 0;
+        trainingCriteria = [...ALL_TRAINING_CRITERIA];
         showStep('basic');
     });
 });

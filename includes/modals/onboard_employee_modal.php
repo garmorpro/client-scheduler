@@ -73,15 +73,16 @@
               </div>
             </div>
 
-            <!-- Step: Training Overview (Staff/Intern only, read-only) -->
+            <!-- Step: Training Overview (Staff/Intern only) -->
             <div class="onboard-step d-none" data-step="training">
               <p class="text-muted" style="font-size: 12.5px; margin-top: 0;">
-                <strong id="onboardTrainingStepName">This person</strong> will start restricted on every criterion below - cleared one at a time (from the Training page) as they're actually tested and documented on each.
+                <strong id="onboardTrainingStepName">This person</strong> starts restricted on every criterion below - remove any they're already trained on (e.g. transferring in with experience), or leave them all and clear each one from the Training page as they're tested and documented on it.
               </p>
-              <div class="eng-audit-type-list" id="onboardTrainingCriteria">
-                <?php foreach (['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'] as $onboardCriterion): ?>
-                <span class="onboard-training-chip"><?php echo htmlspecialchars($onboardCriterion); ?></span>
-                <?php endforeach; ?>
+              <div class="eng-edit-field">
+                <div class="tr-editor-chips" id="onboardTrainingChips"></div>
+              </div>
+              <div class="eng-edit-field">
+                <input type="text" class="eng-edit-input" id="onboardTrainingAddInput" placeholder="Type a criterion and press Enter to add it back">
               </div>
             </div>
 

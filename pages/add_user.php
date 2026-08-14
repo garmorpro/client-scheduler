@@ -97,23 +97,37 @@ if ($stmt->execute()) {
     $newUserId = $stmt->insert_id;
     $stmt->close();
 
-    // Staff/Intern start out restricted on every criterion, not fully
-    // trained - training.php's own default assumed "no restrictions row =
-    // fully trained," which was backwards for someone who just started.
-    // Cleared one at a time (click the x) as they're actually tested and
+    // Staff/Intern start out restricted, not fully trained -
+    // training.php's own default assumed "no restrictions row = fully
+    // trained," which was backwards for someone who just started. Cleared
+    // one at a time (click the x) as they're actually tested and
     // documented on each. Same canonical list used everywhere else
     // (dol_generator.js's SOC2_CRITERIA_ORDER, training.php's
     // sort_training_criteria()) - only Staff/Intern get these since
     // they're the only roles the Training page manages.
+    //
+    // The Onboard Employee wizard's Training step lets whoever's onboarding
+    // remove criteria the new hire is already trained on (e.g. transferring
+    // in with experience) before the account's even created, rather than
+    // always seeding the full list - training_step_shown distinguishes
+    // "wizard's Training step ran and this is the resulting list, possibly
+    // emptied on purpose" from "no wizard step ran, use the full default."
     if (in_array($role, ['staff', 'intern'], true)) {
-        $allCriteria = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
-        $restrictStmt = $conn->prepare("INSERT INTO dol_training_restrictions (user_id, criterion) VALUES (?, ?)");
-        if ($restrictStmt) {
-            foreach ($allCriteria as $criterion) {
-                $restrictStmt->bind_param('is', $newUserId, $criterion);
-                $restrictStmt->execute();
+        $defaultCriteria = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Privacy', 'Processing Integrity'];
+        if (!empty($_POST['training_step_shown'])) {
+            $criteria = array_unique(array_filter(array_map('trim', $_POST['training_criteria'] ?? [])));
+        } else {
+            $criteria = $defaultCriteria;
+        }
+        if (!empty($criteria)) {
+            $restrictStmt = $conn->prepare("INSERT INTO dol_training_restrictions (user_id, criterion) VALUES (?, ?)");
+            if ($restrictStmt) {
+                foreach ($criteria as $criterion) {
+                    $restrictStmt->bind_param('is', $newUserId, $criterion);
+                    $restrictStmt->execute();
+                }
+                $restrictStmt->close();
             }
-            $restrictStmt->close();
         }
     }
 

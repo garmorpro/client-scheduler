@@ -962,12 +962,6 @@ body.dark-mode .onboard-progress-fill { background: var(--secondary-color); }
 .onboard-progress-label { font-size: 11px; font-weight: 700; color: #9aa39d; text-transform: uppercase; letter-spacing: .04em; margin-top: 6px; }
 body.dark-mode .onboard-progress-label { color: #6e7975; }
 
-.onboard-training-chip {
-    display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 700;
-    padding: 4px 10px; border-radius: 20px; background: #fbe8e6; color: #c0392b;
-}
-body.dark-mode .onboard-training-chip { background: #3a2320; color: #e0685a; }
-
 .onboard-review-list { display: flex; flex-direction: column; gap: 2px; }
 .onboard-review-row {
     display: flex; justify-content: space-between; gap: 12px; padding: 9px 0;
