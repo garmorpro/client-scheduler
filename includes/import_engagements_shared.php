@@ -273,8 +273,8 @@ function parse_and_validate_engagement_import(mysqli $conn, string $filePath): a
         }
 
         $socType = trim((string) ($row['soc_type'] ?? ''));
-        if ($socType !== '' && !in_array($socType, ['Type 1', 'Type 2'], true)) {
-            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'soc_type must be "Type 1" or "Type 2" (or left blank).'];
+        if ($socType !== '' && !in_array($socType, ['Type 1', 'Type 2', 'RA'], true)) {
+            $errors[] = ['sheet' => 'Engagements', 'row' => $rowNum, 'message' => 'soc_type must be "Type 1", "Type 2", or "RA" (or left blank).'];
             continue;
         }
 

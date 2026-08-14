@@ -123,7 +123,7 @@ $sheet->fromArray(['Example Client Inc.', '', 2026, 'Pending', 200, $managerName
 $sheet->getStyle('A2:Q2')->getFont()->setItalic(true)->getColor()->setRGB('9AA39D');
 addDropdown($sheet, 'D', 2, 200, ['Confirmed', 'Pending', 'Not Confirmed']);
 if (!empty($auditTypeNames)) addDropdown($sheet, 'G', 2, 200, $auditTypeNames);
-addDropdown($sheet, 'I', 2, 200, ['Type 1', 'Type 2']);
+addDropdown($sheet, 'I', 2, 200, ['Type 1', 'Type 2', 'RA']);
 addDropdown($sheet, 'P', 2, 200, ['Yes', 'No']);
 foreach (['J', 'K', 'L'] as $col) $sheet->getStyle("{$col}2:{$col}200")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
 foreach (['A' => 28, 'B' => 22, 'C' => 8, 'D' => 14, 'E' => 15, 'F' => 20, 'G' => 22, 'H' => 26, 'I' => 10, 'J' => 13, 'K' => 16, 'L' => 16, 'M' => 16, 'N' => 16, 'O' => 24, 'P' => 9, 'Q' => 24] as $col => $w) $sheet->getColumnDimension($col)->setWidth($w);

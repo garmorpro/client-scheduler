@@ -112,13 +112,15 @@
 
             <!-- Report/SOC Type only matters when SOC 1 or SOC 2 is checked
                  above - hidden otherwise. Type 1 asks for a single As-of
-                 Date; Type 2 asks for a Review Period range. -->
+                 Date; Type 2 asks for a Review Period range; RA (Readiness
+                 Assessment) asks for neither. -->
             <div class="eng-edit-field d-none" id="add_eng_soc_type_wrap">
               <label for="add_eng_soc_type">Report / SOC Type</label>
               <select class="eng-edit-input" id="add_eng_soc_type" name="soc_type">
                 <option value="">Select type&hellip;</option>
                 <option value="Type 1">Type 1</option>
                 <option value="Type 2">Type 2</option>
+                <option value="RA">RA (Readiness Assessment)</option>
               </select>
             </div>
 
