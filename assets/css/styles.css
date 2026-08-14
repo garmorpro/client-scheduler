@@ -2028,15 +2028,16 @@ body.dark-mode .eng-vm-team-member-row { border-color: #29302e; }
 .eng-vm-team-member-name { font-size: 13px; font-weight: 600; }
 .eng-vm-team-hours { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .eng-vm-team-dol-lines { margin-top: 4px; }
-/* One line per audit type, never wrapping to a second line - a long list
-   of criteria (e.g. SOC 1 with 7+ chips) scrolls horizontally within its
-   own row instead, keeping every row the same tidy single-line height
-   regardless of how many chips it holds. */
-.eng-vm-team-dol-line { display: flex; align-items: baseline; gap: 6px; font-size: 11.5px; margin-bottom: 3px; flex-wrap: nowrap; }
-.eng-vm-team-dol-audit-label { font-weight: 700; color: #9aa39d; width: 46px; flex-shrink: 0; }
+/* Chips wrap onto their own second (third, ...) line when a row runs out
+   of room - no scrollbar. flex-start (not baseline) keeps wrapped rows
+   readable, and giving .eng-vm-team-dol-chips the remaining width (flex:1,
+   min-width:0) means wrapped chips stay indented under the chips column
+   instead of sliding back out under the audit type label. */
+.eng-vm-team-dol-line { display: flex; align-items: flex-start; gap: 6px; font-size: 11.5px; margin-bottom: 3px; }
+.eng-vm-team-dol-audit-label { font-weight: 700; color: #9aa39d; width: 46px; flex-shrink: 0; padding-top: 2px; }
 body.dark-mode .eng-vm-team-dol-audit-label { color: #6e7975; }
-.eng-vm-team-dol-chips { display: flex; flex-wrap: nowrap; gap: 4px; overflow-x: auto; min-width: 0; padding-bottom: 2px; }
-.eng-vm-team-dol-chip { font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 5px; flex-shrink: 0; }
+.eng-vm-team-dol-chips { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.eng-vm-team-dol-chip { font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 5px; }
 .eng-vm-team-no-dol { font-size: 11.5px; color: #9aa39d; font-style: italic; }
 body.dark-mode .eng-vm-team-no-dol { color: #6e7975; }
 
